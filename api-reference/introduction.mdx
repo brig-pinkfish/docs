@@ -1,33 +1,68 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'API reference for AI Automation Platform'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to the AI Automation API
 
-## Welcome
+This API enables you to execute AI-powered automations that you've created and published on our platform. With these endpoints, you can seamlessly integrate automated workflows into your applications and systems.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Key Concepts
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+- **Automation**: A series of steps that perform a specific task or workflow.
+- **Trigger**: A mechanism to initiate an automation via API call.
+- **Run**: An instance of an automation being executed.
+
+## Core Functionalities
+
+1. **Execute Automations**: Trigger published automations via API calls using their associated triggers.
+2. **Monitor Runs**: Track the status and results of automation executions through the platform interface.
+
+## Execution Model
+
+Our API follows a "fire and forget" model for automation execution:
+
+- When you call an automation trigger, the API immediately returns a confirmation of receipt.
+- The automation runs asynchronously in the background.
+- Results are not directly returned via the API call.
+
+To view the outcomes of an automation run, you have several options:
+1. Check the effects of the automation (e.g., a created Google Doc).
+2. Load the automation details in the platform UI.
+3. Use the Run Monitor in the platform to view execution status and results.
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints are authenticated using API keys. Include your API key in the `X-API-KEY` header of each request:
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
 ```
+X-API-KEY: YOUR_API_KEY_HERE
+```
+
+You can generate API keys in two ways:
+1. In the Library section of the platform interface.
+2. While setting up a trigger for an automation.
+
+## Triggering Automations
+
+Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests) or as form-encoded data (for POST requests).
+
+### Request Formats
+
+For trigger calls, the API supports two methods of passing parameters:
+
+1. Query Parameters: For GET requests or simple data.
+2. Form Data: For POST requests, use `application/x-www-form-urlencoded`.
+
+<Note>
+  The API does not support JSON payloads for automation execution. Ensure all POST requests use form-encoded data.
+</Note>
+
+## Getting Started
+
+To begin using the AI Automation API, you'll need to:
+
+1. Create and publish an automation using our platform.
+2. Set up a trigger for your automation.
+3. Generate an API key from either the Library section or during trigger setup.
+4. Use the provided trigger endpoint to execute your automation, including your API key in the request header.
