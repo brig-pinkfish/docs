@@ -5,30 +5,26 @@ description: 'API reference for AI Automation Platform'
 
 ## Welcome to the AI Automation API
 
-This API enables you to execute AI-powered automations that you've created and published on our platform. With these endpoints, you can seamlessly integrate automated workflows into your applications and systems.
+This API enables you to execute Pinkfish automations that you've created and published. With these endpoints, you can seamlessly integrate automated workflows into your applications and systems.
 
 ## Key Concepts
 
 - **Automation**: A series of steps that perform a specific task or workflow.
-- **Trigger**: A mechanism to initiate an automation via API call.
+- **Trigger**: A mechanism to initiate an automation via API call. You must set up a trigger in order to call your automation by API.
 - **Run**: An instance of an automation being executed.
 
-## Core Functionalities
-
-1. **Execute Automations**: Trigger published automations via API calls using their associated triggers.
-2. **Monitor Runs**: Track the status and results of automation executions through the platform interface.
 
 ## Execution Model
 
 Our API follows a "fire and forget" model for automation execution:
 
-- When you call an automation trigger, the API immediately returns a confirmation of receipt.
+- When you call an automation trigger, the API immediately returns.
 - The automation runs asynchronously in the background.
 - Results are not directly returned via the API call.
 
 To view the outcomes of an automation run, you have several options:
 1. Check the effects of the automation (e.g., a created Google Doc).
-2. Load the automation details in the platform UI.
+2. Load the automation details in the platform UI (you will see results from the last run)
 3. Use the Run Monitor in the platform to view execution status and results.
 
 ## Authentication
@@ -45,7 +41,37 @@ You can generate API keys in two ways:
 
 ## Triggering Automations
 
-Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests) or as form-encoded data (for POST requests).
+Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests) or as form-encoded data (for POST requests). Set up your trigger(s) in the Automation editor.
+
+## Example Request
+
+Here's a sample CURL call.
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_ID' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--data-urlencode 'TestVariable=TestValue'
+```
+
+## Example Response
+
+Here's a sample response. Note that the response body will be null. You can find your runId in the header as `X-Pf-Run-Id` 
+```
+Response Headers
+Date: Wed, 18 Sep 2024 02:12:39 GMT
+Content-Type: application/json
+Content-Length: 0
+Connection: keep-alive
+x-amzn-RequestId: eea7315a-f8c2-4c55-88df-50f8332bf25e
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: Content-Type, Authorization
+X-Pf-Automation-Id: crkbpb5b9nas7163a4kg
+x-amz-apigw-id: eR2LpEkBPHcEK9w=
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+X-Amzn-Trace-Id: Root=1-66ea3717-03397efa60d2632525a8fe5f
+X-Pf-Run-Id: 1726625559774364090
+Response Body
+```
 
 ### Request Formats
 
@@ -57,6 +83,8 @@ For trigger calls, the API supports two methods of passing parameters:
 <Note>
   The API does not support JSON payloads for automation execution. Ensure all POST requests use form-encoded data.
 </Note>
+
+
 
 ## Getting Started
 
