@@ -1,23 +1,103 @@
----
+--- 
 title: 'Google Triggers'
-description: 'Trigger an automation from an event in a Google Doc or Google Sheet'
+description: 'Trigger an automation from an event in a Google Sheet'
 ---
 
-## Hello World with Pinkfish
+## Setting Up a Google Sheets Trigger for Pinkfish
 
-Let's get started with the simplest possible example. 
+This guide will walk you through the process of setting up an Apps Script in a Google Sheet that fires on form submission and triggers a Pinkfish automation.
 
-### Step 1: Write "Output Hello World" 
+### Step 1: Open Script Editor
 
-Write `output hello world` in the step instructions box. 
+1. Open your Google Sheet.
+2. Click on "Tools" in the menu bar.
+3. Select "Script editor" from the dropdown menu.
 
-### Step 2: Run Your Automation
+### Step 2: Write the Script
 
-Click the "Run Step" button. 
+In the script editor, paste the following code:
 
-### Output
+```javascript
+function onFormSubmit(e) {
+  console.log('Form submitted. Event object:', JSON.stringify(e));
 
-Hopefull you'll now see "Hello World" in your results box. 
+  var sheet = e.range.getSheet();
+  var row = e.range.getRow();
+  var values = e.range.getValues()[0];
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-Congratulations, you've just run your first step.
-Happy automating!
+  var formData = [];
+  
+  for (var i = 0; i < headers.length; i++) {
+    var name = headers[i];
+    var value = values[i];
+    if (value !== undefined && value !== null && value !== '') {
+      formData.push(encodeURIComponent(name) + '=' + encodeURIComponent(value));
+    }
+  }
+  formData.push('row_number=' + encodeURIComponent(row));
+  
+  console.log('Form data:', formData);
+  
+  var apiKey = "YOUR_API_KEY_HERE"; // Replace with your actual Pinkfish API key
+  
+  var url = 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID'; // Replace with your actual trigger URL
+  
+  var options = {
+    'method': 'post',
+    'contentType': 'application/x-www-form-urlencoded',
+    'payload': formData.join('&'),
+    'headers': {
+      'X-API-Key': apiKey
+    }
+  };
+  
+  try {
+    var response = UrlFetchApp.fetch(url, options);
+    console.log('API response:', response.getContentText());
+  } catch (error) {
+    console.error('Error calling API:', error);
+  }
+}
+```
+
+### Step 3: Configure the Script
+
+1. Replace `YOUR_API_KEY_HERE` with your actual Pinkfish API key.
+2. Replace `YOUR_TRIGGER_ID` in the URL with your actual Pinkfish trigger ID.
+
+### Step 4: Set Up the Trigger
+
+1. In the script editor, click on the clock icon on the left sidebar to open the project triggers.
+2. Click the "+ Add Trigger" button in the bottom right corner.
+3. In the "Choose which function to run" dropdown, select `onFormSubmit`.
+4. Under "Select event source", choose "From spreadsheet".
+5. For "Select event type", choose "On form submit".
+6. Click "Save".
+
+### Step 5: Authorize the Script
+
+1. You may be prompted to authorize the script to access your Google Sheet and make external requests.
+2. Follow the prompts to grant the necessary permissions.
+
+### Step 6: Test Your Automation
+
+1. Submit a form linked to your Google Sheet.
+2. Check the script logs (in the script editor, click "Execution Log") to see if the form submission was detected and the Pinkfish trigger was called successfully. You can also see the list of executions by clicking the "Executions" button in the left-side navigation.
+
+### How It Works
+
+1. When a form is submitted, the `onFormSubmit` function is triggered.
+2. The script extracts the form data, including headers and values.
+3. It formats the data and adds the row number of the new entry.
+4. The script then makes a POST request to the specified Pinkfish trigger URL, including the form data and your API key.
+5. The response from the Pinkfish API is logged for debugging purposes.
+
+### Troubleshooting
+
+If you encounter any issues:
+- Check the script logs for error messages.
+- Verify that your API key and trigger URL are correct.
+- Ensure that your Google Sheet is properly linked to a form.
+
+Congratulations! You've now set up a Google Sheets trigger that automatically sends form submission data to your Pinkfish automation. Happy automating!
