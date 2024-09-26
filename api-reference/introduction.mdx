@@ -5,7 +5,7 @@ description: 'API reference for AI Automation Platform'
 
 ## Welcome to the AI Automation API
 
-This API enables you to execute Pinkfish automations that you've created and published. With these endpoints, you can seamlessly integrate automated workflows into your applications and systems.
+This API enables you to execute Pinkfish automations that you've created and published. With these endpoints, you can integrate automated workflows into your applications and systems. You can also trigger one automation from another automation - thereby chaining automations together. 
 
 ## Key Concepts
 
@@ -18,14 +18,14 @@ This API enables you to execute Pinkfish automations that you've created and pub
 
 Our API follows a "fire and forget" model for automation execution:
 
-- When you call an automation trigger, the API immediately returns.
+- When you call an automation trigger, the API immediately returns (with a runId in the response header)
 - The automation runs asynchronously in the background.
 - Results are not directly returned via the API call.
 
-To view the outcomes of an automation run, you have several options:
-1. Check the effects of the automation (e.g., a created Google Doc).
-2. Load the automation details in the platform UI (you will see results from the last run)
-3. Use the Run Monitor in the platform to view execution status and results.
+To view the outcome of an automation run, you have several options:
+1. Check the effects of the automation (e.g., a created Google Doc or message to Slack). This is entirely up to you to devise.
+2. Load the automation in the platform UI (you will see results from the last run). Warning: if you have edited your automation since your last publish, you won't see results here.
+3. Use the Runs Monitor in the platform to view execution status and results. This is the most reliable and simple method. 
 
 ## Authentication
 
@@ -41,21 +41,31 @@ You can generate API keys in two ways:
 
 ## Triggering Automations
 
-Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests) or as form-encoded data (for POST requests). Set up your trigger(s) in the Automation editor.
+Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests), as form-encoded data, or as a json payload. Set up your trigger(s) in the Automation editor (requires first publishing a version of your automation)
 
 ## Example Request
 
-Here's a sample CURL call.
+Here's a sample CURL call using form-encoded data
 ```
 curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_ID' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --header 'X-API-KEY: YOUR_API_KEY' \
---data-urlencode 'TestVariable=TestValue'
+--data-urlencode 'Hello=World'
+```
+
+And here's an example using json data:
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_ID' \
+--header 'Content-Type: application/json' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--data '{
+    "user_request": "what is the capital of France"
+}'
 ```
 
 ## Example Response
 
-Here's a sample response. Note that the response body will be null. You can find your runId in the header as `X-Pf-Run-Id` 
+Here's a sample response. Note that the response body will be null. You can find your runId in the header as `X-Pf-Run-Id`. The runId will also be shown in the Run Monitor, so that you can easily see the results from a specific run. 
 ```
 Response Headers
 Date: Wed, 18 Sep 2024 02:12:39 GMT
@@ -72,18 +82,6 @@ X-Amzn-Trace-Id: Root=1-66ea3717-03397efa60d2632525a8fe5f
 X-Pf-Run-Id: 1726625559774364090
 Response Body
 ```
-
-### Request Formats
-
-For trigger calls, the API supports two methods of passing parameters:
-
-1. Query Parameters: For GET requests or simple data.
-2. Form Data: For POST requests, use `application/x-www-form-urlencoded`.
-
-<Note>
-  The API does not support JSON payloads for automation execution. Ensure all POST requests use form-encoded data.
-</Note>
-
 
 
 ## Getting Started
