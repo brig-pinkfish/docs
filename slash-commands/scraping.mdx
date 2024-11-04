@@ -6,19 +6,18 @@ description: "Learn how to use powerful scraping commands in your automations"
 ## Table of Contents
 
 - [Single Page Scraping](#single-page-scraping)
-- [Page Actions and Screenshots](#page-actions-and-screenshots)
+- [Page Scraping with Screenshot](#page-scraping-with-screenshot)
 - [Website Crawling](#website-crawling)
 - [Crawl Mapping](#crawl-mapping)
-- [Response Format](#response-format)
 
 ## Single Page Scraping
 
-Extract data from specific webpage(s) using the `/scrape single web page` command.
+Extract data from specific webpage(s) using the `/Scrape single web page` command.
 
 ### Usage
 
 ```
-/scrape single web page [URL or URLs]
+/Scrape single web page [URL]
 ```
 
 ### Format Options
@@ -36,30 +35,36 @@ Choose one or more output formats:
 - `includeTags`: Specify HTML tags, classes, and IDs to include
 
   ```
-  /scrape https://example.com includeTags=["article", ".main-content", "#content"]
+  /Scrape single web page https://example.com includeTags=["article", ".main-content", "#content"]
   ```
 
 - `excludeTags`: Specify HTML tags, classes, and IDs to exclude
 
   ```
-  /scrape https://example.com excludeTags=["nav", ".sidebar", "#footer"]
+  /Scrape single web page https://example.com excludeTags=["nav", ".sidebar", "#footer"]
   ```
 
 - `onlyMainContent`: Focus on main content (default: true)
   ```
-  /scrape https://example.com onlyMainContent=false
+  /Scrape single web page https://example.com onlyMainContent=false
   ```
 
 ### Page Interaction Options
 
 - `waitFor`: Time in milliseconds to wait before scraping
   ```
-  /scrape https://example.com waitFor=2000
+  /Scrape single web page https://example.com waitFor=2000
   ```
 
-## Page Actions and Screenshots
+## Page Scraping with Screenshot
 
-The scraper supports various page interactions before capturing data.
+Capture both page content and screenshots using the `/Scrape page and take screenshot` command.
+
+### Usage
+
+```
+/Scrape page and take screenshot [URL]
+```
 
 ### Available Actions
 
@@ -76,7 +81,7 @@ The scraper supports various page interactions before capturing data.
 ### Example with Multiple Actions
 
 ```
-/scrape https://example.com actions=[
+/Scrape page and take screenshot https://example.com actions=[
   {"type": "click", "selector": "textarea[title='Search']"},
   {"type": "wait", "milliseconds": 1000},
   {"type": "write", "text": "example search"},
@@ -88,12 +93,12 @@ The scraper supports various page interactions before capturing data.
 
 ## Website Crawling
 
-Automatically navigate and collect data from multiple pages using the `/crawl multiple web pages` command.
+Automatically navigate and collect data from multiple pages using the `/Crawl multiple web pages` command.
 
 ### Usage
 
 ```
-/crawl multiple web pages [Starting URL]
+/Crawl multiple web pages [Starting URL]
 ```
 
 ### Options
@@ -106,7 +111,7 @@ Automatically navigate and collect data from multiple pages using the `/crawl mu
 
 ## Crawl Mapping
 
-Generate a complete map of URLs from a website using the `/prepare crawl map` command. This is particularly useful when you need to:
+Generate a complete map of URLs from a website using the `/Prepare crawl map` command. This is particularly useful when you need to:
 
 - Get an overview of a website's structure
 - Find pages related to a specific topic
@@ -115,7 +120,7 @@ Generate a complete map of URLs from a website using the `/prepare crawl map` co
 ### Usage
 
 ```
-/prepare crawl map [Starting URL]
+/Prepare crawl map [Starting URL]
 ```
 
 ### Options
@@ -123,18 +128,18 @@ Generate a complete map of URLs from a website using the `/prepare crawl map` co
 - `includeSubdomains`: Include/exclude subdomains in the mapping (default: true)
 
   ```
-  /map https://example.com includeSubdomains=false
+  /Prepare crawl map https://example.com includeSubdomains=false
   ```
 
 - `ignoreSitemap`: Skip the sitemap during mapping (default: false)
 
   ```
-  /map https://example.com ignoreSitemap=true
+  /Prepare crawl map https://example.com ignoreSitemap=true
   ```
 
 - `search`: Filter URLs by a search term
   ```
-  /map https://example.com search="products"
+  /Prepare crawl map https://example.com search="products"
   ```
 
 ### Response Format
@@ -159,7 +164,7 @@ The command returns a JSON response with the following structure:
 1. **Pre-Scraping Analysis**
 
    ```
-   /map https://example.com
+   /Prepare crawl map https://example.com
    ```
 
    Get a complete map of the site before deciding which pages to scrape.
@@ -167,7 +172,7 @@ The command returns a JSON response with the following structure:
 2. **Topic-Specific Mapping**
 
    ```
-   /map https://example.com search="pricing"
+   /Prepare crawl map https://example.com search="pricing"
    ```
 
    Find all pages related to pricing or specific topics.
@@ -175,14 +180,14 @@ The command returns a JSON response with the following structure:
 3. **Main Domain Focus**
 
    ```
-   /map https://example.com includeSubdomains=false
+   /Prepare crawl map https://example.com includeSubdomains=false
    ```
 
    Map only the main domain, excluding subdomains.
 
 4. **Custom Crawl Planning**
    ```
-   /map https://example.com ignoreSitemap=true
+   /Prepare crawl map https://example.com ignoreSitemap=true
    ```
    Generate a map by crawling rather than using the sitemap.
 
