@@ -1,0 +1,196 @@
+---
+title: "Scraping Commands Guide"
+description: "Learn how to use powerful scraping commands in your automations"
+---
+
+## Table of Contents
+
+- [Single Page Scraping](#single-page-scraping)
+- [Page Actions and Screenshots](#page-actions-and-screenshots)
+- [Website Crawling](#website-crawling)
+- [Crawl Mapping](#crawl-mapping)
+- [Response Format](#response-format)
+
+## Single Page Scraping
+
+Extract data from specific webpage(s) using the `/scrape single web page` command.
+
+### Usage
+
+```
+/scrape single web page [URL or URLs]
+```
+
+### Format Options
+
+Choose one or more output formats:
+
+- `markdown`: Returns content in Markdown format
+- `links`: Extracts all hyperlinks from the page
+- `html`: Provides processed HTML content
+- `rawHtml`: Delivers unprocessed HTML content
+- `screenshot`: Captures page screenshot
+
+### Content Filtering Options
+
+- `includeTags`: Specify HTML tags, classes, and IDs to include
+
+  ```
+  /scrape https://example.com includeTags=["article", ".main-content", "#content"]
+  ```
+
+- `excludeTags`: Specify HTML tags, classes, and IDs to exclude
+
+  ```
+  /scrape https://example.com excludeTags=["nav", ".sidebar", "#footer"]
+  ```
+
+- `onlyMainContent`: Focus on main content (default: true)
+  ```
+  /scrape https://example.com onlyMainContent=false
+  ```
+
+### Page Interaction Options
+
+- `waitFor`: Time in milliseconds to wait before scraping
+  ```
+  /scrape https://example.com waitFor=2000
+  ```
+
+## Page Actions and Screenshots
+
+The scraper supports various page interactions before capturing data.
+
+### Available Actions
+
+```javascript
+[
+  { type: "wait", milliseconds: 2000 },
+  { type: "click", selector: "button.search" },
+  { type: "write", text: "search term" },
+  { type: "press", key: "ENTER" },
+  { type: "screenshot", fullPage: true },
+];
+```
+
+### Example with Multiple Actions
+
+```
+/scrape https://example.com actions=[
+  {"type": "click", "selector": "textarea[title='Search']"},
+  {"type": "wait", "milliseconds": 1000},
+  {"type": "write", "text": "example search"},
+  {"type": "wait", "milliseconds": 1000},
+  {"type": "press", "key": "ENTER"},
+  {"type": "screenshot", "fullPage": true}
+]
+```
+
+## Website Crawling
+
+Automatically navigate and collect data from multiple pages using the `/crawl multiple web pages` command.
+
+### Usage
+
+```
+/crawl multiple web pages [Starting URL]
+```
+
+### Options
+
+- `limit`: Maximum number of pages to crawl (default: 20)
+- `maxDepth`: Maximum depth of crawling (default: 10)
+- `excludePaths`: Array of paths to exclude from crawling
+- `includePaths`: Array of paths to include in crawling
+- `scrapeOptions`: All options available in single page scraping
+
+## Crawl Mapping
+
+Generate a complete map of URLs from a website using the `/prepare crawl map` command. This is particularly useful when you need to:
+
+- Get an overview of a website's structure
+- Find pages related to a specific topic
+- Plan targeted scraping operations
+
+### Usage
+
+```
+/prepare crawl map [Starting URL]
+```
+
+### Options
+
+- `includeSubdomains`: Include/exclude subdomains in the mapping (default: true)
+
+  ```
+  /map https://example.com includeSubdomains=false
+  ```
+
+- `ignoreSitemap`: Skip the sitemap during mapping (default: false)
+
+  ```
+  /map https://example.com ignoreSitemap=true
+  ```
+
+- `search`: Filter URLs by a search term
+  ```
+  /map https://example.com search="products"
+  ```
+
+### Response Format
+
+The command returns a JSON response with the following structure:
+
+```javascript
+{
+  "status": "success",
+  "links": [
+    "https://example.com",
+    "https://example.com/about",
+    "https://example.com/products",
+    "https://example.com/blog",
+    ...
+  ]
+}
+```
+
+### Common Use Cases
+
+1. **Pre-Scraping Analysis**
+
+   ```
+   /map https://example.com
+   ```
+
+   Get a complete map of the site before deciding which pages to scrape.
+
+2. **Topic-Specific Mapping**
+
+   ```
+   /map https://example.com search="pricing"
+   ```
+
+   Find all pages related to pricing or specific topics.
+
+3. **Main Domain Focus**
+
+   ```
+   /map https://example.com includeSubdomains=false
+   ```
+
+   Map only the main domain, excluding subdomains.
+
+4. **Custom Crawl Planning**
+   ```
+   /map https://example.com ignoreSitemap=true
+   ```
+   Generate a map by crawling rather than using the sitemap.
+
+### Tips for Effective Mapping
+
+1. **Start Broad**: Begin with default settings to get a complete picture
+2. **Use Search**: Narrow down results with specific search terms
+3. **Optimize Performance**: Disable subdomain inclusion for faster mapping of large sites
+4. **Combine with Scraping**: Use the map results to plan targeted scraping operations
+
+Happy scraping!
