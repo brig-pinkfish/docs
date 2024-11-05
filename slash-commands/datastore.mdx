@@ -1,0 +1,258 @@
+---
+title: "Datastore Command Guide"
+description: "Learn how to use the /datastore command to manage your data"
+---
+
+## Basic Usage
+
+The `/datastore` command lets you create, read, update, and delete items in the data store. After typing `/datastore`, you can specify your action and options in natural language.
+
+### Key and Sort Field Patterns
+
+The key and sort field combination is central to organizing your data. Here are common patterns:
+
+1. **Single Key Only**
+
+   ```
+   key: meeting-notes
+   ```
+
+   Good for: Single items that don't need categorization
+
+2. **Key + Date Sort Field**
+
+   ```
+   key: meeting-notes
+   sortField: 2024-03-15
+   ```
+
+   Good for: Time-series data, daily logs, periodic records
+
+3. **Key + Email Sort Field**
+
+   ```
+   key: employee-reviews
+   sortField: jane.smith@company.com
+   ```
+
+   Good for: Per-user data, personal records
+
+4. **Key + Category Sort Field**
+
+   ```
+   key: inventory
+   sortField: electronics
+   ```
+
+   Good for: Organizing items by type or category
+
+5. **Key + ID Sort Field**
+   ```
+   key: customers
+   sortField: CUST-001
+   ```
+   Good for: Unique record identification
+
+### Creating Items
+
+```
+/datastore create a new item with:
+key: [your-key]
+sortField: [optional-sort-field]
+content: [your-content]
+metadata: [your-metadata]
+viewerType: [table/document]
+permissions: [array of permissions]
+```
+
+### Available Options
+
+#### Required Fields
+
+- `key`: (Required) Primary identifier for your item. Think of it as a folder or category name.
+  ```
+  key: sales-reports
+  ```
+
+#### Optional Fields
+
+- `sortField`: Secondary identifier that makes the item unique when combined with key
+
+  ```
+  sortField: 2024-Q1
+  ```
+
+- `content`: The main content of your item
+
+  ```
+  content: Q1 Sales Analysis
+  ```
+
+- `metadata`: Custom attributes as a JSON object
+
+  ```
+  metadata: {
+    "region": "North America",
+    "department": "Sales"
+  }
+  ```
+
+  For tables:
+
+  ```
+  metadata: {
+    "displayType": "csv",
+    "csvData": "Month,Revenue,Units\nJan,50000,500\nFeb,55000,550"
+  }
+  ```
+
+- `logoUrl`: URL for a logo to display in the viewer
+
+  ```
+  logoUrl: http://www.imgstore.com/myimg.jpg
+  ```
+
+- `permissions`: Array of view/edit permissions
+
+  ```
+  permissions: ["view"]  // Read-only access
+  permissions: ["view", "edit"]  // Read and write access
+  permissions: []  // Private
+  ```
+
+- `viewerType`: How the content should be displayed
+  ```
+  viewerType: "table"  // For spreadsheet-like data
+  viewerType: "document"  // For document-style content
+  ```
+
+### Real-World Examples
+
+1. **Project Documentation**
+
+```
+/datastore create a new item with:
+key: projects
+sortField: mobile-app-redesign
+content: Mobile App Redesign Documentation
+metadata: {
+    "status": "in-progress",
+    "team": "design"
+}
+permissions: ["view", "edit"]
+viewerType: "document"
+```
+
+2. **Sales Reports by Region**
+
+```
+/datastore create a new item with:
+key: sales-data
+sortField: europe-2024-q1
+content: European Region Q1 Sales
+metadata: {
+    "displayType": "csv",
+    "csvData": "Country,Revenue,Units\nFrance,75000,750\nGermany,82000,820"
+}
+viewerType: "table"
+permissions: ["view"]
+```
+
+3. **Employee Training Records**
+
+```
+/datastore create a new item with:
+key: training-completion
+sortField: alice.johnson@company.com
+content: Security Training 2024
+metadata: {
+    "completionDate": "2024-03-15",
+    "score": "95%"
+}
+```
+
+4. **Product Inventory by Category**
+
+```
+/datastore create a new item with:
+key: inventory
+sortField: smartphones
+content: Smartphone Inventory
+metadata: {
+    "displayType": "csv",
+    "csvData": "Model,Stock,Price\niPhone 15,50,999\nPixel 8,30,899"
+}
+viewerType: "table"
+permissions: ["view", "edit"]
+```
+
+5. **Customer Support Tickets**
+
+```
+/datastore create a new item with:
+key: support-tickets
+sortField: TICK-2024-001
+content: Login Issue Resolution
+metadata: {
+    "status": "resolved",
+    "priority": "high",
+    "customer": "acme-corp"
+}
+```
+
+### Reading Items
+
+By key only (returns all items with that key):
+
+```
+/datastore get items with key: projects
+```
+
+By key and sort field (returns specific item):
+
+```
+/datastore get item with key: projects and sortField: mobile-app-redesign
+```
+
+### Updating Items
+
+```
+/datastore update item with:
+key: projects
+sortField: mobile-app-redesign
+content: Updated project documentation
+```
+
+### Deleting Items
+
+```
+/datastore delete item with key: projects and sortField: mobile-app-redesign
+```
+
+### Best Practices
+
+1. **Keys**
+
+   - Use plural nouns for collections (e.g., "projects", "employees")
+   - Keep them simple and descriptive
+   - Use consistent naming patterns
+
+2. **Sort Fields**
+
+   - Use dates for time-based organization (YYYY-MM-DD)
+   - Use emails for per-user data
+   - Use IDs for unique records
+   - Use categories for grouping related items
+
+3. **Metadata**
+
+   - Use for searchable attributes
+   - Keep structure consistent within similar items
+   - Avoid storing large amounts of data
+
+4. **Permissions**
+   - Use view-only when possible
+   - Carefully consider who needs edit access
+   - Review shared links periodically
+
+Happy storing! 🗃️
