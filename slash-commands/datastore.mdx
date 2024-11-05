@@ -1,23 +1,66 @@
 ---
 title: "Datastore Command Guide"
-description: "Learn how to use the /datastore command to manage your data"
+description: "Learn how to use the data store slash command"
 ---
+
+## Why Use a Data Store?
+
+The data store provides a flexible way to organize and retrieve your data using a key + sort field system. Think of it like a smart filing cabinet where you can:
+
+- **Organize Related Data**: Group similar items under the same key (like putting related files in the same folder)
+- **Find Specific Items**: Quickly locate exact items using the sort field
+- **Scale Easily**: Store multiple related items without creating complex folder structures
+- **Share Selectively**: Control access to individual items or groups of items
+- **View Data Your Way**: Display content as documents or tables based on your needs
+
+### Common Use Cases
+
+- Store all meeting notes under key `meeting-notes` with dates as sort fields
+- Keep employee records under key `employees` with email addresses as sort fields
+- Track inventory across categories using category names as sort fields
+- Manage project documentation with project codes as sort fields
 
 ## Basic Usage
 
 The `/datastore` command lets you create, read, update, and delete items in the data store. After typing `/datastore`, you can specify your action and options in natural language.
 
+## Key and Sort Field Fundamentals
+
+### Important Rules
+
+- The combination of `key` + `sortField` must be unique
+- If you don't specify a `sortField`, one will be automatically generated for you
+- You can have multiple items with the same `key` as long as they have different `sortField` values
+- Think of `key` as a folder name and `sortField` as a unique identifier within that folder
+
+### Real-World Example
+
+Imagine managing employee reviews:
+
+```
+key: employee-reviews
+sortField: [employee.email]
+```
+
+This structure lets you:
+
+- Keep all reviews under one key
+- Find a specific employee's review instantly
+- Store multiple reviews for different employees
+- Avoid duplicate reviews for the same employee
+- Easily share specific reviews with managers
+
 ### Key and Sort Field Patterns
 
-The key and sort field combination is central to organizing your data. Here are common patterns:
-
-1. **Single Key Only**
+1. **Single Key Only (Auto-generated Sort Field)**
 
    ```
    key: meeting-notes
    ```
 
-   Good for: Single items that don't need categorization
+   - Sort field will be auto-generated
+   - Good for: Quick storage when uniqueness isn't a concern
+   - Example: Daily notes where exact retrieval isn't needed
 
 2. **Key + Date Sort Field**
 
@@ -26,7 +69,9 @@ The key and sort field combination is central to organizing your data. Here are 
    sortField: 2024-03-15
    ```
 
-   Good for: Time-series data, daily logs, periodic records
+   - Creates unique daily entries
+   - Good for: Time-series data, daily logs
+   - Example: Can't have two items with key "meeting-notes" and sortField "2024-03-15"
 
 3. **Key + Email Sort Field**
 
@@ -35,25 +80,33 @@ The key and sort field combination is central to organizing your data. Here are 
    sortField: jane.smith@company.com
    ```
 
-   Good for: Per-user data, personal records
+   - One record per employee
+   - Good for: Per-user data
+   - Example: Can't have duplicate reviews for the same email
 
 4. **Key + Category Sort Field**
 
    ```
    key: inventory
-   sortField: electronics
+   sortField: electronics-001
    ```
 
-   Good for: Organizing items by type or category
+   - Unique identifier within category
+   - Good for: Categorized items requiring unique IDs
 
 5. **Key + ID Sort Field**
    ```
    key: customers
    sortField: CUST-001
    ```
-   Good for: Unique record identification
+   - Explicit unique identifiers
+   - Good for: Systems requiring specific IDs
+
+## Command Options
 
 ### Creating Items
+
+Basic syntax:
 
 ```
 /datastore create a new item with:
@@ -126,7 +179,7 @@ permissions: [array of permissions]
   viewerType: "document"  // For document-style content
   ```
 
-### Real-World Examples
+## Real-World Examples
 
 1. **Project Documentation**
 
@@ -186,19 +239,7 @@ viewerType: "table"
 permissions: ["view", "edit"]
 ```
 
-5. **Customer Support Tickets**
-
-```
-/datastore create a new item with:
-key: support-tickets
-sortField: TICK-2024-001
-content: Login Issue Resolution
-metadata: {
-    "status": "resolved",
-    "priority": "high",
-    "customer": "acme-corp"
-}
-```
+## Managing Items
 
 ### Reading Items
 
@@ -229,7 +270,7 @@ content: Updated project documentation
 /datastore delete item with key: projects and sortField: mobile-app-redesign
 ```
 
-### Best Practices
+## Best Practices
 
 1. **Keys**
 
@@ -254,5 +295,3 @@ content: Updated project documentation
    - Use view-only when possible
    - Carefully consider who needs edit access
    - Review shared links periodically
-
-Happy storing! 🗃️
