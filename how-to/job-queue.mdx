@@ -10,16 +10,25 @@ The datastore can be used as an effective job queue system by leveraging its key
 ## Basic Job Queue Concept
 
 A job queue in the datastore works by:
+
 1. Creating items that represent jobs with specific metadata and triggers
+
 2. Using metadata to track job state (`not_started`, `started`)
+
 3. Updating the job's status to trigger automation
+
 4. Having your automation process the job when triggered
 
 Key benefits of using datastore as a job queue:
+
 * **Organized Structure**: Group similar jobs under the same key
+
 * **Flexible Metadata**: Store job parameters and status
+
 * **Built-in Triggers**: Automatically start jobs when status changes
+
 * **Status Tracking**: Monitor job progress and completion
+
 * **Silent Updates**: Option to update status without triggering automation
 
 ## Datastore Triggers Feature
@@ -27,10 +36,13 @@ Key benefits of using datastore as a job queue:
 Datastore items can have triggers attached that fire when the item is updated. In a job queue system:
 
 1. **Trigger Attachment**: When creating a job item, you attach a trigger that specifies:
-   * What action to take (e.g., "generate_report")
+
+   * What action to take (e.g., "generate\_report")
+
    * When to execute (e.g., when status changes from `not_started` to `started`)
 
 2. **Trigger Execution**: When the item is updated, your automation receives the job data:
+
 ```json
 {
   dataChanged: { content: 'My changed content' },
@@ -38,26 +50,36 @@ Datastore items can have triggers attached that fire when the item is updated. I
 }
 ```
 
-3. **Trigger Control**: You can control trigger execution:
+1. **Trigger Control**: You can control trigger execution:
+
    * Normal updates fire triggers
+
    * Updates with "trigger off" bypass trigger execution
 
 Your automation code can use this payload to:
+
 * Check what data changed
+
 * Verify the status transition
+
 * Access the job parameters
 
 ## Job States
 
 Common job states:
+
 * `not_started`: Initial state when job is created
+
 * `started`: Job is currently running
+
 * `completed`: Job finished successfully
+
 * `failed`: Job encountered an error
 
 ## Creating Jobs
 
 ### Basic Job Creation
+
 ```
 /datastore create a new item with:
 key: jobs
@@ -70,11 +92,9 @@ metadata: {
         "report_type": "monthly",
         "department": "sales"
     }
-}
-trigger: {
-    "type": "status_change",
-    "action": "generate_report",
-    "condition": "getPreviousValue('metadata.status') === 'not_started' && metadata.status === 'started'"
+},
+"triggerUrls": {
+    "URL1": "APIKEY1"
 }
 ```
 
@@ -85,6 +105,7 @@ trigger: {
 There are two ways to update jobs:
 
 1. **Normal Update (Triggers Fire)**
+
 ```
 /datastore update item with:
 key: jobs
@@ -95,7 +116,8 @@ metadata: {
 }
 ```
 
-2. **Silent Update (No Triggers Fire)**
+1. **Silent Update (No Triggers Fire)**
+
 ```
 /datastore update item with trigger off:
 key: jobs
@@ -111,14 +133,19 @@ metadata: {
 ```
 
 This second option is particularly useful for:
+
 * Updating job status from your worker
+
 * Recording completion or failure states
+
 * Updating job metadata without triggering automation
+
 * Adding results or progress information
 
 ### Real-World Examples
 
 1. **Starting a Data Processing Job (With Trigger)**
+
 ```
 /datastore update item with:
 key: jobs-data-processing
@@ -129,7 +156,8 @@ metadata: {
 }
 ```
 
-2. **Recording Job Completion (Without Trigger)**
+1. **Recording Job Completion (Without Trigger)**
+
 ```
 /datastore update item with trigger off:
 key: jobs-data-processing
@@ -147,22 +175,31 @@ metadata: {
 ## Best Practices
 
 1. **Trigger Management**
+
    * Use normal updates to start jobs (trigger fires)
+
    * Use "trigger off" updates for status changes from your worker
+
    * Consider using "trigger off" for progress updates
 
 2. **Status Updates**
+
    * Start jobs with normal updates to trigger automation
+
    * Record completion with "trigger off" updates
+
    * Use "trigger off" for any auxiliary status information
 
 3. **Error Handling**
+
    * Record errors using "trigger off" updates
+
    * Include detailed error information for debugging
 
 ## Example: Complete Job Flow
 
 1. **Create Initial Job**
+
 ```
 /datastore create a new item with:
 key: jobs
@@ -170,15 +207,14 @@ sortField: job-2024-03-15-001
 metadata: {
     "status": "not_started",
     "type": "report_generation"
-}
-trigger: {
-    "type": "status_change",
-    "action": "generate_report",
-    "condition": "getPreviousValue('metadata.status') === 'not_started' && metadata.status === 'started'"
+},
+"triggerUrls": {
+    "URL1": "APIKEY1"
 }
 ```
 
-2. **Start the Job (Triggers Fire)**
+1. **Start the Job (Triggers Fire)**
+
 ```
 /datastore update item with:
 key: jobs
@@ -189,7 +225,8 @@ metadata: {
 }
 ```
 
-3. **Record Progress (No Trigger)**
+1. **Record Progress (No Trigger)**
+
 ```
 /datastore update item with trigger off:
 key: jobs
@@ -201,7 +238,8 @@ metadata: {
 }
 ```
 
-4. **Record Completion (No Trigger)**
+1. **Record Completion (No Trigger)**
+
 ```
 /datastore update item with trigger off:
 key: jobs
