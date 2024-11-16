@@ -1,0 +1,223 @@
+---
+title: "Using Datastore as a Job Queue"
+description: "Learn how to implement a job queue system using the datastore command"
+---
+
+## Overview
+
+The datastore can be used as an effective job queue system by leveraging its key-sort field structure and metadata capabilities. This guide explains how to create, manage, and process jobs using the datastore as a queue.
+
+## Understanding Triggers
+
+When a trigger fires, the automation connected to that trigger receives a payload containing the changed data as input:
+
+```json
+{
+  dataChanged: { content: 'My changed content' },
+  newDataset: { content: 'My changed content', metadata: 'my metadata' }
+}
+```
+
+Your automation code can use this payload to:
+
+* Check what data changed
+
+* Verify the status transition
+
+* Access the job parameters
+
+## Job States
+
+Common job states:
+
+* `not_started`: Initial state when job is created
+
+* `started`: Job is currently running
+
+* `completed`: Job finished successfully
+
+* `failed`: Job encountered an error
+
+## Creating Jobs
+
+### Basic Job Creation
+
+```
+/datastore create a new item with:
+key: jobs
+sortField: job-2024-03-15-001
+content: Process monthly report
+metadata: {
+    "status": "not_started",
+    "type": "report_generation",
+    "parameters": {
+        "report_type": "monthly",
+        "department": "sales"
+    }
+}
+trigger: {
+    "type": "status_change",
+    "action": "generate_report",
+    "condition": "getPreviousValue('metadata.status') === 'not_started' && metadata.status === 'started'"
+}
+```
+
+## Managing Jobs
+
+### Updating Jobs
+
+There are two ways to update jobs:
+
+1. **Normal Update (Triggers Fire)**
+
+```
+/datastore update item with:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "started",
+    "started_at": "2024-03-15T10:05:00Z"
+}
+```
+
+1. **Silent Update (No Triggers Fire)**
+
+```
+/datastore update item with trigger off:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "completed",
+    "completed_at": "2024-03-15T10:15:00Z",
+    "result": {
+        "success": true,
+        "processed_items": 1000
+    }
+}
+```
+
+This second option is particularly useful for:
+
+* Updating job status from your worker
+
+* Recording completion or failure states
+
+* Updating job metadata without triggering automation
+
+* Adding results or progress information
+
+### Real-World Examples
+
+1. **Starting a Data Processing Job (With Trigger)**
+
+```
+/datastore update item with:
+key: jobs-data-processing
+sortField: data-proc-2024-03-15-001
+metadata: {
+    "status": "started",
+    "started_at": "2024-03-15T10:00:00Z"
+}
+```
+
+1. **Recording Job Completion (Without Trigger)**
+
+```
+/datastore update item with trigger off:
+key: jobs-data-processing
+sortField: data-proc-2024-03-15-001
+metadata: {
+    "status": "completed",
+    "completed_at": "2024-03-15T10:15:00Z",
+    "result": {
+        "processed_records": 1000,
+        "success": true
+    }
+}
+```
+
+## Best Practices
+
+1. **Trigger Management**
+
+   * Use normal updates to start jobs (trigger fires)
+
+   * Use "trigger off" updates for status changes from your worker
+
+   * Consider using "trigger off" for progress updates
+
+2. **Status Updates**
+
+   * Start jobs with normal updates to trigger automation
+
+   * Record completion with "trigger off" updates
+
+   * Use "trigger off" for any auxiliary status information
+
+3. **Error Handling**
+
+   * Record errors using "trigger off" updates
+
+   * Include detailed error information for debugging
+
+## Example: Complete Job Flow
+
+1. **Create Initial Job**
+
+```
+/datastore create a new item with:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "not_started",
+    "type": "report_generation"
+}
+trigger: {
+    "type": "status_change",
+    "action": "generate_report",
+    "condition": "getPreviousValue('metadata.status') === 'not_started' && metadata.status === 'started'"
+}
+```
+
+1. **Start the Job (Triggers Fire)**
+
+```
+/datastore update item with:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "started",
+    "started_at": "2024-03-15T10:05:00Z"
+}
+```
+
+1. **Record Progress (No Trigger)**
+
+```
+/datastore update item with trigger off:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "started",
+    "progress": 75,
+    "last_updated": "2024-03-15T10:10:00Z"
+}
+```
+
+1. **Record Completion (No Trigger)**
+
+```
+/datastore update item with trigger off:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "completed",
+    "completed_at": "2024-03-15T10:15:00Z",
+    "result": {
+        "success": true,
+        "processed_items": 1000
+    }
+}
+```
+
+This approach gives you fine-grained control over when triggers fire, allowing you to update job status and metadata without causing unintended automation runs.
