@@ -8,25 +8,17 @@ description: "Learn how to use the data store slash command"
 The data store provides a flexible way to organize and retrieve your data using a key + sort field system. Think of it like a smart filing cabinet where you can:
 
 - **Organize Related Data**: Group similar items under the same key (like putting related files in the same folder)
-
 - **Find Specific Items**: Quickly locate exact items using the sort field
-
 - **Scale Easily**: Store multiple related items without creating complex folder structures
-
 - **Share Selectively**: Control access to individual items or groups of items
-
 - **View Data Your Way**: Display content as documents or tables based on your needs
 
 ### Common Use Cases
 
 - Store all meeting notes under key `meeting-notes` with dates as sort fields
-
 - Keep employee records under key `employees` with email addresses as sort fields
-
 - Track inventory across categories using category names as sort fields
-
 - Manage project documentation with project codes as sort fields
-
 - Use as a job queue
 
 ## Basic Usage
@@ -38,11 +30,8 @@ The `/datastore` command lets you create, read, update, and delete items in the 
 ### Important Rules
 
 - The combination of `key` + `sortField` must be unique
-
 - If you don't specify a `sortField`, one will be automatically generated for you
-
 - You can have multiple items with the same `key` as long as they have different `sortField` values
-
 - Think of `key` as a folder name and `sortField` as a unique identifier within that folder
 
 ### Real-World Example
@@ -57,80 +46,62 @@ sortField: [employee.email]
 This structure lets you:
 
 - Keep all reviews under one key
-
 - Find a specific employee's review instantly
-
 - Store multiple reviews for different employees
-
 - Avoid duplicate reviews for the same employee
-
 - Easily share specific reviews with managers
 
 ### Key and Sort Field Patterns
 
-1. **Single Key Only (Auto-generated Sort Field)**```
+1. **Single Key Only (Auto-generated Sort Field)**
+
+   ```
    key: meeting-notes
-
    ```
 
-   * Sort field will be auto-generated
+   - Sort field will be auto-generated
+   - Good for: Quick storage when uniqueness isn't a concern
+   - Example: Daily notes where exact retrieval isn't needed
 
-   * Good for: Quick storage when uniqueness isn't a concern
-
-   * Example: Daily notes where exact retrieval isn't needed
+2. **Key + Date Sort Field**
 
    ```
-
-2. **Key + Date Sort Field**```
    key: meeting-notes
    sortField: 2024-03-15
-
    ```
 
-   * Creates unique daily entries
+   - Creates unique daily entries
+   - Good for: Time-series data, daily logs
+   - Example: Can't have two items with key "meeting-notes" and sortField "2024-03-15"
 
-   * Good for: Time-series data, daily logs
-
-   * Example: Can't have two items with key "meeting-notes" and sortField "2024-03-15"
+3. **Key + Email Sort Field**
 
    ```
-
-3. **Key + Email Sort Field**```
    key: employee-reviews
    sortField: jane.smith@company.com
-
    ```
 
-   * One record per employee
+   - One record per employee
+   - Good for: Per-user data
+   - Example: Can't have duplicate reviews for the same email
 
-   * Good for: Per-user data
-
-   * Example: Can't have duplicate reviews for the same email
+4. **Key + Category Sort Field**
 
    ```
-
-4. **Key + Category Sort Field**```
    key: inventory
    sortField: electronics-001
-
    ```
 
-   * Unique identifier within category
+   - Unique identifier within category
+   - Good for: Categorized items requiring unique IDs
 
-   * Good for: Categorized items requiring unique IDs
-
+5. **Key + ID Sort Field**
    ```
-
-5. **Key + ID Sort Field**```
    key: customers
    sortField: CUST-001
-
    ```
-
-   * Explicit unique identifiers
-
-   * Good for: Systems requiring specific IDs
-   ```
+   - Explicit unique identifiers
+   - Good for: Systems requiring specific IDs
 
 ## Command Options
 
@@ -146,69 +117,111 @@ content: [your-content]
 metadata: [your-metadata]
 viewerType: [table/document]
 permissions: [array of permissions]
+triggerUrls: [optional-trigger-urls]
 ```
 
 ### Available Options
 
 #### Required Fields
 
-- `key`: (Required) Primary identifier for your item. Think of it as a folder or category name.```
-  key: sales-reports
+- `key`: (Required) Primary identifier for your item. Think of it as a folder or category name.
   ```
-
+  key: sales-reports
   ```
 
 #### Optional Fields
 
-- `sortField`: Secondary identifier that makes the item unique when combined with key```
+- `sortField`: Secondary identifier that makes the item unique when combined with key
+
+  ```
   sortField: 2024-Q1
-
   ```
 
-  ```
+- `content`: The main content of your item
 
-- `content`: The main content of your item```
+  ```
   content: Q1 Sales Analysis
-
   ```
 
-  ```
+- `metadata`: Custom attributes as a JSON object
 
-- `metadata`: Custom attributes as a JSON object`metadata: {
-  "region": "North America",
-  "department": "Sales"
-}`For tables:```
+  ```
   metadata: {
-  "displayType": "csv",
-  "csvData": "Month,Revenue,Units\nJan,50000,500\nFeb,55000,550"
+    "region": "North America",
+    "department": "Sales"
   }
-
   ```
 
+  For tables:
+
+  ```
+  metadata: {
+    "displayType": "csv",
+    "csvData": "Month,Revenue,Units\nJan,50000,500\nFeb,55000,550"
+  }
   ```
 
-- `logoUrl`: URL for a logo to display in the viewer```
+- `logoUrl`: URL for a logo to display in the viewer
+
+  ```
   logoUrl: http://www.imgstore.com/myimg.jpg
-
   ```
 
-  ```
+- `permissions`: Array of view/edit permissions
 
-- `permissions`: Array of view/edit permissions```
+  ```
   permissions: ["view"] // Read-only access
   permissions: ["view", "edit"] // Read and write access
   permissions: [] // Private
-
   ```
 
-  ```
+- `viewerType`: How the content should be displayed
 
-- `viewerType`: How the content should be displayed```
+  ```
   viewerType: "table" // For spreadsheet-like data
   viewerType: "document" // For document-style content
   ```
 
+- `triggerUrls`: URLs to be called when the item changes
   ```
+  triggerUrls: {
+    "URL1": "APIKEY1"
+  }
+  ```
+
+### About Triggers
+
+Datastore items can have triggers attached that fire when the item is updated. When you attach a trigger URL to an item:
+
+- The trigger will be called any time the item changes (content, metadata, or any other field)
+- Each URL in the triggerUrls object will be called with its corresponding API key
+- The trigger receives information about what changed in the item
+- You can update items without firing triggers using the "trigger off" option
+
+Example of creating an item with a trigger:
+
+```
+/datastore create a new item with:
+key: jobs
+sortField: job-2024-03-15-001
+content: Process monthly report
+metadata: {
+    "status": "not_started",
+    "type": "report_generation"
+}
+triggerUrls: {
+    "https://api.myservice.com/webhook": "my-api-key-123"
+}
+```
+
+To update an item without firing triggers, use:
+
+```
+/datastore update item with trigger off:
+key: jobs
+sortField: job-2024-03-15-001
+content: Updated content
+```
 
 ## Real-World Examples
 
@@ -227,7 +240,7 @@ permissions: ["view", "edit"]
 viewerType: "document"
 ```
 
-1. **Sales Reports by Region**
+2. **Sales Reports by Region**
 
 ```
 /datastore create a new item with:
@@ -242,7 +255,7 @@ viewerType: "table"
 permissions: ["view"]
 ```
 
-1. **Employee Training Records**
+3. **Employee Training Records**
 
 ```
 /datastore create a new item with:
@@ -255,7 +268,7 @@ metadata: {
 }
 ```
 
-1. **Product Inventory by Category**
+4. **Product Inventory by Category**
 
 ```
 /datastore create a new item with:
@@ -306,33 +319,30 @@ content: Updated project documentation
 1. **Keys**
 
    - Use plural nouns for collections (e.g., "projects", "employees")
-
    - Keep them simple and descriptive
-
    - Use consistent naming patterns
 
 2. **Sort Fields**
 
    - Use dates for time-based organization (YYYY-MM-DD)
-
    - Use emails for per-user data
-
    - Use IDs for unique records
-
    - Use categories for grouping related items
 
 3. **Metadata**
 
    - Use for searchable attributes
-
    - Keep structure consistent within similar items
-
    - Avoid storing large amounts of data
 
 4. **Permissions**
 
    - Use view-only when possible
-
    - Carefully consider who needs edit access
-
    - Review shared links periodically
+
+5. **Triggers**
+   - Use triggers for automation workflows
+   - Consider using "trigger off" for maintenance updates
+   - Keep track of your trigger URLs and API keys
+   - Test trigger endpoints before adding them to production items
