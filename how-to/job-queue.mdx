@@ -5,7 +5,7 @@ description: "Learn how to implement a job queue system using the datastore comm
 
 ## Overview
 
-The datastore can be used as an effective job queue system by leveraging its key-sort field structure, metadata capabilities, and trigger functionality. This guide explains how to create, manage, and process jobs using the datastore as a queue.
+The datastore can be used as a job queue system. This guide explains how to create, manage, and process jobs using the datastore as a queue.
 
 ## Basic Job Queue Concept
 
@@ -15,7 +15,7 @@ A job queue in the datastore works by:
 
 2. Using metadata to track job state (`not_started`, `started`)
 
-3. Updating the job's status to trigger automation
+3. Updating the job's status to trigger an automation
 
 4. Having your automation process the job when triggered
 
@@ -33,28 +33,24 @@ Key benefits of using datastore as a job queue:
 
 ## Datastore Triggers Feature
 
-Datastore items can have triggers attached that fire when the item is updated. In a job queue system:
+Datastore items can have one or more triggers attached that fire *when the item is updated*. This feature is not specific to the job queue - it's just how the datastore feature works. Which makes it very handy for setting up job queue system:
 
-1. **Trigger Attachment**: When creating a job item, you attach a trigger that specifies:
+1. **Attach Trigger**: When creating a job item, attach a trigger (see Triggers guide)
 
-   * What action to take (e.g., "generate\_report")
+2. **Trigger Execution**: When the item is updated, the trigger fires and your automation receives the contents of the data store item as shown below.&#x20;
 
-   * When to execute (e.g., when status changes from `not_started` to `started`)
+3. **Triggers On and Off**: You can control if an update to a datastore item fires the trigger
 
-2. **Trigger Execution**: When the item is updated, your automation receives the job data:
+   * Any update to a datastore item will fire all attached triggers
 
-```json
+   * However, you can request "trigger off" to bypass trigger execution. Here's a sample prompt: ` update the status of my datastore item to "complete" where the item has key:jobs and sortField:onboarding-02-24-25 with triggers off`
+
+```json Payload sent to an automation via a trigger onChange
 {
   dataChanged: { content: 'My changed content' },
-  newDataset: { content: 'My changed content', metadata: 'my metadata' }
+  newDataset: { content: 'My changed content', metadata: 'existing metadata' }
 }
 ```
-
-1. **Trigger Control**: You can control trigger execution:
-
-   * Normal updates fire triggers
-
-   * Updates with "trigger off" bypass trigger execution
 
 Your automation code can use this payload to:
 
@@ -66,15 +62,15 @@ Your automation code can use this payload to:
 
 ## Job States
 
-Common job states:
+Common job states that you may want to use:
 
 * `not_started`: Initial state when job is created
 
-* `started`: Job is currently running
+* `started`: Set to started to fire triggers
 
-* `completed`: Job finished successfully
+* `completed`: Job finished successfully (update with triggers off)
 
-* `failed`: Job encountered an error
+* `failed`: Job encountered an error (update with triggers off)
 
 ## Creating Jobs
 
