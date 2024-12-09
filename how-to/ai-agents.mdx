@@ -1,0 +1,218 @@
+---
+title: "Using the AI Agent Framework"
+description: "Create a multi faceted agent to solve tasks."
+---
+
+## Overview
+
+The AI Agent Framework allows you to create customized AI agents by defining their behavior, personality, and capabilities through XML-based prompts. This guide explains how to create and interact with AI agents using the framework.
+
+## Basic Concept
+
+The AI Agent Framework works by:
+
+1. Defining an agent's behavior in an XML prompt file
+2. Maintaining conversation history
+3. Processing user messages through the agent
+4. Handling tool interactions automatically
+
+Key benefits of using the AI Agent Framework:
+
+- **Structured Agents**: Define consistent agent personalities and behaviors
+- **Tool Integration**: Built-in support for external API calls
+- **Conversation Management**: Automatic handling of message history
+- **Flexible Configuration**: Customize agent responses and capabilities
+
+## Making Requests
+
+### Basic Request Format
+
+```json
+{
+  "messageHistory": "Previous conversation history",
+  "systemPrompt": "Your agent's XML prompt definition",
+  "userMessage": "Most recent message from the user"
+}
+```
+
+### Headers Required
+
+- `Authorization`: Bearer token for authentication
+- `Premium-Id`: Premium identifier for advanced features
+
+## Creating Agent Prompts
+
+Agent prompts should be defined in XML format. Here's a template structure:
+
+```xml
+<assistant>
+    <assistant_name>YourAgentName</assistant_name>
+
+    <backstory>
+    Define your agent's background and context here.
+    </backstory>
+
+    <goal>
+    Define what the agent aims to accomplish.
+    </goal>
+
+    <guardrails>
+    * List behavioral restrictions
+    * Define what the agent should not do
+    </guardrails>
+
+    <personality>
+    Define how the agent should interact and communicate.
+    </personality>
+
+    <response_format>
+    Define the structure of agent responses, including:
+    - Required JSON format
+    - Tool call formats
+    - Any special formatting requirements
+    </response_format>
+
+    <tasks_available>
+        <task>
+            <name>task_name</name>
+            <numSteps>number_of_steps</numSteps>
+            <steps>
+                <step1>
+                    <instruction>Step instruction</instruction>
+                    <description>Step description</description>
+                    <required_input>Required input for step</required_input>
+                    <expected_output>Expected output from step</expected_output>
+                    <next_action>What to do after step completes</next_action>
+                </step1>
+                <!-- Additional steps as needed -->
+            </steps>
+            <complete_criteria>
+                Define when task is considered complete
+            </complete_criteria>
+            <tool_needed>List required tools</tool_needed>
+        </task>
+    </tasks_available>
+
+    <tools_available>
+    List available tools and their descriptions
+    </tools_available>
+
+    <tool_specs>
+    Define tool call formats and requirements:
+    {
+        "tool": "tool_name",
+        "payload": {
+            "key": "value"
+        },
+        "toolUrl": "tool_endpoint_url",
+        "X-API-KEY": "api_key"
+    }
+    </tool_specs>
+</assistant>
+```
+
+## Message History Format
+
+Message history should be wrapped in XML tags and contain the conversation flow:
+
+```xml
+<messageHistory>
+User: Initial message
+Agent: Agent response
+tool-call: tool_name, tool_url
+prompt: tool_prompt
+tool-result: tool_response
+User: Follow-up message
+Agent: Agent response
+</messageHistory>
+```
+
+## Tool Integration
+
+The framework automatically handles tool calls when an agent responds with a tool call JSON object:
+
+```json
+{
+  "tool": "tool_name",
+  "payload": {
+    "key": "value"
+  },
+  "toolUrl": "https://api-endpoint.com",
+  "X-API-KEY": "your-api-key"
+}
+```
+
+Tool results are automatically:
+
+1. Executed by the framework
+2. Added to message history
+3. Processed by the agent for next steps
+
+## Best Practices
+
+1. **Prompt Design**
+
+   - Keep backstory and personality clear and consistent
+   - Define specific tasks and completion criteria
+   - Include comprehensive guardrails
+   - Specify exact response formats
+
+2. **Message History**
+
+   - Always wrap history in `<messageHistory>` tags
+   - Include both user and agent messages
+   - Preserve tool calls and results
+
+3. **Tool Usage**
+   - Define clear tool specifications
+   - Include all required payload parameters
+   - Handle tool results appropriately in tasks
+
+## Example: Complete Flow
+
+1. **Define Agent Prompt**
+
+```xml
+<assistant>
+    <assistant_name>NewsBot</assistant_name>
+    <backstory>
+    A news research assistant specializing in scientific developments.
+    </backstory>
+    <goal>
+    Provide accurate news summaries using perplexity searches.
+    </goal>
+    <!-- Additional sections as shown in template above -->
+</assistant>
+```
+
+2. **Make API Request**
+
+```json
+{
+  "messageHistory": "<messageHistory>\nUser: Tell me about recent CRISPR developments\n</messageHistory>",
+  "systemPrompt": "[Your XML prompt from step 1]",
+  "userMessage": "What are the latest breakthroughs?"
+}
+```
+
+3. **Handle Response**
+   The framework will:
+
+- Process the request through your agent
+- Execute any necessary tool calls
+- Return the final response with updated message history
+
+## Error Handling
+
+The API will return a 400 status code with error details if:
+
+- Required fields are missing
+- XML prompt is malformed
+- Tool calls fail
+- Maximum iterations are exceeded (default: 5)
+
+Error responses include:
+
+- Error message
+- Execution log
+- Input details for debugging
