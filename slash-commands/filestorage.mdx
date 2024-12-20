@@ -1,0 +1,262 @@
+---
+title: "File Storage Command Guide"
+description: "Learn how to use the filestorage slash command"
+---
+
+## Why Use File Storage?
+
+The file storage system provides a simple yet powerful way to store and manage files with features like:
+
+- **Simple File Management**: Store and retrieve files using unique filenames
+- **Flexible Content Types**: Store any type of content, from JSON to plain text
+- **Custom Metadata**: Add descriptive information to your files
+- **Expiring Links**: Control file access with configurable expiration periods
+- **File History**: Track file changes and access through detailed logs
+- **Append Capability**: Add content to existing files without replacement
+
+### Common Use Cases
+
+- Store configuration files with version tracking
+- Maintain system logs with append functionality
+- Manage documents with rich metadata
+- Share files with controlled access periods
+- Track file access and modifications
+
+### Notice about Race Conditions
+
+There is no race condition prevention in place. If you have multiple automations that are trying to write to the same file, you will experience unexpected results.
+
+## Basic Usage from Slash Command
+
+The `/filestorage` command lets you create, read, update, and delete files in the storage system. After typing `/filestorage`, you can specify your action and options in natural language.
+
+## Basic Usage from Filestorage UI
+
+In the left nav, click "File Storage" where you'll see a list of files that you've created through your automations or directly via the UI. Click Upload to upload a new file.
+
+## File Storage Fundamentals
+
+### Important Rules
+
+- Each file must have a unique filename
+- Files can include optional metadata
+- File links can be set to expire after 1-7 days or made public
+- Content can be appended to existing files
+- File access history is automatically tracked
+
+### Real-World Example
+
+Perhaps you want to store an email template for use across your automations. You could write a file with the following slash command:
+
+```
+/filestorage create a new file with:
+filename: welcome-email-template.json
+content: {"subject": "Welcome to Pinkfish", "body": "<p>Hello {{name}},</p><p>We're glad to have you onboard!</p>"}
+metadata: {"company": "Pinkfish", "version": "1.0"}
+file_links_expire_in_days: "1"
+```
+
+Now you can use the file in your automations. To retrieve it you would write a prompt like this:
+`/filestorage retrieve contents of file welcome-email-template.json from file storage`
+
+Note that the reason I set file_links_expire_in_days to 1 is because that expiry is related to the signed URL that Pinkfish generates for you to access the file. And I only need it to be accessible for the duration of the Automation run.
+
+## Command Options
+
+### Creating Files
+
+Basic syntax:
+
+```
+/filestorage create a new file with:
+filename: [your-filename]
+content: [your-content]
+metadata: [optional-metadata]
+file_links_expire_in_days: [expiration-period]
+```
+
+### Available Options
+
+#### Required Fields
+
+- `filename`: (Required) Unique identifier for your file
+  ```
+  filename: system-logs.txt
+  ```
+- `content`: (Required) The content to store in the file
+  ```
+  content: Log entry at 2024-03-15T10:00:00Z
+  ```
+
+#### Optional Fields
+
+- `metadata`: Additional information about the file
+
+  ```
+  metadata: {
+    "environment": "production",
+    "version": "1.0",
+    "author": "DevOps Team"
+  }
+  ```
+
+- `file_links_expire_in_days`: Control how long file links remain valid
+  ```
+  file_links_expire_in_days: "7"  // Valid values: "1" through "7" or "never"
+  ```
+
+## Real-World Examples
+
+1. **Configuration Management**
+
+```
+/filestorage create a new file with:
+filename: app-config.json
+content: {
+    "api_endpoint": "https://api.example.com",
+    "timeout": 30,
+    "retry_attempts": 3
+}
+metadata: {
+    "environment": "production",
+    "version": "2.1",
+    "last_updated_by": "system-admin"
+}
+file_links_expire_in_days: "7"
+```
+
+2. **System Logging**
+
+```
+/filestorage create a new file with:
+filename: system-logs-2024-03.txt
+content: Initial log entry
+metadata: {
+    "log_type": "system",
+    "retention_period": "90 days"
+}
+file_links_expire_in_days: "never"
+```
+
+3. **Document Storage**
+
+```
+/filestorage create a new file with:
+filename: quarterly-report-q1-2024.txt
+content: Q1 2024 Financial Report
+metadata: {
+    "department": "Finance",
+    "status": "draft",
+    "reviewers": ["jane.doe", "john.smith"]
+}
+file_links_expire_in_days: "3"
+```
+
+## Managing Files
+
+### Creating Files
+
+```
+/filestorage create a new file with:
+filename: system-logs-2024-03.txt
+content: Initial log entry
+metadata: {"log_type": "system", "retention_period": "90 days"}
+file_links_expire_in_days: "never"
+```
+
+Note that if you create a file with the same name as an existing file, it will overwrite the existing file.
+
+### Updating Files
+
+Append to existing file:
+
+```
+/filestorage append to file:
+filename: system-logs-2024-03.txt
+content: New log entry at 2024-03-15T15:30:00Z
+metadata: {"severity": "info"}
+```
+
+### Reading Files
+
+Get file metadata only:
+
+```
+/filestorage get metadata for file: quarterly-report-q1-2024.txt
+```
+
+Get file content and metadata:
+
+```
+/filestorage get file with contents: quarterly-report-q1-2024.txt
+```
+
+List all files with full details including metadata and signedUrls:
+
+```
+/filestorage list files
+```
+
+List files files with minimal results (filename / filepath, date created):
+
+```
+/filestorage list files light
+```
+
+### Deleting Files
+
+```
+/filestorage delete file: quarterly-report-q1-2024.txt
+```
+
+## Best Practices
+
+1. **Filenames**
+
+   - Use descriptive, meaningful names
+   - Include dates for time-sensitive files
+   - Follow a consistent naming convention
+   - Avoid special characters
+
+2. **Metadata**
+
+   - Include version information
+   - Add context about the file's purpose
+   - Track who created or modified the file
+   - Document any dependencies
+
+3. **File Access**
+
+   - Use appropriate expiration periods
+   - Set longer expiration for frequently accessed files
+   - Use "never" expiry only when necessary
+   - Regularly review public files
+
+4. **Content Management**
+
+   - Keep file sizes reasonable
+   - Use append for logs and similar data
+   - Regular cleanup of outdated files
+   - Maintain backup copies of critical files
+
+5. **Security**
+   - Review access logs regularly
+   - Use shortest practical expiration periods
+   - Don't store sensitive data
+
+## File Access and Security
+
+### Access Control
+
+- Files are accessible via signed URLs
+- URLs expire based on the `file_links_expire_in_days` setting
+- Access history is maintained in the `accessList`
+
+### Monitoring and Tracking
+
+- Each file maintains an access log
+- Log entries include:
+  - Action performed
+  - Provider ID (user id)
+  - Timestamp
+- Full history available through metadata endpoint
