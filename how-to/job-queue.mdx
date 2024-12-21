@@ -3,116 +3,88 @@ title: "Using Datastore as a Job Queue"
 description: "Learn how to implement a job queue system using the datastore command"
 ---
 
+# Using Datastore as a Job Queue
+
 ## Overview
 
-The datastore can be used as a job queue system. This guide explains how to create, manage, and process jobs using the datastore as a queue.
+The datastore can be used as a robust job queue system to manage and process tasks in your automations. This guide explains how to create, schedule, and process jobs safely using the datastore.
 
-## Basic Job Queue Concept
+## Core Concepts
 
-A job queue in the datastore works by:
+A job queue in the datastore consists of:
 
-1. Creating items that represent jobs with specific metadata and triggers
+- Jobs represented as datastore items with metadata tracking their state
+- Triggers that fire automations when job status changes
+- Workers (automations) that process jobs either on demand or on a schedule
 
-2. Using metadata to track job state (`not_started`, `started`)
+## Job States
 
-3. Updating the job's status to trigger an automation
+Jobs can be in one of these states:
 
-4. Having your automation process the job when triggered
-
-Key benefits of using datastore as a job queue:
-
-* **Organized Structure**: Group similar jobs under the same key
-
-* **Flexible Metadata**: Store job parameters and status
-
-* **Built-in Triggers**: Automatically start jobs when status changes
-
-* **Status Tracking**: Monitor job progress and completion
-
-* **Silent Updates**: Option to update status without triggering automation
-
-## Datastore Triggers Feature
-
-Datastore items can have one or more triggers attached that fire *when the item is updated*. This feature is not specific to the job queue - it's just how the datastore feature works. Which makes it very handy for setting up job queue system:
-
-1. **Attach Trigger**: When creating a datastore item, attach a trigger (see Triggers guide and API docs)
-
-2. **Trigger Execution**: When the item is updated, the trigger fires and your automation receives the contents of the data store item as shown below.&#x20;
-
-3. **Triggers On and Off**: You can control if an update to a datastore item fires the trigger
-
-   * Any update to a datastore item will fire all attached triggers
-
-   * However, you can request "trigger off" to bypass trigger execution. Here's a sample prompt: ` update the status of my datastore item to "complete" where the item has key:jobs and sortField:onboarding-02-24-25 with triggers off`
-
-```json Payload sent to an automation via a trigger onChange
-{
-  dataChanged: { content: 'My changed content' },
-  newDataset: { content: 'My changed content', metadata: 'existing metadata' }
-}
-```
-
-Your automation code can use this payload to:
-
-* Check what data changed
-
-* Verify the status transition
-
-* Access the job parameters
-
-## Job Statuses
-
-Common job statuses that you may want to use:
-
-* `not_started`: Initial state when job is created
-
-* `started`: Set to started to fire triggers
-
-* `completed`: Job finished successfully (update with triggers off)
-
-* `failed`: Job encountered an error (update with triggers off)
+- `not_started`: Initial state when job is created
+- `started`: Job is currently being processed by a worker
+- `completed`: Job finished successfully
+- `failed`: Job encountered an error and needs attention
 
 ## Creating Jobs
 
-### Basic Job Creation
+To create a new job:
 
 ```
-/datastore create a new item with:
+/datastore create item with:
 key: jobs
 sortField: job-2024-03-15-001
-content: Process monthly report
 metadata: {
     "status": "not_started",
     "type": "report_generation",
+    "created_at": "2024-03-15T09:00:00Z",
     "parameters": {
         "report_type": "monthly",
         "department": "sales"
     }
-},
-"triggerUrls": {
-    "URL1": "APIKEY1"
+}
+triggerUrls: {
+    "https://your-automation-url": "your-api-key"
 }
 ```
 
-## Managing Jobs
+## Understanding Triggers
 
-### Updating Jobs
+When a job's status changes, you can have an automation run to process it. This happens through triggers.
 
-There are two ways to update jobs:
+### How Triggers Work
 
-1. **Normal Update (Triggers Fire)**
+1. When creating a job, you attach trigger URLs that should be called when the job updates
+2. When you update the job's status, all attached triggers will fire (set up your trigger to point to your worker automation)
+3. Your worker automation receives a payload containing details about the job. It also gives you info about what changed in the doc - which in this case is just the status that you updated. What you really care about here is the job details that will allow you to process the job.
 
-```
-/datastore update item with:
-key: jobs
-sortField: job-2024-03-15-001
-metadata: {
-    "status": "started",
-    "started_at": "2024-03-15T10:05:00Z"
+```json
+{
+  "dataChanged": {
+    // What was updated
+    "metadata": {
+      "status": "started"
+    }
+  },
+  "newDataset": {
+    // Complete item after update
+    "key": "jobs",
+    "sortField": "job-2024-03-15-001",
+    "metadata": {
+      "status": "started",
+      "type": "report_generation",
+      "parameters": {
+        "report_type": "monthly",
+        "department": "sales"
+      }
+    }
+  }
 }
 ```
 
-1. **Silent Update (No Triggers Fire)**
+### Controlling Triggers
+
+Sometimes you want to update a job without firing triggers (ie: you don't want your workers to run). In this case use `triggers off`:
 
 ```
 /datastore update item with triggers off:
@@ -120,96 +92,190 @@ key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "completed",
-    "completed_at": "2024-03-15T10:15:00Z",
-    "result": {
-        "success": true,
-        "processed_items": 1000
-    }
+    "completed_at": "2024-03-15T10:00:00Z"
 }
 ```
 
-This second option is particularly useful for:
+## Processing Jobs
 
-* Updating job status from your worker
+There are two ways to process jobs:
 
-* Recording completion or failure states
+### 1. On-Demand Processing
 
-* Updating job metadata without triggering automation
-
-* Adding results or progress information
-
-### Real-World Examples
-
-1. **Starting a Data Processing Job (With Trigger)**
+Write an automation that you run manually.
 
 ```
 /datastore update item with:
-key: jobs-data-processing
-sortField: data-proc-2024-03-15-001
+key: jobs
+sortField: job-2024-03-15-001
 metadata: {
     "status": "started",
-    "started_at": "2024-03-15T10:00:00Z"
+    "started_at": "2024-03-15T10:00:00Z",
+    "worker_id": "worker-123",
+    "version": 1,
+    "locked_until": "2024-03-15T10:10:00Z"
 }
 ```
 
-1. **Recording Job Completion (Without Trigger)**
+### 2. Scheduled Processing
+
+Create a job orchestration automation that runs every 5 minutes (minimum interval) to process jobs. Here's the complete flow:
+
+1. First, query for available jobs:
 
 ```
-/datastore update item with trigger off:
-key: jobs-data-processing
-sortField: data-proc-2024-03-15-001
+/datastore query items where:
+key: jobs
+metadata: {
+    "status": "not_started"
+}
+limit: 10
+```
+
+2. For each job returned, attempt to claim it:
+
+```
+/datastore update item with:
+key: jobs
+sortField: [job.sortField]
+metadata: {
+    "status": "started",
+    "version": [current_version],
+    "worker_id": "worker-123",
+    "started_at": "2024-03-15T10:00:00Z",
+    "locked_until": "2024-03-15T10:10:00Z"
+}
+```
+
+⚠️ **WARNING: Race Condition Risk**
+There is a critical race condition that can occur here: If you ran this scheduled orchestration automation simultaneously with another orchestration automation that is also processing jobs, you could end up with multiple workers claiming the same job.
+
+For example:
+
+1. Worker A and Worker B both query at 10:00:00
+2. Both see Job X in "not_started" state
+3. Both try to claim Job X at almost the same time
+4. Worker A's update succeeds because it's slightly faster
+5. Worker B's update fails because the version number no longer matches
+6. Worker B should catch this error and move on to the next job
+
+To handle this safely:
+
+1. Always check if your claim attempt succeeded
+2. Move on to the next job if the claim fails
+3. Consider adding a small random delay before claiming to help distribute worker claims
+4. Keep track of failed claim attempts for monitoring
+
+5. After successfully claiming a job, process it and update its status:
+
+```
+/datastore update item with triggers off:
+key: jobs
+sortField: [job.sortField]
 metadata: {
     "status": "completed",
-    "completed_at": "2024-03-15T10:15:00Z",
-    "result": {
-        "processed_records": 1000,
-        "success": true
-    }
+    "completed_at": "2024-03-15T10:05:00Z"
 }
 ```
+
+## Handling Multiple Workers Safely
+
+When multiple automations process jobs simultaneously, you need to prevent them from processing the same job. Here's how:
+
+### 1. Version Control
+
+Always include the current version when claiming a job:
+
+```
+/datastore update item with:
+key: jobs
+sortField: job-2024-03-15-001
+metadata: {
+    "status": "started",
+    "version": 1,  // Current version
+    "worker_id": "worker-123",
+    "started_at": "2024-03-15T10:00:00Z",
+    "locked_until": "2024-03-15T10:10:00Z"
+}
+```
+
+If another worker claimed the job first, the version won't match and the update will fail.
+
+### 2. Job Locking
+
+Include these fields to prevent job conflicts:
+
+- `version`: Current version number (prevents double-processing)
+- `worker_id`: Identifies which worker has the job
+- `started_at`: When processing began
+- `locked_until`: When the lock expires
+- `attempts`: Number of processing attempts
+
+### 3. Lock Timeouts
+
+Set a `locked_until` time when claiming a job:
+
+- Other workers can claim the job after this time
+- Prevents jobs from being stuck if a worker crashes
+- Typically 5-15 minutes depending on job complexity
 
 ## Best Practices
 
-1. **Trigger Management**
+1. **Claiming Jobs**
 
-   * Use normal updates to start jobs (trigger fires)
+   - Always include version number when claiming
+   - Set reasonable lock timeouts
+   - Track worker IDs and attempt counts
 
-   * Use "trigger off" updates for status changes from your worker
+2. **Updating Status**
 
-   * Consider using "trigger off" for progress updates
-
-2. **Status Updates**
-
-   * Start jobs with normal updates to trigger automation
-
-   * Record completion with "trigger off" updates
-
-   * Use "trigger off" for any auxiliary status information
+   - Use `triggers off` when updating from worker
+   - Include timestamps for monitoring
+   - Track errors and attempts
 
 3. **Error Handling**
 
-   * Record errors using "trigger off" updates
+   ```
+   /datastore update item with triggers off:
+   key: jobs
+   sortField: job-2024-03-15-001
+   metadata: {
+       "status": "failed",
+       "error": "Connection timeout",
+       "attempts": 2,
+       "last_error_at": "2024-03-15T10:05:00Z"
+   }
+   ```
 
-   * Include detailed error information for debugging
+4. **Job Monitoring**
+   - Query for stuck jobs (past `locked_until`)
+   - Track failed jobs and retry counts
+   - Monitor processing times using timestamps
 
-## Example: Complete Job Flow
+## Complete Job Lifecycle Example
 
-1. **Create Initial Job**
+1. **Create Job**
 
 ```
-/datastore create a new item with:
+/datastore create item with:
 key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "not_started",
-    "type": "report_generation"
-},
-"triggerUrls": {
-    "URL1": "APIKEY1"
+    "type": "report_generation",
+    "created_at": "2024-03-15T09:00:00Z",
+    "version": 1,
+    "parameters": {
+        "report_type": "monthly",
+        "department": "sales"
+    }
+}
+triggerUrls: {
+    "https://your-automation-url": "your-api-key"
 }
 ```
 
-1. **Start the Job (Triggers Fire)**
+2. **Claim Job**
 
 ```
 /datastore update item with:
@@ -217,37 +283,38 @@ key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "started",
-    "started_at": "2024-03-15T10:05:00Z"
+    "version": 1,
+    "worker_id": "worker-123",
+    "started_at": "2024-03-15T09:05:00Z",
+    "locked_until": "2024-03-15T09:20:00Z"
 }
 ```
 
-1. **Record Progress (No Trigger)**
+3. **Update Progress**
 
 ```
-/datastore update item with trigger off:
+/datastore update item with triggers off:
 key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "started",
-    "progress": 75,
-    "last_updated": "2024-03-15T10:10:00Z"
+    "progress": 50,
+    "last_updated": "2024-03-15T09:10:00Z"
 }
 ```
 
-1. **Record Completion (No Trigger)**
+4. **Complete Job**
 
 ```
-/datastore update item with trigger off:
+/datastore update item with triggers off:
 key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "completed",
-    "completed_at": "2024-03-15T10:15:00Z",
+    "completed_at": "2024-03-15T09:15:00Z",
     "result": {
         "success": true,
-        "processed_items": 1000
+        "records_processed": 1000
     }
 }
 ```
-
-This approach gives you fine-grained control over when triggers fire, allowing you to update job status and metadata without causing unintended automation runs.
