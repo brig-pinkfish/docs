@@ -5,197 +5,240 @@ description: "Learn how to use powerful scraping commands in your automations"
 
 ## Table of Contents
 
-- [Single Page Scraping](#single-page-scraping)
-- [Page Scraping with Screenshot](#page-scraping-with-screenshot)
-- [Website Crawling](#website-crawling)
-- [Crawl Mapping](#crawl-mapping)
+- [Basic Scraping](#basic-scraping)
+- [Available Commands](#available-commands)
+- [Advanced Features](#advanced-features)
+- [Common Examples](#common-examples)
 
-## Single Page Scraping
+## Basic Scraping
 
-Extract data from specific webpage(s) using the `/Scrape single web page` command.
-
-### Usage
+Start a scraping session with the `/scraper` command followed by one or more URLs:
 
 ```
-/Scrape single web page [URL]
+/scraper
+url: https://example.com, https://example2.com
+format: markdown
 ```
 
 ### Format Options
 
-Choose one or more output formats:
+- `format: markdown` - Returns content in readable text format (default)
+- `format: html` - Returns HTML content
 
-- `markdown`: Returns content in Markdown format
-- `links`: Extracts all hyperlinks from the page
-- `html`: Provides processed HTML content
-- `rawHtml`: Delivers unprocessed HTML content
-- `screenshot`: Captures page screenshot
+### Content Filtering
 
-### Content Filtering Options
+- `include: article, .main-content, #content` - Specify elements to include
+- `exclude: nav, .sidebar, #footer` - Specify elements to exclude
+- `mainContent: false` - Include all content (default is true, which focuses on main content)
 
-- `includeTags`: Specify HTML tags, classes, and IDs to include
+## Available Actions
 
-  ```
-  /Scrape single web page https://example.com includeTags=["article", ".main-content", "#content"]
-  ```
+Use actions when you need to navigate to a certain location before doing your scrape. Vision is a bit of an outlier in the action list b/c it's an altnerate method of scraping (versus a navigation action).
 
-- `excludeTags`: Specify HTML tags, classes, and IDs to exclude
+**Action Types**
 
-  ```
-  /Scrape single web page https://example.com excludeTags=["nav", ".sidebar", "#footer"]
-  ```
+1. **Navigation Actions**
 
-- `onlyMainContent`: Focus on main content (default: true)
-  ```
-  /Scrape single web page https://example.com onlyMainContent=false
-  ```
+   - `goTo: [URL]` - Navigate to a specific page
+   - `wait: [milliseconds]` - Pause for specified time
+   - `scrollBottom` - Scroll to bottom of page
+   - `scrollTo: [selector]` - Scroll to specific element
 
-### Page Interaction Options
+2. **Interactive Actions**
 
-- `waitFor`: Time in milliseconds to wait before scraping
-  ```
-  /Scrape single web page https://example.com waitFor=2000
-  ```
+   - `click: [text or selector]` - Click on an element
+   - `hover: [text or selector]` - Move mouse over element
+   - `fill: [field] with [text]` - Enter text into input field
+   - `select: [option]` - Choose from dropdown menu
+   - `check: [checkbox]` - Toggle checkbox/radio button
+   - `press: [key]` - Press keyboard key (Enter, Tab, etc.)
 
-## Page Scraping with Screenshot
+3. **Advanced Actions**
+   - `screenshot: [full page or selector]` - Capture screenshot
+   - `vision: [prompt]` - Use AI to analyze page content
+   - `runcode: [Playwright code]` - Execute custom PW code
+   - `loop: [actions]` - Repeat actions with different inputs
 
-Capture both page content and screenshots using the `/Scrape page and take screenshot` command.
+### Waiting
 
-### Usage
+Waiting between actions is a common pattern in scraping and often necessary. You can use the `wait` action to pause for a specified amount of time. So if something isn't working, try adding a wait in between actions.
 
-```
-/Scrape page and take screenshot [URL]
-```
+### Examples
 
-### Available Actions
-
-```javascript
-[
-  { type: "wait", milliseconds: 2000 },
-  { type: "click", selector: "button.search" },
-  { type: "write", text: "search term" },
-  { type: "press", key: "ENTER" },
-  { type: "screenshot", fullPage: true },
-];
-```
-
-### Example with Multiple Actions
+**Basic Navigation:**
 
 ```
-/Scrape page and take screenshot https://example.com actions=[
-  {"type": "click", "selector": "textarea[title='Search']"},
-  {"type": "wait", "milliseconds": 1000},
-  {"type": "write", "text": "example search"},
-  {"type": "wait", "milliseconds": 1000},
-  {"type": "press", "key": "ENTER"},
-  {"type": "screenshot", "fullPage": true}
-]
+/scraper
+goTo: https://example.com
+wait: 2000
+click: "Accept Cookies"
+scrollBottom
+screenshot: full page
 ```
 
-## Website Crawling
-
-Automatically navigate and collect data from multiple pages using the `/Crawl multiple web pages` command.
-
-### Usage
+**Form Filling:**
 
 ```
-/Crawl multiple web pages [Starting URL]
+/scraper
+goTo: https://login.example.com
+fill: Username with "myuser"
+fill: Password with "mypass"
+click: "Login"
+wait: 1000
+screenshot
 ```
 
-### Options
-
-- `limit`: Maximum number of pages to crawl (default: 20)
-- `maxDepth`: Maximum depth of crawling (default: 10)
-- `excludePaths`: Array of paths to exclude from crawling
-- `includePaths`: Array of paths to include in crawling
-- `scrapeOptions`: All options available in single page scraping
-
-## Crawl Mapping
-
-Generate a complete map of URLs from a website using the `/Prepare crawl map` command. This is particularly useful when you need to:
-
-- Get an overview of a website's structure
-- Find pages related to a specific topic
-- Plan targeted scraping operations
-
-### Usage
+**Working with Lists:**
 
 ```
-/Prepare crawl map [Starting URL]
+/scraper
+goTo: https://shop.example.com
+select: "Sort by Price"
+wait: 500
+vision: "Extract all product prices as a table"
 ```
 
-### Options
+**Loop Example:**
 
-- `includeSubdomains`: Include/exclude subdomains in the mapping (default: true)
-
-  ```
-  /Prepare crawl map https://example.com includeSubdomains=false
-  ```
-
-- `ignoreSitemap`: Skip the sitemap during mapping (default: false)
-
-  ```
-  /Prepare crawl map https://example.com ignoreSitemap=true
-  ```
-
-- `search`: Filter URLs by a search term
-  ```
-  /Prepare crawl map https://example.com search="products"
-  ```
-
-### Response Format
-
-The command returns a JSON response with the following structure:
-
-```javascript
-{
-  "status": "success",
-  "links": [
-    "https://example.com",
-    "https://example.com/about",
-    "https://example.com/products",
-    "https://example.com/blog",
-    ...
-  ]
-}
+```
+/scraper
+goTo: https://shop.example.com
+loop:
+  - click: "Add to Cart" in .product-card
+  - wait: 1000
+  items: product1, product2, product3
 ```
 
-### Common Use Cases
+## Advanced Features
 
-1. **Pre-Scraping Analysis**
+### Parent Scoping
 
-   ```
-   /Prepare crawl map https://example.com
-   ```
+Specify a parent container to narrow down element selection:
 
-   Get a complete map of the site before deciding which pages to scrape.
+```
+/scraper
+click: "Submit" in .form-container
+```
 
-2. **Topic-Specific Mapping**
+### AI Vision
 
-   ```
-   /Prepare crawl map https://example.com search="pricing"
-   ```
+Use Vision AI to extract specific information:
 
-   Find all pages related to pricing or specific topics.
+```
+/scraper
+goTo: https://shop.example.com
+vision: "Find all products under $50 and list their features"
+```
 
-3. **Main Domain Focus**
+### Batch Processing
 
-   ```
-   /Prepare crawl map https://example.com includeSubdomains=false
-   ```
+Process multiple pages at once:
 
-   Map only the main domain, excluding subdomains.
+```
+/scraper
+urls:
+  - https://example.com/page1
+  - https://example.com/page2
+format: markdown
+wait: 1000
+screenshot: full page
+```
 
-4. **Custom Crawl Planning**
-   ```
-   /Prepare crawl map https://example.com ignoreSitemap=true
-   ```
-   Generate a map by crawling rather than using the sitemap.
+## Common Examples
 
-### Tips for Effective Mapping
+1. **Login and Extract Content**
 
-1. **Start Broad**: Begin with default settings to get a complete picture
-2. **Use Search**: Narrow down results with specific search terms
-3. **Optimize Performance**: Disable subdomain inclusion for faster mapping of large sites
-4. **Combine with Scraping**: Use the map results to plan targeted scraping operations
+```
+/scraper
+goTo: https://www.example.com
+fill: Username with "user123"
+fill: Password with "pass123"
+click: "Login"
+wait: 2000
+analyze: "Extract main dashboard statistics"
+```
+
+2. **Shopping Cart Process**
+
+```
+/scraper
+goTo: https://shop.example.com
+select: "Sort by Price: Low to High"
+wait: 1000
+click: "Add to Cart" in .first-product
+click: "Checkout"
+screenshot: full page
+```
+
+3. **Content Analysis**
+
+```
+/scraper
+goTo: https://blog.example.com
+scrollBottom
+vision: "Summarize the main points of the article"
+screenshot
+```
+
+4. **Form Submission**
+
+```
+/scraper
+goTo: https://forms.example.com
+fill: Name with "John Doe"
+fill: Email with "john@example.com"
+check: "Accept Terms"
+click: "Submit"
+wait: 2000
+screenshot
+```
+
+## Selector Types
+
+When targeting elements on a page, you can use several different methods:
+
+1. **By Text Content**
+
+   - `click: "Login"` - Clicks element containing exact text "Login"
+   - `click: "Sign up for free"` - Works with longer phrases too
+
+2. **By Placeholder Text**
+
+   - `fill: "Search..." with "laptops"` - Targets input field with placeholder text
+   - `click: "Enter your username"` - Works with any placeholder text
+
+3. **CSS Selectors**
+
+   - `click: #login-button` - Using ID (#)
+   - `click: .submit-btn` - Using class name (.)
+   - `click: button.primary` - Element type with class
+   - `click: .form > .submit` - Using hierarchy
+   - `click: [data-testid="submit"]` - Using attributes
+
+4. **XPath Selectors**
+
+   - `click: //button[@type="submit"]` - Button with specific type
+   - `click: //div[@class="menu"]//a` - Links within menu div
+   - `click: //h1[contains(text(), "Welcome")]` - Heading containing text
+   - `click: //label[text()="Password"]/following-sibling::input` - Input field after label
+   - `click: //*[@id="main"]//button[2]` - Second button in main container
+
+5. **Combined Approaches**
+   - `click: "Submit" in .form-container` - Text within specific container
+   - `click: "Login" in #auth-modal` - Text within ID
+   - `hover: "Menu" in .nav-bar` - Combining text and class
+   - `click: "Next" in //div[@class="pagination"]` - Text within XPath-selected container
+
+Remember:
+
+- Text matching is case-sensitive
+- For elements with spaces in selectors, use quotes: `".main content"`
+- When using text, prefer exact matches over partial ones
+- CSS selectors provide simple targeting for basic needs
+- XPath provides more powerful selection capabilities:
+  - Can traverse up the DOM tree
+  - Can select elements based on their contents
+  - Supports complex relationships between elements
+- Always try to use the most specific selector that works
 
 Happy scraping!
