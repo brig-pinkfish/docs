@@ -25,7 +25,7 @@ Create and interact with an AI agent using the `/ai-agent` command followed by t
 /ai-agent
 systemPrompt: "Your name is Alex and you are a helpful assistant specializing in corporate travel booking."
 userMessage: "What hotels are in NYC around the Empire State Building?"
-threadId: "user-123-travel-booking-89384"
+threadId: "booking-123"
 ```
 
 ## Slash Command Structure
@@ -35,28 +35,16 @@ The AI Agent command follows this basic structure:
 ```
 /ai-agent
 * systemPrompt: [agent definition]
-* userMessage: [user's current query]
-* threadId: [unique thread identifier]
+* userMessage: [user's most recent message]
+* threadId: [unique identifier]
 * messageHistory: [optional]
 ```
 
 ## Required Fields
 
-### 1. threadId
+### 1. systemPrompt
 
-The threadId is a unique identifier for tracking a conversation over time. Your threadId could simply be the user's phone number or email address. Or you could create a step to generate a unique identifier that you then use as the threadId.
-
-The format we like for thread IDs is `[userId]-[purpose]-[uniqueId]` - but really, it's entirely up to you. The most important thing is that you include the threadId in the response to the user and that they then send it back in their response (which is why using a phone number or email address is the simplest solution).
-
-### 2. userMessage
-
-- The most recent message from the user
-- Can be a question, command, or conversation continuation (an SMS, email, chat message, etc.)
-- The agent will respond based on this input and previous context
-- If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
-- Pro tip: use "test inputs" to test your agent with different inputs.
-
-### 3. systemPrompt
+This is the living breathing heart of your agent.
 
 - Defines the agent's personality, knowledge, and behavior
 - Can include:
@@ -66,16 +54,29 @@ The format we like for thread IDs is `[userId]-[purpose]-[uniqueId]` - but reall
   - Response style
   - Limitations and constraints
   - Available tasks and tools (see below)
-- Pro tip: upload your agent prompt as a file to the automation and then retrieve it in step one. This will make editing and replacing your prompt easier.
+- Pro tip: upload your agent prompt as a file to the automation and then retrieve it in step one. This will make editing and replacing your prompt very easy. Whenever you have an update, delete the previous agent prompt file and re-upload a new version.
+
+### 2. userMessage
+
+- The most recent message from the user
+- Can be a question, command, or conversation continuation (an SMS, email, chat message, etc.)
+- The agent will respond based on this input and previous context
+- If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
+- Pro tip: use "test inputs" to test your agent with different inputs.
+
+### 3. threadId
+
+The threadId is a unique identifier for tracking a conversation over time. Your threadId could simply be the user's phone number or email address. Or you could create a step to generate a unique identifier that you then use as the threadId.
+
+The format we like for thread IDs is `[userId]-[uniqueId]` - but really, it's entirely up to you. The most important thing is that you _**get the threadId back in the response from the user**_. For this reason, using a phone number or email address is the simplest solution. If you are using these channels, the sender's phone number or email address is already unique and will be sent by the user with every message. The downside to using a phone number or email address is that the thread will be locked into that user. So if the user cc's other people and they reply, the sender email will change and you'll lose the thread.
 
 ## Optional Fields
 
 ### messageHistory
 
+This parameter is useful if you want to provide a custom message history for testing or debugging.
+
 - Overrides retrieval of message history
-- Useful for:
-  - Testing different conversation flows
-  - Modifying conversation context
 - You must still include threadId even when providing custom history (even though that threadId history will be ignored)
 
 ## Typical Step Structure
@@ -101,7 +102,7 @@ userMessage: step1 userMessage
 threadId: step1 threadId
 ```
 
-_Step 3: Respond to the user_
+_Step 3: Respond to the user on the same channel as the inbound message (email example here)_
 
 ```
 Get agent response from step2 output.message (this could be different depending on your agent prompt)
@@ -109,7 +110,7 @@ Get user's email from step1 inboundPayload.email
 Use /Sendgrid to send an email to the user with the agent response
 ```
 
-## Examples
+## AI Agent Examples
 
 1. **Customer Service Agent**
 
@@ -430,7 +431,7 @@ Note that where we have FILL IN, you should not fill in the values - they are pl
 
 One of the most powerful features of the AI Agent framework is the ability to create and use tools on Pinkfish. A tool is just a regular automation where you add an API trigger - and then you give your tool to your agent to use as it sees fit.
 
-The only tip is that when you create an automation and call it via an API trigger, it will return results from each of the steps. That payload is often too much for the agent to handle - it's more than the agent needs. So the agent framework is setup to search for a step result that has the variable "selectedResult" as the output from one of the steps. So as long as you have a step that has that as an output, the agent will be able to find it and use only that.
+Note that when you get a response from an API Trigger call, it will return results from _all_ of the steps. That payload is often too much for the agent to handle - it's more than the agent needs. So the agent framework is setup to search for a step result that has the variable "selectedResult" as the output from one of the steps. So as long as you have a step that has that as an output, the agent will be able to find it and use only that.
 
 Here is a screenshot of the selectedResult variable in the step output for a tool that scrapes ticketing websites.
 
