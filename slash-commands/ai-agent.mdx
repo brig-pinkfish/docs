@@ -47,12 +47,14 @@ The AI Agent command follows this basic structure:
 - Allows continuity across multiple interactions
 - All interactions are stored in your datastore
 - Format suggestion: `[userId]-[purpose]-[uniqueId]`
+- Make sure that the threadId is sent back in the next call to this agent automation if you want to the agent to continue the conversation. Without the threadId, the agent will start a new conversation.
 
 ### 2. userMessage
 
 - The current query or message from the user
 - Can be a question, command, or conversation continuation
 - The agent will respond based on this input and previous context
+- If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
 
 ### 3. systemPrompt
 
@@ -70,12 +72,11 @@ The AI Agent command follows this basic structure:
 
 ### messageHistory
 
-- Override default history retrieval
+- Overrides retrieval of message history
 - Useful for:
   - Testing different conversation flows
-  - Importing conversations from other sources
   - Modifying conversation context
-- Must still include threadId even when providing custom history
+- You must still include threadId even when providing custom history (even though that threadId history will be ignored)
 
 ## Examples
 
@@ -360,7 +361,7 @@ Although many formats may work with the agent framework, here is a template that
                 "payload": {
                     "file": "FILL IN"  // Required: reference to uploaded spreadsheet file
                 },
-                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOURTRIGGERID",
+                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID",
                 "X-API-KEY": "YOUR_TRIGGER_API_KEY"
             }
         </tool_template>
@@ -372,7 +373,7 @@ Although many formats may work with the agent framework, here is a template that
                     "data": "FILL IN",  // Required: parsed data from spreadsheet
                     "metrics": "FILL IN"  // Required: specify which metrics to calculate
                 },
-                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOURTRIGGERID",
+                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID",
                 "X-API-KEY": "YOUR_TRIGGER_API_KEY"
             }
         </tool_template>
@@ -384,13 +385,15 @@ Although many formats may work with the agent framework, here is a template that
                     "data": "FILL IN",  // Required: analyzed data
                     "type": "FILL IN"  // Required: type of visualization to generate
                 },
-                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOURTRIGGERID",
+                "toolUrl": "https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID",
                 "X-API-KEY": "YOUR_TRIGGER_API_KEY"
             }
         </tool_template>
     </tool_specs>
 </assistant>
 ```
+
+Note that where we have FILL IN, you should not fill in the values - they are placeholders for the AI Agent to fill in. The only part of this example template that is not a note for the AI Agent is YOUR_TRIGGER_API_KEY and YOUR_TRIGGER_ID. These you would actually fill in with your Pinkfish trigger API key and trigger ID.
 
 ## Tools
 
