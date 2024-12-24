@@ -7,6 +7,16 @@ description: "Learn how to use the AI Agent command to create persistent, intera
 
 The AI Agent command allows you to create and interact with persistent AI agents that maintain conversation history across multiple interactions. Each agent can be customized with specific personalities, knowledge domains, and behavioral traits through a system prompt, while maintaining context and memory of previous interactions through a thread ID system.
 
+## When to use (and not use) an AI Agent
+
+If you want to have an ongoing conversation with a user, where the agent remembers what happened previously and responds in a human-like way, an AI Agent is a good option. Or if you want the agent to be able to "think" by itself and figure out how to complete a task given only an objective and a set of tools, an AI Agent is a good fit. The promise of AI Agents is that with relatively simple instructions, you can create a highly autonomous agent that can perform complex tasks. The hardest part about building an agent is giving it tools to perform the various tasks you want it to do. With Pinkfish, this part is easy peasy (build automations as tools). So it's a great platform for building AI Agents.
+
+However, if you want to create an automation that receives an inbound SMS or email, processes that message in some way, and then responds to the user, you don't need an AI Agent. This is a simple automation that receives an input, processes that input, and then responds using the same channel as the inbound message. An AI Agent is overkill. If you are interfacing with a critical system and you cannot afford to make mistakes, don't use an AI Agent. You need a deterministic automation that you can test and publish - having it work the same way every time. Just build a simple multi-step automation for these cases.
+
+## Pro Tip
+
+The more leeway you give your agent to make decisions, prepare its own task list, and select its own tools, the more autonomous your agent will become. However, it'll also be more likely to make mistakes. So you'll want to balance the level of autonomy you give your agent with the level of accuracy you need (or the amount of testing you want to do). The more complex your agent, the more testing you'll need to do.
+
 ## Basic Usage
 
 Create and interact with an AI agent using the `/ai-agent` command followed by the required fields:
@@ -18,7 +28,7 @@ userMessage: "What hotels are in NYC around the Empire State Building?"
 threadId: "user-123-travel-booking-89384"
 ```
 
-## Command Structure
+## Slash Command Structure
 
 The AI Agent command follows this basic structure:
 
@@ -26,24 +36,22 @@ The AI Agent command follows this basic structure:
 /ai-agent
 * systemPrompt: [agent definition]
 * userMessage: [user's current query]
-* threadId: [unique thread identifier - you can make this up - it doesn't matter as long as it's unique per conversation]
-* messageHistory: [optional - use only if you want to provide a custom message history]
+* threadId: [unique thread identifier]
+* messageHistory: [optional]
 ```
 
 ## Required Fields
 
 ### 1. threadId
 
-- Unique identifier for storing conversation history
-- Allows continuity across multiple interactions
-- All interactions are stored in your datastore
-- Format suggestion: `[userId]-[purpose]-[uniqueId]`
-- Pro tip: make sure that the threadId is sent back in the next call to this agent automation if you want to the agent to continue the conversation. Without the threadId, the agent will start a new conversation.
+The threadId is a unique identifier for tracking a conversation over time. Your threadId could simply be the user's phone number or email address. Or you could create a step to generate a unique identifier that you then use as the threadId.
+
+The format we like for thread IDs is `[userId]-[purpose]-[uniqueId]` - but really, it's entirely up to you. The most important thing is that you include the threadId in the response to the user and that they then send it back in their response (which is why using a phone number or email address is the simplest solution).
 
 ### 2. userMessage
 
-- The current query or message from the user
-- Can be a question, command, or conversation continuation
+- The most recent message from the user
+- Can be a question, command, or conversation continuation (an SMS, email, chat message, etc.)
 - The agent will respond based on this input and previous context
 - If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
 - Pro tip: use "test inputs" to test your agent with different inputs.
@@ -51,7 +59,6 @@ The AI Agent command follows this basic structure:
 ### 3. systemPrompt
 
 - Defines the agent's personality, knowledge, and behavior
-- Sets boundaries and capabilities
 - Can include:
   - Name and identity
   - Area of expertise
@@ -59,7 +66,7 @@ The AI Agent command follows this basic structure:
   - Response style
   - Limitations and constraints
   - Available tasks and tools (see below)
-- Pro tip: attach your agent prompt to the automation as a file and import it in step one. This will make editing and replacing your prompt easier.
+- Pro tip: upload your agent prompt as a file to the automation and then retrieve it in step one. This will make editing and replacing your prompt easier.
 
 ## Optional Fields
 
@@ -70,6 +77,37 @@ The AI Agent command follows this basic structure:
   - Testing different conversation flows
   - Modifying conversation context
 - You must still include threadId even when providing custom history (even though that threadId history will be ignored)
+
+## Typical Step Structure
+
+A typical agent automation consists of three steps: getting the inputs, calling the agent, and responding to the user. Here's a sample:
+
+_Step 1: Get your inputs and files sorted_
+
+```
+Output inputs to a variable called "inboundPayload" (this is just to keep organized)
+Get the agent prompt from the file named "agent-prompt.xml" and output it as "agentPrompt"
+If threadId is in the inputs, output it as "threadId" and set isNewThread to false
+If threadId is not in the inputs, generate a unique identifier for this conversation and output it as "threadId" and set isNewThread to true
+Output the user's inbound message as "userMessage" (if the input is an email, this will be subject + email body)
+```
+
+_Step 2: Call the agent_
+
+```
+/ai-agent
+agentPrompt: step1 agentPrompt
+userMessage: step1 userMessage
+threadId: step1 threadId
+```
+
+_Step 3: Respond to the user_
+
+```
+Get agent response from step2 output.message (this could be different depending on your agent prompt)
+Get user's email from step1 inboundPayload.email
+Use /Sendgrid to send an email to the user with the agent response
+```
 
 ## Examples
 
