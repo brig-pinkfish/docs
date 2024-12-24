@@ -1,7 +1,11 @@
 ---
 title: "Scraping Commands Guide"
-description: "Learn how to use powerful scraping commands in your automations"
+description: "Learn how to use scraper skill in your automations"
 ---
+
+## Introduction
+
+The scraper allows you to navigate to a particular location in a website and then bring back the contents. In the simplest case, you give the scraper a URL and it gives you back the contents of that page as text (and screenshot). Using actions, you can login, navigate menus, and even loop through filling out forms with data you've collected in a previous step. You can also use AI Vision to answer questions about content on the page or to scrape and structure data all in one request.
 
 ## Table of Contents
 
@@ -12,11 +16,18 @@ description: "Learn how to use powerful scraping commands in your automations"
 
 ## Basic Scraping
 
-Start a scraping session with the `/scraper` command followed by one or more URLs:
+Scrape a web page with the `/scraper` command followed by one or more URLs:
 
 ```
 /scraper
-url: https://example.com, https://example2.com
+url: https://example.com
+```
+
+Scrape and specify the return format:
+
+```
+/scraper
+url: https://example.com
 format: markdown
 ```
 
@@ -98,18 +109,62 @@ wait: 500
 vision: "Extract all product prices as a table"
 ```
 
+## Advanced Features
+
 **Loop Example:**
 
 ```
 /scraper
 goTo: https://shop.example.com
-loop:
+loop begin:
   - click: "Add to Cart" in .product-card
   - wait: 1000
-  items: product1, product2, product3
+loop end
 ```
 
-## Advanced Features
+**Loop with Data Example:**
+First assemble data into an array of objects. You might do this in a previous step and then refer to the output of that step. Let's say that your data output for Step 1 looks like this:
+
+```
+[
+   {"color":"#ff0000","datetime":"2024-12-21T08:30","email":"test@pinkfish.ai","month":"2026-12","number":"22"},
+   {"color":"#00ff00","datetime":"2023-12-21T08:30","email":"hello@pinkfish.ai","month":"2025-12","number":"23"},
+   {"color":"#0000ff","datetime":"2022-12-21T08:30","email":"dev@pinkfish.ai","month":"2024-02","number":"24"}
+]
+```
+
+Then you would write your scraper in Step 2 like this:
+
+```
+Using the result from the previous step as inputData for the loop:
+/scraper
+* goto https://testpages.eviltester.com/styled/html5-form-test.html
+loop begin
+   - fill color input with "color" data
+   - fill datetime-local input with "datetime" data
+   - fill email input with "email" data
+   - fill month input with "month" data
+   - fill number input with "number" data
+   - click submit button
+   - wait 5 secs
+loop end
+* also wait 2 secs between each action
+```
+
+### Using Secrets
+
+You can use secrets that you've stored in the datastore in combination with scraping to fill in username, password, and apikey fields in order to avoid entering in your credentials into your automation in plain text.
+
+Assuming you've previously stored a secret in the datastore called "salesforceLogin", you could run the scraper with your secret as follows:
+
+```
+/get-secret salesforceLogin
+/scraper
+* goto https://mycompany.lightning.force.com/lightning/page/home
+- fill username input with usename from secret
+- fill password input with password from secret
+- wait 5 secs
+```
 
 ### Parent Scoping
 
@@ -127,7 +182,7 @@ Use Vision AI to extract specific information:
 ```
 /scraper
 goTo: https://shop.example.com
-vision: "Find all products under $50 and list their features"
+vision: "Give me all products under $50 and list their features"
 ```
 
 ### Batch Processing
@@ -149,13 +204,14 @@ screenshot: full page
 1. **Login and Extract Content**
 
 ```
+/get-secret ExampleComLogin
 /scraper
 goTo: https://www.example.com
-fill: Username with "user123"
-fill: Password with "pass123"
+fill: Username with username from secret
+fill: Password with password from secret
 click: "Login"
 wait: 2000
-analyze: "Extract main dashboard statistics"
+vision: "Give me all dashboard statistics"
 ```
 
 2. **Shopping Cart Process**
