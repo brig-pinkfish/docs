@@ -5,7 +5,7 @@ description: "Learn how to use scraper skill in your automations"
 
 ## Introduction
 
-The scraper allows you to navigate to a particular location in a website and then bring back the contents. In the simplest case, you give the scraper a URL and it gives you back the contents of that page as text (and screenshot). Using actions, you can login, navigate menus, and even loop through filling out forms with data you've collected in a previous step. You can also use AI Vision to answer questions about content on the page or to scrape and structure data all in one request.
+The scraper allows you to navigate to a particular location in a website and then bring back the contents. In the simplest case, you give the scraper a URL and it gives you back the contents of that page as text, along with a screenshot. Using _actions_, you can login, navigate menus, and even loop through filling out forms with data you've collected in a previous step. You can also use _AI Vision_ to answer questions about content on the page or to scrape and structure data all in one request. And finally, you can use _secrets_ you've stored in the datastore to fill in username, password, and apikey details (for sites that require logins) without needing to copy/paste those details into your automation as plaintext. Or alternatively, use any _browser connections_ that you've created in Connections to login automatically.
 
 ## Table of Contents
 
@@ -151,8 +151,20 @@ loop end
 * also wait 2 secs between each action
 ```
 
-### Using Secrets
+### Logging Into Websites
 
+**Using Browser Connections**
+If you've created a browser connection, you can use it with the scraper. When you're creating your prompt, first select the saved browser connection and then give your scraper prompt. In the example below assuming that you've created a browser connection called "salesforceLogin"
+
+```
+/browser-connection "salesforceLogin"
+/scraper
+* goto https://YOURCOMPANY.lightning.force.com/lightning/setup/ManageUsers/home
+```
+
+Note that when you use a browser connection, you are already logged in (similar to how you'd already be logged in if you logged in and then visited the page in question), so you don't need to first go to the login page. You can jump right to your destination URL.
+
+**Using Secrets**
 You can use secrets that you've stored in the datastore in combination with scraping to fill in username, password, and apikey fields in order to avoid entering in your credentials into your automation in plain text.
 
 Assuming you've previously stored a secret in the datastore called "salesforceLogin", you could run the scraper with your secret as follows:
@@ -160,11 +172,15 @@ Assuming you've previously stored a secret in the datastore called "salesforceLo
 ```
 /get-secret salesforceLogin
 /scraper
-* goto https://mycompany.lightning.force.com/lightning/page/home
+* goto https://YOURCOMPANY.lightning.force.com/lightning/page/home
 - fill username input with usename from secret
 - fill password input with password from secret
+- click "login" button
 - wait 5 secs
+* goto https://YOURCOMPANY.lightning.force.com/lightning/setup/ManageUsers/home
 ```
+
+In this case, you are first logging in and then going to your destination page. Note that if the site requres 2fa or a one time password, this technique won't work with the scraper. You should use Browser Connection (above) instead.
 
 ### Parent Scoping
 
