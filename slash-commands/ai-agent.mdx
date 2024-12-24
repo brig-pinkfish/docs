@@ -111,6 +111,10 @@ Get user's email from step1 inboundPayload.email
 Use /Sendgrid to send an email to the user with the agent response, include the threadId at the end of the email on a new line as "Ref: [step1 threadId]"
 ```
 
+Here is a screenshot of a three step automation that follows the model above. You can see in this example that I've put the agent prompt in a file and attached the file to the automation (and retrieved it as part of step 1). In step3 shown below, I'm sending out the email response using the Sendgrid connection.
+
+<img alt="Simple Automation" src="/images/examples/agentLayout.png" />
+
 ## AI Agent Examples
 
 1. **Customer Service Agent**
@@ -488,21 +492,3 @@ While you can set test inputs to test your agent, generally, you'll want to send
 - Whatever you can imagine
 
 And then you'll want to respond to the agent's output in the same way.
-
-As a result, your automation will generally consist of three steps.
-
-1. Receive inputs
-2. Call your ai agent
-3. Respond to the user with the agent's response
-
-Here is an example of a simple automation that receives an input from email, calls an ai agent, and then responds to the user with the agent's response via a Sendgrid email connection.
-
-<img alt="Simple Automation" src="/images/examples/agentLayout.png" />
-
-You can see in this example that I've put the agent prompt in a file and attached the file to the automation - and then retrieved it as part of the first step. This is a handy way to keep your agent prompt clean and organized, especially if it gets long.
-
-If you want the agent to continue the conversation, make sure that the threadId that you set for the first message comes back around in the next call to this agent automation.
-
-In the case above, I've included the threadId in the email response. So that when the user responds to the email, we'll still have the threadId (and can extract it from the response in step 1). You could use the sender's email address as the threadId, however if the user cc's other people on the email and they reply, the sender email will change and you'll lose the thread.
-
-In the case of SMS, use the user's phone number as the threadId. Group messages will not work unless you figure out how to attach a threadId to the group message - similar to email.
