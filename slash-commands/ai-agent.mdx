@@ -1,0 +1,138 @@
+---
+title: "AI Agent Command Guide"
+description: "Learn how to use the AI Agent command to create persistent, interactive AI assistants"
+---
+
+## Introduction
+
+The AI Agent command allows you to create and interact with persistent AI agents that maintain conversation history across multiple interactions. Each agent can be customized with specific personalities, knowledge domains, and behavioral traits through a system prompt, while maintaining context and memory of previous interactions through a thread ID system.
+
+## Table of Contents
+
+- [Basic Usage](#basic-usage)
+- [Command Structure](#command-structure)
+- [Required Fields](#required-fields)
+- [Optional Fields](#optional-fields)
+- [Common Examples](#common-examples)
+- [Best Practices](#best-practices)
+
+## Basic Usage
+
+Create and interact with an AI agent using the `/ai-agent` command followed by the required fields:
+
+```
+/ai-agent
+systemPrompt: "Your name is Alex and you are a helpful coding assistant specializing in Python"
+userMessage: "How do I write a function to calculate fibonacci numbers?"
+threadId: "coding-help-123"
+```
+
+## Command Structure
+
+The AI Agent command follows this basic structure:
+
+```
+/ai-agent
+* systemPrompt: [agent definition]
+* userMessage: [user's current query]
+* threadId: [unique thread identifier]
+* messageHistory: [optional override for conversation history]
+```
+
+## Required Fields
+
+### 1. threadId
+
+- Unique identifier for storing conversation history
+- Allows continuity across multiple interactions
+- All interactions are stored in your datastore
+- Format suggestion: `[userId]-[purpose]-[uniqueId]`
+
+### 2. userMessage
+
+- The current query or message from the user
+- Can be a question, command, or conversation continuation
+- The agent will respond based on this input and previous context
+
+### 3. systemPrompt
+
+- Defines the agent's personality, knowledge, and behavior
+- Sets boundaries and capabilities
+- Can include:
+  - Name and identity
+  - Area of expertise
+  - Behavioral traits
+  - Response style
+  - Limitations and constraints
+  - Available tasks and tools (see below)
+
+## Optional Fields
+
+### messageHistory
+
+- Override default history retrieval
+- Useful for:
+  - Testing different conversation flows
+  - Importing conversations from other sources
+  - Modifying conversation context
+- Must still include threadId even when providing custom history
+
+## Common Examples
+
+1. **Customer Service Agent**
+
+```
+/ai-agent
+systemPrompt: "You are a Pinkfish AI customer service agent named Sarah. You have detailed knowledge of our AI automation platform, including pricing plans, features, and common troubleshooting steps. You should answer questions clearly and concisely, provide step-by-step guidance when needed, and know when to escalate to technical support. Your responses should reflect our product documentation and maintain a helpful, professional tone."
+userMessage: "I'm trying to use the /scraper command but keep getting a timeout error. Can you help?"
+threadId: "support-ticket-789"
+```
+
+2. **Sales Development Agent**
+
+```
+/ai-agent
+systemPrompt: "You are Alex from Pinkfish AI's sales team. Your role is to qualify leads, schedule product demos, and provide initial product information. You have access to our demo scheduling calendar and can explain our key features and pricing tiers. Always collect company name, use case, and team size when booking demos. You should be friendly but professional, and focus on understanding the prospect's needs."
+userMessage: "I'm interested in seeing how Pinkfish AI could help with our customer service automation."
+threadId: "sales-demo-456"
+```
+
+3. **Sales Analytics Agent**
+
+```
+/ai-agent
+systemPrompt: "You are the Pinkfish AI sales analytics assistant. You have access to our sales pipeline data and can provide detailed analysis of opportunities, conversion rates, and revenue forecasts. You should be able to break down data by region, product line, and sales stage. Always provide specific numbers and percentages in your analysis, and highlight any significant trends or concerns."
+userMessage: "What's our current pipeline value for Q4, and how many deals are expected to close?"
+threadId: "sales-analytics-123"
+```
+
+## Best Practices
+
+1. **System Prompt Design**
+
+   - Be specific about the agent's role and capabilities
+   - Include personality traits that suit the use case
+   - Define clear boundaries and limitations
+   - Consider including response formats or structures
+
+2. **Thread ID Management**
+
+   - Use consistent naming conventions
+   - Include relevant identifiers (user, purpose, date)
+   - Consider thread lifecycle management
+   - Document thread IDs for future reference
+
+3. **Conversation Management**
+
+   - Start new threads for distinct conversation purposes
+   - Use meaningful thread IDs that reflect the conversation context
+   - Consider privacy and data retention needs
+   - Regularly review and clean up unused threads
+
+4. **History Management**
+   - Use messageHistory when you need to modify context
+   - Consider conversation length and relevance
+   - Clean up or archive old threads periodically
+   - Test different history configurations for optimal results
+
+Remember to regularly check your datastore for stored conversations and manage thread lifecycles appropriately. The AI Agent system provides powerful capabilities for creating persistent, context-aware assistants that can enhance various aspects of your applications and workflows.
