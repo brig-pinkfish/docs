@@ -88,7 +88,8 @@ _Step 1: Get your inputs and files sorted_
 ```
 Output inputs to a variable called "inboundPayload" (this is just to keep organized)
 Get the agent prompt from the file named "agent-prompt.xml" and output it as "agentPrompt"
-If threadId is in the inputs, output it as "threadId" and set isNewThread to false
+If threadId is in the inputs or email body, output it as "threadId" and set isNewThread to false
+Be sure to check the email body for the threadId. It will be in the format "Ref: [threadId]"
 If threadId is not in the inputs, generate a unique identifier for this conversation and output it as "threadId" and set isNewThread to true
 Output the user's inbound message as "userMessage" (if the input is an email, this will be subject + email body)
 ```
@@ -107,7 +108,7 @@ _Step 3: Respond to the user on the same channel as the inbound message (email e
 ```
 Get agent response from step2 output.message (this could be different depending on your agent prompt)
 Get user's email from step1 inboundPayload.email
-Use /Sendgrid to send an email to the user with the agent response
+Use /Sendgrid to send an email to the user with the agent response, include the threadId at the end of the email on a new line as "Ref: [step1 threadId]"
 ```
 
 ## AI Agent Examples
