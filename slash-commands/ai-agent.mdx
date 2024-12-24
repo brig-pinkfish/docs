@@ -38,7 +38,7 @@ The AI Agent command follows this basic structure:
 - Allows continuity across multiple interactions
 - All interactions are stored in your datastore
 - Format suggestion: `[userId]-[purpose]-[uniqueId]`
-- Make sure that the threadId is sent back in the next call to this agent automation if you want to the agent to continue the conversation. Without the threadId, the agent will start a new conversation.
+- Pro tip: make sure that the threadId is sent back in the next call to this agent automation if you want to the agent to continue the conversation. Without the threadId, the agent will start a new conversation.
 
 ### 2. userMessage
 
@@ -46,6 +46,7 @@ The AI Agent command follows this basic structure:
 - Can be a question, command, or conversation continuation
 - The agent will respond based on this input and previous context
 - If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
+- Pro tip: use "test inputs" to test your agent with different inputs.
 
 ### 3. systemPrompt
 
@@ -58,6 +59,7 @@ The AI Agent command follows this basic structure:
   - Response style
   - Limitations and constraints
   - Available tasks and tools (see below)
+- Pro tip: attach your agent prompt to the automation as a file and import it in step one. This will make editing and replacing your prompt easier.
 
 ## Optional Fields
 
@@ -460,3 +462,7 @@ Here is an example of a simple automation that receives an input from email, cal
 You can see in this example that I've put the agent prompt in a file and attached the file to the automation - and then retrieved it as part of the first step. This is a handy way to keep your agent prompt clean and organized, especially if it gets long.
 
 If you want the agent to continue the conversation, make sure that the threadId that you set for the first message comes back around in the next call to this agent automation.
+
+In the case above, I've included the threadId in the email response. So that when the user responds to the email, we'll still have the threadId (and can extract it from the response in step 1). You could use the sender's email address as the threadId, however if the user cc's other people on the email and they reply, the sender email will change and you'll lose the thread.
+
+In the case of SMS, use the user's phone number as the threadId. Group messages will not work unless you figure out how to attach a threadId to the group message - similar to email.
