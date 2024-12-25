@@ -523,3 +523,72 @@ While you can set test inputs to test your agent, generally, you'll want to send
 - Whatever you can imagine
 
 And then you'll want to respond to the agent's output in the same way.
+
+## Advanced Usage: Long-Term Memory
+
+I saved this for very last because it's an advanced feature that you can happily ignore. In normal operation, your agent will remember about 20 previous interactions from the thread message history. We may tweak this from time to time if we're seeing that 20 is not sufficient, but it's a nice easy default that you don't have to worry about too much.
+
+But what if you want your agent to remember interactions across threads or to never forget something about a user. Perhaps a user never wants to be contacted via SMS. Your agent should be able to remember that - no matter how long ago the user said it.
+
+For this use case, your agent supports long term memory! You can store an item in long term memory for a given user. And then when you run your agent, just tell it to use its memory.
+
+First, let's look at creating and managing memories.
+
+#### Creating a memory
+
+```
+/ai-agent Create memory
+userId: <users id>
+message: <whatever memory you want to store>
+```
+
+#### Getting memories for a user
+
+You can see a user's memories in the Datastore UI - or you can retrieve them using a prompt:
+
+```
+/ai-agent Get memories
+userId: <users id>
+compiled: false
+```
+
+Compiled:true will show the list of memories as they will be seen by your agent. When false, it'll give you the listing of datastore items for that user. If you ever want to update or delete a memory, you'll need the full listing details (the sortField in particular)
+
+#### Updating memories for a user
+
+```
+/ai-agent Create memory
+userId: <users id>
+message: <whatever update you want to store>
+sortField: <sortField>
+```
+
+The sortField will be a timestamp that you can retrieve using the get memories method. In combination, the key and sortField are the unique identifiers for each memory.
+
+#### Deleting memories for a user
+
+You can delete memories using the Datastore UI or via a prompt.
+
+```
+/ai-agent Delete all memories
+userId: <users id>
+```
+
+```
+/ai-agent Delete a memory
+userId: <users id>
+sortField: <sortField>
+```
+
+#### User Ids
+
+I've been talking about _user ids_ for long term memory, but how the heck do you get a userId? Simple, you make it up. It could be "123" or it could be the user's email address or phone number (easier). And then, if you want your agent to be aware of memories for a given user, just send in the userId and useMemory flag. In the prompt below, you can see I added two additional parameters at the end to let the agent know that we want to use memory for this interaction.
+
+```
+/ai-agent
+* systemPrompt: [agent definition]
+* userMessage: [user's most recent message]
+* threadId: [unique identifier]
+* userId: [same ID you used to store the memories for this user]
+* useMemory: true
+```
