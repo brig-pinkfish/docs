@@ -596,3 +596,44 @@ I've been talking about _user ids_ for long term memory, but how the heck do you
 #### Group memories
 
 If you wanted to store common or group memories that are shared across multiple users, you could use the userId as a kind of group Id. In this case, you would create a user Id like "GroupXYZ" - and send that into the agent prompt whenever you have a member of that group interacting with the agent. In this way, the agent will pull back this list of common memories for any interaction where you set this Id.
+
+## Debugging
+
+Outside of running your agent with multiple inputs and observing the outputs, there's a lot of information that you'll see in the information that is returned from the AI Agent call.
+
+Here's a sample output from an AI Agent call.
+
+```
+{
+    "message": "AI Agent request processed successfully",
+    "output": {
+        "response": "Based on the sales data in your Excel file, Q4 revenue increased by 23% compared to Q3, with December showing the strongest performance at $1.2M in sales."
+    },
+    "executionLog": [
+        "[2024-12-25T21:04:11.626Z] Message history parameter is empty, fetching last 20 messages",
+        "[2024-12-25T21:04:12.020Z] Retrieved message history",
+        "[2024-12-25T21:04:12.021Z] Processing request",
+        "[2024-12-25T21:04:12.808Z] Message saved successfully",
+        "[2024-12-25T21:04:12.809Z] Starting iteration 1 of 5",
+        "[2024-12-25T21:04:13.066Z] >>TO LLM",
+        "[2024-12-25T21:04:13.896Z] <<FROM LLM",
+        "[2024-12-25T21:04:14.337Z] Message saved successfully"
+    ],
+    "finalMessageHistory": "Human: Can you analyze the Q4 sales data in sales_2024.xlsx?\n\nAssistant: {\"response\":\"I'll take a look at your sales data. Give me a moment to analyze the Excel file.\"}\n\nHuman: How did we perform compared to Q3?\n\nAssistant: {\"response\":\"Q4 revenue increased by 23% compared to Q3, with December being the strongest month at $1.2M.\"}\n\nHuman: What drove the December performance?\n\nAssistant: {\"response\":\"The strong December performance was driven by a 45% increase in enterprise sales and the successful launch of our new product line.\"}",
+    "threadId": "test22",
+    "inputs": {
+        "systemPrompt": "You are a customer service agent named Sarah.",
+        "userMessage": "What drove the December performance?",
+        "threadId": "test22",
+        "userId": "ben@test.com",
+        "useMemory": true
+    }
+}
+```
+
+- `message` just tells you that the agent operated successfully (or with an error)
+- `output` is where you'll find the agent's final response
+- `executionLog` is chock full of info about the agent's processing of the incoming query. I'll often just drop this whole array into Claude and ask it what happened or what went wrong - or does it have the info I wanted it to have. Here you have the full log of what was sent to the LLM and what the LLM sent in reply. The AI Agent has a 5 call circuit breaker to prevent infinte or extreme looping. You'll see that as the iteration count. You'll also see any errors in execution or tool calling.
+- `finalMessageHistory` shows the final compiled message history for this threadId its a nice way to quick see what was in the thread previously and what was added as a result of this call.
+- `threadId` is just what it sounds like.
+- `inputs` just echos out what you sent to it. The only exception is that if you didn't send in a threadId, it'll show the thread Id that it made up here as well.
