@@ -72,7 +72,7 @@ The threadId is a unique identifier for tracking a conversation over time. Your 
 
 The most important thing is that you _**get the threadId back in the response from the user**_. For this reason, using a phone number or email address is the simplest solution. If you are using these channels, the sender's phone number or email address is already unique and will be sent by the user with every message. The downside to using a phone number or email address is that the thread will be locked into that user. So if the user cc's other people and they reply, the sender email will change and you'll lose the thread.
 
-If you don't supply a threadId one will be created for you and returned with the response. You'll want to get this Id and use it for the ongoing conversation. For this reason it's optional. Just don't forget to put it somewhere into your response to the user such that they include it in their response. See example below showing how to include it in an email.
+If you don't supply a threadId one will be created for you and returned with the response. You'll want to get this Id and use it for the ongoing conversation. For this reason it's optional. Just don't forget to put the generated Id somewhere into your response to the user such that they include it in their response (see email example below).
 
 ### 4. messageHistory
 
@@ -81,9 +81,15 @@ This parameter is useful if you want to provide a custom message history for tes
 - Overrides retrieval of message history
 - You must still include threadId even when providing custom history (even though that threadId history will be ignored)
 
-## Typical Step Structure
+## Typical Setup
 
-A typical agent automation consists of three steps: getting the inputs, calling the agent, and responding to the user. Here's a sample:
+You create your AI Agent just like any other automation. A typical AI Agent automation consists of three steps:
+
+1. organizing your inputs
+2. calling the agent
+3. responding to the user
+
+Here's a sample:
 
 _Step 1: Get your inputs and files sorted_
 
@@ -110,7 +116,7 @@ _Step 3: Respond to the user on the same channel as the inbound message (email e
 ```
 Get agent response from step2 output.message (this could be different depending on your agent prompt)
 Get user's email from step1 inboundPayload.email
-Use /Sendgrid to send an email to the user with the agent response
+/sendgrid to send an email to the user with the agent response
 Include the threadId at the end of the email on a new line as
 "Ref: [step1 threadId]"
 ```
@@ -438,7 +444,28 @@ Note that where we have FILL IN, you should not fill in the values - they are pl
 
 ## Tools
 
-One of the most powerful features of the AI Agent framework is the ability to create and use tools on Pinkfish. A tool is just a regular automation where you add an API trigger - and then you give your tool to your agent to use as it sees fit.
+One of the most powerful features of the AI Agent framework is the ability to create and use tools on Pinkfish. A tool is just a regular automation where you get something done. Add an API Trigger to your automation and give the API details to your AI Agent.
+
+You can create tools to give your agents all kinds of super powers. Some ideas are:
+
+- Document search - answer questions from PDFs or other documents
+- Document processing - receiving documents from the user and processing them in some interesting way
+- Visualization creation - generate charts, graphs, and other visual representations of data
+- Answering questions from websites using scraping
+- Answering questions about recent news using Perplexity
+- Searching for flights or hotels using the flights / hotels tool
+- Translating, transcribing, or summarizing
+- Image analysis - extracting text, objects, and insights from uploaded images
+- Database querying - answering questions by searching structured databases
+- Calendar management - scheduling and organizing events and meetings
+- Form filling - automatically completing forms based on provided information
+- Financial analysis - processing and analyzing financial data and reports
+- Social media monitoring - tracking and analyzing social media trends
+- Legal document review - analyzing contracts and legal documents
+- Medical record analysis - processing and summarizing medical information
+- Academic research - searching and summarizing scholarly articles
+- Market research - gathering and analyzing competitive intelligence
+- So so much more...
 
 Note that when you get a response from an API Trigger call, it will return results from _all_ of the steps. That payload is often too much for the agent to handle - it's more than the agent needs. So the agent framework is setup to search for a step result that has the variable "selectedResult" as the output from one of the steps. So as long as you have a step that has that as an output, the agent will be able to find it and use only that.
 
