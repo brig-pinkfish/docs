@@ -64,15 +64,17 @@ This is the living breathing heart of your agent.
 - If you are creating some kind of worker agent that doesn't respond to user messages, you would set this field to be your command to your worker agent. Eg: "Start analytics jobId: 1234567890"
 - Pro tip: use "test inputs" to test your agent with different inputs.
 
-### 3. threadId
-
-The threadId is a unique identifier for tracking a conversation over time. Your threadId could simply be the user's phone number or email address. Or you could create a step to generate a unique identifier that you then use as the threadId.
-
-The format we like for thread IDs is `[userId]-[uniqueId]` - but really, it's entirely up to you. The most important thing is that you _**get the threadId back in the response from the user**_. For this reason, using a phone number or email address is the simplest solution. If you are using these channels, the sender's phone number or email address is already unique and will be sent by the user with every message. The downside to using a phone number or email address is that the thread will be locked into that user. So if the user cc's other people and they reply, the sender email will change and you'll lose the thread.
-
 ## Optional Fields
 
-### messageHistory
+### 3. threadId
+
+The threadId is a unique identifier for tracking a conversation over time. Your threadId could simply be the user's phone number or email address.
+
+The most important thing is that you _**get the threadId back in the response from the user**_. For this reason, using a phone number or email address is the simplest solution. If you are using these channels, the sender's phone number or email address is already unique and will be sent by the user with every message. The downside to using a phone number or email address is that the thread will be locked into that user. So if the user cc's other people and they reply, the sender email will change and you'll lose the thread.
+
+If you don't supply a threadId one will be created for you and returned with the response. You'll want to get this Id and use it for the ongoing conversation. For this reason it's optional. Just don't forget to put it somewhere into your response to the user such that they include it in their response. See example below showing how to include it in an email.
+
+### 4. messageHistory
 
 This parameter is useful if you want to provide a custom message history for testing or debugging.
 
@@ -90,7 +92,7 @@ Output inputs to a variable called "inboundPayload" (this is just to keep organi
 Get the agent prompt from the file named "agent-prompt.xml" and output it as "agentPrompt"
 If threadId is in the inputs or email body, output it as "threadId" and set isNewThread to false
 Be sure to check the email body for the threadId. It will be in the format "Ref: [threadId]"
-If threadId is not in the inputs, generate a unique identifier for this conversation and output it as "threadId" and set isNewThread to true
+If threadId is not in the inputs, output "threadId" as null and set isNewThread to true
 Output the user's inbound message as "userMessage" (if the input is an email, this will be subject + email body)
 ```
 
@@ -103,12 +105,14 @@ userMessage: step1 userMessage
 threadId: step1 threadId
 ```
 
-_Step 3: Respond to the user on the same channel as the inbound message (email example here)_
+_Step 3: Respond to the user on the same channel as the inbound message (email example here with threadId included in the response)_
 
 ```
 Get agent response from step2 output.message (this could be different depending on your agent prompt)
 Get user's email from step1 inboundPayload.email
-Use /Sendgrid to send an email to the user with the agent response, include the threadId at the end of the email on a new line as "Ref: [step1 threadId]"
+Use /Sendgrid to send an email to the user with the agent response
+Include the threadId at the end of the email on a new line as
+"Ref: [step1 threadId]"
 ```
 
 Here is a screenshot of a three step automation that follows the model above. You can see in this example that I've put the agent prompt in a file and attached the file to the automation (and retrieved it as part of step 1). In step3 shown below, I'm sending out the agent's response via email using Sendgrid.
