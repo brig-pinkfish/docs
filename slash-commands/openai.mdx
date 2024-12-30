@@ -1,0 +1,108 @@
+---
+title: "OpenAI Command Guide"
+description: "Learn how to use the OpenAI slash command to interact with OpenAI's models"
+---
+
+## Why Use OpenAI?
+
+The `/openai` command gives you access to OpenAI's models. Perfect for:
+
+- Natural language processing
+- Content generation
+- Data analysis
+- Problem-solving
+- Creative writing
+
+## Basic Usage
+
+Simply use the command followed by your query:
+
+```
+/openai Analyze market trends in the renewable energy sector
+with file market_data.csv
+```
+
+You can also provide multiple documents:
+
+```
+/openai Compare Q4 performance across regions
+with file q4_north.csv
+with file q4_south.csv
+```
+
+## Model Selection
+
+You can specify which OpenAI model you want to use:
+
+```
+/openai use gpt-4o-mini
+Give me back the following information in a json format:
+name - john Does
+address - 123 Main St
+account - 1234567890
+```
+
+See most recent open AI documentation for available models.
+See: https://platform.openai.com/docs/models
+
+## Tool Selection
+
+You can specify tools and how they should be used. 
+See: https://platform.openai.com/docs/guides/function-calling
+
+```
+/openai What's the weather in San Francisco?
+tools = [
+  {
+    "type": "function",
+    "function": {
+      "name": "get_weather",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {"type": "string"}
+        }
+      }
+    }
+  }
+]
+```
+
+### Tool Choice Options
+
+You can control how tools are used with `tool_choices`:
+
+```
+/openai Analyze market data
+tool_choices = ["auto"]  // Let the model choose which tools to use
+with file market_data.csv
+```
+
+```
+/openai Analyze market data
+tool_choices = ["none"]  // Prevent the model from using any tools
+with file market_data.csv
+```
+
+```
+/openai What's the weather?
+tools = [
+  {
+    "type": "function",
+    "function": {
+      "name": "get_weather",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {"type": "string"}
+        }
+      }
+    }
+  }
+]
+tool_choices = [{"type": "function", "function": {"name": "get_weather"}}]  // Force use of specific tool
+```
+
+
+
+
