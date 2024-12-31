@@ -11,11 +11,14 @@ The datastore can be used as a job queue system. This guide explains how to crea
 ### 1. Create a Job Definition (a datastore item)
 Create an item in the datastore that includes a status in its metadata (like "not_started"). This is your job definition and status tracker. Put any data you need to send to the worker in the contents of the item.
 
-### 2. Attach an API Trigger (to your worker automation)
-As part of the item creation priocess, attach a trigger to another of your automations. The automation that you trigger will be your worker automation. It will receive a payload containing details about the job (the item's content and metadata).
+#### 1a. Attach an API Trigger (to your worker automation)
+As part of the item creation process, attach a trigger to another of your automations. The automation that you trigger will be your worker automation. It will receive a payload containing details about the job (the item's content and metadata).
 
-### 3. Update Status to kick off your worker automation
-When ready to process, update the item's status (that you created in step 1). This change will automatically fire your trigger and will kick off your worker automation.
+### 2. Create an Orchestration Automation
+Create an automation that will be your orchestration automation. This automation will query for jobs with a status of "not_started" and then update the item's status to "started". This will automatically fire your trigger and will kick off your worker automation. You can run this automation manually or schedule it to run on a regular basis.
+
+### 3. Process the Job with your Worker Automation
+Your worker automation will receive a payload containing details about the job (the item's content and metadata). Your worker should process the job as you wish and then update the item's status to "completed". Be sure to update with triggers off to avoid triggering your worker automation again.
 
 
 ## Creating a Job
