@@ -12,6 +12,7 @@ The `/openai` command gives you access to OpenAI's models. Perfect for:
 - Data analysis
 - Problem-solving
 - Creative writing
+- Tool selection 
 
 ## Basic Usage
 
@@ -30,42 +31,77 @@ with file q4_north.csv
 with file q4_south.csv
 ```
 
+Or no documents at all:
+
+```
+/openai Compare nano and micro-nano batteries
+```
+
 ## Model Selection
 
 You can specify which OpenAI model you want to use:
 
 ```
 /openai use gpt-4o-mini
-Give me back the following information in a json format:
-name - john Does
-address - 123 Main St
-account - 1234567890
+Convert the following text to a json format:
+[text]
 ```
 
 See most recent open AI documentation for available models.
 See: https://platform.openai.com/docs/models
 
-## Tool Selection
+## Tool Selection (advanced)
 
-You can specify tools and how they should be used. 
+Most LLMs support the concept of tools - which is a way to prepare an API call to external functions. We support this in the `/openai` command. It can be handy espcially when calling external APIs or when you want to call an automation that you've put behind a Pinkfish API endpoint.
+
 See: https://platform.openai.com/docs/guides/function-calling
 
 ```
-/openai What's the weather in San Francisco?
-tools = [
-  {
-    "type": "function",
-    "function": {
-      "name": "get_weather",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "location": {"type": "string"}
+/openai What's the current weather in Copenhagen in farenheight? 
+"tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "getWeather",
+        "description": "Get the current weather for a location",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "City name or coordinates"
+            },
+            "units": {
+              "type": "string",
+              "enum": ["celsius", "fahrenheit"],
+              "description": "Temperature units"
+            }
+          },
+          "required": ["location"]
         }
       }
     }
-  }
-]
+  ]
+  Tool choice: [auto]
+```
+
+Sample response: 
+```json
+{
+    "output": {
+        "tool_calls": [
+            {
+                "id": "call_QEXgadie2OaO7o6Te26E1qOl",
+                "type": "function",
+                "function": {
+                    "name": "getWeather",
+                    "arguments": "{\"location\":\"Copenhagen\",\"units\":\"fahrenheit\"}"
+                }
+            }
+        ],
+        "content": null
+    }
+}
 ```
 
 ### Tool Choice Options
