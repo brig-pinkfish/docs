@@ -3,76 +3,68 @@ title: "Using Datastore as a Job Queue"
 description: "Learn how to implement a job queue system using the datastore command"
 ---
 
-The datastore can be used as a robust job queue system to manage and process tasks in your automations. This guide explains how to create, schedule, and process jobs safely using the datastore.
+The datastore can be used as a job queue system. This guide explains how to create, schedule, and process jobs using the datastore.
 
-## Core Concepts
 
-A job queue in the datastore consists of:
+## How It Works in 3 Steps
 
-- Jobs represented as datastore items with metadata tracking their state
-- Triggers that fire automations when job status changes
-- Workers (automations) that process jobs either on demand or on a schedule
+### 1. Create Your Datastore Item
+Create an item in the datastore that includes a status in its metadata (like "not_started"). This is your job definition and status tracker. Put any data you need to send to the worker in the contents of the item.
 
-## Job States
+### 2. Attach a Trigger
+As part of the item creation priocess, attach a trigger to another of your automations (your worker automation).
 
-Jobs can be in one of these states:
+### 3. Update Status
+When ready to process, update the item's status (that you created in step 1). This change will automatically fire your trigger and will kick off your worker automation.
 
-- `not_started`: Initial state when job is created
-- `started`: Job is currently being processed by a worker
-- `completed`: Job finished successfully
-- `failed`: Job encountered an error and needs attention
 
-## Creating Jobs
-
+## Creating a Job
 To create a new job:
 
 ```
 /datastore create item with:
 key: jobs
 sortField: job-2024-03-15-001
+content: {
+    "report_type": "monthly",
+    "department": "sales"
+}
 metadata: {
     "status": "not_started",
-    "type": "report_generation",
-    "created_at": "2024-03-15T09:00:00Z",
-    "parameters": {
-        "report_type": "monthly",
-        "department": "sales"
-    }
+    "type": "report_generation"
 }
 triggerUrls: {
     "https://your-automation-url": "your-api-key"
 }
 ```
 
-## Understanding Triggers
+## Understanding Triggers and Workers
 
-When a job's status changes, you can have an automation run to process it. This happens through triggers.
+When a job's status changes, you can have an automation run to process it (this is your worker automation). This happens through triggers.
 
 ### How Triggers Work
 
 1. When creating a job, you attach trigger URLs that should be called when the job updates
 2. When you update the job's status, all attached triggers will fire (set up your trigger to point to your worker automation)
-3. Your worker automation receives a payload containing details about the job. It also gives you info about what changed in the doc - which in this case is just the status that you updated. What you really care about here is the job details that will allow you to process the job.
+3. Your worker automation receives a payload containing details about the job (the item's content and metadata). It also gives you info about what changed in the doc - which in this case is just the status that you updated. What you really care about here is the job details that will allow you to process the job.
 
 ```json
 {
-  "dataChanged": {
-    // What was updated
+  "dataChanged": { // Shows you everything that changed in the item
     "metadata": {
       "status": "started"
     }
   },
-  "newDataset": {
-    // Complete item after update
+  "newDataset": { // This is the full current contents of your item
     "key": "jobs",
     "sortField": "job-2024-03-15-001",
+    "content": {
+      "report_type": "monthly",
+      "department": "sales"
+    },
     "metadata": {
       "status": "started",
-      "type": "report_generation",
-      "parameters": {
-        "report_type": "monthly",
-        "department": "sales"
-      }
+      "type": "report_generation"
     }
   }
 }
