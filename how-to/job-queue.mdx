@@ -168,11 +168,22 @@ metadata: {
 
 ## Handling Multiple Workers Safely
 
-When multiple automations process jobs simultaneously, you need to prevent them from processing the same job. Here's how:
+When multiple automations process jobs simultaneously, you need to prevent them from processing the same job. The status field handles this automatically:
 
-### 1. Version Control
+### 1. Status-Based Job Claims
 
-Always include the current version when claiming a job:
+Workers only query for jobs with "not_started" status:
+
+```
+/datastore query items where:
+key: jobs
+metadata: {
+    "status": "not_started"
+}
+limit: 10
+```
+
+When a worker claims a job, it updates the status to "started". This automatically prevents other workers from seeing or claiming the job in their queries:
 
 ```
 /datastore update item with:
@@ -180,20 +191,16 @@ key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "started",
-    "version": 1,  // Current version
     "worker_id": "worker-123",
     "started_at": "2024-03-15T10:00:00Z",
     "locked_until": "2024-03-15T10:10:00Z"
 }
 ```
 
-If another worker claimed the job first, the version won't match and the update will fail.
-
 ### 2. Job Locking
 
-Include these fields to prevent job conflicts:
+Include these fields to track job processing:
 
-- `version`: Current version number (prevents double-processing)
 - `worker_id`: Identifies which worker has the job
 - `started_at`: When processing began
 - `locked_until`: When the lock expires
@@ -203,42 +210,24 @@ Include these fields to prevent job conflicts:
 
 Set a `locked_until` time when claiming a job:
 
-- Other workers can claim the job after this time
+- Other workers can claim the job after this time by querying for expired locks
 - Prevents jobs from being stuck if a worker crashes
 - Typically 5-15 minutes depending on job complexity
 
-## Best Practices
+To handle expired locks, workers can also query for abandoned jobs:
 
-1. **Claiming Jobs**
+```
+/datastore query items where:
+key: jobs
+metadata: {
+    "status": "started",
+    "locked_until": {
+        "lt": "CURRENT_TIMESTAMP"
+    }
+}
+limit: 10
+```
 
-   - Always include version number when claiming
-   - Set reasonable lock timeouts
-   - Track worker IDs and attempt counts
-
-2. **Updating Status**
-
-   - Use `triggers off` when updating from worker
-   - Include timestamps for monitoring
-   - Track errors and attempts
-
-3. **Error Handling**
-
-   ```
-   /datastore update item with triggers off:
-   key: jobs
-   sortField: job-2024-03-15-001
-   metadata: {
-       "status": "failed",
-       "error": "Connection timeout",
-       "attempts": 2,
-       "last_error_at": "2024-03-15T10:05:00Z"
-   }
-   ```
-
-4. **Job Monitoring**
-   - Query for stuck jobs (past `locked_until`)
-   - Track failed jobs and retry counts
-   - Monitor processing times using timestamps
 
 ## Complete Job Lifecycle Example
 
@@ -248,15 +237,14 @@ Set a `locked_until` time when claiming a job:
 /datastore create item with:
 key: jobs
 sortField: job-2024-03-15-001
+content: {
+    "report_type": "monthly",
+    "department": "sales"
+}
 metadata: {
     "status": "not_started",
     "type": "report_generation",
     "created_at": "2024-03-15T09:00:00Z",
-    "version": 1,
-    "parameters": {
-        "report_type": "monthly",
-        "department": "sales"
-    }
 }
 triggerUrls: {
     "https://your-automation-url": "your-api-key"
@@ -271,28 +259,14 @@ key: jobs
 sortField: job-2024-03-15-001
 metadata: {
     "status": "started",
-    "version": 1,
     "worker_id": "worker-123",
     "started_at": "2024-03-15T09:05:00Z",
     "locked_until": "2024-03-15T09:20:00Z"
 }
 ```
 
-3. **Update Progress**
-
-```
-/datastore update item with triggers off:
-key: jobs
-sortField: job-2024-03-15-001
-metadata: {
-    "status": "started",
-    "progress": 50,
-    "last_updated": "2024-03-15T09:10:00Z"
-}
-```
-
-4. **Complete Job**
-
+3. **Complete Job**
+Be sure to update with triggers off to avoid triggering your worker automation again.
 ```
 /datastore update item with triggers off:
 key: jobs
