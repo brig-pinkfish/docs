@@ -1,9 +1,6 @@
----
-title: "Shopping Command Guide"
-description: "Learn how to use the shopping slash command for competitive price analysis and market research"
----
+# Competitive Pricing Command Guide
 
-## Using The Shopping Command
+## Overview
 
 The `/competitive-pricing` command helps you analyze competitive pricing across multiple retailers. Perfect for:
 
@@ -23,15 +20,12 @@ Search for specific competitor products to analyze pricing:
 ```
 
 ```
-/competitive-pricing compare:"Herman Miller Aeron Chair" gl:us,uk,ca
-```
-(gl is a shortcut for location; it's a two letter code for the country)
-
-```
-/competitive-pricing analyze:"Knoll Cesca Chair" multi_location:NYC,LA,Chicago
+/competitive-pricing compare:"Herman Miller Aeron Chair" in:US,UK,CA
 ```
 
-The command understands natural language - phrase it how you prefer!
+```
+/competitive-pricing analyze:"Knoll Cesca Chair" locations:NYC,LA,Chicago
+```
 
 ## Required Parameters
 
@@ -49,7 +43,7 @@ The command understands natural language - phrase it how you prefer!
   - Multiple cities for market comparison
   - Regional pricing differences
   - Local competitor analysis
-- `gl`: Country markets to analyze
+- `country`: Country markets to analyze
   - US: United States market
   - UK: United Kingdom market
   - CA: Canadian market
@@ -58,45 +52,109 @@ The command understands natural language - phrase it how you prefer!
 ### Market Research Settings
 
 - `google_domain`: Target market domain
-- `hl`: Local language for accurate market data
+- `language`: Local language for accurate market data
 - `direct_link`: Get direct seller links
   - true: Include all seller links
   - false: Aggregated data only (default)
 
-## Advanced Research Filters
+## Advanced Search Parameters
 
-### Competitive Analysis
+### TBS (To Be Searched) Parameter Guide
 
-- `tbs`: Advanced search parameters for market segmentation
-- `shoprs`: Filter helper for market positioning
-- `num`: Results depth (max: 100 sellers)
+The tbs parameter enables precise filtering of search results:
 
-### Data Collection
+#### 1. Price Filtering
+```
+# Required format for price filters:
+tbs=mr:1,price:1,ppr_min:[amount]     # Items over [amount]
+tbs=mr:1,price:1,ppr_max:[amount]     # Items under [amount]
+tbs=mr:1,price:1,ppr_min:[amount],ppr_max:[amount]  # Items between amounts
 
-- `start`: Pagination for extensive market analysis
-  - 0: Initial market data
-  - 60: Extended competitor set
-  - 120: Full market coverage
+# Examples:
+tbs=mr:1,price:1,ppr_max:300      # Find items under $300
+tbs=mr:1,price:1,ppr_min:500      # Find items over $500
+tbs=mr:1,price:1,ppr_min:200,ppr_max:500  # Find items $200-$500
+```
+Note: `mr:1,price:1` are required codes that enable price filtering. Always include them when filtering by price.
+
+#### 2. Product Condition
+```
+# Filter by item condition:
+tbs=condition:1      # New items only
+tbs=condition:2      # Used items only
+tbs=condition:3      # Refurbished items only
+tbs=condition:1,2    # Both new and used items
+```
+
+#### 3. Availability & Sales
+```
+# Filter by stock and sale status:
+tbs=merchant:1     # In stock items only
+tbs=sale:1         # Items on sale only
+
+# Combine filters:
+tbs=sale:1,merchant:1    # In-stock items that are on sale
+```
+
+#### 4. Shipping Options
+```
+# Filter by shipping terms:
+tbs=ship:0    # Any shipping method
+tbs=ship:1    # Free shipping only
+```
+
+#### 5. Seller Type
+```
+# Filter by seller category:
+tbs=seller_type:1    # Authorized/official retailers only
+tbs=seller_type:2    # Marketplace sellers only
+```
+
+### Results Depth Control
+
+Control the number of results using the `num` parameter (maximum 100):
+
+```
+/competitive-pricing analyze:"Target product" num:20  # Quick scan: 20 sellers
+/competitive-pricing analyze:"Target product" num:60  # Standard view: 60 sellers
+/competitive-pricing analyze:"Target product" num:100 # Full analysis: 100 sellers
+```
+
+### Pagination Control
+
+Use `start` parameter to navigate through results:
+
+```
+/competitive-pricing analyze:"Product" num:60 start:0   # First 60 results
+/competitive-pricing analyze:"Product" num:60 start:60  # Next 60 results
+/competitive-pricing analyze:"Product" num:60 start:120 # Final set
+```
 
 ## Example Commands
 
-Basic competitor analysis:
+### Basic Price Analysis with Filters
 ```
-/competitive-pricing analyze:"Louis Poulsen PH 5 Pendant" in:US,UK compare:prices
-```
-
-```
-/competitive-pricing research:"Flos IC Lights S Pendant" market:global
+/competitive-pricing analyze:"Louis Poulsen PH 5" tbs=condition:1,mr:1,price:1,ppr_max:1000
 ```
 
-Regional price comparison:
+### Multi-Market Comparison with Stock Filter
 ```
-/competitive-pricing compare:"Tom Dixon Beat Light" regions:NYC,LA,Miami
+/competitive-pricing compare:"Flos IC Lights" in:US,UK,CA tbs=merchant:1,condition:1
 ```
 
-Advanced market research:
+### Sale Items with Free Shipping
 ```
-/competitive-pricing analyze:"Artemide Tolomeo" full:market data:complete direct:true
+/competitive-pricing search:"Tom Dixon Beat Light" tbs=sale:1,ship:1 locations:NYC,LA
+```
+
+### Complete Market Analysis with Multiple Filters
+```
+/competitive-pricing analyze:"Artemide Tolomeo" num:100 tbs=condition:1,seller_type:1,merchant:1
+```
+
+### Premium New Products from Authorized Sellers
+```
+/competitive-pricing search:"Herman Miller Aeron" tbs=condition:1,seller_type:1,mr:1,price:1,ppr_min:500
 ```
 
 ## Response Information
@@ -115,39 +173,73 @@ The command returns comprehensive market data including:
 - Distribution channels
 - Price history trends
 
-## Tips for Best Results
-
-1. Use exact product names
-2. Include model numbers
-3. Specify multiple regions
-4. Compare across markets
-5. Track price histories
-6. Monitor seller networks
-
 ## Special Features
 
 ### Enhanced Market Analysis
 Available in key markets:
-- United States (gl=us)
-- Australia (gl=au)
-- Canada (gl=ca)
-- New Zealand (gl=nz)
+- United States
+- Australia
+- Canada
+- New Zealand
 - Additional markets
 
-For these markets:
+Features in these markets:
 - Direct seller comparison
 - Complete pricing data
 - Enhanced market insights
 - Detailed competitor analysis
 
+## Tips for Best Results
+
+1. Combine multiple tbs parameters effectively:
+```
+# New items on sale with free shipping
+tbs=condition:1,sale:1,ship:1
+
+# Authorized sellers with specific price range
+tbs=seller_type:1,mr:1,price:1,ppr_min:100,ppr_max:1000
+
+# In-stock items from marketplace sellers
+tbs=merchant:1,seller_type:2
+```
+
+2. Use pagination for complete market coverage:
+```
+# Start with first batch
+/competitive-pricing analyze:"Product" num:100 start:0 tbs=condition:1
+
+# Get next batch
+/competitive-pricing analyze:"Product" num:100 start:100 tbs=condition:1
+```
+
+3. Mix location and condition filters:
+```
+# New items from authorized sellers in multiple markets
+/competitive-pricing compare:"Product" in:US,UK tbs=condition:1,seller_type:1
+```
+
 ## Error Resolution
 
-If the command returns incomplete data:
-- Verify product identifiers
-- Check market availability
-- Confirm regional settings
-- Validate search parameters
-- Adjust result depth
-- Review market access
+### Common Issues and Solutions:
 
-For optimal market analysis in supported regions, use direct_link=true and collect complete pagination data.
+1. Invalid TBS Combinations
+- Verify price filter includes mr:1,price:1
+- Check for conflicting condition filters
+- Ensure sale and shipping filters are compatible
+
+2. Pagination Errors
+- Start with lower result numbers
+- Use proper start increments (0, 60, 120)
+- Verify maximum result limits
+
+3. Market Availability
+- Check product availability in specified markets
+- Verify regional restrictions
+- Confirm seller coverage
+
+4. Filter Compatibility
+- Ensure filters are available in selected markets
+- Check for market-specific restrictions
+- Verify feature availability
+
+Remember: While these technical parameters enable detailed analysis, you can use natural language and the system will interpret your requirements appropriately.
