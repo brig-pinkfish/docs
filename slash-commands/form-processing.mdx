@@ -1,0 +1,81 @@
+---
+title: "Form Processing Command Guide"
+description: "Learn how to use the Form Processing slash command to extract data from forms"
+---
+
+The `/form-processing` command allows you to extract form fields and their values using a machine learning model specifically trained for this purpose. Over the last year, LLM models like Claude and OpenAI have eclipsed custom models like this. But every now and then, a custom trained model like this may have greater accuracy. So if you're struggling with a LLM to do document processing on scanned or PDF forms, give this a try.
+
+## Basic Usage
+
+Process a form by either uploading a file or providing a URL:
+
+```
+/form-processing
+File: [Upload your form file]
+```
+
+or
+
+```
+/form-processing
+URL: [URL to your form file]
+```
+
+## Input Formats
+
+Supported file types include:
+- PDF documents
+- Scanned images (PNG, JPEG)
+- Digital forms
+
+## Output Format
+
+The command returns a JSON object containing:
+
+1. Field Extractions:
+   - Field names and their extracted values
+   - Confidence scores for each extraction
+   - Field types (e.g., checkbox status, text fields)
+
+2. Metadata:
+   - Processing timestamp
+   - File information
+   - Model version
+
+Example output:
+```json
+{
+    "json": {
+        "PHARMACY": {
+            "fieldValue": "filled_checkbox",
+            "confidence": 0.9997177124023438
+        },
+        "Member ID Number": {
+            "fieldValue": "871381692",
+            "confidence": 0.9334482550621033
+        },
+        "Date of Birth:": {
+            "fieldValue": "20-MARCH-1960",
+            "confidence": 0.9115520119667053
+        }
+    },
+    "table": []
+}
+```
+
+## Understanding the Results
+
+### Field Values
+- Text fields: Contains the extracted text
+- Checkboxes: Reports as either "filled_checkbox" or "unfilled_checkbox"
+- Empty fields: May return "-" or be omitted
+
+### Confidence Scores
+- Range from 0 to 1 (0% to 100% confidence)
+- Higher scores indicate greater confidence in the extraction
+- Generally:
+  - >0.9: Very high confidence
+  - 0.7-0.9: Good confidence
+  - <0.7: Lower confidence, may need review
+
+The Form Processing command provides a reliable way to extract data from structured forms. While newer LLM models have broader capabilities, this specialized tool can still outperform them for specific form processing tasks.
