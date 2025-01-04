@@ -6,56 +6,44 @@ icon: "plug"
 
 ## What are Connections?
 
-Connections are integrations that allow your Automation platform to interact with external services, tools, and platforms. They extend the capabilities of your automations by enabling them to work with a wide range of third-party applications and data sources.
+Connections are integrations to external services. 
 
-## Key Aspects of Connections
+With connections, you can retrieve data from and write data to external services, like Salesforce, Google Sheets, Slack, and more. So if you want to write an automation that gets a list of new customers from Salesforce and then sends your sales team an update in Slack showing customers who signed up today with ARR over $40k, this is where you start.
 
-### Components of a Connection
 
-Each Connection consists of several important elements:
 
-- **Label**: A human-readable name for the connection.
-- **Logo**: An visual identifier for the service.
-- **Category**: A classification of the type of service (e.g., CRM, Marketing, Analytics).
-- **Active Status**: Whether the connection is currently active and available for use.
+### API Connections
+API connections are your bread and butter. You can use them to get data from any service that exposes an API. Most modern services do and we've got a growing list of connections that work out of the box. On the Connections page, click the plus sign, authenticate, and then you're off to the races. 
 
-### Connection Management
+If we don't already have an API connection that you want, send a note to support@pinkfish.ai and we'll get one going for you. Coming soon, you'll be able to create your own API connections. 
 
-The platform provides a user-friendly interface for managing your connections:
+### Browser Connections
 
-1. **Viewing Connections**: All available connections are displayed in a table format, showing key information at a glance.
+Ok, now it gets interesting. If the service you want to retrieve data from or write data to doesn't expose an API, you can use a browser connection. When you create a browser connection, Pinkfish will open a browser window to the login page of your selected service. You will then authenticate, solve any challenges (like captchas, one time passwords, or 2fa), and then Pinkfish will store your logged in session details. Note that Pinkfish does not store your login credentials, only your session details. 
 
-2. **Filtering**: You can easily filter connections based on their names or categories.
+Once saved, you can use that saved session in tandem with Pinkfish's browser automation skills. Your saved browser connections will be avialable in your slash command menu list (just like your API connections). 
 
-3. **Sorting**: Connections can be sorted by various attributes like name, active status, or category.
 
-4. **Categorization**: Connections are grouped into categories, which can be toggled on or off for easier management.
+The two skills that support browser connections are `/scraper` and `/browser session`.  
 
-## How Connections Work
+#### Scraper
+Scraper allows you to navigate to a given page and to scrape the contents. It supports LLM Vision scraping, so you can get really specific about what data you want to bring back and in what format.
 
-1. **Activation**: To use a connection, you need to activate it for your account. This typically involves an authentication process with the third-party service.
+#### Browser Session
+Browser session is a more full featured browser automation skill that allows you to do things like fill out forms, click buttons, download files, and more. 
 
-2. **Usage**: Once activated, a connection can be used within your automations to interact with the corresponding external service.
+#### Example prompt 
 
-3. **Management**: You can connect or disconnect services as needed through the Connections interface.
+Here's an example showing use of a browser connection to scrape a web page.
 
-## Key Features of the Connections System
+```
+Browser connection - babylon
+Scrape web page(s) https://forum.babylonjs.com/u/bigrig/summary 
+```
 
-- **Easy Discovery**: The table layout and filtering options make it simple to find the connections you need.
+In this example, I selected my "Babylon" browser connection and then used the `/scraper` skill to scrape my private profile page, which I can only access as a logged in user. 
 
-- **Visual Indicators**: Active connections are clearly marked with a green checkmark for quick identification.
+#### Session expiry & Re-authentication
+Browser sessions work the same as if you'd logged in to the service yourself. They will expire whenever the service's session expires. Sometimes it's a few hours, sometimes its a month. If the service offers a "remember me" option, you can use that to extend the session timeout. You'll need to monitor your browser automations and re-authenticate as needed. 
 
-- **Category Management**: You can show or hide entire categories of connections to focus on what's relevant to your work.
-
-- **Quick Access**: A keyboard shortcut ('/') allows for rapid access to the connection filter, speeding up your workflow.
-
-## Why Connections are Important
-
-Connections are crucial for creating powerful, versatile automations:
-
-- They allow your automations to interact with a wide range of external tools and services.
-- They enable data exchange between your automation platform and other systems you use.
-- By centralizing connection management, they simplify the process of maintaining and updating your integrations.
-- They extend the capabilities of your automation platform, allowing you to create more comprehensive and powerful workflows.
-
-Understanding and effectively managing your Connections allows you to create more sophisticated, integrated automations that can interact with all the tools in your technology stack. This integration capability is key to building automations that can handle complex, real-world business processes spanning multiple systems and data sources.
+To re-authenticate, open the browser connection and click the "Update Connection" button. Re-login and you'll be good to go. 
