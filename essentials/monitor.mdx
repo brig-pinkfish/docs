@@ -35,34 +35,44 @@ The Runs Monitor is a dashboard that allows you to view, track, and analyze the 
 - Includes a loading indicator to show when new data is being fetched
 - Displays the total number of runs currently visible
 
-## How to Use the Runs Monitor
+## When to Use the Runs Monitor
 
-1. **View Runs**: Upon opening, you'll see a list of recent Automation runs.
+### Debugging during build 
+When you're developing an automation, especially when you're using triggers, the runs monitor is where you'll go to see what happened after your trigger fired.
 
-2. **Filter by Date**: Use the date picker to select a specific time range for viewing runs.
+### Troubleshooting
+Sometimes an automation will start to fail or will fail occasionally. The runs monitor is where you'll go to
+- Learn about failures (if  you didn't already know)
+- See the inputs that were used
+- See the result from each step, including success/failure of API calls or browser automations
 
-3. **Search**: Use the search bar to filter runs by Automation ID.
+### Performance Analysis
+If you're trying to optimize an automation, the runs monitor is where you'll go to see how long it took and how many steps it completed.
 
-4. **Customize View**: Click the "Columns" button to show/hide specific columns in the table.
+### Auditing
+If you need to audit what happened in a sequence of automations or in a sequence of steps, the runs monitor is where you'll go to see the history.
+- See when each step started and finished
+- See who (or what, in the case of a trigger) started the automation
+- See who the automation communicated with and what data was sent and received
 
-5. **Sort Runs**: Click on column headers to sort the runs based on that column.
+## A note about logging 
+To get the most out of the monitor, you can take advantage of the logging function in your automations. This will make it easier to find the information you need in the runs monitor. To use the logging funtion, add to your prompt what you want to log specifically or just generally. For example: 
 
-6. **View Details**: Click on any run in the table to open a sidebar with detailed information about that run.
+Here's a specific example:
+```
+/gmail loop through contacts list, send email to each contact using template "email-template"
+log: 
+ - complete email payload before sending 
+ - log the result of each email send
+    -- success or failure
+    -- error message if it failed
+    -- the email address that was used
+    -- the id of the contact that was used (not part of the payload)
+```
 
-7. **Refresh Data**: The monitor periodically refreshes to show the latest runs.
+Here's a more general example:
+```
+/gmail loop through contacts list, send email to each contact using template "email-template"
+log: information that will be helpful in debugging and auditing 
+```
 
-## Why the Runs Monitor is Important
-
-The Runs Monitor is a crucial tool for several reasons:
-
-1. **Oversight**: It provides a bird's-eye view of all your Automation executions.
-
-2. **Troubleshooting**: Quickly identify and investigate failed or long-running Automations.
-
-3. **Performance Analysis**: Track run durations and step counts to optimize your Automations.
-
-4. **Auditing**: Keep a record of who started each run and when.
-
-5. **Version Tracking**: See which versions of your Automations are being run.
-
-Understanding and effectively using the Runs Monitor allows you to maintain better control over your Automations, ensure they're running as expected, and quickly address any issues that arise. It's an essential tool for managing and optimizing your automated workflows.
