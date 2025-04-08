@@ -1,0 +1,245 @@
+---
+title: "Limits"
+description: "Platform limits and constraints"
+icon: "gauge-max"
+---
+# Platform Limits
+Our platform includes certain limits and constraints to ensure optimal performance, reliability, and fair usage across all customers. This guide explains these limits and how they may affect your usage.
+
+## Overview
+Pinkfish implements various limits to ensure the platform remains stable, secure, and performant for all users. These limits are designed to prevent resource abuse while still providing flexibility for legitimate use cases. Understanding these limits helps you design more effective automations and manage your resources efficiently.
+
+<Info>
+Different limits apply to different aspects of the platform. Some are tied to your subscription plan, some are technical constraints, and some exist for security and compliance reasons.
+</Info>
+
+## Plan-Specific Limits
+Different subscription plans include different resource allocations and limits:
+
+### Plan Tier Structure
+Pinkfish offers a tiered approach to meet varying customer needs:
+
+<Tabs>
+  <Tab title="Starter">
+    Free trial account with basic features and limited resources:
+    - Single user access
+    - Limited collections
+    - Basic automations
+  </Tab>
+  <Tab title="Pro">
+    Available with monthly or annual billing, three tiers with increasing resources:
+    - Single user access
+    - Standard features
+    - API connections
+    - Browser operator
+  </Tab>
+  <Tab title="Team">
+    Available with monthly or annual billing, three tiers with team features:
+    - Up to 10 users
+    - Collaboration features
+    - Advanced connections
+    - Multiple organizations
+  </Tab>
+  <Tab title="Enterprise">
+    Custom solutions with maximum resources:
+    - Unlimited users
+    - All advanced features
+    - Highest concurrency limits
+    - Optional add-on packages
+  </Tab>
+</Tabs>
+
+### Feature Availability by Plan
+Certain features are only available on specific plans:
+
+| Feature | Starter | Pro | Team | Enterprise |
+|---------|---------|-----|------|------------|
+| Basic Automations | ✓ | ✓ | ✓ | ✓ |
+| All Connections | ✗ | ✓ | ✓ | ✓ |
+| Advanced Analytics | ✗ | Tier 2+ | ✓ | ✓ |
+| User Management | ✗ | ✗ | ✓ | ✓ |
+| Custom Connections | ✗ | ✗ | Tier 2+ | ✓ |
+| Multiple Org Management | ✗ | ✗ | ✓ | ✓ |
+| SSO | ✗ | ✗ | Tier 3+ | ✓ |
+| Browser Operator | ✗ | ✓ | ✓ | ✓ |
+| Custom API Connections | ✗ | ✓ | ✓ | ✓ |
+| Browser Operator Plus | ✗ | ✗ | ✗ | Optional |
+| Organization Plus | ✗ | ✗ | ✗ | Optional |
+| Multi-user Access | ✗ | ✗ | ✓ | ✓ |
+
+### Resource Limits by Plan
+The table below summarizes the key numeric limits for each plan:
+
+| Resource | Starter | Pro | Team | Enterprise |
+|----------|---------|-----|------|------------|
+| **Concurrent Browser Sessions** | 1 | 1 | 2 | 5+ |
+| **Concurrent Automation Runs** | 5 | 5 | 20 | 200+ |
+| **Additional Organizations** | 0 | 0 | 2 | 5+ |
+| **Custom API Connections** | 0 | 5 | 10 | 100 |
+| **Browser Operator Logins** | 0 | 5 | 10 | 100 |
+| **Team Members** | 1 | 1 | 10 | Unlimited |
+| **Datastore Collections** | 1 | 1 | 10 | 100 |
+| **File Storage Collections** | 1 | 1 | 10 | 100 |
+| **Vault Collections** | 1 | 1 | 10 | 100 |
+
+## Concurrency Limits
+Pinkfish manages concurrency to ensure platform stability and fair resource allocation:
+
+### Browser Operator Concurrency
+The number of concurrent browser automation sessions you can run:
+- **Starter Plan**: 1 concurrent session
+- **Pro Plans**: 1 concurrent session
+- **Team Plans**: 2 concurrent sessions
+- **Enterprise Plans**: 5 concurrent sessions (Additional 5 sessions available with Browser Plus package)
+
+### Automation Run Concurrency
+The number of automations that can run simultaneously:
+- **Starter Plan**: 5 concurrent runs
+- **Pro Plans**: 5 concurrent runs
+- **Team Plans**: 20 concurrent runs
+- **Enterprise Plans**: 200+ concurrent runs
+
+### Datastore Concurrency Considerations
+When multiple automations access the same datastore items simultaneously:
+
+<Warning>
+There is no built-in race condition prevention in Datastore. Multiple automations attempting to write to the same datastore item may produce unexpected results.
+</Warning>
+
+- Consider implementing your own locking mechanism for critical datastore operations
+- Use unique keys or sortFields when possible to avoid conflicts
+
+## Storage Limits
+
+### Collection Limits
+
+#### Items per Collection
+Each collection type has a maximum number of items it can contain:
+<CardGroup cols={3}>
+  <Card title="Datastore Collections" icon="database">
+    10,000 items per collection
+  </Card>
+  <Card title="File Storage Collections" icon="file">
+    1,000 items per collection
+  </Card>
+  <Card title="Vault Collections" icon="lock">
+    100 items per collection
+  </Card>
+</CardGroup>
+
+#### Collections per Subscription Tier
+The number of collections you can create varies by subscription tier:
+
+| Collection Type | Starter | Pro | Team | Enterprise |
+|-----------------|---------|-----|------|------------|
+| Datastore | 1 | 1 | 10 | 100 |
+| File Storage | 1 | 1 | 10 | 100 |
+| Vault | 1 | 1 | 10 | 100 |
+
+<Info>
+Team and Enterprise collection limits apply at the organization level, not per user.
+</Info>
+
+#### Datastore Limits
+- **Key and Sort Field Structure**: Each item requires a unique key + sort field combination
+- **Item Size**: [Content placeholder - maximum size of datastore items]
+- **Metadata Size**: [Content placeholder - maximum size of metadata fields]
+- **Query Results**: [Content placeholder - maximum number of items returned in a single query]
+
+#### File Storage Limits
+- **File Size**: [Content placeholder - maximum size of individual files]
+- **Storage Quota**: [Content placeholder - total storage allocation by plan]
+- **Filename Length**: [Content placeholder - maximum length of filenames]
+- **Metadata Size**: [Content placeholder - maximum size of file metadata]
+- **Access History**: [Content placeholder - retention period for access logs]
+
+#### Vault Limits
+- **Secret Size**: [Content placeholder - maximum size of vault items]
+- **Number of Secrets**: [Content placeholder - maximum number of vault items by plan]
+- **Field Count**: [Content placeholder - maximum number of fields in a vault item]
+- **Access Frequency**: [Content placeholder - rate limits for accessing vault items]
+
+## Organization Limits
+
+### Multiple Organizations
+The number of organizations you can create or manage:
+- **Starter Plan**: 0 additional organizations
+- **Pro Plans**: 0 additional organizations
+- **Team Plans**: 2 organizations
+- **Enterprise Plans**: 5 organizations (Additional organizations available with Org Plus package)
+
+## Connection Limits
+
+### Custom API Connections
+The number of custom API connections you can configure:
+- **Starter Plan**: 0 connections
+- **Pro Plans**: 5 connections
+- **Team Plans**: 10 connections
+- **Enterprise Plans**: 100 connections
+
+### Browser Operator Logins
+The number of browser-based service logins you can maintain:
+- **Starter Plan**: 0 logins
+- **Pro Plans**: 5 logins
+- **Team Plans**: 10 logins
+- **Enterprise Plans**: 100 logins
+
+## User Limits
+
+### Team Members
+The number of users who can access your Pinkfish workspace:
+- **Starter Plan**: 1 user
+- **Pro Plans**: 1 user
+- **Team Plans**: 10 users
+- **Enterprise Plans**: Unlimited users
+
+## Usage Limits
+
+### Execution Limits
+- **Runtime Duration**: [Content placeholder - maximum execution time for automation runs]
+- **Concurrent Runs**: [Content placeholder - maximum number of simultaneous automation executions]
+- **Step Timeout**: [Content placeholder - maximum time a single step can run]
+- **Scheduled Runs**: [Content placeholder - maximum number of scheduled runs per automation]
+
+### API Rate Limits
+- **Requests Per Minute**: [Content placeholder - rate limits for API requests]
+- **Requests Per Day**: [Content placeholder - daily quota for API requests]
+- **Payload Size**: [Content placeholder - maximum size of API request payloads]
+- **Response Time**: [Content placeholder - timeout settings for API responses]
+
+## Requesting Limit Increases
+For specific use cases, some limits can be adjusted to accommodate legitimate business needs:
+
+<Steps>
+  <Step title="Determine eligibility">
+    Identify which limits need to be increased and verify your plan supports limit increases
+  </Step>
+  <Step title="Submit request">
+    Contact our support team with specific details about which limits you need increased
+  </Step>
+  <Step title="Provide justification">
+    Explain your use case and why the current limits are insufficient
+  </Step>
+  <Step title="Review process">
+    Our team will evaluate your request based on technical feasibility and account standing
+  </Step>
+  <Step title="Implementation">
+    If approved, limit increases will be applied to your account
+  </Step>
+</Steps>
+
+## Best Practices
+To work effectively within platform limits:
+
+- **Design for Efficiency**: Break large automations into smaller, focused workflows
+- **Implement Pagination**: Process large datasets in smaller batches
+- **Use Webhooks**: Leverage webhooks for long-running processes rather than keeping automations active
+- **Monitor Usage**: Regularly check your usage against your plan limits
+- **Clean Up Resources**: Remove unused automations, files, and data items
+- **Optimize Storage**: Compress large files before storing them
+- **Handle Race Conditions**: Design automations to avoid simultaneous writes to the same resources
+- **Use Collections**: Organize related items into collections for better management
+
+<Note>
+For specific questions about platform limits or to discuss your particular use case, contact our support team at support@pinkfish.ai.
+</Note>
