@@ -93,6 +93,80 @@
           }
         }
       }
+    },
+    "/ext/webhook/{apiKey}/triggers/{triggerId}": {
+      "post": {
+        "summary": "Trigger an automation via webhook",
+        "description": "Executes an automation using a webhook URL with embedded API key. Designed for third-party services that cannot set custom headers.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The API key for authentication (embedded in URL)"
+          },
+          {
+            "name": "triggerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the trigger"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "example": {
+                "event": "issue_created",
+                "issue_id": "12345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Automation triggered successfully",
+            "headers": {
+              "X-Pf-Run-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The unique identifier for this automation run"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -107,7 +181,10 @@
             "type": "string"
           }
         },
-        "required": ["error", "message"]
+        "required": [
+          "error",
+          "message"
+        ]
       }
     },
     "securitySchemes": {

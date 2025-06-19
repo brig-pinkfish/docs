@@ -1,21 +1,21 @@
 ---
-title: 'Triggers API'
-description: 'API reference for Pinkfish Triggers'
+title: "Triggers API"
+description: "API reference for Pinkfish Triggers"
 ---
 
 ## Triggers API
 
-This API enables you to execute Pinkfish automations that you've created and published. With these "trigger" endpoints, you can integrate automated workflows into your applications and systems. You can also trigger one automation from another automation - thereby chaining automations together. 
+This API enables you to execute Pinkfish automations that you've created and published. With these "trigger" endpoints, you can integrate automated workflows into your applications and systems. You can also trigger one automation from another automation - thereby chaining automations together.
 
-There is no API for other services that you might be looking for, such as retrieving monitor logs, billing data, or automation CRUD operations. 
+There is no API for other services that you might be looking for, such as retrieving monitor logs, billing data, or automation CRUD operations.
 
 ## Key Concepts
 
-* **Automation**: A series of steps that perform a specific task or workflow.
+- **Automation**: A series of steps that perform a specific task or workflow.
 
-* **Trigger**: A mechanism to initiate an automation via API call. You must set up a trigger in order to call your automation by API.
+- **Trigger**: A mechanism to initiate an automation via API call. You must set up a trigger in order to call your automation by API.
 
-* **Run**: An instance of an automation being executed.
+- **Run**: An instance of an automation being executed.
 
 ## Execution Models
 
@@ -23,23 +23,35 @@ Our API supports two execution models:
 
 ### Asynchronous (Fire and Forget)
 
-* When you call an automation trigger with `x-api-wait: false`, the API immediately returns (with a runId in the response *header*)
+When you create a trigger for your automation, you get two options:
 
-* The automation runs asynchronously in the background
+1. **API Trigger Endpoint**: Use this with the API key in the header (`X-API-KEY`)
 
-* Results are not directly returned via the API call
+   - Format: `https://triggers.app.pinkfish.ai/ext/triggers/{triggerId}`
+   - Requires API key in request headers
+   - Best for server-to-server integrations
 
-* Best for long-running automations or when immediate response isn't required
+2. **Webhook URL**: Use this for 3rd party services that can't set custom headers
+   - Format: `https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/triggers/{triggerId}`
+   - API key is embedded in the URL path for authentication
+   - Best for services like Slack, Discord, Linear, Zoom, and other webhook-based integrations
+
+Both options:
+
+- Return immediately with a runId in the response header
+- Run the automation asynchronously in the background
+- Don't return results directly via the API call
+- Are best for long-running automations or when immediate response isn't required
 
 ### Synchronous (Wait for Result)
 
-* When you call an automation trigger with `x-api-wait: true`, the API waits for up to 60 seconds for completion
+- When you call an automation trigger with `x-api-wait: true`, the API waits for up to 60 seconds for completion
 
-* If the automation completes within this window, the response body contains the results
+- If the automation completes within this window, the response body contains the results
 
-* If the automation takes longer than 60 seconds, the call returns with a timeout and a runId
+- If the automation takes longer than 60 seconds, the call returns with a timeout and a runId
 
-* Best for quick automations where you need immediate results
+- Best for quick automations where you need immediate results
 
 To view the outcome of an automation run (especially for async calls or timeouts), you have several options:
 
@@ -175,6 +187,56 @@ Response Body
     "message": "Automation execution exceeded 60 second timeout. Use runId to check results in Run Monitor."
 }
 ```
+
+## Webhook Triggers
+
+Webhook triggers provide an alternative way to execute automations when working with third-party services that cannot set custom headers (like Slack, Discord, Linear, Zoom, etc.).
+
+### Webhook URL Format
+
+```
+https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/triggers/{triggerId}
+```
+
+### Key Differences from API Triggers
+
+| Feature        | API Trigger                   | Webhook Trigger                              |
+| -------------- | ----------------------------- | -------------------------------------------- |
+| Authentication | API key in `X-API-KEY` header | API key embedded in URL path                 |
+| URL Format     | `/ext/triggers/{triggerId}`   | `/ext/webhook/{apiKey}/triggers/{triggerId}` |
+| Use Case       | Server-to-server integrations | Third-party services with webhook support    |
+| Security       | More secure (key in headers)  | Less secure (key visible in URL)             |
+
+### Example Webhook Request
+
+```
+POST https://triggers.app.pinkfish.ai/ext/webhook/L2wOL4e7yr6G3Us5LKqHa1BLuhMIW5iR1vAqwFga/triggers/d1a49cl8hlvc714q38e0
+Content-Type: application/json
+
+{
+    "event": "issue_created",
+    "issue_id": "12345",
+    "title": "New feature request"
+}
+```
+
+### Security Considerations
+
+Since the API key is embedded in the webhook URL:
+
+- Treat webhook URLs as sensitive credentials
+- Only share with trusted third-party services
+- Consider rotating API keys periodically
+- Monitor webhook usage in the Runs Monitor
+
+### Common Webhook Integrations
+
+- **Slack**: Use in Slack workflows or slash commands
+- **Discord**: Set up bot commands or server events
+- **Linear**: Trigger automations on issue updates
+- **Zoom**: Execute automations from Zoom apps
+- **GitHub**: Run automations on repository events
+- **Stripe**: Process payment events
 
 ## Getting Started
 
