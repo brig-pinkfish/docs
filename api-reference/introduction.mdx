@@ -5,17 +5,17 @@ description: "API reference for Pinkfish Triggers"
 
 ## Triggers API
 
-This API enables you to execute Pinkfish automations that you've created and published. With these "trigger" endpoints, you can integrate automated workflows into your applications and systems. You can also trigger one automation from another automation - thereby chaining automations together.
+This API enables you to execute Pinkfish workflows that you've created and published. With these "trigger" endpoints, you can integrate automated workflows into your applications and systems. You can also trigger one workflow from another workflow - thereby chaining workflows together.
 
-There is no API for other services that you might be looking for, such as retrieving monitor logs, billing data, or automation CRUD operations.
+There is no API for other services that you might be looking for, such as retrieving monitor logs, billing data, or workflow CRUD operations.
 
 ## Key Concepts
 
-- **Automation**: A series of steps that perform a specific task or workflow.
+- **Workflow**: A series of steps that perform a specific task or workflow.
 
-- **Trigger**: A mechanism to initiate an automation via API call. You must set up a trigger in order to call your automation by API.
+- **Trigger**: A mechanism to initiate a workflow via API call. You must set up a trigger in order to call your workflow by API.
 
-- **Run**: An instance of an automation being executed.
+- **Run**: An instance of a workflow being executed.
 
 ## Execution Models
 
@@ -23,7 +23,7 @@ Our API supports two execution models:
 
 ### Asynchronous (Fire and Forget)
 
-When you create a trigger for your automation, you get two options:
+When you create a trigger for your workflow, you get two options:
 
 1. **API Trigger Endpoint**: Use this with the API key in the header (`X-API-KEY`)
 
@@ -39,25 +39,25 @@ When you create a trigger for your automation, you get two options:
 Both options:
 
 - Return immediately with a runId in the response header
-- Run the automation asynchronously in the background
+- Run the workflow asynchronously in the background
 - Don't return results directly via the API call
-- Are best for long-running automations or when immediate response isn't required
+- Are best for long-running workflows or when immediate response isn't required
 
 ### Synchronous (Wait for Result)
 
-- When you call an automation trigger with `x-api-wait: true`, the API waits for up to 60 seconds for completion
+- When you call a workflow trigger with `x-api-wait: true`, the API waits for up to 60 seconds for completion
 
-- If the automation completes within this window, the response body contains the results
+- If the workflow completes within this window, the response body contains the results
 
-- If the automation takes longer than 60 seconds, the call returns with a timeout and a runId
+- If the workflow takes longer than 60 seconds, the call returns with a timeout and a runId
 
-- Best for quick automations where you need immediate results
+- Best for quick workflows where you need immediate results
 
-To view the outcome of an automation run (especially for async calls or timeouts), you have several options:
+To view the outcome of a workflow run (especially for async calls or timeouts), you have several options:
 
-1. Check the effects of the automation (e.g., a created Google Doc or message to Slack). This is entirely up to you to devise.
+1. Check the effects of the workflow (e.g., a created Google Doc or message to Slack). This is entirely up to you to devise.
 
-2. Load the automation in the platform UI (you will see results from the last run). Warning: if you have edited your automation since your last publish, you won't see results here.
+2. Load the workflow in the platform UI (you will see results from the last run). Warning: if you have edited your workflow since your last publish, you won't see results here.
 
 3. Use the Runs Monitor in the platform to view execution status and results. This is the most reliable and simple method.
 
@@ -73,18 +73,18 @@ You can generate API keys in two ways:
 
 1. In the Library section of the platform interface.
 
-2. While setting up a trigger for an automation.
+2. While setting up a trigger for a workflow.
 
-## Triggering Automations
+## Triggering Workflows
 
-Automations are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests), as form-encoded data, or as a json payload. Set up your trigger(s) in the Automation editor (requires first publishing a version of your automation)
+Workflows are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests), as form-encoded data, or as a json payload. Set up your trigger(s) in the Workflow editor (requires first publishing a version of your workflow)
 
 ## Example Requests
 
 ### Asynchronous Request (Form-encoded)
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --header 'x-api-wait: false' \
@@ -94,7 +94,7 @@ curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_I
 ### Synchronous Request (JSON)
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_AUTOMATION_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
 --header 'Content-Type: application/json' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --header 'x-api-wait: true' \
@@ -129,7 +129,7 @@ null
 
 ### Synchronous Response (Successful)
 
-If the automation completes within 60 seconds, you'll receive the results in the response body:
+If the workflow completes within 60 seconds, you'll receive the results in the response body:
 
 ```
 {
@@ -175,7 +175,7 @@ If the automation completes within 60 seconds, you'll receive the results in the
 
 ### Synchronous Response (Timeout)
 
-If the automation doesn't complete within 60 seconds:
+If the workflow doesn't complete within 60 seconds:
 
 ```
 Response Headers
@@ -184,13 +184,13 @@ Response Headers
 Response Body
 {
     "status": "timeout",
-    "message": "Automation execution exceeded 60 second timeout. Use runId to check results in Run Monitor."
+    "message": "Workflow execution exceeded 60 second timeout. Use runId to check results in Run Monitor."
 }
 ```
 
 ## Webhook Triggers
 
-Webhook triggers provide an alternative way to execute automations when working with third-party services that cannot set custom headers (like Slack, Discord, Linear, Zoom, etc.).
+Webhook triggers provide an alternative way to execute workflows when working with third-party services that cannot set custom headers (like Slack, Discord, Linear, Zoom, etc.).
 
 ### Webhook URL Format
 
@@ -233,21 +233,21 @@ Since the API key is embedded in the webhook URL:
 
 - **Slack**: Use in Slack workflows or slash commands
 - **Discord**: Set up bot commands or server events
-- **Linear**: Trigger automations on issue updates
-- **Zoom**: Execute automations from Zoom apps
-- **GitHub**: Run automations on repository events
+- **Linear**: Trigger workflows on issue updates
+- **Zoom**: Execute workflows from Zoom apps
+- **GitHub**: Run workflows on repository events
 - **Stripe**: Process payment events
 
 ## Getting Started
 
-To begin using the AI Automation API, you'll need to:
+To begin using the AI Workflow API, you'll need to:
 
-1. Create and publish an automation using our platform.
+1. Create and publish a workflow using our platform.
 
-2. Set up a trigger for your automation.
+2. Set up a trigger for your workflow.
 
 3. Generate an API key from either the Library section or during trigger setup.
 
-4. Choose your execution model (sync or async) based on your automation's expected runtime and your application's needs.
+4. Choose your execution model (sync or async) based on your workflow's expected runtime and your application's needs.
 
-5. Use the provided trigger endpoint to execute your automation, including your API key and preferred wait setting in the request headers.
+5. Use the provided trigger endpoint to execute your workflow, including your API key and preferred wait setting in the request headers.

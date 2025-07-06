@@ -5,23 +5,26 @@ description: "Learn how to implement a job queue system using the datastore comm
 
 The datastore can be used as a job queue system. This guide explains how to create, schedule, and process jobs using the datastore.
 
-
 ## How It Works in 3 Steps
 
 ### 1. Create a Job Definition (a datastore item)
+
 Create an item in the datastore that includes a status in its metadata (like "not_started"). This is your job definition and status tracker. Put any data you need to send to the worker in the contents of the item.
 
 #### 1a. Attach an API Trigger
-As part of the item creation process, attach an API trigger to your worker automation. Your worker automation will receive a payload containing details about the job (the item's content and metadata).
 
-### 2. Create an Orchestration Automation
-Create an automation that will be your orchestration automation. This automation will query for jobs with a status of "not_started" and then update the item's status to "started". This will automatically fire your trigger and will kick off your worker automation. You can run this automation manually or schedule it to run on a regular basis.
+As part of the item creation process, attach an API trigger to your worker workflow. Your worker workflow will receive a payload containing details about the job (the item's content and metadata).
 
-### 3. Process the Job with your Worker Automation
-Your worker automation will receive a payload containing details about the job (the item's content and metadata). Your worker should process the job as you wish and then update the item's status to "completed". Be sure to update with triggers off to avoid triggering your worker automation again.
+### 2. Create an Orchestration Workflow
 
+Create a workflow that will be your orchestration workflow. This workflow will query for jobs with a status of "not_started" and then update the item's status to "started". This will automatically fire your trigger and will kick off your worker workflow. You can run this workflow manually or schedule it to run on a regular basis.
+
+### 3. Process the Job with your Worker Workflow
+
+Your worker workflow will receive a payload containing details about the job (the item's content and metadata). Your worker should process the job as you wish and then update the item's status to "completed". Be sure to update with triggers off to avoid triggering your worker workflow again.
 
 ## Creating a Job
+
 To create a new job:
 
 ```
@@ -43,22 +46,24 @@ triggerUrls: {
 
 ## Understanding Triggers and Workers
 
-When a job's status changes, you can have an automation run to process it (this is your worker automation). This happens through triggers.
+When a job's status changes, you can have a workflow run to process it (this is your worker workflow). This happens through triggers.
 
 ### How Triggers Work
 
 1. When creating a job, you attach trigger URLs that should be called when the job updates
-2. When you update the job's status, all attached triggers will fire (set up your trigger to point to your worker automation)
-3. Your worker automation receives a payload containing details about the job (the item's content and metadata). It also gives you info about what changed in the doc - which in this case is just the status that you updated. What you really care about here is the job details that will allow you to process the job.
+2. When you update the job's status, all attached triggers will fire (set up your trigger to point to your worker workflow)
+3. Your worker workflow receives a payload containing details about the job (the item's content and metadata). It also gives you info about what changed in the doc - which in this case is just the status that you updated. What you really care about here is the job details that will allow you to process the job.
 
 ```json
 {
-  "dataChanged": { // Shows you everything that changed in the item
+  "dataChanged": {
+    // Shows you everything that changed in the item
     "metadata": {
       "status": "started"
     }
   },
-  "newDataset": { // This is the full current contents of your item
+  "newDataset": {
+    // This is the full current contents of your item
     "key": "jobs",
     "sortField": "job-2024-03-15-001",
     "content": {
@@ -93,7 +98,7 @@ There are two ways to process jobs:
 
 ### 1. On-Demand Processing
 
-Write an automation that you run manually.
+Write a workflow that you run manually.
 
 ```
 /datastore update item with:
@@ -110,7 +115,7 @@ metadata: {
 
 ### 2. Scheduled Processing
 
-Create a job orchestration automation that runs every 5 minutes (minimum interval) to process jobs. Here's the complete flow:
+Create a job orchestration workflow that runs every 5 minutes (minimum interval) to process jobs. Here's the complete flow:
 
 1. First, query for available jobs:
 
@@ -139,7 +144,7 @@ metadata: {
 ```
 
 ⚠️ **WARNING: Race Condition Risk**
-There is a critical race condition that can occur here: If you ran this scheduled orchestration automation simultaneously with another orchestration automation that is also processing jobs, you could end up with multiple workers claiming the same job.
+There is a critical race condition that can occur here: If you ran this scheduled orchestration workflow simultaneously with another orchestration workflow that is also processing jobs, you could end up with multiple workers claiming the same job.
 
 For example:
 
@@ -171,7 +176,7 @@ metadata: {
 
 ## Handling Multiple Workers Safely
 
-When multiple automations process jobs simultaneously, you need to prevent them from processing the same job. The status field handles this automatically:
+When multiple workflows process jobs simultaneously, you need to prevent them from processing the same job. The status field handles this automatically:
 
 ### 1. Status-Based Job Claims
 
@@ -231,7 +236,6 @@ metadata: {
 limit: 10
 ```
 
-
 ## Complete Job Lifecycle Example
 
 1. **Create Job**
@@ -269,7 +273,8 @@ metadata: {
 ```
 
 3. **Complete Job**
-Be sure to update with triggers off to avoid triggering your worker automation again.
+   Be sure to update with triggers off to avoid triggering your worker automation again.
+
 ```
 /datastore update item with triggers off:
 key: jobs

@@ -1,23 +1,23 @@
 ---
 title: "Vault"
-description: "Securely store and access sensitive data in your automations"
+description: "Securely store and access sensitive data in your workflows"
 icon: "vault"
 ---
 
 ## What is Vault?
 
-Vault is Pinkfish's secure storage system for retrieving encrypted secrets and inserting them into your step code or browser automations. It's perfect for storing and accessing sensitive data like usernames, passwords, and API keys.
+Vault is Pinkfish's secure storage system for retrieving encrypted secrets and inserting them into your step code or browser workflows. It's perfect for storing and accessing sensitive data like usernames, passwords, and API keys.
 
-With Vault, you can safely store sensitive information and reference it in your automations without exposing the actual values in your code. However, Vault alone cannot handle scenarios that require 2FA (two-factor authentication) or CAPTCHA solving. For these cases, you have two better options:
+With Vault, you can safely store sensitive information and reference it in your workflows without exposing the actual values in your code. However, Vault alone cannot handle scenarios that require 2FA (two-factor authentication) or CAPTCHA solving. For these cases, you have two better options:
 
-1. **Browser Connections**: For browser-based automations that require 2FA/CAPTCHA, use Browser Connections to maintain an authenticated session.
+1. **Browser Connections**: For browser-based workflows that require 2FA/CAPTCHA, use Browser Connections to maintain an authenticated session.
 2. **API Connections**: For services that offer API access, use API Connections to bypass browser authentication entirely.
 
 For example, while you could store Salesforce credentials in Vault, you'd want to use Browser Connections if your Salesforce instance requires 2FA, or API Connections if you're performing actions that can be done through Salesforce's API.
 
 ### Using Vault
 
-You can access your stored Vault items using the `/get-secret` command. Here's an example of how to use a stored Salesforce login in an automation:
+You can access your stored Vault items using the `/get-secret` command. Here's an example of how to use a stored Salesforce login in a workflow:
 
 ```
 /get-secret salesforceLogin
@@ -28,7 +28,7 @@ You can access your stored Vault items using the `/get-secret` command. Here's a
 - click "login" button
 ```
 
-In this example, the automation retrieves the stored credentials and uses them to log into Salesforce. The actual username and password values are never exposed in the automation code.
+In this example, the workflow retrieves the stored credentials and uses them to log into Salesforce. The actual username and password values are never exposed in the workflow code.
 
 ### Storing Items in Vault
 
@@ -41,26 +41,26 @@ You can store new items in Vault through the Pinkfish web interface:
 5. Save the item
 
 Your stored items can include multiple fields. For example, a single Vault item might contain:
+
 ```json
 {
-    "username": "myuser@company.com",
-    "password": "mypassword",
-    "apiKey": "abc123",
-    "customField": "custom value"
+  "username": "myuser@company.com",
+  "password": "mypassword",
+  "apiKey": "abc123",
+  "customField": "custom value"
 }
 ```
 
 ### Security Considerations
 
-- Vault items are encrypted at rest and only decrypted when needed by your automations
-- Credentials are never exposed in your automation code or logs
+- Vault items are encrypted at rest and only decrypted when needed by your workflows
+- Credentials are never exposed in your workflow code or logs
 - Access to Vault items requires proper authentication
-- You can rotate or update stored credentials without modifying your automations
+- You can rotate or update stored credentials without modifying your workflows
 
 ### Best Practices
 
 1. Use descriptive key names that indicate the purpose of the stored item
 2. Store related credentials (like username/password pairs) in the same Vault item
 3. Regularly review and update your stored credentials
-4. Never hardcode sensitive information in your automations - always use Vault references
-
+4. Never hardcode sensitive information in your workflows - always use Vault references
