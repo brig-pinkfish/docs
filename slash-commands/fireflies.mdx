@@ -1,0 +1,142 @@
+---
+title: "Fireflies Command Guide"
+description: "Learn how to use the Fireflies slash command for meeting transcripts and analytics"
+---
+
+The `/fireflies` command enables you to access and manage meeting transcripts, notes, and conversation analytics. Perfect for:
+
+- Accessing meeting transcripts
+- Searching conversations
+- Managing action items
+- Analyzing topics
+- Creating notes
+
+## Basic Usage
+
+Use the command to interact with Fireflies:
+
+```
+/fireflies get transcripts from last 10 meetings
+```
+
+```
+/fireflies search for "user engagement" across all meetings
+```
+
+```
+/fireflies show details for transcript ff_tr_123456789
+```
+
+## Key Features
+
+### User Management
+- List organization users
+- View user IDs
+- Track attendees
+
+### Transcript Access
+- List recent transcripts
+- View meeting details
+- Check duration
+- See attendees
+
+### Detailed Analysis
+- View full sentences
+- Speaker attribution
+- Timestamp tracking
+- Topic extraction
+- Action items
+
+### Search Capabilities
+- Search across transcripts
+- Find specific phrases
+- View context snippets
+- Speaker identification
+
+### Note Management
+- Add notes to transcripts
+- Timestamp notes
+- Track important moments
+
+## Example Commands
+
+### Get Users
+```
+/fireflies list all users in organization
+```
+
+### List Transcripts
+```
+/fireflies show last 10 meeting transcripts
+```
+
+### Get Transcript Details
+```
+/fireflies get full details for transcript ff_tr_123456789
+```
+
+### Search Transcripts
+```
+/fireflies search for "quarterly goals" in all meetings
+```
+
+### Create Note
+```
+/fireflies add note "Important decision made" to transcript ff_tr_123456789 at 450 seconds
+```
+
+## GraphQL Queries
+
+The Fireflies API uses GraphQL. Common queries include:
+
+### Basic Transcript List
+```graphql
+query GetTranscripts($limit: Int, $offset: Int) {
+  transcripts(limit: $limit, offset: $offset) {
+    title
+    date
+    transcript_id
+    duration_seconds
+  }
+}
+```
+
+### Detailed Transcript
+```graphql
+query GetTranscriptDetails($transcript_id: ID!) {
+  transcript(transcript_id: $transcript_id) {
+    sentences { speaker_name timestamp text }
+    topics { title start_time end_time }
+    action_items { text assignee { name } due_date }
+  }
+}
+```
+
+## Response Data
+
+### Transcript Info
+- Title and date
+- Unique transcript ID
+- Duration in seconds
+- Attendee list
+
+### Sentence Data
+- Speaker name
+- Timestamp (seconds)
+- Transcript text
+
+### Topics
+- Topic title
+- Start/end times
+- Related content
+
+### Action Items
+- Task description
+- Assignee details
+- Due dates
+
+## Tips
+- Use transcript IDs for specific queries
+- Search is case-insensitive
+- Timestamps are in seconds
+- Limit results for performance 

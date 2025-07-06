@@ -1,0 +1,240 @@
+---
+title: "Structure JSON"
+description: "Structure unstructured data into JSON format"
+---
+
+# Structure JSON
+
+Structure unstructured data into JSON format using AI-powered data transformation to convert text, documents, and other unstructured content into organized JSON structures.
+
+## Overview
+
+The Structure JSON skill provides functionality for:
+- Converting unstructured text into JSON format
+- Processing uploaded files and extracting structured data
+- Transforming various data formats into JSON
+- Following custom structuring instructions
+- Handling complex data transformation tasks
+
+## Connection Requirements
+
+This skill uses an internal service and doesn't require external connections.
+
+## Basic Usage
+
+```javascript
+// Structure text data into JSON
+const payload = {
+  "model": "gpt-4o",
+  "systemPrompt": ["your job is to structure the user's data or file data into JSON. output as json only with no other text."],
+  "userPrompt": ["Convert this customer feedback into JSON with sentiment analysis"],
+  "fileUrls": []
+};
+```
+
+## Key Features
+
+### Data Transformation
+- **Text to JSON**: Convert unstructured text into structured JSON
+- **File Processing**: Extract and structure data from uploaded files
+- **Custom Instructions**: Follow specific formatting requirements
+- **Multi-format Support**: Handle various input data types
+
+### AI-Powered Processing
+- **Intelligent Parsing**: Understand context and relationships in data
+- **Flexible Output**: Adapt JSON structure to data content
+- **Error Handling**: Graceful handling of malformed or unclear data
+- **Consistency**: Maintain consistent output format
+
+## Common Operations
+
+### Structure Text Data
+```javascript
+POST: {INTERNAL_SKILL_URL}/llm/gpt
+{
+  "model": "gpt-4o",
+  "systemPrompt": ["your job is to structure the user's data or file data into JSON. output as json only with no other text."],
+  "userPrompt": ["Structure this customer data: John Doe, age 35, works at Acme Corp, email john@acme.com, phone 555-1234"],
+  "fileUrls": []
+}
+```
+
+### Process File Data
+```javascript
+POST: {INTERNAL_SKILL_URL}/llm/gpt
+{
+  "model": "gpt-4o",
+  "systemPrompt": ["your job is to structure the user's data or file data into JSON. output as json only with no other text."],
+  "userPrompt": ["Extract customer information from this invoice"],
+  "fileUrls": ["https://example.com/invoice.pdf"]
+}
+```
+
+## Use Cases
+
+### Customer Data Structuring
+```javascript
+// Input: "John Smith, 28 years old, Software Engineer at Tech Corp, lives in New York, email: john@techcorp.com"
+// Output:
+{
+  "name": "John Smith",
+  "age": 28,
+  "occupation": "Software Engineer",
+  "company": "Tech Corp",
+  "location": "New York",
+  "email": "john@techcorp.com"
+}
+```
+
+### Product Information
+```javascript
+// Input: "iPhone 14 Pro, 256GB, Space Black, $999, available in store"
+// Output:
+{
+  "product": "iPhone 14 Pro",
+  "storage": "256GB",
+  "color": "Space Black",
+  "price": 999,
+  "currency": "USD",
+  "availability": "in store"
+}
+```
+
+### Survey Response Processing
+```javascript
+// Input: "The service was excellent, staff very helpful, would recommend 9/10"
+// Output:
+{
+  "feedback": "The service was excellent, staff very helpful, would recommend",
+  "rating": 9,
+  "scale": 10,
+  "sentiment": "positive",
+  "recommendation": true
+}
+```
+
+## File Processing
+
+### Supported File Types
+- **PDF**: Extract text and structure data
+- **CSV**: Convert to structured JSON objects
+- **TXT**: Process plain text files
+- **DOC/DOCX**: Extract and structure document content
+- **Images**: OCR text extraction and structuring
+
+### File URL Handling
+```javascript
+{
+  "fileUrls": [
+    "https://example.com/document.pdf",
+    "https://example.com/data.csv"
+  ]
+}
+```
+
+## Response Structure
+
+### Successful Response
+```javascript
+{
+  "output": {
+    "customers": [
+      {
+        "name": "John Doe",
+        "age": 35,
+        "company": "Acme Corp",
+        "email": "john@acme.com",
+        "phone": "555-1234"
+      }
+    ]
+  }
+}
+```
+
+### Processing with Files
+```javascript
+{
+  "output": {
+    "invoice": {
+      "number": "INV-2024-001",
+      "date": "2024-01-15",
+      "customer": {
+        "name": "ABC Company",
+        "address": "123 Main St, City, State"
+      },
+      "items": [
+        {
+          "description": "Consulting Services",
+          "quantity": 10,
+          "rate": 100,
+          "amount": 1000
+        }
+      ],
+      "total": 1000
+    }
+  }
+}
+```
+
+## Custom Instructions
+
+### Specific Formatting
+```javascript
+{
+  "userPrompt": ["Structure this data with specific fields: name, email, phone, and categorize by department"]
+}
+```
+
+### Validation Rules
+```javascript
+{
+  "userPrompt": ["Convert to JSON and ensure all email addresses are valid format"]
+}
+```
+
+### Hierarchical Structure
+```javascript
+{
+  "userPrompt": ["Organize this company data into departments with employees nested under each department"]
+}
+```
+
+## Error Handling
+
+### Common Issues
+- **Malformed Data**: Incomplete or unclear input data
+- **File Access**: Issues accessing provided file URLs
+- **Format Conflicts**: Conflicting instructions or data formats
+- **Size Limits**: Large files or data sets exceeding limits
+
+### Best Practices for Error Prevention
+```javascript
+// Clear, specific instructions
+{
+  "userPrompt": ["Convert this customer list to JSON with fields: name, email, phone, company"]
+}
+
+// Validate file URLs before processing
+{
+  "fileUrls": ["https://valid-url.com/file.pdf"]
+}
+```
+
+## Important Notes
+
+- **System Prompt**: Always use the exact system prompt provided - do not modify it
+- **Output Format**: The service returns JSON-only output without additional text
+- **File Processing**: Ensure file URLs are accessible and valid
+- **Model Selection**: Uses GPT-4o for optimal data structuring performance
+- **Response Handling**: Access the output through the `output` property or fallback to the full response
+
+## Best Practices
+
+1. **Clear Instructions**: Provide specific, clear instructions for desired JSON structure
+2. **Data Validation**: Validate input data quality before processing
+3. **File Accessibility**: Ensure file URLs are accessible and contain relevant data
+4. **Error Handling**: Implement proper error handling for failed transformations
+5. **Output Validation**: Validate the structured JSON output meets requirements
+6. **Batch Processing**: Process related data together for consistency
+7. **Custom Fields**: Specify exact field names and formats needed
+8. **Data Types**: Consider appropriate data types for different fields (strings, numbers, booleans) 

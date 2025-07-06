@@ -1,0 +1,612 @@
+---
+title: "QuickBooks Command Guide"
+description: "Learn how to use the QuickBooks slash command to manage accounting and financial data"
+---
+
+The `/quickbooks` command enables you to access and manage QuickBooks accounting data including customers, invoices, bills, payments, and financial reports. Perfect for:
+
+- Customer and vendor management
+- Invoice and billing operations
+- Payment processing
+- Financial reporting
+- Accounting automation
+
+## Basic Usage
+
+Use the command to work with QuickBooks:
+
+```
+/quickbooks create new customer with contact information
+```
+
+```
+/quickbooks generate invoice for customer services
+```
+
+```
+/quickbooks record payment for outstanding invoice
+```
+
+## Key Features
+
+### Customer Management
+- Create and update customers
+- Manage contact information
+- Customer relationship tracking
+- Payment history
+- Customer reporting
+
+### Invoice Operations
+- Create invoices
+- Track invoice status
+- Payment processing
+- Invoice templates
+- Automated billing
+
+### Financial Management
+- Payment recording
+- Vendor management
+- Bill processing
+- Financial reporting
+- Account management
+
+## Example Commands
+
+### Customer Operations
+```
+/quickbooks add new customer John Smith with billing address
+```
+
+### Invoice Management
+```
+/quickbooks create invoice for customer with line items
+```
+
+### Payment Processing
+```
+/quickbooks record payment for invoice #12345
+```
+
+### Vendor Management
+```
+/quickbooks create new vendor for office supplies
+```
+
+## Company Information
+
+### Get Company Info
+```javascript
+const url = QUICKBOOKS_URL + `company/${REALM_ID}/companyinfo/${COMPANY_ID}`;
+```
+
+### Company Response
+```javascript
+{
+  "output": {
+    "CompanyInfo": {
+      "Id": "123456789",
+      "SyncToken": "0",
+      "CompanyName": "ABC Enterprises",
+      "LegalName": "ABC Enterprises LLC",
+      "CompanyAddr": {
+        "Id": "1",
+        "Line1": "123 Main Street",
+        "City": "Mountain View",
+        "CountrySubDivisionCode": "CA",
+        "PostalCode": "94043",
+        "Country": "US"
+      },
+      "Country": "US",
+      "Email": {
+        "Address": "info@abcenterprises.com"
+      },
+      "WebAddr": {
+        "URI": "https://www.abcenterprises.com"
+      },
+      "SupportedLanguages": "en",
+      "FiscalYearStartMonth": "January"
+    }
+  }
+}
+```
+
+## Customer Management
+
+### Create Customer
+```javascript
+// POST company/{REALM_ID}/customer
+{
+  "DisplayName": "John Smith",
+  "PrimaryEmailAddr": {
+    "Address": "john.smith@example.com"
+  },
+  "PrimaryPhone": {
+    "FreeFormNumber": "555-555-5555"
+  },
+  "BillAddr": {
+    "Line1": "123 Main Street",
+    "City": "San Francisco",
+    "CountrySubDivisionCode": "CA",
+    "PostalCode": "94105",
+    "Country": "US"
+  }
+}
+```
+
+### Customer Response
+```javascript
+{
+  "output": {
+    "Customer": {
+      "Id": "1234",
+      "SyncToken": "0",
+      "DisplayName": "John Smith",
+      "PrimaryEmailAddr": {
+        "Address": "john.smith@example.com"
+      },
+      "PrimaryPhone": {
+        "FreeFormNumber": "555-555-5555"
+      },
+      "BillAddr": {
+        "Id": "567",
+        "Line1": "123 Main Street",
+        "City": "San Francisco",
+        "CountrySubDivisionCode": "CA",
+        "PostalCode": "94105",
+        "Country": "US"
+      },
+      "Active": true,
+      "MetaData": {
+        "CreateTime": "2023-09-15T14:45:00Z",
+        "LastUpdatedTime": "2023-09-15T14:45:00Z"
+      }
+    }
+  }
+}
+```
+
+### Update Customer
+```javascript
+{
+  "Id": "1234",
+  "SyncToken": "0",
+  "DisplayName": "John A. Smith",
+  "PrimaryEmailAddr": {
+    "Address": "john.smith@example.com"
+  },
+  "BillAddr": {
+    "Id": "567",
+    "Line1": "456 Market Street",
+    "City": "San Francisco",
+    "CountrySubDivisionCode": "CA",
+    "PostalCode": "94105",
+    "Country": "US"
+  },
+  "sparse": true
+}
+```
+
+### List Customers
+```javascript
+const url = QUICKBOOKS_URL + `company/${REALM_ID}/query?query=select * from Customer`;
+```
+
+### Customers List Response
+```javascript
+{
+  "output": {
+    "QueryResponse": {
+      "Customer": [
+        {
+          "Id": "1234",
+          "DisplayName": "John A. Smith",
+          "PrimaryEmailAddr": {
+            "Address": "john.smith@example.com"
+          },
+          "Active": true
+        },
+        {
+          "Id": "5678",
+          "DisplayName": "Jane Doe",
+          "PrimaryEmailAddr": {
+            "Address": "jane.doe@example.com"
+          },
+          "Active": true
+        }
+      ],
+      "startPosition": 1,
+      "maxResults": 2,
+      "totalCount": 2
+    }
+  }
+}
+```
+
+## Invoice Management
+
+### Create Invoice
+```javascript
+// POST company/{REALM_ID}/invoice
+{
+  "Line": [
+    {
+      "Amount": 100.00,
+      "DetailType": "SalesItemLineDetail",
+      "SalesItemLineDetail": {
+        "ItemRef": {
+          "value": "1",
+          "name": "Services"
+        }
+      }
+    }
+  ],
+  "CustomerRef": {
+    "value": "1234"
+  },
+  "BillEmail": {
+    "Address": "john.smith@example.com"
+  },
+  "TxnDate": "2023-09-15"
+}
+```
+
+### Invoice Response
+```javascript
+{
+  "output": {
+    "Invoice": {
+      "Id": "9876",
+      "SyncToken": "0",
+      "Line": [
+        {
+          "Id": "1",
+          "LineNum": 1,
+          "Amount": 100.00,
+          "DetailType": "SalesItemLineDetail",
+          "SalesItemLineDetail": {
+            "ItemRef": {
+              "value": "1",
+              "name": "Services"
+            }
+          }
+        }
+      ],
+      "CustomerRef": {
+        "value": "1234",
+        "name": "John A. Smith"
+      },
+      "BillEmail": {
+        "Address": "john.smith@example.com"
+      },
+      "TxnDate": "2023-09-15",
+      "TotalAmt": 100.00,
+      "Balance": 100.00,
+      "MetaData": {
+        "CreateTime": "2023-09-15T16:00:00Z",
+        "LastUpdatedTime": "2023-09-15T16:00:00Z"
+      }
+    }
+  }
+}
+```
+
+### Get Invoice
+```javascript
+const url = QUICKBOOKS_URL + `company/${REALM_ID}/invoice/${INVOICE_ID}`;
+```
+
+## Payment Processing
+
+### Create Payment
+```javascript
+// POST company/{REALM_ID}/payment
+{
+  "CustomerRef": {
+    "value": "1234"
+  },
+  "TotalAmt": 100.00,
+  "Line": [
+    {
+      "Amount": 100.00,
+      "LinkedTxn": [
+        {
+          "TxnId": "9876",
+          "TxnType": "Invoice"
+        }
+      ]
+    }
+  ],
+  "PaymentMethodRef": {
+    "value": "3"
+  },
+  "TxnDate": "2023-09-16"
+}
+```
+
+### Payment Response
+```javascript
+{
+  "output": {
+    "Payment": {
+      "Id": "5432",
+      "SyncToken": "0",
+      "CustomerRef": {
+        "value": "1234",
+        "name": "John A. Smith"
+      },
+      "TotalAmt": 100.00,
+      "Line": [
+        {
+          "Amount": 100.00,
+          "LinkedTxn": [
+            {
+              "TxnId": "9876",
+              "TxnType": "Invoice"
+            }
+          ]
+        }
+      ],
+      "PaymentMethodRef": {
+        "value": "3",
+        "name": "Credit Card"
+      },
+      "TxnDate": "2023-09-16",
+      "MetaData": {
+        "CreateTime": "2023-09-16T10:00:00Z",
+        "LastUpdatedTime": "2023-09-16T10:00:00Z"
+      }
+    }
+  }
+}
+```
+
+## Vendor Management
+
+### Create Vendor
+```javascript
+// POST company/{REALM_ID}/vendor
+{
+  "DisplayName": "Office Supplies Co.",
+  "PrimaryEmailAddr": {
+    "Address": "contact@officesupplies.com"
+  },
+  "PrimaryPhone": {
+    "FreeFormNumber": "555-123-4567"
+  },
+  "BillAddr": {
+    "Line1": "789 Supply St",
+    "City": "Chicago",
+    "CountrySubDivisionCode": "IL",
+    "PostalCode": "60601",
+    "Country": "US"
+  }
+}
+```
+
+### Vendor Response
+```javascript
+{
+  "output": {
+    "Vendor": {
+      "Id": "2468",
+      "SyncToken": "0",
+      "DisplayName": "Office Supplies Co.",
+      "PrimaryEmailAddr": {
+        "Address": "contact@officesupplies.com"
+      },
+      "PrimaryPhone": {
+        "FreeFormNumber": "555-123-4567"
+      },
+      "BillAddr": {
+        "Id": "789",
+        "Line1": "789 Supply St",
+        "City": "Chicago",
+        "CountrySubDivisionCode": "IL",
+        "PostalCode": "60601",
+        "Country": "US"
+      },
+      "Active": true,
+      "MetaData": {
+        "CreateTime": "2023-09-16T11:00:00Z",
+        "LastUpdatedTime": "2023-09-16T11:00:00Z"
+      }
+    }
+  }
+}
+```
+
+## Entity Properties
+
+### Common Fields
+- **Id**: Unique identifier
+- **SyncToken**: Version control token
+- **DisplayName**: Entity display name
+- **Active**: Active status
+- **MetaData**: Creation and update timestamps
+
+### Address Structure
+```javascript
+{
+  "Id": "567",
+  "Line1": "123 Main Street",
+  "Line2": "Suite 100",
+  "City": "San Francisco",
+  "CountrySubDivisionCode": "CA",
+  "PostalCode": "94105",
+  "Country": "US"
+}
+```
+
+### Contact Information
+```javascript
+{
+  "PrimaryEmailAddr": {
+    "Address": "contact@example.com"
+  },
+  "PrimaryPhone": {
+    "FreeFormNumber": "555-123-4567"
+  },
+  "Mobile": {
+    "FreeFormNumber": "555-987-6543"
+  }
+}
+```
+
+## Query Operations
+
+### Query Syntax
+```javascript
+// Basic query
+const query = "select * from Customer";
+
+// Filtered query
+const query = "select * from Customer where Active = true";
+
+// Ordered query
+const query = "select * from Invoice order by TxnDate desc";
+
+// Limited query
+const query = "select * from Customer maxresults 10";
+```
+
+### Common Queries
+```javascript
+// Active customers
+"select * from Customer where Active = true"
+
+// Recent invoices
+"select * from Invoice where TxnDate > '2023-01-01'"
+
+// Unpaid invoices
+"select * from Invoice where Balance > 0"
+
+// Vendors by name
+"select * from Vendor where DisplayName like '%Office%'"
+```
+
+## Connection Requirements
+
+### PinkConnect Setup
+- Uses PC_BASE_URL + v3/ endpoint
+- Requires QuickBooks connection ID
+- OAuth 2.0 authentication
+- Realm ID for company access
+
+### Authentication Headers
+```javascript
+const headers = {
+  'Authorization': `Bearer ${BEARER_TOKEN}`,
+  'Content-Type': 'application/json',
+  'Premium-Id': config.paragonIntegrations.pinkfishpremiumskills
+};
+```
+
+## Best Practices
+
+1. **Data Management**
+   - Always include SyncToken for updates
+   - Validate required fields
+   - Handle sparse updates properly
+   - Use appropriate date formats
+
+2. **Error Handling**
+   - Check for validation errors
+   - Handle authentication failures
+   - Implement retry logic
+   - Log important operations
+
+3. **Performance**
+   - Use specific queries instead of broad selects
+   - Implement pagination for large datasets
+   - Cache frequently accessed data
+   - Monitor API rate limits
+
+4. **Security**
+   - Protect authentication tokens
+   - Validate input data
+   - Use HTTPS connections
+   - Implement proper access controls
+
+## Common Use Cases
+
+### Automated Invoicing
+```
+/quickbooks create monthly recurring invoices for all active customers
+```
+
+### Payment Tracking
+```
+/quickbooks record credit card payment for invoice and update status
+```
+
+### Customer Onboarding
+```
+/quickbooks create new customer profile with complete contact details
+```
+
+### Financial Reporting
+```
+/quickbooks generate accounts receivable report for this month
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid Realm ID
+- Missing SyncToken for updates
+- Validation errors
+- Authentication failures
+- Rate limit exceeded
+
+### Error Response
+```javascript
+{
+  "Fault": {
+    "Error": [
+      {
+        "code": "ValidationFault",
+        "Detail": "Required field DisplayName is missing",
+        "element": "Customer"
+      }
+    ],
+    "type": "ValidationFault"
+  }
+}
+```
+
+## Data Validation
+
+### Required Fields
+- **Customer**: DisplayName
+- **Invoice**: CustomerRef, Line items
+- **Payment**: CustomerRef, TotalAmt
+- **Vendor**: DisplayName
+
+### Field Constraints
+- Email addresses must be valid format
+- Phone numbers should be properly formatted
+- Dates must be in YYYY-MM-DD format
+- Amounts must be numeric values
+
+## Integration Tips
+
+### Workflow Automation
+- Set up automated invoice generation
+- Implement payment reminders
+- Create customer onboarding flows
+- Automate financial reporting
+
+### Data Synchronization
+- Sync customer data with CRM
+- Update inventory from invoices
+- Reconcile payments automatically
+- Generate financial dashboards
+
+## Tips
+- Always include required headers for authentication
+- Use SyncToken for all update operations
+- Validate data formats before sending requests
+- Implement proper error handling for API failures
+- Cache entity IDs to improve performance
+- Use sparse updates to modify only changed fields
+- Monitor rate limits to avoid service interruptions 

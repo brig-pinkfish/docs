@@ -1,0 +1,211 @@
+---
+title: "Talkdesk"
+description: "Manage your customer service operations through Talkdesk"
+---
+
+# Talkdesk
+
+Manage your customer service operations through Talkdesk's cloud-based contact center platform for customer support, sales, and agent management.
+
+## Overview
+
+The Talkdesk skill provides functionality for:
+- Managing users and agents in your contact center
+- Creating and managing intent cards for AI-powered guidance
+- Handling customer service operations
+- Configuring contact center workflows
+- Accessing user and system information
+
+## Connection Requirements
+
+This skill requires a Talkdesk connection configured through either:
+- **PinkConnect Proxy**: PC_BASE_URL
+- **Paragon Proxy**: PARA_BASE_URL + "custom/{integrationId}/"
+- **Connection ID**: `custom.talkdesk`
+
+## Basic Usage
+
+```javascript
+// Get integration ID for Paragon proxy
+const integrationId = config.paragonIntegrations.talkdesk;
+const url = PARA_BASE_URL + `custom/${integrationId}/users`;
+
+// Or use PinkConnect proxy
+const url = PC_BASE_URL + "users";
+```
+
+## Key Features
+
+### User Management
+- **List Users**: Get all users in your Talkdesk account
+- **User Information**: Access user details, roles, and permissions
+- **Agent Management**: Manage contact center agents and their settings
+- **Active Status**: Monitor user activity and availability
+
+### Intent Card Management
+- **Create Intent Cards**: Build AI-powered guidance cards for agents
+- **Draft Management**: Create and manage draft intent cards
+- **Content Organization**: Organize guidance content by topics and languages
+- **Agent Assistance**: Provide contextual help to agents during interactions
+
+## Common Operations
+
+### List All Users
+```javascript
+GET: users
+```
+
+### Create Intent Card Draft
+```javascript
+POST: guide/intent-card/drafts
+{
+  "title": "Customer Support Guide",
+  "language": "en-us",
+  "content": "Step-by-step guide for handling customer inquiries",
+  "tags": ["support", "troubleshooting"]
+}
+```
+
+## Response Structures
+
+### Users Response
+```javascript
+{
+  "output": {
+    "total": 15,
+    "count": 15,
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 1,
+    "_embedded": {
+      "users": [
+        {
+          "id": "123456789",
+          "email": "agent@company.com",
+          "name": "Agent Name",
+          "active": true,
+          "gender": "Male",
+          "extension": null,
+          "external_phone_number": "+123456789",
+          "created_at": "2022-01-04T14:48:35Z",
+          "_links": {
+            "self": {
+              "href": "https://api.talkdeskapp.com/users/123456789"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### Intent Card Draft Response
+```javascript
+{
+  "output": {
+    "id": "0ad52ae2-784c-4acd-8d78-8444a09b51e8",
+    "title": "Customer Support Guide",
+    "language": "en-us",
+    "version": "0.1",
+    "active": true,
+    "status": "ACTIVE",
+    "tags": [],
+    "edited_at": "2024-11-09T15:13:59Z",
+    "edited_by": "system",
+    "created_at": "2024-11-09T15:13:59Z",
+    "created_by": "system",
+    "metadata": [],
+    "_links": {
+      "self": {
+        "href": "http://api.talkdeskapp.com/guide/intent-card/drafts"
+      }
+    }
+  }
+}
+```
+
+## User Management Features
+
+### User Properties
+- **ID**: Unique user identifier
+- **Email**: User's email address
+- **Name**: Full name of the user
+- **Active Status**: Whether the user is currently active
+- **Extension**: Phone extension (if applicable)
+- **External Phone**: External phone number for the user
+- **Creation Date**: When the user account was created
+
+### User Roles
+- **Agents**: Front-line customer service representatives
+- **Supervisors**: Team leads and managers
+- **Administrators**: System administrators with full access
+- **Analysts**: Users focused on reporting and analytics
+
+## Intent Card System
+
+### Card Properties
+- **Title**: Descriptive title for the intent card
+- **Language**: Language code (e.g., "en-us", "es-es")
+- **Version**: Version number for tracking changes
+- **Status**: Current status (ACTIVE, DRAFT, ARCHIVED)
+- **Tags**: Categorization tags for organization
+- **Metadata**: Additional structured information
+
+### Content Management
+- **Draft Creation**: Create new intent cards in draft status
+- **Version Control**: Track changes and versions
+- **Publishing**: Move cards from draft to active status
+- **Localization**: Support multiple languages
+
+## API Endpoints
+
+### User Endpoints
+- **GET /users**: List all users
+- **GET /users/{userId}**: Get specific user details
+- **POST /users**: Create new user (if supported)
+- **PUT /users/{userId}**: Update user information
+
+### Intent Card Endpoints
+- **GET /guide/intent-card/drafts**: List draft intent cards
+- **POST /guide/intent-card/drafts**: Create new draft intent card
+- **PUT /guide/intent-card/drafts/{cardId}**: Update draft intent card
+- **DELETE /guide/intent-card/drafts/{cardId}**: Delete draft intent card
+
+## Pagination
+
+### Response Pagination
+```javascript
+{
+  "total": 150,        // Total number of records
+  "count": 20,         // Records in current response
+  "page": 1,           // Current page number
+  "per_page": 20,      // Records per page
+  "total_pages": 8     // Total number of pages
+}
+```
+
+### Navigation
+- Use `page` parameter to navigate through results
+- Default `per_page` is typically 20 records
+- Check `more_records` or `total_pages` for additional data
+
+## Important Notes
+
+- **Integration ID**: Required for Paragon proxy connections
+- **API Versioning**: Talkdesk API may have version-specific endpoints
+- **Rate Limits**: Respect API rate limits for high-volume operations
+- **Authentication**: Handled automatically through proxy connections
+- **Time Zones**: All timestamps are in UTC format
+- **Language Codes**: Use standard language codes for intent cards
+
+## Best Practices
+
+1. **User Management**: Regularly audit user accounts and permissions
+2. **Intent Cards**: Create comprehensive, well-organized guidance content
+3. **Pagination**: Handle paginated responses properly for large datasets
+4. **Error Handling**: Implement robust error handling for API calls
+5. **Caching**: Cache user data appropriately to reduce API calls
+6. **Localization**: Consider multiple languages for global operations
+7. **Version Control**: Track intent card versions for change management
+8. **Performance**: Monitor API response times and optimize accordingly 

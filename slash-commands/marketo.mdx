@@ -1,0 +1,447 @@
+---
+title: "Marketo API Command Guide"
+description: "Learn how to use the Marketo API slash command for marketing automation and lead management"
+---
+
+The `/marketo` command enables you to manage marketing automation and lead management through Marketo's platform. Perfect for:
+
+- Lead management and tracking
+- Campaign automation
+- Email marketing
+- Lead scoring and nurturing
+- Marketing analytics
+
+## Basic Usage
+
+Use the command to work with Marketo:
+
+```
+/marketo get lead by ID 318581
+```
+
+```
+/marketo create leads with email "john.doe@example.com" and company "Acme Corp"
+```
+
+```
+/marketo trigger campaign 1001 for leads with discount code
+```
+
+## Key Features
+
+### Lead Management
+- Create and update leads
+- Search leads by criteria
+- Track lead activities
+- Manage lead data
+- Lead scoring
+
+### Campaign Management
+- Get campaign information
+- Trigger campaigns
+- Track campaign performance
+- Manage campaign assets
+- Automation workflows
+
+### Email Operations
+- Send sample emails
+- Manage email templates
+- Track email performance
+- Personalization
+- A/B testing
+
+### Asset Management
+- Forms management
+- Landing pages
+- Email templates
+- Programs
+- Custom objects
+
+## Example Commands
+
+### Lead Operations
+```
+/marketo find leads by email "john.doe@example.com,jane.smith@example.com"
+```
+
+### Campaign Triggers
+```
+/marketo request campaign 1001 with tokens for discount code "SAVE20"
+```
+
+### Asset Retrieval
+```
+/marketo get all forms and their configurations
+```
+
+### Activity Tracking
+```
+/marketo get lead activities for web page visits and email clicks
+```
+
+## Lead Operations
+
+### Get Lead by ID
+```javascript
+const url = MARKETO_URL + `lead/${leadId}.json`;
+```
+
+### Create or Update Leads
+```javascript
+{
+  "action": "createOrUpdate",
+  "lookupField": "email",
+  "input": [
+    {
+      "email": "john.doe@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "company": "Acme Corp",
+      "title": "Software Engineer"
+    }
+  ]
+}
+```
+
+### Get Leads by Filter
+```javascript
+const url = MARKETO_URL + `leads.json?filterType=email&filterValues=john.doe@example.com,jane.smith@example.com`;
+```
+
+## Campaign Operations
+
+### Get Campaigns
+```javascript
+const url = MARKETO_URL + "campaigns.json";
+```
+
+### Request Campaign
+```javascript
+{
+  "input": {
+    "leads": [
+      {
+        "id": 318581
+      }
+    ],
+    "tokens": [
+      {
+        "name": "{{my.discount-code}}",
+        "value": "SAVE20"
+      }
+    ]
+  }
+}
+```
+
+### Add Leads to List
+```javascript
+{
+  "input": [
+    {
+      "id": 318581
+    },
+    {
+      "id": 318582
+    }
+  ]
+}
+```
+
+## Activity Tracking
+
+### Get Lead Activities
+```javascript
+const url = MARKETO_URL + `activities.json?activityTypeIds=1,6,12&nextPageToken=${nextPageToken}`;
+```
+
+### Activity Types
+- **1**: Visit Web Page
+- **6**: Fill Out Form
+- **12**: Click Email
+- **2**: Change Data Value
+- **7**: Send Email
+
+## Asset Management
+
+### Get Programs
+```javascript
+const url = MARKETO_URL + "programs.json";
+```
+
+### Get Forms
+```javascript
+const url = MARKETO_URL + "forms.json";
+```
+
+### Get Landing Pages
+```javascript
+const url = MARKETO_URL + "landingPages.json";
+```
+
+### Get Emails
+```javascript
+const url = MARKETO_URL + "emails.json";
+```
+
+## Lead Structure
+
+### Basic Fields
+- **id**: Unique lead identifier
+- **firstName**: Given name
+- **lastName**: Family name
+- **email**: Primary email address
+- **company**: Company name
+- **title**: Job title
+
+### System Fields
+- **createdAt**: Lead creation date
+- **updatedAt**: Last modification date
+- **leadScore**: Lead scoring value
+- **leadStatus**: Current status
+- **unsubscribed**: Email preference
+
+## Campaign Structure
+
+### Campaign Properties
+- **id**: Unique campaign identifier
+- **name**: Campaign display name
+- **description**: Campaign description
+- **type**: Campaign type (trigger/batch)
+- **programId**: Associated program
+- **workspaceName**: Workspace location
+
+### Campaign Types
+- **trigger**: Event-triggered campaigns
+- **batch**: Scheduled batch campaigns
+- **nurture**: Drip campaigns
+- **operational**: System campaigns
+
+## Response Formats
+
+### Lead Response
+```javascript
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 318581,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "company": "Acme Corp",
+      "updatedAt": "2023-04-11T08:59:18Z",
+      "createdAt": "2023-04-10T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Campaign Response
+```javascript
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 1001,
+      "name": "Welcome Email Campaign",
+      "description": "Send welcome email to new leads",
+      "type": "trigger",
+      "programId": 2001,
+      "workspaceName": "Default"
+    }
+  ]
+}
+```
+
+### Activity Response
+```javascript
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "nextPageToken": "GIYDAOBNGEYS2MBWKQYDAORQGA5DAMBOGAYDAKZQGAYDALBQ",
+  "moreResult": true,
+  "result": [
+    {
+      "id": 2,
+      "leadId": 318581,
+      "activityDate": "2023-04-11T08:59:18Z",
+      "activityTypeId": 6,
+      "primaryAttributeValue": "Visited Web Page",
+      "attributes": [
+        {
+          "name": "Web Page",
+          "value": "https://example.com/pricing"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Custom Objects
+
+### Get Custom Objects
+```javascript
+const url = MARKETO_URL + "customobjects.json";
+```
+
+### Create/Update Custom Objects
+```javascript
+{
+  "action": "createOrUpdate",
+  "dedupeBy": "dedupeFields",
+  "input": [
+    {
+      "vin": "19UYA31581L000000",
+      "leadId": 318581,
+      "make": "Toyota",
+      "model": "Camry",
+      "year": 2023,
+      "color": "Blue",
+      "purchaseDate": "2023-04-11"
+    }
+  ]
+}
+```
+
+## Email Operations
+
+### Send Sample Email
+```javascript
+{
+  "emailAddress": "test@example.com",
+  "textOnly": false,
+  "leadId": 318581
+}
+```
+
+### Email Properties
+- **id**: Email template ID
+- **name**: Email name
+- **subject**: Email subject line
+- **fromName**: Sender name
+- **fromEmail**: Sender email
+- **status**: Approval status
+
+## Pagination
+
+### Handling Large Results
+- Use `nextPageToken` for pagination
+- Set appropriate batch sizes
+- Handle `moreResult` flag
+- Process results incrementally
+
+### Token Management
+```javascript
+// Get next page
+const nextUrl = MARKETO_URL + `activities.json?nextPageToken=${nextPageToken}`;
+```
+
+## Best Practices
+
+1. **Lead Management**
+   - Use appropriate lookup fields
+   - Validate email formats
+   - Handle duplicates properly
+   - Maintain data quality
+
+2. **Campaign Automation**
+   - Test campaigns thoroughly
+   - Use meaningful tokens
+   - Monitor performance
+   - Handle errors gracefully
+
+3. **API Usage**
+   - Respect rate limits
+   - Use bulk operations
+   - Implement retry logic
+   - Cache responses
+
+4. **Data Integration**
+   - Sync with CRM systems
+   - Maintain consistency
+   - Handle conflicts
+   - Regular backups
+
+## Common Use Cases
+
+### Lead Nurturing
+```
+/marketo create nurture campaign for new leads with welcome series
+```
+
+### Event Marketing
+```
+/marketo trigger webinar follow-up campaign for attendees
+```
+
+### Lead Scoring
+```
+/marketo update lead scores based on website activity and engagement
+```
+
+### Data Synchronization
+```
+/marketo sync lead data between Marketo and CRM system
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid lead IDs
+- Missing required fields
+- Rate limit exceeded
+- Authentication failures
+
+### Error Response
+```javascript
+{
+  "requestId": "e42b#14272d07d78",
+  "success": false,
+  "errors": [
+    {
+      "code": "1003",
+      "message": "Lead not found"
+    }
+  ]
+}
+```
+
+## Performance Optimization
+
+### Bulk Operations
+- Use batch processing
+- Minimize API calls
+- Optimize payload sizes
+- Handle timeouts
+
+### Caching Strategy
+- Cache frequently accessed data
+- Use appropriate TTL values
+- Invalidate when needed
+- Monitor cache performance
+
+## Integration Tips
+
+### CRM Integration
+- Map fields correctly
+- Handle data conflicts
+- Sync regularly
+- Monitor sync status
+
+### Workflow Automation
+- Design logical flows
+- Test thoroughly
+- Monitor performance
+- Handle exceptions
+
+## Tips
+- Always check the success field in API responses
+- Use bulk operations for better performance
+- Implement proper pagination for large datasets
+- Monitor API rate limits to avoid throttling
+- Use meaningful campaign and program names
+- Test email campaigns before sending to large audiences 

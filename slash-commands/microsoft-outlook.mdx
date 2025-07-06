@@ -1,0 +1,424 @@
+---
+title: "Microsoft Outlook Command Guide"
+description: "Learn how to use the Microsoft Outlook slash command to manage email, calendar, and contacts"
+---
+
+The `/microsoft-outlook` command enables you to manage your email, calendar, and contacts through Microsoft Outlook via the Microsoft Graph API. Perfect for:
+
+- Email management and automation
+- Calendar event scheduling
+- Task and todo management
+- Contact organization
+- Email search and filtering
+
+## Basic Usage
+
+Use the command to work with Microsoft Outlook:
+
+```
+/microsoft-outlook create calendar event "Team Meeting" for tomorrow at 2 PM
+```
+
+```
+/microsoft-outlook search emails for "project update" from last week
+```
+
+```
+/microsoft-outlook add task "Review documents" to my todo list
+```
+
+## Key Features
+
+### Email Management
+- List and search emails
+- Create draft emails
+- Send emails
+- Reply and forward
+- Manage attachments
+
+### Calendar Operations
+- Create events
+- Update events
+- Get calendar view
+- Delete events
+- Manage recurring events
+
+### Task Management
+- Create tasks
+- Update task status
+- List todo items
+- Share task lists
+- Manage due dates
+
+### Contact Management
+- Access contact information
+- Organize contacts
+- Update contact details
+- Group management
+
+## Example Commands
+
+### Email Operations
+```
+/microsoft-outlook send email to "john@example.com" with subject "Meeting Follow-up"
+```
+
+### Calendar Management
+```
+/microsoft-outlook schedule recurring meeting every Tuesday at 10 AM
+```
+
+### Task Creation
+```
+/microsoft-outlook create task "Prepare presentation" due next Friday
+```
+
+### Email Search
+```
+/microsoft-outlook find emails from "manager@company.com" in last month
+```
+
+### Attachment Handling
+```
+/microsoft-outlook download attachments from email with subject "Invoice"
+```
+
+## Email Operations
+
+### List Messages
+```javascript
+const url = OUTLOOK_URL + "me/messages";
+```
+
+### Search Emails
+```javascript
+const url = OUTLOOK_URL + `me/messages?$search="project update"`;
+```
+
+### Get Specific Email
+```javascript
+const url = OUTLOOK_URL + `me/messages/${messageId}`;
+```
+
+### Send Email
+```javascript
+// POST to me/sendMail
+{
+  "message": {
+    "subject": "Meeting Follow-up",
+    "body": {
+      "contentType": "Text",
+      "content": "Thank you for attending the meeting."
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "address": "john@example.com"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Create Draft
+```javascript
+// POST to me/messages
+{
+  "subject": "Draft Email",
+  "body": {
+    "contentType": "HTML",
+    "content": "<p>This is a draft email.</p>"
+  },
+  "toRecipients": [
+    {
+      "emailAddress": {
+        "address": "recipient@example.com"
+      }
+    }
+  ]
+}
+```
+
+## Calendar Operations
+
+### Create Event
+```javascript
+// POST to me/events
+{
+  "subject": "Team Meeting",
+  "body": {
+    "contentType": "HTML",
+    "content": "Weekly team sync meeting"
+  },
+  "start": {
+    "dateTime": "2025-01-15T14:00:00.000Z",
+    "timeZone": "UTC"
+  },
+  "end": {
+    "dateTime": "2025-01-15T15:00:00.000Z",
+    "timeZone": "UTC"
+  },
+  "attendees": [
+    {
+      "emailAddress": {
+        "address": "attendee@example.com",
+        "name": "John Doe"
+      }
+    }
+  ]
+}
+```
+
+### Update Event
+```javascript
+// PATCH to me/events/{eventId}
+{
+  "subject": "Updated Team Meeting",
+  "start": {
+    "dateTime": "2025-01-15T15:00:00.000Z",
+    "timeZone": "UTC"
+  }
+}
+```
+
+### Get Calendar View
+```javascript
+const url = OUTLOOK_URL + "me/calendar/calendarView?startDateTime=2025-01-01T00:00:00Z&endDateTime=2025-01-31T23:59:59Z";
+```
+
+## Task Management
+
+### List Todo Lists
+```javascript
+const url = OUTLOOK_URL + "me/todo/lists";
+```
+
+### Create Task
+```javascript
+// POST to me/todo/lists/{listId}/tasks
+{
+  "title": "Review documents",
+  "body": {
+    "content": "Review the quarterly reports",
+    "contentType": "text"
+  },
+  "dueDateTime": {
+    "dateTime": "2025-01-20T17:00:00.000Z",
+    "timeZone": "UTC"
+  }
+}
+```
+
+### Update Task
+```javascript
+// PATCH to me/todo/lists/{listId}/tasks/{taskId}
+{
+  "status": "completed",
+  "completedDateTime": {
+    "dateTime": "2025-01-15T10:30:00.000Z",
+    "timeZone": "UTC"
+  }
+}
+```
+
+## Attachment Management
+
+### Get Attachments
+```javascript
+const url = OUTLOOK_URL + `me/messages/${messageId}/attachments`;
+```
+
+### Download Attachments
+```javascript
+// Get attachments with contentBytes
+const attachments = response.output.value || [];
+for (const attachment of attachments) {
+  const content = Buffer.from(attachment.contentBytes, 'base64');
+  const extension = attachment.name.split('.').pop().toLowerCase();
+  await config.writeToFile(attachment.name, content, extension);
+}
+```
+
+### Add Attachment to Draft
+```javascript
+// POST to me/messages/{messageId}/attachments
+{
+  "@odata.type": "#microsoft.graph.fileAttachment",
+  "name": "document.pdf",
+  "contentBytes": "base64-encoded-content"
+}
+```
+
+## Response Structure
+
+### Email Response
+```javascript
+{
+  "id": "message-id",
+  "subject": "Meeting Follow-up",
+  "from": {
+    "emailAddress": {
+      "address": "sender@example.com",
+      "name": "Sender Name"
+    }
+  },
+  "receivedDateTime": "2025-01-15T10:30:00Z",
+  "body": {
+    "contentType": "HTML",
+    "content": "<p>Email content</p>"
+  },
+  "hasAttachments": true
+}
+```
+
+### Event Response
+```javascript
+{
+  "id": "event-id",
+  "subject": "Team Meeting",
+  "start": {
+    "dateTime": "2025-01-15T14:00:00.000Z",
+    "timeZone": "UTC"
+  },
+  "end": {
+    "dateTime": "2025-01-15T15:00:00.000Z",
+    "timeZone": "UTC"
+  },
+  "attendees": [
+    {
+      "emailAddress": {
+        "address": "attendee@example.com",
+        "name": "John Doe"
+      },
+      "status": {
+        "response": "accepted"
+      }
+    }
+  ]
+}
+```
+
+### Task Response
+```javascript
+{
+  "id": "task-id",
+  "title": "Review documents",
+  "status": "notStarted",
+  "importance": "normal",
+  "createdDateTime": "2025-01-15T09:00:00Z",
+  "dueDateTime": {
+    "dateTime": "2025-01-20T17:00:00.000Z",
+    "timeZone": "UTC"
+  }
+}
+```
+
+## Search and Filtering
+
+### Email Search
+```javascript
+// Search by keyword (cannot use $orderBy with $search)
+const url = OUTLOOK_URL + `me/messages?$search="project update"`;
+
+// Filter by sender
+const url = OUTLOOK_URL + `me/messages?$filter=from/emailAddress/address eq 'sender@example.com'`;
+
+// Filter by date range
+const url = OUTLOOK_URL + `me/messages?$filter=receivedDateTime ge 2025-01-01T00:00:00Z`;
+```
+
+### Calendar Filtering
+```javascript
+// Get events in date range
+const url = OUTLOOK_URL + "me/calendar/calendarView?startDateTime=2025-01-15T00:00:00Z&endDateTime=2025-01-15T23:59:59Z";
+
+// Filter by subject
+const url = OUTLOOK_URL + `me/events?$filter=contains(subject,'meeting')`;
+```
+
+## Folder Management
+
+### List Mail Folders
+```javascript
+const url = OUTLOOK_URL + "me/mailFolders";
+```
+
+### Get Folder Contents
+```javascript
+const url = OUTLOOK_URL + `me/mailFolders/${folderId}/messages`;
+```
+
+## Best Practices
+
+1. **Response Handling**
+   - Check for `response.output` wrapper
+   - Handle both wrapped and direct responses
+   - Validate data before processing
+
+2. **Attachment Processing**
+   - Use `contentBytes` field for downloads
+   - Avoid `/$value` endpoint
+   - Handle binary data properly
+
+3. **Search Optimization**
+   - Use appropriate filters
+   - Avoid `$orderBy` with `$search`
+   - Implement pagination for large results
+
+4. **Error Handling**
+   - Check API response status
+   - Handle rate limiting
+   - Implement retry logic
+
+## Common Use Cases
+
+### Email Automation
+```
+/microsoft-outlook automate daily status email to team members
+```
+
+### Meeting Scheduling
+```
+/microsoft-outlook schedule weekly team standup with recurring pattern
+```
+
+### Task Management
+```
+/microsoft-outlook create project tasks with due dates and priorities
+```
+
+### Email Organization
+```
+/microsoft-outlook search and organize emails by project categories
+```
+
+## Authentication Requirements
+
+### Connection ID
+- PinkConnect Microsoft Outlook connection ID required
+- Provided in user request or asked for
+- Used for proxy authentication
+- Enables Graph API access
+
+## Performance Optimization
+
+### Efficient Queries
+- Use specific filters
+- Limit returned fields
+- Implement pagination
+- Cache frequently accessed data
+
+### Batch Operations
+- Group related operations
+- Minimize API calls
+- Handle rate limits
+- Process results efficiently
+
+## Tips
+- Always check for response.output wrapper before accessing data
+- Use contentBytes field for attachment downloads, not /$value endpoint
+- Cannot combine $search with $orderBy in email queries
+- Provide PinkConnect connection ID when requested
+- Handle both HTML and text email content types
+- Use UTC timestamps for calendar events to avoid timezone issues 

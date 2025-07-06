@@ -1,0 +1,249 @@
+---
+title: "Wrap Playwright"
+description: "Wrap Playwright code in Step Code"
+---
+
+# Wrap Playwright
+
+Wrap Playwright code in Step Code to enable browser automation as part of automated workflows and step-based processes.
+
+## Overview
+
+The Wrap Playwright skill provides functionality for:
+- Wrapping Playwright browser automation code for execution
+- Retrieving Playwright code from file storage
+- Executing browser automation within workflow steps
+- Managing browser session context and data binding
+- Handling browser automation results and logging
+
+## Connection Requirements
+
+This skill uses internal services and doesn't require external connections.
+
+## Basic Usage
+
+```javascript
+// Direct Playwright code wrapping
+const payload = {
+  "bindingData": step_data,
+  "code": `
+    await page.goto('https://example.com');
+    await page.click('#login-button');
+    await page.fill('#username', 'user@example.com');
+  `,
+  "useContextService": "context_id_if_needed"
+};
+```
+
+## Key Features
+
+### Code Execution
+- **Direct Code Wrapping**: Execute Playwright code directly
+- **File-based Execution**: Retrieve and execute code from file storage
+- **Step Integration**: Seamless integration with workflow steps
+- **Data Binding**: Access step data within Playwright code
+
+### Session Management
+- **Context Service**: Use browser context for persistent sessions
+- **Session IDs**: Track browser sessions across multiple steps
+- **State Persistence**: Maintain browser state between operations
+- **Resource Management**: Proper cleanup of browser resources
+
+## Input Formats
+
+### Direct Playwright Code
+```javascript
+// User provides Playwright code directly
+const playwrightCode = `
+  await page.goto('https://app.example.com');
+  await page.waitForSelector('#dashboard');
+  const title = await page.textContent('h1');
+  console.log('Page title:', title);
+`;
+```
+
+### File-based Code
+```javascript
+// User specifies file name
+"Wrap playwright for automation_script.js"
+```
+
+## Common Operations
+
+### Execute Direct Code
+```javascript
+POST: {INTERNAL_SKILL_URL}/browserautomation/code-run
+{
+  "bindingData": step_data,
+  "code": "await page.goto('https://example.com'); await page.screenshot({path: 'screenshot.png'});",
+  "useContextService": "optional_context_id"
+}
+```
+
+### Execute Code from File
+```javascript
+// Step 1: Retrieve file from storage
+GET: {INTERNAL_SKILL_URL}/filestorage/items/{filename}?get_file_contents=true
+
+// Step 2: Execute the retrieved code
+POST: {INTERNAL_SKILL_URL}/browserautomation/code-run
+{
+  "bindingData": step_data,
+  "code": fileData.content,
+  "useContextService": "optional_context_id"
+}
+```
+
+## Code Wrapping Process
+
+### Standard Headers
+```javascript
+// Always include required imports and setup
+const PLAYWRIGHT_URL = INTERNAL_SKILL_URL + 'browserautomation/code-run';
+```
+
+### Payload Structure
+```javascript
+{
+  "bindingData": step_data,           // Step data for context
+  "code": "USER_PLAYWRIGHT_CODE",     // Exact user code without modifications
+  "useContextService": "context_id"   // Optional context service ID
+}
+```
+
+### Response Handling
+```javascript
+// Standard response format
+{
+  "output": {
+    "message": "Code executed successfully",
+    "success": true
+  },
+  "sessionId": "d6725b65-a27d-453f-b6cd-ad68071e1971"
+}
+```
+
+## File Storage Integration
+
+### Retrieve File Content
+```javascript
+const FILESTORAGE_URL = INTERNAL_SKILL_URL + 'filestorage/items';
+GET: {FILESTORAGE_URL}/{filename}?get_file_contents=true
+```
+
+### File Response Structure
+```javascript
+{
+  "content": "// Playwright automation code\nawait page.goto('https://example.com');",
+  "filename": "automation_script.js",
+  "size": 1024,
+  "created_at": "2025-01-15T10:30:00Z"
+}
+```
+
+## Output Structure
+
+### Final Output Format
+```javascript
+const finalOutput = {
+  log: executionLog,                    // Execution logs if available
+  browserOutput: browserOutput,        // Browser automation results
+  api_response: {
+    'sessionId': browserOutput.sessionId  // Session ID for tracking
+  }
+};
+```
+
+### With File Execution
+```javascript
+const finalOutput = {
+  log: executionLog,                    // Execution logs
+  browserOutput: browserOutput.output, // Browser results from file execution
+  api_response: {
+    'sessionId': browserOutput.sessionId  // Session tracking
+  }
+};
+```
+
+## Context Service
+
+### Purpose
+- **Session Persistence**: Maintain browser state across multiple steps
+- **Data Sharing**: Share data between different automation steps
+- **Resource Optimization**: Reuse browser instances efficiently
+- **State Management**: Handle complex multi-step workflows
+
+### Usage
+```javascript
+{
+  "useContextService": "user_session_123"  // Specify context ID when needed
+}
+```
+
+## Common Playwright Patterns
+
+### Page Navigation
+```javascript
+await page.goto('https://example.com');
+await page.waitForLoadState('networkidle');
+```
+
+### Element Interaction
+```javascript
+await page.click('#submit-button');
+await page.fill('input[name="email"]', 'user@example.com');
+await page.selectOption('select#country', 'US');
+```
+
+### Data Extraction
+```javascript
+const title = await page.textContent('h1');
+const links = await page.$$eval('a', links => links.map(link => link.href));
+```
+
+### Screenshots and Files
+```javascript
+await page.screenshot({path: 'screenshot.png'});
+await page.pdf({path: 'document.pdf'});
+```
+
+## Error Handling
+
+### Common Issues
+- **Code Syntax Errors**: Invalid JavaScript/Playwright syntax
+- **Element Not Found**: Selectors that don't match page elements
+- **Timeout Errors**: Operations that exceed timeout limits
+- **File Access**: Issues retrieving code from file storage
+
+### Best Practices
+```javascript
+// Use proper waits
+await page.waitForSelector('#element');
+
+// Handle errors gracefully
+try {
+  await page.click('#optional-button');
+} catch (error) {
+  console.log('Optional element not found');
+}
+```
+
+## Important Notes
+
+- **Code Preservation**: User Playwright code is inserted exactly as provided without modifications
+- **No Logging**: Don't add log statements to user code automatically
+- **Session Tracking**: Always include sessionId in API response
+- **File Retrieval**: Use file storage API for file-based code execution
+- **Context Optional**: Context service usage is optional based on user specification
+- **Internal URLs**: Always use INTERNAL_SKILL_URL for service endpoints
+
+## Best Practices
+
+1. **Code Integrity**: Preserve user code exactly as provided
+2. **Error Handling**: Implement proper error handling for code execution
+3. **Session Management**: Track browser sessions for debugging and monitoring
+4. **File Validation**: Validate file existence before attempting retrieval
+5. **Resource Cleanup**: Ensure proper cleanup of browser resources
+6. **Context Usage**: Use context service only when explicitly specified
+7. **Logging**: Maintain execution logs for troubleshooting
+8. **Response Format**: Follow consistent output structure for integration 

@@ -1,0 +1,224 @@
+---
+title: "Segment"
+description: "Manage your data pipelines with Segment"
+---
+
+# Segment
+
+Manage your data pipelines with Segment's customer data platform for collecting, cleaning, and controlling customer data.
+
+## Overview
+
+The Segment skill provides comprehensive functionality for:
+- Managing data warehouses and connections
+- Creating and configuring data sources
+- Setting up destinations for data routing
+- Monitoring data pipeline health
+- Integrating with various analytics and marketing tools
+
+## Connection Requirements
+
+This skill requires a Segment connection configured through Paragon Proxy.
+
+## Basic Usage
+
+```javascript
+// Create a new data warehouse
+const warehouse = {
+  "name": "Analytics Warehouse",
+  "type": "snowflake",
+  "connection": {
+    "account": "my_snowflake_account",
+    "warehouse": "COMPUTE_WH",
+    "database": "ANALYTICS_DB",
+    "schema": "PUBLIC",
+    "username": "user",
+    "role": "SYSADMIN"
+  }
+};
+```
+
+## Key Features
+
+### Warehouse Management
+- **List Warehouses**: View all configured data warehouses
+- **Create Warehouses**: Add new warehouse connections (Redshift, BigQuery, Snowflake)
+- **Update Warehouses**: Modify warehouse configurations
+- **Delete Warehouses**: Remove warehouse connections
+
+### Source Management
+- **List Sources**: View all data sources in your workspace
+- **Create Sources**: Add new data collection sources
+- **Update Sources**: Modify source configurations
+- **Delete Sources**: Remove data sources
+
+### Destination Management
+- **List Destinations**: View all configured destinations
+- **Create Destinations**: Add new data destinations
+- **Update Destinations**: Modify destination settings
+- **Delete Destinations**: Remove destinations
+
+## Common Operations
+
+### Create a Data Warehouse
+```javascript
+POST: warehouses
+{
+  "name": "Production Warehouse",
+  "type": "redshift",
+  "connection": {
+    "host": "cluster.redshift.amazonaws.com",
+    "port": 5439,
+    "database": "analytics",
+    "username": "admin",
+    "schema": "public"
+  }
+}
+```
+
+### List All Sources
+```javascript
+GET: sources
+```
+
+### Create a New Source
+```javascript
+POST: sources
+{
+  "name": "Website Analytics",
+  "slug": "website_analytics",
+  "metadata": {
+    "platform": "web",
+    "categories": ["analytics"]
+  }
+}
+```
+
+### Update a Destination
+```javascript
+PATCH: destinations/{destination_id}
+{
+  "name": "Updated Google Analytics",
+  "metadata": {
+    "platform": "web",
+    "categories": ["analytics", "marketing"]
+  }
+}
+```
+
+## Supported Warehouse Types
+
+### Redshift
+```javascript
+{
+  "type": "redshift",
+  "connection": {
+    "host": "cluster.redshift.amazonaws.com",
+    "port": 5439,
+    "database": "analytics",
+    "username": "user",
+    "schema": "public"
+  }
+}
+```
+
+### BigQuery
+```javascript
+{
+  "type": "bigquery",
+  "connection": {
+    "project_id": "my-gcp-project",
+    "dataset": "analytics"
+  }
+}
+```
+
+### Snowflake
+```javascript
+{
+  "type": "snowflake",
+  "connection": {
+    "account": "my_snowflake_account",
+    "warehouse": "COMPUTE_WH",
+    "database": "ANALYTICS_DB",
+    "schema": "PUBLIC",
+    "username": "user",
+    "role": "SYSADMIN"
+  }
+}
+```
+
+## Response Structure
+
+### Warehouse Response
+```javascript
+{
+  "id": "warehouse_123",
+  "name": "My Data Warehouse",
+  "type": "redshift",
+  "connection": {
+    "host": "example.redshift.amazonaws.com",
+    "port": 5439,
+    "database": "analytics",
+    "username": "user",
+    "schema": "public"
+  }
+}
+```
+
+### Source Response
+```javascript
+{
+  "id": "source_123",
+  "name": "Website Analytics",
+  "slug": "website_analytics",
+  "metadata": {
+    "platform": "web",
+    "categories": ["analytics"]
+  }
+}
+```
+
+### Destination Response
+```javascript
+{
+  "id": "destination_123",
+  "name": "Google Analytics",
+  "slug": "google_analytics",
+  "metadata": {
+    "platform": "web",
+    "categories": ["analytics"]
+  }
+}
+```
+
+## Platform Categories
+
+### Source Platforms
+- **web**: Website tracking
+- **mobile**: Mobile app analytics
+- **server**: Server-side tracking
+- **cloud**: Cloud application data
+
+### Destination Platforms
+- **analytics**: Analytics tools (Google Analytics, Mixpanel)
+- **marketing**: Marketing platforms (Facebook Ads, Google Ads)
+- **crm**: Customer relationship management
+- **email**: Email marketing platforms
+
+## Important Notes
+
+- **Slug Uniqueness**: Source and destination slugs must be unique within your workspace
+- **Connection Security**: Warehouse credentials are encrypted and stored securely
+- **Data Flow**: Sources collect data, destinations receive processed data
+- **Real-time Processing**: Segment processes data in real-time through configured pipelines
+- **Schema Management**: Warehouse schemas are automatically managed by Segment
+
+## Best Practices
+
+1. **Naming Conventions**: Use descriptive names for sources, destinations, and warehouses
+2. **Environment Separation**: Use different workspaces for development and production
+3. **Connection Testing**: Test warehouse connections before deploying to production
+4. **Monitoring**: Regularly monitor data pipeline health and delivery rates
+5. **Schema Evolution**: Plan for schema changes in your data warehouse
+6. **Access Control**: Implement proper access controls for sensitive data connections 

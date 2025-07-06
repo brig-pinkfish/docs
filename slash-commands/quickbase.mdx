@@ -1,0 +1,449 @@
+---
+title: "Quickbase Command Guide"
+description: "Learn how to use the Quickbase slash command to create and manage custom applications and workflows"
+---
+
+The `/quickbase` command enables you to create and manage custom applications and workflows using Quickbase. Perfect for:
+
+- Custom application development
+- Database management
+- Workflow automation
+- Record management
+- Business process optimization
+
+## Basic Usage
+
+Use the command to work with Quickbase:
+
+```
+/quickbase get all tables from my application
+```
+
+```
+/quickbase query records from customer database
+```
+
+```
+/quickbase insert new record into project table
+```
+
+## Key Features
+
+### Application Management
+- List application tables
+- Table structure access
+- Field configuration
+- Application organization
+- Custom workflows
+
+### Record Operations
+- Query records by criteria
+- Insert new records
+- Update existing records
+- Bulk data operations
+- Record relationships
+
+### Data Management
+- Field-based queries
+- Data validation
+- Record filtering
+- Bulk operations
+- Data export/import
+
+## Example Commands
+
+### Table Discovery
+```
+/quickbase show me all tables in application ID 12345
+```
+
+### Data Queries
+```
+/quickbase find all active customers in the CRM table
+```
+
+### Record Creation
+```
+/quickbase add new project record with name and deadline
+```
+
+### Data Analysis
+```
+/quickbase get all records from sales table for this quarter
+```
+
+## Application Structure
+
+### Get Tables
+```javascript
+// GET v1/tables?appId={appId}
+const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
+```
+
+### Tables Response
+```javascript
+{
+  "output": [
+    {
+      "alias": "_DBID_TABLE1",
+      "created": "2024-10-23T05:41:27Z",
+      "defaultSortFieldId": 2,
+      "defaultSortOrder": "DESC",
+      "description": "",
+      "id": "buk58j6w3",           // tableId
+      "keyFieldId": 3,
+      "name": "table1",
+      "nextFieldId": 9,
+      "nextRecordId": 5,
+      "pluralRecordName": "table1S",
+      "singleRecordName": "table1",
+      "sizeLimit": "500 MB",
+      "spaceRemaining": "500 MB",
+      "spaceUsed": "1 KB",
+      "updated": "2024-10-30T17:49:46Z"
+    }
+  ]
+}
+```
+
+### Table Properties
+- **id**: Unique table identifier
+- **name**: Table display name
+- **alias**: Table alias
+- **keyFieldId**: Primary key field
+- **defaultSortFieldId**: Default sort field
+- **sizeLimit**: Storage limit
+- **spaceUsed**: Current storage usage
+
+## Record Operations
+
+### Query All Records
+```javascript
+// POST v1/records/query
+{
+  "from": "${tableId}",
+  "select": [],
+  "limit": 100
+}
+```
+
+### Query Response
+```javascript
+{
+  "output": {
+    "data": [
+      {
+        "7": {
+          "value": "dev23"
+        },
+        "8": {
+          "value": "dummy@test.com"
+        }
+      },
+      {
+        "7": {
+          "value": "John"
+        },
+        "8": {
+          "value": "Doe"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "id": 7,
+        "label": "Pinkfish Field 1",
+        "type": "text"
+      },
+      {
+        "id": 8,
+        "label": "Pinkfish Field 12",
+        "type": "text"
+      }
+    ],
+    "metadata": {
+      "numFields": 2,
+      "numRecords": 4,
+      "skip": 0,
+      "totalRecords": 4
+    }
+  }
+}
+```
+
+### Query by ID
+```javascript
+{
+  "from": "${tableId}",
+  "select": [],
+  "limit": 100,
+  "where": "{3.EX.'2'}"
+}
+```
+
+### Insert Records
+```javascript
+// POST v1/records
+{
+  "to": "${tableId}",
+  "data": [
+    {
+      "7": {"value": "John"},
+      "8": {"value": "Doe"}
+    }
+  ]
+}
+```
+
+### Insert Response
+```javascript
+{
+  "output": {
+    "data": [],
+    "metadata": {
+      "createdRecordIds": [6],
+      "totalNumberOfRecordsProcessed": 1,
+      "unchangedRecordIds": [],
+      "updatedRecordIds": []
+    }
+  }
+}
+```
+
+## Field Types and Data
+
+### Common Field Types
+- **text**: Text fields
+- **numeric**: Numeric values
+- **date**: Date fields
+- **datetime**: Date and time
+- **checkbox**: Boolean values
+- **dropdown**: Selection lists
+- **email**: Email addresses
+- **phone**: Phone numbers
+
+### Field Structure
+```javascript
+{
+  "id": 7,
+  "label": "Customer Name",
+  "type": "text",
+  "required": true,
+  "unique": false
+}
+```
+
+### Data Values
+```javascript
+{
+  "fieldId": {
+    "value": "field_value"
+  }
+}
+```
+
+## Query Syntax
+
+### Basic Queries
+```javascript
+// Select all records
+{
+  "from": "tableId",
+  "select": []
+}
+
+// Select specific fields
+{
+  "from": "tableId",
+  "select": [7, 8, 9]
+}
+
+// Limit results
+{
+  "from": "tableId",
+  "select": [],
+  "limit": 50
+}
+```
+
+### Filtering Records
+```javascript
+// Filter by field value
+{
+  "from": "tableId",
+  "select": [],
+  "where": "{7.EX.'John'}"
+}
+
+// Multiple conditions
+{
+  "from": "tableId",
+  "select": [],
+  "where": "{7.EX.'John'}AND{8.CT.'@gmail.com'}"
+}
+```
+
+### Query Operators
+- **EX**: Equals exactly
+- **CT**: Contains
+- **SW**: Starts with
+- **EW**: Ends with
+- **GT**: Greater than
+- **LT**: Less than
+- **GTE**: Greater than or equal
+- **LTE**: Less than or equal
+
+## Connection Requirements
+
+### PinkConnect Proxy
+- Uses PC_BASE_URL endpoint
+- Requires Quickbase connection ID
+- Standard API authentication
+
+### Paragon Proxy
+- Uses PARA_BASE_URL + custom/{integrationId}/
+- Alternative authentication method
+- Different endpoint structure
+
+## Best Practices
+
+1. **Application Design**
+   - Plan table relationships
+   - Define clear field types
+   - Use descriptive names
+   - Implement data validation
+
+2. **Query Optimization**
+   - Use specific field selections
+   - Implement appropriate limits
+   - Filter data effectively
+   - Cache frequently accessed data
+
+3. **Data Management**
+   - Validate data before insertion
+   - Handle bulk operations efficiently
+   - Implement error handling
+   - Monitor storage usage
+
+4. **Performance**
+   - Use pagination for large datasets
+   - Optimize query conditions
+   - Batch operations when possible
+   - Monitor API usage
+
+## Common Use Cases
+
+### CRM Management
+```
+/quickbase update customer contact information in CRM table
+```
+
+### Project Tracking
+```
+/quickbase create new project with milestones and deadlines
+```
+
+### Inventory Management
+```
+/quickbase query low stock items from inventory table
+```
+
+### Sales Reporting
+```
+/quickbase get all sales records for Q4 analysis
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid application ID
+- Table not found
+- Field validation errors
+- Permission denied
+- Data type mismatches
+
+### Error Response
+```javascript
+{
+  "error": {
+    "code": "INVALID_TABLE_ID",
+    "message": "The specified table ID does not exist.",
+    "details": {
+      "tableId": "invalid_id"
+    }
+  }
+}
+```
+
+## Data Validation
+
+### Field Validation
+- Required field checks
+- Data type validation
+- Format constraints
+- Unique value enforcement
+- Range validations
+
+### Input Sanitization
+- Clean text inputs
+- Validate email formats
+- Check phone number formats
+- Sanitize special characters
+- Prevent injection attacks
+
+## Integration Patterns
+
+### Workflow Automation
+- Trigger-based actions
+- Conditional logic
+- Multi-step processes
+- Approval workflows
+- Notification systems
+
+### Data Synchronization
+- Real-time updates
+- Batch synchronization
+- Conflict resolution
+- Data mapping
+- Error recovery
+
+## Performance Optimization
+
+### Query Efficiency
+- Use indexed fields for filtering
+- Limit result sets appropriately
+- Implement pagination
+- Cache frequently accessed data
+- Optimize field selections
+
+### Bulk Operations
+- Batch record insertions
+- Bulk updates
+- Mass data imports
+- Efficient deletions
+- Transaction management
+
+## Security Considerations
+
+### Access Control
+- User permissions
+- Role-based access
+- Field-level security
+- Application-level restrictions
+- API key management
+
+### Data Protection
+- Input validation
+- Output sanitization
+- Secure connections
+- Audit logging
+- Compliance requirements
+
+## Tips
+- Always ask user for appId if not provided
+- Use field IDs (numbers) rather than field names in queries
+- Implement proper error handling for API failures
+- Cache table structure information to improve performance
+- Use appropriate query limits to avoid timeouts
+- Validate data types before inserting records
+- Monitor storage usage to avoid limits 

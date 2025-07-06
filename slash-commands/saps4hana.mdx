@@ -1,0 +1,150 @@
+---
+title: "SAP S/4HANA"
+description: "Manage supplier invoices, suppliers, and customers through SAP S/4HANA"
+---
+
+# SAP S/4HANA
+
+Manage supplier invoices, suppliers, and customers through SAP S/4HANA enterprise resource planning system.
+
+## Overview
+
+The SAP S/4HANA skill provides comprehensive functionality for:
+- Creating and managing supplier invoices
+- Searching and retrieving invoice data
+- Managing supplier and customer information
+- Updating business partner records
+- Handling procurement and financial processes
+
+## Connection Requirements
+
+This skill requires a SAP S/4HANA connection configured through Paragon Proxy.
+
+## Basic Usage
+
+```javascript
+// Create a supplier invoice
+const invoice = {
+  "InvoiceDocument": "1234567890",
+  "CompanyCode": "1000",
+  "SupplierID": "SUPPLIER123",
+  "DocumentDate": "2025-01-15",
+  "PostingDate": "2025-01-15",
+  "InvoiceAmount": "1500.00",
+  "Currency": "USD",
+  "Items": [
+    {
+      "PurchaseOrder": "4500001234",
+      "PurchaseOrderItem": "10",
+      "Quantity": "100",
+      "Amount": "1500.00"
+    }
+  ]
+};
+```
+
+## Key Features
+
+### Invoice Management
+- **Create Invoices**: Generate new supplier invoices with complete line items
+- **Retrieve Invoices**: Get invoice details by document ID
+- **Search Invoices**: Find invoices based on supplier, date, or amount criteria
+- **Delete Invoices**: Remove invoices from the system
+
+### Supplier Management
+- **Supplier Lookup**: Retrieve supplier details by business partner ID
+- **Search Suppliers**: Find suppliers based on organization criteria
+- **Update Suppliers**: Modify supplier information and addresses
+
+### Customer Management
+- **Customer Lookup**: Get customer details by business partner ID
+- **Search Customers**: Find customers based on person criteria
+- **Update Customers**: Modify customer information and addresses
+
+## Common Operations
+
+### Create a Supplier Invoice
+```javascript
+POST: odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice
+{
+  "InvoiceDocument": "1234567890",
+  "CompanyCode": "1000",
+  "SupplierID": "SUPPLIER123",
+  "DocumentDate": "2025-01-15",
+  "PostingDate": "2025-01-15",
+  "InvoiceAmount": "1500.00",
+  "Currency": "USD"
+}
+```
+
+### Search for Invoices
+```javascript
+GET: odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice?$filter=SupplierID eq 'SUPPLIER123'
+```
+
+### Get Supplier Details
+```javascript
+GET: odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('SUPPLIER123')
+```
+
+### Update Customer Information
+```javascript
+PATCH: odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('CUSTOMER123')
+{
+  "BusinessPartnerFullName": "Updated Customer Name",
+  "Address": {
+    "StreetName": "987 Birch Rd",
+    "CityName": "Metrocity",
+    "PostalCode": "76543",
+    "Country": "US"
+  }
+}
+```
+
+## Response Structure
+
+### Invoice Response
+```javascript
+{
+  "InvoiceDocument": "1234567890",
+  "CompanyCode": "1000",
+  "SupplierID": "SUPPLIER123",
+  "DocumentDate": "2025-01-15",
+  "PostingDate": "2025-01-15",
+  "InvoiceAmount": "1500.00",
+  "Currency": "USD"
+}
+```
+
+### Business Partner Response
+```javascript
+{
+  "BusinessPartner": "SUPPLIER123",
+  "BusinessPartnerFullName": "ABC Supplies Inc.",
+  "BusinessPartnerCategory": "Organization",
+  "Address": {
+    "StreetName": "123 Main St",
+    "CityName": "Anytown",
+    "PostalCode": "12345",
+    "Country": "US"
+  }
+}
+```
+
+## Important Notes
+
+- **OData Protocol**: SAP S/4HANA uses OData v2 protocol for API interactions
+- **Authentication**: Requires proper SAP authentication through Paragon Proxy
+- **Company Codes**: Always specify the correct company code for your organization
+- **Currency Handling**: Ensure currency codes match your SAP configuration
+- **Date Formats**: Use YYYY-MM-DD format for all date fields
+- **Business Partner Types**: Distinguish between Organization (suppliers) and Person (customers)
+
+## Best Practices
+
+1. **Error Handling**: Always check response status and handle SAP-specific error codes
+2. **Data Validation**: Validate required fields before creating invoices
+3. **Batch Processing**: Use batch operations for multiple invoice creation
+4. **Audit Trail**: Maintain proper documentation for all financial transactions
+5. **Performance**: Use filters and pagination for large data sets
+6. **Security**: Ensure proper authorization for financial operations 

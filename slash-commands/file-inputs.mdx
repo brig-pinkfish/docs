@@ -1,0 +1,296 @@
+---
+title: "File Inputs Command Guide"
+description: "Learn how to use the File Inputs slash command to work with uploaded files and URLs"
+---
+
+The `/file-inputs` command enables you to work with files uploaded by users or from URLs. Perfect for:
+
+- Processing uploaded documents
+- Extracting text from files
+- Converting file formats
+- Handling multiple file types
+- Data retrieval and analysis
+
+## Basic Usage
+
+Use the command to work with uploaded files:
+
+```
+/file-inputs get data from "users.json" file
+```
+
+```
+/file-inputs extract text from uploaded "document.pdf"
+```
+
+```
+/file-inputs process "data.xlsx" and convert to CSV
+```
+
+## Key Features
+
+### File Access
+- Direct data retrieval
+- Automatic parsing
+- Pattern matching
+- Multiple file support
+- URL downloads
+
+### Document Extraction
+- PDF text extraction
+- Word document processing
+- Excel to CSV conversion
+- PowerPoint text extraction
+- Multi-format support
+
+### Data Processing
+- JSON parsing
+- CSV processing
+- Binary file handling
+- MIME type detection
+- Base64 conversion
+
+## Example Commands
+
+### Get JSON Data
+```
+/file-inputs load and parse "config.json" file
+```
+
+### Extract PDF Text
+```
+/file-inputs extract all text from "report.pdf"
+```
+
+### Process Excel File
+```
+/file-inputs convert "spreadsheet.xlsx" to CSV format
+```
+
+### Find Multiple Files
+```
+/file-inputs find all CSV files in uploads
+```
+
+### Download from URL
+```
+/file-inputs download and process file from URL
+```
+
+## File Discovery
+
+### Find Specific Files
+```javascript
+// Find by exact name
+const file = config.findUploadedFile('document.pdf');
+
+// Exact match for special characters
+const fileWithParens = config.findUploadedFile('invoice (1).pdf', { exactMatch: true });
+
+// Pattern matching
+const csvFiles = config.findUploadedFile('\\.csv$', { multipleFiles: true });
+```
+
+### Important Notes
+- Use `exactMatch: true` for filenames with special characters
+- Parentheses, brackets, dots need exact matching
+- Pattern matching uses regex by default
+
+## Data Retrieval
+
+### Auto-Parsed Data
+```javascript
+// JSON files (automatically parsed)
+const userData = await config.getUploadedFileData('users.json');
+
+// CSV files (automatically parsed)
+const csvData = await config.getUploadedFileData('data.csv');
+
+// Text files
+const text = await config.getUploadedFileData('readme.txt');
+```
+
+### Direct Access
+- Automatic format detection
+- Built-in parsing
+- Error handling
+- Type preservation
+
+## Document Extraction
+
+### Supported Formats
+- **PDF**: .pdf → text extraction
+- **Word**: .docx → text extraction
+- **Excel**: .xlsx → CSV conversion
+- **PowerPoint**: .pptx → text extraction
+- **CSV**: .csv → structured data
+
+### Unsupported Formats
+- Older Office formats (.xls, .doc, .ppt)
+- Users need to convert to newer formats
+- Clear error messaging provided
+
+### Extraction Examples
+```javascript
+// PDF extraction
+const pdfFile = config.findUploadedFile('document.pdf');
+const pdfText = await config.extractPdfText(pdfFile);
+
+// Word extraction
+const wordFile = config.findUploadedFile('document.docx');
+const wordText = await config.extractWordText(wordFile);
+
+// Excel to CSV
+const excelFile = config.findUploadedFile('spreadsheet.xlsx');
+const csvContent = await config.extractExcelText(excelFile);
+```
+
+## File Processing
+
+### Manual Downloads
+```javascript
+// Download from URL
+const data = await config.downloadFromUrl('https://example.com/data.json');
+if (data.success) {
+  const jsonData = JSON.parse(data.buffer.toString('utf8'));
+}
+```
+
+### MIME Type Handling
+```javascript
+// Automatic type detection
+const result = await config.downloadFromUrl(fileUrl);
+if (result.success) {
+  if (result.mimeType.startsWith('text/')) {
+    const textContent = result.buffer.toString('utf8');
+  } else {
+    const binaryData = result.buffer; // Keep as binary
+  }
+}
+```
+
+## Binary File Handling
+
+### Saving Binary Files
+```javascript
+// Use specific file extensions
+await config.writeToFile('document.pdf', pdfBuffer, 'pdf');
+await config.writeToFile('image.jpg', imageBuffer, 'jpg');
+await config.writeToFile('data.docx', docxBuffer, 'docx');
+
+// Don't use 'binary' - it corrupts files
+```
+
+### Supported Extensions
+- PDF files: 'pdf'
+- Images: 'jpg', 'png', 'gif'
+- Office: 'docx', 'xlsx', 'pptx'
+- Archives: 'zip', 'tar'
+
+## Multi-File Processing
+
+### Batch Operations
+```javascript
+// Process multiple files
+const files = [pdfFile, wordFile, excelFile];
+const urls = files.map(f => f.url);
+const results = await config.extractMultipleFiles(urls, ['pdf', 'docx', 'xlsx']);
+
+results.forEach(result => {
+  if (result.success) {
+    // Process result.content
+  }
+});
+```
+
+### File Type Arrays
+- Match file objects with types
+- Process in parallel
+- Handle mixed formats
+- Error handling per file
+
+## Complete Examples
+
+### JSON Processing
+```
+/file-inputs process uploaded JSON, add timestamps, and save as processed data
+```
+
+### Excel to Multiple Formats
+```
+/file-inputs convert Excel file to both CSV and JSON formats
+```
+
+### Document Text Extraction
+```
+/file-inputs extract text from all uploaded PDF and Word documents
+```
+
+### URL File Processing
+```
+/file-inputs download file from URL and extract content
+```
+
+## Error Handling
+
+### Common Issues
+- File not found
+- Unsupported formats
+- Corrupted files
+- Network errors
+
+### Debug Strategies
+```javascript
+// List all available files
+const allFiles = config.findUploadedFile('.*', { multipleFiles: true });
+log('Available files:');
+allFiles.forEach(f => log(`  - ${f.name}`));
+```
+
+## Best Practices
+
+1. **File Discovery**
+   - Use exact match for special characters
+   - Validate file existence
+   - Handle multiple matches
+   - Clear error messages
+
+2. **Data Processing**
+   - Auto-parse when possible
+   - Handle different formats
+   - Preserve data types
+   - Validate content
+
+3. **Binary Handling**
+   - Use correct file extensions
+   - Don't convert binary to text
+   - Preserve file integrity
+   - Handle large files
+
+4. **Error Management**
+   - Check file availability
+   - Validate formats
+   - Handle extraction failures
+   - Provide user feedback
+
+## Performance Tips
+
+### Optimization
+- Use direct data access when possible
+- Batch similar operations
+- Cache extracted content
+- Monitor memory usage
+
+### File Size Considerations
+- Large files take more time
+- Memory constraints apply
+- Network transfer limits
+- Processing complexity
+
+## Tips
+- Use getUploadedFileData() for automatic parsing
+- Extract functions accept file objects or URLs directly
+- Always use exactMatch for filenames with special characters
+- Excel files are extracted as properly formatted CSV
+- Check MIME types for proper binary/text handling
+- Use specific file extensions when saving binary files 

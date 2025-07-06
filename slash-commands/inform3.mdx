@@ -1,0 +1,362 @@
+---
+title: "Infor M3 Integration Command Guide"
+description: "Learn how to use the Infor M3 Integration slash command for ERP management"
+---
+
+The `/inform3` command enables efficient management of Infor M3 ERP system, allowing you to read values and interact with various modules. Perfect for:
+
+- Customer data management
+- Inventory operations
+- Order processing
+- Delivery tracking
+- Material planning
+- Supply chain management
+
+## Basic Usage
+
+Use the command to interact with Infor M3:
+
+```
+/inform3 search for customers with name "John"
+```
+
+```
+/inform3 get customer basic data for customer number 8588691050
+```
+
+```
+/inform3 retrieve delivery information for delivery number 1
+```
+
+## Key Features
+
+### Customer Management
+- Search customers
+- Get basic customer data
+- Customer information retrieval
+- Address and contact details
+- Customer classification
+
+### Order Management
+- Customer order interface
+- Order head information
+- Order status tracking
+- Order details retrieval
+
+### Inventory Operations
+- Quick inventory counting
+- Item feature interface
+- Material planning
+- Stock management
+
+### Delivery Operations
+- Delivery number toolbox
+- Delivery head information
+- Shipment tracking
+- Delivery status
+
+## Example Commands
+
+### Customer Search
+```
+/inform3 search customers by criteria "CUNO:9* RGDT:20210714"
+```
+
+### Customer Details
+```
+/inform3 get complete customer information for customer 8588691050
+```
+
+### Delivery Information
+```
+/inform3 retrieve delivery head data for company 222
+```
+
+### Order Details
+```
+/inform3 get order head information for order number 12345
+```
+
+## Available Interfaces
+
+### Customer Interface (CRS610MI)
+- **SearchCustomer**: Find customers by criteria
+- **GetBasicData**: Retrieve customer details
+
+### Order Interface (OIS100MI)
+- **GetOrderHead**: Get order information
+
+### Delivery Interface (MWS410MI)
+- **GetHead**: Delivery head information
+
+### Inventory Interfaces
+- **MMS310MI**: Quick inventory counting
+- **MMS019MI**: Item feature interface
+- **MMS080MI**: Material planning
+
+### Supply Chain Interface (MWS150MI)
+- **Active Supply Chain**: Supply chain operations
+
+### Customer Return Interface (OIS390MI)
+- **Customer Return**: Return processing
+
+## Universal Parameters
+
+### Context Parameters
+- **cono**: Company context
+- **divi**: Division context
+- **lanc**: Language code
+- **locale**: Locale setting
+- **timeZone**: Time zone
+
+### Data Control
+- **maxrecs**: Max records returned (0 = unlimited)
+- **returncols**: Comma-separated column names
+- **excludeempty**: Omit empty fields (default: false)
+- **righttrim**: Right trim values (default: true)
+
+### Format Options
+- **dateformat**: Date format (YMD8, YMD6, MDY6, DMY6, YWD5, YMD8-)
+- **format**: JSON format (UNFORMATTED, COMPACT, PRETTY)
+- **extendedresult**: Show transaction parameters (default: false)
+
+## Customer Operations
+
+### Search Customer
+```javascript
+// Search with query
+const query = encodeURIComponent("CUNO:9* RGDT:20210714 ECAR:NC RESP:WWONG");
+const url = INFOR_URL + `CRS610MI/SearchCustomer?SQRY=${query}`;
+```
+
+### Search Parameters
+- **SQRY**: Search query (up to 900 characters)
+- Supports wildcards and multiple criteria
+- URL encoding required
+
+### Get Customer Basic Data
+```javascript
+// Retrieve customer details
+const url = INFOR_URL + `CRS610MI/GetBasicData?CUNO=${customerNumber}`;
+```
+
+### Required Parameters
+- **CUNO**: Customer number (10 characters)
+- **CONO**: Company number (3 digits)
+
+## Customer Data Structure
+
+### Basic Information
+- **CUNO**: Customer number
+- **CUNM**: Customer name
+- **CUA1-CUA4**: Address lines
+- **PONO**: Postal code
+- **PHNO**: Phone number
+- **MAIL**: Email address
+
+### Business Details
+- **STAT**: Customer status
+- **CUCL**: Customer class
+- **CUTP**: Customer type
+- **CSCD**: Country code
+- **ECAR**: State/region code
+- **CUCD**: Currency code
+
+### Financial Information
+- **PYNO**: Payer number
+- **RGDT**: Registration date
+- **LMDT**: Last modified date
+- **TXID**: Tax ID
+- **TXCO**: Tax code
+
+## Delivery Operations
+
+### Get Delivery Head
+```javascript
+const url = INFOR_URL + `MWS410MI/GetHead?CONO=${company}&DLIX=${deliveryNumber}`;
+```
+
+### Delivery Parameters
+- **CONO**: Company number
+- **DLIX**: Delivery number
+- **CONA**: Consignee
+- **PUTP**: Reference qualifier
+- **PUSN**: Reference number
+
+### Delivery Information
+- **DLIX**: Delivery number
+- **DONR**: Delivery order number
+- **TRDT**: Transport date
+- **TRTM**: Transport time
+- **RIDN**: Route ID
+- **ETRN**: External tracking number
+
+## Order Management
+
+### Get Order Head
+```javascript
+const url = INFOR_URL + `OIS100MI/GetOrderHead?ORNO=${orderNumber}`;
+```
+
+### Order Parameters
+- **ORNO**: Customer order number (10 characters)
+
+### Order Information
+- **DIVI**: Division
+- **CUNO**: Customer number
+- **ORTP**: Order type
+- **ORST**: Highest status
+- **ORDT**: Order date
+- **RLDT**: Requested delivery date
+
+## Response Structure
+
+### Standard Response
+```javascript
+{
+  "status": 200,
+  "output": {
+    "results": [
+      {
+        "transaction": "SearchCustomer",
+        "records": [
+          {
+            "CUNO": "9192705806",
+            "CUNM": "JOHN DOE",
+            "STAT": "20",
+            "CUCL": "Y01"
+          }
+        ]
+      }
+    ],
+    "wasTerminated": false,
+    "nrOfSuccessfullTransactions": 1,
+    "nrOfFailedTransactions": 0
+  }
+}
+```
+
+### Response Elements
+- **results**: Transaction results array
+- **records**: Data records
+- **wasTerminated**: Process completion status
+- **nrOfSuccessfullTransactions**: Success count
+- **nrOfFailedTransactions**: Error count
+
+## Date Formats
+
+### Available Formats
+- **YMD8**: YYYYMMDD (default)
+- **YMD6**: YYMMDD
+- **MDY6**: MMDDYY
+- **DMY6**: DDMMYY
+- **YWD5**: YYWWD
+- **YMD8-**: YYYY-MM-DD
+
+### Date Usage
+```javascript
+// Set date format in request
+const url = INFOR_URL + `CRS610MI/GetBasicData?CUNO=${customerNumber}&dateformat=YMD8`;
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid customer numbers
+- Missing required parameters
+- Company context errors
+- Permission restrictions
+
+### Error Response
+```javascript
+{
+  "errorMessage": "Customer not found",
+  "errorCode": "XRE0103",
+  "errorField": "CUNO",
+  "errorType": "BackendInternalError"
+}
+```
+
+## Best Practices
+
+1. **Parameter Validation**
+   - Validate customer numbers
+   - Check company codes
+   - Verify required fields
+   - Handle missing data
+
+2. **Query Optimization**
+   - Use specific search criteria
+   - Limit returned columns
+   - Set appropriate max records
+   - Encode special characters
+
+3. **Data Processing**
+   - Handle empty responses
+   - Validate data formats
+   - Process multiple records
+   - Check transaction status
+
+4. **Integration Setup**
+   - Configure integration ID
+   - Set up proper authentication
+   - Handle connection errors
+   - Monitor API limits
+
+## Common Use Cases
+
+### Customer Lookup
+```
+/inform3 find customer by phone number or email address
+```
+
+### Order Status Check
+```
+/inform3 check order status and delivery information
+```
+
+### Inventory Query
+```
+/inform3 get current inventory levels for specific items
+```
+
+### Delivery Tracking
+```
+/inform3 track delivery status and shipping information
+```
+
+## Integration Configuration
+
+### Paragon Integration
+```javascript
+const integrationId = config.paragonIntegrations.inform3;
+const INFOR_URL = PARA_BASE_URL + `custom/${integrationId}/`;
+```
+
+### Authentication
+- Uses Paragon proxy authentication
+- Integration ID required
+- Proper credentials needed
+- Session management
+
+## Performance Considerations
+
+### Query Efficiency
+- Use specific search criteria
+- Limit result sets
+- Optimize date ranges
+- Cache frequently used data
+
+### API Limits
+- Monitor request rates
+- Handle timeouts
+- Implement retry logic
+- Batch operations when possible
+
+## Tips
+- Always URL encode search queries with special characters
+- Use company context (cono) for multi-company environments
+- Set appropriate date formats for regional requirements
+- Handle empty responses gracefully in customer searches
+- Cache integration ID for repeated operations
+- Validate customer numbers before API calls 

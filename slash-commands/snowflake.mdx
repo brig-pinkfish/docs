@@ -1,0 +1,230 @@
+---
+title: "Snowflake"
+description: "Execute SQL queries, manage databases, and handle data warehousing with Snowflake"
+---
+
+# Snowflake
+
+Execute SQL queries, manage databases, and handle data warehousing with Snowflake's cloud data platform for analytics and data engineering.
+
+## Overview
+
+The Snowflake skill provides functionality for:
+- Executing SQL statements and queries
+- Managing database operations
+- Handling data warehousing tasks
+- Monitoring query execution status
+- Processing large-scale data analytics
+
+## Connection Requirements
+
+This skill requires a Snowflake connection configured through either:
+- **PinkConnect Proxy**: PC_BASE_URL + "v2/"
+- **Paragon Proxy**: PARA_BASE_URL + "snowflake/"
+
+## Basic Usage
+
+```javascript
+// Execute a SQL query
+const queryPayload = {
+  "statement": "SELECT * FROM my_table WHERE id = 1;",
+  "timeout": 60
+};
+```
+
+## Key Features
+
+### SQL Execution
+- **Query Execution**: Run SELECT, INSERT, UPDATE, DELETE statements
+- **DDL Operations**: Create, alter, drop tables and databases
+- **Data Loading**: Load data from various sources
+- **Analytics Queries**: Complex analytical queries with aggregations
+
+### Query Management
+- **Status Monitoring**: Check query execution status
+- **Result Retrieval**: Get query results and metadata
+- **Query Cancellation**: Cancel long-running queries
+- **Timeout Handling**: Manage query timeouts
+
+## Common Operations
+
+### Execute SQL Statement
+```javascript
+POST: statements
+{
+  "statement": "SELECT customer_id, customer_name, total_orders FROM customers WHERE region = 'North America';",
+  "timeout": 120
+}
+```
+
+### Check Query Status
+```javascript
+GET: statements/{statementHandle}
+```
+
+### Cancel Query Execution
+```javascript
+POST: statements/{statementHandle}/cancel
+```
+
+## SQL Statement Examples
+
+### Data Query
+```sql
+SELECT 
+    product_id,
+    product_name,
+    SUM(quantity) as total_quantity,
+    AVG(price) as avg_price
+FROM sales_data 
+WHERE sale_date >= '2024-01-01'
+GROUP BY product_id, product_name
+ORDER BY total_quantity DESC;
+```
+
+### Data Insertion
+```sql
+INSERT INTO customer_orders (customer_id, order_date, total_amount)
+VALUES (12345, '2025-01-15', 299.99);
+```
+
+### Table Creation
+```sql
+CREATE TABLE analytics_summary (
+    id INTEGER AUTOINCREMENT,
+    metric_name VARCHAR(100),
+    metric_value DECIMAL(10,2),
+    calculation_date DATE,
+    PRIMARY KEY (id)
+);
+```
+
+## Response Structure
+
+### Query Execution Response
+```javascript
+{
+  "statementHandle": "01234567-89ab-cdef-0123-456789abcdef",
+  "status": "Complete",
+  "resultSetMetaData": {
+    "numRows": 150,
+    "format": "jsonv2",
+    "rowType": [
+      {
+        "name": "CUSTOMER_ID",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "CUSTOMER_NAME",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "TOTAL_ORDERS",
+        "type": "integer",
+        "nullable": true
+      }
+    ]
+  },
+  "data": [
+    [12345, "Acme Corp", 25],
+    [12346, "Global Industries", 18],
+    [12347, "Tech Solutions", 32]
+  ]
+}
+```
+
+### Status Check Response
+```javascript
+{
+  "statementHandle": "01234567-89ab-cdef-0123-456789abcdef",
+  "status": "Complete",
+  "message": "Query executed successfully",
+  "queryId": "01234567-89ab-cdef-0123-456789abcdef",
+  "sqlText": "SELECT * FROM customers WHERE region = 'North America'"
+}
+```
+
+## Query Status Values
+
+### Status Types
+- **Running**: Query is currently executing
+- **Complete**: Query finished successfully
+- **Failed**: Query failed with error
+- **Cancelled**: Query was cancelled by user
+- **Queued**: Query is waiting in queue
+
+## Data Types
+
+### Snowflake Data Types
+- **INTEGER**: Whole numbers
+- **DECIMAL/NUMBER**: Decimal numbers with precision
+- **VARCHAR/STRING**: Text strings
+- **DATE**: Date values (YYYY-MM-DD)
+- **TIMESTAMP**: Date and time values
+- **BOOLEAN**: True/false values
+- **ARRAY**: JSON arrays
+- **OBJECT**: JSON objects
+
+## Error Handling
+
+### Common Error Types
+```javascript
+{
+  "error": {
+    "code": "SQL_COMPILATION_ERROR",
+    "message": "Object 'NONEXISTENT_TABLE' does not exist",
+    "sqlState": "42S02"
+  }
+}
+```
+
+### Error Categories
+- **SQL_COMPILATION_ERROR**: Syntax or object errors
+- **SQL_EXECUTION_ERROR**: Runtime execution errors
+- **INSUFFICIENT_PRIVILEGES**: Permission errors
+- **RESOURCE_EXHAUSTED**: Resource limit errors
+
+## Performance Optimization
+
+### Query Optimization
+```sql
+-- Use appropriate WHERE clauses
+SELECT * FROM large_table WHERE indexed_column = 'value';
+
+-- Use LIMIT for large result sets
+SELECT * FROM transactions ORDER BY date DESC LIMIT 1000;
+
+-- Use clustering keys for better performance
+SELECT * FROM sales_data WHERE sale_date BETWEEN '2024-01-01' AND '2024-12-31';
+```
+
+### Warehouse Management
+```sql
+-- Use appropriate warehouse size
+USE WAREHOUSE COMPUTE_WH;
+
+-- Suspend warehouse when not in use
+ALTER WAREHOUSE COMPUTE_WH SUSPEND;
+```
+
+## Best Practices
+
+1. **Query Optimization**: Use appropriate WHERE clauses and indexes
+2. **Resource Management**: Choose appropriate warehouse sizes for workloads
+3. **Error Handling**: Always check query status before processing results
+4. **Timeout Management**: Set appropriate timeouts for long-running queries
+5. **Data Security**: Use role-based access control for sensitive data
+6. **Cost Control**: Monitor warehouse usage and suspend when not needed
+7. **Batch Processing**: Group related operations for efficiency
+8. **Result Handling**: Process large result sets in batches to avoid memory issues
+
+## Important Notes
+
+- **Statement Handles**: Save statement handles for status checking and cancellation
+- **Timeout Settings**: Set appropriate timeouts based on query complexity
+- **Data Format**: Results are returned in JSON format with metadata
+- **Warehouse Context**: Ensure proper warehouse and database context
+- **Rate Limits**: Respect Snowflake API rate limits for high-volume operations
+- **Security**: Use appropriate authentication and authorization 

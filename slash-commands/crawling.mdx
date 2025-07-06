@@ -1,0 +1,304 @@
+---
+title: "Crawling Command Guide"
+description: "Learn how to use the Crawling slash command to retrieve website content"
+---
+
+The `/crawling` command enables you to crawl websites and extract content from multiple pages. Perfect for:
+
+- Extracting content from websites
+- Bulk data collection
+- Content analysis
+- Documentation scraping
+- Research automation
+
+## Basic Usage
+
+Use the command to crawl websites:
+
+```
+/crawling crawl "https://example.com" with limit 10 pages
+```
+
+```
+/crawling extract content from docs section of "https://company.com"
+```
+
+```
+/crawling scrape "https://blog.com" excluding blog posts
+```
+
+## Key Features
+
+### Content Extraction
+- Extract markdown content
+- Retrieve HTML source
+- Capture page metadata
+- Multi-format output
+- Structured data
+
+### Crawling Control
+- Set page limits
+- Control crawl depth
+- Include/exclude paths
+- Follow link patterns
+- Backward link support
+
+### Output Formats
+- Markdown format
+- HTML source
+- Metadata extraction
+- Screenshot capture
+- Custom formats
+
+### Advanced Options
+- Webhook notifications
+- Path filtering
+- Depth control
+- Credit tracking
+- Progress monitoring
+
+## Example Commands
+
+### Basic Crawling
+```
+/crawling crawl "https://docs.example.com" with 20 page limit
+```
+
+### Path Filtering
+```
+/crawling crawl "https://site.com" including only "docs/*" paths
+```
+
+### Exclude Patterns
+```
+/crawling crawl "https://blog.com" excluding "admin/*" and "private/*"
+```
+
+### Deep Crawling
+```
+/crawling crawl "https://wiki.com" with max depth 5
+```
+
+### Multi-URL Crawling
+```
+/crawling crawl multiple URLs with markdown output
+```
+
+## Parameters
+
+### Required Parameters
+- **urls**: Array of URLs to crawl
+- **limit**: Maximum pages to crawl (default: 10)
+
+### Optional Parameters
+- **maxDepth**: Maximum link depth to follow
+- **excludePaths**: Glob patterns to exclude
+- **includePaths**: Glob patterns to include only
+- **allowBackwardLinks**: Follow non-child links
+- **scrapeOptions**: Output format configuration
+- **webhook**: Progress notification URL
+
+## Response Structure
+
+### Successful Crawl
+```javascript
+{
+  "https://example.com": {
+    "status": "completed",
+    "total": 4,
+    "completed": 4,
+    "creditsUsed": 4,
+    "data": [
+      {
+        "markdown": "# Page Title\n\nContent...",
+        "html": "<!DOCTYPE html>...",
+        "metadata": {
+          "title": "Page Title",
+          "sourceURL": "https://example.com",
+          "statusCode": 200
+        }
+      }
+    ]
+  }
+}
+```
+
+### Error Response
+```javascript
+{
+  "error": "Error message details"
+}
+```
+
+## Content Formats
+
+### Markdown Output
+- Clean, readable format
+- Structured content
+- Preserved formatting
+- Easy to process
+- Human-readable
+
+### HTML Output
+- Complete source code
+- Full page structure
+- All elements preserved
+- Raw format
+- Developer-friendly
+
+### Metadata
+- **title**: Page title
+- **language**: Content language
+- **sourceURL**: Original URL
+- **description**: Page description
+- **statusCode**: HTTP response code
+
+## Path Filtering
+
+### Include Patterns
+```javascript
+"includePaths": ["docs/*", "help/*", "api/*"]
+```
+
+### Exclude Patterns
+```javascript
+"excludePaths": ["admin/*", "private/*", "temp/*"]
+```
+
+### Glob Patterns
+- Use `*` for wildcards
+- Use `**` for recursive matching
+- Combine multiple patterns
+- Case-sensitive matching
+
+## Crawl Depth Control
+
+### Depth Levels
+- **0**: Only starting URLs
+- **1**: Direct links from start
+- **2**: Links from level 1 pages
+- **N**: Continue to depth N
+
+### Backward Links
+- **true**: Follow any discovered links
+- **false**: Only follow child links
+- Affects crawl scope
+- Controls link following
+
+## Credit Usage
+
+### Credit Calculation
+- 1 credit per page crawled
+- Failed pages don't count
+- Redirects count as 1 page
+- Screenshots use additional credits
+
+### Monitoring
+- Track credits used
+- Monitor crawl progress
+- Set appropriate limits
+- Optimize for efficiency
+
+## Webhook Integration
+
+### Webhook Events
+- Crawl started
+- Page completed
+- Crawl finished
+- Error notifications
+
+### Webhook Payload
+```javascript
+{
+  "event": "page_completed",
+  "url": "https://example.com/page",
+  "status": "success",
+  "progress": {
+    "completed": 5,
+    "total": 10
+  }
+}
+```
+
+## Best Practices
+
+1. **Set Appropriate Limits**
+   - Start with small limits
+   - Monitor credit usage
+   - Adjust based on needs
+   - Avoid excessive crawling
+
+2. **Use Path Filtering**
+   - Include relevant sections
+   - Exclude unnecessary content
+   - Use specific patterns
+   - Optimize crawl scope
+
+3. **Monitor Progress**
+   - Use webhooks for updates
+   - Track completion status
+   - Handle errors gracefully
+   - Implement retries
+
+4. **Respect Websites**
+   - Check robots.txt
+   - Avoid overloading servers
+   - Use reasonable delays
+   - Follow site policies
+
+## Common Use Cases
+
+### Documentation Scraping
+```
+/crawling extract all docs from "https://docs.company.com"
+```
+
+### Blog Content Collection
+```
+/crawling crawl blog posts from "https://blog.example.com"
+```
+
+### Research Data Gathering
+```
+/crawling collect research papers from university site
+```
+
+### Competitive Analysis
+```
+/crawling analyze competitor website content structure
+```
+
+## Error Handling
+
+### Common Issues
+- Network timeouts
+- Access restrictions
+- Invalid URLs
+- Rate limiting
+
+### Error Recovery
+- Retry failed pages
+- Handle partial results
+- Check status codes
+- Validate responses
+
+## Performance Optimization
+
+### Speed Factors
+- Page load times
+- Network conditions
+- Site responsiveness
+- Crawl depth
+
+### Optimization Tips
+- Use appropriate limits
+- Filter paths effectively
+- Monitor progress
+- Batch similar requests
+
+## Tips
+- Start with small limits to test crawling behavior
+- Use path filtering to focus on relevant content
+- Monitor credit usage to control costs
+- Implement webhooks for real-time progress tracking
+- Respect website robots.txt and crawling policies 

@@ -1,0 +1,200 @@
+---
+title: "Google Forms Command Guide"
+description: "Learn how to use the Google Forms slash command to create and manage forms"
+---
+
+The `/google-forms` command enables you to create, update, and manage Google Forms and responses. Perfect for:
+
+- Creating forms
+- Adding questions
+- Managing responses
+- Setting permissions
+- Collecting feedback
+
+## Basic Usage
+
+Use the command to interact with Google Forms:
+
+```
+/google-forms create form "Customer Survey" with description "Please share your feedback"
+```
+
+```
+/google-forms add question "What is your name?" to form FORM_ID
+```
+
+```
+/google-forms get responses for form FORM_ID
+```
+
+## Key Features
+
+### Form Management
+- Create new forms
+- Update form details
+- Get form structure
+- Set permissions
+- Delete forms
+
+### Question Types
+- Text questions
+- Multiple choice
+- Checkboxes
+- Dropdowns
+- Linear scale
+- Date/time
+- File upload
+
+### Response Handling
+- View responses
+- Export data
+- Set up webhooks
+- Monitor submissions
+
+## Example Commands
+
+### Create Form
+```
+/google-forms create new form titled "Event Registration"
+```
+
+### Get Form Details
+```
+/google-forms show form FORM_ID
+```
+
+### Add Text Question
+```
+/google-forms add text question "What is your email?" to form FORM_ID required
+```
+
+### Add Multiple Choice
+```
+/google-forms add radio question "Select your department" with options Sales, Marketing, Engineering to form FORM_ID
+```
+
+### Update Question
+```
+/google-forms update question ITEM_ID in form FORM_ID to add option "Other"
+```
+
+### Get Responses
+```
+/google-forms show all responses for form FORM_ID
+```
+
+### Make Form Public
+```
+/google-forms make form FORM_ID public
+```
+
+## Question Types
+
+### Text Input
+```json
+{
+  "textQuestion": {}
+}
+```
+
+### Paragraph Text
+```json
+{
+  "paragraphQuestion": {}
+}
+```
+
+### Multiple Choice
+```json
+{
+  "choiceQuestion": {
+    "type": "RADIO",
+    "options": [
+      {"value": "Option 1"},
+      {"value": "Option 2"}
+    ]
+  }
+}
+```
+
+### Checkboxes
+```json
+{
+  "choiceQuestion": {
+    "type": "CHECKBOX",
+    "options": [
+      {"value": "Option A"},
+      {"value": "Option B"}
+    ]
+  }
+}
+```
+
+### Dropdown
+```json
+{
+  "choiceQuestion": {
+    "type": "DROP_DOWN",
+    "options": [
+      {"value": "Choice 1"},
+      {"value": "Choice 2"}
+    ]
+  }
+}
+```
+
+### Linear Scale
+```json
+{
+  "scaleQuestion": {
+    "low": 1,
+    "high": 5,
+    "lowLabel": "Disagree",
+    "highLabel": "Agree"
+  }
+}
+```
+
+## Required Information
+
+### Form ID
+- Required for most operations
+- Found in form URL: `https://docs.google.com/forms/d/FORM_ID/edit`
+
+### Item ID
+- Required for question updates
+- Returned when creating questions
+- Found in form structure
+
+## Permissions
+
+### Public Access
+```json
+{
+  "role": "reader",
+  "type": "anyone"
+}
+```
+
+### Specific Users
+```json
+{
+  "role": "reader",
+  "type": "user",
+  "emailAddress": "user@example.com"
+}
+```
+
+## Important Notes
+
+- Cannot list all forms (use Google Drive instead)
+- Questions are referenced by itemId
+- Responses include timestamps
+- Webhooks available for real-time updates
+
+## Tips
+- Always provide form ID for operations
+- Set required fields for important questions
+- Use appropriate question types
+- Test forms before sharing
+- Monitor responses regularly 

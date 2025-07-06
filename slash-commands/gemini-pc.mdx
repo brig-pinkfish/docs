@@ -1,0 +1,344 @@
+---
+title: "Google Gemini API Command Guide"
+description: "Learn how to use the Google Gemini API slash command through PinkConnect Proxy"
+---
+
+The `/gemini-pc` command enables you to access Google Gemini AI models through PinkConnect Proxy. Perfect for:
+
+- Text generation and creative writing
+- Image analysis and description
+- Multi-turn conversations
+- Code generation and analysis
+- Function calling capabilities
+- Multimodal AI interactions
+
+## Basic Usage
+
+Use the command to interact with Gemini models:
+
+```
+/gemini-pc generate a short story about space exploration
+```
+
+```
+/gemini-pc analyze this image and describe what you see
+```
+
+```
+/gemini-pc help me write a Python function for data processing
+```
+
+## Key Features
+
+### Text Generation
+- Creative writing
+- Content creation
+- Code generation
+- Technical documentation
+- Conversational AI
+
+### Multimodal Capabilities
+- Image understanding
+- Video analysis
+- Audio processing
+- Visual reasoning
+- Cross-modal tasks
+
+### Advanced Features
+- Function calling
+- Tool integration
+- JSON mode support
+- Multi-turn conversations
+- Structured outputs
+
+## Example Commands
+
+### Creative Writing
+```
+/gemini-pc write a poem about artificial intelligence
+```
+
+### Code Generation
+```
+/gemini-pc create a Python class for managing user accounts
+```
+
+### Image Analysis
+```
+/gemini-pc describe the contents of this uploaded image
+```
+
+### Conversation
+```
+/gemini-pc start a conversation about machine learning concepts
+```
+
+### Function Calling
+```
+/gemini-pc get weather information for San Francisco using available tools
+```
+
+## Available Models
+
+### Latest Generation
+- **gemini-2.0-flash**: Next-generation features, speed, and thinking
+- **gemini-2.0-flash-lite**: Cost-efficient with low latency
+- **gemini-2.5-flash**: Fast and versatile for general tasks
+- **gemini-2.5-pro**: Advanced reasoning and coding capabilities
+
+### Established Models
+- **gemini-1.5-pro**: High intelligence for complex tasks
+- **gemini-1.5-flash**: Fast and versatile performance
+
+## Text Generation
+
+### Basic Request
+```javascript
+{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Write a short story about a robot learning to paint"
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "temperature": 0.7,
+    "topK": 40,
+    "topP": 0.95,
+    "maxOutputTokens": 1024
+  }
+}
+```
+
+### Configuration Options
+- **temperature**: Creativity level (0.0-1.0)
+- **topK**: Token selection diversity
+- **topP**: Nucleus sampling threshold
+- **maxOutputTokens**: Response length limit
+
+## Image Analysis
+
+### Image Input
+```javascript
+{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Describe what you see in this image"
+        },
+        {
+          "inline_data": {
+            "mime_type": "image/jpeg",
+            "data": "base64_encoded_image_data"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Supported Formats
+- JPEG images
+- PNG images
+- WebP images
+- Base64 encoding
+- Inline data format
+
+## Multi-turn Conversations
+
+### Chat Format
+```javascript
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [{"text": "Hello! Can you help me with coding?"}]
+    },
+    {
+      "role": "model",
+      "parts": [{"text": "Hello! I'd be happy to help you with coding..."}]
+    },
+    {
+      "role": "user",
+      "parts": [{"text": "I need help with Python functions"}]
+    }
+  ]
+}
+```
+
+### Conversation Flow
+- Maintain context across turns
+- Use role-based messaging
+- Build on previous responses
+- Handle conversation history
+
+## Function Calling
+
+### Function Declaration
+```javascript
+{
+  "tools": [
+    {
+      "function_declarations": [
+        {
+          "name": "get_weather",
+          "description": "Get the current weather for a location",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "The city and state, e.g. San Francisco, CA"
+              }
+            },
+            "required": ["location"]
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Tool Integration
+- Define custom functions
+- Structured parameter schemas
+- Automatic function calling
+- Result integration
+
+## Response Structure
+
+### Standard Response
+```javascript
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Generated response text..."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "safetyRatings": [...]
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 12,
+    "candidatesTokenCount": 150,
+    "totalTokenCount": 162
+  }
+}
+```
+
+### Response Elements
+- **candidates**: Generated responses
+- **finishReason**: Completion status
+- **safetyRatings**: Content safety scores
+- **usageMetadata**: Token usage information
+
+## Best Practices
+
+1. **Model Selection**
+   - Choose appropriate model for task
+   - Consider speed vs. capability trade-offs
+   - Use flash models for quick responses
+   - Use pro models for complex reasoning
+
+2. **Prompt Engineering**
+   - Be specific and clear
+   - Provide context and examples
+   - Use structured formatting
+   - Test different approaches
+
+3. **Configuration Tuning**
+   - Adjust temperature for creativity
+   - Set appropriate token limits
+   - Use sampling parameters wisely
+   - Monitor response quality
+
+4. **Multimodal Usage**
+   - Combine text and images effectively
+   - Use appropriate mime types
+   - Optimize image sizes
+   - Provide clear instructions
+
+## Common Use Cases
+
+### Content Creation
+```
+/gemini-pc create marketing copy for a new product launch
+```
+
+### Code Analysis
+```
+/gemini-pc review this code and suggest improvements
+```
+
+### Data Processing
+```
+/gemini-pc analyze this dataset and provide insights
+```
+
+### Creative Tasks
+```
+/gemini-pc generate ideas for a mobile app interface
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid API keys
+- Model not found
+- Rate limiting
+- Content safety blocks
+
+### Response Codes
+- **200**: Success
+- **400**: Bad request
+- **401**: Unauthorized
+- **429**: Rate limited
+- **500**: Server error
+
+## Safety Features
+
+### Content Filtering
+- Automatic safety checks
+- Harmful content detection
+- Bias mitigation
+- Responsible AI practices
+
+### Safety Categories
+- Sexually explicit content
+- Hate speech
+- Harassment
+- Dangerous content
+
+## Performance Optimization
+
+### Speed Considerations
+- Use flash models for quick responses
+- Optimize prompt length
+- Batch similar requests
+- Cache common responses
+
+### Cost Management
+- Monitor token usage
+- Use appropriate models
+- Optimize request frequency
+- Track usage metrics
+
+## Tips
+- Choose the right model for your specific task requirements
+- Use multimodal capabilities by combining text with images
+- Leverage function calling for structured interactions
+- Adjust temperature settings based on desired creativity level
+- Monitor token usage to optimize costs
+- Test different prompt strategies for best results 

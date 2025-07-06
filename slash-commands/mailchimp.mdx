@@ -1,0 +1,437 @@
+---
+title: "Mailchimp API Command Guide"
+description: "Learn how to use the Mailchimp API slash command to manage email campaigns and subscriber lists"
+---
+
+The `/mailchimp` command enables you to manage email campaigns and subscriber lists through Mailchimp's marketing platform. Perfect for:
+
+- Creating and managing email campaigns
+- Building and organizing audiences
+- Automating email marketing
+- Tracking campaign performance
+- Managing subscriber data
+
+## Basic Usage
+
+Use the command to work with Mailchimp:
+
+```
+/mailchimp create campaign "Winter Sale" for audience list_id
+```
+
+```
+/mailchimp add contact "john.doe@example.com" to list with name "John Doe"
+```
+
+```
+/mailchimp send campaign immediately to subscribers
+```
+
+## Key Features
+
+### Campaign Management
+- Create regular campaigns
+- Update campaign settings
+- Send campaigns immediately
+- Schedule campaigns
+- Track campaign performance
+
+### Audience Management
+- Create subscriber lists
+- Add/update contacts
+- Manage subscriber data
+- Segment audiences
+- Handle unsubscribes
+
+### Search and Organization
+- Search campaigns
+- Filter audiences
+- Organize by folders
+- Track engagement
+- Monitor deliverability
+
+## Example Commands
+
+### Create Campaign
+```
+/mailchimp create regular campaign with subject "Your Subject Here"
+```
+
+### Manage Audiences
+```
+/mailchimp create new audience "Newsletter Subscribers" with company details
+```
+
+### Add Subscribers
+```
+/mailchimp add subscriber with merge fields for personalization
+```
+
+### Send Campaigns
+```
+/mailchimp send campaign_id to audience immediately
+```
+
+### Search Content
+```
+/mailchimp search campaigns for "Winter Sale" keyword
+```
+
+## Campaign Operations
+
+### Create Campaign
+```javascript
+{
+  "type": "regular",
+  "recipients": {
+    "list_id": "your_list_id"
+  },
+  "settings": {
+    "subject_line": "Your Subject Here",
+    "title": "Campaign Title",
+    "from_name": "Your Name",
+    "reply_to": "your_email@example.com"
+  }
+}
+```
+
+### Update Campaign
+```javascript
+{
+  "settings": {
+    "subject_line": "Updated Subject Line",
+    "title": "Updated Campaign Title"
+  }
+}
+```
+
+### Send Campaign
+```javascript
+// Send immediately
+const url = MAILCHIMP_URL + `campaigns/${campaignId}/actions/send`;
+```
+
+## Audience Operations
+
+### Create List
+```javascript
+{
+  "name": "New Audience",
+  "contact": {
+    "company": "Your Company",
+    "address1": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "zip": "12345",
+    "country": "US"
+  },
+  "permission_reminder": "You're receiving this email because you signed up for updates.",
+  "campaign_defaults": {
+    "from_name": "Your Name",
+    "from_email": "your_email@example.com",
+    "subject": "Default Subject",
+    "language": "en"
+  },
+  "email_type_option": true
+}
+```
+
+### Add Contact to List
+```javascript
+{
+  "email_address": "john.doe@example.com",
+  "status": "subscribed",
+  "merge_fields": {
+    "FNAME": "John",
+    "LNAME": "Doe"
+  }
+}
+```
+
+### Update Contact
+```javascript
+{
+  "email_address": "john.new@example.com",
+  "merge_fields": {
+    "FNAME": "John",
+    "LNAME": "Doe"
+  },
+  "status": "subscribed"
+}
+```
+
+## Campaign Types
+
+### Regular Campaigns
+- **type**: "regular"
+- Standard email campaigns
+- One-time sends
+- Immediate or scheduled
+
+### Automated Campaigns
+- **type**: "automation"
+- Triggered by user actions
+- Drip sequences
+- Welcome series
+
+### A/B Test Campaigns
+- **type**: "variate"
+- Split testing
+- Subject line testing
+- Content variations
+
+## Audience Structure
+
+### List Properties
+- **id**: Unique list identifier
+- **name**: List display name
+- **contact**: Company contact info
+- **permission_reminder**: Subscription reminder
+- **campaign_defaults**: Default settings
+
+### Contact Properties
+- **email_address**: Primary email
+- **status**: Subscription status
+- **merge_fields**: Custom data fields
+- **interests**: Preference categories
+- **tags**: Organizational labels
+
+## Subscriber Status
+
+### Status Types
+- **subscribed**: Active subscriber
+- **unsubscribed**: Opted out
+- **cleaned**: Removed due to bounces
+- **pending**: Awaiting confirmation
+- **transactional**: Transactional only
+
+### Status Management
+```javascript
+// Subscribe user
+"status": "subscribed"
+
+// Unsubscribe user
+"status": "unsubscribed"
+
+// Pending confirmation
+"status": "pending"
+```
+
+## Search Operations
+
+### Search Campaigns
+```javascript
+const url = MAILCHIMP_URL + "search-campaigns?query=Winter Sale";
+```
+
+### Search Lists
+```javascript
+const url = MAILCHIMP_URL + "lists?fields=lists.name,lists.id&name=Newsletter";
+```
+
+### Filter Results
+- Use query parameters
+- Specify return fields
+- Limit result sets
+- Sort by criteria
+
+## Response Formats
+
+### Campaign Response
+```javascript
+{
+  "id": "campaign_id",
+  "type": "regular",
+  "create_time": "2025-01-13T12:00:00+00:00",
+  "status": "save",
+  "settings": {
+    "subject_line": "Your Subject Here",
+    "title": "Campaign Title",
+    "from_name": "Your Name",
+    "reply_to": "your_email@example.com"
+  },
+  "recipients": {
+    "list_id": "your_list_id"
+  }
+}
+```
+
+### List Response
+```javascript
+{
+  "id": "list_id",
+  "name": "New Audience",
+  "contact": {
+    "company": "Your Company",
+    "address1": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "zip": "12345",
+    "country": "US"
+  },
+  "stats": {
+    "member_count": 1250,
+    "unsubscribe_count": 25,
+    "cleaned_count": 10
+  }
+}
+```
+
+### Contact Response
+```javascript
+{
+  "id": "contact_id",
+  "email_address": "john.doe@example.com",
+  "status": "subscribed",
+  "merge_fields": {
+    "FNAME": "John",
+    "LNAME": "Doe"
+  },
+  "stats": {
+    "avg_open_rate": 0.25,
+    "avg_click_rate": 0.05
+  }
+}
+```
+
+## Merge Fields
+
+### Default Fields
+- **FNAME**: First name
+- **LNAME**: Last name
+- **ADDRESS**: Mailing address
+- **PHONE**: Phone number
+- **BIRTHDAY**: Birth date
+
+### Custom Fields
+- Create additional fields
+- Various data types
+- Personalization options
+- Segmentation criteria
+
+## Best Practices
+
+1. **Campaign Strategy**
+   - Clear subject lines
+   - Compelling content
+   - Mobile optimization
+   - A/B testing
+
+2. **Audience Management**
+   - Regular list cleaning
+   - Segmentation strategy
+   - Permission-based marketing
+   - Engagement tracking
+
+3. **Deliverability**
+   - Maintain sender reputation
+   - Monitor bounce rates
+   - Handle unsubscribes properly
+   - Use authentication
+
+4. **Compliance**
+   - GDPR compliance
+   - CAN-SPAM compliance
+   - Permission documentation
+   - Data protection
+
+## Common Use Cases
+
+### Newsletter Campaigns
+```
+/mailchimp create monthly newsletter campaign for subscribers
+```
+
+### Promotional Emails
+```
+/mailchimp send product launch campaign to segmented audience
+```
+
+### Welcome Series
+```
+/mailchimp create automated welcome sequence for new subscribers
+```
+
+### Re-engagement
+```
+/mailchimp create win-back campaign for inactive subscribers
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid email addresses
+- Missing required fields
+- List permission errors
+- Campaign send failures
+
+### Status Codes
+- **200**: Success
+- **204**: No content (successful action)
+- **400**: Bad request
+- **401**: Unauthorized
+- **404**: Not found
+
+## Automation Features
+
+### Triggered Campaigns
+- Welcome emails
+- Abandoned cart recovery
+- Birthday campaigns
+- Re-engagement series
+
+### Workflow Setup
+- Define triggers
+- Set conditions
+- Create sequences
+- Monitor performance
+
+## Integration Tips
+
+### API Limits
+- Rate limiting applies
+- Monitor usage quotas
+- Implement retry logic
+- Cache responses
+
+### Data Synchronization
+- Regular data updates
+- Handle conflicts
+- Maintain consistency
+- Backup strategies
+
+## Performance Optimization
+
+### Campaign Efficiency
+- Optimize send times
+- Segment audiences
+- Test subject lines
+- Monitor metrics
+
+### List Health
+- Remove inactive subscribers
+- Handle bounces
+- Update preferences
+- Clean duplicates
+
+## Advanced Features
+
+### Segmentation
+- Behavior-based segments
+- Demographic targeting
+- Engagement levels
+- Purchase history
+
+### Personalization
+- Dynamic content
+- Merge field usage
+- Conditional blocks
+- Product recommendations
+
+## Tips
+- Use descriptive campaign titles for easy organization
+- Regularly clean subscriber lists to maintain deliverability
+- Test campaigns with small segments before full deployment
+- Monitor engagement metrics to optimize future campaigns
+- Implement double opt-in for better list quality
+- Use merge fields for personalized content 

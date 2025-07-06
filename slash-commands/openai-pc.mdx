@@ -1,0 +1,461 @@
+---
+title: "OpenAI API Command Guide"
+description: "Learn how to use the OpenAI API slash command with PinkConnect Proxy for AI-powered capabilities"
+---
+
+The `/openai-pc` command enables you to access OpenAI's powerful AI capabilities through PinkConnect Proxy. Perfect for:
+
+- Text generation and chat completions
+- Image analysis and generation
+- Audio transcription and synthesis
+- Text embeddings for semantic search
+- Function calling and tool use
+
+## Basic Usage
+
+Use the command to work with OpenAI:
+
+```
+/openai-pc generate a professional email about project status
+```
+
+```
+/openai-pc analyze this image and describe what you see
+```
+
+```
+/openai-pc create embeddings for similarity search
+```
+
+## Key Features
+
+### Text Generation
+- Chat completions with GPT models
+- System prompts and context
+- Temperature and creativity control
+- JSON mode support
+- Structured responses
+
+### Vision Capabilities
+- Image understanding
+- Visual question answering
+- Scene description
+- Object detection
+- Multi-modal conversations
+
+### Audio Processing
+- Speech-to-text transcription
+- Text-to-speech synthesis
+- Multiple voice options
+- Audio format support
+- Language detection
+
+### Advanced Features
+- Function calling
+- Tool integration
+- Embedding generation
+- Semantic search
+- Custom model fine-tuning
+
+## Example Commands
+
+### Text Generation
+```
+/openai-pc write a summary of the quarterly sales report
+```
+
+### Image Analysis
+```
+/openai-pc describe the contents of this product image
+```
+
+### Audio Processing
+```
+/openai-pc transcribe this meeting recording
+```
+
+### Function Calling
+```
+/openai-pc get weather information for Boston using function calls
+```
+
+## Chat Completions
+
+### Basic Chat
+```javascript
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that responds in JSON format."
+    },
+    {
+      "role": "user",
+      "content": "What are the benefits of renewable energy?"
+    }
+  ],
+  "max_tokens": 1500,
+  "temperature": 0.7
+}
+```
+
+### Chat Response
+```javascript
+{
+  "id": "chatcmpl-9AbCdEf12345",
+  "object": "chat.completion",
+  "created": 1677652288,
+  "model": "gpt-4o",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"benefits\": [\"Reduces carbon emissions\", \"Sustainable energy source\", \"Lower long-term costs\"]}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 45,
+    "total_tokens": 70
+  }
+}
+```
+
+## Vision Capabilities
+
+### Image Analysis
+```javascript
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What's in this image?"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/image.jpg"
+          }
+        }
+      ]
+    }
+  ],
+  "max_tokens": 300
+}
+```
+
+### Vision Response
+```javascript
+{
+  "id": "chatcmpl-9AbCdEf12345",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "This image shows a golden retriever sitting in a park with green grass and trees in the background."
+      },
+      "finish_reason": "stop"
+    }
+  ]
+}
+```
+
+## Function Calling
+
+### Function Definition
+```javascript
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What's the weather like in Boston?"
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_current_weather",
+        "description": "Get the current weather in a given location",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The city and state, e.g. San Francisco, CA"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["celsius", "fahrenheit"]
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+```
+
+### Function Response
+```javascript
+{
+  "id": "chatcmpl-9AbCdEf12345",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_abc123",
+            "type": "function",
+            "function": {
+              "name": "get_current_weather",
+              "arguments": "{\"location\": \"Boston, MA\"}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ]
+}
+```
+
+## Embeddings
+
+### Generate Embeddings
+```javascript
+{
+  "input": "The quick brown fox jumps over the lazy dog",
+  "model": "text-embedding-3-small"
+}
+```
+
+### Embeddings Response
+```javascript
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "embedding",
+      "embedding": [0.123, -0.456, 0.789, ...],
+      "index": 0
+    }
+  ],
+  "model": "text-embedding-3-small",
+  "usage": {
+    "prompt_tokens": 8,
+    "total_tokens": 8
+  }
+}
+```
+
+## Image Generation
+
+### DALL-E Generation
+```javascript
+{
+  "model": "dall-e-3",
+  "prompt": "A futuristic city skyline at sunset with flying cars",
+  "n": 1,
+  "size": "1024x1024",
+  "quality": "standard",
+  "style": "vivid"
+}
+```
+
+### Image Response
+```javascript
+{
+  "created": 1677652288,
+  "data": [
+    {
+      "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/..."
+    }
+  ]
+}
+```
+
+## Audio Processing
+
+### Speech-to-Text
+```javascript
+{
+  "file": "[AUDIO_FILE]",
+  "model": "whisper-1",
+  "language": "en"
+}
+```
+
+### Transcription Response
+```javascript
+{
+  "text": "Hello, this is a test transcription of the audio file."
+}
+```
+
+### Text-to-Speech
+```javascript
+{
+  "model": "tts-1",
+  "input": "Hello world! This is a test of the text to speech API.",
+  "voice": "alloy",
+  "response_format": "mp3",
+  "speed": 1.0
+}
+```
+
+## Available Models
+
+### GPT Models
+- **gpt-4o**: Most advanced multimodal model
+- **gpt-4o-mini**: Faster and more cost-effective
+- **gpt-4-turbo**: High-intelligence model for complex tasks
+- **gpt-3.5-turbo**: Fast, inexpensive model for simple tasks
+
+### DALL-E Models
+- **dall-e-3**: Latest image generation model
+- **dall-e-2**: Previous generation image model
+
+### Embedding Models
+- **text-embedding-3-large**: Most capable embedding model
+- **text-embedding-3-small**: Highly efficient embedding model
+- **text-embedding-ada-002**: Legacy embedding model
+
+### Audio Models
+- **whisper-1**: Speech recognition model
+- **tts-1**: Text-to-speech model (standard)
+- **tts-1-hd**: Text-to-speech model (high quality)
+
+## Model Capabilities
+
+### Text Generation
+- Creative writing and content creation
+- Code generation and debugging
+- Data analysis and summarization
+- Question answering
+- Language translation
+
+### Vision Understanding
+- Image description and analysis
+- Object detection and recognition
+- Scene understanding
+- Visual question answering
+- Chart and document analysis
+
+### Audio Processing
+- Speech transcription in multiple languages
+- Audio content analysis
+- Voice synthesis with different personas
+- Audio format conversion
+- Real-time processing
+
+## Best Practices
+
+1. **Prompt Engineering**
+   - Use clear, specific instructions
+   - Provide context and examples
+   - Structure prompts logically
+   - Test different approaches
+
+2. **Model Selection**
+   - Choose appropriate model for task
+   - Consider cost vs. performance
+   - Use specialized models when available
+   - Test model capabilities
+
+3. **Parameter Tuning**
+   - Adjust temperature for creativity
+   - Set appropriate max_tokens
+   - Use system prompts effectively
+   - Control response format
+
+4. **Error Handling**
+   - Handle rate limits gracefully
+   - Implement retry logic
+   - Validate inputs before sending
+   - Monitor usage and costs
+
+## Common Use Cases
+
+### Content Creation
+```
+/openai-pc write a blog post about AI trends in 2025
+```
+
+### Data Analysis
+```
+/openai-pc analyze this CSV data and provide insights
+```
+
+### Code Generation
+```
+/openai-pc create a Python function for data validation
+```
+
+### Image Processing
+```
+/openai-pc analyze this screenshot and extract the text
+```
+
+## Connection Requirements
+
+### PinkConnect Setup
+- Uses PC_BASE_URL + v1/ endpoint
+- Requires OpenAI connection ID
+- SELECTED_SKILL_ID must be "openai"
+- Standard API authentication
+
+### Authentication
+- API key authentication
+- Organization ID support
+- Usage tracking
+- Rate limit management
+
+## Performance Optimization
+
+### Efficient Usage
+- Cache responses when appropriate
+- Use streaming for long responses
+- Batch requests when possible
+- Monitor token usage
+
+### Cost Management
+- Choose cost-effective models
+- Optimize prompt length
+- Use appropriate max_tokens
+- Monitor usage patterns
+
+## Integration Tips
+
+### Workflow Automation
+- Chain multiple API calls
+- Combine with other services
+- Implement error recovery
+- Use function calling for tools
+
+### Response Processing
+- Parse JSON responses carefully
+- Handle different response formats
+- Extract relevant information
+- Validate response quality
+
+## Tips
+- Always specify SELECTED_SKILL_ID as "openai" for PinkConnect
+- Use system prompts to establish context and behavior
+- Test different temperature values for optimal creativity
+- Implement proper error handling for rate limits and failures
+- Monitor token usage to manage costs effectively
+- Use function calling for structured interactions with external tools 

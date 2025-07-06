@@ -1,0 +1,198 @@
+---
+title: "Akeneo Command Guide"
+description: "Learn how to use the Akeneo slash command to manage product information and data"
+---
+
+The `/akeneo` command enables you to manage product information in Akeneo PIM. Perfect for:
+
+- Managing product catalogs
+- Creating and updating products
+- Searching product data
+- Handling asset media files
+- Working with product attributes
+
+## Basic Usage
+
+Use the command to interact with Akeneo:
+
+```
+/akeneo list all products
+```
+
+```
+/akeneo create product "Leather Wallet" in family "accessories"
+```
+
+```
+/akeneo search for products with item_id "1234"
+```
+
+## Key Features
+
+### Product Management
+- List all products
+- Create new products
+- Update existing products
+- Delete products
+- Search by attributes
+
+### Asset Management
+- Upload media files
+- Associate assets to products
+- Manage asset families
+- Handle media previews
+
+### Search & Filter
+- Search by any attribute
+- Filter by categories
+- Find by SKU or identifier
+- Use complex queries
+
+### Product Attributes
+- Manage product values
+- Set localized content
+- Handle multi-channel data
+- Work with custom attributes
+
+## Example Commands
+
+### List Products
+```
+/akeneo show all products with pagination
+```
+
+### Create Product
+```
+/akeneo create product "T-Shirt" in family "clothing" with name "Cotton T-Shirt"
+```
+
+### Search Products
+```
+/akeneo find products where name contains "wallet"
+```
+
+### Update Product
+```
+/akeneo update product "new_product" with description "Updated premium leather wallet"
+```
+
+### Upload Asset
+```
+/akeneo upload media file for product assets
+```
+
+### Search by SKU
+```
+/akeneo find product with SKU "sku_12345"
+```
+
+## Product Structure
+
+### Basic Properties
+- **identifier**: Unique product ID
+- **family**: Product family
+- **categories**: Product categories
+- **enabled**: Active status
+- **values**: Attribute values
+
+### Product Values
+- **name**: Product name (localized)
+- **description**: Product description
+- **sku**: Stock keeping unit
+- **brand**: Product brand
+- **category_sku**: Category identifier
+
+## Search Filters
+
+### Common Operators
+- **=**: Exact match
+- **CONTAINS**: Partial match
+- **IN**: Multiple values
+- **NOT IN**: Exclude values
+- **>**: Greater than
+- **<**: Less than
+
+### Search Examples
+```javascript
+// By item ID
+{"item_id": [{"operator": "=", "value": "1234"}]}
+
+// By name containing text
+{"name": [{"operator": "CONTAINS", "value": "wallet"}]}
+
+// By SKU
+{"sku": [{"operator": "=", "value": "sku_12345"}]}
+```
+
+## Asset Media Files
+
+### Upload Process
+1. Upload media file (multipart/form-data)
+2. Get asset-media-file-code from response
+3. Associate with asset in asset family
+4. Link asset to product
+
+### Asset Association
+- Specify asset family code
+- Provide asset code
+- Include media data array
+- Set locale and channel
+
+## Product Creation
+
+### Required Fields
+- **identifier**: Unique ID
+- **family**: Product family
+- **values**: Basic attributes
+
+### Optional Fields
+- **categories**: Product categories
+- **enabled**: Active status
+- **groups**: Product groups
+- **parent**: Parent product
+
+## Update Operations
+
+### Partial Updates
+- Only specify changed attributes
+- Preserve existing data
+- Use PATCH method
+- Returns 201 or 204 status
+
+### Attribute Updates
+- Localized values supported
+- Channel-specific data
+- Array values for multi-select
+- Date formats for dates
+
+## Response Handling
+
+### Success Responses
+- **200**: List/search results
+- **201**: Created successfully
+- **204**: Updated/deleted successfully
+
+### Error Handling
+- Check status codes
+- Validate required fields
+- Handle pagination
+- Parse error messages
+
+## Pagination
+
+### Response Structure
+- **_links**: Navigation links
+- **current_page**: Current page
+- **_embedded.items**: Product array
+
+### Navigation
+- Use next/previous links
+- Maintain search parameters
+- Handle page limits
+
+## Tips
+- Always URL-encode search filters
+- Use specific field names in searches
+- Handle pagination for large datasets
+- Upload assets before associating with products
+- Check response status for operation success 

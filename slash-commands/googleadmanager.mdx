@@ -1,0 +1,351 @@
+---
+title: "Google Ad Manager Command Guide"
+description: "Learn how to use the Google Ad Manager slash command to manage and automate ad campaigns"
+---
+
+The `/googleadmanager` command enables you to manage and automate your Google Ad Manager campaigns through reporting and analytics. Perfect for:
+
+- Creating detailed ad performance reports
+- Analyzing campaign metrics
+- Downloading revenue data
+- Monitoring ad impressions and clicks
+- Automating report generation
+
+## Basic Usage
+
+Use the command to work with Google Ad Manager:
+
+```
+/googleadmanager create revenue report for last 7 days
+```
+
+```
+/googleadmanager generate impressions and clicks report by line item
+```
+
+```
+/googleadmanager download performance data for network code 12345
+```
+
+## Key Features
+
+### Report Generation
+- Custom date ranges
+- Multiple dimensions
+- Various metrics
+- Automated downloads
+- CSV format output
+
+### Performance Metrics
+- Total impressions
+- Total clicks
+- Total revenue
+- Click-through rates
+- Revenue per impression
+
+### Data Analysis
+- Line item performance
+- Date-based trends
+- Campaign comparisons
+- Revenue tracking
+- Traffic analysis
+
+## Example Commands
+
+### Revenue Report
+```
+/googleadmanager create last 30 days revenue report by line item name
+```
+
+### Performance Analysis
+```
+/googleadmanager analyze impressions and clicks for specific campaign
+```
+
+### Custom Date Range
+```
+/googleadmanager generate report from January 1st to January 31st
+```
+
+### Network Analysis
+```
+/googleadmanager create comprehensive performance report for network
+```
+
+## Prerequisites
+
+### Network Code Required
+Before using Google Ad Manager, you must provide a valid network code:
+
+```
+Network Code: 12345678
+```
+
+The system will prompt for this if not provided initially.
+
+### API Version
+- Current version: v202308
+- Endpoint format: `/googleadmanager/v2/networks/{NETWORK_CODE}/reports`
+
+## Report Creation Process
+
+### 1. Create Report Job
+```javascript
+const REPORT_QUERY = {
+  reportQuery: {
+    dimensions: ['DATE', 'LINE_ITEM_NAME'],
+    columns: ['TOTAL_IMPRESSIONS', 'TOTAL_CLICKS', 'TOTAL_REVENUE'],
+    dateRangeType: 'LAST_7_DAYS'
+  }
+};
+```
+
+### 2. Monitor Job Status
+- Check status periodically
+- Wait for completion
+- Handle failed jobs
+- 5-second polling interval
+
+### 3. Download Results
+- CSV format download
+- Complete data export
+- Error handling
+- Success confirmation
+
+## Available Dimensions
+
+### Time Dimensions
+- **DATE**: Daily breakdown
+- **WEEK**: Weekly aggregation
+- **MONTH**: Monthly summary
+- **YEAR**: Annual data
+
+### Content Dimensions
+- **LINE_ITEM_NAME**: Ad line item
+- **ORDER_NAME**: Order grouping
+- **ADVERTISER_NAME**: Advertiser breakdown
+- **CREATIVE_NAME**: Creative performance
+
+### Targeting Dimensions
+- **COUNTRY_NAME**: Geographic data
+- **REGION_NAME**: Regional breakdown
+- **CITY_NAME**: City-level data
+- **DEVICE_CATEGORY**: Device targeting
+
+## Available Metrics
+
+### Traffic Metrics
+- **TOTAL_IMPRESSIONS**: Ad views
+- **TOTAL_CLICKS**: Click count
+- **UNIQUE_IMPRESSIONS**: Unique views
+- **CTR**: Click-through rate
+
+### Revenue Metrics
+- **TOTAL_REVENUE**: Total earnings
+- **AVERAGE_ECPM**: Effective CPM
+- **REVENUE_PER_CLICK**: Per-click revenue
+- **FILL_RATE**: Inventory fill rate
+
+### Performance Metrics
+- **VIEWABILITY_RATE**: Viewable impressions
+- **VIDEO_COMPLETION_RATE**: Video completions
+- **ACTIVE_VIEW_IMPRESSIONS**: Active viewable impressions
+
+## Date Range Options
+
+### Predefined Ranges
+- **YESTERDAY**: Previous day
+- **LAST_7_DAYS**: Past week
+- **LAST_30_DAYS**: Past month
+- **LAST_WEEK**: Previous week
+- **LAST_MONTH**: Previous month
+
+### Custom Ranges
+```javascript
+{
+  startDate: '2023-01-01',
+  endDate: '2023-01-31'
+}
+```
+
+## Report Workflow
+
+### Step 1: Job Creation
+```javascript
+async function createReportJob() {
+  const response = await fetch(PROXY_URL + 'googleadmanager/v2/networks/' + NETWORK_CODE + '/reports', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(REPORT_QUERY)
+  });
+  
+  return await response.json();
+}
+```
+
+### Step 2: Status Monitoring
+```javascript
+async function checkReportJobStatus(reportJobId) {
+  const response = await fetch(PROXY_URL + 'googleadmanager/v2/networks/' + NETWORK_CODE + '/reports/' + reportJobId);
+  return await response.json();
+}
+```
+
+### Step 3: Data Download
+```javascript
+async function downloadReport(reportJobId) {
+  const response = await fetch(PROXY_URL + 'googleadmanager/v2/networks/' + NETWORK_CODE + '/reports/' + reportJobId + '/downloads/REPORT_CSV');
+  return await response.text();
+}
+```
+
+## Job Status Types
+
+### Processing States
+- **PENDING**: Job queued
+- **IN_PROGRESS**: Processing data
+- **COMPLETED**: Ready for download
+- **FAILED**: Error occurred
+
+### Error Handling
+- Retry failed jobs
+- Check error messages
+- Validate parameters
+- Monitor timeouts
+
+## Sample Report Query
+
+### Basic Performance Report
+```javascript
+{
+  reportQuery: {
+    dimensions: ['DATE', 'LINE_ITEM_NAME'],
+    columns: ['TOTAL_IMPRESSIONS', 'TOTAL_CLICKS', 'TOTAL_REVENUE'],
+    dateRangeType: 'LAST_7_DAYS'
+  }
+}
+```
+
+### Advanced Analytics Report
+```javascript
+{
+  reportQuery: {
+    dimensions: ['DATE', 'LINE_ITEM_NAME', 'COUNTRY_NAME'],
+    columns: [
+      'TOTAL_IMPRESSIONS',
+      'TOTAL_CLICKS', 
+      'TOTAL_REVENUE',
+      'CTR',
+      'AVERAGE_ECPM'
+    ],
+    dateRangeType: 'LAST_30_DAYS',
+    filters: [
+      {
+        column: 'COUNTRY_NAME',
+        operator: 'EQUALS',
+        values: ['United States']
+      }
+    ]
+  }
+}
+```
+
+## Best Practices
+
+1. **Network Configuration**
+   - Always validate network code
+   - Use correct API version
+   - Check account permissions
+   - Verify access rights
+
+2. **Report Design**
+   - Choose relevant dimensions
+   - Select appropriate metrics
+   - Use reasonable date ranges
+   - Consider data volume
+
+3. **Performance Optimization**
+   - Monitor job status efficiently
+   - Handle timeouts gracefully
+   - Implement retry logic
+   - Cache results when appropriate
+
+4. **Data Analysis**
+   - Validate downloaded data
+   - Handle empty results
+   - Format numbers properly
+   - Provide meaningful insights
+
+## Common Use Cases
+
+### Daily Performance Monitoring
+```
+/googleadmanager create daily performance dashboard for key metrics
+```
+
+### Revenue Analysis
+```
+/googleadmanager generate monthly revenue report by advertiser
+```
+
+### Campaign Optimization
+```
+/googleadmanager analyze line item performance for optimization
+```
+
+### Geographic Analysis
+```
+/googleadmanager create geographic performance breakdown report
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid network code
+- Insufficient permissions
+- API rate limits
+- Job timeouts
+
+### Troubleshooting
+- Verify network access
+- Check API credentials
+- Monitor job status
+- Retry failed operations
+
+## Data Export Formats
+
+### CSV Download
+- Comma-separated values
+- Header row included
+- UTF-8 encoding
+- Standard format
+
+### Data Processing
+- Parse CSV data
+- Handle numeric values
+- Format dates properly
+- Validate completeness
+
+## Integration Tips
+
+### Automated Reporting
+- Schedule regular reports
+- Set up alerts for failures
+- Archive historical data
+- Monitor performance trends
+
+### Data Analysis
+- Import to spreadsheets
+- Create visualizations
+- Track KPIs
+- Generate insights
+
+## Tips
+- Always provide a valid network code before creating reports
+- Monitor report job status with 5-second intervals until completion
+- Handle failed jobs by checking error messages and retrying
+- Use appropriate date ranges to balance detail and performance
+- Download reports in CSV format for easy data analysis
+- Cache network codes for repeated operations 

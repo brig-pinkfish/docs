@@ -1,0 +1,246 @@
+---
+title: "Shopping Command Guide"
+description: "Learn how to use the shopping slash command for competitive pricing analysis"
+---
+
+The `/shopping` command helps you analyze competitive pricing across multiple retailers. Perfect for:
+
+- Tracking competitor pricing
+- Analyzing market positioning
+- Monitoring price variations by region
+- Comparing seller offerings
+- Identifying pricing trends
+- Gathering market intelligence
+
+## Basic Usage
+
+Search for specific competitor products to analyze pricing:
+
+```
+/shopping search:"Foscarini Spokes 3 LED Pendant"
+```
+
+```
+/shopping compare:"Herman Miller Aeron Chair" in:US,UK,CA
+```
+
+```
+/shopping analyze:"Knoll Cesca Chair" locations:NYC,LA,Chicago
+```
+
+## Required Parameters
+
+- `search term`: Product to analyze
+  - Exact model names
+  - SKU numbers
+  - Product lines
+  - Brand collections
+
+## Optional Parameters
+
+### Geographic Analysis
+
+- `location`: Market location (city level)
+  - Multiple cities for market comparison
+  - Regional pricing differences
+  - Local competitor analysis
+- `country`: Country markets to analyze
+  - US: United States market
+  - UK: United Kingdom market
+  - CA: Canadian market
+  - Multiple markets for global analysis
+
+### Market Research Settings
+
+- `google_domain`: Target market domain
+- `language`: Local language for accurate market data
+- `direct_link`: Get direct seller links
+  - true: Include all seller links
+  - false: Aggregated data only (default)
+
+## Advanced Search Parameters
+
+### TBS (To Be Searched) Parameter Guide
+
+The tbs parameter enables precise filtering of search results:
+
+#### 1. Price Filtering
+```
+# Required format for price filters:
+tbs=mr:1,price:1,ppr_min:[amount]     # Items over [amount]
+tbs=mr:1,price:1,ppr_max:[amount]     # Items under [amount]
+tbs=mr:1,price:1,ppr_min:[amount],ppr_max:[amount]  # Items between amounts
+
+# Examples:
+tbs=mr:1,price:1,ppr_max:300      # Find items under $300
+tbs=mr:1,price:1,ppr_min:500      # Find items over $500
+tbs=mr:1,price:1,ppr_min:200,ppr_max:500  # Find items $200-$500
+```
+Note: `mr:1,price:1` are required codes that enable price filtering. Always include them when filtering by price.
+
+#### 2. Product Condition
+```
+# Filter by item condition:
+tbs=condition:1      # New items only
+tbs=condition:2      # Used items only
+tbs=condition:3      # Refurbished items only
+tbs=condition:1,2    # Both new and used items
+```
+
+#### 3. Availability & Sales
+```
+# Filter by stock and sale status:
+tbs=merchant:1     # In stock items only
+tbs=sale:1         # Items on sale only
+
+# Combine filters:
+tbs=sale:1,merchant:1    # In-stock items that are on sale
+```
+
+#### 4. Shipping Options
+```
+# Filter by shipping terms:
+tbs=ship:0    # Any shipping method
+tbs=ship:1    # Free shipping only
+```
+
+#### 5. Seller Type
+```
+# Filter by seller category:
+tbs=seller_type:1    # Authorized/official retailers only
+tbs=seller_type:2    # Marketplace sellers only
+```
+
+### Results Depth Control
+
+Control the number of results using the `num` parameter (maximum 100):
+
+```
+/shopping analyze:"Target product" num:20  # Quick scan: 20 sellers
+/shopping analyze:"Target product" num:60  # Standard view: 60 sellers
+/shopping analyze:"Target product" num:100 # Full analysis: 100 sellers
+```
+
+### Pagination Control
+
+Use `start` parameter to navigate through results:
+
+```
+/shopping analyze:"Product" num:60 start:0   # First 60 results
+/shopping analyze:"Product" num:60 start:60  # Next 60 results
+/shopping analyze:"Product" num:60 start:120 # Final set
+```
+
+## Example Commands
+
+### Basic Price Analysis with Filters
+```
+/shopping analyze:"Louis Poulsen PH 5" tbs=condition:1,mr:1,price:1,ppr_max:1000
+```
+
+### Multi-Market Comparison with Stock Filter
+```
+/shopping compare:"Flos IC Lights" in:US,UK,CA tbs=merchant:1,condition:1
+```
+
+### Sale Items with Free Shipping
+```
+/shopping search:"Tom Dixon Beat Light" tbs=sale:1,ship:1 locations:NYC,LA
+```
+
+### Complete Market Analysis with Multiple Filters
+```
+/shopping analyze:"Artemide Tolomeo" num:100 tbs=condition:1,seller_type:1,merchant:1
+```
+
+### Premium New Products from Authorized Sellers
+```
+/shopping search:"Herman Miller Aeron" tbs=condition:1,seller_type:1,mr:1,price:1,ppr_min:500
+```
+
+## Response Information
+
+The command returns comprehensive market data including:
+
+- Competitor pricing
+  - MSRP comparisons
+  - Discount analysis
+  - Price variations
+- Seller distribution
+- Market positioning
+- Regional price differences
+- Competitive advantages
+- Market share indicators
+- Distribution channels
+- Price history trends
+
+## Special Features
+
+### Enhanced Market Analysis
+Available in key markets:
+- United States
+- Australia
+- Canada
+- New Zealand
+- Additional markets
+
+Features in these markets:
+- Direct seller comparison
+- Complete pricing data
+- Enhanced market insights
+- Detailed competitor analysis
+
+## Tips for Best Results
+
+1. Combine multiple tbs parameters effectively:
+```
+# New items on sale with free shipping
+tbs=condition:1,sale:1,ship:1
+
+# Authorized sellers with specific price range
+tbs=seller_type:1,mr:1,price:1,ppr_min:100,ppr_max:1000
+
+# In-stock items from marketplace sellers
+tbs=merchant:1,seller_type:2
+```
+
+2. Use pagination for complete market coverage:
+```
+# Start with first batch
+/shopping analyze:"Product" num:100 start:0 tbs=condition:1
+
+# Get next batch
+/shopping analyze:"Product" num:100 start:100 tbs=condition:1
+```
+
+3. Mix location and condition filters:
+```
+# New items from authorized sellers in multiple markets
+/shopping compare:"Product" in:US,UK tbs=condition:1,seller_type:1
+```
+
+## Error Resolution
+
+### Common Issues and Solutions:
+
+1. Invalid TBS Combinations
+- Verify price filter includes mr:1,price:1
+- Check for conflicting condition filters
+- Ensure sale and shipping filters are compatible
+
+2. Pagination Errors
+- Start with lower result numbers
+- Use proper start increments (0, 60, 120)
+- Verify maximum result limits
+
+3. Market Availability
+- Check product availability in specified markets
+- Verify regional restrictions
+- Confirm seller coverage
+
+4. Filter Compatibility
+- Ensure filters are available in selected markets
+- Check for market-specific restrictions
+- Verify feature availability
+
+Remember: While these technical parameters enable detailed analysis, you can use natural language and the system will interpret your requirements appropriately.

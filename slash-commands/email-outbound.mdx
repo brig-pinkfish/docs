@@ -1,0 +1,117 @@
+---
+title: "Email Outbound Command Guide"
+description: "Learn how to use the email-outbound slash command to send emails directly from your workspace"
+---
+
+## Why Use Email Outbound?
+
+The `/email-outbound` command helps you quickly send emails directly from your workspace. Perfect for:
+
+- Sending quick updates to colleagues
+- Forwarding reports to stakeholders
+- Distributing newsletters
+- Following up with customers
+- Sending meeting summaries
+
+## Basic Usage
+
+The simplest way to send an email is using the command with a recipient and message:
+
+```
+/email-outbound send email to "tom@work.com" with message "Here is a report for you regarding our Q4 results."
+```
+
+## Sender Information
+
+All emails sent through the email-outbound command will come from:
+**Pinkfish Email** `<mail@pinkfish-email.com>`
+
+This sender address cannot be changed and helps recipients identify emails coming from your Pinkfish automation.
+
+## Advanced Options
+
+You can enhance your emails with these additional options:
+
+### Subject Lines
+Add a custom subject line to your email:
+```
+/email-outbound send email to "jane@company.com" with subject "Weekly Update" with message "Here are this week's metrics..."
+```
+
+### CC and BCC Recipients
+Include additional recipients using CC and BCC:
+```
+/email-outbound send email to "team@company.com" cc "manager@company.com" with message "Team update for this sprint..."
+```
+
+### Reply-To Address
+Set a specific reply-to address:
+```
+/email-outbound send email to "customer@example.com" reply-to "support@ourcompany.com" with message "Thank you for your inquiry..."
+```
+
+### HTML Formatting
+Send formatted HTML emails:
+```
+/email-outbound send email to "marketing@company.com" with html "<h1>Campaign Results</h1><p>Our Q4 campaign showed...</p>"
+```
+
+### File Attachments
+Include file attachments with your email:
+```
+/email-outbound send email to "finance@company.com" with message "Please find the attached report" with files ["Q4_Report.pdf"]
+```
+
+## Rate Limits
+
+To ensure optimal service quality, the following rate limits apply:
+
+- **Per Minute**: 10 emails
+- **Daily**: 25 emails
+
+You'll receive a notification when approaching these limits. The response will show your current usage:
+```json
+{
+    "minutely": {
+        "current": 1,
+        "limit": 10
+    },
+    "daily": {
+        "current": 23,
+        "limit": 25
+    }
+}
+```
+
+Need higher limits? Contact `sales@pinkfish.ai` to discuss enterprise options and custom limit configurations.
+
+## Creating Email Loops with Triggers
+
+You can create powerful email automation loops by combining email-outbound with email triggers. Here's how:
+
+1. Set up an email trigger in your automation to generate a unique email address (e.g., `ctqe6aa8s9s3js89@pinkfish.email`)
+2. When emails are sent to this trigger address, their contents are sent to your automation
+3. Use email-outbound to reply to the original sender by:
+   - Setting their email as the "to" address
+   - Setting your trigger email as the "reply-to" address
+
+Example:
+```
+/email-outbound send email to "customer@example.com" reply-to "ctqe6aa8s9s3js89@pinkfish.email" with message "Thanks for your inquiry..."
+```
+
+This creates a loop where:
+- Your automation receives an email
+- You reply using email-outbound
+- The recipient replies to your trigger email
+- Your automation processes the reply and can respond again
+
+This is perfect for creating automated email conversations, support ticket systems, or email-based workflows.
+
+## Common Issues
+
+- **Missing Recipient**: Always include a "to" email address
+- **Empty Message**: Provide either a plain text message or HTML content
+- **Rate Limits**: If you hit a limit, wait until the next period or contact sales for higher limits
+
+The command will provide helpful error messages if you forget any required information or hit rate limits.

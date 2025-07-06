@@ -1,0 +1,151 @@
+---
+title: "ServiceNow"
+description: "Manage IT service workflows with the ServiceNow platform"
+---
+
+# ServiceNow
+
+Manage IT service workflows with the ServiceNow platform for incident management, service requests, and IT operations.
+
+## Overview
+
+The ServiceNow skill provides essential functionality for:
+- Creating and managing incidents
+- Retrieving incident details and status
+- Updating incident records and assignments
+- Managing IT service workflows
+- Tracking resolution progress
+
+## Connection Requirements
+
+This skill requires a ServiceNow connection configured through either:
+- PinkConnect Proxy (PC_BASE_URL)
+- Paragon Proxy (PARA_BASE_URL + "servicenow/")
+
+## Basic Usage
+
+```javascript
+// Create a new incident
+const incident = {
+  "short_description": "Cannot connect to VPN",
+  "description": "User is unable to establish a VPN connection from home network.",
+  "caller_id": "Jane Smith",
+  "priority": "3 - Moderate",
+  "category": "Network"
+};
+```
+
+## Key Features
+
+### Incident Management
+- **Create Incidents**: Generate new incident tickets with detailed information
+- **Retrieve Incidents**: Get incident details using system ID
+- **Update Incidents**: Modify incident status, assignment, and work notes
+- **Track Progress**: Monitor incident resolution workflow
+
+### Service Request Handling
+- **Request Processing**: Handle various IT service requests
+- **Assignment Management**: Assign incidents to appropriate teams
+- **Status Tracking**: Monitor incident lifecycle from creation to resolution
+
+## Common Operations
+
+### Create an Incident
+```javascript
+POST: now/table/incident
+{
+  "short_description": "Email access issue",
+  "description": "User reports being unable to access their email account.",
+  "caller_id": "John Doe",
+  "priority": "2 - High",
+  "category": "Email"
+}
+```
+
+### Get Incident Details
+```javascript
+GET: now/table/incident/{sys_id}
+```
+
+### Update Incident Status
+```javascript
+PUT: now/table/incident/{sys_id}
+{
+  "state": "In Progress",
+  "assigned_to": "Jane Smith",
+  "work_notes": "Issue acknowledged. Investigating VPN configuration settings."
+}
+```
+
+## Priority Levels
+
+- **1 - Critical**: System down, major business impact
+- **2 - High**: Significant impact, urgent resolution needed
+- **3 - Moderate**: Normal business impact
+- **4 - Low**: Minor impact, can be scheduled
+- **5 - Planning**: Future enhancement or non-urgent
+
+## Incident States
+
+- **New**: Incident just created, not yet assigned
+- **In Progress**: Incident being actively worked on
+- **On Hold**: Incident paused, waiting for information
+- **Resolved**: Issue fixed, awaiting user confirmation
+- **Closed**: Incident completed and verified
+- **Canceled**: Incident canceled or invalid
+
+## Response Structure
+
+### Incident Response
+```javascript
+{
+  "result": {
+    "sys_id": "1234567890abcdef",
+    "number": "INC0010001",
+    "short_description": "Unable to access email",
+    "description": "User reports being unable to access their email account.",
+    "state": "New",
+    "priority": "2 - High",
+    "assigned_to": "John Doe",
+    "opened_at": "2025-01-14 10:00:00",
+    "resolved_at": null,
+    "caller_id": "Jane Smith",
+    "category": "Email"
+  }
+}
+```
+
+## Common Categories
+
+### IT Categories
+- **Hardware**: Computer, printer, phone issues
+- **Software**: Application problems, license issues
+- **Network**: Connectivity, VPN, Wi-Fi problems
+- **Email**: Email access, configuration issues
+- **Security**: Password resets, access requests
+- **Telephony**: Phone system issues
+
+### Service Categories
+- **Request**: Service requests and provisioning
+- **Inquiry**: Information requests
+- **Complaint**: Service complaints
+- **Change**: Change requests
+
+## Important Notes
+
+- **System ID**: Use sys_id for all update and retrieval operations
+- **Incident Numbers**: Human-readable incident numbers (e.g., INC0010001) are auto-generated
+- **Work Notes**: Use work_notes for internal communication, comments for customer-visible updates
+- **Assignment**: Incidents can be assigned to users or groups
+- **SLA Tracking**: ServiceNow automatically tracks SLA compliance
+- **Escalation**: Incidents can be escalated based on priority and time
+
+## Best Practices
+
+1. **Detailed Descriptions**: Provide comprehensive incident descriptions for faster resolution
+2. **Proper Categorization**: Use appropriate categories for better routing and reporting
+3. **Priority Assignment**: Set priorities based on business impact and urgency
+4. **Regular Updates**: Update work notes regularly to track progress
+5. **Caller Information**: Always include caller details for communication
+6. **Resolution Documentation**: Document resolution steps for knowledge base
+7. **Closure Verification**: Confirm resolution with the caller before closing incidents 

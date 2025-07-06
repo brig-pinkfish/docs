@@ -1,0 +1,354 @@
+---
+title: "Microsoft Word Command Guide"
+description: "Learn how to use the Microsoft Word slash command to download and manage Word documents"
+---
+
+The `/microsoft-word` command enables you to download and manage Word documents through Microsoft Word via the Microsoft Graph API. Perfect for:
+
+- Downloading Word documents
+- Managing document files
+- Creating shareable links
+- Document organization
+- File automation workflows
+
+## Basic Usage
+
+Use the command to work with Word documents:
+
+```
+/microsoft-word download document "Annual Report.docx"
+```
+
+```
+/microsoft-word list all Word documents in my drive
+```
+
+```
+/microsoft-word create shareable link for "Meeting Notes.docx"
+```
+
+## Key Features
+
+### File Management
+- Download Word documents
+- Upload Word documents
+- List document files
+- Search for documents
+- File organization
+
+### Document Access
+- Get document metadata
+- Access file content
+- File version management
+- Document properties
+- Content retrieval
+
+### Sharing Operations
+- Create temporary public links
+- Generate shareable URLs
+- Set expiration dates
+- Access control management
+- Link administration
+
+## Example Commands
+
+### Document Download
+```
+/microsoft-word download "Project Proposal.docx" for review
+```
+
+### File Listing
+```
+/microsoft-word show all Word documents in Documents folder
+```
+
+### Link Creation
+```
+/microsoft-word generate public link for document with 24-hour expiration
+```
+
+### File Upload
+```
+/microsoft-word upload new document to shared folder
+```
+
+## File Discovery
+
+### List Word Documents
+```javascript
+const url = WORD_URL + "me/drive/root/children";
+```
+
+### Search for Documents
+```javascript
+const url = WORD_URL + "me/drive/root/search(q='.docx')";
+```
+
+### Get Document by Path
+```javascript
+const url = WORD_URL + "me/drive/root:/Documents/Report.docx";
+```
+
+### File Response
+```javascript
+{
+  "id": "0123456789abc!123",
+  "name": "Document1.docx",
+  "size": 102400,
+  "file": {},
+  "createdDateTime": "2025-01-15T10:30:00Z",
+  "lastModifiedDateTime": "2025-01-15T14:20:00Z",
+  "webUrl": "https://onedrive.live.com/...",
+  "downloadUrl": "https://..."
+}
+```
+
+## File Operations
+
+### Download Document
+```javascript
+const url = WORD_URL + `me/drive/items/${itemId}/content`;
+```
+
+### Upload Document
+```javascript
+// PUT request with binary content
+const url = WORD_URL + "me/drive/root:/Documents/NewReport.docx:/content";
+```
+
+### Upload Response
+```javascript
+{
+  "id": "0123456789abc!123",
+  "name": "NewReport.docx",
+  "size": 204800,
+  "file": {},
+  "createdDateTime": "2025-01-15T15:00:00Z",
+  "createdBy": {
+    "user": {
+      "displayName": "John Doe"
+    }
+  }
+}
+```
+
+## Link Management
+
+### Create Shareable Link
+```javascript
+{
+  "type": "view",
+  "scope": "anonymous",
+  "expirationDateTime": "2025-03-07T12:00:00Z"
+}
+```
+
+### Link Response
+```javascript
+{
+  "id": "[ITEM ID]",
+  "roles": ["read"],
+  "shareId": "[SHARE ID]",
+  "expirationDateTime": "[EXPIRATION DATE TIME]",
+  "hasPassword": false,
+  "link": {
+    "scope": "anonymous",
+    "type": "view",
+    "webUrl": "[LINK]"
+  }
+}
+```
+
+### Link Configuration
+- **type**: view, edit, embed
+- **scope**: anonymous, organization, users
+- **expirationDateTime**: Mandatory expiration date
+
+## Document Properties
+
+### Basic Properties
+- **id**: Unique document identifier
+- **name**: Document name with extension
+- **size**: File size in bytes
+- **file**: File-specific metadata
+- **createdDateTime**: Creation timestamp
+- **lastModifiedDateTime**: Last modification time
+
+### Extended Properties
+- **webUrl**: Direct access URL
+- **downloadUrl**: Download link
+- **parentReference**: Parent folder information
+- **createdBy**: Document creator
+- **lastModifiedBy**: Last modifier
+
+### File Metadata
+- **mimeType**: Document content type
+- **eTag**: Version identifier
+- **cTag**: Change tag
+- **fileSystemInfo**: File system details
+
+## Content Types
+
+### Word MIME Type
+```
+application/vnd.openxmlformats-officedocument.wordprocessingml.document
+```
+
+### Supported Extensions
+- **.docx**: Word document
+- **.docm**: Macro-enabled document
+- **.dotx**: Word template
+- **.dotm**: Macro-enabled template
+
+## Search and Filtering
+
+### Search by Extension
+```javascript
+const url = WORD_URL + "me/drive/root/search(q='.docx')";
+```
+
+### Search by Name
+```javascript
+const url = WORD_URL + "me/drive/root/search(q='report')";
+```
+
+### Filter by Properties
+```javascript
+// Get files modified in last 7 days
+const url = WORD_URL + "me/drive/root/children?$filter=lastModifiedDateTime gt 2025-01-08T00:00:00Z";
+```
+
+## Error Handling
+
+### Common Issues
+- File not found (404)
+- Access denied (403)
+- File too large (413)
+- Network timeout (408)
+
+### Error Response
+```javascript
+{
+  "error": {
+    "code": "itemNotFound",
+    "message": "The resource could not be found.",
+    "innerError": {
+      "code": "itemDoesNotExist",
+      "request-id": "request-id"
+    }
+  }
+}
+```
+
+## Best Practices
+
+1. **File Management**
+   - Use descriptive file names
+   - Organize in logical folder structures
+   - Implement version control
+   - Regular backup procedures
+
+2. **Link Sharing**
+   - Set appropriate expiration dates
+   - Use minimal required permissions
+   - Monitor link usage
+   - Revoke unnecessary access
+
+3. **Performance**
+   - Cache file metadata
+   - Use appropriate timeouts
+   - Implement retry logic
+   - Monitor API limits
+
+4. **Security**
+   - Validate file permissions
+   - Use organization scope when possible
+   - Monitor access logs
+   - Implement audit trails
+
+## Common Use Cases
+
+### Document Backup
+```
+/microsoft-word download all documents for local backup
+```
+
+### Content Distribution
+```
+/microsoft-word create temporary links for document review
+```
+
+### Document Organization
+```
+/microsoft-word organize documents by project and date
+```
+
+### Automated Processing
+```
+/microsoft-word download documents for content analysis
+```
+
+## Limitations
+
+### API Constraints
+- File-level operations only
+- No direct content editing
+- Limited metadata modification
+- Requires local processing for advanced operations
+
+### Editing Requirements
+- Download for complex modifications
+- Use appropriate libraries for content editing
+- Re-upload modified documents
+- Maintain document integrity
+
+## Integration Workflows
+
+### Document Processing
+- Extract text content
+- Generate document summaries
+- Create content indexes
+- Implement search functionality
+
+### Collaboration
+- Automate document sharing
+- Manage review processes
+- Track document changes
+- Implement approval workflows
+
+## Performance Optimization
+
+### Efficient Operations
+- Cache frequently accessed metadata
+- Use batch operations when possible
+- Implement proper pagination
+- Monitor rate limits
+
+### File Handling
+- Stream large files appropriately
+- Validate files before processing
+- Handle network interruptions
+- Implement resume capabilities
+
+## Authentication Requirements
+
+### Connection Setup
+- Requires appropriate Graph API permissions
+- Files.Read or Files.ReadWrite scope
+- Proper authentication flow
+- Token management
+
+### Permission Levels
+- **Files.Read**: Read-only access
+- **Files.ReadWrite**: Full file access
+- **Sites.Read.All**: SharePoint access
+- **Files.ReadWrite.All**: All files access
+
+## Tips
+- Always obtain item ID before performing file operations
+- Set mandatory expiration dates for public links (next day recommended)
+- Use search functionality to efficiently find documents
+- Handle file locking when documents are open in desktop Word
+- Implement proper error handling for network operations
+- Cache document metadata to improve performance
+- Use appropriate MIME types for Word document operations 

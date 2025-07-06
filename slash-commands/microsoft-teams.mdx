@@ -1,0 +1,366 @@
+---
+title: "Microsoft Teams Command Guide"
+description: "Learn how to use the Microsoft Teams slash command to manage team communication and collaboration"
+---
+
+The `/microsoft-teams` command enables you to manage your team's communication and collaboration through Microsoft Teams. Perfect for:
+
+- Sending messages to channels
+- Managing team communications
+- Automating notifications
+- Channel management
+- Team collaboration workflows
+
+## Basic Usage
+
+Use the command to work with Microsoft Teams:
+
+```
+/microsoft-teams send message "Hello team!" to General channel
+```
+
+```
+/microsoft-teams get all my joined teams and their channels
+```
+
+```
+/microsoft-teams send rich message with subject and HTML content
+```
+
+## Key Features
+
+### Team Management
+- Get joined teams
+- List team channels
+- Access team information
+- Team membership details
+- Team settings
+
+### Channel Communication
+- Send text messages
+- Send rich HTML messages
+- Add message subjects
+- Set message importance
+- Channel notifications
+
+### Message Features
+- Plain text messages
+- HTML formatted content
+- Message subjects
+- Importance levels
+- Automated messaging
+
+## Example Commands
+
+### Team Discovery
+```
+/microsoft-teams list all teams I'm a member of
+```
+
+### Channel Messaging
+```
+/microsoft-teams send "Project update: Phase 1 complete" to Project Alpha channel
+```
+
+### Rich Messaging
+```
+/microsoft-teams send HTML message with subject "Weekly Report" and high importance
+```
+
+### Channel Management
+```
+/microsoft-teams get all channels for Marketing team
+```
+
+## Team Operations
+
+### Get Joined Teams
+```javascript
+const url = TEAMS_URL + "me/joinedTeams";
+```
+
+### Teams Response
+```javascript
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#teams",
+  "@odata.count": 1,
+  "value": [
+    {
+      "id": "team-id",
+      "displayName": "Marketing Team",
+      "description": "Marketing department collaboration",
+      "isArchived": false,
+      "visibility": "private",
+      "webUrl": "https://teams.microsoft.com/l/team/...",
+      "tenantId": "tenant-id"
+    }
+  ]
+}
+```
+
+### Team Properties
+- **id**: Unique team identifier
+- **displayName**: Team name
+- **description**: Team description
+- **isArchived**: Archive status
+- **visibility**: Team visibility (private/public)
+- **webUrl**: Direct team link
+
+## Channel Operations
+
+### Get Team Channels
+```javascript
+const url = TEAMS_URL + `teams/${teamId}/channels`;
+```
+
+### Channel Response
+```javascript
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#teams('team-id')/channels",
+  "@odata.count": 2,
+  "value": [
+    {
+      "id": "channel-id",
+      "displayName": "General",
+      "description": "General team discussions",
+      "email": null,
+      "webUrl": "https://teams.microsoft.com/l/channel/...",
+      "membershipType": "standard",
+      "isArchived": false
+    }
+  ]
+}
+```
+
+### Channel Properties
+- **id**: Unique channel identifier
+- **displayName**: Channel name
+- **description**: Channel description
+- **webUrl**: Direct channel link
+- **membershipType**: Channel type
+- **isArchived**: Archive status
+
+## Message Operations
+
+### Send Simple Message
+```javascript
+// POST to teams/{teamId}/channels/{channelId}/messages
+{
+  "body": {
+    "content": "Hello World!"
+  }
+}
+```
+
+### Send Rich Message
+```javascript
+{
+  "subject": "Weekly Report",
+  "body": {
+    "contentType": "html",
+    "content": "<h2>Project Status</h2><p>All milestones completed on time.</p>"
+  },
+  "importance": "high"
+}
+```
+
+### Message Response
+```javascript
+{
+  "id": "1732208611283",
+  "createdDateTime": "2024-11-21T17:03:31.283Z",
+  "body": {
+    "content": "Hello from Automation!",
+    "contentType": "text"
+  },
+  "from": {
+    "user": {
+      "displayName": "John Doe",
+      "id": "user-id",
+      "userIdentityType": "aadUser"
+    }
+  },
+  "channelIdentity": {
+    "channelId": "channel-id",
+    "teamId": "team-id"
+  },
+  "importance": "normal",
+  "messageType": "message"
+}
+```
+
+## Message Types
+
+### Content Types
+- **text**: Plain text messages
+- **html**: Rich HTML content
+
+### Importance Levels
+- **normal**: Standard priority
+- **high**: High priority
+- **urgent**: Urgent priority
+
+### Message Structure
+- **subject**: Optional message subject
+- **body**: Message content
+- **importance**: Priority level
+- **attachments**: File attachments
+
+## Message Formatting
+
+### HTML Content
+```javascript
+{
+  "body": {
+    "contentType": "html",
+    "content": `
+      <h2>Project Update</h2>
+      <ul>
+        <li>Phase 1: Complete ✅</li>
+        <li>Phase 2: In Progress 🔄</li>
+        <li>Phase 3: Planned 📋</li>
+      </ul>
+    `
+  }
+}
+```
+
+### Text Content
+```javascript
+{
+  "body": {
+    "contentType": "text",
+    "content": "Simple text message without formatting"
+  }
+}
+```
+
+## Error Handling
+
+### Common Issues
+- Team not found
+- Channel not found
+- Permission denied
+- Message too long
+
+### Error Response
+```javascript
+{
+  "error": {
+    "code": "Forbidden",
+    "message": "Insufficient privileges to complete the operation.",
+    "innerError": {
+      "code": "InsufficientPermissions"
+    }
+  }
+}
+```
+
+## Best Practices
+
+1. **Message Content**
+   - Keep messages concise and clear
+   - Use appropriate formatting
+   - Include relevant context
+   - Avoid excessive notifications
+
+2. **Channel Selection**
+   - Choose appropriate channels
+   - Respect channel purposes
+   - Consider message relevance
+   - Use private channels when needed
+
+3. **Automation Ethics**
+   - Avoid spam-like behavior
+   - Respect team communication norms
+   - Use appropriate timing
+   - Provide value with each message
+
+4. **Error Handling**
+   - Check team and channel existence
+   - Handle permission errors gracefully
+   - Implement retry logic
+   - Log failures appropriately
+
+## Common Use Cases
+
+### Status Updates
+```
+/microsoft-teams send daily build status to Development channel
+```
+
+### Alert Notifications
+```
+/microsoft-teams notify Operations channel about system alerts
+```
+
+### Report Distribution
+```
+/microsoft-teams send weekly report summary to Management channel
+```
+
+### Event Announcements
+```
+/microsoft-teams announce upcoming events to All Hands channel
+```
+
+## Integration Workflows
+
+### Automated Notifications
+- CI/CD pipeline updates
+- System monitoring alerts
+- Task completion notifications
+- Scheduled reports
+
+### Team Coordination
+- Meeting reminders
+- Deadline notifications
+- Project milestones
+- Status updates
+
+## Performance Considerations
+
+### Rate Limiting
+- Respect API rate limits
+- Implement proper delays
+- Batch operations when possible
+- Monitor usage quotas
+
+### Message Optimization
+- Combine related updates
+- Use threading when appropriate
+- Avoid duplicate messages
+- Cache team/channel IDs
+
+## Security and Permissions
+
+### Required Permissions
+- **ChannelMessage.Send**: Send messages
+- **Team.ReadBasic.All**: Read team info
+- **Channel.ReadBasic.All**: Read channel info
+
+### Authentication
+- Use appropriate authentication method
+- Handle token expiration
+- Implement proper scopes
+- Monitor permission changes
+
+## Connection Requirements
+
+### PinkConnect
+- Requires Microsoft Teams connection ID
+- Uses PC_BASE_URL + v1.0/ endpoint
+- Standard Graph API authentication
+
+### Paragon Proxy
+- Uses PARA_BASE_URL + microsoftTeams/
+- Alternative authentication method
+- Different endpoint structure
+
+## Tips
+- Always get team ID from joined teams list before accessing channels
+- Use team and channel IDs rather than names for API calls
+- Include "body" attribute in all message payloads
+- Handle HTML content carefully to avoid formatting issues
+- Implement proper error handling for network failures
+- Cache team and channel information to reduce API calls 

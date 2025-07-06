@@ -1,0 +1,178 @@
+---
+title: "Attio"
+description: "Attio is a data-driven customer relationship platform for managing contacts, lists, and data workflows"
+---
+
+# Attio
+
+Attio is a data-driven customer relationship platform that allows users to manage their contacts, lists, and data workflows with programmatic access to core platform features.
+
+## Overview
+
+The Attio skill provides functionality for:
+- Managing customer relationship data
+- Working with lists and objects (people and companies)
+- Organizing contacts and data workflows
+- Accessing workspace information
+- Handling CRM data programmatically
+
+## Connection Requirements
+
+This skill requires an Attio connection configured through:
+- **PinkConnect Proxy**: PC_BASE_URL (equivalent to https://api.attio.com/v2)
+- **Authentication**: Handled automatically by the proxy
+- **API Version**: Uses Attio API v2
+
+## Basic Usage
+
+```javascript
+// List all lists in workspace
+GET: lists
+
+// List all objects in workspace
+GET: objects
+```
+
+## Key Features
+
+### List Management
+- **List Retrieval**: Get all lists in the workspace
+- **List Organization**: Manage different types of data lists
+- **Pagination Support**: Handle large datasets with pagination
+- **List Metadata**: Access list creation dates and properties
+
+### Object Management
+- **Object Types**: Work with different object types (people, companies)
+- **Object Properties**: Access object metadata and structure
+- **API Slugs**: Use API-friendly object identifiers
+- **Workspace Context**: All operations scoped to workspace
+
+## Common Operations
+
+### List All Lists
+```javascript
+GET: lists
+```
+
+### List All Objects
+```javascript
+GET: objects
+```
+
+## Response Structures
+
+### Lists Response
+```javascript
+{
+  "output": {
+    "data": [
+      {
+        "id": "016f46b1-c878-41ab-b62a-83443b7cec75",
+        "type": "list",
+        "name": "All Accounts",
+        "created_at": "2023-01-26T14:47:04.999Z"
+      }
+    ],
+    "offset": 0,
+    "limit": 20,
+    "total": 1
+  }
+}
+```
+
+### Objects Response
+```javascript
+{
+  "output": {
+    "data": [
+      {
+        "id": {
+          "workspace_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+          "object_id": "people"
+        },
+        "type": "object",
+        "api_slug": "people",
+        "singular_noun": "person",
+        "plural_noun": "people"
+      }
+    ],
+    "offset": 0,
+    "limit": 20,
+    "total": 1
+  }
+}
+```
+
+## Data Structure
+
+### List Properties
+- **ID**: Unique identifier for the list
+- **Type**: Always "list" for list objects
+- **Name**: Human-readable list name
+- **Created At**: Timestamp of list creation
+
+### Object Properties
+- **ID**: Composite identifier with workspace_id and object_id
+- **Type**: Always "object" for object types
+- **API Slug**: API-friendly identifier (e.g., "people", "companies")
+- **Singular Noun**: Singular form of the object name
+- **Plural Noun**: Plural form of the object name
+
+## Pagination
+
+### Pagination Parameters
+- **offset**: Starting position for results (default: 0)
+- **limit**: Maximum number of results per page (default: 20)
+- **total**: Total number of available records
+
+### Handling Pagination
+```javascript
+// First page
+GET: lists?offset=0&limit=20
+
+// Next page
+GET: lists?offset=20&limit=20
+```
+
+## Object Types
+
+### Common Objects
+- **people**: Individual contacts and persons
+- **companies**: Organizations and businesses
+- **Custom Objects**: Workspace-specific object types
+
+### Object Identification
+- Use `api_slug` for API operations
+- Use `singular_noun` and `plural_noun` for display purposes
+- Reference objects by their composite ID structure
+
+## Workspace Context
+
+### Workspace Scope
+- All operations are scoped to the authenticated workspace
+- Workspace ID is included in object identifiers
+- Lists and objects are workspace-specific
+
+### Data Organization
+- Lists contain collections of objects
+- Objects define the structure of data types
+- Relationships between objects can be managed through lists
+
+## Important Notes
+
+- **API Version**: Uses Attio API v2 through PinkConnect proxy
+- **Authentication**: Handled automatically by proxy connection
+- **Rate Limits**: Respect Attio API rate limits for high-volume operations
+- **Pagination**: Use pagination for large datasets to avoid timeouts
+- **Workspace Isolation**: Data is isolated by workspace boundaries
+
+## Best Practices
+
+1. **Pagination**: Always handle pagination for list operations
+2. **Error Handling**: Implement proper error handling for API calls
+3. **Object Identification**: Use api_slug for consistent object references
+4. **Data Validation**: Validate object types before performing operations
+5. **Rate Limiting**: Implement appropriate delays between API calls
+6. **Workspace Awareness**: Understand workspace context for data operations
+7. **List Organization**: Use descriptive list names for better data management
+8. **Performance**: Cache object metadata to reduce API calls 

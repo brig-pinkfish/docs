@@ -1,0 +1,398 @@
+---
+title: "Keap API Command Guide"
+description: "Learn how to use the Keap API slash command to manage customer relationships and sales"
+---
+
+The `/keap` command enables you to manage customer relationships and sales through the Keap CRM platform. Perfect for:
+
+- Managing companies and contacts
+- Customer relationship management
+- Sales automation
+- Contact information tracking
+- Business data organization
+
+## Basic Usage
+
+Use the command to work with Keap CRM:
+
+```
+/keap create new company "Acme Corporation" with contact details
+```
+
+```
+/keap add contact "John Doe" to CRM with email and phone
+```
+
+```
+/keap update company information for existing client
+```
+
+## Key Features
+
+### Company Management
+- Create new companies
+- Update company details
+- Retrieve company information
+- Delete companies
+- Manage company relationships
+
+### Contact Management
+- Add new contacts
+- Update contact information
+- Retrieve contact details
+- Delete contacts
+- Organize contact data
+
+### Data Organization
+- Address management
+- Phone number tracking
+- Email organization
+- Website information
+- Business details
+
+## Example Commands
+
+### Create Company
+```
+/keap create company "Beta Industries" with website and contact info
+```
+
+### Add Contact
+```
+/keap add contact "Alice Johnson" with mobile number and address
+```
+
+### Update Information
+```
+/keap update company "Gamma Enterprises" to "Gamma Enterprises LLC"
+```
+
+### Retrieve Data
+```
+/keap get all companies in CRM system
+```
+
+### Delete Records
+```
+/keap remove company with ID 345678 from system
+```
+
+## Company Operations
+
+### List All Companies
+```javascript
+const url = KEAP_URL + "companies";
+```
+
+### Get Company by ID
+```javascript
+const url = KEAP_URL + `companies/${company_id}`;
+```
+
+### Create New Company
+```javascript
+{
+  "company_name": "Gamma Enterprises",
+  "email_address": "contact@gamma.com",
+  "phone_number": "+1122334455",
+  "website": "https://www.gamma.com",
+  "address": {
+    "line1": "456 Elm St",
+    "line2": "Floor 2",
+    "city": "Othertown",
+    "state": "NY",
+    "postal_code": "67890",
+    "country": "USA"
+  }
+}
+```
+
+### Update Company
+```javascript
+{
+  "company_name": "Gamma Enterprises LLC",
+  "email_address": "info@gamma.com",
+  "phone_number": "+1122334455",
+  "website": "https://www.gamma.com"
+}
+```
+
+## Contact Operations
+
+### List All Contacts
+```javascript
+const url = KEAP_URL + "contacts";
+```
+
+### Get Contact by ID
+```javascript
+const url = KEAP_URL + `contacts/${contact_id}`;
+```
+
+### Create New Contact
+```javascript
+{
+  "given_name": "Alice",
+  "family_name": "Johnson",
+  "email_addresses": [
+    {
+      "email": "alice.johnson@example.com",
+      "field": "EMAIL1"
+    }
+  ],
+  "phone_numbers": [
+    {
+      "number": "+1122334455",
+      "type": "Mobile"
+    }
+  ],
+  "address": {
+    "line1": "456 Elm St",
+    "city": "Othertown",
+    "state": "NY",
+    "postal_code": "67890",
+    "country": "USA"
+  }
+}
+```
+
+### Update Contact
+```javascript
+{
+  "given_name": "Alice",
+  "family_name": "Johnson",
+  "email_addresses": [
+    {
+      "email": "alice.new@example.com",
+      "field": "EMAIL1"
+    }
+  ],
+  "address": {
+    "line1": "789 Pine St",
+    "city": "Newtown",
+    "state": "FL",
+    "postal_code": "98765",
+    "country": "USA"
+  }
+}
+```
+
+## Data Structures
+
+### Company Information
+- **id**: Unique company identifier
+- **company_name**: Business name
+- **email_address**: Primary email
+- **phone_number**: Contact phone
+- **website**: Company website
+- **address**: Physical location
+
+### Contact Information
+- **id**: Unique contact identifier
+- **given_name**: First name
+- **family_name**: Last name
+- **email_addresses**: Email array
+- **phone_numbers**: Phone array
+- **address**: Contact address
+
+### Address Structure
+- **line1**: Primary address line
+- **line2**: Secondary address line
+- **city**: City name
+- **state**: State/province
+- **postal_code**: ZIP/postal code
+- **country**: Country code
+
+## Email and Phone Handling
+
+### Email Addresses
+```javascript
+"email_addresses": [
+  {
+    "email": "contact@example.com",
+    "field": "EMAIL1"
+  }
+]
+```
+
+### Phone Numbers
+```javascript
+"phone_numbers": [
+  {
+    "number": "+1234567890",
+    "type": "Work"
+  },
+  {
+    "number": "+0987654321",
+    "type": "Mobile"
+  }
+]
+```
+
+### Phone Types
+- **Work**: Business phone
+- **Mobile**: Cell phone
+- **Home**: Personal phone
+- **Fax**: Fax number
+
+## Response Formats
+
+### Company Response
+```javascript
+{
+  "id": 123456,
+  "company_name": "Acme Corporation",
+  "email_address": "info@acme.com",
+  "phone_number": "+1234567890",
+  "website": "https://www.acme.com",
+  "address": {
+    "line1": "123 Main St",
+    "line2": "Suite 400",
+    "city": "Anytown",
+    "state": "CA",
+    "postal_code": "12345",
+    "country": "USA"
+  }
+}
+```
+
+### Contact Response
+```javascript
+{
+  "id": 123456,
+  "given_name": "John",
+  "family_name": "Doe",
+  "email_addresses": [
+    {
+      "email": "john.doe@example.com",
+      "field": "EMAIL1"
+    }
+  ],
+  "phone_numbers": [
+    {
+      "number": "+1234567890",
+      "type": "Work"
+    }
+  ],
+  "address": {
+    "line1": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "postal_code": "12345",
+    "country": "USA"
+  }
+}
+```
+
+## Best Practices
+
+1. **Data Quality**
+   - Validate email formats
+   - Standardize phone numbers
+   - Complete address information
+   - Use consistent naming
+
+2. **Organization**
+   - Link contacts to companies
+   - Maintain updated information
+   - Use descriptive names
+   - Regular data cleanup
+
+3. **Integration**
+   - Sync with other systems
+   - Automate data entry
+   - Monitor data changes
+   - Backup important data
+
+4. **Security**
+   - Protect sensitive data
+   - Use proper authentication
+   - Monitor access logs
+   - Follow privacy regulations
+
+## Common Use Cases
+
+### Lead Management
+```
+/keap create new lead company with contact information for follow-up
+```
+
+### Customer Onboarding
+```
+/keap add new customer contact with complete profile information
+```
+
+### Data Migration
+```
+/keap import existing customer data into Keap CRM system
+```
+
+### Contact Updates
+```
+/keap update contact information for existing customers
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid email formats
+- Missing required fields
+- Duplicate entries
+- Invalid phone numbers
+
+### Status Codes
+- **200**: Success
+- **201**: Created
+- **204**: Deleted
+- **400**: Bad request
+- **404**: Not found
+
+## Data Validation
+
+### Required Fields
+- Company name for companies
+- Given name for contacts
+- Valid email format
+- Proper phone format
+
+### Optional Fields
+- Address information
+- Website URLs
+- Additional phone numbers
+- Secondary email addresses
+
+## Integration Tips
+
+### CRM Workflow
+- Automate lead capture
+- Track customer interactions
+- Update contact status
+- Generate reports
+
+### Data Synchronization
+- Regular data updates
+- Conflict resolution
+- Backup procedures
+- Change tracking
+
+## Performance Optimization
+
+### Efficient Operations
+- Batch updates when possible
+- Cache frequently accessed data
+- Use appropriate filters
+- Monitor API limits
+
+### Data Management
+- Regular cleanup
+- Remove duplicates
+- Update outdated information
+- Archive old records
+
+## Tips
+- Always validate email formats before creating contacts
+- Use consistent address formatting for better data quality
+- Link contacts to companies for better relationship tracking
+- Regularly update contact information to maintain accuracy
+- Use descriptive company names for easy identification
+- Implement proper error handling for API operations 

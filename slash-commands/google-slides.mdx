@@ -1,0 +1,404 @@
+---
+title: "Google Slides Command Guide"
+description: "Learn how to use the Google Slides slash command to create and edit presentations"
+---
+
+The `/google-slides` command enables you to create and edit Google Slides presentations programmatically. Perfect for:
+
+- Creating presentation slides
+- Adding text and images
+- Formatting slide content
+- Automating slide generation
+- Building dynamic presentations
+
+## Basic Usage
+
+Use the command to work with Google Slides:
+
+```
+/google-slides create new slide with title "Project Overview"
+```
+
+```
+/google-slides add text "Welcome to our presentation" to slide
+```
+
+```
+/google-slides insert image from URL into current slide
+```
+
+## Key Features
+
+### Slide Management
+- Create new slides
+- Get presentation data
+- Update slide content
+- Delete slide elements
+- Manage slide layouts
+
+### Content Creation
+- Add text boxes
+- Insert images
+- Create shapes
+- Format elements
+- Position objects
+
+### Batch Operations
+- Multiple updates
+- Grouped operations
+- Efficient API usage
+- Error handling
+- Performance optimization
+
+## Example Commands
+
+### Create New Slide
+```
+/google-slides add new slide with "Title and Body" layout
+```
+
+### Add Text Content
+```
+/google-slides insert text "Project Status Update" into title placeholder
+```
+
+### Insert Image
+```
+/google-slides add image from "https://example.com/chart.png" to slide
+```
+
+### Create Shape
+```
+/google-slides create rectangle shape with blue background
+```
+
+### Update Formatting
+```
+/google-slides change text color to red for selected text box
+```
+
+## Presentation ID Extraction
+
+### From URL
+```javascript
+// URL: https://docs.google.com/presentation/d/[PRESENTATION_ID]/edit#slide=id.[SLIDE_ID]
+const presentationId = url.split('/d/')[1].split('/')[0];
+```
+
+### Common URL Formats
+- Edit mode: `/presentation/d/ID/edit`
+- View mode: `/presentation/d/ID/view`
+- Embed mode: `/presentation/d/ID/embed`
+
+## Core Operations
+
+### Get Presentation
+```javascript
+// Retrieve presentation data
+const url = GOOGLE_SLIDES_URL + presentationId;
+```
+
+### Create Slide
+```javascript
+{
+  "requests": [
+    {
+      "createSlide": {
+        "objectId": "new_slide_id",
+        "insertionIndex": 1,
+        "slideLayoutReference": {
+          "predefinedLayout": "TITLE_AND_BODY"
+        }
+      }
+    }
+  ]
+}
+```
+
+### Insert Text
+```javascript
+{
+  "requests": [
+    {
+      "insertText": {
+        "objectId": "text_box_1",
+        "insertionIndex": 0,
+        "text": "New text content"
+      }
+    }
+  ]
+}
+```
+
+## Slide Layouts
+
+### Available Layouts
+- **TITLE_ONLY**: Title slide
+- **TITLE_AND_BODY**: Standard content slide
+- **BLANK**: Empty slide
+- **SECTION_HEADER**: Section divider
+- **TITLE_AND_TWO_COLUMNS**: Two-column layout
+
+### Layout Selection
+```javascript
+"slideLayoutReference": {
+  "predefinedLayout": "TITLE_AND_BODY"
+}
+```
+
+## Shape Creation
+
+### Basic Shape
+```javascript
+{
+  "createShape": {
+    "objectId": "shape_1",
+    "shapeType": "RECTANGLE",
+    "elementProperties": {
+      "pageObjectId": "p1",
+      "size": {
+        "width": {"magnitude": 100, "unit": "PT"},
+        "height": {"magnitude": 50, "unit": "PT"}
+      },
+      "transform": {
+        "translateX": 100,
+        "translateY": 100,
+        "unit": "PT"
+      }
+    }
+  }
+}
+```
+
+### Shape Types
+- RECTANGLE
+- ELLIPSE
+- TRIANGLE
+- ARROW
+- CALLOUT
+- STAR
+- PLUS
+- DIAMOND
+
+## Image Insertion
+
+### From URL
+```javascript
+{
+  "createImage": {
+    "objectId": "image_1",
+    "url": "https://example.com/image.jpg",
+    "elementProperties": {
+      "pageObjectId": "p1",
+      "size": {
+        "width": {"magnitude": 200, "unit": "PT"},
+        "height": {"magnitude": 100, "unit": "PT"}
+      },
+      "transform": {
+        "translateX": 100,
+        "translateY": 100,
+        "unit": "PT"
+      }
+    }
+  }
+}
+```
+
+### Image Requirements
+- Publicly accessible URL
+- Supported formats: PNG, JPG, GIF
+- Maximum size: 25MB
+- Proper dimensions
+
+## Formatting and Styling
+
+### Update Shape Properties
+```javascript
+{
+  "updateShapeProperties": {
+    "objectId": "shape_1",
+    "fields": "shapeBackgroundFill.solidFill.color",
+    "shapeProperties": {
+      "shapeBackgroundFill": {
+        "solidFill": {
+          "color": {
+            "rgbColor": {
+              "red": 1,
+              "green": 0,
+              "blue": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Color Specification
+- RGB values (0.0 to 1.0)
+- Hex colors converted to RGB
+- Theme colors
+- Transparency support
+
+## Coordinate System
+
+### Position and Size
+- Origin (0,0) at top-left
+- Units: PT (points)
+- 72 PT = 1 inch
+- Positive X: right
+- Positive Y: down
+
+### Transform Properties
+- **translateX/Y**: Position
+- **scaleX/Y**: Size scaling
+- **shearX/Y**: Skewing
+- **unit**: Measurement unit
+
+## Batch Operations
+
+### Multiple Requests
+```javascript
+{
+  "requests": [
+    {
+      "createSlide": {
+        "objectId": "slide_1",
+        "slideLayoutReference": {
+          "predefinedLayout": "TITLE_AND_BODY"
+        }
+      }
+    },
+    {
+      "insertText": {
+        "objectId": "title_text",
+        "text": "New Slide Title"
+      }
+    }
+  ]
+}
+```
+
+### Batch Benefits
+- Reduced API calls
+- Atomic operations
+- Better performance
+- Consistent state
+
+## Object Management
+
+### Object IDs
+- Must be unique within presentation
+- Use descriptive prefixes
+- Store for future updates
+- Required for modifications
+
+### Naming Conventions
+```javascript
+// Good object ID examples
+"title_text_slide_1"
+"image_logo_header"
+"shape_button_cta"
+"chart_sales_q1"
+```
+
+## Error Handling
+
+### Common Errors
+- **400**: Invalid request format
+- **403**: Permission denied
+- **404**: Presentation not found
+- **429**: Rate limit exceeded
+
+### Error Prevention
+- Validate object IDs
+- Check permissions
+- Verify URLs
+- Handle rate limits
+
+## Best Practices
+
+1. **Object Management**
+   - Use descriptive object IDs
+   - Store IDs for updates
+   - Avoid ID conflicts
+   - Plan object hierarchy
+
+2. **Batch Operations**
+   - Group related changes
+   - Minimize API calls
+   - Handle errors gracefully
+   - Test request size limits
+
+3. **Performance**
+   - Cache presentation data
+   - Optimize image sizes
+   - Use efficient layouts
+   - Monitor API usage
+
+4. **Content Quality**
+   - Validate image URLs
+   - Check text encoding
+   - Verify color formats
+   - Test on different devices
+
+## Common Use Cases
+
+### Report Generation
+```
+/google-slides create monthly report slides with charts and data
+```
+
+### Template Creation
+```
+/google-slides build presentation template with company branding
+```
+
+### Data Visualization
+```
+/google-slides insert charts and graphs from data analysis
+```
+
+### Automated Updates
+```
+/google-slides update presentation with latest metrics and KPIs
+```
+
+## Response Structure
+
+### Successful Response
+```javascript
+{
+  "status": 200,
+  "output": {
+    "presentationId": "presentation_id",
+    "replies": [
+      {
+        "createSlide": {
+          "objectId": "new_slide_id"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Error Response
+```javascript
+{
+  "status": 400,
+  "error": {
+    "code": 400,
+    "message": "Invalid request format"
+  }
+}
+```
+
+## Tips
+- Use batch operations to group related changes efficiently
+- Store object IDs for future updates and modifications
+- Validate image URLs before insertion to avoid errors
+- Use descriptive object IDs with prefixes for better organization
+- Test coordinate positioning with small values first
+- Handle permissions properly for shared presentations 

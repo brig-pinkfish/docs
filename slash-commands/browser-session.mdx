@@ -1,0 +1,253 @@
+---
+title: "Browser Session Command Guide"
+description: "Learn how to use the Browser Session slash command to automate remote browser sessions"
+---
+
+The `/browser-session` command enables you to automate web browser interactions using Playwright. Perfect for:
+
+- Web scraping and data extraction
+- Form automation and submission
+- UI testing and validation
+- Interactive web workflows
+- Dynamic content handling
+
+## Basic Usage
+
+Use the command to automate browser tasks:
+
+```
+/browser-session navigate to "https://example.com" and extract product data
+```
+
+```
+/browser-session login to website with username "user" and password "pass"
+```
+
+```
+/browser-session fill form and submit data
+```
+
+## Key Features
+
+### Web Navigation
+- Navigate to URLs
+- Handle page loading
+- Wait for elements
+- Manage timeouts
+- Handle redirects
+
+### Element Interaction
+- Click buttons and links
+- Fill input fields
+- Select dropdown options
+- Upload files
+- Handle forms
+
+### Data Extraction
+- Extract text content
+- Get element attributes
+- Capture screenshots
+- Parse structured data
+- Handle dynamic content
+
+### Advanced Operations
+- Execute JavaScript
+- Handle popups/alerts
+- Manage cookies
+- Work with frames
+- Handle file downloads
+
+## Example Commands
+
+### Basic Navigation
+```
+/browser-session go to "https://saucedemo.com" and wait for page load
+```
+
+### Login Automation
+```
+/browser-session login with username "standard_user" password "secret_sauce"
+```
+
+### Data Extraction
+```
+/browser-session extract all product names and prices from inventory page
+```
+
+### Form Submission
+```
+/browser-session fill contact form with name "John" email "john@example.com" and submit
+```
+
+### Element Validation
+```
+/browser-session check if "Add to Cart" button is enabled before clicking
+```
+
+## Code Structure
+
+### Basic Template
+```javascript
+const code = `
+  try {
+    // Your Playwright code here
+    await page.goto('https://example.com');
+    
+    // Extract data or perform actions
+    const result = await page.evaluate(() => {
+      // DOM manipulation code
+      return { data: 'extracted' };
+    });
+    
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error) {
+    console.error('Error:', error.message);
+    return { error: error.message };
+  }
+`;
+```
+
+### With Binding Data
+```javascript
+const payload = {
+  "bindingData": { 
+    "username": "user123", 
+    "password": "pass456" 
+  },
+  "code": [code]
+};
+```
+
+## Best Practices
+
+### Error Handling
+- Always wrap code in try-catch
+- Include meaningful error messages
+- Return error objects for failures
+- Log errors for debugging
+
+### Element Waiting
+- Use explicit timeouts
+- Wait for elements to appear
+- Check element states
+- Handle loading delays
+
+### Data Extraction
+- Use `page.evaluate()` for DOM access
+- Convert NodeLists to Arrays
+- Extract structured data
+- Return JSON-serializable objects
+
+### Button Interactions
+- Use `.isEnabled()` to check state
+- Wait for elements before clicking
+- Handle disabled states
+- Validate before actions
+
+## Common Patterns
+
+### Login Flow
+```javascript
+await page.goto('https://login-site.com');
+await page.fill('#username', username);
+await page.fill('#password', password);
+await page.click('#login-button');
+await page.waitForSelector('.dashboard');
+```
+
+### Data Extraction
+```javascript
+const products = await page.evaluate(() => {
+  const items = Array.from(document.querySelectorAll('.product'));
+  return items.map(item => ({
+    name: item.querySelector('.name')?.innerText || '',
+    price: item.querySelector('.price')?.innerText || ''
+  }));
+});
+```
+
+### Form Filling
+```javascript
+await page.fill('#name', 'John Doe');
+await page.selectOption('#country', 'US');
+await page.check('#newsletter');
+await page.click('#submit');
+```
+
+### Element Validation
+```javascript
+const button = page.locator('#submit-btn');
+await button.waitFor();
+const isEnabled = await button.isEnabled();
+if (isEnabled) {
+  await button.click();
+}
+```
+
+## Available Objects
+
+Pre-defined variables in the execution context:
+- **browser**: Playwright browser instance
+- **context**: Browser context
+- **page**: Current page object
+
+No need to import or initialize these objects.
+
+## Timeout Management
+
+### Element Waiting
+```javascript
+await page.waitForSelector('.element', { timeout: 5000 });
+await page.waitForLoadState('networkidle');
+```
+
+### Custom Delays
+```javascript
+await page.waitForTimeout(1000); // Wait 1 second
+```
+
+## Error Scenarios
+
+### Common Issues
+- Element not found
+- Timeout exceeded
+- Network failures
+- JavaScript errors
+- Permission denied
+
+### Handling Strategies
+- Use try-catch blocks
+- Set appropriate timeouts
+- Validate element states
+- Return error objects
+- Log detailed messages
+
+## Data Binding
+
+### Using Variables
+Pass data through bindingData:
+```javascript
+const payload = {
+  "bindingData": { 
+    "searchTerm": "laptops",
+    "maxPrice": 1000
+  },
+  "code": [code]
+};
+```
+
+Access in code:
+```javascript
+await page.fill('#search', searchTerm);
+await page.fill('#max-price', maxPrice.toString());
+```
+
+## Tips
+- Always use try-catch for error handling
+- Set explicit timeouts for reliability
+- Use `page.evaluate()` for complex DOM operations
+- Convert NodeLists to Arrays before mapping
+- Check element states before interactions
+- Return structured, JSON-serializable data
+- Include both console.log and return statements 

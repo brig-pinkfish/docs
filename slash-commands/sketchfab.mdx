@@ -1,0 +1,200 @@
+---
+title: "Sketchfab"
+description: "Access and use 3D models from Sketchfab"
+---
+
+# Sketchfab
+
+Access and use 3D models from Sketchfab, the world's largest platform for publishing, sharing, and discovering 3D content online.
+
+## Overview
+
+The Sketchfab skill provides functionality for:
+- Embedding 3D models from Sketchfab
+- Creating interactive 3D viewers
+- Generating HTML applications with 3D content
+- Extracting model IDs from Sketchfab URLs
+- Building responsive 3D model displays
+
+## Connection Requirements
+
+This skill doesn't require external connections but uses Sketchfab's public embed system.
+
+## Basic Usage
+
+```javascript
+// Extract model ID from Sketchfab URL
+const sketchfabUrl = "https://sketchfab.com/3d-models/jordan-1-travis-scott-x-fragment-7007b36ecf9c4897b532bffabe432162";
+const modelId = "7007b36ecf9c4897b532bffabe432162"; // ID at the end of URL
+```
+
+## Key Features
+
+### 3D Model Embedding
+- **Model Display**: Embed Sketchfab models in web applications
+- **Interactive Viewers**: Full 3D interaction capabilities
+- **Responsive Design**: Automatically adapts to different screen sizes
+- **Full-Screen Support**: Native full-screen viewing experience
+
+### Web Application Generation
+- **HTML Generation**: Create complete HTML applications
+- **CSS Styling**: Responsive and modern styling
+- **JavaScript Integration**: Interactive 3D functionality
+- **Cross-Platform**: Works on desktop and mobile devices
+
+## Model ID Extraction
+
+### From Sketchfab URLs
+```javascript
+// URL format: https://sketchfab.com/3d-models/[model-name]-[MODEL_ID]
+const url = "https://sketchfab.com/3d-models/vintage-camera-f12a3b4c5d6e7f8g9h0i1j2k3l4m5n6o";
+const modelId = "f12a3b4c5d6e7f8g9h0i1j2k3l4m5n6o"; // Last part after final dash
+```
+
+## HTML Application Template
+
+### Basic Embed Structure
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Model Viewer</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .sketchfab-embed-wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+        .sketchfab-embed-wrapper iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="sketchfab-embed-wrapper">
+        <iframe 
+            title="3D Model" 
+            frameborder="0" 
+            allowfullscreen 
+            src="https://sketchfab.com/models/[MODEL_ID]/embed">
+        </iframe>
+    </div>
+</body>
+</html>
+```
+
+## Embed Features
+
+### Interactive Controls
+- **Rotation**: Click and drag to rotate the model
+- **Zoom**: Mouse wheel or pinch to zoom in/out
+- **Pan**: Right-click and drag to pan the view
+- **Full-Screen**: Native full-screen mode support
+
+### Supported Formats
+- **3D Models**: OBJ, FBX, GLTF, DAE, and more
+- **Textures**: PNG, JPG, TGA texture support
+- **Animations**: Skeletal and morph animations
+- **Materials**: PBR materials and lighting
+
+## Application Generation
+
+### JavaScript Template
+```javascript
+async function generateSketchfabApp() {
+  const modelId = "your-model-id-here";
+  const modelName = "Your Model Name";
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>${modelName}</title>
+        <style>
+            /* Responsive 3D viewer styles */
+        </style>
+    </head>
+    <body>
+        <div class="sketchfab-embed-wrapper">
+            <iframe 
+                title="${modelName}"
+                src="https://sketchfab.com/models/${modelId}/embed"
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </body>
+    </html>
+  `;
+  
+  fs.writeFileSync('output.html', htmlContent, 'utf8');
+  
+  return {
+    resultType: 'app',
+    result: config.sandboxURL
+  };
+}
+```
+
+## Iframe Parameters
+
+### Basic Parameters
+- **title**: Descriptive title for accessibility
+- **frameborder**: Set to "0" for seamless integration
+- **allowfullscreen**: Enable full-screen functionality
+- **src**: Sketchfab embed URL with model ID
+
+### Advanced Parameters
+- **mozallowfullscreen**: Firefox full-screen support
+- **webkitallowfullscreen**: Safari full-screen support
+- **allow**: Permissions for autoplay, fullscreen, XR features
+- **xr-spatial-tracking**: Enable XR/VR features
+- **web-share**: Enable web sharing capabilities
+
+## Response Structure
+
+### Application Result
+```javascript
+{
+  "resultType": "app",
+  "result": "https://sandbox.example.com/app-url"
+}
+```
+
+## Model Categories
+
+### Popular Categories
+- **Architecture**: Buildings, interiors, landscapes
+- **Characters**: People, animals, fantasy creatures
+- **Vehicles**: Cars, planes, ships, spacecraft
+- **Objects**: Furniture, tools, decorative items
+- **Nature**: Plants, rocks, organic forms
+- **Art**: Sculptures, artistic creations
+
+## Important Notes
+
+- **Model ID Format**: Always 32-character alphanumeric string
+- **URL Structure**: Model ID is the last part of Sketchfab URLs
+- **Embed Permissions**: Only publicly available models can be embedded
+- **Performance**: 3D models can be resource-intensive on mobile devices
+- **Licensing**: Respect model licensing and usage rights
+- **Responsive Design**: Ensure proper scaling across devices
+
+## Best Practices
+
+1. **Model Selection**: Choose optimized models for web viewing
+2. **Loading States**: Implement loading indicators for large models
+3. **Mobile Optimization**: Test on mobile devices for performance
+4. **Accessibility**: Include proper titles and descriptions
+5. **Error Handling**: Handle cases where models fail to load
+6. **Performance**: Consider model complexity and file size
+7. **User Experience**: Provide clear interaction instructions
+8. **Responsive Design**: Ensure proper display across screen sizes 

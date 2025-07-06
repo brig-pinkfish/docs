@@ -1,0 +1,413 @@
+---
+title: "PDF Form Filler Command Guide"
+description: "Learn how to use the PDF Form Filler slash command to automatically fill PDF forms"
+---
+
+The `/pdf-form-filler` command enables you to automatically fill PDF forms with data. Perfect for:
+
+- Filling interactive PDF forms
+- Automating form completion
+- Processing multiple forms
+- Data entry automation
+- Document workflow optimization
+
+## Basic Usage
+
+Use the command to fill PDF forms:
+
+```
+/pdf-form-filler fill application form with customer data
+```
+
+```
+/pdf-form-filler complete tax form with provided information
+```
+
+```
+/pdf-form-filler populate contract form fields
+```
+
+## Key Features
+
+### Form Field Detection
+- Automatic field identification
+- Text field filling
+- Checkbox handling
+- Dropdown selection
+- Field type recognition
+
+### Robust Processing
+- Multiple fallback strategies
+- Field name matching
+- Positional field access
+- Error recovery
+- Format validation
+
+### Output Generation
+- Base64 PDF encoding
+- Proper file formatting
+- Download preparation
+- Quality preservation
+- Metadata handling
+
+## Example Commands
+
+### Basic Form Filling
+```
+/pdf-form-filler fill employee onboarding form with John Doe's information
+```
+
+### Complex Forms
+```
+/pdf-form-filler complete insurance application with all required fields
+```
+
+### Batch Processing
+```
+/pdf-form-filler fill multiple registration forms with customer data
+```
+
+## Form Filling Process
+
+### Field Identification
+The system uses multiple strategies to identify and fill form fields:
+
+1. **Direct Field Access**: Match by exact field name
+2. **Similar Name Matching**: Find fields with similar names
+3. **Pattern Matching**: Use field name patterns
+4. **Positional Fallback**: Access fields by position as last resort
+
+### Field Types Supported
+
+#### Text Fields
+- Single-line text input
+- Multi-line text areas
+- Formatted text fields
+- Numeric input fields
+- Date fields
+
+#### Checkboxes
+- Boolean value checkboxes
+- Multiple selection options
+- Radio button groups
+- Toggle switches
+- State indicators
+
+#### Dropdowns
+- Single selection dropdowns
+- Multi-select lists
+- Combo boxes
+- Option lists
+- Cascading dropdowns
+
+## Implementation Example
+
+### Basic Form Filling Function
+```javascript
+async function fillPDFForm(pdfBytes, formData) {
+  try {
+    // Load PDF with compatibility options
+    const pdfDoc = await PDFDocument.load(pdfBytes, {
+      ignoreEncryption: true,
+      updateMetadata: false
+    });
+    
+    const form = pdfDoc.getForm();
+    const fields = form.getFields();
+    
+    // Categorize fields by type
+    const textFields = fields.filter(field => 
+      field.constructor.name === 'PDFTextField');
+    const checkBoxes = fields.filter(field => 
+      field.constructor.name === 'PDFCheckBox');
+    const dropdowns = fields.filter(field => 
+      field.constructor.name === 'PDFDropdown');
+    
+    // Fill text fields with fallbacks
+    for (const [name, value] of Object.entries(formData)) {
+      try {
+        // Direct field name match
+        form.getTextField(name).setText(String(value));
+      } catch (error) {
+        // Find similar field name
+        const similarField = textFields.find(f => 
+          f.getName().toLowerCase().includes(name.toLowerCase()));
+        
+        if (similarField) {
+          similarField.setText(String(value));
+        }
+      }
+    }
+    
+    return await pdfDoc.save();
+  } catch (error) {
+    console.error(`Error filling form: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+### Checkbox Handling
+```javascript
+// Handle checkboxes with multiple methods
+for (const [name, value] of Object.entries(formData)) {
+  if (!value || typeof value !== 'boolean' && value !== 'true') continue;
+  
+  for (const checkbox of checkBoxes) {
+    if (checkbox.getName().toLowerCase().includes(name.toLowerCase())) {
+      try {
+        // Method 1: Standard check
+        checkbox.check();
+      } catch (e1) {
+        // Method 2: Try different values
+        const values = ['Yes', 'On', 'X', 'TRUE', '1', ''];
+        for (const val of values) {
+          try {
+            checkbox.setValue(val);
+            break;
+          } catch (e2) {
+            // Continue to next value
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Dropdown Selection
+```javascript
+// Handle dropdowns with value matching
+for (const [name, value] of Object.entries(formData)) {
+  const dropdown = dropdowns.find(d => 
+    d.getName().toLowerCase().includes(name.toLowerCase()));
+  
+  if (dropdown) {
+    const options = dropdown.getOptions();
+    // Find exact or similar option
+    const option = options.find(o => 
+      o.toLowerCase() === String(value).toLowerCase() || 
+      o.toLowerCase().includes(String(value).toLowerCase()));
+    
+    if (option) {
+      dropdown.select(option);
+    } else if (options.length > 0) {
+      // Fallback to first option
+      dropdown.select(options[0]);
+    }
+  }
+}
+```
+
+## Field Mapping Strategies
+
+### Direct Mapping
+```javascript
+// Exact field name match
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "[email protected]"
+}
+```
+
+### Pattern Matching
+```javascript
+// Flexible field name matching
+{
+  "name": "John Doe",      // Matches "full_name", "customer_name", etc.
+  "phone": "555-1234",     // Matches "phone_number", "telephone", etc.
+  "address": "123 Main St" // Matches "street_address", "mailing_address", etc.
+}
+```
+
+### Boolean Values
+```javascript
+// Checkbox handling
+{
+  "subscribe": true,       // Checks subscription checkbox
+  "terms": "checked",      // Alternative checkbox value
+  "newsletter": false      // Leaves checkbox unchecked
+}
+```
+
+## Output Format
+
+### Response Structure
+```javascript
+{
+  message: 'PDF form filled successfully',
+  fileName: 'filled_form.pdf',
+  mimeType: 'application/pdf',
+  pdf: base64EncodedPdf  // IMPORTANT: use 'pdf' as the key name
+}
+```
+
+### Base64 Encoding
+The filled PDF must be returned as base64-encoded data with the key name 'pdf' for proper display and download functionality.
+
+## Error Handling
+
+### Common Issues
+- Field not found errors
+- Invalid field values
+- Checkbox setting failures
+- Dropdown option mismatches
+- PDF corruption
+
+### Error Recovery
+```javascript
+try {
+  // Primary field filling method
+  form.getTextField(fieldName).setText(value);
+} catch (primaryError) {
+  try {
+    // Secondary method: similar name matching
+    const field = findSimilarField(fieldName);
+    field.setText(value);
+  } catch (secondaryError) {
+    // Log error but continue processing
+    console.warn(`Could not fill field ${fieldName}: ${secondaryError.message}`);
+  }
+}
+```
+
+## Best Practices
+
+1. **Field Identification**
+   - Implement multiple fallback strategies
+   - Use case-insensitive matching
+   - Log field names for debugging
+   - Handle special characters
+
+2. **Data Validation**
+   - Validate input data types
+   - Check field constraints
+   - Handle missing values
+   - Format data appropriately
+
+3. **Error Handling**
+   - Use try-catch for each field
+   - Continue processing on errors
+   - Provide detailed logging
+   - Return partial results
+
+4. **Performance**
+   - Cache field mappings
+   - Optimize PDF loading
+   - Minimize memory usage
+   - Handle large files efficiently
+
+## Field Debugging
+
+### Field Discovery
+```javascript
+// Log all field information
+fields.forEach(field => {
+  console.log(`Field: "${field.getName()}" (${field.constructor.name})`);
+  
+  if (field.constructor.name === 'PDFDropdown') {
+    console.log(`Options: ${field.getOptions().join(', ')}`);
+  }
+});
+```
+
+### Field Categorization
+```javascript
+console.log(`Found ${fields.length} fields:`);
+console.log(`- ${textFields.length} text fields`);
+console.log(`- ${checkBoxes.length} checkboxes`);
+console.log(`- ${dropdowns.length} dropdowns`);
+```
+
+## Common Use Cases
+
+### Application Forms
+```
+/pdf-form-filler complete job application with candidate information
+```
+
+### Government Forms
+```
+/pdf-form-filler fill tax return with financial data
+```
+
+### Insurance Forms
+```
+/pdf-form-filler populate insurance claim form with incident details
+```
+
+### Registration Forms
+```
+/pdf-form-filler complete event registration with attendee information
+```
+
+## Advanced Features
+
+### Custom Field Handlers
+```javascript
+// Custom handling for specific field types
+const customHandlers = {
+  date: (field, value) => {
+    const formattedDate = new Date(value).toLocaleDateString();
+    field.setText(formattedDate);
+  },
+  
+  currency: (field, value) => {
+    const formattedCurrency = `$${parseFloat(value).toFixed(2)}`;
+    field.setText(formattedCurrency);
+  }
+};
+```
+
+### Batch Processing
+```javascript
+// Process multiple forms with same data
+async function fillMultipleForms(formPaths, commonData) {
+  const results = [];
+  
+  for (const formPath of formPaths) {
+    try {
+      const pdfBytes = await readFile(formPath);
+      const filledPdf = await fillPDFForm(pdfBytes, commonData);
+      results.push({
+        success: true,
+        fileName: formPath,
+        pdf: filledPdf
+      });
+    } catch (error) {
+      results.push({
+        success: false,
+        fileName: formPath,
+        error: error.message
+      });
+    }
+  }
+  
+  return results;
+}
+```
+
+## Performance Optimization
+
+### Memory Management
+- Stream large PDF files
+- Release resources promptly
+- Avoid loading multiple PDFs simultaneously
+- Use appropriate buffer sizes
+
+### Processing Efficiency
+- Cache field mappings
+- Pre-validate form data
+- Use parallel processing for multiple forms
+- Implement progress tracking
+
+## Tips
+- Always categorize fields by type for better handling
+- Use multiple methods for checkbox operations (.check(), .setValue())
+- Implement name similarity matching for robust field identification
+- Provide comprehensive logging for easier debugging
+- Use try/catch for each field operation, not just the whole function
+- Return results with 'pdf' as the key name for proper display
+- Test with various PDF forms to ensure compatibility
+- Handle edge cases like empty fields and special characters 

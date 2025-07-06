@@ -1,0 +1,157 @@
+---
+title: "Google Drive Command Guide"
+description: "Learn how to use the Google Drive slash command to manage files and folders"
+---
+
+The `/google-drive` command enables you to manage files and folders in Google Drive. Perfect for:
+
+- Uploading files
+- Searching documents
+- Managing folders
+- Sharing files
+- Reading content
+
+## Basic Usage
+
+Use the command to interact with Google Drive:
+
+```
+/google-drive find file "Project Report.pdf"
+```
+
+```
+/google-drive upload "document.txt" to folder "Work Documents"
+```
+
+```
+/google-drive list files in folder "Projects"
+```
+
+## Key Features
+
+### File Search
+- Search by exact name
+- Search by partial name
+- Filter by file type
+- Find in folders
+
+### File Operations
+- Upload new files
+- Read file content
+- Download files
+- Update metadata
+- Add comments
+
+### Folder Management
+- Create folders
+- List folder contents
+- Move files between folders
+- Find folder IDs
+
+### File Sharing
+- Share with users
+- Set permissions
+- Generate public links
+
+## Example Commands
+
+### Search Files
+```
+/google-drive find file named "Budget 2024.xlsx"
+```
+
+### Upload File
+```
+/google-drive upload "report.pdf" to folder "Reports"
+```
+
+### List Folder Contents
+```
+/google-drive show all files in folder "Marketing"
+```
+
+### Read Text File
+```
+/google-drive read content of file "notes.txt"
+```
+
+### Move File
+```
+/google-drive move "document.docx" from "Drafts" to "Final"
+```
+
+### Add Comment
+```
+/google-drive add comment "Please review" to file "proposal.pdf"
+```
+
+## File Upload Process
+
+### Step 1: Create Metadata
+```json
+{
+  "name": "filename.ext",
+  "mimeType": "application/pdf",
+  "parents": ["folderId"]
+}
+```
+
+### Step 2: Upload Content
+- Text files: Send as plain text
+- Binary files: Decode base64 first
+- Set correct Content-Type
+
+## File Reading Rules
+
+### Text-Based Files
+- `.txt`, `.json`, `.csv`, `.html`, `.xml`, `.js`
+- Use `alt=media` endpoint
+- Returns content directly
+
+### Binary Files
+- PDFs, images, Office docs
+- Use download endpoint
+- Returns download URL
+
+## Search Queries
+
+### Exact Match
+```
+name='Document.pdf'
+```
+
+### Partial Match
+```
+name contains 'Report'
+```
+
+### Folder Search
+```
+name='Projects' and mimeType='application/vnd.google-apps.folder'
+```
+
+### Files in Folder
+```
+'folderId' in parents
+```
+
+## MIME Types
+
+### Common File Types
+- PDF: `application/pdf`
+- Image: `image/png`, `image/jpeg`
+- Text: `text/plain`
+- JSON: `application/json`
+
+### Google Workspace
+- Folder: `application/vnd.google-apps.folder`
+- Doc: `application/vnd.google-apps.document`
+- Sheet: `application/vnd.google-apps.spreadsheet`
+- Slide: `application/vnd.google-apps.presentation`
+
+## Tips
+- Always encode query parameters
+- Check MIME type before reading files
+- Use exact name match first
+- Handle multiple search results
+- Decode base64 before uploading binary files 

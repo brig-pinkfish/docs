@@ -1,0 +1,113 @@
+---
+title: "Trigger Calls Command Guide"
+description: "Learn how to use the Trigger Calls slash command to start other automations"
+---
+
+
+The `/trigger-call` command allows you to start other automations from within your current automation. Think of it like a remote control that can start other automated processes. Perfect for:
+
+- Chaining multiple automations together
+- Starting background processes
+- Coordinating complex workflows
+- Triggering dependent automations
+- Managing sequential automation tasks
+
+## Basic Usage
+
+Start another automation using the trigger command:
+
+```
+/trigger-call
+Trigger URL: [Your automation endpoint URL]
+Trigger API Key: [Your API key]
+```
+
+## Required Parameters
+
+- `Trigger URL`: The web address where your target automation lives
+  - Must be a valid URL
+  - Should be the complete endpoint address
+  - Usually provided in your automation settings
+
+- `Trigger API Key`: Your security key for accessing the automation
+  - Unique to your account
+  - Required for authentication
+  - Keep this private and secure
+
+See [API Triggers documentation](/api-reference/introduction) for more information.
+
+## Optional Parameters
+
+### Execution Control
+
+- `wait`: Controls whether to wait for the triggered automation to complete
+  - `true`: Wait for completion (default)
+    - You'll get full results back
+    - Sees the complete execution
+    - Good for dependent processes
+  - `false`: Don't wait (fire and forget)
+    - Starts the automation and moves on
+    - Faster execution
+    - Good for background tasks
+
+## How It Works
+
+### When Waiting for Results (wait: true)
+1. Triggers the automation
+2. Waits for completion
+3. Returns detailed results including:
+   - Automation details
+   - Step-by-step results
+   - Execution times
+   - Success/failure status
+
+### When Not Waiting (wait: false)
+1. Triggers the automation
+2. Immediately returns a confirmation
+3. Provides a Run ID for reference (in the header of the response)
+4. Continues with your current automation
+
+## Example Commands
+
+### Basic Trigger with Waiting
+```
+/trigger-call call
+Trigger URL: https://your-automation-endpoint.com
+Trigger API Key: your-api-key-here
+```
+
+### Fire-and-Forget Trigger
+```
+/trigger-call call
+Trigger URL: https://your-automation-endpoint.com
+Trigger API Key: your-api-key-here
+wait: false
+```
+
+## Monitoring and Tracking
+
+The Monitor interface provides a centralized view of all your trigger call executions. You can:
+- Track the sequence of events across multiple automations
+- View the timing and duration of each triggered automation
+- Inspect the full execution chain when automations trigger other automations
+- Debug issues by following the complete execution path
+- Monitor the status of background tasks started with `wait: false`
+
+## Important Considerations
+
+### Avoiding Infinite Loops
+
+Be cautious when implementing trigger calls to prevent infinite loops or excessive execution:
+- Never create circular trigger dependencies where automations trigger each other endlessly
+- Implement safeguards like execution counters or time-based checks
+- Consider using the datastore to track execution state and prevent loops
+- Monitor your automation usage to catch any unintended rapid triggering
+
+### Building Job Queues
+
+You can combine trigger calls with the datastore to create a job queue system. See [Job Queues](/how-to/job-queue) for more information.
+
+### Storing your API Key as a secret
+If you want to keep your API key out of your generated steps in plain text, you can store it as a secret in the datastore and then retrieve it at runtime. See [Secrets](/essentials/secrets) for more information. This approach would also allow you to rotate your API key without having to update your automation.
+
+The Trigger Calls command makes it easy to connect your automations. Start with the basics and expand as needed!

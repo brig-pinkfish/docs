@@ -1,0 +1,426 @@
+---
+title: "Polygon.io API Command Guide"
+description: "Learn how to use the Polygon.io API slash command to access financial market data including stocks, options, and market indices"
+---
+
+The `/polygon-io` command enables you to access comprehensive financial market data through the Polygon.io API. Perfect for:
+
+- Stock market data and analysis
+- Options contract information
+- Real-time market snapshots
+- Historical price data
+- Financial market research
+
+## Basic Usage
+
+Use the command to access financial data:
+
+```
+/polygon-io get AAPL stock data for the last week
+```
+
+```
+/polygon-io find options contracts for TSLA expiring next month
+```
+
+```
+/polygon-io get market snapshot for major tech stocks
+```
+
+## Key Features
+
+### Stock Data
+- OHLCV (Open, High, Low, Close, Volume) data
+- Historical price aggregates
+- Real-time snapshots
+- Daily open/close prices
+- Volume-weighted average prices
+
+### Options Data
+- Options contracts lookup
+- Strike prices and expiration dates
+- Call and put options
+- Contract specifications
+- Exercise styles
+
+### Market Information
+- Ticker details and company info
+- Market snapshots
+- Last trade information
+- Quote data
+- Market indices
+
+## Example Commands
+
+### Stock Analysis
+```
+/polygon-io analyze AAPL price movements over the past month
+```
+
+### Options Research
+```
+/polygon-io find all NVDA options expiring in July 2024
+```
+
+### Market Snapshots
+```
+/polygon-io get current market data for top 10 S&P 500 stocks
+```
+
+### Company Information
+```
+/polygon-io get detailed company information for Microsoft
+```
+
+## Stock Data Operations
+
+### Get Aggregates (OHLCV Data)
+```javascript
+// GET aggs/ticker/{ticker}/range/{multiplier}/{timespan}/{from}/{to}
+const url = POLYGON_URL + `aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-13`;
+```
+
+### Aggregates Response
+```javascript
+{
+  "ticker": "AAPL",
+  "queryCount": 5,
+  "resultsCount": 5,
+  "adjusted": true,
+  "results": [
+    {
+      "v": 76532548,         // volume
+      "vw": 130.8995,        // volume-weighted average price
+      "o": 130.465,          // open price
+      "c": 130.73,           // close price
+      "h": 132.4899,         // high price
+      "l": 129.89,           // low price
+      "t": 1673298000000,    // timestamp (Unix time in milliseconds)
+      "n": 657212            // number of trades
+    }
+  ],
+  "status": "OK",
+  "count": 5
+}
+```
+
+### Supported Timeframes
+- **minute**: Minute-level data
+- **hour**: Hourly aggregates
+- **day**: Daily data
+- **week**: Weekly aggregates
+- **month**: Monthly data
+- **quarter**: Quarterly data
+- **year**: Annual data
+
+## Options Data
+
+### Get Options Contracts
+```javascript
+const url = POLYGON_URL + `reference/options/contracts?underlying_ticker=AAPL&expiration_date=2023-07-21`;
+```
+
+### Options Response
+```javascript
+{
+  "results": [
+    {
+      "ticker": "O:AAPL230721C00150000",
+      "underlying_ticker": "AAPL",
+      "contract_type": "call",
+      "exercise_style": "american",
+      "expiration_date": "2023-07-21",
+      "strike_price": 150,
+      "shares_per_contract": 100,
+      "primary_exchange": "OPRA",
+      "cfi": "OCASPS"
+    },
+    {
+      "ticker": "O:AAPL230721P00150000",
+      "underlying_ticker": "AAPL",
+      "contract_type": "put",
+      "exercise_style": "american",
+      "expiration_date": "2023-07-21",
+      "strike_price": 150,
+      "shares_per_contract": 100,
+      "primary_exchange": "OPRA",
+      "cfi": "OPASPS"
+    }
+  ],
+  "status": "OK",
+  "count": 50
+}
+```
+
+### Contract Types
+- **call**: Call options
+- **put**: Put options
+
+### Exercise Styles
+- **american**: Can be exercised anytime before expiration
+- **european**: Can only be exercised at expiration
+
+## Market Snapshots
+
+### Single Stock Snapshot
+```javascript
+const url = POLYGON_URL + `snapshot/ticker/AAPL`;
+```
+
+### Snapshot Response
+```javascript
+{
+  "ticker": {
+    "ticker": "AAPL",
+    "todaysChange": 1.25,
+    "todaysChangePerc": 0.67,
+    "updated": 1673463600000,
+    "day": {
+      "o": 132.45,
+      "h": 133.51,
+      "l": 131.88,
+      "c": 133.49,
+      "v": 79829739,
+      "vw": 132.6474
+    },
+    "lastTrade": {
+      "p": 133.49,
+      "s": 200,
+      "t": 1673463600321,
+      "c": [0, 12]
+    },
+    "lastQuote": {
+      "p": 133.48,
+      "s": 1,
+      "P": 133.49,
+      "S": 3,
+      "t": 1673463600176
+    },
+    "min": {
+      "av": 79829739,
+      "c": 133.49,
+      "h": 133.51,
+      "l": 133.41,
+      "o": 133.41,
+      "v": 143532,
+      "vw": 133.4531
+    },
+    "prevDay": {
+      "o": 130.46,
+      "h": 132.49,
+      "l": 129.89,
+      "c": 130.73,
+      "v": 76532548,
+      "vw": 130.8995
+    }
+  }
+}
+```
+
+## Daily Open/Close Data
+
+### Get Daily Prices
+```javascript
+const url = POLYGON_URL + `open-close/AAPL/2023-01-09`;
+```
+
+### Daily Response
+```javascript
+{
+  "status": "OK",
+  "from": "2023-01-09",
+  "symbol": "AAPL",
+  "open": 130.465,
+  "high": 132.4899,
+  "low": 129.89,
+  "close": 130.73,
+  "volume": 76532548,
+  "afterHours": 130.42,
+  "preMarket": 132.71
+}
+```
+
+## Company Information
+
+### Get Ticker Details
+```javascript
+const url = POLYGON_URL + `reference/tickers/AAPL`;
+```
+
+### Company Response
+```javascript
+{
+  "results": {
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "market": "stocks",
+    "locale": "us",
+    "primary_exchange": "XNAS",
+    "type": "CS",
+    "active": true,
+    "currency_name": "usd",
+    "cik": "0000320193",
+    "composite_figi": "BBG000B9XRY4",
+    "share_class_figi": "BBG001S5N8V8",
+    "market_cap": 2107160401920,
+    "phone_number": "(408) 996-1010",
+    "address": {
+      "address1": "One Apple Park Way",
+      "city": "Cupertino",
+      "state": "CA",
+      "postal_code": "95014"
+    },
+    "description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide...",
+    "sic_code": "3571",
+    "sic_description": "Electronic Computers",
+    "ticker_root": "AAPL",
+    "homepage_url": "https://www.apple.com",
+    "total_employees": 164000,
+    "list_date": "1980-12-12",
+    "branding": {
+      "logo_url": "https://api.polygon.io/v1/reference/company-branding/AAPL/logo",
+      "icon_url": "https://api.polygon.io/v1/reference/company-branding/AAPL/icon"
+    }
+  },
+  "status": "OK"
+}
+```
+
+## Data Format Requirements
+
+### Date Format
+- **Required Format**: YYYY-MM-DD (with hyphens)
+- **Example**: 2023-01-09
+- **Invalid**: 2023/01/09 or 20230109
+
+### Supported Resolutions
+- minute
+- hour
+- day
+- week
+- month
+- quarter
+- year
+
+### Default Parameters
+- **multiplier**: 1
+- **timespan**: day
+- **from**: current date
+- **to**: tomorrow date
+
+## Connection Requirements
+
+### PinkConnect Proxy
+- Uses PC_BASE_URL + v3/ endpoint
+- Equivalent to https://api.polygon.io/v3/
+- Requires Polygon.io connection ID
+
+### Paragon Proxy
+- Uses PROXY_URL + custom/{integrationId}/v2/
+- Alternative authentication method
+- Different endpoint structure
+
+## Best Practices
+
+1. **Date Handling**
+   - Always use YYYY-MM-DD format with hyphens
+   - Validate date ranges before requests
+   - Consider market holidays and weekends
+   - Use appropriate timeframes for analysis
+
+2. **Data Analysis**
+   - Combine multiple data points for insights
+   - Use volume-weighted averages for accuracy
+   - Consider after-hours and pre-market data
+   - Implement proper error handling
+
+3. **Performance**
+   - Cache frequently accessed data
+   - Use appropriate date ranges
+   - Batch requests when possible
+   - Monitor API rate limits
+
+4. **Options Trading**
+   - Verify expiration dates
+   - Check strike price ranges
+   - Understand exercise styles
+   - Monitor contract specifications
+
+## Common Use Cases
+
+### Technical Analysis
+```
+/polygon-io analyze MSFT price patterns with volume indicators
+```
+
+### Options Strategy
+```
+/polygon-io find covered call opportunities for GOOGL
+```
+
+### Portfolio Tracking
+```
+/polygon-io get daily performance for my stock portfolio
+```
+
+### Market Research
+```
+/polygon-io compare tech sector performance over last quarter
+```
+
+## Error Handling
+
+### Common Issues
+- Invalid date format
+- Unsupported ticker symbols
+- Market closed periods
+- Rate limit exceeded
+
+### Error Response
+```javascript
+{
+  "status": "ERROR",
+  "error": "Invalid date format. Please use YYYY-MM-DD.",
+  "request_id": "12345"
+}
+```
+
+## Data Interpretation
+
+### Price Data
+- **o**: Opening price
+- **h**: Highest price
+- **l**: Lowest price
+- **c**: Closing price
+- **v**: Volume
+- **vw**: Volume-weighted average price
+- **n**: Number of trades
+
+### Trade Data
+- **p**: Price
+- **s**: Size (shares)
+- **t**: Timestamp
+- **c**: Conditions array
+
+## Integration Tips
+
+### Financial Analysis
+- Combine with other financial APIs
+- Implement technical indicators
+- Create custom alerts
+- Build portfolio trackers
+
+### Data Visualization
+- Create price charts
+- Volume analysis graphs
+- Options chain displays
+- Market heatmaps
+
+## Tips
+- Always use YYYY-MM-DD date format with hyphens (mandatory)
+- Supported resolutions are limited to minute|hour|day|week|month|quarter|year
+- Default parameters include multiplier=1, timespan=day
+- Use volume-weighted average price (vw) for more accurate analysis
+- Consider market hours when interpreting real-time data
+- Cache company information as it changes infrequently
+- Monitor API rate limits to avoid service interruptions 

@@ -1,0 +1,305 @@
+---
+title: "WhatsApp"
+description: "Communicate with WhatsApp"
+---
+
+# WhatsApp
+
+Communicate with WhatsApp using the WhatsApp Cloud API for business messaging, customer communication, and automated interactions.
+
+## Overview
+
+The WhatsApp skill provides functionality for:
+- Sending text messages to WhatsApp users
+- Sharing media files (images, documents, videos)
+- Using pre-approved message templates
+- Managing message delivery status
+- Handling contact information and validation
+
+## Connection Requirements
+
+This skill requires a WhatsApp connection configured through:
+- **Paragon Proxy**: PARA_BASE_URL + "whatsapp/"
+- **WhatsApp Business Account**: Verified business account with Cloud API access
+- **Phone Number ID**: Configured WhatsApp Business phone number
+
+## Basic Usage
+
+```javascript
+// Send a text message
+const message = {
+  "messaging_product": "whatsapp",
+  "to": "recipient_phone_number",
+  "type": "text",
+  "text": {
+    "body": "Hello, this is a test message."
+  }
+};
+```
+
+## Key Features
+
+### Message Types
+- **Text Messages**: Send plain text messages with formatting
+- **Media Messages**: Share images, documents, videos, and audio
+- **Template Messages**: Use pre-approved business templates
+- **Interactive Messages**: Buttons, lists, and quick replies (if supported)
+
+### Message Management
+- **Delivery Tracking**: Monitor message delivery status
+- **Message Status**: Track sent, delivered, read, and failed messages
+- **Contact Management**: Validate and manage recipient contacts
+- **Error Handling**: Handle failed messages and invalid recipients
+
+## Common Operations
+
+### Send Text Message
+```javascript
+POST: messages
+{
+  "messaging_product": "whatsapp",
+  "to": "1234567890",
+  "type": "text",
+  "text": {
+    "body": "Hello! How can I help you today?"
+  }
+}
+```
+
+### Send Image Message
+```javascript
+POST: messages
+{
+  "messaging_product": "whatsapp",
+  "to": "1234567890",
+  "type": "image",
+  "image": {
+    "link": "https://example.com/image.jpg",
+    "caption": "Check out this product image!"
+  }
+}
+```
+
+### Send Template Message
+```javascript
+POST: messages
+{
+  "messaging_product": "whatsapp",
+  "to": "1234567890",
+  "type": "template",
+  "template": {
+    "name": "hello_world",
+    "language": {
+      "code": "en_US"
+    }
+  }
+}
+```
+
+### Check Message Status
+```javascript
+GET: {message-id}
+```
+
+## Message Types
+
+### Text Messages
+```javascript
+{
+  "type": "text",
+  "text": {
+    "body": "Your message text here",
+    "preview_url": false  // Enable link previews
+  }
+}
+```
+
+### Media Messages
+```javascript
+// Image
+{
+  "type": "image",
+  "image": {
+    "link": "https://example.com/image.jpg",
+    "caption": "Optional caption"
+  }
+}
+
+// Document
+{
+  "type": "document",
+  "document": {
+    "link": "https://example.com/document.pdf",
+    "caption": "Document description",
+    "filename": "report.pdf"
+  }
+}
+
+// Video
+{
+  "type": "video",
+  "video": {
+    "link": "https://example.com/video.mp4",
+    "caption": "Video description"
+  }
+}
+```
+
+## Template Messages
+
+### Template Structure
+```javascript
+{
+  "type": "template",
+  "template": {
+    "name": "template_name",
+    "language": {
+      "code": "en_US"
+    },
+    "components": [
+      {
+        "type": "body",
+        "parameters": [
+          {
+            "type": "text",
+            "text": "Parameter value"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Common Templates
+- **hello_world**: Basic greeting template
+- **order_confirmation**: Order confirmation with details
+- **appointment_reminder**: Appointment reminder with date/time
+- **payment_reminder**: Payment due notification
+- **shipping_update**: Package tracking information
+
+## Response Structure
+
+### Message Send Response
+```javascript
+{
+  "status": 200,
+  "output": {
+    "messaging_product": "whatsapp",
+    "contacts": [
+      {
+        "input": "1234567890",
+        "wa_id": "1234567890"
+      }
+    ],
+    "messages": [
+      {
+        "id": "wamid.HBgMNTg1Mjg3NTY4NzU5FQIAERgSODg3RDI1Q0Y2QjYzQzYxNjY1AA=="
+      }
+    ]
+  }
+}
+```
+
+### Message Status Response
+```javascript
+{
+  "status": 200,
+  "output": {
+    "messaging_product": "whatsapp",
+    "contacts": [
+      {
+        "input": "1234567890",
+        "wa_id": "1234567890"
+      }
+    ],
+    "messages": [
+      {
+        "id": "wamid.HBgMNTg1Mjg3NTY4NzU5FQIAERgSODg3RDI1Q0Y2QjYzQzYxNjY1AA==",
+        "status": "delivered",
+        "timestamp": "2025-01-14T12:34:56Z"
+      }
+    ]
+  }
+}
+```
+
+## Message Status Types
+
+### Status Values
+- **sent**: Message sent to WhatsApp servers
+- **delivered**: Message delivered to recipient's device
+- **read**: Message read by recipient
+- **failed**: Message delivery failed
+
+### Error Handling
+```javascript
+{
+  "error": {
+    "code": 131026,
+    "title": "Message Undeliverable",
+    "message": "Message failed to send because more than 24 hours have passed since the customer last replied to this number."
+  }
+}
+```
+
+## Contact Management
+
+### Contact Validation
+```javascript
+POST: contacts
+{
+  "messaging_product": "whatsapp",
+  "contacts": [
+    {
+      "input": "1234567890",
+      "wa_id": "1234567890"
+    }
+  ]
+}
+```
+
+### Contact Response
+```javascript
+{
+  "contacts": [
+    {
+      "input": "1234567890",
+      "status": "valid",
+      "wa_id": "1234567890"
+    }
+  ]
+}
+```
+
+## Phone Number Format
+
+### International Format
+- Use international format without + symbol
+- Include country code
+- Example: "1234567890" for US number +1 (234) 567-890
+
+### Validation
+- Numbers must be valid WhatsApp-enabled phone numbers
+- Business accounts can only message users who have opted in
+- 24-hour messaging window applies for non-template messages
+
+## Important Notes
+
+- **24-Hour Rule**: Non-template messages can only be sent within 24 hours of last user interaction
+- **Template Approval**: Template messages must be pre-approved by WhatsApp
+- **Media Limits**: File size limits apply to media messages (16MB for most types)
+- **Rate Limits**: WhatsApp enforces rate limits based on your business account tier
+- **Opt-in Required**: Users must opt-in to receive business messages
+- **Message ID**: Save message IDs for status tracking and reference
+
+## Best Practices
+
+1. **Template Usage**: Use templates for initial outreach and notifications
+2. **Media Optimization**: Optimize media files for faster delivery
+3. **Status Monitoring**: Track message delivery status for important communications
+4. **Error Handling**: Implement proper error handling for failed messages
+5. **User Experience**: Respect user preferences and response times
+6. **Compliance**: Follow WhatsApp Business Policy and local regulations
+7. **Opt-out Handling**: Provide clear opt-out mechanisms
+8. **Message Timing**: Send messages during appropriate hours for recipients 
