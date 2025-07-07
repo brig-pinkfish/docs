@@ -1,81 +1,541 @@
 ---
-title: "Tableau Integration"
-description: "For use with Tableau charts and graphs"
+title: "Tableau Guide"
+description: "For use with Tableau charts and graphs."
 ---
 
 ## What can you do with it?
 
-Integrate with Tableau Server and Tableau Online for business intelligence, data visualization, and analytics dashboard management. Manage workbooks and data sources, publish and download Tableau content, handle user and project management, query view data and analytics, and manage permissions and access control.
+Manage and interact with Tableau Server/Online, including retrieving workbooks, datasources, views, and users, as well as publishing content, managing permissions, and querying data from visualizations.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/tableau [action] [resource] [parameters]
+/your-tableau-connection [action] [required-parameters] [optional-parameters]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `action` - Operation to perform (GET, POST, PUT, DELETE)
-
-- `resource` - Tableau resource (workbooks, datasources, projects, users, views)
+- `action` - The operation to perform (get-users, get-workbooks, get-workbook, get-datasources, get-projects, get-views, publish-workbook, publish-datasource, update-workbook, download-workbook, download-datasource, get-permissions, create-project, query-view-data)
 
 **Optional:**
 
-- `id` - Resource identifier for specific operations
+- `workbook-id` - Tableau workbook ID
+- `datasource-id` - Tableau datasource ID
+- `project-id` - Tableau project ID
+- `view-id` - Tableau view ID
 
-- `data` - Request body for POST/PUT operations
+## Tools
 
-- `format` - Export format for data (csv)
+### Get Users
+Retrieve users on the site
 
-- `filters` - Query filters for listing resources
+**Parameters:**
+- No additional parameters required
 
-### Response Format
+**Example:**
+```
+/your-tableau-connection
+action: get-users
+```
 
-The command returns:
+**Response:**
 ```json
 {
-  "resource": "Tableau resource data",
-  "metadata": {
-    "id": "resource identifier",
-    "name": "resource name",
-    "type": "resource type"
+  "users": {
+    "user": [
+      {
+        "id": "user-789",
+        "name": "john.doe",
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "siteRole": "Creator",
+        "locale": "en_US",
+        "language": "en"
+      }
+    ]
   }
 }
 ```
 
-## Examples
+### Get Workbooks
+Retrieve a list of workbooks on the site
 
-### Basic Usage
-```
-/tableau
-action: GET
-resource: workbooks
-```
-List all workbooks in the Tableau site.
+**Parameters:**
+- No additional parameters required
 
-### Advanced Usage
+**Example:**
 ```
-/tableau
-action: POST
-resource: workbooks
-data: {"workbook": {"name": "Sales Dashboard", "projectId": "project-456"}}
-file: workbook.twbx
+/your-tableau-connection
+action: get-workbooks
 ```
-Publish a new workbook with metadata and file upload.
 
-### Specific Use Case
+**Response:**
+```json
+{
+  "workbooks": {
+    "workbook": [
+      {
+        "id": "workbook-123",
+        "name": "Sales Dashboard",
+        "description": "Monthly sales performance dashboard",
+        "contentUrl": "SalesDashboard",
+        "showTabs": true,
+        "size": 2048576,
+        "createdAt": "2025-01-15T12:34:56Z",
+        "updatedAt": "2025-01-15T14:20:00Z",
+        "project": {
+          "id": "project-456",
+          "name": "Sales Analytics"
+        },
+        "owner": {
+          "id": "user-789",
+          "name": "John Doe"
+        }
+      }
+    ]
+  }
+}
 ```
-/tableau
-action: GET
-resource: views/{view-id}/data
+
+### Get Workbook by ID
+Retrieve a specific workbook by its ID
+
+**Parameters:**
+- `workbook-id` (required) - The workbook ID to retrieve
+
+**Example:**
+```
+/your-tableau-connection
+action: get-workbook
+workbook-id: workbook-123
+```
+
+**Response:**
+```json
+{
+  "workbook": {
+    "id": "workbook-123",
+    "name": "Sales Dashboard",
+    "description": "Monthly sales performance dashboard",
+    "contentUrl": "SalesDashboard",
+    "showTabs": true,
+    "size": 2048576,
+    "createdAt": "2025-01-15T12:34:56Z",
+    "updatedAt": "2025-01-15T14:20:00Z",
+    "project": {
+      "id": "project-456",
+      "name": "Sales Analytics"
+    },
+    "owner": {
+      "id": "user-789",
+      "name": "John Doe"
+    },
+    "views": {
+      "view": [
+        {
+          "id": "view-111",
+          "name": "Sales Overview",
+          "contentUrl": "SalesOverview"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Get Datasources
+Retrieve a list of datasources on the site
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
+```
+/your-tableau-connection
+action: get-datasources
+```
+
+**Response:**
+```json
+{
+  "datasources": {
+    "datasource": [
+      {
+        "id": "datasource-123",
+        "name": "Sales Data",
+        "description": "Customer and sales transaction data",
+        "contentUrl": "SalesData",
+        "type": "sqlserver",
+        "size": 10485760,
+        "createdAt": "2025-01-10T09:00:00Z",
+        "updatedAt": "2025-01-15T08:30:00Z",
+        "project": {
+          "id": "project-456",
+          "name": "Sales Analytics"
+        },
+        "owner": {
+          "id": "user-789",
+          "name": "John Doe"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Get Projects
+Retrieve a list of projects on the site
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
+```
+/your-tableau-connection
+action: get-projects
+```
+
+**Response:**
+```json
+{
+  "projects": {
+    "project": [
+      {
+        "id": "project-456",
+        "name": "Sales Analytics",
+        "description": "Sales team analytics and reporting",
+        "contentPermissions": "ManagedByOwner",
+        "parentProjectId": "project-000",
+        "owner": {
+          "id": "user-789",
+          "name": "John Doe"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Get Views
+Retrieve views (sheets/dashboards) from workbooks
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
+```
+/your-tableau-connection
+action: get-views
+```
+
+**Response:**
+```json
+{
+  "views": {
+    "view": [
+      {
+        "id": "view-111",
+        "name": "Sales Overview",
+        "contentUrl": "SalesOverview",
+        "viewUrlName": "SalesOverview",
+        "createdAt": "2025-01-15T12:34:56Z",
+        "updatedAt": "2025-01-15T14:20:00Z",
+        "workbook": {
+          "id": "workbook-123",
+          "name": "Sales Dashboard"
+        },
+        "project": {
+          "id": "project-456",
+          "name": "Sales Analytics"
+        },
+        "owner": {
+          "id": "user-789",
+          "name": "John Doe"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Publish Workbook
+Publish a workbook to Tableau Server/Online
+
+**Parameters:**
+- `workbook-name` (required) - Name for the workbook
+- `project-id` (required) - Target project ID
+- `show-tabs` (optional) - Whether to show tabs
+
+**Example:**
+```
+/your-tableau-connection
+action: publish-workbook
+workbook-name: New Sales Dashboard
+project-id: project-456
+show-tabs: true
+```
+
+**Response:**
+```json
+{
+  "workbook": {
+    "id": "workbook-456",
+    "name": "New Sales Dashboard",
+    "contentUrl": "NewSalesDashboard",
+    "showTabs": true,
+    "size": 1048576,
+    "createdAt": "2025-01-15T16:00:00Z",
+    "updatedAt": "2025-01-15T16:00:00Z",
+    "project": {
+      "id": "project-456",
+      "name": "Sales Analytics"
+    },
+    "owner": {
+      "id": "user-789",
+      "name": "John Doe"
+    }
+  }
+}
+```
+
+### Publish Datasource
+Publish a datasource to Tableau Server/Online
+
+**Parameters:**
+- `datasource-name` (required) - Name for the datasource
+- `project-id` (required) - Target project ID
+
+**Example:**
+```
+/your-tableau-connection
+action: publish-datasource
+datasource-name: Customer Data
+project-id: project-456
+```
+
+**Response:**
+```json
+{
+  "datasource": {
+    "id": "datasource-456",
+    "name": "Customer Data",
+    "contentUrl": "CustomerData",
+    "type": "tdsx",
+    "size": 2097152,
+    "createdAt": "2025-01-15T16:30:00Z",
+    "updatedAt": "2025-01-15T16:30:00Z",
+    "project": {
+      "id": "project-456",
+      "name": "Sales Analytics"
+    },
+    "owner": {
+      "id": "user-789",
+      "name": "John Doe"
+    }
+  }
+}
+```
+
+### Update Workbook
+Update workbook properties
+
+**Parameters:**
+- `workbook-id` (required) - The workbook ID to update
+- `workbook-name` (optional) - New name for the workbook
+- `description` (optional) - New description
+- `show-tabs` (optional) - Whether to show tabs
+- `project-id` (optional) - New project ID
+
+**Example:**
+```
+/your-tableau-connection
+action: update-workbook
+workbook-id: workbook-123
+workbook-name: Updated Sales Dashboard
+description: Updated monthly sales performance dashboard
+show-tabs: false
+project-id: project-789
+```
+
+**Response:**
+```json
+{
+  "workbook": {
+    "id": "workbook-123",
+    "name": "Updated Sales Dashboard",
+    "description": "Updated monthly sales performance dashboard",
+    "contentUrl": "UpdatedSalesDashboard",
+    "showTabs": false,
+    "project": {
+      "id": "project-789",
+      "name": "Marketing Analytics"
+    }
+  }
+}
+```
+
+### Download Workbook
+Download a workbook file
+
+**Parameters:**
+- `workbook-id` (required) - The workbook ID to download
+
+**Example:**
+```
+/your-tableau-connection
+action: download-workbook
+workbook-id: workbook-123
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "headers": {
+    "Content-Type": "application/octet-stream",
+    "Content-Disposition": "attachment; filename=\"SalesDashboard.twbx\""
+  },
+  "output": "[Binary workbook content]"
+}
+```
+
+### Download Datasource
+Download a datasource file
+
+**Parameters:**
+- `datasource-id` (required) - The datasource ID to download
+
+**Example:**
+```
+/your-tableau-connection
+action: download-datasource
+datasource-id: datasource-123
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "headers": {
+    "Content-Type": "application/octet-stream",
+    "Content-Disposition": "attachment; filename=\"SalesData.tdsx\""
+  },
+  "output": "[Binary datasource content]"
+}
+```
+
+### Get Workbook Permissions
+Get permissions for a workbook
+
+**Parameters:**
+- `workbook-id` (required) - The workbook ID to get permissions for
+
+**Example:**
+```
+/your-tableau-connection
+action: get-permissions
+workbook-id: workbook-123
+```
+
+**Response:**
+```json
+{
+  "permissions": {
+    "workbook": {
+      "id": "workbook-123",
+      "name": "Sales Dashboard"
+    },
+    "granteeCapabilities": [
+      {
+        "user": {
+          "id": "user-789",
+          "name": "john.doe"
+        },
+        "capabilities": {
+          "capability": [
+            {
+              "name": "Read",
+              "mode": "Allow"
+            },
+            {
+              "name": "Write",
+              "mode": "Allow"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Create Project
+Create a new project on the site
+
+**Parameters:**
+- `project-name` (required) - Name for the new project
+- `description` (optional) - Project description
+- `content-permissions` (optional) - Content permissions setting
+- `parent-project-id` (optional) - Parent project ID
+
+**Example:**
+```
+/your-tableau-connection
+action: create-project
+project-name: Finance Analytics
+description: Financial reporting and analytics
+content-permissions: ManagedByOwner
+parent-project-id: project-000
+```
+
+**Response:**
+```json
+{
+  "project": {
+    "id": "project-999",
+    "name": "Finance Analytics",
+    "description": "Financial reporting and analytics",
+    "contentPermissions": "ManagedByOwner",
+    "parentProjectId": "project-000",
+    "owner": {
+      "id": "user-789",
+      "name": "John Doe"
+    }
+  }
+}
+```
+
+### Query View Data
+Query data from a view using CSV format
+
+**Parameters:**
+- `view-id` (required) - The view ID to query data from
+- `format` (optional) - Data format (default: csv)
+- `max-age` (optional) - Maximum age for cached data
+
+**Example:**
+```
+/your-tableau-connection
+action: query-view-data
+view-id: view-111
 format: csv
-filters: maxAge=60
+max-age: 60
 ```
-Export view data as CSV with cache control.
 
-### Notes
+**Response:**
+```json
+{
+  "status": 200,
+  "headers": {
+    "Content-Type": "text/csv"
+  },
+  "output": "Date,Sales,Region\n2025-01-01,10000,North\n2025-01-01,15000,South\n2025-01-02,12000,North"
+}
+```
 
-Requires Tableau connection configured through PinkConnect Proxy. Site context and authentication handled automatically. Supports workbook and data source management, user and permission control, and data export operations. File uploads use multipart/form-data. Binary content returned for file downloads. 
+## Notes
+
+Tableau API supports various query parameters including fields, filter, sort, pageSize, and pageNumber for pagination. Publishing operations require multipart/form-data with both JSON metadata and file content. Downloaded files are returned as binary content with appropriate headers. 

@@ -1,95 +1,160 @@
 ---
-title: "Smartsheet"
-description: "Manage your spreadsheets and data with Smartsheet"
+title: "Smartsheet Guide"
+description: "Manage your spreadsheets and data with Smartsheet."
 ---
 
-# Smartsheet
+## What can you do with it?
 
-Manage your spreadsheets and data with Smartsheet's collaborative work management platform for project management, task tracking, and team collaboration.
+Manage your spreadsheets and data with Smartsheet, including retrieving all sheets, reading sheet data, managing rows and columns, and handling spreadsheet operations for efficient data organization and collaboration within the Smartsheet platform.
 
-## Overview
+## How to use it?
 
-The Smartsheet skill provides functionality for:
-- Reading and managing spreadsheet data
-- Accessing sheet information and metadata
-- Working with rows, columns, and cells
-- Handling sheet relationships and hierarchies
-- Integrating with Smartsheet's collaborative features
-
-## Connection Requirements
-
-This skill requires a Smartsheet connection configured through:
-- **Connection ID**: `custom.smartsheet`
-- **Integration**: Uses Paragon custom integration for Smartsheet API access
-
-## Basic Usage
-
-```javascript
-// Get list of all sheets
-const integrationId = config.paragonIntegrations.smartsheet;
-const url = PROXY_URL + "custom/" + integrationId + "/2.0/sheets";
-
-// Read data from a specific sheet
-const sheetUrl = PROXY_URL + "custom/" + integrationId + "/2.0/sheets/[SheetId]";
+### Basic Command Structure
+```
+/your-smartsheet-connection [action] [required-parameters] [optional-parameters]
 ```
 
-## Key Features
+### Parameters
 
-### Sheet Management
-- **List Sheets**: Get all sheets accessible to your account
-- **Read Sheet Data**: Access complete sheet contents including rows, columns, and cells
-- **Sheet Metadata**: Retrieve sheet properties and configuration
-- **Sheet Relationships**: Handle parent-child relationships between sheets
+**Required:**
 
-### Data Access
-- **Column Information**: Access column definitions and properties
-- **Row Data**: Read row contents and cell values
-- **Cell Values**: Extract individual cell data and formatting
-- **Sheet Structure**: Understand sheet organization and hierarchy
+- `action` - The operation to perform (get-all-sheets, get-sheet-data)
 
-## Common Operations
+**Optional:**
 
-### List All Sheets
-```javascript
-GET: custom/{integrationId}/2.0/sheets
+- `sheet-id` - Smartsheet sheet ID
+- `include-columns` - Include column information
+- `include-rows` - Include row information
+
+## Tools
+
+### Get All Sheets
+Retrieve a list of all your Smartsheet sheets
+
+**Parameters:**
+- No parameters required
+
+**Example:**
+```
+/your-smartsheet-connection
+action: get-all-sheets
 ```
 
-### Read Sheet Data
-```javascript
-GET: custom/{integrationId}/2.0/sheets/{sheetId}
-```
-
-### Access Specific Sheet Information
-```javascript
-// Get sheet with specific options
-GET: custom/{integrationId}/2.0/sheets/{sheetId}?include=attachments,discussions,format
-```
-
-## Understanding Sheet Response Structure
-
-### Sheet Object Hierarchy
-```javascript
+**Response:**
+```json
 {
-  "id": 123456789,
-  "name": "Project Tracker",
+  "data": [
+    {
+      "id": 4583173393803140,
+      "name": "sheet1",
+      "accessLevel": "OWNER",
+      "permalink": "https://app.smartsheet.com/sheets/VtqiTExBWDqy4T4xncrHqhQ",
+      "createdAt": "2016-06-29T21:32:52Z",
+      "modifiedAt": "2016-06-29T21:32:52Z"
+    },
+    {
+      "id": 2331373580117892,
+      "name": "Copy of sheet1",
+      "accessLevel": "OWNER",
+      "permalink": "https://app.smartsheet.com/sheets/WtqiTExBWDqy4T4xncrHqhQ",
+      "createdAt": "2016-06-29T21:33:05Z",
+      "modifiedAt": "2016-06-29T21:33:05Z"
+    }
+  ],
+  "totalCount": 2,
+  "pageNumber": 1,
+  "pageSize": 100,
+  "totalPages": 1
+}
+```
+
+### Get Sheet Data
+Read data from a specific Smartsheet sheet
+
+**Parameters:**
+- `sheet-id` (required) - Smartsheet sheet ID
+- `include-columns` (optional) - Include column information (default: true)
+- `include-rows` (optional) - Include row information (default: true)
+
+**Example:**
+```
+/your-smartsheet-connection
+action: get-sheet-data
+sheet-id: 4583173393803140
+include-columns: true
+include-rows: true
+```
+
+**Response:**
+```json
+{
+  "id": 4583173393803140,
+  "name": "sheet1",
+  "version": 1,
+  "totalRowCount": 100,
+  "accessLevel": "OWNER",
+  "effectiveAttachmentOptions": ["GOOGLE_DRIVE", "LINK", "FILE"],
+  "ganttEnabled": false,
+  "dependenciesEnabled": false,
+  "resourceManagementEnabled": false,
+  "cellLinkingEnabled": false,
+  "createdAt": "2016-06-29T21:32:52Z",
+  "modifiedAt": "2016-06-29T21:32:52Z",
   "columns": [
     {
-      "id": 987654321,
+      "id": 7960873114331012,
+      "version": 0,
       "index": 0,
-      "title": "Task Name",
+      "title": "Primary Column",
       "type": "TEXT_NUMBER",
-      "primary": true
+      "primary": true,
+      "width": 150
+    },
+    {
+      "id": 642523719853956,
+      "version": 0,
+      "index": 1,
+      "title": "Column2",
+      "type": "TEXT_NUMBER",
+      "width": 150
     }
   ],
   "rows": [
     {
-      "id": 111222333,
+      "id": 6572401924865924,
       "rowNumber": 1,
+      "version": 0,
+      "createdAt": "2016-06-29T21:32:52Z",
+      "modifiedAt": "2016-06-29T21:32:52Z",
       "cells": [
         {
-          "columnId": 987654321,
-          "value": "Project Setup",
-          "displayValue": "Project Setup"
+          "columnId": 7960873114331012,
+          "value": "Sample Value 1",
+          "displayValue": "Sample Value 1"
+        },
+        {
+          "columnId": 642523719853956,
+          "value": "Sample Value 2",
+          "displayValue": "Sample Value 2"
+        }
+      ]
+    },
+    {
+      "id": 1068202310180740,
+      "rowNumber": 2,
+      "version": 0,
+      "createdAt": "2016-06-29T21:32:52Z",
+      "modifiedAt": "2016-06-29T21:32:52Z",
+      "cells": [
+        {
+          "columnId": 7960873114331012,
+          "value": "Sample Value 3",
+          "displayValue": "Sample Value 3"
+        },
+        {
+          "columnId": 642523719853956,
+          "value": "Sample Value 4",
+          "displayValue": "Sample Value 4"
         }
       ]
     }
@@ -97,87 +162,6 @@ GET: custom/{integrationId}/2.0/sheets/{sheetId}?include=attachments,discussions
 }
 ```
 
-### Key Relationships
-- **Sheets** contain **Columns** and **Rows**
-- **Rows** contain **Cells** that reference **Column IDs**
-- **Column IDs** are used to map cell values to column headers
-- **Row IDs** are used to identify and update specific rows
+## Notes
 
-## Data Processing Pattern
-
-### Reading Sheet Data
-```javascript
-// 1. Get sheet structure
-const sheet = await fetchSheet(sheetId);
-
-// 2. Map column IDs to column names
-const columnMap = {};
-sheet.columns.forEach(col => {
-  columnMap[col.id] = col.title;
-});
-
-// 3. Process rows and cells
-sheet.rows.forEach(row => {
-  const rowData = {};
-  row.cells.forEach(cell => {
-    const columnName = columnMap[cell.columnId];
-    rowData[columnName] = cell.value;
-  });
-  // Process rowData...
-});
-```
-
-## Column Types
-
-### Available Column Types
-- **TEXT_NUMBER**: Text and numeric values
-- **DATE**: Date values
-- **DATETIME**: Date and time values
-- **CONTACT_LIST**: Contact information
-- **DROPDOWN**: Predefined dropdown options
-- **CHECKBOX**: Boolean checkbox values
-- **SYMBOL**: Symbol indicators (stars, flags, etc.)
-- **PICKLIST**: Single or multi-select lists
-
-## API Endpoint Structure
-
-### Base URL Pattern
-```javascript
-const baseUrl = PROXY_URL + "custom/" + integrationId + "/2.0/";
-```
-
-### Common Endpoints
-- **Sheets**: `sheets` - List all sheets
-- **Sheet Details**: `sheets/{sheetId}` - Get specific sheet
-- **Rows**: `sheets/{sheetId}/rows` - Sheet rows
-- **Columns**: `sheets/{sheetId}/columns` - Sheet columns
-- **Cells**: `sheets/{sheetId}/rows/{rowId}/cells` - Specific cells
-
-## Query Parameters
-
-### Common Parameters
-- **include**: Include additional data (attachments, discussions, format)
-- **exclude**: Exclude specific data types
-- **columnIds**: Specify which columns to include
-- **rowIds**: Specify which rows to include
-- **pageSize**: Number of items per page
-- **page**: Page number for pagination
-
-## Important Notes
-
-- **Column ID Mapping**: Always map column IDs to column titles for readable data processing
-- **Row Processing**: Loop through columns first, then rows and cells for efficient data access
-- **API Version**: Always include `/2.0/` in the API URL path
-- **Integration ID**: Use the correct Paragon integration ID for your Smartsheet connection
-- **Rate Limits**: Respect Smartsheet API rate limits for large data operations
-- **Data Types**: Handle different column types appropriately when processing cell values
-
-## Best Practices
-
-1. **Efficient Data Access**: Map column IDs to names once, then reuse the mapping
-2. **Error Handling**: Check for missing columns or cells before processing
-3. **Batch Operations**: Use include parameters to get all needed data in one request
-4. **Data Validation**: Validate cell values against expected column types
-5. **Performance**: Use pagination for large sheets to avoid timeouts
-6. **Caching**: Cache sheet structure if making multiple requests to the same sheet
-7. **Type Safety**: Handle null or undefined cell values gracefully 
+Smartsheet API uses custom proxy integration through Paragon. Sheet IDs are numeric identifiers found in sheet URLs. Each sheet contains columns and rows with cells that store data. Columns are identified by ID and have types like TEXT_NUMBER, DATE, PICKLIST. Rows contain cells that reference column IDs for data organization. The API supports both reading sheet lists and detailed sheet data including cell values and formatting information. 

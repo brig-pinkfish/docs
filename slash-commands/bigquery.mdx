@@ -1,109 +1,238 @@
 ---
-title: "BigQuery Command Guide"
-description: "Learn how to use the BigQuery slash command to analyze data in the cloud"
+title: "BigQuery Guide"
+description: "Manage and analyze data in the cloud with Google BigQuery."
 ---
 
-The `/bigquery` command enables you to manage and analyze large datasets in Google BigQuery. Perfect for:
+## What can you do with it?
 
-- Running SQL queries
-- Analyzing large datasets
-- Managing data warehouses
-- Creating reports
-- Data exploration
+Manage and analyze large datasets in Google Cloud BigQuery, including listing projects and datasets, querying tables, and executing SQL queries for data analysis and reporting.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with BigQuery:
-
+### Basic Command Structure
 ```
-/bigquery run query "SELECT * FROM dataset.table LIMIT 10"
+/your-bigquery-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/bigquery list all datasets in project my-project-id
-```
+### Parameters
 
-```
-/bigquery show tables in dataset analytics
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (list-projects, list-datasets, list-tables, run-query, get-query-results)
 
-### Query Execution
-- Run SQL queries
-- Get query results
-- Use standard SQL
-- Handle large datasets
-- View query costs
+**Optional:**
 
-### Project Management
-- List projects
-- Access project data
-- Navigate datasets
-- View permissions
+- `project-id` - Google Cloud project ID
+- `dataset-id` - BigQuery dataset ID
+- `job-id` - Query job ID for result retrieval
 
-### Dataset Operations
-- List datasets
-- Create datasets
-- View dataset properties
-- Manage locations
-
-### Table Management
-- List tables
-- View table schemas
-- Query table data
-- Check table types
-
-## Example Commands
-
-### Run Query
-```
-/bigquery in project analytics-prod run "SELECT COUNT(*) FROM sales.transactions WHERE date > '2024-01-01'"
-```
+## Tools
 
 ### List Projects
+Retrieve a list of projects to which the user has been granted any project role
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
 ```
-/bigquery show all my projects
+/your-bigquery-connection
+action: list-projects
+```
+
+**Response:**
+```json
+{
+  "kind": "bigquery#projectList",
+  "projects": [
+    {
+      "kind": "bigquery#project",
+      "id": "project-id-1",
+      "numericId": "123456789",
+      "projectReference": {
+        "projectId": "project-id-1"
+      },
+      "friendlyName": "Project One"
+    }
+  ],
+  "totalItems": 2
+}
 ```
 
 ### List Datasets
+List all datasets in the specified project to which the user has been granted the READER dataset role
+
+**Parameters:**
+- `project-id` (required) - The project ID containing the datasets
+
+**Example:**
 ```
-/bigquery list datasets in project data-warehouse-prod
+/your-bigquery-connection
+action: list-datasets
+project-id: project-id-1
 ```
 
-### Show Tables
-```
-/bigquery show all tables in dataset customer_data
+**Response:**
+```json
+{
+  "kind": "bigquery#datasetList",
+  "datasets": [
+    {
+      "kind": "bigquery#dataset",
+      "id": "project-id-1:dataset_id_1",
+      "datasetReference": {
+        "datasetId": "dataset_id_1",
+        "projectId": "project-id-1"
+      },
+      "location": "US"
+    }
+  ]
+}
 ```
 
-### Complex Query
+### List Tables
+Lists all tables in the specified dataset
+
+**Parameters:**
+- `project-id` (required) - The project ID containing the dataset
+- `dataset-id` (required) - The dataset ID containing the tables
+
+**Example:**
 ```
-/bigquery query "SELECT customer_id, SUM(amount) as total FROM sales.orders GROUP BY customer_id HAVING total > 1000"
+/your-bigquery-connection
+action: list-tables
+project-id: project-id-1
+dataset-id: dataset_id_1
+```
+
+**Response:**
+```json
+{
+  "kind": "bigquery#tableList",
+  "tables": [
+    {
+      "kind": "bigquery#table",
+      "id": "project-id-1:dataset_id_1.table_id_1",
+      "tableReference": {
+        "projectId": "project-id-1",
+        "datasetId": "dataset_id_1",
+        "tableId": "table_id_1"
+      },
+      "type": "TABLE"
+    }
+  ],
+  "totalItems": 2
+}
+```
+
+### Run Query
+Runs a BigQuery SQL query synchronously and returns query results if the query completes within a specified timeout
+
+**Parameters:**
+- `project-id` (required) - The project ID to run the query in
+- `query` (required) - The SQL query to execute
+- `use-legacy-sql` (optional) - Whether to use legacy SQL syntax (default: false)
+
+**Example:**
+```
+/your-bigquery-connection
+action: run-query
+project-id: project-id-1
+query: SELECT name, age FROM `project-id-1.dataset_id_1.table_id_1` WHERE age > 30
+use-legacy-sql: false
+```
+
+**Response:**
+```json
+{
+  "kind": "bigquery#queryResponse",
+  "schema": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "name": "age",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  "jobReference": {
+    "projectId": "project-id-1",
+    "jobId": "job_12345"
+  },
+  "totalRows": "2",
+  "rows": [
+    {
+      "f": [
+        {
+          "v": "Alice"
+        },
+        {
+          "v": "35"
+        }
+      ]
+    }
+  ],
+  "totalBytesProcessed": "1024",
+  "jobComplete": true
+}
 ```
 
 ### Get Query Results
+Retrieves the results of a query job
+
+**Parameters:**
+- `project-id` (required) - The project ID containing the query job
+- `job-id` (required) - The query job ID
+
+**Example:**
 ```
-/bigquery get results for job ID job_12345 in project analytics
+/your-bigquery-connection
+action: get-query-results
+project-id: project-id-1
+job-id: job_12345
 ```
 
-## SQL Syntax
+**Response:**
+```json
+{
+  "kind": "bigquery#queryResponse",
+  "schema": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "name": "age",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  "jobReference": {
+    "projectId": "project-id-1",
+    "jobId": "job_12345"
+  },
+  "totalRows": "2",
+  "rows": [
+    {
+      "f": [
+        {
+          "v": "Alice"
+        },
+        {
+          "v": "35"
+        }
+      ]
+    }
+  ],
+  "totalBytesProcessed": "1024",
+  "jobComplete": true
+}
+```
 
-BigQuery supports standard SQL:
-- `SELECT`, `FROM`, `WHERE`
-- `GROUP BY`, `ORDER BY`
-- `JOIN`, `UNION`
-- Window functions
-- CTEs (Common Table Expressions)
+## Notes
 
-## Table References
-
-Use fully qualified names:
-- `project.dataset.table`
-- `dataset.table` (uses default project)
-- Backticks for special characters: `` `my-project.my_dataset.table` ``
-
-## Tips
-- Use `LIMIT` to preview data
-- Check `totalBytesProcessed` for query costs
-- Use `useLegacySql: false` for standard SQL
-- Results are paginated for large datasets 
+BigQuery supports standard SQL syntax and provides detailed schema information for query results. Use backticks around fully qualified table names in the format `project-id.dataset_id.table_id`. 

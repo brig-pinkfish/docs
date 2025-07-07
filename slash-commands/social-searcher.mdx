@@ -1,184 +1,125 @@
 ---
-title: "Social Searcher"
-description: "Search social media platforms and analyze sentiment"
+title: "Social Searcher Guide"
+description: "Search social media platforms and analyze sentiment."
 ---
 
-# Social Searcher
+## What can you do with it?
 
-Search social media platforms and analyze sentiment across multiple social networks for brand monitoring, market research, and social media analytics.
+Search social media platforms and analyze sentiment with comprehensive monitoring capabilities including real-time social media searches, saved search management, historical data retrieval, post popularity analysis, and sentiment tracking across multiple social networks.
 
-## Overview
+## How to use it?
 
-The Social Searcher skill provides functionality for:
-- Real-time social media search across multiple platforms
-- Historical data analysis using saved searches
-- Sentiment analysis of social media posts
-- Social media monitoring and brand tracking
-- Post engagement metrics and analytics
-
-## Connection Requirements
-
-This skill uses direct API access to Social Searcher:
-- **Base URL**: `https://api.social-searcher.com/v2/`
-- **API Key**: `679bf2487776909d2a63fe64ced84b5e`
-- **No proxy required**: Direct API calls to Social Searcher
-
-## Basic Usage
-
-```javascript
-// Real-time search for mentions
-const searchUrl = "https://api.social-searcher.com/v2/search?q=@brandname&limit=100&key=679bf2487776909d2a63fe64ced84b5e";
-
-// Historical data from saved searches
-const savedSearchUrl = "https://api.social-searcher.com/v2/searches";
+### Basic Command Structure
+```
+/your-social-searcher-connection [action] [required-parameters] [optional-parameters]
 ```
 
-## Key Features
+### Parameters
 
-### Real-time Search
-- **Multi-platform Search**: Search across web, Facebook, Twitter, Instagram, YouTube, and more
-- **Mention Tracking**: Track brand mentions and keywords
-- **Sentiment Analysis**: Automatic sentiment classification (positive, negative, neutral)
-- **Content Filtering**: Filter by content type, language, and network
+**Required:**
 
-### Historical Data
-- **Saved Searches**: Access historical monitoring data
-- **Trend Analysis**: Analyze data over time periods
-- **Custom Date Ranges**: Query specific time periods
-- **Bulk Data Export**: Export large datasets for analysis
+- `action` - The operation to perform (realtime-search, get-saved-searches, get-saved-search-posts, get-post-comments, get-post-likes, get-post-reposts)
 
-## Supported Networks
+**Optional:**
 
-### Available Platforms
-- **web**: General web content and news
-- **facebook**: Facebook posts and comments
-- **twitter**: Twitter/X posts and interactions
-- **instagram**: Instagram posts and stories
-- **youtube**: YouTube videos and comments
-- **linkedin**: LinkedIn posts and articles
-- **reddit**: Reddit posts and comments
-- **tiktok**: TikTok content (accessed through 'web' network)
-- **tumblr**: Tumblr posts
-- **flickr**: Flickr photos and descriptions
+- `keywords` - Search keywords (use quotes for exact phrases, - to exclude)
+- `limit` - Number of posts to return (default: 100)
+- `page` - Page number for pagination (default: 0)
+- `network` - Social media platforms (web, facebook, twitter, youtube, instagram, etc.)
+- `language` - Language restriction
+- `content-type` - Content type (video, photo, status, link)
+- `search-id` - Saved search ID
+- `post-id` - Post ID for specific operations
 
-## Real-time Search Operations
+## Tools
 
-### Basic Search
-```javascript
-GET: search?q=keyword&limit=100&key={API_KEY}
+### Realtime Search
+Search social media platforms in real-time for mentions and content
+
+**Parameters:**
+- `keywords` (required) - Keywords to search for (use @ for mentions)
+- `limit` (optional) - Number of posts per page (default: 100)
+- `page` (optional) - Page number for pagination (default: 0)
+- `network` (optional) - Networks to search (web, facebook, twitter, youtube, instagram)
+- `language` (optional) - Language restriction
+- `content-type` (optional) - Content type filter (video, photo, status, link)
+
+**Example:**
+```
+/your-social-searcher-connection
+action: realtime-search
+keywords: @brandname OR "product launch"
+limit: 50
+network: web,facebook,twitter
+language: en
+content-type: status,photo
 ```
 
-### Mention Search
-```javascript
-// Add @ prefix for mentions
-GET: search?q=@brandname&limit=100&key={API_KEY}
-```
-
-### Multi-network Search
-```javascript
-GET: search?q=keyword&network=web,facebook,twitter&key={API_KEY}
-```
-
-### Advanced Search with Filters
-```javascript
-GET: search?q="exact phrase" OR alternative -excluded&network=twitter,facebook&lang=en&type=photo&sentiment=positive&key={API_KEY}
-```
-
-## Query Syntax
-
-### Search Operators
-- **Exact Phrases**: Use double quotes `"exact phrase"`
-- **Exclude Terms**: Use minus sign `-unwanted`
-- **OR Logic**: Use `OR` (uppercase) for alternatives
-- **Mentions**: Use `@` prefix for specific mentions
-
-### Examples
-```javascript
-// Exact phrase search
-q="customer service"
-
-// Exclude unwanted terms
-q=brand -spam -promotion
-
-// Multiple alternatives
-q=brand OR company OR organization
-
-// Mention tracking
-q=@brandname
-```
-
-## Historical Data Access
-
-### List Saved Searches
-```javascript
-GET: searches?key={API_KEY}
-```
-
-### Get Historical Data
-```javascript
-GET: searches/{searchId}/posts?key={API_KEY}
-```
-
-### Time Period Filtering
-```javascript
-GET: searches/{searchId}/posts?period=last30days&key={API_KEY}
-```
-
-## Response Structure
-
-### Real-time Search Response
-```javascript
+**Response:**
+```json
 {
   "meta": {
     "requestid": "d497bd0d28394dfd9825b06b4c3ce9ff",
     "http_code": 200,
     "network": "web,twitter",
     "query_type": "realtime",
-    "limit": 100,
+    "limit": 1,
     "page": 0,
     "status": "finished"
   },
   "posts": [
     {
-      "network": "twitter",
+      "network": "web",
       "posted": "2024-11-20 12:53:21 +00:00",
-      "postid": "1234567890",
-      "text": "Great experience with @brandname customer service!",
-      "type": "status",
-      "sentiment": "positive",
-      "url": "https://twitter.com/user/status/1234567890",
+      "postid": "https://en.wikipedia.org/wiki/Gucci",
+      "text": "",
+      "type": "link",
+      "sentiment": "neutral",
+      "url": "https://en.wikipedia.org/wiki/Gucci",
       "user": {
-        "name": "CustomerName",
-        "url": "https://twitter.com/CustomerName"
-      },
-      "popularity": [
-        {
-          "name": "retweets",
-          "count": 5
-        },
-        {
-          "name": "likes",
-          "count": 23
-        }
-      ]
+        "name": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org"
+      }
     }
   ]
 }
 ```
 
-### Saved Search Response
-```javascript
+### Get Saved Searches
+Retrieve list of saved searches for historical data access
+
+**Parameters:**
+- No parameters required
+
+**Example:**
+```
+/your-social-searcher-connection
+action: get-saved-searches
+```
+
+**Response:**
+```json
 {
+  "meta": {
+    "http_code": 200,
+    "query_type": "searches_list"
+  },
   "searches": [
     {
       "id": "672f61b2e107bf402632223f",
-      "name": "Brand Monitoring",
-      "q": "@brandname -spam",
-      "network": "web,facebook,twitter,instagram",
+      "name": "main @katespade",
+      "userId": "672e0f2de107bf402623e83e",
+      "q": "\"@katespade\" -\"get well-research report\" -\"research report\" -\"click here\"",
+      "network": "web,facebook,twitter,youtube,instagram,tumblr,reddit,flickr,dailymotion,vimeo,vkontakte,linkedin",
+      "type": "link,photo,status,video",
       "created": "2024-11-09 13:20:50 +00:00",
+      "changed": "2024-11-20 13:44:13 +00:00",
       "status": "active",
+      "plan": "Professional",
       "monitoring": {
-        "posts_count": 1250,
+        "started": "Y",
+        "posts_count": 161,
+        "premium_posts_count": 100,
         "start_date": "2024-11-09 13:20:51 +00:00"
       }
     }
@@ -186,93 +127,167 @@ GET: searches/{searchId}/posts?period=last30days&key={API_KEY}
 }
 ```
 
-## Sentiment Analysis
+### Get Saved Search Posts
+Retrieve posts from a saved search for historical data analysis
 
-### Sentiment Categories
-- **positive**: Positive sentiment and emotions
-- **negative**: Negative sentiment and criticism
-- **neutral**: Neutral or factual content
+**Parameters:**
+- `search-id` (required) - Saved search ID
+- `page` (optional) - Page number for pagination
+- `period` (optional) - Time period (recent, yesterday, last7days, last30days)
+- `sentiment` (optional) - Filter by sentiment (positive, negative, neutral)
+- `sort` (optional) - Sort order (date, popularity)
 
-### Sentiment Filtering
-```javascript
-GET: search?q=brand&sentiment=positive,negative&key={API_KEY}
+**Example:**
+```
+/your-social-searcher-connection
+action: get-saved-search-posts
+search-id: 672f61b2e107bf402632223f
+page: 1
+period: last30days
+sentiment: positive
+sort: popularity
 ```
 
-## Engagement Metrics
-
-### Available Metrics
-- **likes**: Post likes/reactions
-- **comments**: Comment count
-- **retweets**: Retweet/share count
-- **views**: View count (when available)
-
-### Popularity Data
-```javascript
-"popularity": [
-  {
-    "name": "likes",
-    "count": 45
+**Response:**
+```json
+{
+  "meta": {
+    "http_code": 200,
+    "network": "twitter,facebook,youtube,instagram",
+    "query_type": "recent",
+    "limit": 1,
+    "page": 0,
+    "searchid": "672f61b2e107bf402632223f",
+    "period": "recent",
+    "nextpage": "1"
   },
-  {
-    "name": "comments",
-    "count": 12
-  },
-  {
-    "name": "retweets",
-    "count": 8
+  "posts": [
+    {
+      "id": "672f62b2e177ac5f75c278d5",
+      "network": "twitter",
+      "posted": "2024-11-07 08:19:22 +00:00",
+      "text": "@katespade is bringing back saddle shoes this is awesome!! #saddleshoes",
+      "lang": "en",
+      "type": "photo",
+      "sentiment": "positive",
+      "image": "https://pbs.twimg.com/media/GbxJ-CoWMBUdmEr.jpg",
+      "url": "https://twitter.com/444Cin444/status/1854438479855235373",
+      "user": {
+        "name": "444Cin444",
+        "url": "https://twitter.com/444Cin444",
+        "userid": "4323023897"
+      },
+      "popularity": [
+        {
+          "name": "retweets",
+          "count": 0
+        },
+        {
+          "name": "likes",
+          "count": 1
+        },
+        {
+          "name": "comments",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Get Post Comments
+Retrieve comments for a specific social media post
+
+**Parameters:**
+- `post-id` (required) - Post ID to get comments for
+
+**Example:**
+```
+/your-social-searcher-connection
+action: get-post-comments
+post-id: https://twitter.com/444Cin444/status/1854438479855235373
+```
+
+**Response:**
+```json
+{
+  "comments": [
+    {
+      "id": "comment-123",
+      "text": "Great post! Love this content.",
+      "user": {
+        "name": "commenter_user",
+        "url": "https://twitter.com/commenter_user"
+      },
+      "posted": "2024-11-07 09:30:00 +00:00",
+      "sentiment": "positive"
+    }
+  ]
+}
+```
+
+### Get Post Likes
+Retrieve likes count and details for a specific post
+
+**Parameters:**
+- `post-id` (required) - Post ID to get likes for
+
+**Example:**
+```
+/your-social-searcher-connection
+action: get-post-likes
+post-id: https://twitter.com/444Cin444/status/1854438479855235373
+```
+
+**Response:**
+```json
+{
+  "likes": {
+    "count": 25,
+    "users": [
+      {
+        "name": "user1",
+        "url": "https://twitter.com/user1"
+      },
+      {
+        "name": "user2",
+        "url": "https://twitter.com/user2"
+      }
+    ]
   }
-]
+}
 ```
 
-## Pagination
+### Get Post Reposts
+Retrieve reposts/shares count and details for a specific post
 
-### Real-time Search Pagination
-```javascript
-// Step 1: Initial request
-GET: search?q=keyword&key={API_KEY}
+**Parameters:**
+- `post-id` (required) - Post ID to get reposts for
 
-// Step 2: Next page using requestid
-GET: search?requestid={requestid}&page=1&key={API_KEY}
+**Example:**
+```
+/your-social-searcher-connection
+action: get-post-reposts
+post-id: https://twitter.com/444Cin444/status/1854438479855235373
 ```
 
-### Historical Data Pagination
-```javascript
-GET: searches/{searchId}/posts?page=2&key={API_KEY}
+**Response:**
+```json
+{
+  "reposts": {
+    "count": 5,
+    "users": [
+      {
+        "name": "sharer1",
+        "url": "https://twitter.com/sharer1",
+        "repost_date": "2024-11-07 10:15:00 +00:00"
+      }
+    ]
+  }
+}
 ```
 
-## Time Periods
+## Notes
 
-### Predefined Periods
-- **recent**: Last few hours
-- **yesterday**: Previous day
-- **last3days**: Last 3 days
-- **last7days**: Last week
-- **last30days**: Last month
-- **last3months**: Last 3 months
-
-### Custom Date Ranges
-```javascript
-// Format: YYYY-MM-DD,YYYY-MM-DD
-period=2024-01-01,2024-12-31
-```
-
-## Important Notes
-
-- **API Key**: Always include the API key in requests
-- **Rate Limits**: Respect API rate limits for high-volume searches
-- **Date Format**: Ensure proper timezone format (+00:00)
-- **Historical Data**: Use saved searches for historical analysis
-- **Mention Syntax**: Add @ prefix for brand mention tracking
-- **Network Selection**: Choose appropriate networks for your use case
-- **Pagination**: Use requestid for consistent pagination in real-time searches
-
-## Best Practices
-
-1. **Search Strategy**: Use specific keywords and exclude spam terms
-2. **Network Selection**: Choose relevant networks for your audience
-3. **Sentiment Monitoring**: Track sentiment trends over time
-4. **Historical Analysis**: Use saved searches for trend analysis
-5. **Rate Management**: Implement appropriate delays between requests
-6. **Data Processing**: Handle timezone conversions properly
-7. **Error Handling**: Check response status and handle API errors
-8. **Keyword Optimization**: Refine search terms based on results quality 
+Social Searcher uses direct API access without proxy URLs. Always include the API key in requests. Use @ prefix for mention searches. Historical data requires saved searches. Supports multiple social networks including web, Facebook, Twitter, YouTube, Instagram, TikTok (via web), Reddit, LinkedIn. Query operators include quotes for exact phrases, minus sign for exclusions, and OR for multiple keywords. Sentiment analysis provides positive, negative, and neutral classifications. 

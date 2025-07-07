@@ -1,87 +1,48 @@
 ---
-title: "Quickbase Command Guide"
-description: "Learn how to use the Quickbase slash command to create and manage custom applications and workflows"
+title: "Quickbase Guide"
+description: "Create and manage custom applications and workflows using Quickbase."
 ---
 
-The `/quickbase` command enables you to create and manage custom applications and workflows using Quickbase. Perfect for:
+## What can you do with it?
 
-- Custom application development
-- Database management
-- Workflow automation
-- Record management
-- Business process optimization
+Create and manage custom applications and workflows using Quickbase, including retrieving table information, querying records, and inserting new data into your custom applications.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Quickbase:
-
+### Basic Command Structure
 ```
-/quickbase get all tables from my application
+/your-quickbase-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/quickbase query records from customer database
-```
+### Parameters
 
-```
-/quickbase insert new record into project table
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (get-tables, query-records, query-by-id, insert-records)
 
-### Application Management
-- List application tables
-- Table structure access
-- Field configuration
-- Application organization
-- Custom workflows
+**Optional:**
 
-### Record Operations
-- Query records by criteria
-- Insert new records
-- Update existing records
-- Bulk data operations
-- Record relationships
+- `app-id` - Quickbase application ID
+- `table-id` - Quickbase table ID
+- `limit` - Number of records to retrieve (default: 100)
 
-### Data Management
-- Field-based queries
-- Data validation
-- Record filtering
-- Bulk operations
-- Data export/import
-
-## Example Commands
-
-### Table Discovery
-```
-/quickbase show me all tables in application ID 12345
-```
-
-### Data Queries
-```
-/quickbase find all active customers in the CRM table
-```
-
-### Record Creation
-```
-/quickbase add new project record with name and deadline
-```
-
-### Data Analysis
-```
-/quickbase get all records from sales table for this quarter
-```
-
-## Application Structure
+## Tools
 
 ### Get Tables
-```javascript
-// GET v1/tables?appId={appId}
-const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
+Retrieve a list of tables in the specified Quickbase application
+
+**Parameters:**
+- `app-id` (required) - The Quickbase application ID
+
+**Example:**
+```
+/your-quickbase-connection
+action: get-tables
+app-id: bq7abc123
 ```
 
-### Tables Response
-```javascript
+**Response:**
+```json
 {
   "output": [
     {
@@ -90,7 +51,7 @@ const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
       "defaultSortFieldId": 2,
       "defaultSortOrder": "DESC",
       "description": "",
-      "id": "buk58j6w3",           // tableId
+      "id": "buk58j6w3",
       "keyFieldId": 3,
       "name": "table1",
       "nextFieldId": 9,
@@ -106,29 +67,23 @@ const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
 }
 ```
 
-### Table Properties
-- **id**: Unique table identifier
-- **name**: Table display name
-- **alias**: Table alias
-- **keyFieldId**: Primary key field
-- **defaultSortFieldId**: Default sort field
-- **sizeLimit**: Storage limit
-- **spaceUsed**: Current storage usage
-
-## Record Operations
-
 ### Query All Records
-```javascript
-// POST v1/records/query
-{
-  "from": "${tableId}",
-  "select": [],
-  "limit": 100
-}
+Retrieve all records from a specified table
+
+**Parameters:**
+- `table-id` (required) - The table ID to query
+- `limit` (optional) - Maximum number of records to retrieve
+
+**Example:**
+```
+/your-quickbase-connection
+action: query-records
+table-id: buk58j6w3
+limit: 100
 ```
 
-### Query Response
-```javascript
+**Response:**
+```json
 {
   "output": {
     "data": [
@@ -171,37 +126,83 @@ const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
 }
 ```
 
-### Query by ID
-```javascript
+### Query Records By ID
+Retrieve specific records by their ID
+
+**Parameters:**
+- `table-id` (required) - The table ID to query
+- `record-id` (required) - The specific record ID to retrieve
+- `limit` (optional) - Maximum number of records to retrieve
+
+**Example:**
+```
+/your-quickbase-connection
+action: query-by-id
+table-id: buk58j6w3
+record-id: 2
+limit: 100
+```
+
+**Response:**
+```json
 {
-  "from": "${tableId}",
-  "select": [],
-  "limit": 100,
-  "where": "{3.EX.'2'}"
+  "output": {
+    "data": [
+      {
+        "7": {
+          "value": "John"
+        },
+        "8": {
+          "value": "Doe"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "id": 7,
+        "label": "Pinkfish Field 1",
+        "type": "text"
+      },
+      {
+        "id": 8,
+        "label": "Pinkfish Field 12",
+        "type": "text"
+      }
+    ],
+    "metadata": {
+      "numFields": 2,
+      "numRecords": 1,
+      "skip": 0,
+      "totalRecords": 1
+    }
+  }
 }
 ```
 
 ### Insert Records
-```javascript
-// POST v1/records
-{
-  "to": "${tableId}",
-  "data": [
-    {
-      "7": {"value": "John"},
-      "8": {"value": "Doe"}
-    }
-  ]
-}
+Insert new records into a table
+
+**Parameters:**
+- `table-id` (required) - The table ID to insert records into
+- `field-data` (required) - The field data to insert (field ID and value pairs)
+
+**Example:**
+```
+/your-quickbase-connection
+action: insert-records
+table-id: buk58j6w3
+field-data: Field 7: John, Field 8: Doe
 ```
 
-### Insert Response
-```javascript
+**Response:**
+```json
 {
   "output": {
     "data": [],
     "metadata": {
-      "createdRecordIds": [6],
+      "createdRecordIds": [
+        6
+      ],
       "totalNumberOfRecordsProcessed": 1,
       "unchangedRecordIds": [],
       "updatedRecordIds": []
@@ -210,240 +211,6 @@ const url = QUICKBASE_URL + `v1/tables?appId=${appId}`;
 }
 ```
 
-## Field Types and Data
+## Notes
 
-### Common Field Types
-- **text**: Text fields
-- **numeric**: Numeric values
-- **date**: Date fields
-- **datetime**: Date and time
-- **checkbox**: Boolean values
-- **dropdown**: Selection lists
-- **email**: Email addresses
-- **phone**: Phone numbers
-
-### Field Structure
-```javascript
-{
-  "id": 7,
-  "label": "Customer Name",
-  "type": "text",
-  "required": true,
-  "unique": false
-}
-```
-
-### Data Values
-```javascript
-{
-  "fieldId": {
-    "value": "field_value"
-  }
-}
-```
-
-## Query Syntax
-
-### Basic Queries
-```javascript
-// Select all records
-{
-  "from": "tableId",
-  "select": []
-}
-
-// Select specific fields
-{
-  "from": "tableId",
-  "select": [7, 8, 9]
-}
-
-// Limit results
-{
-  "from": "tableId",
-  "select": [],
-  "limit": 50
-}
-```
-
-### Filtering Records
-```javascript
-// Filter by field value
-{
-  "from": "tableId",
-  "select": [],
-  "where": "{7.EX.'John'}"
-}
-
-// Multiple conditions
-{
-  "from": "tableId",
-  "select": [],
-  "where": "{7.EX.'John'}AND{8.CT.'@gmail.com'}"
-}
-```
-
-### Query Operators
-- **EX**: Equals exactly
-- **CT**: Contains
-- **SW**: Starts with
-- **EW**: Ends with
-- **GT**: Greater than
-- **LT**: Less than
-- **GTE**: Greater than or equal
-- **LTE**: Less than or equal
-
-## Connection Requirements
-
-### PinkConnect Proxy
-- Uses PC_BASE_URL endpoint
-- Requires Quickbase connection ID
-- Standard API authentication
-
-### Paragon Proxy
-- Uses PARA_BASE_URL + custom/{integrationId}/
-- Alternative authentication method
-- Different endpoint structure
-
-## Best Practices
-
-1. **Application Design**
-   - Plan table relationships
-   - Define clear field types
-   - Use descriptive names
-   - Implement data validation
-
-2. **Query Optimization**
-   - Use specific field selections
-   - Implement appropriate limits
-   - Filter data effectively
-   - Cache frequently accessed data
-
-3. **Data Management**
-   - Validate data before insertion
-   - Handle bulk operations efficiently
-   - Implement error handling
-   - Monitor storage usage
-
-4. **Performance**
-   - Use pagination for large datasets
-   - Optimize query conditions
-   - Batch operations when possible
-   - Monitor API usage
-
-## Common Use Cases
-
-### CRM Management
-```
-/quickbase update customer contact information in CRM table
-```
-
-### Project Tracking
-```
-/quickbase create new project with milestones and deadlines
-```
-
-### Inventory Management
-```
-/quickbase query low stock items from inventory table
-```
-
-### Sales Reporting
-```
-/quickbase get all sales records for Q4 analysis
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid application ID
-- Table not found
-- Field validation errors
-- Permission denied
-- Data type mismatches
-
-### Error Response
-```javascript
-{
-  "error": {
-    "code": "INVALID_TABLE_ID",
-    "message": "The specified table ID does not exist.",
-    "details": {
-      "tableId": "invalid_id"
-    }
-  }
-}
-```
-
-## Data Validation
-
-### Field Validation
-- Required field checks
-- Data type validation
-- Format constraints
-- Unique value enforcement
-- Range validations
-
-### Input Sanitization
-- Clean text inputs
-- Validate email formats
-- Check phone number formats
-- Sanitize special characters
-- Prevent injection attacks
-
-## Integration Patterns
-
-### Workflow Automation
-- Trigger-based actions
-- Conditional logic
-- Multi-step processes
-- Approval workflows
-- Notification systems
-
-### Data Synchronization
-- Real-time updates
-- Batch synchronization
-- Conflict resolution
-- Data mapping
-- Error recovery
-
-## Performance Optimization
-
-### Query Efficiency
-- Use indexed fields for filtering
-- Limit result sets appropriately
-- Implement pagination
-- Cache frequently accessed data
-- Optimize field selections
-
-### Bulk Operations
-- Batch record insertions
-- Bulk updates
-- Mass data imports
-- Efficient deletions
-- Transaction management
-
-## Security Considerations
-
-### Access Control
-- User permissions
-- Role-based access
-- Field-level security
-- Application-level restrictions
-- API key management
-
-### Data Protection
-- Input validation
-- Output sanitization
-- Secure connections
-- Audit logging
-- Compliance requirements
-
-## Tips
-- Always ask user for appId if not provided
-- Use field IDs (numbers) rather than field names in queries
-- Implement proper error handling for API failures
-- Cache table structure information to improve performance
-- Use appropriate query limits to avoid timeouts
-- Validate data types before inserting records
-- Monitor storage usage to avoid limits 
+Quickbase uses field IDs (numbers) to identify table columns. When querying records, data is returned using these field IDs as keys. The application ID is required for table operations, and table IDs are required for record operations. 

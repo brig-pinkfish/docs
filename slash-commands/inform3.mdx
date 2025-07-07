@@ -1,362 +1,203 @@
 ---
-title: "Infor M3 Integration Command Guide"
-description: "Learn how to use the Infor M3 Integration slash command for ERP management"
+title: "Inform3 Guide"
+description: "InforM3 Integration enables efficient management of ERP, allowing users to read values from Infor M3, enhancing productivity within the Infor platform."
 ---
 
-The `/inform3` command enables efficient management of Infor M3 ERP system, allowing you to read values and interact with various modules. Perfect for:
+## What can you do with it?
 
-- Customer data management
-- Inventory operations
-- Order processing
-- Delivery tracking
-- Material planning
-- Supply chain management
+Efficiently manage ERP operations with Infor M3, allowing users to read values, search customers, retrieve customer basic data, and perform various ERP functions including inventory management, customer orders, and supply chain operations within the Infor M3 platform.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Infor M3:
-
+### Basic Command Structure
 ```
-/inform3 search for customers with name "John"
+/your-inform3-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/inform3 get customer basic data for customer number 8588691050
-```
+### Parameters
 
-```
-/inform3 retrieve delivery information for delivery number 1
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (search-customer, get-customer-basic-data)
 
-### Customer Management
-- Search customers
-- Get basic customer data
-- Customer information retrieval
-- Address and contact details
-- Customer classification
+**Optional:**
 
-### Order Management
-- Customer order interface
-- Order head information
-- Order status tracking
-- Order details retrieval
+- `search-query` - Search query for customer lookup
+- `customer-number` - Customer number for data retrieval
+- `company-number` - Company context (default: varies by operation)
+- `date-format` - Date format (YMD8, YMD6, MDY6, DMY6, YWD5, YMD8-)
+- `exclude-empty` - Exclude empty fields from response
+- `max-records` - Maximum number of records returned
+- `format` - Output JSON format (UNFORMATTED, COMPACT, PRETTY)
 
-### Inventory Operations
-- Quick inventory counting
-- Item feature interface
-- Material planning
-- Stock management
-
-### Delivery Operations
-- Delivery number toolbox
-- Delivery head information
-- Shipment tracking
-- Delivery status
-
-## Example Commands
-
-### Customer Search
-```
-/inform3 search customers by criteria "CUNO:9* RGDT:20210714"
-```
-
-### Customer Details
-```
-/inform3 get complete customer information for customer 8588691050
-```
-
-### Delivery Information
-```
-/inform3 retrieve delivery head data for company 222
-```
-
-### Order Details
-```
-/inform3 get order head information for order number 12345
-```
-
-## Available Interfaces
-
-### Customer Interface (CRS610MI)
-- **SearchCustomer**: Find customers by criteria
-- **GetBasicData**: Retrieve customer details
-
-### Order Interface (OIS100MI)
-- **GetOrderHead**: Get order information
-
-### Delivery Interface (MWS410MI)
-- **GetHead**: Delivery head information
-
-### Inventory Interfaces
-- **MMS310MI**: Quick inventory counting
-- **MMS019MI**: Item feature interface
-- **MMS080MI**: Material planning
-
-### Supply Chain Interface (MWS150MI)
-- **Active Supply Chain**: Supply chain operations
-
-### Customer Return Interface (OIS390MI)
-- **Customer Return**: Return processing
-
-## Universal Parameters
-
-### Context Parameters
-- **cono**: Company context
-- **divi**: Division context
-- **lanc**: Language code
-- **locale**: Locale setting
-- **timeZone**: Time zone
-
-### Data Control
-- **maxrecs**: Max records returned (0 = unlimited)
-- **returncols**: Comma-separated column names
-- **excludeempty**: Omit empty fields (default: false)
-- **righttrim**: Right trim values (default: true)
-
-### Format Options
-- **dateformat**: Date format (YMD8, YMD6, MDY6, DMY6, YWD5, YMD8-)
-- **format**: JSON format (UNFORMATTED, COMPACT, PRETTY)
-- **extendedresult**: Show transaction parameters (default: false)
-
-## Customer Operations
+## Tools
 
 ### Search Customer
-```javascript
-// Search with query
-const query = encodeURIComponent("CUNO:9* RGDT:20210714 ECAR:NC RESP:WWONG");
-const url = INFOR_URL + `CRS610MI/SearchCustomer?SQRY=${query}`;
+Search for customers using LES (Lawson Expert Search) queries
+
+**Parameters:**
+- `search-query` (required) - Search query using Infor M3 syntax
+- `date-format` (optional) - Date format (default: YMD8)
+- `exclude-empty` (optional) - Exclude empty fields (default: false)
+- `format` (optional) - Output format (default: PRETTY)
+
+**Example:**
+```
+/your-inform3-connection
+action: search-customer
+search-query: CUNO:9* RGDT:20210714 ECAR:NC RESP:WWONG
+date-format: YMD8
+exclude-empty: false
+format: PRETTY
 ```
 
-### Search Parameters
-- **SQRY**: Search query (up to 900 characters)
-- Supports wildcards and multiple criteria
-- URL encoding required
+**Response:**
+```json
+{
+  "results": [
+    {
+      "transaction": "SearchCustomer",
+      "records": [
+        {
+          "CUNO": "9192705806",
+          "CUNM": "JHON DOE",
+          "STAT": "20",
+          "CUCL": "Y01",
+          "CUTP": "0",
+          "PYNO": "",
+          "SMCD": "",
+          "RESP": "WWONG",
+          "BLCD": "0",
+          "RGDT": "20210714",
+          "CSCD": "US",
+          "ECAR": "NC",
+          "FRE1": "",
+          "RSMC": "",
+          "RPYN": "",
+          "DPOT": "",
+          "SRES": "",
+          "PGNM": "CRS610",
+          "FILE": "OCUSMA",
+          "KSTR": "OKCONO,222,OKCUNO,9192705806"
+        },
+        {
+          "CUNO": "9845007439",
+          "CUNM": "MARIA JOSE",
+          "STAT": "20",
+          "CUCL": "Y01",
+          "CUTP": "0",
+          "PYNO": "",
+          "SMCD": "",
+          "RESP": "WWONG",
+          "BLCD": "0",
+          "RGDT": "20210714",
+          "CSCD": "US",
+          "ECAR": "NC",
+          "FRE1": "",
+          "RSMC": "",
+          "RPYN": "",
+          "DPOT": "",
+          "SRES": "",
+          "PGNM": "CRS610",
+          "FILE": "OCUSMA",
+          "KSTR": "OKCONO,222,OKCUNO,9845007439"
+        }
+      ]
+    }
+  ],
+  "wasTerminated": false,
+  "nrOfSuccessfullTransactions": 1,
+  "nrOfFailedTransactions": 0
+}
+```
 
 ### Get Customer Basic Data
-```javascript
-// Retrieve customer details
-const url = INFOR_URL + `CRS610MI/GetBasicData?CUNO=${customerNumber}`;
+Retrieve detailed customer basic data for a specific customer
+
+**Parameters:**
+- `customer-number` (required) - Customer number (10 characters)
+- `company-number` (optional) - Company number (3 digits)
+- `date-format` (optional) - Date format (default: YMD8)
+- `exclude-empty` (optional) - Exclude empty fields (default: false)
+- `format` (optional) - Output format (default: PRETTY)
+
+**Example:**
+```
+/your-inform3-connection
+action: get-customer-basic-data
+customer-number: 8588691050
+company-number: 222
+date-format: YMD8
+exclude-empty: false
+format: PRETTY
 ```
 
-### Required Parameters
-- **CUNO**: Customer number (10 characters)
-- **CONO**: Company number (3 digits)
-
-## Customer Data Structure
-
-### Basic Information
-- **CUNO**: Customer number
-- **CUNM**: Customer name
-- **CUA1-CUA4**: Address lines
-- **PONO**: Postal code
-- **PHNO**: Phone number
-- **MAIL**: Email address
-
-### Business Details
-- **STAT**: Customer status
-- **CUCL**: Customer class
-- **CUTP**: Customer type
-- **CSCD**: Country code
-- **ECAR**: State/region code
-- **CUCD**: Currency code
-
-### Financial Information
-- **PYNO**: Payer number
-- **RGDT**: Registration date
-- **LMDT**: Last modified date
-- **TXID**: Tax ID
-- **TXCO**: Tax code
-
-## Delivery Operations
-
-### Get Delivery Head
-```javascript
-const url = INFOR_URL + `MWS410MI/GetHead?CONO=${company}&DLIX=${deliveryNumber}`;
-```
-
-### Delivery Parameters
-- **CONO**: Company number
-- **DLIX**: Delivery number
-- **CONA**: Consignee
-- **PUTP**: Reference qualifier
-- **PUSN**: Reference number
-
-### Delivery Information
-- **DLIX**: Delivery number
-- **DONR**: Delivery order number
-- **TRDT**: Transport date
-- **TRTM**: Transport time
-- **RIDN**: Route ID
-- **ETRN**: External tracking number
-
-## Order Management
-
-### Get Order Head
-```javascript
-const url = INFOR_URL + `OIS100MI/GetOrderHead?ORNO=${orderNumber}`;
-```
-
-### Order Parameters
-- **ORNO**: Customer order number (10 characters)
-
-### Order Information
-- **DIVI**: Division
-- **CUNO**: Customer number
-- **ORTP**: Order type
-- **ORST**: Highest status
-- **ORDT**: Order date
-- **RLDT**: Requested delivery date
-
-## Response Structure
-
-### Standard Response
-```javascript
+**Response:**
+```json
 {
-  "status": 200,
-  "output": {
-    "results": [
-      {
-        "transaction": "SearchCustomer",
-        "records": [
-          {
-            "CUNO": "9192705806",
-            "CUNM": "JOHN DOE",
-            "STAT": "20",
-            "CUCL": "Y01"
-          }
-        ]
-      }
-    ],
-    "wasTerminated": false,
-    "nrOfSuccessfullTransactions": 1,
-    "nrOfFailedTransactions": 0
-  }
+  "results": [
+    {
+      "transaction": "GetBasicData",
+      "records": [
+        {
+          "CONO": "222",
+          "DIVI": "",
+          "LNCD": "GB",
+          "CUNO": "8588691050",
+          "CUNM": "H FURMAN",
+          "CUA1": "302 PROSPECT STREET",
+          "CUA2": "1",
+          "CUA3": "SAN DIEGO  CA  92037",
+          "CUA4": "United States",
+          "PONO": "92037",
+          "PHNO": "8588691050",
+          "PHN2": "",
+          "TFNO": "",
+          "CUTP": "0",
+          "ALCU": "8588691050",
+          "YREF": "",
+          "YRE2": "",
+          "MAIL": "",
+          "CSCD": "US",
+          "ECAR": "CA",
+          "CFC1": "RETAIL",
+          "CFC2": "0.00",
+          "CFC3": "",
+          "CFC4": "",
+          "CFC5": "",
+          "CFC6": "",
+          "CFC7": "0.00",
+          "CFC8": "",
+          "CFC9": "",
+          "CFC0": "",
+          "CESA": "",
+          "STAT": "20",
+          "LMDT": "20220419",
+          "PYOP": "1",
+          "TOWN": "SAN DIEGO",
+          "CUCD": "USD",
+          "MCOS": "1",
+          "FRCO": "",
+          "CUSU": "",
+          "EALO": "0",
+          "RASN": "",
+          "SPLE": "",
+          "LSID": "",
+          "LSAD": "",
+          "MEAL": "",
+          "HAFE": "",
+          "TXID": "0",
+          "RGDT": "20210714"
+        }
+      ]
+    }
+  ],
+  "wasTerminated": false,
+  "nrOfSuccessfullTransactions": 1,
+  "nrOfFailedTransactions": 0
 }
 ```
 
-### Response Elements
-- **results**: Transaction results array
-- **records**: Data records
-- **wasTerminated**: Process completion status
-- **nrOfSuccessfullTransactions**: Success count
-- **nrOfFailedTransactions**: Error count
+## Notes
 
-## Date Formats
-
-### Available Formats
-- **YMD8**: YYYYMMDD (default)
-- **YMD6**: YYMMDD
-- **MDY6**: MMDDYY
-- **DMY6**: DDMMYY
-- **YWD5**: YYWWD
-- **YMD8-**: YYYY-MM-DD
-
-### Date Usage
-```javascript
-// Set date format in request
-const url = INFOR_URL + `CRS610MI/GetBasicData?CUNO=${customerNumber}&dateformat=YMD8`;
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid customer numbers
-- Missing required parameters
-- Company context errors
-- Permission restrictions
-
-### Error Response
-```javascript
-{
-  "errorMessage": "Customer not found",
-  "errorCode": "XRE0103",
-  "errorField": "CUNO",
-  "errorType": "BackendInternalError"
-}
-```
-
-## Best Practices
-
-1. **Parameter Validation**
-   - Validate customer numbers
-   - Check company codes
-   - Verify required fields
-   - Handle missing data
-
-2. **Query Optimization**
-   - Use specific search criteria
-   - Limit returned columns
-   - Set appropriate max records
-   - Encode special characters
-
-3. **Data Processing**
-   - Handle empty responses
-   - Validate data formats
-   - Process multiple records
-   - Check transaction status
-
-4. **Integration Setup**
-   - Configure integration ID
-   - Set up proper authentication
-   - Handle connection errors
-   - Monitor API limits
-
-## Common Use Cases
-
-### Customer Lookup
-```
-/inform3 find customer by phone number or email address
-```
-
-### Order Status Check
-```
-/inform3 check order status and delivery information
-```
-
-### Inventory Query
-```
-/inform3 get current inventory levels for specific items
-```
-
-### Delivery Tracking
-```
-/inform3 track delivery status and shipping information
-```
-
-## Integration Configuration
-
-### Paragon Integration
-```javascript
-const integrationId = config.paragonIntegrations.inform3;
-const INFOR_URL = PARA_BASE_URL + `custom/${integrationId}/`;
-```
-
-### Authentication
-- Uses Paragon proxy authentication
-- Integration ID required
-- Proper credentials needed
-- Session management
-
-## Performance Considerations
-
-### Query Efficiency
-- Use specific search criteria
-- Limit result sets
-- Optimize date ranges
-- Cache frequently used data
-
-### API Limits
-- Monitor request rates
-- Handle timeouts
-- Implement retry logic
-- Batch operations when possible
-
-## Tips
-- Always URL encode search queries with special characters
-- Use company context (cono) for multi-company environments
-- Set appropriate date formats for regional requirements
-- Handle empty responses gracefully in customer searches
-- Cache integration ID for repeated operations
-- Validate customer numbers before API calls 
+Infor M3 uses specific interface codes like CRS610MI for customer operations, MMS310MI for inventory, OIS100MI for orders, and MWS410MI for delivery management. Search queries use Lawson Expert Search (LES) syntax with field:value pairs. Customer numbers are 10-character identifiers. Company numbers (CONO) provide context for multi-company environments. Date formats support various regional standards. Universal parameters like maxrecs, dateformat, excludeempty, and righttrim can be applied to all endpoints for customized output formatting. 

@@ -1,104 +1,422 @@
 ---
-title: "Box Command Guide"
-description: "Learn how to use the Box slash command to manage cloud files and folders"
+title: "Box Guide"
+description: "Manage files and folders with Box cloud storage including upload, download, organization, and search capabilities"
 ---
 
-The `/box` command enables you to manage files and folders in Box cloud storage. Perfect for:
+## What can you do with it?
 
-- Uploading and downloading files
-- Creating and organizing folders
-- Searching for content
-- Moving files between folders
-- Managing file permissions
+The Box API allows you to manage files and folders in your enterprise cloud storage. You can upload and download files, create and organize folders, search for content across your entire organization, move files and folders, retrieve metadata, and handle all aspects of your file storage with comprehensive enterprise-grade cloud storage management.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Box:
-
+### Basic Command Structure
 ```
-/box upload report.pdf to folder "Q1 Reports"
+/your-box-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (upload, download, list, create, move, search, delete)
+- `entity` - The entity type (file, folder)
+- `id` - File or folder ID for specific operations
+
+**Optional:**
+
+- `parent_id` - Parent folder ID for uploads and folder creation
+- `name` - File or folder name
+- `query` - Search query string
+- `type` - Search filter (file, folder, web_link)
+- `limit` - Maximum number of search results
+- `offset` - Search result offset for pagination
+
+## Tools
+
+### Save File
+Upload a new file to a specified folder in Box.
+
+**Parameters:**
+- `name` (required) - File name for the upload
+- `parent_id` (required) - Parent folder ID where file will be uploaded
+- `file_content` (required) - File content to upload
+
+**Example:**
 ```
-/box list all files in folder "Documents"
+/your-box-connection
+action: upload
+entity: file
+name: example.pdf
+parent_id: 123456789
+file_content: [binary file content]
 ```
 
+**Response:**
+```json
+{
+  "type": "file",
+  "id": "987654321",
+  "name": "example.pdf",
+  "size": 102400,
+  "parent": {
+    "type": "folder",
+    "id": "123456789",
+    "name": "Documents"
+  },
+  "created_at": "2024-01-01T12:00:00Z",
+  "modified_at": "2024-01-01T12:00:00Z",
+  "created_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  }
+}
 ```
-/box search for folders containing "project"
+
+### Get File Content
+Download a file from Box using its ID with proper binary handling.
+
+**Parameters:**
+- `file_id` (required) - File ID to download
+
+**Example:**
+```
+/your-box-connection
+action: download
+entity: file
+file_id: 987654321
 ```
 
-## Key Features
-
-### File Management
-- Upload new files
-- Download file content
-- Get file information
-- Delete files
-- Move files between folders
-
-### Folder Operations
-- Create new folders
-- List folder contents
-- Move folders
-- Delete folders
-- Navigate folder hierarchy
-
-### Search Capabilities
-- Search by file name
-- Search by folder name
-- Filter by file type
-- Search within specific folders
-- Advanced search filters
-
-### File Information
-- View file size
-- Check creation date
-- See modification date
-- Get file metadata
-
-## Example Commands
-
-### Upload File
+**Response:**
+```json
+{
+  "type": "file",
+  "id": "987654321",
+  "name": "example.pdf",
+  "size": 102400,
+  "content": "[Binary file content as ArrayBuffer]",
+  "content_type": "application/pdf",
+  "parent": {
+    "type": "folder",
+    "id": "123456789"
+  }
+}
 ```
-/box upload "presentation.pptx" to folder ID 123456789
+
+### Get File by ID
+Retrieve metadata information about a file using its ID.
+
+**Parameters:**
+- `file_id` (required) - File ID to retrieve information for
+
+**Example:**
+```
+/your-box-connection
+action: get
+entity: file
+file_id: 987654321
+```
+
+**Response:**
+```json
+{
+  "type": "file",
+  "id": "987654321",
+  "name": "example.pdf",
+  "description": "Important document",
+  "size": 102400,
+  "path_collection": {
+    "total_count": 3,
+    "entries": [
+      {
+        "type": "folder",
+        "id": "0",
+        "name": "All Files"
+      },
+      {
+        "type": "folder",
+        "id": "123456789",
+        "name": "Documents"
+      }
+    ]
+  },
+  "created_at": "2024-01-01T12:00:00Z",
+  "modified_at": "2024-01-02T12:00:00Z",
+  "created_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  },
+  "owned_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  }
+}
 ```
 
 ### List Files
+List all items (files and folders) in a specified folder.
+
+**Parameters:**
+- `folder_id` (required) - Folder ID to list contents of
+- `limit` (optional) - Maximum number of items to return
+- `offset` (optional) - Number of items to skip for pagination
+
+**Example:**
 ```
-/box show all items in folder "Marketing Materials"
+/your-box-connection
+action: list
+entity: folder
+folder_id: 123456789
+limit: 100
+offset: 0
+```
+
+**Response:**
+```json
+{
+  "total_count": 2,
+  "entries": [
+    {
+      "type": "file",
+      "id": "987654321",
+      "name": "example.pdf",
+      "size": 102400,
+      "created_at": "2024-01-01T12:00:00Z",
+      "modified_at": "2024-01-02T12:00:00Z"
+    },
+    {
+      "type": "folder",
+      "id": "123456780",
+      "name": "Subfolder",
+      "created_at": "2024-01-01T12:00:00Z",
+      "modified_at": "2024-01-01T12:00:00Z"
+    }
+  ],
+  "offset": 0,
+  "limit": 100
+}
 ```
 
 ### Create Folder
+Create a new folder within a specified parent folder.
+
+**Parameters:**
+- `name` (required) - Name for the new folder
+- `parent_id` (required) - Parent folder ID (use "0" for root)
+
+**Example:**
 ```
-/box create folder "2024 Projects" in root directory
+/your-box-connection
+action: create
+entity: folder
+name: New Folder
+parent_id: 0
 ```
 
-### Search Files
-```
-/box search for PDF files in folder "Contracts"
-```
-
-### Download File
-```
-/box download file "budget.xlsx" from folder "Finance"
+**Response:**
+```json
+{
+  "type": "folder",
+  "id": "123456789",
+  "name": "New Folder",
+  "created_at": "2024-01-01T12:00:00Z",
+  "modified_at": "2024-01-01T12:00:00Z",
+  "parent": {
+    "type": "folder",
+    "id": "0",
+    "name": "All Files"
+  },
+  "created_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  },
+  "owned_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  }
+}
 ```
 
 ### Move Folder
+Move a folder to a different parent folder.
+
+**Parameters:**
+- `folder_id` (required) - Folder ID to move
+- `parent_id` (required) - New parent folder ID
+
+**Example:**
 ```
-/box move folder "Old Reports" to "Archive"
+/your-box-connection
+action: move
+entity: folder
+folder_id: 123456789
+parent_id: 987654321
 ```
 
-## Search Filters
+**Response:**
+```json
+{
+  "type": "folder",
+  "id": "123456789",
+  "name": "Moved Folder",
+  "created_at": "2024-01-01T12:00:00Z",
+  "modified_at": "2024-01-03T12:00:00Z",
+  "parent": {
+    "type": "folder",
+    "id": "987654321",
+    "name": "New Parent"
+  },
+  "path_collection": {
+    "total_count": 3,
+    "entries": [
+      {
+        "type": "folder",
+        "id": "0",
+        "name": "All Files"
+      },
+      {
+        "type": "folder",
+        "id": "987654321",
+        "name": "New Parent"
+      }
+    ]
+  }
+}
+```
 
-Advanced search options:
-- **type**: file, folder, or web_link
-- **file_extensions**: pdf, docx, xlsx, etc.
-- **size_range**: Filter by file size
-- **created_at_range**: Filter by creation date
-- **owner_user_ids**: Filter by file owner
+### Get Folder by ID
+Retrieve information about a folder using its ID.
 
-## Tips
-- Use folder ID "0" for the root directory
-- File downloads preserve original format
-- Search is case-insensitive
-- Binary files (PDF, images) require special handling 
+**Parameters:**
+- `folder_id` (required) - Folder ID to retrieve information for
+
+**Example:**
+```
+/your-box-connection
+action: get
+entity: folder
+folder_id: 123456789
+```
+
+**Response:**
+```json
+{
+  "type": "folder",
+  "id": "123456789",
+  "name": "Documents",
+  "description": "Important documents folder",
+  "created_at": "2024-01-01T12:00:00Z",
+  "modified_at": "2024-01-02T12:00:00Z",
+  "parent": {
+    "type": "folder",
+    "id": "0",
+    "name": "All Files"
+  },
+  "path_collection": {
+    "total_count": 2,
+    "entries": [
+      {
+        "type": "folder",
+        "id": "0",
+        "name": "All Files"
+      }
+    ]
+  },
+  "created_by": {
+    "type": "user",
+    "id": "user123",
+    "name": "John Doe"
+  },
+  "item_status": "active"
+}
+```
+
+### Search
+Search for files, folders, and web links across user content or enterprise-wide.
+
+**Parameters:**
+- `query` (required) - Search query string
+- `type` (optional) - Filter by item type (file, folder, web_link)
+- `limit` (optional) - Maximum number of results (default: 30, max: 200)
+- `offset` (optional) - Number of results to skip for pagination
+- `ancestor_folder_ids` (optional) - Limit search to specific folders
+- `file_extensions` (optional) - Filter by file extensions
+- `scope` (optional) - Search scope (user_content, enterprise_content)
+
+**Example:**
+```
+/your-box-connection
+action: search
+entity: content
+query: documents
+type: folder
+limit: 20
+offset: 0
+```
+
+**Response:**
+```json
+{
+  "total_count": 2,
+  "entries": [
+    {
+      "type": "folder",
+      "id": "123456789",
+      "name": "Documents Test",
+      "created_at": "2024-01-01T12:00:00Z",
+      "modified_at": "2024-01-02T12:00:00Z",
+      "parent": {
+        "type": "folder",
+        "id": "0",
+        "name": "All Files"
+      }
+    },
+    {
+      "type": "folder",
+      "id": "987654321",
+      "name": "Documents",
+      "created_at": "2024-01-01T12:00:00Z",
+      "modified_at": "2024-01-01T12:00:00Z",
+      "parent": {
+        "type": "folder",
+        "id": "0",
+        "name": "All Files"
+      }
+    }
+  ],
+  "offset": 0,
+  "limit": 20
+}
+```
+
+### Delete Folder
+Delete a folder using its ID (folder must be empty or use recursive parameter).
+
+**Parameters:**
+- `folder_id` (required) - Folder ID to delete
+- `recursive` (optional) - Delete folder and all contents (default: false)
+
+**Example:**
+```
+/your-box-connection
+action: delete
+entity: folder
+folder_id: 123456789
+recursive: false
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Folder with ID 123456789 deleted successfully."
+}
+```
+
+## Notes 
+
+File downloads require X-Paragon-Use-Raw-Response header set to 1 for binary content. File content returns as ArrayBuffer and should be converted to Uint8Array for proper handling. Always detect file type from extension for proper file handling. Binary types include pdf, jpg, jpeg, png, gif, doc, docx, xls, xlsx, ppt, pptx, zip. Text types include json, html, csv, xml, txt, md. Parent folder ID "0" represents the root folder. Path collections show folder hierarchy. Search supports enterprise-wide content discovery. File types indicate whether item is file, folder, or web_link. Supports both PinkConnect and Paragon proxy connections. Created_by and owned_by track user ownership. Item status indicates active or trashed state. 

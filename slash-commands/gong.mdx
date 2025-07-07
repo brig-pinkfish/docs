@@ -1,144 +1,188 @@
 ---
-title: "Gong Command Guide"
-description: "Learn how to use the Gong slash command for call management and sales intelligence"
+title: "Gong Guide"
+description: "With Gong, manage calls and sales intelligence."
 ---
 
-The `/gong` command enables you to manage calls and access sales intelligence data. Perfect for:
+## What can you do with it?
 
-- Uploading call recordings
-- Searching call history
-- Analyzing conversations
-- Tracking sales activities
-- Managing call metadata
+Manage calls and sales intelligence with Gong, including uploading new calls with metadata, retrieving call details, and searching calls based on criteria for comprehensive conversation analytics and sales performance tracking.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Gong:
-
+### Basic Command Structure
 ```
-/gong upload call "Sales Call with Jane Smith" from today at 1:30pm
+/your-gong-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (add-call, get-call, search-calls)
+
+**Optional:**
+
+- `call-id` - Gong call ID
+- `client-unique-id` - Unique client identifier for the call
+- `call-title` - Title/name for the call
+- `download-media-url` - URL to download call media file
+- `actual-start` - Call start time
+- `direction` - Call direction (Inbound, Outbound)
+- `disposition` - Call disposition/outcome
+- `participants` - Call participants information
+- `primary-user` - Primary user ID
+- `search-criteria` - Search criteria for call lookup
+
+## Tools
+
+### Add Call
+Upload a new call to Gong with metadata and media file information
+
+**Parameters:**
+- `actual-start` (required) - Call start time in ISO format
+- `client-unique-id` (required) - Unique client identifier
+- `download-media-url` (required) - URL to download call media file
+- `call-title` (required) - Title/name for the call
+- `direction` (required) - Call direction (Inbound, Outbound)
+- `disposition` (optional) - Call disposition/outcome
+- `participants` (required) - Array of participant information
+- `primary-user` (required) - Primary user ID
+
+**Example:**
 ```
-/gong get call details for ID generated_call_id_67890
+/your-gong-connection
+action: add-call
+actual-start: 2025-01-13T01:30:00-08:00
+client-unique-id: unique_call_id_12345
+download-media-url: https://example.com/path/to/call.mp3
+call-title: Sales Call with Jane Smith
+direction: Outbound
+disposition: Intro Call
+participants: [{"emailAddress": "john.doe@example.com", "mediaChannelId": 1, "name": "John Doe", "userId": "gong_user_id_12345"}, {"mediaChannelId": 0, "name": "Jane Smith", "phoneNumber": "+1 555-555-1212"}]
+primary-user: gong_user_id_12345
 ```
 
-```
-/gong search calls from January with keywords "sales" and "demo"
-```
-
-## Key Features
-
-### Call Upload
-- Add new calls
-- Include metadata
-- Set participants
-- Add custom data
-- Specify direction
-
-### Call Retrieval
-- Get call details
-- View participants
-- Access media URLs
-- Check duration
-- See disposition
-
-### Call Search
-- Search by date range
-- Filter by participants
-- Find by keywords
-- View extended context
-- Access analytics
-
-### Call Analytics
-- Points of interest
-- Topic detection
-- Tracker information
-- Speaker statistics
-- Questions asked
-
-## Example Commands
-
-### Upload Call
-```
-/gong upload call "Intro Call" with John Doe and Jane Smith from https://example.com/call.mp3
+**Response:**
+```json
+{
+  "callId": "generated_call_id_67890",
+  "status": "Processing"
+}
 ```
 
-### Get Call Details
+### Get Call
+Retrieve detailed information about a specific call using its unique ID
+
+**Parameters:**
+- `call-id` (required) - Gong call ID
+
+**Example:**
 ```
-/gong show call generated_call_id_67890
+/your-gong-connection
+action: get-call
+call-id: generated_call_id_67890
+```
+
+**Response:**
+```json
+{
+  "callId": "generated_call_id_67890",
+  "title": "Sales Call with Jane Smith",
+  "actualStart": "2025-01-13T01:30:00-08:00",
+  "duration": 3600,
+  "primaryUser": {
+    "userId": "gong_user_id_12345",
+    "name": "John Doe",
+    "emailAddress": "john.doe@example.com"
+  },
+  "parties": [
+    {
+      "name": "John Doe",
+      "emailAddress": "john.doe@example.com",
+      "affiliation": "Internal"
+    },
+    {
+      "name": "Jane Smith",
+      "phoneNumber": "+1 555-555-1212",
+      "affiliation": "External"
+    }
+  ],
+  "direction": "Outbound",
+  "disposition": "Intro Call",
+  "media": {
+    "audioUrl": "https://gong.io/calls/generated_call_id_67890/audio",
+    "videoUrl": "https://gong.io/calls/generated_call_id_67890/video"
+  }
+}
 ```
 
 ### Search Calls
+Search for calls based on specific criteria such as date range, participants, or keywords
+
+**Parameters:**
+- `from-date` (optional) - Search from date
+- `to-date` (optional) - Search to date
+- `primary-user-ids` (optional) - Array of primary user IDs
+- `keywords` (optional) - Keywords to search for
+- `context` (optional) - Content context level (Extended, Basic)
+- `include-content` (optional) - Include call content analysis
+- `include-media` (optional) - Include media URLs
+
+**Example:**
 ```
-/gong search calls from 2025-01-01 to 2025-01-31 by user gong_user_id_12345
+/your-gong-connection
+action: search-calls
+from-date: 2025-01-01T00:00:00-08:00
+to-date: 2025-01-31T23:59:59-08:00
+primary-user-ids: ["gong_user_id_12345"]
+keywords: ["sales", "demo"]
+context: Extended
+include-content: true
+include-media: true
 ```
 
-### Search with Keywords
-```
-/gong find calls containing "pricing" and "contract" from this month
-```
-
-## Call Upload Fields
-
-### Required Fields
-- `actualStart`: Call start time
-- `clientUniqueId`: Your unique identifier
-- `parties`: Call participants
-
-### Optional Fields
-- `title`: Call title
-- `direction`: Inbound/Outbound
-- `disposition`: Call type
-- `customData`: Additional data
-- `downloadMediaUrl`: Recording URL
-
-## Participant Information
-
-### Internal Participants
+**Response:**
 ```json
 {
-  "emailAddress": "john.doe@example.com",
-  "mediaChannelId": 1,
-  "name": "John Doe",
-  "userId": "gong_user_id_12345"
+  "calls": [
+    {
+      "callId": "generated_call_id_67890",
+      "title": "Sales Call with Jane Smith",
+      "actualStart": "2025-01-13T01:30:00-08:00",
+      "duration": 3600,
+      "primaryUser": {
+        "userId": "gong_user_id_12345",
+        "name": "John Doe",
+        "emailAddress": "john.doe@example.com"
+      },
+      "parties": [
+        {
+          "name": "John Doe",
+          "emailAddress": "john.doe@example.com",
+          "affiliation": "Internal"
+        },
+        {
+          "name": "Jane Smith",
+          "phoneNumber": "+1 555-555-1212",
+          "affiliation": "External"
+        }
+      ],
+      "direction": "Outbound",
+      "disposition": "Intro Call",
+      "media": {
+        "audioUrl": "https://gong.io/calls/generated_call_id_67890/audio",
+        "videoUrl": "https://gong.io/calls/generated_call_id_67890/video"
+      }
+    }
+  ],
+  "pagination": {
+    "totalRecords": 10,
+    "pageSize": 10,
+    "currentPage": 1
+  }
 }
 ```
 
-### External Participants
-```json
-{
-  "mediaChannelId": 0,
-  "name": "Jane Smith",
-  "phoneNumber": "+1 555-555-1212"
-}
-```
+## Notes
 
-## Search Filters
-
-### Date Range
-- `fromDateTime`: Start date
-- `toDateTime`: End date
-
-### Participants
-- `primaryUserIds`: Array of user IDs
-- Filter by specific users
-
-### Keywords
-- Search call content
-- Multiple keywords supported
-
-## Content Selection
-
-### Available Fields
-- `collaboration`: Comments
-- `content`: Topics, trackers
-- `interaction`: Questions, speakers
-- `media`: Audio/video URLs
-- `parties`: Participant details
-
-## Tips
-- Use ISO 8601 format for dates
-- Include timezone in timestamps
-- Media channel 0 for external, 1 for internal
-- Keywords search transcripts and titles 
+Gong API requires media file URLs for call uploads. Client unique IDs prevent duplicate call uploads. Participants can be internal (with user IDs) or external (with phone numbers). Media channel IDs identify audio/video streams. Call dispositions categorize call outcomes. Search supports extensive content analysis including topics, keywords, and conversation insights. All timestamps use ISO 8601 format with timezone information. 

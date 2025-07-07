@@ -1,73 +1,155 @@
 ---
-title: "Anthropic Command Guide"
-description: "Learn how to use the Anthropic slash command to interact with Claude AI models"
+title: "Anthropic Guide"
+description: "Anthropic skill for use with PinkConnect Proxy"
 ---
 
 ## What can you do with it?
 
-The `/anthropic` command enables you to interact with Claude AI models for various tasks including complex reasoning and analysis, code generation and review, image understanding, research and writing, and creative tasks. This command provides access to state-of-the-art AI capabilities for both text and image processing.
+Interact with Claude AI models through the Anthropic API for text generation, analysis, and conversation, including support for system prompts, multi-turn conversations, and image analysis capabilities.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/anthropic [prompt] [optional-parameters]
+/your-anthropic-connection [action] [required-parameters] [optional-parameters]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `prompt` - Your instructions or questions for Claude
+- `action` - The operation to perform (create-message, create-message-with-system, create-message-with-image)
 
 **Optional:**
 
-- `model` - Specific Claude model to use (defaults to claude-3-5-sonnet-20241022)
+- `model` - Claude model to use (default: claude-3-5-sonnet-20241022)
+- `max-tokens` - Maximum tokens to generate (default: 1024)
+- `system-prompt` - System instructions for the model
+- `anthropic-version` - API version header
 
-- `system` - System prompt to set custom behaviors or response styles
+## Tools
 
-- `image` - Image file to analyze or process
+### Create Message
+Send a message to Claude and get a response
 
-### Response Format
+**Parameters:**
+- `model` (optional) - Claude model to use
+- `max-tokens` (optional) - Maximum tokens to generate
+- `message` (required) - The user message to send
 
-The command returns:
+**Example:**
+```
+/your-anthropic-connection
+action: create-message
+model: claude-3-5-sonnet-20241022
+max-tokens: 1024
+message: Hello, Claude!
+```
+
+**Response:**
 ```json
 {
-  "response": "Claude's generated response",
-  "model": "model used for generation",
-  "metadata": {
-    "tokens": "number of tokens used",
-    "processing_time": "time taken to process"
+  "id": "msg_01A1B2C3D4E5F6G7H8I9J0",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Hello! How can I help you today?"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20241022",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 12
   }
 }
 ```
 
-## Examples
+### Create Message with System Prompt
+Send a message with system instructions
 
-### Basic Usage
-```
-/anthropic
-prompt: Explain quantum computing in simple terms
-```
-Asks Claude to provide a simple explanation of quantum computing.
+**Parameters:**
+- `model` (optional) - Claude model to use
+- `max-tokens` (optional) - Maximum tokens to generate
+- `system-prompt` (required) - System instructions for the model
+- `message` (required) - The user message to send
 
-### Advanced Usage
+**Example:**
 ```
-/anthropic
-prompt: Review this code for bugs and suggest improvements
-model: claude-opus-4-20250514
-system: You are a helpful coding assistant
+/your-anthropic-connection
+action: create-message-with-system
+model: claude-3-5-sonnet-20241022
+max-tokens: 1024
+system-prompt: You are a helpful assistant that responds in JSON format.
+message: What is the capital of France?
 ```
-Uses the Opus model with a custom system prompt to review code with specific expertise.
 
-### Specific Use Case
+**Response:**
+```json
+{
+  "id": "msg_01A1B2C3D4E5F6G7H8I9J0",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"capital\": \"Paris\", \"country\": \"France\"}"
+    }
+  ],
+  "model": "claude-3-5-sonnet-20241022",
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 25,
+    "output_tokens": 15
+  }
+}
 ```
-/anthropic
-prompt: Describe what you see in this image and identify all objects
-image: uploaded_image.jpg
+
+### Create Message with Image
+Send a message with an image for analysis
+
+**Parameters:**
+- `model` (optional) - Claude model to use
+- `max-tokens` (optional) - Maximum tokens to generate
+- `message` (required) - The text message to send
+- `image-data` (required) - Base64 encoded image data
+- `media-type` (required) - Image media type (e.g., image/jpeg, image/png)
+
+**Example:**
 ```
-Analyzes an uploaded image and provides detailed description of its contents.
+/your-anthropic-connection
+action: create-message-with-image
+model: claude-3-5-sonnet-20241022
+max-tokens: 1024
+message: What do you see in this image?
+image-data: /9j/4AAQSkZJRgABAQAAAQABAAD...
+media-type: image/jpeg
+```
 
-### Notes 
+**Response:**
+```json
+{
+  "id": "msg_01A1B2C3D4E5F6G7H8I9J0",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I can see a beautiful landscape with mountains in the background and a lake in the foreground..."
+    }
+  ],
+  "model": "claude-3-5-sonnet-20241022",
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 1150,
+    "output_tokens": 45
+  }
+}
+```
 
-Supported models include claude-opus-4-20250514, claude-sonnet-4-20250514, claude-3-5-sonnet-20241022 (default), claude-3-5-haiku-20241022, and legacy models. Images must be in JPEG, PNG, GIF, or WebP format. 
+## Notes
+
+Available Claude models include claude-opus-4-20250514 for complex reasoning, claude-sonnet-4-20250514 for coding and analysis, claude-3-7-sonnet-20250219 for structured reasoning, claude-3-5-haiku-20241022 for fast responses, and claude-3-5-sonnet-20241022 for general chat. All models support text and image inputs with varying context windows. Include the anthropic-version header (e.g., 2023-06-01) in requests. 

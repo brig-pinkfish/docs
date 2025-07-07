@@ -1,235 +1,350 @@
 ---
-title: "BrightData Command Guide"
-description: "Learn how to use the BrightData slash command to manage web scraping and proxy infrastructure"
+title: "BrightData Guide"
+description: "With BrightData, manage your web scraping and proxy infrastructure."
 ---
 
-The `/brightdata` command enables you to manage your BrightData proxy infrastructure and web scraping operations. Perfect for:
+## What can you do with it?
 
-- Managing proxy zones
-- Monitoring IP usage
-- Configuring proxy settings
-- Handling authentication
-- Tracking billing and usage
+Manage zones, IPs, authentication, and proxy infrastructure through BrightData's API, enabling operations such as checking status, managing zones, handling proxy configurations, and monitoring usage for web scraping and data collection.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with BrightData:
-
+### Basic Command Structure
 ```
-/brightdata check account status
+/your-brightdata-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/brightdata create residential zone "my_scraping_zone" for country "us"
-```
+### Parameters
 
-```
-/brightdata list all zones
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (check-status, get-zone-status, create-zone, update-zone, list-zones, delete-zone, get-ip-usage, get-proxy-config, create-whitelist, get-billing, generate-api-key)
 
-### Account Management
-- Check account status
-- View billing information
-- Monitor usage statistics
-- Manage IP whitelist
-- Generate API keys
+**Optional:**
 
-### Zone Operations
-- Create new zones
-- Update zone configurations
-- List all zones
-- Delete zones
-- Check zone status
+- `zone-id` - BrightData zone identifier
+- `zone-name` - Name for the zone
+- `zone-type` - Type of zone (residential, datacenter, mobile)
+- `country` - Country code for zone
+- `plan` - Zone plan (production, enterprise)
 
-### Proxy Configuration
-- Get proxy settings
-- Retrieve connection strings
-- Manage authentication
-- Configure zone access
-
-### Monitoring & Analytics
-- Track IP usage
-- Monitor billing cycles
-- View usage statistics
-- Check remaining quotas
-
-## Example Commands
+## Tools
 
 ### Check Status
+Check the status of your BrightData account
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
 ```
-/brightdata check my account status
+/your-brightdata-connection
+action: check-status
+```
+
+**Response:**
+```json
+{
+  "status": "active",
+  "customer": "hl_6504f1e5",
+  "can_make_requests": true,
+  "ip": "171.243.58.62,15.158.13.106, 34.96.45.168"
+}
+```
+
+### Get Zone Status
+Check the status of a specific zone
+
+**Parameters:**
+- `zone-id` (required) - The zone ID to check
+
+**Example:**
+```
+/your-brightdata-connection
+action: get-zone-status
+zone-id: zone123
+```
+
+**Response:**
+```json
+{
+  "status": "active",
+  "customer": "hl_6504f1e5",
+  "can_make_requests": false,
+  "auth_fail_reason": "zone_not_found",
+  "ip": "171.243.58.62,15.158.13.106, 34.96.45.168"
+}
 ```
 
 ### Create Zone
+Create a new zone in BrightData
+
+**Parameters:**
+- `zone-name` (required) - Name for the new zone
+- `zone-type` (required) - Type of zone (residential, datacenter, mobile)
+- `country` (required) - Country code for the zone
+- `plan` (required) - Zone plan (production, enterprise)
+
+**Example:**
 ```
-/brightdata create residential zone "data_collection" for US traffic
+/your-brightdata-connection
+action: create-zone
+zone-name: my_scraping_zone
+zone-type: residential
+country: us
+plan: production
 ```
 
-### List Zones
-```
-/brightdata show all my proxy zones
+**Response:**
+```json
+{
+  "id": "zone_12345abc",
+  "name": "my_scraping_zone",
+  "type": "residential",
+  "country": "us",
+  "status": "active",
+  "created_at": "2023-09-15T14:30:00Z"
+}
 ```
 
 ### Update Zone
+Update an existing zone's configuration
+
+**Parameters:**
+- `zone-id` (required) - The zone ID to update
+- `zone-name` (optional) - New name for the zone
+- `plan` (optional) - New plan for the zone
+
+**Example:**
 ```
-/brightdata update zone "zone_12345abc" to enterprise plan
+/your-brightdata-connection
+action: update-zone
+zone-id: zone_12345abc
+zone-name: updated_zone_name
+plan: enterprise
 ```
 
-### Get Proxy Config
+**Response:**
+```json
+{
+  "id": "zone_12345abc",
+  "name": "updated_zone_name",
+  "type": "residential",
+  "country": "us",
+  "plan": "enterprise",
+  "status": "active",
+  "updated_at": "2023-09-16T10:15:00Z"
+}
 ```
-/brightdata show proxy configuration details
+
+### List Zones
+Retrieve a list of all zones
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
+```
+/your-brightdata-connection
+action: list-zones
 ```
 
-### Monitor Usage
+**Response:**
+```json
+{
+  "zones": [
+    {
+      "id": "zone_12345abc",
+      "name": "updated_zone_name",
+      "type": "residential",
+      "country": "us",
+      "status": "active"
+    },
+    {
+      "id": "zone_67890def",
+      "name": "data_center_zone",
+      "type": "datacenter",
+      "country": "uk",
+      "status": "active"
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "page_size": 20
+}
 ```
-/brightdata check IP usage statistics
+
+### Delete Zone
+Delete a zone from your account
+
+**Parameters:**
+- `zone-id` (required) - The zone ID to delete
+
+**Example:**
+```
+/your-brightdata-connection
+action: delete-zone
+zone-id: zone_12345abc
 ```
 
-## Zone Types
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Zone successfully deleted",
+  "id": "zone_12345abc"
+}
+```
 
-### Residential
-- Real residential IPs
-- High success rates
-- Country targeting
-- Premium pricing
+### Get IP Usage
+Retrieve IP usage statistics
 
-### Datacenter
-- Fast datacenter IPs
-- Cost-effective
-- High throughput
-- Good for APIs
+**Parameters:**
+- No additional parameters required
 
-### Mobile
-- Mobile carrier IPs
-- Mobile-specific content
-- Carrier targeting
-- Premium features
+**Example:**
+```
+/your-brightdata-connection
+action: get-ip-usage
+```
 
-## Zone Management
+**Response:**
+```json
+{
+  "total_ips": 1500,
+  "active_ips": 950,
+  "available_ips": 550,
+  "usage_by_zone": [
+    {
+      "zone_id": "zone_12345abc",
+      "zone_name": "updated_zone_name",
+      "ips_used": 350
+    },
+    {
+      "zone_id": "zone_67890def",
+      "zone_name": "data_center_zone",
+      "ips_used": 600
+    }
+  ],
+  "last_updated": "2023-09-16T13:45:00Z"
+}
+```
 
-### Creation Options
-- **name**: Zone identifier
-- **type**: residential/datacenter/mobile
-- **country**: Target country
-- **plan**: production/enterprise
+### Get Proxy Configurations
+Retrieve proxy configuration details
 
-### Configuration Updates
-- Change zone names
-- Upgrade plans
-- Modify settings
-- Update targeting
+**Parameters:**
+- No additional parameters required
 
-## Proxy Configuration
+**Example:**
+```
+/your-brightdata-connection
+action: get-proxy-config
+```
 
-### Connection Strings
-- Zone-specific URLs
-- Authentication credentials
-- Port assignments
-- Protocol support
+**Response:**
+```json
+{
+  "username": "customer-hl_6504f1e5",
+  "password": "pwd_123456abcdef",
+  "proxy_addresses": {
+    "residential": "brd.superproxy.io:22225",
+    "datacenter": "brd.superproxy.io:22224",
+    "mobile": "brd.superproxy.io:22226"
+  },
+  "zone_connection_strings": {
+    "zone_12345abc": "zone-updated_zone_name:pwd_123456abcdef@brd.superproxy.io:22225",
+    "zone_67890def": "zone-data_center_zone:pwd_123456abcdef@brd.superproxy.io:22224"
+  }
+}
+```
 
-### Authentication
-- Username/password pairs
-- Zone-based credentials
-- API key generation
-- Whitelist management
+### Create IP Whitelist
+Add IP addresses to the whitelist
 
-## Usage Monitoring
+**Parameters:**
+- `ip-addresses` (required) - List of IP addresses to whitelist
+- `description` (optional) - Description for the whitelist entry
 
-### IP Statistics
-- Total available IPs
-- Active IP count
-- Usage by zone
-- Historical data
+**Example:**
+```
+/your-brightdata-connection
+action: create-whitelist
+ip-addresses: 203.0.113.1, 198.51.100.2, 192.0.2.3
+description: Office IP addresses
+```
 
-### Billing Information
-- Current plan details
-- Usage vs. limits
-- Estimated charges
-- Billing cycle info
+**Response:**
+```json
+{
+  "success": true,
+  "added": ["203.0.113.1", "198.51.100.2", "192.0.2.3"],
+  "already_whitelisted": [],
+  "total_whitelisted": 8
+}
+```
 
-## API Key Management
+### Get Billing Information
+Retrieve current billing information and usage
 
-### Key Generation
-- Zone-specific keys
-- Expiration dates
-- Named keys
-- Access control
+**Parameters:**
+- No additional parameters required
 
-### Key Properties
-- **key_id**: Unique identifier
-- **key**: API access token
-- **name**: Descriptive name
-- **expires_at**: Expiration date
+**Example:**
+```
+/your-brightdata-connection
+action: get-billing
+```
 
-## Whitelist Management
+**Response:**
+```json
+{
+  "current_plan": "enterprise",
+  "billing_cycle": {
+    "start_date": "2023-09-01T00:00:00Z",
+    "end_date": "2023-09-30T23:59:59Z",
+    "days_remaining": 14
+  },
+  "usage": {
+    "gb_used": 450.75,
+    "gb_included": 1000,
+    "requests_made": 3500000,
+    "requests_included": 5000000
+  },
+  "estimated_charges": 2500.00,
+  "currency": "USD"
+}
+```
 
-### IP Whitelisting
-- Add multiple IPs
-- Bulk operations
-- Description labels
-- Status tracking
+### Generate Zone API Key
+Generate a new API key for a specific zone
 
-### Whitelist Benefits
-- Improved security
-- Faster authentication
-- Reduced blocks
-- Better performance
+**Parameters:**
+- `zone-id` (required) - The zone ID to generate a key for
+- `key-name` (required) - Name for the API key
+- `expires-in-days` (optional) - Number of days until expiration (default: 90)
 
-## Billing & Usage
+**Example:**
+```
+/your-brightdata-connection
+action: generate-api-key
+zone-id: zone_12345abc
+key-name: script_automation_key
+expires-in-days: 90
+```
 
-### Usage Tracking
-- Data transfer (GB)
-- Request counts
-- Zone-specific usage
-- Real-time monitoring
+**Response:**
+```json
+{
+  "key_id": "key_12345abcdef",
+  "key": "bd_api_9876543210abcdefghijklmnopqrstuvwxyz",
+  "name": "script_automation_key",
+  "created_at": "2023-09-16T15:30:00Z",
+  "expires_at": "2023-12-15T15:30:00Z",
+  "zone_id": "zone_12345abc"
+}
+```
 
-### Billing Cycles
-- Monthly/custom periods
-- Usage limits
-- Overage charges
-- Cost estimates
+## Notes
 
-## Best Practices
-
-1. **Zone Organization**
-   - Use descriptive names
-   - Separate by purpose
-   - Monitor usage per zone
-
-2. **IP Management**
-   - Whitelist your IPs
-   - Monitor usage patterns
-   - Rotate when needed
-
-3. **Cost Control**
-   - Track usage regularly
-   - Set appropriate limits
-   - Choose right plan types
-
-4. **Security**
-   - Generate zone-specific keys
-   - Set key expiration dates
-   - Regularly rotate credentials
-
-## Error Handling
-
-### Common Issues
-- Zone not found errors
-- Authentication failures
-- Usage limit exceeded
-- Invalid configurations
-
-### Status Codes
-- **active**: Zone operational
-- **inactive**: Zone disabled
-- **pending**: Setup in progress
-- **error**: Configuration issue
-
-## Tips
-- Check status before operations
-- Use specific zone IDs for updates
-- Monitor billing to avoid overages
-- Whitelist your server IPs for better performance
-- Generate separate API keys for different applications 
+BrightData supports multiple zone types including residential, datacenter, and mobile proxies. Premium operations require Authorization Bearer token and Premium-Id headers. Zone connection strings include credentials for direct proxy usage. IP whitelisting enhances security for proxy access. 

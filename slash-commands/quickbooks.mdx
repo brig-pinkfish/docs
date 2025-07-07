@@ -1,612 +1,476 @@
 ---
-title: "QuickBooks Command Guide"
-description: "Learn how to use the QuickBooks slash command to manage accounting and financial data"
+title: "QuickBooks Guide"
+description: "With QuickBooks, manage your accounting and financial data."
 ---
 
-The `/quickbooks` command enables you to access and manage QuickBooks accounting data including customers, invoices, bills, payments, and financial reports. Perfect for:
+## What can you do with it?
 
-- Customer and vendor management
-- Invoice and billing operations
-- Payment processing
-- Financial reporting
-- Accounting automation
+Access and manage QuickBooks accounting data including customers, invoices, bills, payments, and financial reports, enabling comprehensive accounting operations such as creating customers, generating invoices, recording payments, and retrieving company information.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with QuickBooks:
-
+### Basic Command Structure
 ```
-/quickbooks create new customer with contact information
+/your-quickbooks-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/quickbooks generate invoice for customer services
-```
+### Parameters
 
-```
-/quickbooks record payment for outstanding invoice
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (get-company-info, create-customer, update-customer, get-customer, list-customers, create-invoice, get-invoice, create-payment)
 
-### Customer Management
-- Create and update customers
-- Manage contact information
-- Customer relationship tracking
-- Payment history
-- Customer reporting
+**Optional:**
 
-### Invoice Operations
-- Create invoices
-- Track invoice status
-- Payment processing
-- Invoice templates
-- Automated billing
+- `realm-id` - QuickBooks company realm ID
+- `customer-id` - Customer ID for operations
+- `invoice-id` - Invoice ID for operations
+- `company-id` - Company ID for info retrieval
+- `display-name` - Customer display name
+- `email` - Customer email address
 
-### Financial Management
-- Payment recording
-- Vendor management
-- Bill processing
-- Financial reporting
-- Account management
-
-## Example Commands
-
-### Customer Operations
-```
-/quickbooks add new customer John Smith with billing address
-```
-
-### Invoice Management
-```
-/quickbooks create invoice for customer with line items
-```
-
-### Payment Processing
-```
-/quickbooks record payment for invoice #12345
-```
-
-### Vendor Management
-```
-/quickbooks create new vendor for office supplies
-```
-
-## Company Information
+## Tools
 
 ### Get Company Info
-```javascript
-const url = QUICKBOOKS_URL + `company/${REALM_ID}/companyinfo/${COMPANY_ID}`;
+Retrieve information about the company
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `company-id` (required) - Company ID
+
+**Example:**
+```
+/your-quickbooks-connection
+action: get-company-info
+realm-id: 123456789
+company-id: 123456789
 ```
 
-### Company Response
-```javascript
+**Response:**
+```json
 {
-  "output": {
-    "CompanyInfo": {
-      "Id": "123456789",
-      "SyncToken": "0",
-      "CompanyName": "ABC Enterprises",
-      "LegalName": "ABC Enterprises LLC",
-      "CompanyAddr": {
-        "Id": "1",
-        "Line1": "123 Main Street",
-        "City": "Mountain View",
-        "CountrySubDivisionCode": "CA",
-        "PostalCode": "94043",
-        "Country": "US"
-      },
-      "Country": "US",
-      "Email": {
-        "Address": "info@abcenterprises.com"
-      },
-      "WebAddr": {
-        "URI": "https://www.abcenterprises.com"
-      },
-      "SupportedLanguages": "en",
-      "FiscalYearStartMonth": "January"
-    }
-  }
+  "CompanyInfo": {
+    "Id": "123456789",
+    "SyncToken": "0",
+    "CompanyName": "ABC Enterprises",
+    "LegalName": "ABC Enterprises LLC",
+    "CompanyAddr": {
+      "Id": "1",
+      "Line1": "123 Main Street",
+      "City": "Mountain View",
+      "CountrySubDivisionCode": "CA",
+      "PostalCode": "94043",
+      "Country": "US"
+    },
+    "Country": "US",
+    "Email": {
+      "Address": "info@abcenterprises.com"
+    },
+    "WebAddr": {
+      "URI": "https://www.abcenterprises.com"
+    },
+    "SupportedLanguages": "en",
+    "FiscalYearStartMonth": "January"
+  },
+  "time": "2023-09-15T14:30:00Z"
 }
 ```
-
-## Customer Management
 
 ### Create Customer
-```javascript
-// POST company/{REALM_ID}/customer
-{
-  "DisplayName": "John Smith",
-  "PrimaryEmailAddr": {
-    "Address": "john.smith@example.com"
-  },
-  "PrimaryPhone": {
-    "FreeFormNumber": "555-555-5555"
-  },
-  "BillAddr": {
-    "Line1": "123 Main Street",
-    "City": "San Francisco",
-    "CountrySubDivisionCode": "CA",
-    "PostalCode": "94105",
-    "Country": "US"
-  }
-}
+Create a new customer in QuickBooks
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `display-name` (required) - Customer display name
+- `email` (optional) - Customer email address
+- `phone` (optional) - Customer phone number
+- `address-line1` (optional) - Address line 1
+- `city` (optional) - City
+- `state` (optional) - State/province
+- `postal-code` (optional) - Postal/ZIP code
+- `country` (optional) - Country code
+
+**Example:**
+```
+/your-quickbooks-connection
+action: create-customer
+realm-id: 123456789
+display-name: John Smith
+email: john.smith@example.com
+phone: 555-555-5555
+address-line1: 123 Main Street
+city: San Francisco
+state: CA
+postal-code: 94105
+country: US
 ```
 
-### Customer Response
-```javascript
+**Response:**
+```json
 {
-  "output": {
-    "Customer": {
-      "Id": "1234",
-      "SyncToken": "0",
-      "DisplayName": "John Smith",
-      "PrimaryEmailAddr": {
-        "Address": "john.smith@example.com"
-      },
-      "PrimaryPhone": {
-        "FreeFormNumber": "555-555-5555"
-      },
-      "BillAddr": {
-        "Id": "567",
-        "Line1": "123 Main Street",
-        "City": "San Francisco",
-        "CountrySubDivisionCode": "CA",
-        "PostalCode": "94105",
-        "Country": "US"
-      },
-      "Active": true,
-      "MetaData": {
-        "CreateTime": "2023-09-15T14:45:00Z",
-        "LastUpdatedTime": "2023-09-15T14:45:00Z"
-      }
-    }
-  }
+  "Customer": {
+    "Id": "1234",
+    "SyncToken": "0",
+    "DisplayName": "John Smith",
+    "PrimaryEmailAddr": {
+      "Address": "john.smith@example.com"
+    },
+    "PrimaryPhone": {
+      "FreeFormNumber": "555-555-5555"
+    },
+    "BillAddr": {
+      "Id": "567",
+      "Line1": "123 Main Street",
+      "City": "San Francisco",
+      "CountrySubDivisionCode": "CA",
+      "PostalCode": "94105",
+      "Country": "US"
+    },
+    "Active": true,
+    "MetaData": {
+      "CreateTime": "2023-09-15T14:45:00Z",
+      "LastUpdatedTime": "2023-09-15T14:45:00Z"
+    },
+    "domain": "QBO",
+    "sparse": false
+  },
+  "time": "2023-09-15T14:45:00Z"
 }
 ```
 
 ### Update Customer
-```javascript
+Update an existing customer's information
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `customer-id` (required) - Customer ID to update
+- `sync-token` (required) - Current sync token value
+- `display-name` (optional) - Updated display name
+- `email` (optional) - Updated email address
+- `phone` (optional) - Updated phone number
+- `address-line1` (optional) - Updated address line 1
+- `city` (optional) - Updated city
+- `state` (optional) - Updated state/province
+- `postal-code` (optional) - Updated postal/ZIP code
+
+**Example:**
+```
+/your-quickbooks-connection
+action: update-customer
+realm-id: 123456789
+customer-id: 1234
+sync-token: 0
+display-name: John A. Smith
+address-line1: 456 Market Street
+city: San Francisco
+state: CA
+postal-code: 94105
+```
+
+**Response:**
+```json
 {
-  "Id": "1234",
-  "SyncToken": "0",
-  "DisplayName": "John A. Smith",
-  "PrimaryEmailAddr": {
-    "Address": "john.smith@example.com"
+  "Customer": {
+    "Id": "1234",
+    "SyncToken": "1",
+    "DisplayName": "John A. Smith",
+    "PrimaryEmailAddr": {
+      "Address": "john.smith@example.com"
+    },
+    "PrimaryPhone": {
+      "FreeFormNumber": "555-555-5555"
+    },
+    "BillAddr": {
+      "Id": "567",
+      "Line1": "456 Market Street",
+      "City": "San Francisco",
+      "CountrySubDivisionCode": "CA",
+      "PostalCode": "94105",
+      "Country": "US"
+    },
+    "Active": true,
+    "MetaData": {
+      "CreateTime": "2023-09-15T14:45:00Z",
+      "LastUpdatedTime": "2023-09-15T15:00:00Z"
+    },
+    "domain": "QBO",
+    "sparse": false
   },
-  "BillAddr": {
-    "Id": "567",
-    "Line1": "456 Market Street",
-    "City": "San Francisco",
-    "CountrySubDivisionCode": "CA",
-    "PostalCode": "94105",
-    "Country": "US"
+  "time": "2023-09-15T15:00:00Z"
+}
+```
+
+### Get Customer
+Retrieve a customer by ID
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `customer-id` (required) - Customer ID to retrieve
+
+**Example:**
+```
+/your-quickbooks-connection
+action: get-customer
+realm-id: 123456789
+customer-id: 1234
+```
+
+**Response:**
+```json
+{
+  "Customer": {
+    "Id": "1234",
+    "SyncToken": "1",
+    "DisplayName": "John A. Smith",
+    "PrimaryEmailAddr": {
+      "Address": "john.smith@example.com"
+    },
+    "PrimaryPhone": {
+      "FreeFormNumber": "555-555-5555"
+    },
+    "BillAddr": {
+      "Id": "567",
+      "Line1": "456 Market Street",
+      "City": "San Francisco",
+      "CountrySubDivisionCode": "CA",
+      "PostalCode": "94105",
+      "Country": "US"
+    },
+    "Active": true,
+    "MetaData": {
+      "CreateTime": "2023-09-15T14:45:00Z",
+      "LastUpdatedTime": "2023-09-15T15:00:00Z"
+    },
+    "domain": "QBO",
+    "sparse": false
   },
-  "sparse": true
+  "time": "2023-09-15T15:15:00Z"
 }
 ```
 
 ### List Customers
-```javascript
-const url = QUICKBOOKS_URL + `company/${REALM_ID}/query?query=select * from Customer`;
+Retrieve a list of customers
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+
+**Example:**
+```
+/your-quickbooks-connection
+action: list-customers
+realm-id: 123456789
 ```
 
-### Customers List Response
-```javascript
+**Response:**
+```json
 {
-  "output": {
-    "QueryResponse": {
-      "Customer": [
-        {
-          "Id": "1234",
-          "DisplayName": "John A. Smith",
-          "PrimaryEmailAddr": {
-            "Address": "john.smith@example.com"
-          },
-          "Active": true
+  "QueryResponse": {
+    "Customer": [
+      {
+        "Id": "1234",
+        "DisplayName": "John A. Smith",
+        "PrimaryEmailAddr": {
+          "Address": "john.smith@example.com"
         },
-        {
-          "Id": "5678",
-          "DisplayName": "Jane Doe",
-          "PrimaryEmailAddr": {
-            "Address": "jane.doe@example.com"
-          },
-          "Active": true
-        }
-      ],
-      "startPosition": 1,
-      "maxResults": 2,
-      "totalCount": 2
-    }
-  }
+        "Active": true
+      },
+      {
+        "Id": "5678",
+        "DisplayName": "Jane Doe",
+        "PrimaryEmailAddr": {
+          "Address": "jane.doe@example.com"
+        },
+        "Active": true
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 2,
+    "totalCount": 2
+  },
+  "time": "2023-09-15T15:30:00Z"
 }
 ```
-
-## Invoice Management
 
 ### Create Invoice
-```javascript
-// POST company/{REALM_ID}/invoice
-{
-  "Line": [
-    {
-      "Amount": 100.00,
-      "DetailType": "SalesItemLineDetail",
-      "SalesItemLineDetail": {
-        "ItemRef": {
-          "value": "1",
-          "name": "Services"
-        }
-      }
-    }
-  ],
-  "CustomerRef": {
-    "value": "1234"
-  },
-  "BillEmail": {
-    "Address": "john.smith@example.com"
-  },
-  "TxnDate": "2023-09-15"
-}
+Create a new invoice for a customer
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `customer-id` (required) - Customer ID to invoice
+- `amount` (required) - Invoice amount
+- `item-name` (optional) - Service/product name
+- `item-id` (optional) - Service/product ID
+- `bill-email` (optional) - Email for billing
+- `txn-date` (optional) - Transaction date
+
+**Example:**
+```
+/your-quickbooks-connection
+action: create-invoice
+realm-id: 123456789
+customer-id: 1234
+amount: 100.00
+item-name: Services
+item-id: 1
+bill-email: john.smith@example.com
+txn-date: 2023-09-15
 ```
 
-### Invoice Response
-```javascript
+**Response:**
+```json
 {
-  "output": {
-    "Invoice": {
-      "Id": "9876",
-      "SyncToken": "0",
-      "Line": [
-        {
-          "Id": "1",
-          "LineNum": 1,
-          "Amount": 100.00,
-          "DetailType": "SalesItemLineDetail",
-          "SalesItemLineDetail": {
-            "ItemRef": {
-              "value": "1",
-              "name": "Services"
-            }
+  "Invoice": {
+    "Id": "9876",
+    "SyncToken": "0",
+    "Line": [
+      {
+        "Id": "1",
+        "LineNum": 1,
+        "Amount": 100.00,
+        "DetailType": "SalesItemLineDetail",
+        "SalesItemLineDetail": {
+          "ItemRef": {
+            "value": "1",
+            "name": "Services"
           }
         }
-      ],
-      "CustomerRef": {
-        "value": "1234",
-        "name": "John A. Smith"
-      },
-      "BillEmail": {
-        "Address": "john.smith@example.com"
-      },
-      "TxnDate": "2023-09-15",
-      "TotalAmt": 100.00,
-      "Balance": 100.00,
-      "MetaData": {
-        "CreateTime": "2023-09-15T16:00:00Z",
-        "LastUpdatedTime": "2023-09-15T16:00:00Z"
       }
-    }
-  }
+    ],
+    "CustomerRef": {
+      "value": "1234",
+      "name": "John A. Smith"
+    },
+    "BillEmail": {
+      "Address": "john.smith@example.com"
+    },
+    "TxnDate": "2023-09-15",
+    "TotalAmt": 100.00,
+    "Balance": 100.00,
+    "MetaData": {
+      "CreateTime": "2023-09-15T16:00:00Z",
+      "LastUpdatedTime": "2023-09-15T16:00:00Z"
+    },
+    "domain": "QBO"
+  },
+  "time": "2023-09-15T16:00:00Z"
 }
 ```
 
 ### Get Invoice
-```javascript
-const url = QUICKBOOKS_URL + `company/${REALM_ID}/invoice/${INVOICE_ID}`;
+Retrieve an invoice by ID
+
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `invoice-id` (required) - Invoice ID to retrieve
+
+**Example:**
+```
+/your-quickbooks-connection
+action: get-invoice
+realm-id: 123456789
+invoice-id: 9876
 ```
 
-## Payment Processing
-
-### Create Payment
-```javascript
-// POST company/{REALM_ID}/payment
+**Response:**
+```json
 {
-  "CustomerRef": {
-    "value": "1234"
-  },
-  "TotalAmt": 100.00,
-  "Line": [
-    {
-      "Amount": 100.00,
-      "LinkedTxn": [
-        {
-          "TxnId": "9876",
-          "TxnType": "Invoice"
-        }
-      ]
-    }
-  ],
-  "PaymentMethodRef": {
-    "value": "3"
-  },
-  "TxnDate": "2023-09-16"
-}
-```
-
-### Payment Response
-```javascript
-{
-  "output": {
-    "Payment": {
-      "Id": "5432",
-      "SyncToken": "0",
-      "CustomerRef": {
-        "value": "1234",
-        "name": "John A. Smith"
-      },
-      "TotalAmt": 100.00,
-      "Line": [
-        {
-          "Amount": 100.00,
-          "LinkedTxn": [
-            {
-              "TxnId": "9876",
-              "TxnType": "Invoice"
-            }
-          ]
-        }
-      ],
-      "PaymentMethodRef": {
-        "value": "3",
-        "name": "Credit Card"
-      },
-      "TxnDate": "2023-09-16",
-      "MetaData": {
-        "CreateTime": "2023-09-16T10:00:00Z",
-        "LastUpdatedTime": "2023-09-16T10:00:00Z"
-      }
-    }
-  }
-}
-```
-
-## Vendor Management
-
-### Create Vendor
-```javascript
-// POST company/{REALM_ID}/vendor
-{
-  "DisplayName": "Office Supplies Co.",
-  "PrimaryEmailAddr": {
-    "Address": "contact@officesupplies.com"
-  },
-  "PrimaryPhone": {
-    "FreeFormNumber": "555-123-4567"
-  },
-  "BillAddr": {
-    "Line1": "789 Supply St",
-    "City": "Chicago",
-    "CountrySubDivisionCode": "IL",
-    "PostalCode": "60601",
-    "Country": "US"
-  }
-}
-```
-
-### Vendor Response
-```javascript
-{
-  "output": {
-    "Vendor": {
-      "Id": "2468",
-      "SyncToken": "0",
-      "DisplayName": "Office Supplies Co.",
-      "PrimaryEmailAddr": {
-        "Address": "contact@officesupplies.com"
-      },
-      "PrimaryPhone": {
-        "FreeFormNumber": "555-123-4567"
-      },
-      "BillAddr": {
-        "Id": "789",
-        "Line1": "789 Supply St",
-        "City": "Chicago",
-        "CountrySubDivisionCode": "IL",
-        "PostalCode": "60601",
-        "Country": "US"
-      },
-      "Active": true,
-      "MetaData": {
-        "CreateTime": "2023-09-16T11:00:00Z",
-        "LastUpdatedTime": "2023-09-16T11:00:00Z"
-      }
-    }
-  }
-}
-```
-
-## Entity Properties
-
-### Common Fields
-- **Id**: Unique identifier
-- **SyncToken**: Version control token
-- **DisplayName**: Entity display name
-- **Active**: Active status
-- **MetaData**: Creation and update timestamps
-
-### Address Structure
-```javascript
-{
-  "Id": "567",
-  "Line1": "123 Main Street",
-  "Line2": "Suite 100",
-  "City": "San Francisco",
-  "CountrySubDivisionCode": "CA",
-  "PostalCode": "94105",
-  "Country": "US"
-}
-```
-
-### Contact Information
-```javascript
-{
-  "PrimaryEmailAddr": {
-    "Address": "contact@example.com"
-  },
-  "PrimaryPhone": {
-    "FreeFormNumber": "555-123-4567"
-  },
-  "Mobile": {
-    "FreeFormNumber": "555-987-6543"
-  }
-}
-```
-
-## Query Operations
-
-### Query Syntax
-```javascript
-// Basic query
-const query = "select * from Customer";
-
-// Filtered query
-const query = "select * from Customer where Active = true";
-
-// Ordered query
-const query = "select * from Invoice order by TxnDate desc";
-
-// Limited query
-const query = "select * from Customer maxresults 10";
-```
-
-### Common Queries
-```javascript
-// Active customers
-"select * from Customer where Active = true"
-
-// Recent invoices
-"select * from Invoice where TxnDate > '2023-01-01'"
-
-// Unpaid invoices
-"select * from Invoice where Balance > 0"
-
-// Vendors by name
-"select * from Vendor where DisplayName like '%Office%'"
-```
-
-## Connection Requirements
-
-### PinkConnect Setup
-- Uses PC_BASE_URL + v3/ endpoint
-- Requires QuickBooks connection ID
-- OAuth 2.0 authentication
-- Realm ID for company access
-
-### Authentication Headers
-```javascript
-const headers = {
-  'Authorization': `Bearer ${BEARER_TOKEN}`,
-  'Content-Type': 'application/json',
-  'Premium-Id': config.paragonIntegrations.pinkfishpremiumskills
-};
-```
-
-## Best Practices
-
-1. **Data Management**
-   - Always include SyncToken for updates
-   - Validate required fields
-   - Handle sparse updates properly
-   - Use appropriate date formats
-
-2. **Error Handling**
-   - Check for validation errors
-   - Handle authentication failures
-   - Implement retry logic
-   - Log important operations
-
-3. **Performance**
-   - Use specific queries instead of broad selects
-   - Implement pagination for large datasets
-   - Cache frequently accessed data
-   - Monitor API rate limits
-
-4. **Security**
-   - Protect authentication tokens
-   - Validate input data
-   - Use HTTPS connections
-   - Implement proper access controls
-
-## Common Use Cases
-
-### Automated Invoicing
-```
-/quickbooks create monthly recurring invoices for all active customers
-```
-
-### Payment Tracking
-```
-/quickbooks record credit card payment for invoice and update status
-```
-
-### Customer Onboarding
-```
-/quickbooks create new customer profile with complete contact details
-```
-
-### Financial Reporting
-```
-/quickbooks generate accounts receivable report for this month
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid Realm ID
-- Missing SyncToken for updates
-- Validation errors
-- Authentication failures
-- Rate limit exceeded
-
-### Error Response
-```javascript
-{
-  "Fault": {
-    "Error": [
+  "Invoice": {
+    "Id": "9876",
+    "SyncToken": "0",
+    "Line": [
       {
-        "code": "ValidationFault",
-        "Detail": "Required field DisplayName is missing",
-        "element": "Customer"
+        "Id": "1",
+        "LineNum": 1,
+        "Amount": 100.00,
+        "DetailType": "SalesItemLineDetail",
+        "SalesItemLineDetail": {
+          "ItemRef": {
+            "value": "1",
+            "name": "Services"
+          }
+        }
       }
     ],
-    "type": "ValidationFault"
-  }
+    "CustomerRef": {
+      "value": "1234",
+      "name": "John A. Smith"
+    },
+    "BillEmail": {
+      "Address": "john.smith@example.com"
+    },
+    "TxnDate": "2023-09-15",
+    "TotalAmt": 100.00,
+    "Balance": 100.00,
+    "MetaData": {
+      "CreateTime": "2023-09-15T16:00:00Z",
+      "LastUpdatedTime": "2023-09-15T16:00:00Z"
+    },
+    "domain": "QBO"
+  },
+  "time": "2023-09-15T16:15:00Z"
 }
 ```
 
-## Data Validation
+### Create Payment
+Record a payment for an invoice
 
-### Required Fields
-- **Customer**: DisplayName
-- **Invoice**: CustomerRef, Line items
-- **Payment**: CustomerRef, TotalAmt
-- **Vendor**: DisplayName
+**Parameters:**
+- `realm-id` (required) - QuickBooks company realm ID
+- `customer-id` (required) - Customer ID making payment
+- `invoice-id` (required) - Invoice ID being paid
+- `amount` (required) - Payment amount
+- `payment-method-id` (optional) - Payment method reference ID
+- `txn-date` (optional) - Transaction date
 
-### Field Constraints
-- Email addresses must be valid format
-- Phone numbers should be properly formatted
-- Dates must be in YYYY-MM-DD format
-- Amounts must be numeric values
+**Example:**
+```
+/your-quickbooks-connection
+action: create-payment
+realm-id: 123456789
+customer-id: 1234
+invoice-id: 9876
+amount: 100.00
+payment-method-id: 3
+txn-date: 2023-09-16
+```
 
-## Integration Tips
+**Response:**
+```json
+{
+  "Payment": {
+    "Id": "5432",
+    "SyncToken": "0",
+    "CustomerRef": {
+      "value": "1234",
+      "name": "John A. Smith"
+    },
+    "TotalAmt": 100.00,
+    "Line": [
+      {
+        "Amount": 100.00,
+        "LinkedTxn": [
+          {
+            "TxnId": "9876",
+            "TxnType": "Invoice"
+          }
+        ]
+      }
+    ],
+    "PaymentMethodRef": {
+      "value": "3",
+      "name": "Cash"
+    },
+    "TxnDate": "2023-09-16",
+    "MetaData": {
+      "CreateTime": "2023-09-16T09:00:00Z",
+      "LastUpdatedTime": "2023-09-16T09:00:00Z"
+    },
+    "domain": "QBO"
+  },
+  "time": "2023-09-16T09:00:00Z"
+}
+```
 
-### Workflow Automation
-- Set up automated invoice generation
-- Implement payment reminders
-- Create customer onboarding flows
-- Automate financial reporting
+## Notes
 
-### Data Synchronization
-- Sync customer data with CRM
-- Update inventory from invoices
-- Reconcile payments automatically
-- Generate financial dashboards
-
-## Tips
-- Always include required headers for authentication
-- Use SyncToken for all update operations
-- Validate data formats before sending requests
-- Implement proper error handling for API failures
-- Cache entity IDs to improve performance
-- Use sparse updates to modify only changed fields
-- Monitor rate limits to avoid service interruptions 
+QuickBooks API requires a realm ID (company ID) for all operations. Premium operations require Authorization Bearer token and Premium-Id headers. SyncToken values are required for update operations to maintain data consistency. Payment methods include Cash, Check, Credit Card, and other configured options. All monetary amounts are in the company's base currency. 

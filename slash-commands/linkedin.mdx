@@ -1,147 +1,269 @@
 ---
-title: "LinkedIn Command Guide"
-description: "Learn how to use the LinkedIn slash command to manage your professional network"
+title: "LinkedIn Guide"
+description: "With LinkedIn, manage your professional network."
 ---
 
-The `/linkedin` command enables you to interact with LinkedIn's professional network. Perfect for:
+## What can you do with it?
 
-- Sharing posts and updates
-- Managing company pages
-- Searching for organizations
-- Viewing connections
-- Posting job openings
+Manage your professional network with LinkedIn, including sharing posts, searching companies, creating company page posts, getting organization followers, posting job openings, and managing connections for comprehensive professional networking and recruitment activities.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with LinkedIn:
-
+### Basic Command Structure
 ```
-/linkedin share post "Excited to announce our new product launch!"
+/your-linkedin-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (get-profile, share-post, search-company, create-company-post, get-followers, post-job, get-connections)
+
+**Optional:**
+
+- `profile-id` - LinkedIn profile ID
+- `post-content` - Content for posts
+- `company-name` - Company name for search
+- `organization-id` - Organization ID
+- `job-title` - Job title for posting
+- `job-description` - Job description
+- `location` - Job location
+
+## Tools
+
+### Get User Profile
+Identify and retrieve the authenticated user's profile information
+
+**Parameters:**
+- No parameters required for current user profile
+
+**Example:**
 ```
-/linkedin search company "Microsoft Corporation"
-```
-
-```
-/linkedin get my profile information
-```
-
-## Key Features
-
-### Profile Management
-- Get user profile info
-- Access profile ID
-- View profile picture
-- Check email address
-- Retrieve full name
-
-### Content Sharing
-- Create personal posts
-- Share updates publicly
-- Add commentary
-- Set visibility options
-- Track post creation
-
-### Company Operations
-- Search for companies
-- Create company posts
-- Check follower count
-- Access organization IDs
-- Share company updates
-
-### Professional Networking
-- View connections
-- Check connection dates
-- Access mini profiles
-- Browse network
-- Monitor relationships
-
-### Job Posting
-- Create job listings
-- Set employment type
-- Specify location
-- Define experience level
-- Track posting status
-
-## Example Commands
-
-### Share a Post
-```
-/linkedin create post "Just completed an amazing project! #innovation"
+/your-linkedin-connection
+action: get-profile
 ```
 
-### Search Companies
-```
-/linkedin find companies matching "Tech startups"
-```
-
-### Get Profile Info
-```
-/linkedin show my profile details
-```
-
-### Company Page Post
-```
-/linkedin post to company 123456 "We're hiring! Check out our open positions"
+**Response:**
+```json
+{
+  "sub": "E0AVmS9A12",
+  "name": "John Doe",
+  "given_name": "John",
+  "family_name": "Doe",
+  "picture": "https://media.licdn.com/dms/image/C4D03AQGTPFGPXYZ123/profile-displayphoto-shrink_200_200/0?e=1612396800&v=beta&t=abcdefghijk",
+  "email": "johndoe@example.com"
+}
 ```
 
-### View Connections
+### Share Post
+Share a post on LinkedIn to your network
+
+**Parameters:**
+- `profile-id` (required) - LinkedIn profile ID
+- `post-content` (required) - Text content for the post
+- `visibility` (optional) - Post visibility (PUBLIC, CONNECTIONS)
+- `media-category` (optional) - Media category (NONE, ARTICLE, IMAGE)
+
+**Example:**
 ```
-/linkedin show my first 50 connections
+/your-linkedin-connection
+action: share-post
+profile-id: E0AVmS9A12
+post-content: Excited to share this update!
+visibility: PUBLIC
+media-category: NONE
+```
+
+**Response:**
+```json
+{
+  "id": "urn:li:share:6789012345",
+  "created": {
+    "time": 1634567890000
+  }
+}
+```
+
+### Search Company
+Search for companies to find organization information and IDs
+
+**Parameters:**
+- `company-name` (required) - Name of the company to search for
+- `limit` (optional) - Number of results to return (default: 10)
+
+**Example:**
+```
+/your-linkedin-connection
+action: search-company
+company-name: LinkedIn Corporation
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "elements": [
+    {
+      "entity~": {
+        "vanityName": "linked-it"
+      },
+      "entity": "urn:li:organization:1032984"
+    },
+    {
+      "entity~": {
+        "vanityName": "linked"
+      },
+      "entity": "urn:li:organization:1333387"
+    }
+  ],
+  "paging": {
+    "total": 12991,
+    "count": 10,
+    "start": 0
+  }
+}
+```
+
+### Create Company Post
+Create a post on behalf of a company page
+
+**Parameters:**
+- `organization-id` (required) - Organization ID
+- `post-title` (required) - Title of the post
+- `post-content` (required) - Text content of the post
+- `post-subject` (required) - Subject of the post
+- `content-url` (optional) - URL to link in the post
+- `thumbnail-url` (optional) - Thumbnail image URL
+
+**Example:**
+```
+/your-linkedin-connection
+action: create-company-post
+organization-id: 123456
+post-title: New Blog Post
+post-content: We're excited to share our latest insights on industry trends...
+post-subject: Check out our latest blog post
+content-url: https://www.example.com/blog
+thumbnail-url: https://www.example.com/image.jpg
+```
+
+**Response:**
+```json
+{
+  "activity": "urn:li:activity:6789012345",
+  "id": "urn:li:share:6789012345"
+}
+```
+
+### Get Organization Followers
+Retrieve follower count for an organization
+
+**Parameters:**
+- `organization-id` (required) - Organization ID to get followers for
+
+**Example:**
+```
+/your-linkedin-connection
+action: get-followers
+organization-id: 123456
+```
+
+**Response:**
+```json
+{
+  "elements": [
+    {
+      "entityUrn": "urn:li:fs_followingInfo:urn:li:organization:123456",
+      "followerCount": 5000,
+      "followingInfo": {
+        "followerCount": 5000,
+        "followingType": "Organization"
+      }
+    }
+  ]
+}
 ```
 
 ### Post Job Opening
+Post a job opening on LinkedIn
+
+**Parameters:**
+- `company-id` (required) - Company ID posting the job
+- `job-title` (required) - Title of the job position
+- `job-description` (required) - Description of the job
+- `location-country` (required) - Country code (e.g., US)
+- `location-city` (required) - City name
+- `employment-status` (optional) - Employment type (FULL_TIME, PART_TIME, CONTRACT)
+- `experience-level` (optional) - Experience level (ENTRY_LEVEL, MID_SENIOR, SENIOR, EXECUTIVE)
+- `job-function` (optional) - Job function category (ENGINEERING, MARKETING, SALES)
+
+**Example:**
 ```
-/linkedin post job "Senior Developer" at company 123456 in San Francisco
+/your-linkedin-connection
+action: post-job
+company-id: 123456
+job-title: Senior Software Engineer
+job-description: We are looking for an experienced software engineer...
+location-country: US
+location-city: San Francisco
+employment-status: FULL_TIME
+experience-level: SENIOR
+job-function: ENGINEERING
 ```
 
-## Post Visibility Options
+**Response:**
+```json
+{
+  "id": "3456789",
+  "jobPosting": {
+    "title": "Senior Software Engineer",
+    "companyId": 123456,
+    "status": "ACTIVE"
+  }
+}
+```
 
-- **PUBLIC**: Visible to everyone
-- **CONNECTIONS**: Only connections can see
-- **PRIVATE**: Limited visibility
+### Get Connections
+Retrieve your LinkedIn connections information
 
-## Company Search Results
+**Parameters:**
+- `start` (optional) - Starting index for pagination (default: 0)
+- `count` (optional) - Number of connections to return (default: 50)
 
-Returns information including:
-- Organization ID (URN format)
-- Vanity name
-- Total results count
-- Pagination links
+**Example:**
+```
+/your-linkedin-connection
+action: get-connections
+start: 0
+count: 50
+```
 
-## Connection Information
+**Response:**
+```json
+{
+  "elements": [
+    {
+      "miniProfile": {
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "occupation": "Product Manager",
+        "entityUrn": "urn:li:fs_miniProfile:ABC123def456"
+      },
+      "connectionInfo": {
+        "connected": true,
+        "connectionDate": 1634567890000
+      }
+    }
+  ],
+  "paging": {
+    "count": 50,
+    "start": 0,
+    "total": 500
+  }
+}
+```
 
-Connection data includes:
-- First and last name
-- Current occupation
-- Connection date
-- Profile URN
-- Connection status
+## Notes
 
-## Job Posting Fields
-
-### Employment Status
-- **FULL_TIME**: Full-time position
-- **PART_TIME**: Part-time role
-- **CONTRACT**: Contract work
-- **INTERNSHIP**: Internship position
-
-### Experience Levels
-- **ENTRY**: Entry level
-- **MID**: Mid-level
-- **SENIOR**: Senior level
-- **EXECUTIVE**: Executive position
-
-### Functions
-- **ENGINEERING**: Technical roles
-- **MARKETING**: Marketing positions
-- **SALES**: Sales roles
-- **HR**: Human resources
-
-## Tips
-- Use URN format for organization/person IDs
-- Include hashtags in posts for visibility
-- Check vanity names when searching companies
-- Set appropriate visibility for posts
-- Use pagination for large result sets 
+LinkedIn uses URN (Uniform Resource Name) format for entity identification. Profile IDs are required for most operations and can be obtained from the get-profile endpoint. Company searches return organization URNs that can be used for posting and follower operations. Job postings require valid company IDs and location information. Connection data includes pagination for large contact lists. 

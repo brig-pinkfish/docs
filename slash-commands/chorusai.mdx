@@ -1,257 +1,223 @@
 ---
-title: "Chorus.ai Command Guide"
-description: "Learn how to use the Chorus.ai slash command to analyze sales calls and meetings"
+title: "Chorus.ai Guide"
+description: "With Chorus.ai, record, transcribe, and analyze sales calls and meetings."
 ---
 
-The `/chorusai` command enables you to access conversation intelligence from Chorus.ai. Perfect for:
+## What can you do with it?
 
-- Analyzing sales call recordings
-- Reviewing conversation transcripts
-- Tracking talk ratios and insights
-- Managing playlists
-- Adding comments to calls
+Record, transcribe, and analyze sales calls and meetings with Chorus.ai, including retrieving current user information, listing conversations, getting conversation details with transcripts, creating comments on conversations, and managing playlists for comprehensive conversation intelligence and sales analytics.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Chorus.ai:
-
+### Basic Command Structure
 ```
-/chorusai list all recent conversations
+/your-chorusai-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (get-current-user, list-conversations, get-conversation, create-comment, list-playlists)
+
+**Optional:**
+
+- `conversation-id` - Chorus.ai conversation ID
+- `comment-text` - Comment text content
+- `comment-timestamp` - Timestamp for comment placement
+- `comment-visibility` - Comment visibility (team, private)
+- `page-size` - Number of items per page
+- `page-number` - Page number for pagination
+
+## Tools
+
+### Get Current User
+Retrieve the current user's Chorus.ai information
+
+**Parameters:**
+- No parameters required
+
+**Example:**
 ```
-/chorusai get transcript for conversation "conv_xyz789"
+/your-chorusai-connection
+action: get-current-user
 ```
 
+**Response:**
+```json
+{
+  "id": "user_123abc",
+  "email": "user@company.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "admin",
+  "createdAt": "2023-01-15T08:30:00Z",
+  "updatedAt": "2024-01-20T14:25:33Z"
+}
 ```
-/chorusai add comment "Great objection handling" to call at timestamp 15:30
-```
-
-## Key Features
-
-### Conversation Management
-- List all conversations
-- Get conversation details
-- View transcripts
-- Access call metadata
-- Track call status
-
-### Analytics & Insights
-- Talk ratio analysis
-- Keyword extraction
-- Performance metrics
-- Call scoring
-- Trend analysis
-
-### Collaboration
-- Add timestamped comments
-- Create playlists
-- Share insights
-- Team visibility
-- Call reviews
-
-### User Management
-- View user profile
-- Check permissions
-- Access team data
-- Role management
-
-## Example Commands
 
 ### List Conversations
+Retrieve a list of conversations with pagination
+
+**Parameters:**
+- `page-size` (optional) - Number of conversations per page (default: 25)
+- `page-number` (optional) - Page number (default: 1)
+
+**Example:**
 ```
-/chorusai show all conversations from last week
+/your-chorusai-connection
+action: list-conversations
+page-size: 25
+page-number: 1
 ```
 
-### Get Call Details
-```
-/chorusai get full details for conversation "conv_xyz789"
+**Response:**
+```json
+{
+  "conversations": [
+    {
+      "id": "conv_xyz789",
+      "title": "Sales Call with Acme Corp",
+      "startTime": "2024-02-01T15:00:00Z",
+      "duration": 3600,
+      "status": "completed",
+      "participants": [
+        {
+          "id": "user_123abc",
+          "name": "John Doe",
+          "email": "john@company.com",
+          "role": "host"
+        }
+      ],
+      "metadata": {
+        "dealSize": "$50000",
+        "stage": "discovery"
+      }
+    }
+  ],
+  "pagination": {
+    "totalCount": 150,
+    "pageSize": 25,
+    "currentPage": 1
+  }
+}
 ```
 
-### View Transcript
+### Get Conversation
+Retrieve detailed information for a specific conversation including transcript and insights
+
+**Parameters:**
+- `conversation-id` (required) - Chorus.ai conversation ID
+
+**Example:**
 ```
-/chorusai show transcript for call "conv_xyz789" with speaker names
+/your-chorusai-connection
+action: get-conversation
+conversation-id: conv_xyz789
 ```
 
-### Add Comment
+**Response:**
+```json
+{
+  "id": "conv_xyz789",
+  "title": "Sales Call with Acme Corp",
+  "startTime": "2024-02-01T15:00:00Z",
+  "endTime": "2024-02-01T16:00:00Z",
+  "duration": 3600,
+  "status": "completed",
+  "transcript": {
+    "segments": [
+      {
+        "id": "seg_001",
+        "speakerId": "user_123abc",
+        "speakerName": "John Doe",
+        "startTime": 0,
+        "endTime": 15,
+        "text": "Hi everyone, thanks for joining today's call."
+      }
+    ]
+  },
+  "insights": {
+    "talkRatio": {
+      "rep": 0.4,
+      "customer": 0.6
+    },
+    "keywords": [
+      "pricing",
+      "implementation",
+      "timeline"
+    ]
+  }
+}
 ```
-/chorusai add comment "Excellent discovery questions" to call "conv_xyz789" at 15:30
+
+### Create Comment
+Add a comment to a specific conversation at a given timestamp
+
+**Parameters:**
+- `conversation-id` (required) - Chorus.ai conversation ID
+- `comment-text` (required) - Comment text content
+- `comment-timestamp` (required) - Timestamp in seconds for comment placement
+- `comment-visibility` (optional) - Comment visibility (team, private, default: team)
+
+**Example:**
+```
+/your-chorusai-connection
+action: create-comment
+conversation-id: conv_xyz789
+comment-text: Great discovery of pain points at 15:30
+comment-timestamp: 930
+comment-visibility: team
+```
+
+**Response:**
+```json
+{
+  "id": "comment_456def",
+  "text": "Great discovery of pain points at 15:30",
+  "timestamp": 930,
+  "visibility": "team",
+  "createdBy": "user_123abc",
+  "createdAt": "2024-02-01T16:30:00Z"
+}
 ```
 
 ### List Playlists
+Retrieve a list of playlists for organizing conversations
+
+**Parameters:**
+- `page-size` (optional) - Number of playlists per page (default: 10)
+- `page-number` (optional) - Page number (default: 1)
+
+**Example:**
 ```
-/chorusai show all playlists for training purposes
-```
-
-### Get User Info
-```
-/chorusai show my user profile and permissions
-```
-
-## Conversation Data
-
-### Basic Properties
-- **id**: Unique conversation ID
-- **title**: Call title/subject
-- **startTime**: Call start timestamp
-- **duration**: Call length in seconds
-- **status**: completed/in-progress/failed
-
-### Participants
-- **id**: User identifier
-- **name**: Participant name
-- **email**: Contact email
-- **role**: host/attendee/guest
-
-### Metadata
-- Deal information
-- Sales stage
-- Custom fields
-- Tags and labels
-
-## Transcript Structure
-
-### Segments
-- **speakerId**: Who spoke
-- **speakerName**: Speaker's name
-- **startTime**: Segment start (seconds)
-- **endTime**: Segment end (seconds)
-- **text**: Spoken content
-
-### Navigation
-- Search by keyword
-- Jump to timestamps
-- Filter by speaker
-- Highlight key moments
-
-## Insights & Analytics
-
-### Talk Ratio
-- **rep**: Sales rep talk percentage
-- **customer**: Customer talk percentage
-- Ideal ratios for different call types
-
-### Keywords
-- Automatically extracted topics
-- Custom keyword tracking
-- Competitive mentions
-- Product discussions
-
-### Performance Metrics
-- Call outcomes
-- Engagement scores
-- Question ratios
-- Next steps identified
-
-## Comment Management
-
-### Adding Comments
-- Specify exact timestamp
-- Choose visibility level
-- Tag team members
-- Reference key moments
-
-### Visibility Options
-- **team**: Visible to team
-- **private**: Personal notes
-- **public**: Organization-wide
-
-### Comment Features
-- Timestamp linking
-- Threaded discussions
-- Mention notifications
-- Search capabilities
-
-## Playlist Management
-
-### Playlist Types
-- Training materials
-- Best practices
-- Objection handling
-- Discovery calls
-- Closing techniques
-
-### Playlist Properties
-- **name**: Descriptive title
-- **description**: Purpose/content
-- **conversationCount**: Number of calls
-- **createdBy**: Playlist creator
-
-## Pagination
-
-### List Responses
-- **totalCount**: Total items
-- **pageSize**: Items per page
-- **currentPage**: Current page number
-
-### Navigation
-- Use page parameters
-- Handle large datasets
-- Maintain filters
-- Sort options
-
-## Search & Filtering
-
-### Conversation Filters
-- Date ranges
-- Participants
-- Call duration
-- Outcomes
-- Keywords
-
-### Advanced Search
-- Transcript content
-- Speaker ratios
-- Custom fields
-- Tags and labels
-
-## Best Practices
-
-1. **Regular Review**
-   - Schedule call reviews
-   - Track performance trends
-   - Identify coaching opportunities
-
-2. **Effective Commenting**
-   - Use specific timestamps
-   - Provide actionable feedback
-   - Share best practices
-
-3. **Playlist Curation**
-   - Organize by themes
-   - Update regularly
-   - Share with team
-
-4. **Analytics Usage**
-   - Monitor talk ratios
-   - Track keyword trends
-   - Measure improvements
-
-## Common Use Cases
-
-### Sales Coaching
-```
-/chorusai find calls with low rep talk ratio for coaching review
+/your-chorusai-connection
+action: list-playlists
+page-size: 10
+page-number: 1
 ```
 
-### Competitive Analysis
-```
-/chorusai search conversations mentioning competitor keywords
+**Response:**
+```json
+{
+  "playlists": [
+    {
+      "id": "playlist_789ghi",
+      "name": "Best Discovery Calls Q1 2024",
+      "description": "Top performing discovery calls from Q1",
+      "createdBy": "user_123abc",
+      "createdAt": "2024-01-05T09:00:00Z",
+      "conversationCount": 12
+    }
+  ],
+  "pagination": {
+    "totalCount": 5,
+    "pageSize": 10,
+    "currentPage": 1
+  }
+}
 ```
 
-### Training Materials
-```
-/chorusai create playlist of best discovery calls for new hire training
-```
+## Notes
 
-### Performance Review
-```
-/chorusai analyze talk ratios and outcomes for Q1 sales calls
-```
-
-## Tips
-- Use specific conversation IDs for accurate data retrieval
-- Leverage timestamps for precise commenting
-- Create themed playlists for different training needs
-- Monitor talk ratios to improve call effectiveness
-- Use keyword insights to track competitive mentions 
+Chorus.ai uses custom proxy integration through Paragon. Conversation IDs are alphanumeric identifiers for specific calls or meetings. Transcripts include speaker identification and timing information. Comments can be placed at specific timestamps within conversations. Talk ratio insights show speaking time distribution between participants. Keywords are automatically extracted from conversation content. Playlists help organize conversations by themes or criteria. 

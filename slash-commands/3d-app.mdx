@@ -1,76 +1,130 @@
 ---
-title: "3D App Command Guide"
-description: "Create interactive 3D web applications powered by Babylon.js"
+title: "3D App Guide"
+description: "Creates a 3D App."
 ---
 
 ## What can you do with it?
 
-The `/3d-app` command enables you to create complete, interactive 3D web applications using Babylon.js. You can build product viewers, configurators, educational models, architectural walkthroughs, and interactive 3D experiences that run directly in the browser with camera controls, lighting, materials, and animations.
+Create interactive 3D applications using Babylon.js that fulfill specific objectives, generating complete HTML, CSS, and JavaScript for functional 3D scenes including environments, objects, animations, lighting, and camera controls for immersive web-based 3D experiences.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/3d-app [scene-description]
+/your-3d-app-connection [action] [required-parameters] [optional-parameters]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `scene-description` - Detailed description of the 3D scene you want to create including objects, lighting, camera setup, and interactions
+- `action` - The operation to perform (create-3d-app)
 
 **Optional:**
 
-- `For model use file: [file-url]` - URL to a GLB/GLTF 3D model file to include in the scene
-- `Camera type: [camera-type]` - Specify camera type (ArcRotate, Free, Follow, Universal)
-- `Lighting: [lighting-setup]` - Custom lighting configuration
-- `Materials: [material-properties]` - Specific material and texture requirements
-- `Animations: [animation-details]` - Animation and interaction specifications
+- `app-description` - Description of the 3D application to create
+- `objects` - Objects to include in the scene
+- `animations` - Animation requirements
+- `lighting` - Lighting setup preferences
+- `camera-position` - Initial camera position
+- `environment` - Environment and background settings
+- `interactions` - User interaction requirements
 
-### Response Format
+## Tools
 
-The command returns:
+### Create 3D App
+Generate a complete 3D application using Babylon.js with specified requirements
+
+**Parameters:**
+- `app-description` (required) - Description of the 3D application to create
+- `objects` (optional) - Objects to include (spheres, cubes, planes, custom meshes)
+- `animations` (optional) - Animation specifications (rotation, movement, scaling)
+- `lighting` (optional) - Lighting setup (hemispheric, point, directional, spot)
+- `camera-position` (optional) - Initial camera position and controls
+- `environment` (optional) - Environment settings (skybox, ground, fog)
+- `interactions` (optional) - User interaction capabilities (mouse, touch, keyboard)
+
+**Example:**
+```
+/your-3d-app-connection
+action: create-3d-app
+app-description: Interactive 3D scene with animated sphere and particle effects
+objects: sphere, ground plane
+animations: sphere rotation and orbital movement
+lighting: hemispheric and point light
+camera-position: arc rotate camera at distance 10
+environment: skybox with tropical theme and white ground
+interactions: mouse rotation and zoom controls
+```
+
+**Response:**
+```json
+{
+  "resultType": "app",
+  "result": "https://sandbox.example.com/3d-app-12345"
+}
+```
+
+**Generated HTML Application Features:**
+- Complete HTML document with Babylon.js CDN integration
+- Responsive CSS styling for full-screen 3D canvas
+- JavaScript using traditional browser-compatible syntax (no arrow functions, template literals, or const/let)
+- Arc rotate camera with mouse/touch controls
+- Hemispheric and point lighting setup
+- Default environment with skybox and ground
+- Animated objects with render loop
+- Window resize handling
+- Touch-friendly controls for mobile devices
+
+**Key Technical Specifications:**
 ```html
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Babylon.js 3D Application</title>
-    <style>[CSS styles]</style>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
 </head>
 <body>
     <canvas id="renderCanvas"></canvas>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script>[JavaScript 3D scene code]</script>
+    <script>
+        // Browser-compatible JavaScript implementation
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+        
+        function createScene() {
+            var scene = new BABYLON.Scene(engine);
+            // 3D scene implementation...
+            return scene;
+        }
+        
+        var scene = createScene();
+        engine.runRenderLoop(function() {
+            scene.render();
+        });
+        
+        window.addEventListener("resize", function() {
+            engine.resize();
+        });
+    </script>
 </body>
 </html>
 ```
 
-## Examples
+## Notes
 
-### Basic Usage
-```
-/3d-app create a simple 3D scene with a rotating sphere
-```
-Creates a basic 3D scene with a sphere that rotates automatically, including camera controls and basic lighting.
-
-### Advanced Usage
-```
-/3d-app create an interactive product viewer with multiple objects
-For model use file: https://bjs-playground.s3.us-east-1.amazonaws.com/sneakers.glb
-Camera type: ArcRotate
-Lighting: Point lights with color changing effects
-Materials: Metallic and glass materials
-Animations: Smooth rotation and hover effects
-```
-Creates a comprehensive product viewer with custom models, advanced lighting, multiple materials, and interactive animations.
-
-### Specific Use Case
-```
-/3d-app create an architectural walkthrough of a simple room
-Camera type: Free
-Lighting: Realistic indoor lighting with shadows
-Materials: Wood floors, painted walls, glass windows
-Animations: Smooth camera movement through the space
-```
-Creates a first-person architectural walkthrough with realistic materials and lighting for interior visualization.
+3D App generation uses Babylon.js CDN for maximum compatibility. JavaScript code follows strict browser compatibility rules with no template literals, arrow functions, or const/let declarations. Applications are fully responsive and mobile-friendly with touch controls. Token limits restrict complexity, so complex scenes are automatically simplified. Generated apps include proper error handling and window resize support. The skill regenerates complete applications for any modifications rather than partial updates. All 3D coordinates and calculations use proper numeric values for accurate positioning.

@@ -1,199 +1,218 @@
 ---
-title: "Zendesk Command Guide"
-description: "Learn how to use the Zendesk slash command to manage customer support operations"
+title: "Zendesk Guide"
+description: "Manage your customer support operations with Zendesk."
 ---
 
-The `/zendesk` command enables you to manage customer support tickets and operations. Perfect for:
+## What can you do with it?
 
-- Creating support tickets
-- Viewing ticket status
-- Searching tickets
-- Managing ticket priorities
-- Tracking customer issues
+Manage your customer support operations with Zendesk, including retrieving tickets, creating new support tickets, searching for specific tickets, and handling customer service workflows efficiently.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Zendesk:
-
+### Basic Command Structure
 ```
-/zendesk list all tickets
+/your-zendesk-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (get-tickets, create-ticket, search-ticket)
+
+**Optional:**
+
+- `ticket-id` - Zendesk ticket ID for searches
+- `priority` - Ticket priority level (low, normal, high, urgent)
+- `subject` - Ticket subject line
+- `body` - Ticket description content
+- `query` - Search query parameters
+
+## Tools
+
+### Get Tickets
+Retrieve a list of all tickets
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
 ```
-/zendesk create urgent ticket "My printer is on fire!" with details "The smoke is very colorful"
-```
-
-```
-/zendesk search for ticket ID 945
-```
-
-## Key Features
-
-### Ticket Management
-- View all tickets
-- Create new tickets
-- Update ticket status
-- Set priorities
-- Add comments
-
-### Search Capabilities
-- Search by ticket ID
-- Filter by status
-- Find by requester
-- Query custom fields
-- Advanced filtering
-
-### Ticket Information
-- View ticket details
-- Check assignee
-- See creation date
-- Track updates
-- Monitor status
-
-### Organization
-- Group tickets
-- Assign to agents
-- Set collaborators
-- Manage followers
-- Track organizations
-
-## Example Commands
-
-### List All Tickets
-```
-/zendesk show all tickets
+/your-zendesk-connection
+action: get-tickets
 ```
 
-### Create New Ticket
-```
-/zendesk create ticket "Login issues" priority normal description "Cannot access account"
-```
-
-### Search Tickets
-```
-/zendesk find ticket 945
-```
-
-### Create Urgent Ticket
-```
-/zendesk create urgent ticket "System down" with comment "Production server not responding"
-```
-
-### Search by Status
-```
-/zendesk find all open tickets
-```
-
-## Ticket Properties
-
-### Priority Levels
-- **urgent**: Immediate attention needed
-- **high**: Important issue
-- **normal**: Standard priority
-- **low**: Non-critical issue
-
-### Status Options
-- **new**: Just created
-- **open**: Being worked on
-- **pending**: Awaiting response
-- **hold**: On hold
-- **solved**: Issue resolved
-- **closed**: Ticket closed
-
-### Ticket Types
-- **question**: General inquiry
-- **incident**: Service issue
-- **problem**: Root cause ticket
-- **task**: Action item
-
-## Ticket Structure
-
-Key fields in tickets:
-- **id**: Unique identifier
-- **subject**: Ticket title
-- **description**: Initial message
-- **requester_id**: Who created it
-- **assignee_id**: Agent assigned
-- **status**: Current state
-- **priority**: Urgency level
-- **created_at**: Creation time
-- **updated_at**: Last modified
-
-## Creating Tickets
-
-### Required Fields
-- **subject**: Brief description
-- **comment.body**: Detailed information
-
-### Optional Fields
-- **priority**: Set urgency
-- **type**: Categorize ticket
-- **tags**: Add labels
-- **custom_fields**: Extra data
-
-## Search Operations
-
-### Query Examples
-```
-/zendesk search for tickets with status:open
+**Response:**
+```json
+{
+  "tickets": [
+    {
+      "id": 945,
+      "url": "https://d3v-pinkfish.zendesk.com/api/v2/tickets/945.json",
+      "external_id": null,
+      "created_at": "2024-07-26T02:46:43Z",
+      "updated_at": "2024-08-24T20:01:10Z",
+      "type": "question",
+      "subject": "Subject",
+      "raw_subject": "Subject",
+      "description": "Description",
+      "priority": null,
+      "status": "closed",
+      "recipient": null,
+      "requester_id": 410103033914,
+      "submitter_id": 410103033914,
+      "assignee_id": 410103033914,
+      "organization_id": 370356337994,
+      "group_id": 360010100594,
+      "collaborator_ids": [],
+      "follower_ids": [],
+      "email_cc_ids": [],
+      "forum_topic_id": null,
+      "problem_id": null,
+      "has_incidents": false,
+      "is_public": true,
+      "due_at": null,
+      "tags": [],
+      "custom_fields": [],
+      "satisfaction_rating": {
+        "score": "unoffered"
+      },
+      "sharing_agreement_ids": [],
+      "custom_status_id": 1500006665241,
+      "encoded_id": "PG54EL-Y99VD",
+      "fields": [],
+      "followup_ids": [],
+      "ticket_form_id": 360003653613,
+      "brand_id": 360004648614,
+      "allow_channelback": false,
+      "allow_attachments": true,
+      "from_messaging_channel": false
+    }
+  ]
+}
 ```
 
+### Create Ticket
+Create a new support ticket
+
+**Parameters:**
+- `subject` (required) - The ticket subject line
+- `body` (required) - The ticket description/body content
+- `priority` (optional) - Priority level (low, normal, high, urgent)
+- `ticket-type` (optional) - Type of ticket (question, incident, problem, task)
+
+**Example:**
 ```
-/zendesk find tickets assigned to me
+/your-zendesk-connection
+action: create-ticket
+subject: My printer is on fire!
+body: The smoke is very colorful.
+priority: urgent
 ```
 
+**Response:**
+```json
+{
+  "ticket": {
+    "id": 946,
+    "url": "https://d3v-pinkfish.zendesk.com/api/v2/tickets/946.json",
+    "external_id": null,
+    "created_at": "2024-07-26T02:46:43Z",
+    "updated_at": "2024-07-26T02:46:43Z",
+    "type": "question",
+    "subject": "My printer is on fire!",
+    "raw_subject": "My printer is on fire!",
+    "description": "The smoke is very colorful.",
+    "priority": "urgent",
+    "status": "new",
+    "recipient": null,
+    "requester_id": 410103033914,
+    "submitter_id": 410103033914,
+    "assignee_id": null,
+    "organization_id": 370356337994,
+    "group_id": 360010100594,
+    "collaborator_ids": [],
+    "follower_ids": [],
+    "email_cc_ids": [],
+    "forum_topic_id": null,
+    "problem_id": null,
+    "has_incidents": false,
+    "is_public": true,
+    "due_at": null,
+    "tags": [],
+    "custom_fields": [],
+    "satisfaction_rating": {
+      "score": "unoffered"
+    }
+  },
+  "audit": {
+    "id": 12345,
+    "ticket_id": 946,
+    "created_at": "2024-07-26T02:46:43Z",
+    "author_id": 410103033914,
+    "metadata": {},
+    "events": []
+  }
+}
 ```
-/zendesk search tickets created today
+
+### Search Ticket
+Search for a specific ticket by ID
+
+**Parameters:**
+- `ticket-id` (required) - The ticket ID to search for
+
+**Example:**
+```
+/your-zendesk-connection
+action: search-ticket
+ticket-id: 945
 ```
 
-### Search Tips
-- URL-encode search parameters
-- Use specific field names
-- Combine multiple criteria
-- Check result count
+**Response:**
+```json
+{
+  "results": [
+    {
+      "id": 945,
+      "url": "https://d3v-pinkfish.zendesk.com/api/v2/tickets/945.json",
+      "external_id": null,
+      "created_at": "2024-07-26T02:46:43Z",
+      "updated_at": "2024-08-24T20:01:10Z",
+      "type": "question",
+      "subject": "Subject",
+      "raw_subject": "Subject",
+      "description": "Description",
+      "priority": null,
+      "status": "closed",
+      "recipient": null,
+      "requester_id": 410103033914,
+      "submitter_id": 410103033914,
+      "assignee_id": 410103033914,
+      "organization_id": 370356337994,
+      "group_id": 360010100594,
+      "collaborator_ids": [],
+      "follower_ids": [],
+      "email_cc_ids": [],
+      "forum_topic_id": null,
+      "problem_id": null,
+      "has_incidents": false,
+      "is_public": true,
+      "due_at": null,
+      "tags": [],
+      "custom_fields": [],
+      "satisfaction_rating": {
+        "score": "unoffered"
+      }
+    }
+  ],
+  "facets": null,
+  "next_page": null,
+  "previous_page": null,
+  "count": 1
+}
+```
 
-## Pagination Handling
+## Notes
 
-When results span multiple pages:
-1. Check for next_page in response
-2. Extract path from URL
-3. Reconstruct with proxy URL
-4. Continue fetching results
-
-## Response Information
-
-### Ticket Response
-- Full ticket details
-- Audit trail included
-- Related IDs provided
-- Custom fields returned
-
-### Search Results
-- Results array
-- Total count
-- Pagination links
-- Faceted search data
-
-## Best Practices
-
-1. **Set Appropriate Priority**
-   - Use urgent sparingly
-   - Normal for most issues
-   - Low for questions
-
-2. **Provide Clear Information**
-   - Descriptive subjects
-   - Detailed comments
-   - Relevant tags
-
-3. **Search Efficiently**
-   - Use specific IDs when known
-   - Filter by relevant fields
-   - Handle pagination properly
-
-## Tips
-- Always URL-encode search queries
-- Include detailed descriptions in tickets
-- Use appropriate priority levels
-- Check ticket status regularly
-- Handle pagination for large result sets 
+When working with Zendesk API through a proxy, always URL-encode search parameters. For pagination, extract the path from next_page URLs and reconstruct with your proxy base URL rather than using raw URLs directly. Ticket statuses include new, open, pending, hold, solved, and closed. Priority levels are low, normal, high, and urgent. 

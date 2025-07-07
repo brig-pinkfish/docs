@@ -1,102 +1,242 @@
 ---
-title: "Calendly Command Guide"
-description: "Learn how to use the Calendly slash command to manage scheduling and meetings"
+title: "Calendly Guide"
+description: "With Calendly, manage and schedule meetings."
 ---
 
-The `/calendly` command enables you to manage and schedule meetings through Calendly. Perfect for:
+## What can you do with it?
 
-- Viewing scheduled events
-- Checking meeting details
-- Managing invitees
-- Canceling meetings
-- Tracking event types
+Manage and schedule meetings with Calendly, including retrieving current user information, getting event type details, searching scheduled events, getting specific event details, retrieving event invitees, and managing calendar scheduling workflows for efficient meeting coordination.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Calendly:
-
+### Basic Command Structure
 ```
-/calendly show my upcoming meetings
+/your-calendly-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (get-current-user, get-event-type, search-events, get-event, get-event-invitees)
+
+**Optional:**
+
+- `event-type-uuid` - Event type UUID
+- `event-uuid` - Event UUID
+- `user-uri` - User URI URL
+- `status` - Event status (active, canceled)
+- `start-date` - Start date for event search
+- `end-date` - End date for event search
+
+## Tools
+
+### Get Current User
+Retrieve the current user's Calendly information
+
+**Parameters:**
+- No parameters required
+
+**Example:**
 ```
-/calendly get details for event abcd1234
-```
-
-```
-/calendly cancel meeting abcd1234 reason "Scheduling conflict"
-```
-
-## Key Features
-
-### Event Management
-- View scheduled events
-- Get event details
-- List event invitees
-- Cancel meetings
-- Check meeting status
-
-### User Information
-- Get your Calendly profile
-- View scheduling URL
-- Check organization details
-- Access user settings
-
-### Event Types
-- View event type details
-- Check duration and settings
-- See active event types
-- Review descriptions
-
-### Invitee Tracking
-- List meeting invitees
-- Check invitee status
-- View invitee details
-- Monitor attendance
-
-## Example Commands
-
-### View Your Events
-```
-/calendly show all my active meetings
+/your-calendly-connection
+action: get-current-user
 ```
 
-### Get Event Details
-```
-/calendly show details for meeting ID abcd1234
+**Response:**
+```json
+{
+  "resource": {
+    "avatar_url": null,
+    "created_at": "2025-05-14T16:18:41.756033Z",
+    "current_organization": "https://api.calendly.com/organizations/xxx",
+    "email": "user@example.com",
+    "locale": "en",
+    "name": "user name",
+    "resource_type": "User",
+    "scheduling_url": "https://calendly.com/user-domain",
+    "slug": "user-domain",
+    "time_notation": "24h",
+    "updated_at": "2025-05-14T16:39:27.080754Z",
+    "uri": "https://api.calendly.com/users/userid-xxx"
+  }
+}
 ```
 
-### List Invitees
-```
-/calendly show all invitees for event abcd1234
-```
+### Get Event Type
+Retrieve details of a specific event type
 
-### Cancel Meeting
-```
-/calendly cancel event abcd1234 with reason "Client rescheduled"
-```
+**Parameters:**
+- `event-type-uuid` (required) - Event type UUID
 
-### Get Your Info
+**Example:**
 ```
-/calendly show my profile information
+/your-calendly-connection
+action: get-event-type
+event-type-uuid: 12345678-1234-1234-1234-123456789012
 ```
 
-## Event Status
+**Response:**
+```json
+{
+  "resource": {
+    "uri": "https://api.calendly.com/event_types/12345678-1234-1234-1234-123456789012",
+    "name": "30 Minute Meeting",
+    "description": "A 30-minute meeting",
+    "duration": 30,
+    "active": true
+  }
+}
+```
 
-Common statuses:
-- **active**: Scheduled and confirmed
-- **canceled**: Meeting canceled
-- **completed**: Meeting finished
+### Search Events
+Retrieve a list of scheduled events based on query parameters
 
-## Invitee Status
+**Parameters:**
+- `user-uri` (required) - User URI URL from get-current-user
+- `status` (optional) - Event status (active, canceled)
+- `start-date` (optional) - Start date for search
+- `end-date` (optional) - End date for search
 
-Invitee states:
-- **accepted**: Confirmed attendance
-- **declined**: Not attending
-- **tentative**: May attend
+**Example:**
+```
+/your-calendly-connection
+action: search-events
+user-uri: https://api.calendly.com/users/userid-xxx
+status: active
+start-date: 2025-01-01T00:00:00Z
+end-date: 2025-01-31T23:59:59Z
+```
 
-## Tips
-- Use "my" or "me" to reference your own events
-- Event IDs are UUIDs (e.g., abcd1234)
-- Include cancellation reasons when canceling
-- Times are in UTC format 
+**Response:**
+```json
+{
+  "collection": [
+    {
+      "calendar_event": {
+        "external_id": "external_id_123",
+        "kind": "google"
+      },
+      "created_at": "2025-01-15T10:00:00Z",
+      "end_time": "2025-01-15T11:00:00Z",
+      "event_guests": [],
+      "event_memberships": [
+        {
+          "buffered_end_time": "2025-01-15T11:15:00Z",
+          "buffered_start_time": "2025-01-15T10:45:00Z",
+          "user": "https://api.calendly.com/users/userid-xxx",
+          "user_email": "user@example.com",
+          "user_name": "User Name"
+        }
+      ],
+      "event_type": "https://api.calendly.com/event_types/event-type-uuid",
+      "invitees_counter": {
+        "active": 1,
+        "limit": 1,
+        "total": 1
+      },
+      "location": {
+        "join_url": "https://zoom.us/j/123456789",
+        "status": "pushed",
+        "type": "zoom"
+      },
+      "meeting_notes_html": null,
+      "meeting_notes_plain": null,
+      "name": "30 Minute Meeting",
+      "start_time": "2025-01-15T10:00:00Z",
+      "status": "active",
+      "updated_at": "2025-01-15T10:00:00Z",
+      "uri": "https://api.calendly.com/scheduled_events/event-uuid"
+    }
+  ],
+  "pagination": {
+    "count": 1,
+    "next_page": null,
+    "next_page_token": null,
+    "previous_page": null,
+    "previous_page_token": null
+  }
+}
+```
+
+### Get Event
+Retrieve details of a scheduled event using its unique ID
+
+**Parameters:**
+- `event-uuid` (required) - Event UUID
+
+**Example:**
+```
+/your-calendly-connection
+action: get-event
+event-uuid: abcd1234-5678-9012-3456-789012345678
+```
+
+**Response:**
+```json
+{
+  "resource": {
+    "uri": "https://api.calendly.com/scheduled_events/abcd1234-5678-9012-3456-789012345678",
+    "name": "30 Minute Meeting",
+    "start_time": "2025-01-01T10:00:00Z",
+    "end_time": "2025-01-01T10:30:00Z",
+    "status": "active",
+    "event_type": "https://api.calendly.com/event_types/event-type-uuid",
+    "location": {
+      "join_url": "https://zoom.us/j/123456789",
+      "status": "pushed",
+      "type": "zoom"
+    },
+    "invitees_counter": {
+      "active": 1,
+      "limit": 1,
+      "total": 1
+    }
+  }
+}
+```
+
+### Get Event Invitees
+Retrieve a list of invitees for a specific scheduled event
+
+**Parameters:**
+- `event-uuid` (required) - Event UUID
+
+**Example:**
+```
+/your-calendly-connection
+action: get-event-invitees
+event-uuid: abcd1234-5678-9012-3456-789012345678
+```
+
+**Response:**
+```json
+{
+  "collection": [
+    {
+      "uri": "https://api.calendly.com/scheduled_events/abcd1234/invitees/invitee1",
+      "email": "invitee1@example.com",
+      "name": "Invitee One",
+      "status": "accepted",
+      "created_at": "2025-01-01T09:00:00Z",
+      "updated_at": "2025-01-01T09:30:00Z"
+    },
+    {
+      "uri": "https://api.calendly.com/scheduled_events/abcd1234/invitees/invitee2",
+      "email": "invitee2@example.com",
+      "name": "Invitee Two",
+      "status": "accepted",
+      "created_at": "2025-01-01T09:15:00Z",
+      "updated_at": "2025-01-01T09:45:00Z"
+    }
+  ],
+  "pagination": {
+    "count": 2,
+    "next_page": null
+  }
+}
+```
+
+## Notes
+
+Calendly API requires user URI from get-current-user for most operations. First-person pronouns (I, me, my, mine) automatically trigger user information retrieval. Event UUIDs are required for specific event operations. All timestamps are in ISO 8601 format. Event types define meeting templates and availability settings. Invitees can have different statuses (accepted, declined, pending). Location information includes join URLs for video meetings. 

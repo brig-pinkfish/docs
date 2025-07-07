@@ -1,438 +1,204 @@
 ---
-title: "PandaDoc API Command Guide"
-description: "Learn how to use the PandaDoc API slash command to manage documents and signatures"
+title: "PandaDoc Guide"
+description: "With PandaDoc, manage your documents and signatures."
 ---
 
-The `/pandadoc` command enables you to manage your documents and signatures through the PandaDoc API. Perfect for:
+## What can you do with it?
 
-- Creating and managing documents
-- E-signature workflows
-- Document templates
-- Recipient management
-- Document lifecycle automation
+Manage your documents and signatures with PandaDoc, including creating documents from templates, updating document details, sending documents for signature, searching for documents, and tracking document status for efficient document management workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with PandaDoc:
-
+### Basic Command Structure
 ```
-/pandadoc create new contract from template with customer details
+/your-pandadoc-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/pandadoc send document for signature to client
-```
+### Parameters
 
-```
-/pandadoc search for documents by name or status
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (create-document, update-document, get-document, delete-document, send-document, search-documents)
 
-### Document Management
-- Create documents from templates
-- Update document details
-- Delete documents
-- Get document information
-- Document organization
+**Optional:**
 
-### E-signature Workflow
-- Send documents for signing
-- Track signature status
-- Manage recipients
-- Automated reminders
-- Completion notifications
+- `document-id` - PandaDoc document ID
+- `document-name` - Name of the document
+- `template-uuid` - Template UUID for document creation
+- `recipient-email` - Email address of the recipient
+- `recipient-first-name` - First name of the recipient
+- `recipient-last-name` - Last name of the recipient
+- `recipient-role` - Role of the recipient (Signer, Viewer, etc.)
 
-### Template System
-- Use predefined templates
-- Custom field mapping
-- Dynamic content insertion
-- Template management
-- Reusable workflows
-
-## Example Commands
-
-### Document Creation
-```
-/pandadoc create service agreement from template for new client
-```
-
-### Signature Process
-```
-/pandadoc send contract to customer for electronic signature
-```
-
-### Document Search
-```
-/pandadoc find all pending documents for this month
-```
-
-### Document Updates
-```
-/pandadoc update document recipient information
-```
-
-## Document Operations
+## Tools
 
 ### Create Document
-```javascript
-{
-  "name": "Sample Document",
-  "template_uuid": "template-id-123",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "Signer"
-    }
-  ],
-  "fields": {
-    "field_id_1": "Field Value"
-  }
-}
+Create a new document in PandaDoc
+
+**Parameters:**
+- `document-name` (required) - Name of the document
+- `template-uuid` (required) - Template ID to use for document creation
+- `recipient-email` (required) - Email address of the recipient
+- `recipient-first-name` (required) - First name of the recipient
+- `recipient-last-name` (required) - Last name of the recipient
+- `recipient-role` (optional) - Role of the recipient (default: Signer)
+- `field-values` (optional) - Field values for template fields
+
+**Example:**
+```
+/your-pandadoc-connection
+action: create-document
+document-name: Sample Document
+template-uuid: template-id-123
+recipient-email: john.doe@example.com
+recipient-first-name: John
+recipient-last-name: Doe
+recipient-role: Signer
 ```
 
-### Create Response
-```javascript
+**Response:**
+```json
 {
   "id": "document-id-123",
   "name": "Sample Document",
-  "status": "document.draft",
-  "date_created": "2025-01-15T10:00:00.000Z",
-  "date_modified": "2025-01-15T10:00:00.000Z",
-  "expiration_date": "2025-02-15T10:00:00.000Z",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "Signer",
-      "signing_order": 1
-    }
-  ]
+  "status": "document.draft"
 }
 ```
 
 ### Update Document
-```javascript
+Update details of an existing document in PandaDoc
+
+**Parameters:**
+- `document-id` (required) - PandaDoc document ID to update
+- `document-name` (optional) - Updated document name
+- `recipient-email` (optional) - Updated recipient email
+- `recipient-first-name` (optional) - Updated recipient first name
+- `recipient-last-name` (optional) - Updated recipient last name
+- `recipient-role` (optional) - Updated recipient role
+
+**Example:**
+```
+/your-pandadoc-connection
+action: update-document
+document-id: document-id-123
+document-name: Updated Document Name
+recipient-email: jane.smith@example.com
+recipient-first-name: Jane
+recipient-last-name: Smith
+recipient-role: Signer
+```
+
+**Response:**
+```json
 {
+  "id": "document-id-123",
   "name": "Updated Document Name",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "Jane",
-      "last_name": "Smith",
-      "role": "Signer"
-    }
-  ]
+  "status": "document.draft"
 }
 ```
 
 ### Get Document
-```javascript
-const url = PANDADOC_URL + `documents/${documentId}`;
+Retrieve details of a specific document using its unique ID
+
+**Parameters:**
+- `document-id` (required) - PandaDoc document ID
+
+**Example:**
+```
+/your-pandadoc-connection
+action: get-document
+document-id: document-id-123
 ```
 
-### Document Response
-```javascript
+**Response:**
+```json
 {
   "id": "document-id-123",
   "name": "Sample Document",
-  "status": "document.draft",
-  "date_created": "2025-01-15T10:00:00.000Z",
-  "date_modified": "2025-01-15T10:00:00.000Z",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "Signer",
-      "has_completed": false
-    }
-  ],
-  "metadata": {},
-  "tokens": []
+  "status": "document.draft"
 }
 ```
 
-## Signature Workflow
+### Delete Document
+Delete a document from PandaDoc using its unique ID
+
+**Parameters:**
+- `document-id` (required) - PandaDoc document ID to delete
+
+**Example:**
+```
+/your-pandadoc-connection
+action: delete-document
+document-id: document-id-123
+```
+
+**Response:**
+```json
+{
+  "message": "Document deleted successfully."
+}
+```
 
 ### Send Document
-```javascript
-{
-  "message": "Please review and sign the document.",
-  "subject": "Document Signature Request",
-  "silent": false
-}
+Send a document for signing in PandaDoc
+
+**Parameters:**
+- `document-id` (required) - PandaDoc document ID to send
+- `message` (optional) - Message to include with signature request
+- `subject` (optional) - Email subject for signature request
+- `silent` (optional) - Whether to send without email notifications
+
+**Example:**
+```
+/your-pandadoc-connection
+action: send-document
+document-id: document-id-123
+message: Please review and sign the document.
+subject: Document Signature Request
+silent: false
 ```
 
-### Send Response
-```javascript
+**Response:**
+```json
 {
   "id": "document-id-123",
-  "status": "document.sent",
-  "date_created": "2025-01-15T10:00:00.000Z",
-  "date_modified": "2025-01-15T10:30:00.000Z",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "Signer",
-      "has_completed": false,
-      "date_sent": "2025-01-15T10:30:00.000Z"
-    }
-  ]
+  "status": "document.sent"
 }
 ```
-
-## Document Status
-
-### Status Types
-- **document.draft**: Document in draft state
-- **document.sent**: Document sent for signing
-- **document.viewed**: Document has been viewed
-- **document.waiting_approval**: Waiting for approval
-- **document.approved**: Document approved
-- **document.rejected**: Document rejected
-- **document.waiting_pay**: Waiting for payment
-- **document.paid**: Payment completed
-- **document.completed**: All signatures completed
-- **document.cancelled**: Document cancelled
-- **document.declined**: Document declined
-- **document.voided**: Document voided
-- **document.error**: Document has errors
-
-### Status Tracking
-```javascript
-{
-  "status": "document.completed",
-  "date_completed": "2025-01-16T14:30:00.000Z",
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "has_completed": true,
-      "date_completed": "2025-01-16T14:30:00.000Z"
-    }
-  ]
-}
-```
-
-## Search and Filtering
 
 ### Search Documents
-```javascript
-const url = PANDADOC_URL + `documents?name=${searchQuery}`;
+Search for documents in PandaDoc matching specific criteria
+
+**Parameters:**
+- `search-name` (optional) - Search by document name
+- `status` (optional) - Filter by document status
+- `template-uuid` (optional) - Filter by template ID
+
+**Example:**
+```
+/your-pandadoc-connection
+action: search-documents
+search-name: Sample
 ```
 
-### Search Parameters
-- **name**: Search by document name
-- **status**: Filter by document status
-- **tag**: Filter by document tags
-- **folder_uuid**: Filter by folder
-- **count**: Number of results to return
-- **page**: Page number for pagination
-
-### Search Response
-```javascript
+**Response:**
+```json
 {
-  "count": 2,
-  "next": null,
-  "previous": null,
   "results": [
     {
       "id": "document-id-123",
       "name": "Sample Document",
-      "status": "document.draft",
-      "date_created": "2025-01-15T10:00:00.000Z"
+      "status": "document.draft"
     },
     {
       "id": "document-id-456",
       "name": "Sample Agreement",
-      "status": "document.sent",
-      "date_created": "2025-01-14T15:30:00.000Z"
+      "status": "document.sent"
     }
   ]
 }
 ```
 
-## Recipients Management
+## Notes
 
-### Recipient Roles
-- **Signer**: Can sign the document
-- **Approver**: Can approve the document
-- **CC**: Receives copy for information
-- **Editor**: Can edit the document
-
-### Recipient Properties
-- **email**: Recipient email address
-- **first_name**: First name
-- **last_name**: Last name
-- **role**: Recipient role
-- **signing_order**: Order of signing
-- **message**: Custom message to recipient
-
-### Multiple Recipients
-```javascript
-{
-  "recipients": [
-    {
-      "email": "[email protected]",
-      "first_name": "John",
-      "last_name": "Doe",
-      "role": "Signer",
-      "signing_order": 1
-    },
-    {
-      "email": "[email protected]",
-      "first_name": "Jane",
-      "last_name": "Smith",
-      "role": "Approver",
-      "signing_order": 2
-    }
-  ]
-}
-```
-
-## Template Integration
-
-### Template Fields
-- **template_uuid**: Template identifier
-- **fields**: Dynamic field values
-- **tokens**: Token replacements
-- **pricing**: Pricing information
-
-### Field Mapping
-```javascript
-{
-  "template_uuid": "template-id-123",
-  "fields": {
-    "customer_name": "John Doe",
-    "contract_date": "2025-01-15",
-    "service_description": "Professional consulting services",
-    "total_amount": "$5,000"
-  }
-}
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid template UUID
-- Missing required fields
-- Invalid recipient email
-- Document already sent
-- Insufficient permissions
-
-### Error Response
-```javascript
-{
-  "type": "validation_error",
-  "details": [
-    {
-      "field": "recipients.0.email",
-      "error_code": "invalid_email",
-      "message": "Enter a valid email address."
-    }
-  ]
-}
-```
-
-## Best Practices
-
-1. **Document Creation**
-   - Use descriptive document names
-   - Validate recipient information
-   - Set appropriate expiration dates
-   - Include clear instructions
-
-2. **Template Usage**
-   - Design reusable templates
-   - Map fields consistently
-   - Test template rendering
-   - Maintain template versions
-
-3. **Workflow Management**
-   - Set logical signing order
-   - Use appropriate recipient roles
-   - Monitor document progress
-   - Handle rejections gracefully
-
-4. **Integration**
-   - Implement webhook handlers
-   - Cache document states
-   - Handle API rate limits
-   - Log important events
-
-## Common Use Cases
-
-### Contract Management
-```
-/pandadoc create employment contract from template with employee details
-```
-
-### Sales Proposals
-```
-/pandadoc generate sales proposal and send to prospect for approval
-```
-
-### Service Agreements
-```
-/pandadoc create service agreement with custom terms and pricing
-```
-
-### Document Tracking
-```
-/pandadoc check status of all pending signature requests
-```
-
-## Connection Requirements
-
-### Paragon Proxy
-- Uses PARA_BASE_URL + pandadoc/ endpoint
-- Requires PandaDoc connection ID
-- OAuth 2.0 authentication
-- Proper scope permissions
-
-### API Permissions
-- **documents:read**: Read document information
-- **documents:write**: Create and update documents
-- **documents:send**: Send documents for signing
-- **templates:read**: Access templates
-
-## Performance Optimization
-
-### Efficient Operations
-- Cache template information
-- Batch document operations
-- Use appropriate pagination
-- Monitor API rate limits
-
-### Workflow Optimization
-- Design efficient templates
-- Minimize recipient steps
-- Use automation rules
-- Track completion metrics
-
-## Integration Tips
-
-### Webhook Integration
-- Set up completion webhooks
-- Handle status change events
-- Implement retry logic
-- Validate webhook signatures
-
-### Data Management
-- Sync document status
-- Store document metadata
-- Implement search functionality
-- Archive completed documents
-
-## Tips
-- Always validate recipient email addresses before creating documents
-- Use templates for consistent document creation
-- Set appropriate signing order for multiple recipients
-- Monitor document status to track completion progress
-- Implement proper error handling for API failures
-- Use meaningful document names for easy identification 
+PandaDoc documents support various statuses including document.draft, document.sent, document.viewed, document.completed, and document.canceled. Template UUIDs are required for creating documents from templates. Recipients can have different roles such as Signer, Viewer, CC, or Approver. Document fields can be populated with custom values during creation. 

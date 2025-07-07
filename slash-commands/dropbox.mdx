@@ -1,107 +1,319 @@
 ---
-title: "Dropbox Command Guide"
-description: "Learn how to use the Dropbox slash command to manage cloud storage"
+title: "Dropbox Guide"
+description: "Manage files and folders with Dropbox cloud storage including upload, download, organization, and search"
 ---
 
-The `/dropbox` command enables you to manage files and folders in Dropbox. Perfect for:
+## What can you do with it?
 
-- Uploading and downloading files
-- Creating and organizing folders
-- Searching for content
-- Moving and renaming items
-- Managing cloud storage
+The Dropbox API allows you to manage files and folders in your cloud storage. You can upload and download files, create and organize folders, search for content, move files and folders, retrieve metadata, and handle all aspects of your file storage and organization with comprehensive cloud storage management.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Dropbox:
-
+### Basic Command Structure
 ```
-/dropbox upload file.txt to /Documents/Reports
+/your-dropbox-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (upload, download, list, create, move, search, delete)
+- `entity` - The entity type (file, folder)
+- `path` - File or folder path
+
+**Optional:**
+
+- `mode` - Upload mode (add, overwrite, update)
+- `autorename` - Automatically rename if conflict exists
+- `recursive` - Include subfolders in listing
+- `query` - Search query string
+- `max_results` - Maximum number of search results
+- `include_media_info` - Include media metadata
+
+## Tools
+
+### Save File
+Upload a file to Dropbox at the specified path.
+
+**Parameters:**
+- `path` (required) - Destination path for the file
+- `mode` (optional) - Upload mode: add, overwrite, update (default: add)
+- `autorename` (optional) - Automatically rename if file exists (default: true)
+- `mute` (optional) - Suppress notifications (default: false)
+- `strict_conflict` (optional) - Strict conflict detection (default: false)
+
+**Example:**
 ```
-/dropbox list files in /Projects folder
-```
-
-```
-/dropbox create folder /Work/2024
-```
-
-## Key Features
-
-### File Operations
-- Upload files to Dropbox
-- Download files by path
-- Get file metadata
-- Delete files
-- Move files
-
-### Folder Management
-- Create new folders
-- List folder contents
-- Move and rename folders
-- Delete folders
-- Search for folders
-
-### Search Functionality
-- Search by name
-- Search within specific paths
-- Filter active files
-- Full-text search
-
-### Metadata Access
-- File size and dates
-- Modification timestamps
-- File IDs
-- Path information
-
-## Example Commands
-
-### Upload File
-```
-/dropbox upload "report.pdf" to /Work/Q1-Reports with auto-rename
+/your-dropbox-connection
+action: upload
+entity: file
+path: /Homework/math/answers.txt
+mode: add
+autorename: true
+mute: false
 ```
 
-### Download File
-```
-/dropbox download /Documents/budget.xlsx
+**Response:**
+```json
+{
+  "name": "answers.txt",
+  "path_lower": "/homework/math/answers.txt",
+  "path_display": "/Homework/math/answers.txt",
+  "id": "id:4g0reZjDjHAAAAAAAAAAAQ",
+  "client_modified": "2025-01-13T12:00:00Z",
+  "server_modified": "2025-01-13T12:00:00Z",
+  "rev": "015fdb0f4",
+  "size": 12345,
+  "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
 ```
 
-### List Contents
+### Get File by Name
+Download a file from Dropbox by specifying its path.
+
+**Parameters:**
+- `path` (required) - Path to the file to download
+
+**Example:**
 ```
-/dropbox show all files in /Projects/Website
+/your-dropbox-connection
+action: download
+entity: file
+path: /Homework/math/answers.txt
+```
+
+**Response:**
+```json
+{
+  "file_content": "Base64 encoded file content",
+  "metadata": {
+    "name": "answers.txt",
+    "path_lower": "/homework/math/answers.txt",
+    "path_display": "/Homework/math/answers.txt",
+    "id": "id:4g0reZjDjHAAAAAAAAAAAQ",
+    "client_modified": "2025-01-13T12:00:00Z",
+    "server_modified": "2025-01-13T12:00:00Z",
+    "rev": "015fdb0f4",
+    "size": 12345
+  }
+}
+```
+
+### List Files
+List the contents of a folder in Dropbox.
+
+**Parameters:**
+- `path` (required) - Path to the folder to list
+- `recursive` (optional) - Include subfolders recursively (default: false)
+- `include_media_info` (optional) - Include media metadata (default: false)
+- `include_deleted` (optional) - Include deleted files (default: false)
+- `include_mounted_folders` (optional) - Include mounted folders (default: true)
+
+**Example:**
+```
+/your-dropbox-connection
+action: list
+entity: folder
+path: /Homework
+recursive: false
+include_media_info: false
+```
+
+**Response:**
+```json
+{
+  "entries": [
+    {
+      ".tag": "file",
+      "name": "answers.txt",
+      "path_lower": "/homework/answers.txt",
+      "path_display": "/Homework/answers.txt",
+      "id": "id:4g0reZjDjHAAAAAAAAAAAQ",
+      "client_modified": "2025-01-13T12:00:00Z",
+      "server_modified": "2025-01-13T12:00:00Z",
+      "rev": "015fdb0f4",
+      "size": 12345
+    },
+    {
+      ".tag": "folder",
+      "name": "math",
+      "path_lower": "/homework/math",
+      "path_display": "/Homework/math",
+      "id": "id:4g0reZjDjHAAAAAAAAAAAR"
+    }
+  ],
+  "cursor": "AAFn1YzF9aW5leHBsb3Jlci1jdXJzb3ItdjI",
+  "has_more": false
+}
 ```
 
 ### Create Folder
+Create a new folder in Dropbox.
+
+**Parameters:**
+- `path` (required) - Path for the new folder
+- `autorename` (optional) - Automatically rename if folder exists (default: false)
+
+**Example:**
 ```
-/dropbox create folder /Archive/2024
+/your-dropbox-connection
+action: create
+entity: folder
+path: /Homework/science
+autorename: false
 ```
 
-### Move Item
-```
-/dropbox move /Temp/draft.doc to /Documents/Final/report.doc
+**Response:**
+```json
+{
+  "metadata": {
+    ".tag": "folder",
+    "name": "science",
+    "path_lower": "/homework/science",
+    "path_display": "/Homework/science",
+    "id": "id:4g0reZjDjHAAAAAAAAAAAS"
+  }
+}
 ```
 
-### Search
+### Move Folder
+Move a folder to a new location in Dropbox.
+
+**Parameters:**
+- `from_path` (required) - Current path of the folder
+- `to_path` (required) - New path for the folder
+- `allow_shared_folder` (optional) - Allow moving shared folders (default: false)
+- `autorename` (optional) - Automatically rename if conflict exists (default: false)
+- `allow_ownership_transfer` (optional) - Allow ownership transfer (default: false)
+
+**Example:**
 ```
-/dropbox search for "presentation" in /Work folder
+/your-dropbox-connection
+action: move
+entity: folder
+from_path: /Homework/science
+to_path: /Homework/biology
+allow_shared_folder: false
+autorename: false
+```
+
+**Response:**
+```json
+{
+  "metadata": {
+    ".tag": "folder",
+    "name": "biology",
+    "path_lower": "/homework/biology",
+    "path_display": "/Homework/biology",
+    "id": "id:4g0reZjDjHAAAAAAAAAAAT"
+  }
+}
+```
+
+### Get Folder by ID
+Retrieve metadata for a folder using its ID or path.
+
+**Parameters:**
+- `path` (required) - Path or ID of the folder
+- `include_media_info` (optional) - Include media metadata (default: false)
+- `include_deleted` (optional) - Include deleted status (default: false)
+- `include_has_explicit_shared_members` (optional) - Include sharing info (default: false)
+
+**Example:**
+```
+/your-dropbox-connection
+action: get
+entity: folder
+path: id:4g0reZjDjHAAAAAAAAAAAT
+include_media_info: false
+```
+
+**Response:**
+```json
+{
+  ".tag": "folder",
+  "name": "biology",
+  "path_lower": "/homework/biology",
+  "path_display": "/Homework/biology",
+  "id": "id:4g0reZjDjHAAAAAAAAAAAT",
+  "shared_folder_id": null,
+  "sharing_info": null
+}
+```
+
+### Search Folders
+Search for folders in Dropbox matching a query.
+
+**Parameters:**
+- `query` (required) - Search query string
+- `path` (optional) - Path to search within (default: entire account)
+- `max_results` (optional) - Maximum number of results (default: 20)
+- `file_status` (optional) - File status filter: active, deleted (default: active)
+- `filename_only` (optional) - Search filename only (default: false)
+
+**Example:**
+```
+/your-dropbox-connection
+action: search
+entity: folder
+query: biology
+path: ""
+max_results: 20
+file_status: active
+```
+
+**Response:**
+```json
+{
+  "matches": [
+    {
+      "metadata": {
+        "metadata": {
+          ".tag": "folder",
+          "name": "biology",
+          "path_lower": "/homework/biology",
+          "path_display": "/Homework/biology",
+          "id": "id:4g0reZjDjHAAAAAAAAAAAT"
+        }
+      },
+      "match_type": {
+        ".tag": "filename"
+      }
+    }
+  ],
+  "has_more": false,
+  "start": 0
+}
 ```
 
 ### Delete Folder
+Delete a folder in Dropbox using its path.
+
+**Parameters:**
+- `path` (required) - Path of the folder to delete
+
+**Example:**
 ```
-/dropbox delete folder /Old-Files
+/your-dropbox-connection
+action: delete
+entity: folder
+path: /Homework/biology
 ```
 
-## Path Format
+**Response:**
+```json
+{
+  "metadata": {
+    ".tag": "folder",
+    "name": "biology",
+    "path_lower": "/homework/biology",
+    "path_display": "/Homework/biology",
+    "id": "id:4g0reZjDjHAAAAAAAAAAAT"
+  }
+}
+```
 
-Dropbox paths:
-- Always start with forward slash (/)
-- Case-insensitive internally
-- Display case preserved
-- Example: `/Work/Reports/Q1`
+## Notes 
 
-## Tips
-- Use autorename to avoid conflicts
-- Paths are case-preserved but case-insensitive
-- File downloads return base64 encoded content
-- Search includes both files and folders 
+Upload modes include add (fail if exists), overwrite (replace existing), and update (modify existing). Autorename automatically adds number suffix to avoid conflicts. File paths are case-insensitive but preserve display case. IDs start with "id:" prefix for unique identification. Tags indicate entry type: file or folder. Recursive listing includes all subfolders and files. Search supports filename and content matching. File revisions track version history. Client_modified reflects original file timestamp while server_modified shows upload time. Supports both PinkConnect and Paragon proxy connections. Content hashing ensures file integrity. Sharing information available for collaborative folders. 

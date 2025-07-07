@@ -1,123 +1,181 @@
 ---
-title: "SAP S/4HANA"
-description: "Manage supplier invoices, suppliers, and customers through SAP S/4HANA"
+title: "SAP S/4HANA Guide"
+description: "Manage supplier invoices, suppliers, and customers through SAP S/4HANA."
 ---
 
-# SAP S/4HANA
+## What can you do with it?
 
-Manage supplier invoices, suppliers, and customers through SAP S/4HANA enterprise resource planning system.
+Manage supplier invoices, suppliers, and customers through SAP S/4HANA, including creating and managing supplier invoices, retrieving supplier information, and processing business partner data for comprehensive enterprise resource planning operations.
 
-## Overview
+## How to use it?
 
-The SAP S/4HANA skill provides comprehensive functionality for:
-- Creating and managing supplier invoices
-- Searching and retrieving invoice data
-- Managing supplier and customer information
-- Updating business partner records
-- Handling procurement and financial processes
+### Basic Command Structure
+```
+/your-saps4hana-connection [action] [required-parameters] [optional-parameters]
+```
 
-## Connection Requirements
+### Parameters
 
-This skill requires a SAP S/4HANA connection configured through Paragon Proxy.
+**Required:**
 
-## Basic Usage
+- `action` - The operation to perform (create-invoice, get-invoice, search-invoices, delete-invoice, get-supplier, search-suppliers)
 
-```javascript
-// Create a supplier invoice
-const invoice = {
+**Optional:**
+
+- `invoice-document` - Invoice document number
+- `company-code` - Company code (e.g., 1000)
+- `supplier-id` - Supplier ID
+- `document-date` - Document date
+- `posting-date` - Posting date
+- `invoice-amount` - Invoice amount
+- `currency` - Currency code (e.g., USD, EUR)
+
+## Tools
+
+### Create Supplier Invoice
+Create a new supplier invoice in SAP S/4HANA
+
+**Parameters:**
+- `invoice-document` (required) - Invoice document number
+- `company-code` (required) - Company code
+- `supplier-id` (required) - Supplier ID
+- `document-date` (required) - Document date (YYYY-MM-DD)
+- `posting-date` (required) - Posting date (YYYY-MM-DD)
+- `invoice-amount` (required) - Invoice amount
+- `currency` (required) - Currency code
+- `purchase-order` (optional) - Purchase order number
+- `purchase-order-item` (optional) - Purchase order item number
+- `quantity` (optional) - Quantity
+
+**Example:**
+```
+/your-saps4hana-connection
+action: create-invoice
+invoice-document: 1234567890
+company-code: 1000
+supplier-id: SUPPLIER123
+document-date: 2025-01-15
+posting-date: 2025-01-15
+invoice-amount: 1500.00
+currency: USD
+purchase-order: 4500001234
+purchase-order-item: 10
+quantity: 100
+```
+
+**Response:**
+```json
+{
   "InvoiceDocument": "1234567890",
   "CompanyCode": "1000",
   "SupplierID": "SUPPLIER123",
   "DocumentDate": "2025-01-15",
   "PostingDate": "2025-01-15",
   "InvoiceAmount": "1500.00",
-  "Currency": "USD",
-  "Items": [
+  "Currency": "USD"
+}
+```
+
+### Get Supplier Invoice
+Retrieve details of a specific supplier invoice using its unique ID
+
+**Parameters:**
+- `invoice-document` (required) - Invoice document number
+
+**Example:**
+```
+/your-saps4hana-connection
+action: get-invoice
+invoice-document: 1234567890
+```
+
+**Response:**
+```json
+{
+  "InvoiceDocument": "1234567890",
+  "CompanyCode": "1000",
+  "SupplierID": "SUPPLIER123",
+  "DocumentDate": "2025-01-15",
+  "PostingDate": "2025-01-15",
+  "InvoiceAmount": "1500.00",
+  "Currency": "USD"
+}
+```
+
+### Search Supplier Invoices
+Search for supplier invoices based on specific criteria
+
+**Parameters:**
+- `filter-criteria` (required) - Search filter criteria (e.g., SupplierID eq 'SUPPLIER123')
+
+**Example:**
+```
+/your-saps4hana-connection
+action: search-invoices
+filter-criteria: SupplierID eq 'SUPPLIER123'
+```
+
+**Response:**
+```json
+{
+  "value": [
     {
-      "PurchaseOrder": "4500001234",
-      "PurchaseOrderItem": "10",
-      "Quantity": "100",
-      "Amount": "1500.00"
+      "InvoiceDocument": "1234567890",
+      "CompanyCode": "1000",
+      "SupplierID": "SUPPLIER123",
+      "DocumentDate": "2025-01-15",
+      "PostingDate": "2025-01-15",
+      "InvoiceAmount": "1500.00",
+      "Currency": "USD"
+    },
+    {
+      "InvoiceDocument": "1234567891",
+      "CompanyCode": "1000",
+      "SupplierID": "SUPPLIER123",
+      "DocumentDate": "2025-01-16",
+      "PostingDate": "2025-01-16",
+      "InvoiceAmount": "2000.00",
+      "Currency": "USD"
     }
   ]
-};
-```
-
-## Key Features
-
-### Invoice Management
-- **Create Invoices**: Generate new supplier invoices with complete line items
-- **Retrieve Invoices**: Get invoice details by document ID
-- **Search Invoices**: Find invoices based on supplier, date, or amount criteria
-- **Delete Invoices**: Remove invoices from the system
-
-### Supplier Management
-- **Supplier Lookup**: Retrieve supplier details by business partner ID
-- **Search Suppliers**: Find suppliers based on organization criteria
-- **Update Suppliers**: Modify supplier information and addresses
-
-### Customer Management
-- **Customer Lookup**: Get customer details by business partner ID
-- **Search Customers**: Find customers based on person criteria
-- **Update Customers**: Modify customer information and addresses
-
-## Common Operations
-
-### Create a Supplier Invoice
-```javascript
-POST: odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice
-{
-  "InvoiceDocument": "1234567890",
-  "CompanyCode": "1000",
-  "SupplierID": "SUPPLIER123",
-  "DocumentDate": "2025-01-15",
-  "PostingDate": "2025-01-15",
-  "InvoiceAmount": "1500.00",
-  "Currency": "USD"
 }
 ```
 
-### Search for Invoices
-```javascript
-GET: odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice?$filter=SupplierID eq 'SUPPLIER123'
+### Delete Supplier Invoice
+Delete a specific supplier invoice using its unique ID
+
+**Parameters:**
+- `invoice-document` (required) - Invoice document number to delete
+
+**Example:**
+```
+/your-saps4hana-connection
+action: delete-invoice
+invoice-document: 1234567890
 ```
 
-### Get Supplier Details
-```javascript
-GET: odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('SUPPLIER123')
-```
-
-### Update Customer Information
-```javascript
-PATCH: odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('CUSTOMER123')
+**Response:**
+```json
 {
-  "BusinessPartnerFullName": "Updated Customer Name",
-  "Address": {
-    "StreetName": "987 Birch Rd",
-    "CityName": "Metrocity",
-    "PostalCode": "76543",
-    "Country": "US"
-  }
+  "message": "Supplier invoice deleted successfully."
 }
 ```
 
-## Response Structure
+### Get Supplier
+Retrieve details of a specific supplier using their unique ID
 
-### Invoice Response
-```javascript
-{
-  "InvoiceDocument": "1234567890",
-  "CompanyCode": "1000",
-  "SupplierID": "SUPPLIER123",
-  "DocumentDate": "2025-01-15",
-  "PostingDate": "2025-01-15",
-  "InvoiceAmount": "1500.00",
-  "Currency": "USD"
-}
+**Parameters:**
+- `supplier-id` (required) - Supplier business partner ID
+
+**Example:**
+```
+/your-saps4hana-connection
+action: get-supplier
+supplier-id: SUPPLIER123
 ```
 
-### Business Partner Response
-```javascript
+**Response:**
+```json
 {
   "BusinessPartner": "SUPPLIER123",
   "BusinessPartnerFullName": "ABC Supplies Inc.",
@@ -131,20 +189,49 @@ PATCH: odata/sap/API_BUSINESS_PARTNER/A_BusinessPartner('CUSTOMER123')
 }
 ```
 
-## Important Notes
+### Search Suppliers
+Search for suppliers based on specific criteria
 
-- **OData Protocol**: SAP S/4HANA uses OData v2 protocol for API interactions
-- **Authentication**: Requires proper SAP authentication through Paragon Proxy
-- **Company Codes**: Always specify the correct company code for your organization
-- **Currency Handling**: Ensure currency codes match your SAP configuration
-- **Date Formats**: Use YYYY-MM-DD format for all date fields
-- **Business Partner Types**: Distinguish between Organization (suppliers) and Person (customers)
+**Parameters:**
+- `filter-criteria` (required) - Search filter criteria (e.g., BusinessPartnerCategory eq 'Organization')
 
-## Best Practices
+**Example:**
+```
+/your-saps4hana-connection
+action: search-suppliers
+filter-criteria: BusinessPartnerCategory eq 'Organization'
+```
 
-1. **Error Handling**: Always check response status and handle SAP-specific error codes
-2. **Data Validation**: Validate required fields before creating invoices
-3. **Batch Processing**: Use batch operations for multiple invoice creation
-4. **Audit Trail**: Maintain proper documentation for all financial transactions
-5. **Performance**: Use filters and pagination for large data sets
-6. **Security**: Ensure proper authorization for financial operations 
+**Response:**
+```json
+{
+  "value": [
+    {
+      "BusinessPartner": "SUPPLIER123",
+      "BusinessPartnerFullName": "ABC Supplies Inc.",
+      "BusinessPartnerCategory": "Organization",
+      "Address": {
+        "StreetName": "123 Main St",
+        "CityName": "Anytown",
+        "PostalCode": "12345",
+        "Country": "US"
+      }
+    },
+    {
+      "BusinessPartner": "SUPPLIER124",
+      "BusinessPartnerFullName": "XYZ Industries",
+      "BusinessPartnerCategory": "Organization",
+      "Address": {
+        "StreetName": "456 Elm St",
+        "CityName": "Othertown",
+        "PostalCode": "67890",
+        "Country": "US"
+      }
+    }
+  ]
+}
+```
+
+## Notes
+
+SAP S/4HANA uses OData APIs for data operations. All invoice operations require valid company codes and supplier IDs. Filter criteria use OData query syntax with operators like eq (equals), ne (not equals), and contains. Date formats should be in YYYY-MM-DD format. Currency codes must be valid ISO currency codes. 

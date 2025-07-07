@@ -1,355 +1,268 @@
 ---
-title: "Zoho CRM API"
-description: "With Zoho CRM, manage contacts, leads, accounts, deals and other CRM data"
+title: "Zoho Guide"
+description: "With Zoho CRM, manage contacts, leads, accounts, deals and other CRM data."
 ---
 
-# Zoho CRM API
+## What can you do with it?
 
-Manage contacts, leads, accounts, deals and other CRM data with Zoho CRM's comprehensive customer relationship management platform.
+Manage contacts, leads, accounts, deals and other CRM data with Zoho CRM, including retrieving all contacts, getting specific contact details, creating new contacts, updating contact information, and searching contacts for comprehensive customer relationship management.
 
-## Overview
+## How to use it?
 
-The Zoho CRM skill provides comprehensive functionality for:
-- Managing contacts and their detailed information
-- Creating and tracking leads through the sales pipeline
-- Handling deals and opportunities
-- Managing user accounts and permissions
-- Searching and filtering CRM data
-- Performing CRUD operations on all CRM entities
+### Basic Command Structure
+```
+/your-zoho-connection [action] [required-parameters] [optional-parameters]
+```
 
-## Connection Requirements
+### Parameters
 
-This skill requires a Zoho CRM connection configured through:
-- **PinkConnect Proxy**: PC_BASE_URL + "crm/v2/"
-- **Authentication**: Handled automatically by the proxy
-- **API Version**: Uses CRM API v2
+**Required:**
 
-## Basic Usage
+- `action` - The operation to perform (get-all-contacts, get-contact, create-contact, update-contact, search-contacts)
 
-```javascript
-// Get all contacts
-GET: contacts
+**Optional:**
 
-// Create a new contact
-POST: contacts
+- `contact-id` - Zoho contact ID
+- `first-name` - Contact first name
+- `last-name` - Contact last name
+- `email` - Contact email address
+- `phone` - Contact phone number
+- `search-criteria` - Search criteria for contact lookup
+- `account-id` - Associated account ID
+- `title` - Contact job title
+- `address` - Contact address information
+
+## Tools
+
+### Get All Contacts
+Retrieve a list of all contacts from Zoho CRM
+
+**Parameters:**
+- No parameters required
+
+**Example:**
+```
+/your-zoho-connection
+action: get-all-contacts
+```
+
+**Response:**
+```json
 {
   "data": [
     {
+      "id": "123456789",
       "First_Name": "John",
       "Last_Name": "Doe",
-      "Email": "john.doe@example.com"
+      "Email": "john.doe@example.com",
+      "Phone": "+1 555-123-4567",
+      "Account_Name": {
+        "id": "987654321",
+        "name": "Example Company"
+      },
+      "Owner": {
+        "id": "112233445",
+        "name": "Sales Rep"
+      },
+      "Created_Time": "2023-01-15T10:30:00-08:00",
+      "Modified_Time": "2023-02-20T14:45:00-08:00"
+    }
+  ],
+  "info": {
+    "per_page": 200,
+    "count": 15,
+    "page": 1,
+    "more_records": false
+  }
+}
+```
+
+### Get Contact
+Retrieve details of a specific contact using its ID
+
+**Parameters:**
+- `contact-id` (required) - Zoho contact ID
+
+**Example:**
+```
+/your-zoho-connection
+action: get-contact
+contact-id: 123456789
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "123456789",
+      "First_Name": "John",
+      "Last_Name": "Doe",
+      "Email": "john.doe@example.com",
+      "Phone": "+1 555-123-4567",
+      "Mailing_Street": "123 Main St",
+      "Mailing_City": "San Francisco",
+      "Mailing_State": "CA",
+      "Mailing_Zip": "94105",
+      "Mailing_Country": "USA",
+      "Account_Name": {
+        "id": "987654321",
+        "name": "Example Company"
+      },
+      "Title": "CEO",
+      "Department": "Executive",
+      "Owner": {
+        "id": "112233445",
+        "name": "Sales Rep"
+      },
+      "Created_Time": "2023-01-15T10:30:00-08:00",
+      "Modified_Time": "2023-02-20T14:45:00-08:00"
     }
   ]
 }
 ```
 
-## Key Features
+### Create Contact
+Add a new contact to Zoho CRM with contact details
 
-### Contact Management
-- **List Contacts**: Retrieve all contacts with pagination
-- **Contact Details**: Get detailed information for specific contacts
-- **Create Contacts**: Add new contacts with complete information
-- **Update Contacts**: Modify existing contact details
-- **Search Contacts**: Find contacts using various criteria
+**Parameters:**
+- `first-name` (required) - Contact first name
+- `last-name` (required) - Contact last name
+- `email` (required) - Contact email address
+- `phone` (optional) - Contact phone number
+- `title` (optional) - Contact job title
+- `account-id` (optional) - Associated account ID
+- `address` (optional) - Contact address information
 
-### Lead Management
-- **Lead Tracking**: Monitor leads through the sales pipeline
-- **Lead Status**: Track qualification and conversion status
-- **Lead Sources**: Identify where leads originated
-- **Lead Assignment**: Assign leads to sales representatives
-
-### Deal Management
-- **Opportunity Tracking**: Monitor sales opportunities and deals
-- **Deal Stages**: Track deals through sales pipeline stages
-- **Revenue Forecasting**: Manage expected revenue and closing dates
-- **Deal Association**: Link deals to contacts and accounts
-
-## Common Operations
-
-### Get All Contacts
-```javascript
-GET: contacts
+**Example:**
+```
+/your-zoho-connection
+action: create-contact
+first-name: Jane
+last-name: Smith
+email: jane.smith@example.com
+phone: +1 555-987-6543
+title: CTO
+account-id: 987654321
+address: 456 Oak Ave, New York, NY 10001, USA
 ```
 
-### Get Contact by ID
-```javascript
-GET: contacts/{contactId}
-```
-
-### Create New Contact
-```javascript
-POST: contacts
+**Response:**
+```json
 {
   "data": [
     {
-      "First_Name": "Jane",
-      "Last_Name": "Smith",
-      "Email": "jane.smith@example.com",
-      "Phone": "+1 555-987-6543",
-      "Mailing_Street": "456 Oak Ave",
-      "Mailing_City": "New York",
-      "Mailing_State": "NY",
-      "Mailing_Zip": "10001",
-      "Title": "CTO"
+      "code": "SUCCESS",
+      "details": {
+        "id": "456789123",
+        "Created_Time": "2023-03-10T09:15:00-08:00",
+        "Modified_Time": "2023-03-10T09:15:00-08:00",
+        "Created_By": {
+          "id": "112233445",
+          "name": "Sales Rep"
+        },
+        "Modified_By": {
+          "id": "112233445",
+          "name": "Sales Rep"
+        }
+      },
+      "message": "record added",
+      "status": "success"
     }
-  ],
-  "trigger": ["approval", "workflow", "blueprint"]
+  ]
 }
 ```
 
 ### Update Contact
-```javascript
-PUT: contacts/{contactId}
+Update an existing contact's information
+
+**Parameters:**
+- `contact-id` (required) - Zoho contact ID
+- `first-name` (optional) - Updated first name
+- `last-name` (optional) - Updated last name
+- `email` (optional) - Updated email address
+- `phone` (optional) - Updated phone number
+- `title` (optional) - Updated job title
+- `address` (optional) - Updated address information
+
+**Example:**
+```
+/your-zoho-connection
+action: update-contact
+contact-id: 456789123
+phone: +1 555-111-2222
+title: VP of Engineering
+address: 789 Pine St, San Francisco, CA 94105
+```
+
+**Response:**
+```json
 {
   "data": [
     {
-      "Phone": "+1 555-111-2222",
-      "Title": "VP of Engineering",
-      "Mailing_City": "San Francisco"
+      "code": "SUCCESS",
+      "details": {
+        "id": "456789123",
+        "Modified_Time": "2023-03-15T11:30:00-08:00",
+        "Modified_By": {
+          "id": "112233445",
+          "name": "Sales Rep"
+        }
+      },
+      "message": "record updated",
+      "status": "success"
     }
-  ],
-  "trigger": ["approval", "workflow", "blueprint"]
+  ]
 }
 ```
 
 ### Search Contacts
-```javascript
-GET: contacts/search?criteria=(Email:equals:jane.smith@example.com)
+Search for contacts based on specific criteria
+
+**Parameters:**
+- `search-criteria` (required) - Search criteria (e.g., "Email:equals:jane.smith@example.com")
+- `fields` (optional) - Fields to retrieve in search results
+
+**Example:**
+```
+/your-zoho-connection
+action: search-contacts
+search-criteria: Email:equals:jane.smith@example.com
+fields: First_Name,Last_Name,Email,Phone
 ```
 
-## Response Structures
-
-### Contact List Response
-```javascript
-{
-  "output": {
-    "data": [
-      {
-        "id": "123456789",
-        "First_Name": "John",
-        "Last_Name": "Doe",
-        "Email": "john.doe@example.com",
-        "Phone": "+1 555-123-4567",
-        "Account_Name": {
-          "id": "987654321",
-          "name": "Example Company"
-        },
-        "Owner": {
-          "id": "112233445",
-          "name": "Sales Rep"
-        },
-        "Created_Time": "2023-01-15T10:30:00-08:00",
-        "Modified_Time": "2023-02-20T14:45:00-08:00"
-      }
-    ],
-    "info": {
-      "per_page": 200,
-      "count": 15,
-      "page": 1,
-      "more_records": false
-    }
-  }
-}
-```
-
-### Create/Update Response
-```javascript
-{
-  "output": {
-    "data": [
-      {
-        "code": "SUCCESS",
-        "details": {
-          "id": "456789123",
-          "Created_Time": "2023-03-10T09:15:00-08:00",
-          "Modified_Time": "2023-03-10T09:15:00-08:00",
-          "Created_By": {
-            "id": "112233445",
-            "name": "Sales Rep"
-          },
-          "Modified_By": {
-            "id": "112233445",
-            "name": "Sales Rep"
-          }
-        },
-        "message": "record added",
-        "status": "success"
-      }
-    ]
-  }
-}
-```
-
-## Lead Management
-
-### Get All Leads
-```javascript
-GET: leads
-```
-
-### Lead Response Structure
-```javascript
-{
-  "output": {
-    "data": [
-      {
-        "id": "334455667",
-        "First_Name": "Michael",
-        "Last_Name": "Johnson",
-        "Email": "michael.johnson@example.com",
-        "Phone": "+1 555-222-3333",
-        "Company": "Prospect Inc",
-        "Lead_Status": "Qualified",
-        "Lead_Source": "Website",
-        "Owner": {
-          "id": "112233445",
-          "name": "Sales Rep"
-        },
-        "Created_Time": "2023-02-05T13:20:00-08:00",
-        "Modified_Time": "2023-02-10T09:45:00-08:00"
-      }
-    ],
-    "info": {
-      "per_page": 200,
-      "count": 10,
-      "page": 1,
-      "more_records": false
-    }
-  }
-}
-```
-
-## Deal Management
-
-### Create New Deal
-```javascript
-POST: deals
+**Response:**
+```json
 {
   "data": [
     {
-      "Deal_Name": "New Enterprise License",
+      "id": "456789123",
+      "First_Name": "Jane",
+      "Last_Name": "Smith",
+      "Email": "jane.smith@example.com",
+      "Phone": "+1 555-111-2222",
       "Account_Name": {
-        "id": "987654321"
+        "id": "987654321",
+        "name": "Example Company"
       },
-      "Stage": "Qualification",
-      "Amount": 50000,
-      "Closing_Date": "2023-06-30",
-      "Contact_Name": {
-        "id": "456789123"
+      "Title": "VP of Engineering",
+      "Owner": {
+        "id": "112233445",
+        "name": "Sales Rep"
       },
-      "Pipeline": "Standard",
-      "Expected_Revenue": 45000,
-      "Description": "Enterprise license deal with Example Company"
+      "Created_Time": "2023-03-10T09:15:00-08:00",
+      "Modified_Time": "2023-03-15T11:30:00-08:00"
     }
   ],
-  "trigger": ["approval", "workflow", "blueprint"]
-}
-```
-
-## User Management
-
-### Get Users
-```javascript
-GET: users
-```
-
-### User Response Structure
-```javascript
-{
-  "output": {
-    "users": [
-      {
-        "id": "6421284000000479001",
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "john@example.com",
-        "role": {
-          "name": "Sales Manager",
-          "id": "6421284000000026005"
-        },
-        "profile": {
-          "name": "Administrator",
-          "id": "6421284000000026011"
-        },
-        "status": "active",
-        "created_time": "2024-09-07T05:27:36-07:00",
-        "time_zone": "America/Los_Angeles"
-      }
-    ],
-    "info": {
-      "per_page": 200,
-      "count": 1,
-      "page": 1,
-      "more_records": false
-    }
-  }
-}
-```
-
-## Search and Filtering
-
-### Search Criteria
-```javascript
-// Email search
-GET: contacts/search?criteria=(Email:equals:john@example.com)
-
-// Multiple criteria
-GET: contacts/search?criteria=((First_Name:equals:John)and(Last_Name:equals:Doe))
-
-// Date range search
-GET: deals/search?criteria=(Created_Time:between:2023-01-01T00:00:00-08:00,2023-12-31T23:59:59-08:00)
-```
-
-### Search Operators
-- **equals**: Exact match
-- **contains**: Partial match
-- **starts_with**: Begins with specified value
-- **between**: Range search (for dates and numbers)
-- **greater_than**: Greater than specified value
-- **less_than**: Less than specified value
-
-## Data Management
-
-### Triggers
-```javascript
-{
-  "trigger": ["approval", "workflow", "blueprint"]
-}
-```
-
-### Trigger Types
-- **approval**: Trigger approval processes
-- **workflow**: Execute workflow rules
-- **blueprint**: Run blueprint transitions
-
-### Pagination
-```javascript
-{
   "info": {
-    "per_page": 200,      // Records per page
-    "count": 15,          // Records in current response
-    "page": 1,            // Current page number
-    "more_records": false // Whether more pages exist
+    "per_page": 200,
+    "count": 1,
+    "page": 1,
+    "more_records": false
   }
 }
 ```
 
-## Important Notes
+## Notes
 
-- **API Version**: Uses Zoho CRM API v2
-- **Rate Limits**: Respect Zoho CRM API rate limits
-- **Time Zones**: All timestamps include timezone information
-- **Required Fields**: Some fields may be required based on your CRM configuration
-- **Custom Fields**: Support for custom fields specific to your organization
-- **Bulk Operations**: Can create/update multiple records in single requests
-
-## Best Practices
-
-1. **Data Validation**: Validate required fields before creating records
-2. **Error Handling**: Check response status and handle errors appropriately
-3. **Pagination**: Handle paginated responses for large datasets
-4. **Search Optimization**: Use specific search criteria to improve performance
-5. **Bulk Operations**: Use bulk operations for multiple record operations
-6. **Field Mapping**: Understand your CRM's field configuration and requirements
-7. **Trigger Management**: Use appropriate triggers for business process automation
-8. **Rate Limiting**: Implement appropriate delays between API calls 
+Zoho CRM API uses v2 endpoints for contact management. Contact IDs are numeric identifiers returned from create and search operations. Search criteria use colon-separated format like "Field:operator:value". Supported operators include equals, contains, starts_with, ends_with. Account associations require valid account IDs. Address information can be split into Street, City, State, Zip, and Country fields. All timestamps are in ISO 8601 format with timezone information. 

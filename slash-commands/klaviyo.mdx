@@ -1,363 +1,276 @@
 ---
-title: "Klaviyo API Command Guide"
-description: "Learn how to use the Klaviyo API slash command to manage email campaigns and subscriber lists"
+title: "Klaviyo Guide"
+description: "Manage email campaigns and subscriber lists with Klaviyo email marketing platform"
 ---
 
-The `/klaviyo` command enables you to manage email campaigns and subscriber lists through Klaviyo's marketing platform. Perfect for:
+## What can you do with it?
 
-- Creating and managing email campaigns
-- Building subscriber lists
-- Managing email marketing automation
-- Tracking campaign performance
-- Subscriber management
+The Klaviyo API allows you to manage email marketing campaigns and subscriber lists with advanced segmentation and personalization. You can create and send campaigns, manage subscriber lists, add and remove subscribers, track campaign performance, and handle all aspects of your email marketing automation with Klaviyo's powerful platform.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Klaviyo:
-
+### Basic Command Structure
 ```
-/klaviyo create "Winter Sale Campaign" for list 123456
+/your-klaviyo-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/klaviyo add subscriber "john.doe@example.com" to list "New Subscribers"
-```
+### Parameters
 
-```
-/klaviyo send campaign "campaign_123456" at scheduled time
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (create, get, send, add, remove)
+- `entity` - The entity type (campaign, list, subscriber)
+- `name` - Campaign or list name
+- `subject` - Email subject line
+- `from_email` - Sender email address
 
-### Campaign Management
-- Create new campaigns
-- Schedule campaign sends
-- Track campaign status
-- Manage campaign content
-- Performance monitoring
+**Optional:**
 
-### List Management
-- Create subscriber lists
-- Add/remove subscribers
-- Organize audiences
-- Segment subscribers
-- List maintenance
+- `list_id` - List ID for campaigns and subscribers
+- `template_id` - Template ID for campaigns
+- `send_time` - Scheduled send time
+- `content_type` - Content type (html, text)
+- `phone_number` - Subscriber phone number
+- `first_name` - Subscriber first name
+- `last_name` - Subscriber last name
 
-### Automation
-- Email sequences
-- Triggered campaigns
-- Subscriber workflows
-- Personalization
-- A/B testing
-
-## Example Commands
+## Tools
 
 ### Create Campaign
-```
-/klaviyo create email campaign "Spring Promo" with template 654321
-```
+Create a new email campaign in Klaviyo.
 
-### Manage Lists
-```
-/klaviyo create new list "Loyal Customers" for segmentation
-```
+**Parameters:**
+- `name` (required) - Campaign name
+- `list_id` (required) - Target list ID
+- `template_id` (required) - Template ID
+- `subject` (required) - Email subject line
+- `from_email` (required) - Sender email address
+- `from_name` (required) - Sender name
+- `content_type` (optional) - Content type (html, text)
 
-### Add Subscribers
+**Example:**
 ```
-/klaviyo add contact with phone "+1234567890" and name "John Doe"
-```
-
-### Send Campaigns
-```
-/klaviyo schedule campaign to send on January 15th at 12 PM
-```
-
-### Remove Subscribers
-```
-/klaviyo remove "john.doe@example.com" from list 123456
-```
-
-## Campaign Operations
-
-### Create Campaign
-```javascript
-{
-  "name": "Winter Sale Campaign",
-  "list_id": "123456",
-  "template_id": "654321",
-  "subject": "Winter Sale is Here!",
-  "from_email": "sales@company.com",
-  "from_name": "Company Sales",
-  "content_type": "html"
-}
+/your-klaviyo-connection
+action: create
+entity: campaign
+name: Winter Sale Campaign
+list_id: 123456
+template_id: 654321
+subject: Winter Sale is Here!
+from_email: sales@company.com
+from_name: Company Sales
+content_type: html
 ```
 
-### Get Campaigns
-```javascript
-const url = KLAVIYO_URL + "campaigns";
-```
-
-### Send Campaign
-```javascript
-{
-  "send_time": "2025-01-15T12:00:00Z"
-}
-```
-
-## List Operations
-
-### Create List
-```javascript
-{
-  "name": "New Subscribers",
-  "list_type": "list"
-}
-```
-
-### Add Subscriber to List
-```javascript
-{
-  "profiles": [
-    {
-      "email": "john.doe@example.com",
-      "phone_number": "+1234567890",
-      "first_name": "John",
-      "last_name": "Doe"
-    }
-  ]
-}
-```
-
-### Remove Subscriber
-```javascript
-{
-  "emails": [
-    "john.doe@example.com"
-  ]
-}
-```
-
-## Campaign Structure
-
-### Campaign Properties
-- **id**: Unique campaign identifier
-- **name**: Campaign display name
-- **status**: Current campaign status
-- **created**: Creation timestamp
-- **list_id**: Target audience list
-- **template_id**: Email template
-
-### Campaign Status
-- **draft**: Being created/edited
-- **sending**: Currently sending
-- **sent**: Completed send
-- **scheduled**: Scheduled for future
-- **paused**: Temporarily stopped
-
-## List Management
-
-### List Properties
-- **list_id**: Unique list identifier
-- **name**: List display name
-- **created**: Creation timestamp
-- **list_type**: Type of list
-- **subscriber_count**: Number of subscribers
-
-### Subscriber Properties
-- **email**: Primary email address
-- **phone_number**: Contact phone
-- **first_name**: Given name
-- **last_name**: Family name
-- **status**: Subscription status
-
-## Response Formats
-
-### Campaign Response
-```javascript
+**Response:**
+```json
 {
   "id": "campaign_123456",
   "name": "Winter Sale Campaign",
   "status": "draft",
-  "created": "2025-01-10T10:00:00Z",
-  "list_id": "123456",
-  "template_id": "654321",
   "subject": "Winter Sale is Here!",
   "from_email": "sales@company.com",
-  "from_name": "Company Sales"
+  "from_name": "Company Sales",
+  "list_id": "123456",
+  "template_id": "654321",
+  "content_type": "html",
+  "created": "2025-01-10T10:00:00Z"
 }
 ```
 
-### List Response
-```javascript
+### Get Campaigns
+Retrieve a list of campaigns in Klaviyo.
+
+**Parameters:**
+- `status` (optional) - Filter by campaign status
+- `limit` (optional) - Number of campaigns to return
+
+**Example:**
+```
+/your-klaviyo-connection
+action: get
+entity: campaigns
+status: draft
+limit: 20
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "campaign_123456",
+    "name": "Winter Sale Campaign",
+    "status": "draft",
+    "subject": "Winter Sale is Here!",
+    "created": "2025-01-10T10:00:00Z"
+  },
+  {
+    "id": "campaign_654321",
+    "name": "Spring Promo Campaign",
+    "status": "sent",
+    "subject": "Spring Collection Now Available",
+    "created": "2025-03-01T10:00:00Z"
+  }
+]
+```
+
+### Send Campaign
+Send a campaign that has been created and is in draft status.
+
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to send
+- `send_time` (optional) - Scheduled send time (ISO format)
+
+**Example:**
+```
+/your-klaviyo-connection
+action: send
+entity: campaign
+campaign_id: campaign_123456
+send_time: 2025-01-15T12:00:00Z
+```
+
+**Response:**
+```json
+{
+  "id": "campaign_123456",
+  "name": "Winter Sale Campaign",
+  "status": "sending",
+  "send_time": "2025-01-15T12:00:00Z",
+  "subject": "Winter Sale is Here!",
+  "from_email": "sales@company.com"
+}
+```
+
+### Create List
+Create a new subscriber list in Klaviyo.
+
+**Parameters:**
+- `name` (required) - List name
+- `list_type` (optional) - List type (default: "list")
+
+**Example:**
+```
+/your-klaviyo-connection
+action: create
+entity: list
+name: New Subscribers
+list_type: list
+```
+
+**Response:**
+```json
 {
   "list_id": "123456",
   "name": "New Subscribers",
-  "created": "2025-01-12T12:00:00Z",
   "list_type": "list",
-  "subscriber_count": 1250
+  "created": "2025-01-12T12:00:00Z",
+  "member_count": 0,
+  "status": "active"
 }
 ```
 
-### Subscriber Response
-```javascript
+### Add Subscriber to List
+Add a subscriber to a specific list in Klaviyo.
+
+**Parameters:**
+- `list_id` (required) - List ID to add subscriber to
+- `email` (required) - Subscriber email address
+- `phone_number` (optional) - Subscriber phone number
+- `first_name` (optional) - Subscriber first name
+- `last_name` (optional) - Subscriber last name
+
+**Example:**
+```
+/your-klaviyo-connection
+action: add
+entity: subscriber
+list_id: 123456
+email: john.doe@example.com
+phone_number: +1234567890
+first_name: John
+last_name: Doe
+```
+
+**Response:**
+```json
 {
   "added": [
     {
       "id": "profile_123456",
       "email": "john.doe@example.com",
-      "status": "subscribed",
+      "phone_number": "+1234567890",
       "first_name": "John",
       "last_name": "Doe",
-      "phone_number": "+1234567890"
+      "status": "subscribed",
+      "created": "2025-01-12T12:00:00Z"
     }
   ]
 }
 ```
 
-## Campaign Scheduling
+### Remove Subscriber from List
+Remove a subscriber from a specific list in Klaviyo.
 
-### Send Immediately
-```javascript
-// No send_time specified
-const url = KLAVIYO_URL + `campaigns/${campaignId}/send`;
+**Parameters:**
+- `list_id` (required) - List ID to remove subscriber from
+- `emails` (required) - Array of email addresses to remove
+
+**Example:**
+```
+/your-klaviyo-connection
+action: remove
+entity: subscriber
+list_id: 123456
+emails: ["john.doe@example.com"]
 ```
 
-### Schedule for Later
-```javascript
+**Response:**
+```json
 {
-  "send_time": "2025-01-15T12:00:00Z"
+  "status": 204,
+  "message": "Subscriber removed successfully."
 }
 ```
 
-### Time Zone Considerations
-- Use UTC timestamps
-- Consider audience time zones
-- Plan for optimal send times
-- Account for delivery delays
+### Get Lists
+Retrieve a list of all subscriber lists in Klaviyo.
 
-## Best Practices
+**Parameters:**
+- `limit` (optional) - Number of lists to return
+- `offset` (optional) - Number of lists to skip
 
-1. **Campaign Planning**
-   - Define clear objectives
-   - Segment audiences appropriately
-   - Test subject lines
-   - Optimize send times
-
-2. **List Management**
-   - Regular list cleanup
-   - Remove inactive subscribers
-   - Maintain data quality
-   - Respect unsubscribe requests
-
-3. **Content Strategy**
-   - Personalize messages
-   - Use compelling subject lines
-   - Include clear calls-to-action
-   - Mobile-friendly design
-
-4. **Performance Monitoring**
-   - Track open rates
-   - Monitor click-through rates
-   - Analyze conversion data
-   - A/B test variations
-
-## Common Use Cases
-
-### Welcome Series
+**Example:**
 ```
-/klaviyo create welcome campaign for new subscriber onboarding
+/your-klaviyo-connection
+action: get
+entity: lists
+limit: 20
+offset: 0
 ```
 
-### Promotional Campaigns
+**Response:**
+```json
+[
+  {
+    "list_id": "123456",
+    "name": "New Subscribers",
+    "list_type": "list",
+    "created": "2025-01-12T12:00:00Z",
+    "member_count": 250,
+    "status": "active"
+  },
+  {
+    "list_id": "654321",
+    "name": "Loyal Customers",
+    "list_type": "list",
+    "created": "2024-12-15T10:00:00Z",
+    "member_count": 1500,
+    "status": "active"
+  }
+]
 ```
-/klaviyo send seasonal sale campaign to loyal customers list
-```
 
-### Re-engagement
-```
-/klaviyo create win-back campaign for inactive subscribers
-```
+## Notes 
 
-### Event Marketing
-```
-/klaviyo schedule event reminder campaign for registered attendees
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid email formats
-- Missing required fields
-- Campaign scheduling conflicts
-- List permission errors
-
-### Status Codes
-- **200**: Success
-- **201**: Created
-- **204**: No content (successful deletion)
-- **400**: Bad request
-- **404**: Not found
-
-## Subscriber Management
-
-### Subscription Status
-- **subscribed**: Active subscriber
-- **unsubscribed**: Opted out
-- **bounced**: Email delivery failed
-- **suppressed**: Blocked from receiving
-
-### Data Fields
-- Required: email address
-- Optional: phone, name, custom fields
-- Validation: email format checking
-- Privacy: GDPR compliance
-
-## Integration Tips
-
-### Email Automation
-- Set up triggered campaigns
-- Use behavioral triggers
-- Implement drip sequences
-- Track customer journey
-
-### Data Synchronization
-- Sync with CRM systems
-- Update subscriber data
-- Handle data conflicts
-- Maintain consistency
-
-## Performance Optimization
-
-### Campaign Efficiency
-- Segment audiences properly
-- Use appropriate send times
-- Monitor delivery rates
-- Optimize for engagement
-
-### List Health
-- Regular cleanup
-- Remove duplicates
-- Update contact information
-- Monitor bounce rates
-
-## Compliance Considerations
-
-### Email Regulations
-- CAN-SPAM compliance
-- GDPR requirements
-- Unsubscribe handling
-- Data protection
-
-### Best Practices
-- Double opt-in processes
-- Clear unsubscribe options
-- Privacy policy links
-- Data retention policies
-
-## Tips
-- Always validate email addresses before adding to lists
-- Use descriptive campaign names for easy identification
-- Schedule campaigns for optimal audience engagement times
-- Regularly clean subscriber lists to maintain deliverability
-- Test campaigns with small segments before full deployment
-- Monitor campaign performance metrics for optimization 
+Campaign status includes draft, sending, sent, and scheduled. List types are typically "list" for standard subscriber lists. Subscriber profiles support custom properties and attributes. Send times use ISO 8601 format for scheduling. Templates must be created in Klaviyo dashboard before use in campaigns. Phone numbers should include country code. Uses Paragon proxy connection. Profiles can be segmented based on behavior and attributes. Campaign analytics and performance metrics are available through separate endpoints. 

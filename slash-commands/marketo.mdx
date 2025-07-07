@@ -1,226 +1,54 @@
 ---
-title: "Marketo API Command Guide"
-description: "Learn how to use the Marketo API slash command for marketing automation and lead management"
+title: "Marketo Guide"
+description: "Manage marketing automation campaigns with Marketo platform including leads, campaigns, programs, and customer data"
 ---
 
-The `/marketo` command enables you to manage marketing automation and lead management through Marketo's platform. Perfect for:
+## What can you do with it?
 
-- Lead management and tracking
-- Campaign automation
-- Email marketing
-- Lead scoring and nurturing
-- Marketing analytics
+The Marketo API allows you to manage marketing automation campaigns and lead data. You can create and update leads, manage campaigns and programs, track lead activities, handle email communications, work with forms and landing pages, manage custom objects, and implement comprehensive marketing automation workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Marketo:
-
+### Basic Command Structure
 ```
-/marketo get lead by ID 318581
+/your-marketo-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/marketo create leads with email "john.doe@example.com" and company "Acme Corp"
-```
+### Parameters
 
-```
-/marketo trigger campaign 1001 for leads with discount code
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (get, create, update, delete, trigger, send)
+- `entity` - The entity type (lead, campaign, program, email, form, list)
+- `id` - Entity ID for specific operations
 
-### Lead Management
-- Create and update leads
-- Search leads by criteria
-- Track lead activities
-- Manage lead data
-- Lead scoring
+**Optional:**
 
-### Campaign Management
-- Get campaign information
-- Trigger campaigns
-- Track campaign performance
-- Manage campaign assets
-- Automation workflows
+- `filter_type` - Filter type for searches (email, id, etc.)
+- `filter_values` - Values to filter by
+- `lookup_field` - Field to use for lead lookup
+- `activity_type_ids` - Activity types to retrieve
+- `fields` - Specific fields to return
+- `tokens` - Campaign tokens for personalization
 
-### Email Operations
-- Send sample emails
-- Manage email templates
-- Track email performance
-- Personalization
-- A/B testing
-
-### Asset Management
-- Forms management
-- Landing pages
-- Email templates
-- Programs
-- Custom objects
-
-## Example Commands
-
-### Lead Operations
-```
-/marketo find leads by email "john.doe@example.com,jane.smith@example.com"
-```
-
-### Campaign Triggers
-```
-/marketo request campaign 1001 with tokens for discount code "SAVE20"
-```
-
-### Asset Retrieval
-```
-/marketo get all forms and their configurations
-```
-
-### Activity Tracking
-```
-/marketo get lead activities for web page visits and email clicks
-```
-
-## Lead Operations
+## Tools
 
 ### Get Lead by ID
-```javascript
-const url = MARKETO_URL + `lead/${leadId}.json`;
+Retrieve a specific lead using their unique ID.
+
+**Parameters:**
+- `lead_id` (required) - Lead ID to retrieve
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: lead
+lead_id: 318581
 ```
 
-### Create or Update Leads
-```javascript
-{
-  "action": "createOrUpdate",
-  "lookupField": "email",
-  "input": [
-    {
-      "email": "john.doe@example.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "company": "Acme Corp",
-      "title": "Software Engineer"
-    }
-  ]
-}
-```
-
-### Get Leads by Filter
-```javascript
-const url = MARKETO_URL + `leads.json?filterType=email&filterValues=john.doe@example.com,jane.smith@example.com`;
-```
-
-## Campaign Operations
-
-### Get Campaigns
-```javascript
-const url = MARKETO_URL + "campaigns.json";
-```
-
-### Request Campaign
-```javascript
-{
-  "input": {
-    "leads": [
-      {
-        "id": 318581
-      }
-    ],
-    "tokens": [
-      {
-        "name": "{{my.discount-code}}",
-        "value": "SAVE20"
-      }
-    ]
-  }
-}
-```
-
-### Add Leads to List
-```javascript
-{
-  "input": [
-    {
-      "id": 318581
-    },
-    {
-      "id": 318582
-    }
-  ]
-}
-```
-
-## Activity Tracking
-
-### Get Lead Activities
-```javascript
-const url = MARKETO_URL + `activities.json?activityTypeIds=1,6,12&nextPageToken=${nextPageToken}`;
-```
-
-### Activity Types
-- **1**: Visit Web Page
-- **6**: Fill Out Form
-- **12**: Click Email
-- **2**: Change Data Value
-- **7**: Send Email
-
-## Asset Management
-
-### Get Programs
-```javascript
-const url = MARKETO_URL + "programs.json";
-```
-
-### Get Forms
-```javascript
-const url = MARKETO_URL + "forms.json";
-```
-
-### Get Landing Pages
-```javascript
-const url = MARKETO_URL + "landingPages.json";
-```
-
-### Get Emails
-```javascript
-const url = MARKETO_URL + "emails.json";
-```
-
-## Lead Structure
-
-### Basic Fields
-- **id**: Unique lead identifier
-- **firstName**: Given name
-- **lastName**: Family name
-- **email**: Primary email address
-- **company**: Company name
-- **title**: Job title
-
-### System Fields
-- **createdAt**: Lead creation date
-- **updatedAt**: Last modification date
-- **leadScore**: Lead scoring value
-- **leadStatus**: Current status
-- **unsubscribed**: Email preference
-
-## Campaign Structure
-
-### Campaign Properties
-- **id**: Unique campaign identifier
-- **name**: Campaign display name
-- **description**: Campaign description
-- **type**: Campaign type (trigger/batch)
-- **programId**: Associated program
-- **workspaceName**: Workspace location
-
-### Campaign Types
-- **trigger**: Event-triggered campaigns
-- **batch**: Scheduled batch campaigns
-- **nurture**: Drip campaigns
-- **operational**: System campaigns
-
-## Response Formats
-
-### Lead Response
-```javascript
+**Response:**
+```json
 {
   "requestId": "e42b#14272d07d78",
   "success": true,
@@ -230,7 +58,6 @@ const url = MARKETO_URL + "emails.json";
       "firstName": "John",
       "lastName": "Doe",
       "email": "john.doe@example.com",
-      "company": "Acme Corp",
       "updatedAt": "2023-04-11T08:59:18Z",
       "createdAt": "2023-04-10T10:30:00Z"
     }
@@ -238,26 +65,112 @@ const url = MARKETO_URL + "emails.json";
 }
 ```
 
-### Campaign Response
-```javascript
+### Create or Update Leads
+Create new leads or update existing ones based on lookup field.
+
+**Parameters:**
+- `action_type` (required) - Action type (createOrUpdate)
+- `lookup_field` (required) - Field to use for lookup (email, id)
+- `leads` (required) - Array of lead objects
+- `email` (required) - Lead email address
+- `first_name` (optional) - Lead first name
+- `last_name` (optional) - Lead last name
+- `company` (optional) - Lead company
+- `title` (optional) - Lead job title
+
+**Example:**
+```
+/your-marketo-connection
+action: create
+entity: leads
+action_type: createOrUpdate
+lookup_field: email
+leads: [
+  {
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "company": "Acme Corp",
+    "title": "Software Engineer"
+  }
+]
+```
+
+**Response:**
+```json
 {
   "requestId": "e42b#14272d07d78",
   "success": true,
   "result": [
     {
-      "id": 1001,
-      "name": "Welcome Email Campaign",
-      "description": "Send welcome email to new leads",
-      "type": "trigger",
-      "programId": 2001,
-      "workspaceName": "Default"
+      "id": 318581,
+      "status": "updated"
     }
   ]
 }
 ```
 
-### Activity Response
-```javascript
+### Get Leads by Filter
+Retrieve leads using filter criteria like email addresses.
+
+**Parameters:**
+- `filter_type` (required) - Filter type (email, id, leadPartitionId)
+- `filter_values` (required) - Comma-separated values to filter by
+- `fields` (optional) - Specific fields to return
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: leads
+filter_type: email
+filter_values: john.doe@example.com,jane.smith@example.com
+fields: id,firstName,lastName,email,company
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 318581,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "company": "Acme Corp"
+    },
+    {
+      "id": 318582,
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane.smith@example.com",
+      "company": "Tech Solutions"
+    }
+  ]
+}
+```
+
+### Get Lead Activities
+Retrieve lead activities based on activity type IDs.
+
+**Parameters:**
+- `activity_type_ids` (required) - Comma-separated activity type IDs
+- `next_page_token` (optional) - Token for pagination
+- `lead_ids` (optional) - Specific lead IDs to filter
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: activities
+activity_type_ids: 1,6,12
+next_page_token: GIYDAOBNGEYS2MBWKQYDAORQGA5DAMBOGAYDAKZQGAYDALBQ
+```
+
+**Response:**
+```json
 {
   "requestId": "e42b#14272d07d78",
   "success": true,
@@ -281,167 +194,323 @@ const url = MARKETO_URL + "emails.json";
 }
 ```
 
-## Custom Objects
+### Add Leads to List
+Add leads to a specific static list.
 
-### Get Custom Objects
-```javascript
-const url = MARKETO_URL + "customobjects.json";
+**Parameters:**
+- `list_id` (required) - List ID to add leads to
+- `lead_ids` (required) - Array of lead IDs to add
+
+**Example:**
+```
+/your-marketo-connection
+action: add
+entity: leads_to_list
+list_id: 1001
+lead_ids: [318581, 318582]
 ```
 
-### Create/Update Custom Objects
-```javascript
-{
-  "action": "createOrUpdate",
-  "dedupeBy": "dedupeFields",
-  "input": [
-    {
-      "vin": "19UYA31581L000000",
-      "leadId": 318581,
-      "make": "Toyota",
-      "model": "Camry",
-      "year": 2023,
-      "color": "Blue",
-      "purchaseDate": "2023-04-11"
-    }
-  ]
-}
-```
-
-## Email Operations
-
-### Send Sample Email
-```javascript
-{
-  "emailAddress": "test@example.com",
-  "textOnly": false,
-  "leadId": 318581
-}
-```
-
-### Email Properties
-- **id**: Email template ID
-- **name**: Email name
-- **subject**: Email subject line
-- **fromName**: Sender name
-- **fromEmail**: Sender email
-- **status**: Approval status
-
-## Pagination
-
-### Handling Large Results
-- Use `nextPageToken` for pagination
-- Set appropriate batch sizes
-- Handle `moreResult` flag
-- Process results incrementally
-
-### Token Management
-```javascript
-// Get next page
-const nextUrl = MARKETO_URL + `activities.json?nextPageToken=${nextPageToken}`;
-```
-
-## Best Practices
-
-1. **Lead Management**
-   - Use appropriate lookup fields
-   - Validate email formats
-   - Handle duplicates properly
-   - Maintain data quality
-
-2. **Campaign Automation**
-   - Test campaigns thoroughly
-   - Use meaningful tokens
-   - Monitor performance
-   - Handle errors gracefully
-
-3. **API Usage**
-   - Respect rate limits
-   - Use bulk operations
-   - Implement retry logic
-   - Cache responses
-
-4. **Data Integration**
-   - Sync with CRM systems
-   - Maintain consistency
-   - Handle conflicts
-   - Regular backups
-
-## Common Use Cases
-
-### Lead Nurturing
-```
-/marketo create nurture campaign for new leads with welcome series
-```
-
-### Event Marketing
-```
-/marketo trigger webinar follow-up campaign for attendees
-```
-
-### Lead Scoring
-```
-/marketo update lead scores based on website activity and engagement
-```
-
-### Data Synchronization
-```
-/marketo sync lead data between Marketo and CRM system
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid lead IDs
-- Missing required fields
-- Rate limit exceeded
-- Authentication failures
-
-### Error Response
-```javascript
+**Response:**
+```json
 {
   "requestId": "e42b#14272d07d78",
-  "success": false,
-  "errors": [
+  "success": true,
+  "result": [
     {
-      "code": "1003",
-      "message": "Lead not found"
+      "id": 318581,
+      "status": "added"
+    },
+    {
+      "id": 318582,
+      "status": "added"
     }
   ]
 }
 ```
 
-## Performance Optimization
+### Get Campaigns
+Retrieve a list of available campaigns.
 
-### Bulk Operations
-- Use batch processing
-- Minimize API calls
-- Optimize payload sizes
-- Handle timeouts
+**Parameters:**
+- `program_ids` (optional) - Filter by specific program IDs
+- `is_triggerable` (optional) - Filter by triggerable campaigns only
 
-### Caching Strategy
-- Cache frequently accessed data
-- Use appropriate TTL values
-- Invalidate when needed
-- Monitor cache performance
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: campaigns
+is_triggerable: true
+```
 
-## Integration Tips
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 1001,
+      "name": "Welcome Email Campaign",
+      "description": "Send welcome email to new leads",
+      "type": "trigger",
+      "programId": 2001,
+      "workspaceName": "Default",
+      "createdAt": "2023-04-10T10:30:00Z",
+      "updatedAt": "2023-04-11T08:59:18Z"
+    }
+  ]
+}
+```
 
-### CRM Integration
-- Map fields correctly
-- Handle data conflicts
-- Sync regularly
-- Monitor sync status
+### Trigger Campaign
+Execute a campaign for specific leads with optional tokens.
 
-### Workflow Automation
-- Design logical flows
-- Test thoroughly
-- Monitor performance
-- Handle exceptions
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to trigger
+- `lead_ids` (required) - Array of lead IDs to include
+- `tokens` (optional) - Array of token objects for personalization
 
-## Tips
-- Always check the success field in API responses
-- Use bulk operations for better performance
-- Implement proper pagination for large datasets
-- Monitor API rate limits to avoid throttling
-- Use meaningful campaign and program names
-- Test email campaigns before sending to large audiences 
+**Example:**
+```
+/your-marketo-connection
+action: trigger
+entity: campaign
+campaign_id: 1001
+lead_ids: [318581, 318582]
+tokens: [{"name": "{{my.discount-code}}", "value": "SAVE20"}]
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 318581,
+      "status": "triggered"
+    },
+    {
+      "id": 318582,
+      "status": "triggered"
+    }
+  ]
+}
+```
+
+### Get Programs
+Retrieve a list of marketing programs.
+
+**Parameters:**
+- `status` (optional) - Filter by program status
+- `max_return` (optional) - Maximum number of programs to return
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: programs
+status: on
+max_return: 20
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 2001,
+      "name": "Onboarding Program",
+      "description": "New customer onboarding workflow",
+      "type": "nurture",
+      "channel": "Email",
+      "status": "on",
+      "workspace": "Default",
+      "createdAt": "2023-04-10T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Get Forms
+Retrieve a list of forms available in Marketo.
+
+**Parameters:**
+- `status` (optional) - Filter by form status
+- `folder_id` (optional) - Filter by folder ID
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: forms
+status: approved
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 1001,
+      "name": "Contact Us Form",
+      "description": "Main contact form for website",
+      "createdAt": "2023-04-10T10:30:00Z",
+      "url": "https://app-sjdemo.marketo.com/#FO1001A1",
+      "status": "approved",
+      "language": "English",
+      "locale": "en_US"
+    }
+  ]
+}
+```
+
+### Send Sample Email
+Send a sample email for testing purposes.
+
+**Parameters:**
+- `email_id` (required) - Email ID to send
+- `email_address` (required) - Recipient email address
+- `text_only` (optional) - Send text-only version
+- `lead_id` (optional) - Lead ID for personalization
+
+**Example:**
+```
+/your-marketo-connection
+action: send
+entity: sample_email
+email_id: 3001
+email_address: test@example.com
+text_only: false
+lead_id: 318581
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 1,
+      "status": "sent"
+    }
+  ]
+}
+```
+
+### Get Custom Objects
+Retrieve custom object definitions.
+
+**Parameters:**
+- `names` (optional) - Filter by specific custom object names
+
+**Example:**
+```
+/your-marketo-connection
+action: get
+entity: custom_objects
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "name": "car_c",
+      "displayName": "Car",
+      "description": "Car purchase tracking",
+      "createdAt": "2023-04-10T10:30:00Z",
+      "idField": "marketoGUID",
+      "dedupeFields": ["vin"],
+      "searchableFields": [["vin"], ["marketoGUID"], ["leadId"]]
+    }
+  ]
+}
+```
+
+### Create Custom Object Records
+Create or update custom object records.
+
+**Parameters:**
+- `custom_object_name` (required) - Custom object API name
+- `action_type` (required) - Action type (createOrUpdate)
+- `dedupe_by` (required) - Deduplication method
+- `records` (required) - Array of custom object records
+
+**Example:**
+```
+/your-marketo-connection
+action: create
+entity: custom_object_records
+custom_object_name: car_c
+action_type: createOrUpdate
+dedupe_by: dedupeFields
+records: [
+  {
+    "vin": "19UYA31581L000000",
+    "leadId": 318581,
+    "make": "Toyota",
+    "model": "Camry",
+    "year": 2023
+  }
+]
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "seq": 0,
+      "marketoGUID": "dff23271-f996-47d7-984f-f2676861b5fb",
+      "status": "created"
+    }
+  ]
+}
+```
+
+### Delete Leads
+Delete leads from the Marketo database.
+
+**Parameters:**
+- `lead_ids` (required) - Array of lead IDs to delete
+
+**Example:**
+```
+/your-marketo-connection
+action: delete
+entity: leads
+lead_ids: [318581, 318582]
+```
+
+**Response:**
+```json
+{
+  "requestId": "e42b#14272d07d78",
+  "success": true,
+  "result": [
+    {
+      "id": 318581,
+      "status": "deleted"
+    },
+    {
+      "id": 318582,
+      "status": "deleted"
+    }
+  ]
+}
+```
+
+## Notes 
+
+All responses include requestId for tracking and success boolean indicating operation status. Lead activities use nextPageToken for pagination when moreResult is true. Campaign types include trigger (real-time) and batch (scheduled). Custom objects support relationships with leads. Tokens enable dynamic content in campaigns. Activity type IDs map to specific Marketo activities like email opens, web visits, and form fills. Uses PinkConnect proxy connection. Lead fields support both standard and custom attributes. Programs organize campaigns and assets in hierarchical structures. 

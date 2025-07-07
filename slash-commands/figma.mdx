@@ -1,122 +1,402 @@
 ---
-title: "Figma Command Guide"
-description: "Learn how to use the Figma slash command to manage designs and collaborate"
+title: "Figma Guide"
+description: "With Figma, manage design files, collaborate through comments, and access project resources."
 ---
 
-The `/figma` command enables you to manage design files, collaborate through comments, and access project resources. Perfect for:
+## What can you do with it?
 
-- Accessing design files
-- Managing projects
-- Adding comments
-- Exporting images
-- Viewing team resources
+Manage design files, collaborate through comments, and access project resources with Figma, including retrieving design files, getting specific nodes, rendering images, managing projects, creating and managing comments, adding reactions, and organizing team resources for comprehensive design collaboration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Figma:
-
+### Basic Command Structure
 ```
-/figma get file with ID 12345
+/your-figma-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/figma list projects for team 67890
-```
+### Parameters
 
-```
-/figma add comment "Needs revision" to file 12345 at position 150,200
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (get-file, get-file-nodes, get-rendered-image, get-team-projects, get-project-files, create-comment, get-comments, delete-comment, create-reaction, get-reactions, delete-reaction)
 
-### File Management
-- Get file content
-- Access specific nodes
-- View file details
-- Check last modified dates
-- Access thumbnails
+**Optional:**
 
-### Project Navigation
-- List team projects
-- View project files
-- Browse team resources
-- Access file metadata
+- `file-id` - Figma file ID
+- `node-ids` - Comma-separated node IDs
+- `team-id` - Team ID for projects
+- `project-id` - Project ID for files
+- `comment-message` - Comment message text
+- `comment-id` - Comment ID for operations
+- `x-position` - X coordinate for comment placement
+- `y-position` - Y coordinate for comment placement
+- `emoji` - Emoji for reactions
 
-### Image Export
-- Export nodes as images
-- Choose image formats
-- Get rendered assets
-- Batch export nodes
-
-### Collaboration
-- Add comments
-- View all comments
-- Add reactions
-- Delete comments
-- Track feedback
-
-## Example Commands
+## Tools
 
 ### Get File
+Retrieve the content of a Figma file using its unique ID
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+
+**Example:**
 ```
-/figma show file 12345
+/your-figma-connection
+action: get-file
+file-id: 12345
 ```
 
-### Get Specific Nodes
-```
-/figma get nodes 1:2,1:3 from file 12345
-```
-
-### Export Images
-```
-/figma export nodes 1:2,1:3 as PNG from file 12345
-```
-
-### List Projects
-```
-/figma show all projects for team 67890
-```
-
-### List Files in Project
-```
-/figma list all files in project 101
-```
-
-### Add Comment
-```
-/figma comment "This button needs more padding" on file 12345 at x:150 y:200
+**Response:**
+```json
+{
+  "name": "Design System",
+  "lastModified": "2025-01-15T12:34:56Z",
+  "thumbnailUrl": "https://example.com/thumbnail.png",
+  "document": {
+    "id": "0:1",
+    "name": "Page 1",
+    "type": "CANVAS",
+    "children": [
+      {
+        "id": "1:2",
+        "name": "Component",
+        "type": "FRAME"
+      }
+    ]
+  }
+}
 ```
 
-### View Comments
+### Get File Nodes
+Retrieve specific nodes within a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `node-ids` (required) - Comma-separated list of node IDs
+
+**Example:**
 ```
-/figma show all comments on file 12345
+/your-figma-connection
+action: get-file-nodes
+file-id: 12345
+node-ids: 1:2,1:3
 ```
 
-### Add Reaction
+**Response:**
+```json
+{
+  "nodes": {
+    "1:2": {
+      "document": {
+        "id": "1:2",
+        "name": "Component",
+        "type": "FRAME"
+      }
+    },
+    "1:3": {
+      "document": {
+        "id": "1:3",
+        "name": "Button",
+        "type": "COMPONENT"
+      }
+    }
+  }
+}
 ```
-/figma add 👍 reaction to comment c123 in file 12345
+
+### Get Rendered Image
+Retrieve rendered images of selected nodes within a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `node-ids` (required) - Comma-separated list of node IDs to render
+- `format` (optional) - Image format (png, jpg, svg, pdf)
+- `scale` (optional) - Image scale (1, 2, 4)
+
+**Example:**
+```
+/your-figma-connection
+action: get-rendered-image
+file-id: 12345
+node-ids: 1:2,1:3
+format: png
+scale: 2
 ```
 
-## Required Information
+**Response:**
+```json
+{
+  "images": {
+    "1:2": "https://example.com/image1.png",
+    "1:3": "https://example.com/image2.png"
+  }
+}
+```
 
-### Team ID
-When working with teams, you'll need the team ID. Ask your Figma admin or find it in your Figma URL.
+### Get Team Projects
+Retrieve a list of projects for a specific team
 
-### File ID
-File IDs are found in Figma URLs after `/file/`:
-`https://www.figma.com/file/ABC123/Design-Name`
+**Parameters:**
+- `team-id` (required) - Team ID to get projects for
 
-### Node IDs
-Node IDs identify specific elements in a design (e.g., "1:2", "1:3")
+**Example:**
+```
+/your-figma-connection
+action: get-team-projects
+team-id: 67890
+```
 
-## Comment Positioning
+**Response:**
+```json
+{
+  "name": "Dev Forpink's team",
+  "projects": [
+    {
+      "id": "101",
+      "name": "Marketing Website",
+      "description": "Designs for the new marketing site."
+    },
+    {
+      "id": "102",
+      "name": "Mobile App",
+      "description": "UI designs for the mobile application."
+    }
+  ]
+}
+```
 
-When adding comments, specify coordinates:
-- `x`: Horizontal position
-- `y`: Vertical position
+### Get Project Files
+Retrieve a list of files within a specific project
 
-## Tips
-- Always provide team ID when accessing team resources
-- File IDs are found in Figma URLs
-- Comments require x,y coordinates
-- Reactions use emoji characters 
+**Parameters:**
+- `project-id` (required) - Project ID to get files for
+
+**Example:**
+```
+/your-figma-connection
+action: get-project-files
+project-id: 101
+```
+
+**Response:**
+```json
+{
+  "files": [
+    {
+      "key": "12345",
+      "name": "Homepage Design",
+      "thumbnail_url": "https://example.com/thumbnail1.png",
+      "last_modified": "2025-01-14T10:00:00Z"
+    },
+    {
+      "key": "67890",
+      "name": "Dashboard UI",
+      "thumbnail_url": "https://example.com/thumbnail2.png",
+      "last_modified": "2025-01-13T09:00:00Z"
+    }
+  ]
+}
+```
+
+### Create Comment
+Add a new comment to a specific location within a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `comment-message` (required) - Comment message text
+- `x-position` (required) - X coordinate for comment placement
+- `y-position` (required) - Y coordinate for comment placement
+
+**Example:**
+```
+/your-figma-connection
+action: create-comment
+file-id: 12345
+comment-message: This section needs revision.
+x-position: 150
+y-position: 200
+```
+
+**Response:**
+```json
+{
+  "id": "c123",
+  "file_key": "12345",
+  "parent_id": null,
+  "user": {
+    "handle": "designer@example.com"
+  },
+  "created_at": "2025-01-15T12:00:00Z",
+  "resolved_at": null,
+  "message": "This section needs revision.",
+  "client_meta": {
+    "x": 150,
+    "y": 200
+  }
+}
+```
+
+### Get Comments
+Retrieve all comments associated with a specific Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+
+**Example:**
+```
+/your-figma-connection
+action: get-comments
+file-id: 12345
+```
+
+**Response:**
+```json
+{
+  "comments": [
+    {
+      "id": "c123",
+      "user": {
+        "handle": "designer@example.com"
+      },
+      "created_at": "2025-01-15T12:00:00Z",
+      "message": "This section needs revision.",
+      "client_meta": {
+        "x": 150,
+        "y": 200
+      }
+    },
+    {
+      "id": "c124",
+      "user": {
+        "handle": "developer@example.com"
+      },
+      "created_at": "2025-01-15T12:30:00Z",
+      "message": "Updated the design as per feedback.",
+      "client_meta": {
+        "x": 150,
+        "y": 200
+      }
+    }
+  ]
+}
+```
+
+### Delete Comment
+Remove a specific comment from a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `comment-id` (required) - Comment ID to delete
+
+**Example:**
+```
+/your-figma-connection
+action: delete-comment
+file-id: 12345
+comment-id: c123
+```
+
+**Response:**
+```json
+{
+  "message": "Comment deleted successfully."
+}
+```
+
+### Create Comment Reaction
+Add a reaction (emoji) to a specific comment in a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `comment-id` (required) - Comment ID to react to
+- `emoji` (required) - Emoji for the reaction
+
+**Example:**
+```
+/your-figma-connection
+action: create-reaction
+file-id: 12345
+comment-id: c123
+emoji: 👍
+```
+
+**Response:**
+```json
+{
+  "reaction_id": "r123",
+  "comment_id": "c123",
+  "emoji": "👍",
+  "user": {
+    "handle": "designer@example.com"
+  },
+  "created_at": "2025-01-15T12:45:00Z"
+}
+```
+
+### Get Comment Reactions
+Retrieve all reactions to a specific comment within a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `comment-id` (required) - Comment ID to get reactions for
+
+**Example:**
+```
+/your-figma-connection
+action: get-reactions
+file-id: 12345
+comment-id: c123
+```
+
+**Response:**
+```json
+{
+  "reactions": [
+    {
+      "reaction_id": "r123",
+      "emoji": "👍",
+      "user": {
+        "handle": "designer@example.com"
+      },
+      "created_at": "2025-01-15T12:45:00Z"
+    },
+    {
+      "reaction_id": "r124",
+      "emoji": "❤️",
+      "user": {
+        "handle": "developer@example.com"
+      },
+      "created_at": "2025-01-15T12:50:00Z"
+    }
+  ]
+}
+```
+
+### Delete Comment Reaction
+Remove a reaction from a specific comment in a Figma file
+
+**Parameters:**
+- `file-id` (required) - Figma file ID
+- `comment-id` (required) - Comment ID
+- `reaction-id` (required) - Reaction ID to delete
+
+**Example:**
+```
+/your-figma-connection
+action: delete-reaction
+file-id: 12345
+comment-id: c123
+reaction-id: r123
+```
+
+**Response:**
+```json
+{
+  "message": "Reaction deleted successfully."
+}
+```
+
+## Notes
+
+Figma requires team ID to be provided by the user as there's no endpoint to list available teams. File IDs and node IDs use Figma's unique identifier format. Comments can be placed at specific coordinates within design files. Rendered images support multiple formats including PNG, JPG, SVG, and PDF. Team projects contain multiple design files organized by project categories. 

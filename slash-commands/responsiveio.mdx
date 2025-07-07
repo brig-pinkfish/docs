@@ -1,343 +1,131 @@
 ---
-title: "ResponsiveIO Command Guide"
-description: "Learn how to use the ResponsiveIO slash command to manage RFP projects and intakes"
+title: "ResponsiveIO Guide"
+description: "Manage and access ResponsiveIO projects and intakes through their API for RFP management"
 ---
 
-The `/responsiveio` command enables you to manage and access ResponsiveIO projects and intakes through their API. Perfect for:
+## What can you do with it?
 
-- RFP (Request for Proposal) management
-- Project tracking and organization
-- Intake process automation
-- Proposal workflow management
-- Client engagement tracking
+The ResponsiveIO API allows you to manage RFP (Request for Proposal) projects and intakes. You can retrieve project details, access intake information, and manage your RFP workflow through their platform's API endpoints for comprehensive project management and intake tracking.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with ResponsiveIO:
-
+### Basic Command Structure
 ```
-/responsiveio get project details for project ID 12345
+/your-responsiveio-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/responsiveio retrieve intake information for specific intake
-```
+### Parameters
 
-```
-/responsiveio check project status and timeline
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (get, retrieve, fetch)
+- `entity` - The entity type (project, intake)
+- `id` - Entity ID for specific operations
 
-### Project Management
-- Project information retrieval
-- Project status tracking
-- Timeline management
-- Project organization
-- Progress monitoring
+**Optional:**
 
-### Intake Management
-- Intake data access
-- Status monitoring
-- Process tracking
-- Client information
-- Workflow management
+- `project_id` - Project ID for project-related operations
+- `intake_id` - Intake ID for intake-related operations
 
-### RFP Operations
-- Proposal management
-- Document handling
-- Client communications
-- Status updates
-- Deadline tracking
-
-## Example Commands
-
-### Project Operations
-```
-/responsiveio get all details for marketing project
-```
-
-### Intake Processing
-```
-/responsiveio check intake status for client submission
-```
-
-### Status Monitoring
-```
-/responsiveio monitor active projects and their current status
-```
-
-## Project Operations
+## Tools
 
 ### Get Project
-```javascript
-const url = RESPONSIVEIO_URL + `rfpserver/ext/v1/projects/${projectId}`;
+Retrieve a specific project by project ID with detailed project information.
+
+**Parameters:**
+- `project_id` (required) - Project ID to retrieve
+
+**Example:**
+```
+/your-responsiveio-connection
+action: get
+entity: project
+project_id: project123
 ```
 
-### Project Response
-```javascript
+**Response:**
+```json
 {
   "id": "project123",
   "name": "Sample Project",
   "status": "active",
   "created_at": "2024-01-01T00:00:00Z",
-  "updated_at": "2024-01-15T12:00:00Z"
+  "updated_at": "2024-01-15T12:00:00Z",
+  "description": "This is a sample project for RFP management",
+  "owner": {
+    "id": "user456",
+    "name": "Project Manager",
+    "email": "manager@company.com"
+  },
+  "team_members": [
+    {
+      "id": "user789",
+      "name": "Team Member",
+      "role": "contributor"
+    }
+  ],
+  "deadline": "2024-03-01T00:00:00Z",
+  "budget": {
+    "amount": 50000,
+    "currency": "USD"
+  }
 }
 ```
 
-### Project Properties
-- **id**: Unique project identifier
-- **name**: Project display name
-- **status**: Current project status
-- **created_at**: Project creation timestamp
-- **updated_at**: Last modification timestamp
-
-## Intake Operations
-
 ### Get Intake
-```javascript
-const url = RESPONSIVEIO_URL + `rfpserver/ext/v1/intakes/${intakeId}`;
+Retrieve a specific intake by intake ID with detailed intake information.
+
+**Parameters:**
+- `intake_id` (required) - Intake ID to retrieve
+
+**Example:**
+```
+/your-responsiveio-connection
+action: get
+entity: intake
+intake_id: intake456
 ```
 
-### Intake Response
-```javascript
+**Response:**
+```json
 {
   "id": "intake456",
   "project_id": "project123",
   "status": "pending",
   "created_at": "2024-01-01T00:00:00Z",
-  "updated_at": "2024-01-10T10:00:00Z"
-}
-```
-
-### Intake Properties
-- **id**: Unique intake identifier
-- **project_id**: Associated project ID
-- **status**: Current intake status
-- **created_at**: Intake creation timestamp
-- **updated_at**: Last modification timestamp
-
-## Status Types
-
-### Project Status
-- **active**: Project is currently active
-- **completed**: Project has been completed
-- **on_hold**: Project is temporarily paused
-- **cancelled**: Project has been cancelled
-- **planning**: Project is in planning phase
-
-### Intake Status
-- **pending**: Intake is awaiting review
-- **approved**: Intake has been approved
-- **rejected**: Intake has been rejected
-- **in_review**: Intake is under review
-- **requires_info**: Additional information needed
-
-## Connection Requirements
-
-### PinkConnect Proxy
-- Uses PC_BASE_URL endpoint
-- Requires ResponsiveIO connection ID
-- Standard API authentication
-- Project and intake access permissions
-
-## API Endpoints
-
-### Project Endpoints
-```javascript
-// Get specific project
-GET /rfpserver/ext/v1/projects/{projectId}
-
-// List projects (if available)
-GET /rfpserver/ext/v1/projects
-
-// Update project (if available)
-PUT /rfpserver/ext/v1/projects/{projectId}
-```
-
-### Intake Endpoints
-```javascript
-// Get specific intake
-GET /rfpserver/ext/v1/intakes/{intakeId}
-
-// List intakes (if available)
-GET /rfpserver/ext/v1/intakes
-
-// Update intake (if available)
-PUT /rfpserver/ext/v1/intakes/{intakeId}
-```
-
-## Best Practices
-
-1. **Project Management**
-   - Track project status regularly
-   - Monitor deadlines and milestones
-   - Maintain clear project documentation
-   - Coordinate team communications
-
-2. **Intake Processing**
-   - Review intakes promptly
-   - Provide clear feedback
-   - Track approval workflows
-   - Maintain client communication
-
-3. **Data Organization**
-   - Use consistent naming conventions
-   - Implement proper categorization
-   - Maintain data integrity
-   - Regular status updates
-
-4. **Performance**
-   - Cache frequently accessed data
-   - Implement efficient queries
-   - Monitor API usage
-   - Handle errors gracefully
-
-## Common Use Cases
-
-### Project Tracking
-```
-/responsiveio monitor all active projects and their completion status
-```
-
-### Intake Management
-```
-/responsiveio process pending intakes and update their status
-```
-
-### Status Reporting
-```
-/responsiveio generate status report for all current projects
-```
-
-### Client Communication
-```
-/responsiveio get project updates for client presentation
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid project ID
-- Intake not found
-- Access permissions
-- Network connectivity
-- API rate limits
-
-### Error Response
-```javascript
-{
-  "error": {
-    "code": "PROJECT_NOT_FOUND",
-    "message": "The specified project ID does not exist.",
-    "details": {
-      "projectId": "invalid_id"
+  "updated_at": "2024-01-10T10:00:00Z",
+  "title": "RFP Response Intake",
+  "description": "Intake for managing RFP responses",
+  "priority": "high",
+  "assigned_to": {
+    "id": "user789",
+    "name": "Intake Manager",
+    "email": "intake@company.com"
+  },
+  "requirements": [
+    {
+      "id": "req001",
+      "title": "Technical Specification",
+      "status": "pending",
+      "due_date": "2024-02-01T00:00:00Z"
+    },
+    {
+      "id": "req002",
+      "title": "Budget Proposal",
+      "status": "completed",
+      "due_date": "2024-01-15T00:00:00Z"
     }
-  }
+  ],
+  "attachments": [
+    {
+      "id": "att001",
+      "filename": "rfp_document.pdf",
+      "url": "https://files.responsiveio.com/att001"
+    }
+  ]
 }
 ```
 
-## Data Management
+## Notes 
 
-### Project Data
-- Project metadata
-- Status information
-- Timeline data
-- Team assignments
-- Client information
-
-### Intake Data
-- Submission details
-- Review status
-- Approval workflow
-- Client communications
-- Document attachments
-
-## Integration Patterns
-
-### Workflow Automation
-- Automated status updates
-- Notification systems
-- Approval workflows
-- Deadline reminders
-- Progress tracking
-
-### Reporting Systems
-- Status dashboards
-- Progress reports
-- Client updates
-- Team notifications
-- Performance metrics
-
-## Performance Optimization
-
-### Efficient Operations
-- Cache project data
-- Batch API requests
-- Use appropriate timeouts
-- Implement retry logic
-- Monitor response times
-
-### Data Management
-- Regular data cleanup
-- Efficient data structures
-- Proper indexing
-- Query optimization
-- Resource management
-
-## Security Considerations
-
-### Access Control
-- User authentication
-- Project permissions
-- Data privacy
-- Secure connections
-- Audit logging
-
-### Data Protection
-- Input validation
-- Output sanitization
-- Secure storage
-- Compliance requirements
-- Privacy policies
-
-## Integration Tips
-
-### API Usage
-- Follow rate limiting guidelines
-- Implement proper error handling
-- Use appropriate HTTP methods
-- Cache responses when possible
-- Monitor API health
-
-### Data Synchronization
-- Keep data up to date
-- Handle conflicts gracefully
-- Implement backup strategies
-- Maintain data consistency
-- Regular synchronization
-
-## Workflow Management
-
-### Project Lifecycle
-1. **Planning**: Initial project setup
-2. **Active**: Project execution
-3. **Review**: Quality assurance
-4. **Completion**: Project delivery
-5. **Follow-up**: Client feedback
-
-### Intake Process
-1. **Submission**: Client intake submission
-2. **Review**: Internal review process
-3. **Approval**: Decision making
-4. **Implementation**: Project initiation
-5. **Monitoring**: Ongoing tracking
-
-## Tips
-- Always validate project and intake IDs before making requests
-- Implement proper error handling for API failures
-- Cache frequently accessed project data to improve performance
-- Monitor project status changes for automated workflows
-- Use meaningful project and intake names for better organization
-- Implement proper logging for audit and debugging purposes
-- Consider rate limiting when making multiple API calls 
+Project status can be active, completed, or archived. Intake status includes pending, in-progress, completed, and cancelled. All timestamps use ISO 8601 format. Uses PinkConnect proxy connection. Project and intake IDs are unique identifiers within the ResponsiveIO system. API endpoints follow RESTful conventions. Team members have different roles including owner, contributor, and viewer. Requirements track individual deliverables within intakes. Attachments support various file formats for documentation. Budget information includes amount and currency. Priority levels help organize intake workflow. Deadlines support project timeline management. 

@@ -1,131 +1,302 @@
 ---
-title: "Amplitude Command Guide"
-description: "Learn how to use the Amplitude slash command for product analytics"
+title: "Amplitude Guide"
+description: "Analyze user behavior and analytics with Amplitude Dashboard REST API for event tracking and user insights"
 ---
 
-The `/amplitude` command enables you to access product analytics data from your Amplitude dashboard. Perfect for:
+## What can you do with it?
 
-- Tracking user activity
-- Analyzing funnels
-- Monitoring revenue
-- Segmenting events
-- Real-time analytics
+The Amplitude API allows you to analyze user behavior and track analytics data. You can monitor real-time active users, calculate revenue lifetime values, perform event segmentation analysis, create funnel conversion reports, and track individual user activity to gain comprehensive insights into your application's usage patterns.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Amplitude:
-
+### Basic Command Structure
 ```
-/amplitude get active users for the last 2 days
+/your-amplitude-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (get, analyze, track)
+- `entity` - The entity type (realtime, revenue, events, funnels, user)
+- `start` - Start date in YYYYMMDD format
+- `end` - End date in YYYYMMDD format
+
+**Optional:**
+
+- `interval` - Time interval (5 minutes, daily, weekly, monthly)
+- `metric` - Metric type (ARPU, ARPPU, Total Revenue, Paying Users)
+- `segment` - Segment definitions
+- `group_by` - Property to group by
+- `user_id` - User identifier for user activity
+- `limit` - Number of results to return
+- `offset` - Pagination offset
+
+## Tools
+
+### Get Real-time Active Users
+Monitor active user numbers with 5-minute granularity for the last two days.
+
+**Parameters:**
+- `interval` (optional) - Interval in minutes (default: 5)
+
+**Example:**
 ```
-/amplitude show revenue from 2022-10-01 to 2022-10-31
-```
-
-```
-/amplitude analyze funnel for signup to purchase
-```
-
-## Key Features
-
-### Real-time Analytics
-- Active user counts
-- 5-minute granularity
-- Today vs yesterday
-- Live monitoring
-
-### Revenue Analysis
-- Lifetime value (LTV)
-- ARPU and ARPPU
-- Total revenue
-- Paying users
-- Revenue trends
-
-### Event Segmentation
-- Track custom events
-- Filter by properties
-- Group by attributes
-- Time-based analysis
-
-### Funnel Analysis
-- Conversion rates
-- Drop-off points
-- User flow tracking
-- Conversion windows
-
-### User Activity
-- Individual user tracking
-- Event history
-- User properties
-- Activity timeline
-
-## Example Commands
-
-### Real-time Users
-```
-/amplitude show real-time active users
+/your-amplitude-connection
+action: get
+entity: realtime
+interval: 5
 ```
 
-### Revenue LTV
+**Response:**
+```json
+{
+  "data": {
+    "xValues": ["15:00", "15:05", "15:10", "15:15"],
+    "seriesLabels": ["Today", "Yesterday"],
+    "series": [
+      [123, 144, 101, 156],
+      [139, 111, 180, 142]
+    ]
+  }
+}
 ```
-/amplitude get lifetime value from 2021-12-01 to 2021-12-31 weekly
+
+### Get Revenue Lifetime Value
+Calculate the lifetime value of new users with detailed revenue metrics.
+
+**Parameters:**
+- `start` (required) - First date in YYYYMMDD format
+- `end` (required) - Last date in YYYYMMDD format
+- `metric` (optional) - Metric type: 0=ARPU, 1=ARPPU, 2=Total Revenue, 3=Paying Users (default: 0)
+- `interval` (optional) - Interval: 1=daily, 7=weekly, 30=monthly (default: 1)
+- `segment` (optional) - Segment definitions (JSON array)
+- `group_by` (optional) - Property to group by
+
+**Example:**
+```
+/your-amplitude-connection
+action: get
+entity: revenue
+start: 20221001
+end: 20221031
+metric: 0
+interval: 7
 ```
 
-### Event Segmentation
+**Response:**
+```json
+{
+  "data": {
+    "seriesLabels": [""],
+    "series": [
+      {
+        "dates": ["2022-10-04", "2022-10-03", "2022-10-02", "2022-10-01"],
+        "values": {
+          "2022-10-01": {
+            "r1d": 9.99,
+            "r2d": 19.98,
+            "r30d": 299.70,
+            "r90d": 742.52,
+            "count": 110,
+            "paid": 37,
+            "total_amount": 781.39
+          }
+        }
+      }
+    ]
+  }
+}
 ```
-/amplitude segment CompletedProfile events by country from 2022-01-01 to 2022-01-31
+
+### Get Event Segmentation
+Analyze segmentation data for specific events with filtering and grouping.
+
+**Parameters:**
+- `event` (required) - Event definition (JSON object)
+- `start` (required) - Start date in YYYYMMDD format
+- `end` (required) - End date in YYYYMMDD format
+- `metric` (optional) - Metric type for analysis
+- `interval` (optional) - Interval (1, 7, or 30)
+- `segment` (optional) - Segment definitions
+- `group_by` (optional) - Group by properties
+
+**Example:**
+```
+/your-amplitude-connection
+action: get
+entity: events
+event: {
+  "event_type": "CompletedProfile",
+  "filters": [
+    {
+      "subprop_type": "event",
+      "subprop_key": "EmailVerified",
+      "subprop_op": "is",
+      "subprop_value": ["true"]
+    }
+  ],
+  "group_by": [
+    {
+      "type": "user",
+      "value": "country"
+    }
+  ]
+}
+start: 20221001
+end: 20221031
 ```
 
-### User Activity
+**Response:**
+```json
+{
+  "data": {
+    "seriesLabels": ["US", "UK", "Canada"],
+    "series": [
+      {
+        "dates": ["2022-10-01", "2022-10-02", "2022-10-03"],
+        "values": [245, 189, 156]
+      },
+      {
+        "dates": ["2022-10-01", "2022-10-02", "2022-10-03"],
+        "values": [134, 142, 138]
+      },
+      {
+        "dates": ["2022-10-01", "2022-10-02", "2022-10-03"],
+        "values": [87, 94, 91]
+      }
+    ]
+  }
+}
 ```
-/amplitude show activity for user john@example.com
+
+### Get Funnel Analysis
+Analyze funnel conversion data across multiple events.
+
+**Parameters:**
+- `events` (required) - Array of event definitions (JSON)
+- `start` (required) - Start date in YYYYMMDD format
+- `end` (required) - End date in YYYYMMDD format
+- `conversion_window` (optional) - Conversion window in days
+- `conversion_type` (optional) - Conversion window type
+- `segment` (optional) - Segment definitions
+- `group_by` (optional) - Group by properties
+
+**Example:**
+```
+/your-amplitude-connection
+action: get
+entity: funnels
+events: [
+  {
+    "event_type": "PageView",
+    "filters": [
+      {
+        "subprop_type": "event",
+        "subprop_key": "page_name",
+        "subprop_op": "is",
+        "subprop_value": ["signup"]
+      }
+    ]
+  },
+  {
+    "event_type": "CompletedProfile"
+  },
+  {
+    "event_type": "FirstPurchase"
+  }
+]
+start: 20221001
+end: 20221031
+conversion_window: 7
 ```
 
-## Query Parameters
+**Response:**
+```json
+{
+  "data": {
+    "seriesLabels": ["All Users"],
+    "series": [
+      {
+        "dates": ["2022-10-01", "2022-10-02", "2022-10-03"],
+        "values": [
+          {
+            "step1": 1000,
+            "step2": 450,
+            "step3": 127
+          },
+          {
+            "step1": 1125,
+            "step2": 485,
+            "step3": 142
+          },
+          {
+            "step1": 1050,
+            "step2": 465,
+            "step3": 135
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
-### Date Formats
-- Use YYYYMMDD format (e.g., 20221031)
-- Required for most endpoints
+### Get User Activity
+Retrieve activity data for a specific user including all events and properties.
 
-### Intervals
-- `1`: Daily
-- `7`: Weekly  
-- `30`: Monthly
+**Parameters:**
+- `user` (required) - User identifier
+- `offset` (optional) - Pagination offset
+- `limit` (optional) - Number of results (max 1000)
 
-### Metrics
-- `0`: ARPU (Average Revenue Per User)
-- `1`: ARPPU (Average Revenue Per Paying User)
-- `2`: Total Revenue
-- `3`: Paying Users
+**Example:**
+```
+/your-amplitude-connection
+action: get
+entity: user_activity
+user: user_12345
+offset: 0
+limit: 100
+```
 
-## Event Types
+**Response:**
+```json
+{
+  "data": {
+    "events": [
+      {
+        "event_time": "2022-10-15T14:30:00Z",
+        "event_type": "PageView",
+        "user_id": "user_12345",
+        "device_id": "device_67890",
+        "session_id": "session_abc123",
+        "event_properties": {
+          "page_name": "homepage",
+          "referrer": "google.com"
+        },
+        "user_properties": {
+          "country": "US",
+          "premium_user": true
+        }
+      },
+      {
+        "event_time": "2022-10-15T14:32:15Z",
+        "event_type": "ButtonClick",
+        "user_id": "user_12345",
+        "device_id": "device_67890",
+        "session_id": "session_abc123",
+        "event_properties": {
+          "button_name": "signup",
+          "page_name": "homepage"
+        }
+      }
+    ]
+  }
+}
+```
 
-### Built-in Events
-- `_active`: Any active event
-- `_all`: Any event
-- `revenue_amount`: Revenue events
+## Notes 
 
-### Custom Events
-- Prefix with `ce:` (e.g., `ce:ButtonClick`)
-
-## Property Types
-
-### Built-in Properties
-- version, country, city, region
-- language, platform, os, device
-- device_type, start_version, paying
-
-### Custom Properties
-- Prefix with `gp:` (e.g., `gp:subscription_type`)
-
-## Rate Limits
-- 5 concurrent requests
-- 360 queries/hour
-- Cost-based limits apply
-
-## Tips
-- URL encode special characters
-- Time zones match project settings
-- Use filters for precise data
-- Monitor rate limits 
+Rate limits include 5 concurrent requests and 360 queries per hour for user endpoints. Cost-based model calculates as (days) × (conditions) × (query type cost). Concurrent limit is 1000 cost within 5 minutes. Hourly limit is 108,000 cost per hour. Time zone matches your Amplitude project settings. URL encode special characters in event names and properties. Built-in properties include version, country, city, region, language, platform, os, device. Custom user properties use gp:property_name format. Special event types include _active, _all, revenue_amount. Uses PinkConnect proxy connection. Authentication requires base64-encoded API key and secret key. Event filters support various operators like is, contains, greater than. 

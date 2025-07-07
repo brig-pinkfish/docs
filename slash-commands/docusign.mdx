@@ -1,114 +1,215 @@
 ---
-title: "DocuSign Command Guide"
-description: "Learn how to use the DocuSign slash command to manage electronic signatures"
+title: "DocuSign Guide"
+description: "With DocuSign, manage and automate document workflows."
 ---
 
-The `/docusign` command enables you to manage and automate document workflows with electronic signatures. Perfect for:
+## What can you do with it?
 
-- Creating signature requests
-- Sending documents for signing
-- Tracking envelope status
-- Managing recipients
-- Automating workflows
+Manage and automate document workflows with DocuSign, including creating envelopes, collecting eSignatures, updating documents, sending signature requests, and tracking document status for efficient digital signing processes.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with DocuSign:
-
+### Basic Command Structure
 ```
-/docusign create envelope with document "contract.pdf" for john@example.com
+/your-docusign-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/docusign send envelope 12345678-1234-1234-1234-123456789012
-```
+### Parameters
 
-```
-/docusign check status of envelope 12345678-1234-1234-1234-123456789012
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (create-envelope, get-envelope, update-envelope, send-envelope, search-envelopes, get-custom-fields)
 
-### Envelope Creation
-- Create envelopes
-- Add documents
-- Set recipients
-- Define signature locations
-- Configure email subjects
+**Optional:**
 
-### Document Management
-- Upload documents
-- Set document order
-- Add signature tabs
-- Configure fields
+- `envelope-id` - DocuSign envelope ID
+- `email-subject` - Email subject for the envelope
+- `document-name` - Name of the document
+- `recipient-email` - Email address of the recipient
+- `recipient-name` - Name of the recipient
+- `status` - Envelope status (created, sent, delivered, completed)
 
-### Recipient Management
-- Add signers
-- Set signing order
-- Configure authentication
-- Track recipient status
-
-### Status Tracking
-- Check envelope status
-- Search envelopes
-- View completion status
-- Monitor progress
-
-## Example Commands
+## Tools
 
 ### Create Envelope
+Create a new envelope to collect eSignatures
+
+**Parameters:**
+- `email-subject` (required) - Email subject for signature request
+- `document-base64` (required) - Base64 encoded document content
+- `document-name` (required) - Name of the document
+- `document-extension` (required) - File extension (pdf, docx, etc.)
+- `recipient-email` (required) - Signer's email address
+- `recipient-name` (required) - Signer's name
+- `anchor-string` (optional) - Text anchor for signature placement
+- `anchor-y-offset` (optional) - Y offset for signature placement
+
+**Example:**
 ```
-/docusign create envelope "Please sign contract" with document contract.pdf for signer john@example.com
+/your-docusign-connection
+action: create-envelope
+email-subject: Please sign this document
+document-base64: BASE64_ENCODED_DOCUMENT
+document-name: Contract.pdf
+document-extension: pdf
+recipient-email: john.doe@example.com
+recipient-name: John Doe
+anchor-string: /sn1/
+anchor-y-offset: -10
 ```
 
-### Get Envelope Details
+**Response:**
+```json
+{
+  "envelopeId": "12345678-1234-1234-1234-123456789012",
+  "status": "created"
+}
 ```
-/docusign get envelope 12345678-1234-1234-1234-123456789012
+
+### Get Envelope
+Retrieve details of an envelope using its unique ID
+
+**Parameters:**
+- `envelope-id` (required) - DocuSign envelope ID
+
+**Example:**
+```
+/your-docusign-connection
+action: get-envelope
+envelope-id: 12345678-1234-1234-1234-123456789012
+```
+
+**Response:**
+```json
+{
+  "envelopeId": "12345678-1234-1234-1234-123456789012",
+  "status": "created",
+  "emailSubject": "Please sign this document",
+  "recipients": {
+    "signers": [
+      {
+        "email": "john.doe@example.com",
+        "name": "John Doe",
+        "recipientId": "1",
+        "status": "created"
+      }
+    ]
+  },
+  "documents": [
+    {
+      "documentId": "1",
+      "name": "Contract.pdf"
+    }
+  ]
+}
 ```
 
 ### Update Envelope
+Update the details of an existing envelope
+
+**Parameters:**
+- `envelope-id` (required) - DocuSign envelope ID to update
+- `email-subject` (optional) - Updated email subject
+- `status` (optional) - Updated envelope status
+
+**Example:**
 ```
-/docusign update envelope 12345678-1234-1234-1234-123456789012 subject "Updated: Please review and sign"
+/your-docusign-connection
+action: update-envelope
+envelope-id: 12345678-1234-1234-1234-123456789012
+email-subject: Updated Subject: Please review and sign
+status: created
+```
+
+**Response:**
+```json
+{
+  "envelopeId": "12345678-1234-1234-1234-123456789012",
+  "status": "created"
+}
 ```
 
 ### Send Envelope
+Send an envelope that was previously created
+
+**Parameters:**
+- `envelope-id` (required) - DocuSign envelope ID to send
+
+**Example:**
 ```
-/docusign send envelope 12345678-1234-1234-1234-123456789012
+/your-docusign-connection
+action: send-envelope
+envelope-id: 12345678-1234-1234-1234-123456789012
+```
+
+**Response:**
+```json
+{
+  "envelopeId": "12345678-1234-1234-1234-123456789012",
+  "status": "sent"
+}
 ```
 
 ### Search Envelopes
+Search for envelopes based on query parameters
+
+**Parameters:**
+- `status` (optional) - Filter by envelope status (created, sent, delivered, completed)
+- `search-text` (optional) - Search text to filter envelopes
+
+**Example:**
 ```
-/docusign search for completed envelopes
+/your-docusign-connection
+action: search-envelopes
+status: completed
 ```
 
-### View Custom Fields
+**Response:**
+```json
+{
+  "envelopes": [
+    {
+      "envelopeId": "12345678-1234-1234-1234-123456789012",
+      "status": "completed",
+      "emailSubject": "Contract Signed"
+    },
+    {
+      "envelopeId": "98765432-4321-4321-4321-987654321098",
+      "status": "completed",
+      "emailSubject": "NDA Agreement Signed"
+    }
+  ]
+}
 ```
-/docusign get custom fields for envelope 12345678-1234-1234-1234-123456789012
+
+### Get Custom Fields
+Retrieve custom fields for an envelope
+
+**Parameters:**
+- `envelope-id` (required) - DocuSign envelope ID
+
+**Example:**
+```
+/your-docusign-connection
+action: get-custom-fields
+envelope-id: 12345678-1234-1234-1234-123456789012
 ```
 
-## Required Information
+**Response:**
+```json
+{
+  "textCustomFields": [
+    {
+      "name": "Project",
+      "value": "Confidential Project",
+      "required": false,
+      "show": true
+    }
+  ],
+  "listCustomFields": []
+}
+```
 
-### Account ID
-You'll need your DocuSign account ID to use the API. Find it in your DocuSign admin settings.
+## Notes
 
-### Document Format
-Documents must be base64 encoded when creating envelopes.
-
-### Envelope Status Values
-- `created`: Draft state
-- `sent`: Sent for signing
-- `completed`: All signed
-- `voided`: Cancelled
-
-## Signature Tab Placement
-
-Use anchor strings to place signature tabs:
-- `anchorString`: Text to search for
-- `anchorYOffset`: Vertical offset
-- `anchorUnits`: "pixels" or "inches"
-
-## Tips
-- Always provide account ID first
-- Documents must be base64 encoded
-- Use anchor strings for signature placement
-- Check envelope status before sending 
+DocuSign requires a valid account ID before using the API. Envelope statuses include created, sent, delivered, completed, declined, and voided. Document files must be base64 encoded for upload. Anchor strings are used to position signature fields automatically. Recipients must have valid email addresses for notifications. 

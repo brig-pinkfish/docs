@@ -1,103 +1,50 @@
 ---
-title: "ServiceNow"
-description: "Manage IT service workflows with the ServiceNow platform"
+title: "ServiceNow Guide"
+description: "Manage IT service workflows with the ServiceNow platform."
 ---
 
-# ServiceNow
+## What can you do with it?
 
-Manage IT service workflows with the ServiceNow platform for incident management, service requests, and IT operations.
+Manage IT service workflows with the ServiceNow platform, including creating and updating incidents, retrieving incident details, and automating IT service management processes for efficient workflow operations.
 
-## Overview
+## How to use it?
 
-The ServiceNow skill provides essential functionality for:
-- Creating and managing incidents
-- Retrieving incident details and status
-- Updating incident records and assignments
-- Managing IT service workflows
-- Tracking resolution progress
-
-## Connection Requirements
-
-This skill requires a ServiceNow connection configured through either:
-- PinkConnect Proxy (PC_BASE_URL)
-- Paragon Proxy (PARA_BASE_URL + "servicenow/")
-
-## Basic Usage
-
-```javascript
-// Create a new incident
-const incident = {
-  "short_description": "Cannot connect to VPN",
-  "description": "User is unable to establish a VPN connection from home network.",
-  "caller_id": "Jane Smith",
-  "priority": "3 - Moderate",
-  "category": "Network"
-};
+### Basic Command Structure
+```
+/your-servicenow-connection [action] [required-parameters] [optional-parameters]
 ```
 
-## Key Features
+### Parameters
 
-### Incident Management
-- **Create Incidents**: Generate new incident tickets with detailed information
-- **Retrieve Incidents**: Get incident details using system ID
-- **Update Incidents**: Modify incident status, assignment, and work notes
-- **Track Progress**: Monitor incident resolution workflow
+**Required:**
 
-### Service Request Handling
-- **Request Processing**: Handle various IT service requests
-- **Assignment Management**: Assign incidents to appropriate teams
-- **Status Tracking**: Monitor incident lifecycle from creation to resolution
+- `action` - The operation to perform (get-incident, create-incident, update-incident)
 
-## Common Operations
+**Optional:**
 
-### Create an Incident
-```javascript
-POST: now/table/incident
-{
-  "short_description": "Email access issue",
-  "description": "User reports being unable to access their email account.",
-  "caller_id": "John Doe",
-  "priority": "2 - High",
-  "category": "Email"
-}
+- `sys-id` - ServiceNow system ID for the incident
+- `incident-number` - Incident number for reference
+- `priority` - Incident priority level
+- `category` - Incident category
+- `assigned-to` - Person assigned to the incident
+
+## Tools
+
+### Get Incident
+Retrieve details of a specific incident using its unique ID
+
+**Parameters:**
+- `sys-id` (required) - The ServiceNow system ID of the incident
+
+**Example:**
+```
+/your-servicenow-connection
+action: get-incident
+sys-id: 1234567890abcdef
 ```
 
-### Get Incident Details
-```javascript
-GET: now/table/incident/{sys_id}
-```
-
-### Update Incident Status
-```javascript
-PUT: now/table/incident/{sys_id}
-{
-  "state": "In Progress",
-  "assigned_to": "Jane Smith",
-  "work_notes": "Issue acknowledged. Investigating VPN configuration settings."
-}
-```
-
-## Priority Levels
-
-- **1 - Critical**: System down, major business impact
-- **2 - High**: Significant impact, urgent resolution needed
-- **3 - Moderate**: Normal business impact
-- **4 - Low**: Minor impact, can be scheduled
-- **5 - Planning**: Future enhancement or non-urgent
-
-## Incident States
-
-- **New**: Incident just created, not yet assigned
-- **In Progress**: Incident being actively worked on
-- **On Hold**: Incident paused, waiting for information
-- **Resolved**: Issue fixed, awaiting user confirmation
-- **Closed**: Incident completed and verified
-- **Canceled**: Incident canceled or invalid
-
-## Response Structure
-
-### Incident Response
-```javascript
+**Response:**
+```json
 {
   "result": {
     "sys_id": "1234567890abcdef",
@@ -108,44 +55,85 @@ PUT: now/table/incident/{sys_id}
     "priority": "2 - High",
     "assigned_to": "John Doe",
     "opened_at": "2025-01-14 10:00:00",
-    "resolved_at": null,
-    "caller_id": "Jane Smith",
-    "category": "Email"
+    "resolved_at": null
   }
 }
 ```
 
-## Common Categories
+### Create Incident
+Create a new incident in ServiceNow
 
-### IT Categories
-- **Hardware**: Computer, printer, phone issues
-- **Software**: Application problems, license issues
-- **Network**: Connectivity, VPN, Wi-Fi problems
-- **Email**: Email access, configuration issues
-- **Security**: Password resets, access requests
-- **Telephony**: Phone system issues
+**Parameters:**
+- `short-description` (required) - Brief description of the incident
+- `description` (required) - Detailed description of the incident
+- `caller-id` (required) - Person reporting the incident
+- `priority` (required) - Priority level (1 - Critical, 2 - High, 3 - Moderate, 4 - Low)
+- `category` (optional) - Incident category
 
-### Service Categories
-- **Request**: Service requests and provisioning
-- **Inquiry**: Information requests
-- **Complaint**: Service complaints
-- **Change**: Change requests
+**Example:**
+```
+/your-servicenow-connection
+action: create-incident
+short-description: Cannot connect to VPN
+description: User is unable to establish a VPN connection from home network.
+caller-id: Jane Smith
+priority: 3 - Moderate
+category: Network
+```
 
-## Important Notes
+**Response:**
+```json
+{
+  "result": {
+    "sys_id": "abcdef1234567890",
+    "number": "INC0010002",
+    "short_description": "Cannot connect to VPN",
+    "description": "User is unable to establish a VPN connection from home network.",
+    "state": "New",
+    "priority": "3 - Moderate",
+    "assigned_to": null,
+    "opened_at": "2025-01-14 11:30:00"
+  }
+}
+```
 
-- **System ID**: Use sys_id for all update and retrieval operations
-- **Incident Numbers**: Human-readable incident numbers (e.g., INC0010001) are auto-generated
-- **Work Notes**: Use work_notes for internal communication, comments for customer-visible updates
-- **Assignment**: Incidents can be assigned to users or groups
-- **SLA Tracking**: ServiceNow automatically tracks SLA compliance
-- **Escalation**: Incidents can be escalated based on priority and time
+### Update Incident
+Update details of an existing incident in ServiceNow
 
-## Best Practices
+**Parameters:**
+- `sys-id` (required) - The ServiceNow system ID of the incident to update
+- `state` (optional) - New state of the incident (New, In Progress, Resolved, Closed)
+- `assigned-to` (optional) - Person to assign the incident to
+- `work-notes` (optional) - Work notes to add to the incident
+- `priority` (optional) - New priority level
 
-1. **Detailed Descriptions**: Provide comprehensive incident descriptions for faster resolution
-2. **Proper Categorization**: Use appropriate categories for better routing and reporting
-3. **Priority Assignment**: Set priorities based on business impact and urgency
-4. **Regular Updates**: Update work notes regularly to track progress
-5. **Caller Information**: Always include caller details for communication
-6. **Resolution Documentation**: Document resolution steps for knowledge base
-7. **Closure Verification**: Confirm resolution with the caller before closing incidents 
+**Example:**
+```
+/your-servicenow-connection
+action: update-incident
+sys-id: abcdef1234567890
+state: In Progress
+assigned-to: Jane Smith
+work-notes: Issue acknowledged. Investigating VPN configuration settings.
+```
+
+**Response:**
+```json
+{
+  "result": {
+    "sys_id": "abcdef1234567890",
+    "number": "INC0010002",
+    "short_description": "Cannot connect to VPN",
+    "description": "User is unable to establish a VPN connection from home network.",
+    "state": "In Progress",
+    "priority": "3 - Moderate",
+    "assigned_to": "Jane Smith",
+    "work_notes": "Issue acknowledged. Investigating VPN configuration settings.",
+    "opened_at": "2025-01-14 11:30:00"
+  }
+}
+```
+
+## Notes
+
+ServiceNow uses system IDs (sys_id) as unique identifiers for all records. Priority levels range from 1 (Critical) to 4 (Low). Incident states include New, In Progress, Resolved, and Closed. Work notes are used for internal communication and tracking progress on incidents. 

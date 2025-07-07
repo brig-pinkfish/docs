@@ -1,78 +1,306 @@
 ---
-title: "Adobe Sign Command Guide"
-description: "Learn how to use the Adobe Sign slash command for electronic signature workflows"
+title: "Adobe Sign Guide"
+description: "With Adobe Sign, create, send, track, and manage electronic signature workflows."
 ---
 
-The `/adobe-sign` command enables you to create, send, track, and manage electronic signature workflows. Perfect for:
+## What can you do with it?
 
-- Creating signature requests
-- Tracking agreement status
-- Managing contract workflows
-- Collecting signed documents
-- Setting up reminders
+Create, send, track, and manage electronic signature workflows with Adobe Sign, including uploading documents, creating agreements, sending signature requests, tracking status, downloading signed documents, and managing reminders for efficient digital signing processes.
 
-## Basic Usage
+## How to use it?
 
-Use the command to create and send documents for signature:
-
+### Basic Command Structure
 ```
-/adobe-sign send document.pdf to john@example.com for signature
+/your-adobe-sign-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (upload-document, create-agreement, get-agreement, get-signing-url, send-reminder, download-document, get-form-data, cancel-agreement, create-webhook)
+
+**Optional:**
+
+- `agreement-id` - Adobe Sign agreement ID
+- `document-name` - Name of the document
+- `document-file` - Document file for upload
+- `signer-email` - Email address of the signer
+- `participant-id` - Participant ID for reminders
+- `reminder-note` - Note for reminder notifications
+- `webhook-url` - Webhook URL for notifications
+
+## Tools
+
+### Upload Document
+Create a transient document for use in agreements
+
+**Parameters:**
+- `document-file` (required) - Document file to upload (multipart/form-data)
+- `document-name` (required) - Name of the document
+
+**Example:**
 ```
-/adobe-sign create agreement "Service Contract" with signers: alice@company.com, bob@client.com
-```
-
-## Key Features
-
-### Document Management
-- Upload documents for signature
-- Create agreements from templates
-- Combine multiple documents
-- Download signed copies
-
-### Signature Workflows
-- Single or multiple signers
-- Sequential signing order
-- Role-based signatures (signer, approver, acceptor)
-- Custom signature fields
-
-### Tracking & Reminders
-- Real-time status updates
-- Automatic reminders
-- Audit trails
-- Form data extraction
-
-### Integration Options
-- Webhook notifications
-- API-based automation
-- Bulk operations
-- Template management
-
-## Example Commands
-
-### Send for Signature
-```
-/adobe-sign send "contract.pdf" to client@example.com with subject "Please sign the service agreement"
+/your-adobe-sign-connection
+action: upload-document
+document-file: [FILE_DATA]
+document-name: Contract.pdf
 ```
 
-### Check Status
+**Response:**
+```json
+{
+  "transientDocumentId": "3AAABLblqZhD1uP3ZnkJximC0JV1S677PR5xmybSJ-SJn6OtEy2tVqFyMN4xUAbhKTSkLw2Zb6HEF4zAGsrUd2ycoB8fFHQJhrci0O6267VztmIL4nCicSqvAjO7HckATHAsovVmuYwI9_FDDgHg0ogyti62L13HQFZIQRe9iyQMvvzbmksM7ODNK_HEepEKRCeJTtis9FOlz6uRCcIMNlbX_2GU8utWT"
+}
 ```
-/adobe-sign status of agreement ABC123
+
+### Create Agreement
+Create an agreement for electronic signature
+
+**Parameters:**
+- `transient-document-id` (required) - Transient document ID from upload
+- `agreement-name` (required) - Name of the agreement
+- `signer-email` (required) - Email address of the signer
+- `signature-type` (optional) - Type of signature (ESIGN, default)
+- `state` (optional) - Initial state (IN_PROCESS, default)
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: create-agreement
+transient-document-id: 3AAABLblqZhD1uP3ZnkJximC0JV1S677PR5xmybSJ-SJn6OtEy2tVqFyMN4xUAbhKTSkLw2Zb6HEF4zAGsrUd2ycoB8fFHQJhrci0O6267VztmIL4nCicSqvAjO7HckATHAsovVmuYwI9_FDDgHg0ogyti62L13HQFZIQRe9iyQMvvzbmksM7ODNK_HEepEKRCeJTtis9FOlz6uRCcIMNlbX_2GU8utWT
+agreement-name: Contract Agreement
+signer-email: signer@example.com
+signature-type: ESIGN
+state: IN_PROCESS
+```
+
+**Response:**
+```json
+{
+  "id": "CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC"
+}
+```
+
+### Get Agreement Status
+Retrieve the current status of an agreement
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: get-agreement
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+```
+
+**Response:**
+```json
+{
+  "id": "CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC",
+  "name": "Contract Agreement",
+  "type": "AGREEMENT",
+  "participantSetsInfo": [
+    {
+      "memberInfos": [
+        {
+          "email": "signer@example.com",
+          "securityOption": {
+            "authenticationMethod": "NONE"
+          }
+        }
+      ],
+      "role": "SIGNER",
+      "order": 1
+    }
+  ],
+  "senderEmail": "sender@example.com",
+  "createdDate": "2023-07-17T22:36:21Z",
+  "signatureType": "ESIGN",
+  "locale": "en_US",
+  "status": "OUT_FOR_SIGNATURE",
+  "documentVisibilityEnabled": false
+}
+```
+
+### Get Signing URL
+Retrieve the signing URL for an agreement
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: get-signing-url
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+```
+
+**Response:**
+```json
+{
+  "signingUrlSetInfos": [
+    {
+      "signingUrls": [
+        {
+          "email": "signer@example.com",
+          "esignUrl": "https://secure.na1.echosign.com/public/apiesign?pid=CBFCIBAA3AAABLblqZhAFOXm9f9Pf3tNiV7u9fhBW9-LScE4XOjwi8ycjKlMSF6D3DRHaqL4DtN*"
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ### Send Reminder
+Send a reminder notification to agreement participants
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+- `participant-ids` (required) - Array of participant IDs to remind
+- `reminder-note` (optional) - Custom note for the reminder
+- `reminder-status` (optional) - Status of reminder (ACTIVE, default)
+
+**Example:**
 ```
-/adobe-sign remind signers of agreement ABC123 with message "Please complete signing by end of day"
+/your-adobe-sign-connection
+action: send-reminder
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+participant-ids: ["CBJCHBCAABAAXtX0rJlm3vpMRivbnMtYS_4rfd6KqB-u"]
+reminder-note: Please sign the agreement at your earliest convenience.
+reminder-status: ACTIVE
 ```
 
-### Download Signed Document
-```
-/adobe-sign download signed agreement ABC123 with audit report
+**Response:**
+```json
+{
+  "id": "CBJCHBCAABAAXtX0rJlm3vpMRivbnMtYS_4rfd6KqB-u",
+  "reminderFrequency": "DAILY_UNTIL_SIGNED",
+  "status": "ACTIVE",
+  "firstReminderDelay": 1,
+  "note": "Please sign the agreement at your earliest convenience."
+}
 ```
 
-## Tips
-- Ensure documents are properly formatted before sending
-- Use clear agreement names for easy tracking
-- Set up webhooks for automated notifications
-- Include signing instructions in your message 
+### Download Signed Agreement
+Download the signed agreement document
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+- `attach-audit-report` (optional) - Include audit trail (true/false)
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: download-document
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+attach-audit-report: true
+```
+
+**Response:**
+```json
+{
+  "content-type": "application/pdf",
+  "document": "Binary PDF data"
+}
+```
+
+### Get Form Data
+Retrieve form field data from a signed agreement
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: get-form-data
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+```
+
+**Response:**
+```json
+{
+  "fields": [
+    {
+      "name": "Full Name",
+      "value": "John Doe"
+    },
+    {
+      "name": "Email",
+      "value": "john.doe@example.com"
+    },
+    {
+      "name": "Date",
+      "value": "2023-07-18"
+    }
+  ]
+}
+```
+
+### Cancel Agreement
+Cancel an existing agreement
+
+**Parameters:**
+- `agreement-id` (required) - Adobe Sign agreement ID
+- `comment` (optional) - Reason for cancellation
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: cancel-agreement
+agreement-id: CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC
+comment: Cancelling this agreement as it's no longer needed.
+```
+
+**Response:**
+```json
+{
+  "id": "CBJCHBCAABAAWVRaEKO_sCcLuT4cXUvXxu2nVm20kivC",
+  "state": "CANCELLED"
+}
+```
+
+### Create Webhook
+Create a webhook to receive notifications about agreement events
+
+**Parameters:**
+- `webhook-name` (required) - Name for the webhook
+- `webhook-url` (required) - URL to receive webhook notifications
+- `events` (required) - Array of events to subscribe to
+- `scope` (optional) - Webhook scope (ACCOUNT, default)
+- `webhook-state` (optional) - Webhook state (ACTIVE, default)
+
+**Example:**
+```
+/your-adobe-sign-connection
+action: create-webhook
+webhook-name: Agreement Status Webhook
+webhook-url: https://your-webhook-endpoint.com/callback
+events: ["AGREEMENT_ACTION_COMPLETED", "AGREEMENT_CREATED", "AGREEMENT_SIGNED"]
+scope: ACCOUNT
+webhook-state: ACTIVE
+```
+
+**Response:**
+```json
+{
+  "id": "CBJCHBCAABAAXtX0rJlm3vpMRivbnMtYS_4rfd6KqB-u",
+  "name": "Agreement Status Webhook",
+  "scope": "ACCOUNT",
+  "state": "ACTIVE",
+  "webhookSubscriptionEvents": [
+    "AGREEMENT_ACTION_COMPLETED",
+    "AGREEMENT_CREATED",
+    "AGREEMENT_SIGNED"
+  ],
+  "webhookUrlInfo": {
+    "url": "https://your-webhook-endpoint.com/callback"
+  }
+}
+```
+
+## Notes
+
+Adobe Sign supports various signature types including ESIGN (electronic signature). Agreement statuses include OUT_FOR_SIGNATURE, SIGNED, CANCELLED, and EXPIRED. Documents must be uploaded as transient documents before creating agreements. Participants can have roles like SIGNER, APPROVER, or DELEGATE. Webhook events include AGREEMENT_CREATED, AGREEMENT_SIGNED, and AGREEMENT_ACTION_COMPLETED. 

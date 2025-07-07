@@ -1,104 +1,288 @@
 ---
-title: "GitHub Command Guide"
-description: "Learn how to use the GitHub slash command for version control and repository management"
+title: "GitHub Guide"
+description: "With GitHub, manage version control and collaborative software development."
 ---
 
-The `/github` command enables you to manage repositories, issues, and collaborate on code. Perfect for:
+## What can you do with it?
 
-- Creating and managing repositories
-- Tracking issues and bugs
-- Viewing repository contents
-- Managing organizations
-- Automating development workflows
+Manage version control and collaborative software development with GitHub, including retrieving user information, managing repositories, handling issues, and accessing repository contents for code management and collaboration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with GitHub:
-
+### Basic Command Structure
 ```
-/github create repository "my-project" with description "A new project"
+/your-github-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (get-user, list-orgs, list-repos, create-repo, list-issues, create-issue, get-contents)
+
+**Optional:**
+
+- `owner` - Repository owner username
+- `repo` - Repository name
+- `path` - File path in repository
+- `state` - Issue state (open, closed, all)
+- `sort` - Sort criteria
+- `direction` - Sort direction (asc, desc)
+
+## Tools
+
+### Get Current User
+Retrieve information about the authenticated user
+
+**Parameters:**
+- No additional parameters required
+
+**Example:**
 ```
-/github list my repositories sorted by last updated
+/your-github-connection
+action: get-user
 ```
 
+**Response:**
+```json
+{
+  "login": "anpinkfish",
+  "id": 188481194,
+  "node_id": "U_kgDOCzv-qg",
+  "avatar_url": "https://avatars.githubusercontent.com/u/188481194?v=4",
+  "html_url": "https://github.com/anpinkfish",
+  "type": "User",
+  "site_admin": false,
+  "name": "Arthur Nunes",
+  "company": null,
+  "blog": "",
+  "location": null,
+  "email": null,
+  "public_repos": 0,
+  "public_gists": 0,
+  "followers": 0,
+  "following": 1,
+  "created_at": "2024-11-14T15:55:35Z",
+  "updated_at": "2024-11-14T20:51:07Z",
+  "plan": {
+    "name": "free",
+    "space": 976562499,
+    "collaborators": 0,
+    "private_repos": 10000
+  }
+}
 ```
-/github create issue "Fix login bug" in repo "myapp" with label "bug"
+
+### List Organizations
+List organizations for the authenticated user
+
+**Parameters:**
+- `per-page` (optional) - Number of results per page (default: 30, max: 100)
+- `page` (optional) - Page number (default: 1)
+
+**Example:**
+```
+/your-github-connection
+action: list-orgs
+per-page: 30
+page: 1
 ```
 
-## Key Features
-
-### Repository Management
-- Create new repositories
-- List user/organization repos
-- Configure repository settings
-- View repository contents
-- Access file contents
-
-### Issue Tracking
-- Create new issues
-- List repository issues
-- Filter by state (open/closed)
-- Assign issues to users
-- Add labels to issues
-
-### User & Organization
-- Get user information
-- List organizations
-- View organization repositories
-- Manage permissions
-
-### File Operations
-- Read file contents
-- Navigate repository structure
-- Access different branches
-- View commit history
-
-## Example Commands
-
-### Create Repository
-```
-/github create private repository "internal-tools" with issues and wiki enabled
+**Response:**
+```json
+[
+  {
+    "login": "pfdemo",
+    "id": 190025681,
+    "node_id": "O_kgDOC1OP0Q",
+    "url": "https://api.github.com/orgs/pfdemo",
+    "repos_url": "https://api.github.com/orgs/pfdemo/repos",
+    "events_url": "https://api.github.com/orgs/pfdemo/events",
+    "avatar_url": "https://avatars.githubusercontent.com/u/190025681?v=4",
+    "description": null
+  }
+]
 ```
 
 ### List Repositories
+List repositories for the authenticated user
+
+**Parameters:**
+- `type` (optional) - Repository type (all, owner, public, private, member)
+- `sort` (optional) - Sort criteria (created, updated, pushed, full_name)
+- `direction` (optional) - Sort direction (asc, desc)
+
+**Example:**
 ```
-/github show all my repositories sorted by creation date
+/your-github-connection
+action: list-repos
+type: all
+sort: created
+direction: desc
 ```
 
-### Create Issue
+**Response:**
+```json
+[
+  {
+    "id": 1296269,
+    "name": "pfdemorepo",
+    "full_name": "pfdemo/pfdemorepo",
+    "owner": {
+      "login": "pfdemo",
+      "id": 1
+    },
+    "private": false,
+    "description": "This is my first repo!",
+    "fork": false,
+    "created_at": "2011-01-26T19:01:12Z",
+    "updated_at": "2011-01-26T19:14:43Z"
+  }
+]
 ```
-/github in repo "pfdemo/myapp" create issue "Add user authentication" assign to @john with labels: enhancement, priority-high
+
+### Create Repository
+Create a new repository
+
+**Parameters:**
+- `name` (required) - Repository name
+- `description` (optional) - Repository description
+- `private` (optional) - Whether repository is private (default: false)
+- `has-issues` (optional) - Whether to enable issues (default: true)
+- `has-projects` (optional) - Whether to enable projects (default: true)
+- `has-wiki` (optional) - Whether to enable wiki (default: true)
+
+**Example:**
+```
+/your-github-connection
+action: create-repo
+name: pfdemorepo
+description: This is my first repository
+private: false
+has-issues: true
+has-projects: true
+has-wiki: true
+```
+
+**Response:**
+```json
+{
+  "id": 1296269,
+  "name": "pfdemorepo",
+  "full_name": "pfdemo/pfdemorepo",
+  "owner": {
+    "login": "pfdemo",
+    "id": 1
+  },
+  "private": false,
+  "created_at": "2011-01-26T19:01:12Z"
+}
 ```
 
 ### List Issues
+List issues in a repository
+
+**Parameters:**
+- `owner` (required) - Repository owner username
+- `repo` (required) - Repository name
+- `state` (optional) - Issue state (open, closed, all)
+- `sort` (optional) - Sort criteria (created, updated, comments)
+- `direction` (optional) - Sort direction (asc, desc)
+
+**Example:**
 ```
-/github list open issues in "myproject" repository sorted by most recently updated
+/your-github-connection
+action: list-issues
+owner: pfdemo
+repo: pfdemorepo
+state: open
+sort: created
+direction: desc
 ```
 
-### View File
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "title": "Found a bug",
+    "body": "I'm having a problem with this.",
+    "state": "open",
+    "created_at": "2011-04-22T13:33:48Z",
+    "updated_at": "2011-04-22T13:38:35Z",
+    "closed_at": null,
+    "user": {
+      "login": "pfdemo",
+      "id": 1
+    }
+  }
+]
 ```
-/github show contents of README.md in repository "myapp"
+
+### Create Issue
+Create a new issue in a repository
+
+**Parameters:**
+- `owner` (required) - Repository owner username
+- `repo` (required) - Repository name
+- `title` (required) - Issue title
+- `body` (optional) - Issue description
+- `assignees` (optional) - List of usernames to assign
+- `labels` (optional) - List of labels to apply
+
+**Example:**
+```
+/your-github-connection
+action: create-issue
+owner: pfdemo
+repo: pfdemorepo
+title: Found a bug
+body: I'm having a problem with this.
+assignees: pfdemo
+labels: bug
 ```
 
-## Repository Options
+**Response:**
+```json
+{
+  "id": 1,
+  "title": "Found a bug",
+  "body": "I'm having a problem with this.",
+  "state": "open",
+  "created_at": "2011-04-22T13:33:48Z"
+}
+```
 
-When creating repositories:
-- **private**: true/false
-- **has_issues**: Enable issue tracking
-- **has_projects**: Enable project boards
-- **has_wiki**: Enable wiki pages
+### Get Repository Contents
+Get the contents of a file or directory in a repository
 
-## Issue Filters
+**Parameters:**
+- `owner` (required) - Repository owner username
+- `repo` (required) - Repository name
+- `path` (required) - File or directory path
 
-When listing issues:
-- **state**: open, closed, or all
-- **sort**: created, updated, or comments
-- **direction**: asc or desc
+**Example:**
+```
+/your-github-connection
+action: get-contents
+owner: pfdemo
+repo: pfdemorepo
+path: README.md
+```
 
-## Tips
-- Use owner/repo format for repository references (e.g., "pfdemo/myapp")
-- File contents are returned base64 encoded
-- Assignees must be valid GitHub usernames
-- Labels must exist in the repository before use 
+**Response:**
+```json
+{
+  "type": "file",
+  "encoding": "base64",
+  "size": 5362,
+  "name": "README.md",
+  "path": "README.md",
+  "content": "encoded file content",
+  "sha": "3d21ec53a331a6f037a91c368710b99387d012c1"
+}
+```
+
+## Notes
+
+GitHub API supports pagination with per_page and page parameters. File contents are returned as base64 encoded strings. All repository operations require appropriate permissions. The API follows REST conventions with standard HTTP methods and status codes. 
