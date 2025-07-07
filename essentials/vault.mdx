@@ -1,66 +1,59 @@
 ---
 title: "Vault"
-description: "Securely store and access sensitive data in your workflows"
-icon: "vault"
+description: "Secure storage for sensitive information and credentials"
+icon: "shield"
 ---
 
-## What is Vault?
+The Vault feature provides secure storage for credentials and sensitive information used across your workflows, with fine-grained access controls to protect your most sensitive data.
 
-Vault is Pinkfish's secure storage system for retrieving encrypted secrets and inserting them into your step code or browser workflows. It's perfect for storing and accessing sensitive data like usernames, passwords, and API keys.
+## Vault Collections
 
-With Vault, you can safely store sensitive information and reference it in your workflows without exposing the actual values in your code. However, Vault alone cannot handle scenarios that require 2FA (two-factor authentication) or CAPTCHA solving. For these cases, you have two better options:
+Vault Collections help you organize your secure credentials and sensitive information stored in Pinkfish's Vault. They provide a structured way to manage secrets used across your workflows.
 
-1. **Browser Connections**: For browser-based workflows that require 2FA/CAPTCHA, use Browser Connections to maintain an authenticated session.
-2. **API Connections**: For services that offer API access, use API Connections to bypass browser authentication entirely.
+With Vault Collections, you can:
 
-For example, while you could store Salesforce credentials in Vault, you'd want to use Browser Connections if your Salesforce instance requires 2FA, or API Connections if you're performing actions that can be done through Salesforce's API.
+- Group related credentials by service, environment, or purpose
+- Manage access to sensitive information with fine-grained controls
+- Reference entire collections of secrets in workflow workflows
+- Rotate credentials across collections when needed
+- Maintain clear separation between different security contexts
 
-### Using Vault
+## Creating and Managing Collections
 
-You can access your stored Vault items using the `/get-secret` command. Here's an example of how to use a stored Salesforce login in a workflow:
+<Warning>
+  Be extremely cautious when working with vault collections. Always follow security best practices and never store sensitive information in plain text outside of the vault.
+</Warning>
 
-```
-/get-secret salesforceLogin
-/scraper
-* goto https://YOURCOMPANY.lightning.force.com/lightning/page/home
-- fill username input with username from secret
-- fill password input with password from secret
-- click "login" button
-```
+<Steps>
+  <Step title="Access Vault">
+    Navigate to the main header menu and select the Vault section
+  </Step>
+  <Step title="Create a Collection">
+    Click the "+" or "New Collection" button to create a new vault collection
+  </Step>
+  <Step title="Name and Configure">
+    Provide a name and configure security settings for the collection
+  </Step>
+  <Step title="Add Secrets">
+    Add existing secrets to your collection or create new ones directly within it
+  </Step>
+  <Step title="Manage Access">
+    Configure strict permissions to control who can view or edit the collection
+  </Step>
+</Steps>
 
-In this example, the workflow retrieves the stored credentials and uses them to log into Salesforce. The actual username and password values are never exposed in the workflow code.
+## Sharing Collections
 
-### Storing Items in Vault
+<Warning>
+  Be extremely cautious when sharing vault collections. Only share with trusted team members who require access, and always apply the principle of least privilege when configuring access permissions.
+</Warning>
 
-You can store new items in Vault through the Pinkfish web interface:
+Vault collections can be shared with specific team members, but should never be shared with the entire organization unless absolutely necessary. Different permission levels (View/Edit) control what actions others can perform with your shared collections.
 
-1. Navigate to the Vault section
-2. Click the "+" button to add a new item
-3. Enter a key name (e.g., "salesforceLogin")
-4. Add your sensitive data in the content field
-5. Save the item
+For detailed information about sharing permissions and procedures, see our [Sharing](/essentials/sharing) documentation.
 
-Your stored items can include multiple fields. For example, a single Vault item might contain:
+## Using Collections with Workflows
 
-```json
-{
-  "username": "myuser@company.com",
-  "password": "mypassword",
-  "apiKey": "abc123",
-  "customField": "custom value"
-}
-```
+To reference a vault collection from your workflow, select it from the Slash command. Selecting it will insert a reference to that collection and the secrets within it into your code.
 
-### Security Considerations
-
-- Vault items are encrypted at rest and only decrypted when needed by your workflows
-- Credentials are never exposed in your workflow code or logs
-- Access to Vault items requires proper authentication
-- You can rotate or update stored credentials without modifying your workflows
-
-### Best Practices
-
-1. Use descriptive key names that indicate the purpose of the stored item
-2. Store related credentials (like username/password pairs) in the same Vault item
-3. Regularly review and update your stored credentials
-4. Never hardcode sensitive information in your workflows - always use Vault references
+For more details on using the Vault feature in workflows, see the [Get Secret slash command documentation](/slash-commands/get-secret).
