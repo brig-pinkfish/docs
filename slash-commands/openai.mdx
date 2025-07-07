@@ -3,10 +3,6 @@ title: "OpenAI Command Guide"
 description: "Learn how to use the OpenAI slash command to interact with OpenAI's models"
 ---
 
-# OpenAI
-
-Access OpenAI's GPT models for advanced AI capabilities.
-
 ## What can you do with it?
 
 Use OpenAI models for general reasoning, chat, multimodal tasks, and advanced coding. Choose from various GPT models optimized for different performance and cost requirements.
@@ -15,55 +11,67 @@ Use OpenAI models for general reasoning, chat, multimodal tasks, and advanced co
 
 ### Basic Command Structure
 ```
-/openai
-prompt: your instructions or questions
+/openai [prompt] [optional-parameters]
 ```
 
 ### Parameters
-- **prompt**: Your instructions or questions
-- **model** (optional): Specific GPT model to use (defaults to gpt-4.1)
-- **system prompt** (optional): Override the default system prompt
-- **files** (optional): File URLs to include in the request
-- **tools** (optional): Function tools for the model to use
-- **tool choices** (optional): Control how the model uses tools
+
+**Required:**
+
+- `prompt` - Your instructions or questions
+
+**Optional:**
+
+- `model` - Specific GPT model to use (defaults to gpt-4.1)
+
+- `system prompt` - Override the default system prompt
+
+- `files` - File URLs to include in the request
+
+- `tools` - Function tools for the model to use
+
+- `tool choices` - Control how the model uses tools
 
 ### Response Format
-Returns the model's response in the requested format (JSON by default, or plaintext/markdown/HTML if specified).
+
+The command returns:
+```json
+{
+  "response": "Model's generated response",
+  "format": "Response format (JSON/plaintext/markdown/HTML)",
+  "metadata": {
+    "model": "Model used",
+    "tokens": "Token count"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Get a response from GPT:
 ```
 /openai
 prompt: Create a marketing strategy for a new product launch
 ```
+Get a response from GPT for strategic planning and creative tasks.
 
 ### Advanced Usage
-Use a specific model with files:
 ```
 /openai
 prompt: Analyze this code and suggest optimizations
-files: [code_file_url]
+files: code_file.py
 model: gpt-4.1
 ```
+Use a specific model with file context for code analysis and optimization.
 
 ### Specific Use Case
-Fast, cost-effective analysis:
 ```
 /openai
 prompt: Summarize these customer reviews
 model: gpt-4o-mini
 ```
+Fast, cost-effective analysis using the mini model for simple tasks.
 
 ### Notes
-Available models:
-- gpt-4o: General reasoning, chat, multimodal
-- gpt-4o-mini: Fast, cost-effective chat, analysis
-- gpt-4.1: Advanced coding, long context (default)
-- gpt-4.1-mini: Fast coding, scalable tasks
-- gpt-4.1-nano: Ultra-fast, simple tasks
 
-## Why Use OpenAI?
-
-The `/openai`
+Available models: gpt-4o (general reasoning, chat, multimodal), gpt-4o-mini (fast, cost-effective chat, analysis), gpt-4.1 (advanced coding, long context - default), gpt-4.1-mini (fast coding, scalable tasks), gpt-4.1-nano (ultra-fast, simple tasks).

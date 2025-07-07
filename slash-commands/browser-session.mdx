@@ -5,54 +5,73 @@ description: "Learn how to use the Browser Session slash command to automate rem
 
 ## What can you do with it?
 
-Control a remote browser to automate web tasks like form filling, data extraction, testing, and web scraping. Execute custom Playwright code in a managed browser environment.
+Control a remote browser to automate web tasks like form filling, data extraction, testing, and web scraping. Execute custom Playwright code in a managed browser environment with full control over navigation, element interaction, and data extraction capabilities.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/browser-session
-url: the website to navigate to
-actions: describe what you want to do on the page
+/browser-session [url] [actions]
 ```
 
 ### Parameters
-- **url**: The website URL to navigate to
-- **actions**: Description of browser interactions to perform
-- **data** (optional): Data to use in forms or interactions
-- **use context service** (optional): Enable context service for advanced scenarios
+
+**Required:**
+
+- `url` - The website URL to navigate to
+
+- `actions` - Description of browser interactions to perform
+
+**Optional:**
+
+- `data` - Data to use in forms or interactions
+
+- `use context service` - Enable context service for advanced scenarios
 
 ### Response Format
-Returns the results of browser automation including extracted data, screenshots, or operation status.
+
+The command returns:
+```json
+{
+  "result": "extracted data or operation status",
+  "screenshot": "base64 encoded screenshot if requested",
+  "metadata": {
+    "execution_time": "time taken",
+    "elements_found": "number of elements processed"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Fill out a login form:
 ```
 /browser-session
 url: https://example.com/login
 actions: fill username field with "user123", fill password field with "pass456", click login button
 ```
+Fill out a login form with provided credentials.
 
 ### Advanced Usage
-Extract product information:
 ```
 /browser-session
 url: https://shop.example.com/products
 actions: wait for products to load, extract all product names, prices, and descriptions
 ```
+Extract structured product information from an e-commerce page.
 
 ### Specific Use Case
-Automate multi-step workflow:
 ```
 /browser-session
 url: https://app.example.com
 actions: login with credentials, navigate to reports section, download monthly report
 data: {"username": "admin", "password": "secure123", "month": "January"}
 ```
+Automate a multi-step workflow with dynamic data.
 
-## Key Features
+### Notes
+
+Uses Playwright for browser automation. Supports JavaScript execution, form handling, element waiting, and data extraction. Pre-defined browser, context, and page objects available in execution environment. Always wrap code in try-catch for error handling. Returns JSON-serializable data only.
 
 ### Web Navigation
 - Navigate to URLs

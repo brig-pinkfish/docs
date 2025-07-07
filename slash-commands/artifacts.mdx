@@ -5,40 +5,56 @@ description: "Learn how to use the artifacts slash command to work with output f
 
 ## What can you do with it?
 
-Access and process output files (artifacts) from previous automation steps. Read data, extract content from documents, combine results, and work with various file formats seamlessly.
+Access and process output files (artifacts) from previous automation steps. Read data, extract content from documents, combine results, and work with various file formats seamlessly. Essential for multi-step workflows where data needs to be passed between steps.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/artifacts
-action: get data from previous step
-file: the artifact file name
-step: which step to get it from
+/artifacts [action] [file]
 ```
 
 ### Parameters
-- **action**: What to do (get, list, extract, combine)
-- **file**: Artifact filename or pattern
-- **step** (optional): Step ID (like 'a3x7') or step number
-- **property** (optional): Specific JSON property to extract
-- **format** (optional): How to process the file
+
+**Required:**
+
+- `action` - What to do (get, list, extract, combine)
+
+- `file` - Artifact filename or pattern
+
+**Optional:**
+
+- `step` - Step ID (like 'a3x7') or step number
+
+- `property` - Specific JSON property to extract
+
+- `format` - How to process the file
 
 ### Response Format
-Returns the requested data parsed and ready to use, or lists available artifacts with their metadata.
+
+The command returns:
+```json
+{
+  "data": "requested artifact content",
+  "metadata": {
+    "filename": "artifact name",
+    "step": "source step ID",
+    "type": "file type"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Get data from a previous step:
 ```
 /artifacts
 action: get data from step a3x7
 file: results.json
 ```
+Get data from a specific previous step by ID.
 
 ### Advanced Usage
-Extract specific property from JSON:
 ```
 /artifacts
 action: get user email from previous step
@@ -46,19 +62,17 @@ file: user-data.json
 step: b2y9
 property: contact.email
 ```
+Extract specific property from JSON artifact in a previous step.
 
 ### Specific Use Case
-Combine results from multiple steps:
 ```
 /artifacts
 action: combine all CSV files into one dataset
 file pattern: *.csv
 steps: all previous steps
 ```
+Combine multiple CSV artifacts from all previous steps into one dataset.
 
 ### Notes
-- Automatically parses JSON and CSV files
-- Extracts text from PDFs, Word docs, Excel, and PowerPoint
-- Supports regex patterns for finding multiple files
-- Returns null if artifact not found
-- Step IDs (like 'a3x7') are more stable than step numbers 
+
+Automatically parses JSON and CSV files. Extracts text from PDFs, Word docs, Excel, and PowerPoint. Supports regex patterns for finding multiple files. Returns null if artifact not found. Step IDs (like 'a3x7') are more stable than step numbers. 

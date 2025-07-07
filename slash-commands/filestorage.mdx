@@ -5,33 +5,53 @@ description: "Learn how to use the filestorage slash command for file storage op
 
 ## What can you do with it?
 
-Store, retrieve, update, and manage files in the cloud storage system. Supports text and binary files with metadata, link expiration control, and public file sharing options.
+Store, retrieve, update, and manage files in the cloud storage system. Supports text and binary files with metadata, link expiration control, and public file sharing options. Perfect for configuration management, system logging, document storage, and file sharing with controlled access periods.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/filestorage
-action: upload, get, list, update, or delete
-filename: name of the file
-content: file content or data
+/filestorage [action] [parameters]
 ```
 
 ### Parameters
-- **action**: Operation to perform (upload, get, list, update, delete)
-- **filename**: Name of the file (required for most operations)
-- **content**: File content for upload/update
-- **metadata** (optional): Additional information about the file
-- **expiration** (optional): Link expiry (1-7 days or "never" for public)
-- **collection** (optional): Collection ID for file organization
+
+**Required:**
+
+- `action` - Operation to perform (upload, get, list, update, delete, append)
+
+- `filename` - Name of the file (required for most operations)
+
+**Optional:**
+
+- `content` - File content for upload/update/append operations
+
+- `metadata` - Additional information about the file as JSON object
+
+- `expiration` - Link expiry (1-7 days or "never" for public)
+
+- `collection` - Collection ID for file organization
+
+- `format` - Output format for list operations (detailed or light)
 
 ### Response Format
-Returns file URLs, metadata, and signed URLs for access. List operations return arrays of file information.
+
+The command returns:
+```json
+{
+  "filename": "name of the file",
+  "signedUrl": "temporary access URL",
+  "metadata": {
+    "created": "timestamp",
+    "modified": "timestamp",
+    "custom": "user metadata"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Upload a text file:
 ```
 /filestorage
 action: upload
@@ -39,9 +59,19 @@ filename: report.txt
 content: Monthly sales report content here
 expiration: 7 days
 ```
+Upload a text file with 7-day link expiration for temporary sharing.
 
 ### Advanced Usage
-Make file public:
+```
+/filestorage
+action: append
+filename: system-logs-2024.txt
+content: New log entry at 2024-03-15T15:30:00Z
+metadata: {"severity": "info", "source": "api"}
+```
+Append new content to an existing log file while preserving previous entries.
+
+### Specific Use Case
 ```
 /filestorage
 action: update
@@ -49,26 +79,11 @@ filename: public-document.pdf
 expiration: never
 metadata: {"category": "public", "version": "2.0"}
 ```
-
-### Specific Use Case
-List and extract content:
-```
-/filestorage
-action: list all files with content extraction
-format: detailed
-extract: pdf, docx, xlsx files
-```
+Make a file publicly accessible by setting expiration to never.
 
 ### Notes
-- Supports text and binary files (images, PDFs, documents, etc.)
-- Files can be made public with expiration="never"
-- Use PATCH for updating binary files without re-uploading
-- Automatic content extraction for PDFs, Word, Excel, PowerPoint
-- Maximum link expiration is 7 days (unless public)
 
-## Why Use File Storage?
-
-The file storage system provides a simple yet powerful way to store and manage files with features like:
+Supports text and binary files including images, PDFs, and documents. Files can be made public with expiration="never". Maximum link expiration is 7 days unless public. Automatic content extraction available for PDFs, Word, Excel, and PowerPoint files. No race condition prevention - multiple automations writing to same file may cause unexpected results.
 
 - **Simple File Management**: Store and retrieve files using unique filenames
 - **Flexible Content Types**: Store any type of content, from JSON to plain text

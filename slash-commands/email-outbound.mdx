@@ -5,44 +5,63 @@ description: "Learn how to use the email-outbound slash command to send emails t
 
 ## What can you do with it?
 
-Send outbound emails using our integrated email service. Supports HTML and plain text formats, attachments, CC/BCC recipients, and conversation threading.
+Send outbound emails using our integrated email service. Supports HTML and plain text formats, attachments, CC/BCC recipients, and conversation threading. Perfect for automated notifications, customer communications, and transactional emails with built-in rate limiting.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/email-outbound
-to: recipient email address
-subject: email subject line
-body: email content
+/email-outbound [to] [subject] [body]
 ```
 
 ### Parameters
-- **to**: Recipient email address (required)
-- **subject**: Email subject line
-- **body**: Email content (HTML or plain text)
-- **reply to** (optional): Reply-to email address
-- **cc** (optional): CC recipients (comma-separated)
-- **bcc** (optional): BCC recipients (comma-separated)
-- **files** (optional): File attachments
-- **thread id** (optional): For conversation threading
+
+**Required:**
+
+- `to` - Recipient email address
+
+- `subject` - Email subject line
+
+- `body` - Email content (HTML or plain text)
+
+**Optional:**
+
+- `reply to` - Reply-to email address
+
+- `cc` - CC recipients (comma-separated)
+
+- `bcc` - BCC recipients (comma-separated)
+
+- `files` - File attachments
+
+- `thread id` - For conversation threading
 
 ### Response Format
-Returns success confirmation with current usage limits or error message if limits exceeded.
+
+The command returns:
+```json
+{
+  "status": "success or error",
+  "message": "confirmation or error details",
+  "usage": {
+    "daily_remaining": "emails left today",
+    "minute_remaining": "emails left this minute"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Send a simple email:
 ```
 /email-outbound
 to: john@example.com
 subject: Meeting Reminder
 body: Don't forget about our meeting tomorrow at 3pm
 ```
+Send a simple plain text email reminder.
 
 ### Advanced Usage
-Send HTML email with CC:
 ```
 /email-outbound
 to: client@company.com
@@ -51,20 +70,18 @@ subject: Project Update
 body: <h2>Project Status</h2><p>We've completed phase 1 successfully.</p>
 reply to: project-team@ourcompany.com
 ```
+Send HTML email with CC recipients and custom reply-to address.
 
 ### Specific Use Case
-Send email with attachment:
 ```
 /email-outbound
 to: customer@example.com
 subject: Invoice for January
 body: Please find attached your invoice for January services
-files: [invoice_jan_2024.pdf]
+files: invoice_jan_2024.pdf
 ```
+Send email with file attachment for invoicing.
 
 ### Notes
-- Daily limit: 25 emails
-- Minutely limit: 10 emails
-- Both HTML and plain text versions are created automatically
-- Do not use with other email service skills
-- From address is system-managed
+
+Daily limit: 25 emails. Minutely limit: 10 emails. Both HTML and plain text versions are created automatically. Do not use with other email service skills. From address is system-managed.

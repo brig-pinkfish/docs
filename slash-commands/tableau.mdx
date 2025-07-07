@@ -3,284 +3,79 @@ title: "Tableau Integration"
 description: "For use with Tableau charts and graphs"
 ---
 
-# Tableau Integration
+## What can you do with it?
 
-Integrate with Tableau Server and Tableau Online for business intelligence, data visualization, and analytics dashboard management.
+Integrate with Tableau Server and Tableau Online for business intelligence, data visualization, and analytics dashboard management. Manage workbooks and data sources, publish and download Tableau content, handle user and project management, query view data and analytics, and manage permissions and access control.
 
-## Overview
+## How to use it?
 
-The Tableau Integration skill provides comprehensive functionality for:
-- Managing workbooks and data sources
-- Publishing and downloading Tableau content
-- Handling user and project management
-- Querying view data and analytics
-- Managing permissions and access control
-
-## Connection Requirements
-
-This skill requires a Tableau connection configured through:
-- **PinkConnect Proxy**: PC_BASE_URL (includes site-id and API version)
-- **Authentication**: Handled automatically by the proxy
-- **Site Context**: Site ID is included in the base URL
-
-## Basic Usage
-
-```javascript
-// Get all workbooks
-GET: workbooks
-
-// Get specific workbook
-GET: workbooks/{workbook-id}
-
-// Publish new workbook
-POST: workbooks (with multipart form data)
+### Basic Command Structure
+```
+/tableau [action] [resource] [parameters]
 ```
 
-## Key Features
+### Parameters
 
-### Content Management
-- **Workbook Operations**: Create, read, update, delete workbooks
-- **Data Source Management**: Publish and manage data sources
-- **Project Organization**: Organize content in projects
-- **Version Control**: Handle workbook versions and updates
+**Required:**
 
-### User and Permissions
-- **User Management**: List and manage site users
-- **Permission Control**: Set and manage content permissions
-- **Role Management**: Handle user roles and site access
-- **Security**: Implement proper access controls
+- `action` - Operation to perform (GET, POST, PUT, DELETE)
 
-### Data Access
-- **View Querying**: Extract data from Tableau views
-- **CSV Export**: Export view data in CSV format
-- **Metadata Access**: Get workbook and data source metadata
-- **Real-time Data**: Access live data through Tableau views
+- `resource` - Tableau resource (workbooks, datasources, projects, users, views)
 
-## Common Operations
+**Optional:**
 
-### List All Workbooks
-```javascript
-GET: workbooks
-```
+- `id` - Resource identifier for specific operations
 
-### Get Workbook Details
-```javascript
-GET: workbooks/{workbook-id}
-```
+- `data` - Request body for POST/PUT operations
 
-### Publish Workbook
-```javascript
-POST: workbooks
-Content-Type: multipart/form-data
+- `format` - Export format for data (csv)
 
-Form Data:
-- request_payload: {"workbook": {"name": "Sales Dashboard", "projectId": "project-456"}}
-- tableau_workbook: [workbook.twbx file]
-```
+- `filters` - Query filters for listing resources
 
-### Query View Data
-```javascript
-GET: views/{view-id}/data?format=csv&maxAge=60
-```
+### Response Format
 
-## Response Structures
-
-### Workbook Response
-```javascript
+The command returns:
+```json
 {
-  "workbook": {
-    "id": "workbook-123",
-    "name": "Sales Dashboard",
-    "description": "Monthly sales performance dashboard",
-    "contentUrl": "SalesDashboard",
-    "showTabs": true,
-    "size": 2048576,
-    "createdAt": "2025-01-15T12:34:56Z",
-    "updatedAt": "2025-01-15T14:20:00Z",
-    "project": {
-      "id": "project-456",
-      "name": "Sales Analytics"
-    },
-    "owner": {
-      "id": "user-789",
-      "name": "John Doe"
-    },
-    "views": {
-      "view": [
-        {
-          "id": "view-111",
-          "name": "Sales Overview",
-          "contentUrl": "SalesOverview"
-        }
-      ]
-    }
+  "resource": "Tableau resource data",
+  "metadata": {
+    "id": "resource identifier",
+    "name": "resource name",
+    "type": "resource type"
   }
 }
 ```
 
-### Data Source Response
-```javascript
-{
-  "datasource": {
-    "id": "datasource-123",
-    "name": "Sales Data",
-    "description": "Customer and sales transaction data",
-    "contentUrl": "SalesData",
-    "type": "sqlserver",
-    "size": 10485760,
-    "createdAt": "2025-01-10T09:00:00Z",
-    "updatedAt": "2025-01-15T08:30:00Z",
-    "project": {
-      "id": "project-456",
-      "name": "Sales Analytics"
-    },
-    "owner": {
-      "id": "user-789",
-      "name": "John Doe"
-    }
-  }
-}
+## Examples
+
+### Basic Usage
 ```
-
-### View Data Response (CSV)
-```javascript
-{
-  "status": 200,
-  "headers": {
-    "Content-Type": "text/csv"
-  },
-  "output": "Date,Sales,Region\n2025-01-01,10000,North\n2025-01-01,15000,South\n2025-01-02,12000,North"
-}
+/tableau
+action: GET
+resource: workbooks
 ```
+List all workbooks in the Tableau site.
 
-## Project Management
-
-### Create Project
-```javascript
-POST: projects
-{
-  "project": {
-    "name": "Finance Analytics",
-    "description": "Financial reporting and analytics",
-    "contentPermissions": "ManagedByOwner",
-    "parentProjectId": "project-000"
-  }
-}
+### Advanced Usage
 ```
-
-### Project Permissions
-- **ManagedByOwner**: Owner manages all permissions
-- **LockedToProject**: Project-level permission management
-- **LockedToProjectWithoutNested**: Project-level without nested projects
-
-## User Management
-
-### List Users
-```javascript
-GET: users
+/tableau
+action: POST
+resource: workbooks
+data: {"workbook": {"name": "Sales Dashboard", "projectId": "project-456"}}
+file: workbook.twbx
 ```
+Publish a new workbook with metadata and file upload.
 
-### User Roles
-- **Creator**: Can create and publish content
-- **Explorer**: Can interact with published content
-- **Viewer**: Can view published content
-- **SiteAdministrator**: Full site administration rights
-
-## Permission Management
-
-### Get Workbook Permissions
-```javascript
-GET: workbooks/{workbook-id}/permissions
+### Specific Use Case
 ```
-
-### Permission Capabilities
-- **Read**: View content
-- **Write**: Edit content
-- **Delete**: Remove content
-- **ChangePermissions**: Modify permissions
-- **ChangeHierarchy**: Move content between projects
-
-## Data Export Options
-
-### CSV Export
-```javascript
-GET: views/{view-id}/data?format=csv
+/tableau
+action: GET
+resource: views/{view-id}/data
+format: csv
+filters: maxAge=60
 ```
+Export view data as CSV with cache control.
 
-### Export Parameters
-- **format**: Export format (csv)
-- **maxAge**: Cache age in seconds
-- **vf_{filter}**: View filters
-- **refresh**: Force refresh of data
+### Notes
 
-## File Operations
-
-### Download Workbook
-```javascript
-GET: workbooks/{workbook-id}/content
-// Returns binary TWBX file
-```
-
-### Download Data Source
-```javascript
-GET: datasources/{datasource-id}/content
-// Returns binary TDSX/TDS file
-```
-
-## Query Parameters
-
-### Common Parameters
-- **fields**: Specify response fields
-- **filter**: Filter results
-- **sort**: Sort results
-- **pageSize**: Items per page (max 1000)
-- **pageNumber**: Page number for pagination
-
-### Filtering Examples
-```javascript
-// Filter workbooks by project
-GET: workbooks?filter=projectName:eq:Sales Analytics
-
-// Filter users by site role
-GET: users?filter=siteRole:eq:Creator
-```
-
-## Error Handling
-
-### Common Errors
-```javascript
-{
-  "error": {
-    "code": "400008",
-    "summary": "Bad Request",
-    "detail": "The workbook name is required."
-  }
-}
-```
-
-### Error Categories
-- **Authentication**: Invalid credentials or expired tokens
-- **Authorization**: Insufficient permissions
-- **Validation**: Invalid request parameters
-- **Resource**: Missing or invalid resource IDs
-- **Server**: Internal server errors
-
-## Important Notes
-
-- **Site Context**: All operations are scoped to the configured site
-- **Authentication**: Handled automatically by PinkConnect Proxy
-- **File Uploads**: Use multipart/form-data for workbook and data source publishing
-- **Rate Limits**: Respect Tableau Server rate limits
-- **API Versioning**: API version is included in the proxy URL
-- **Binary Content**: File downloads return binary content
-
-## Best Practices
-
-1. **Project Organization**: Use projects to organize content logically
-2. **Permission Management**: Implement least-privilege access principles
-3. **Version Control**: Track workbook versions and changes
-4. **Data Freshness**: Use appropriate cache settings for data exports
-5. **Error Handling**: Implement robust error handling for API calls
-6. **Resource Management**: Clean up unused workbooks and data sources
-7. **Performance**: Use pagination for large result sets
-8. **Security**: Regularly audit user permissions and access 
+Requires Tableau connection configured through PinkConnect Proxy. Site context and authentication handled automatically. Supports workbook and data source management, user and permission control, and data export operations. File uploads use multipart/form-data. Binary content returned for file downloads. 

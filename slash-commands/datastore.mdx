@@ -5,43 +5,65 @@ description: "Learn how to use the datastore slash command to interact with NoSQ
 
 ## What can you do with it?
 
-Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities.
+Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities. Ideal for user preferences, application state, dynamic content, and any data that needs persistent storage with search functionality.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/datastore
-action: create, read, update, delete, or search
-key: unique identifier for your data
-content: the data to store
+/datastore [action] [key] [content]
 ```
 
 ### Parameters
-- **action**: Operation to perform (create, read, update, delete, search)
-- **key**: Unique identifier for the item (required for most operations)
-- **content**: Data to store (required for create/update)
-- **collection** (optional): Collection ID for data isolation
-- **sort field** (optional): Secondary sorting field
-- **metadata** (optional): Additional custom attributes
-- **search query** (optional): Text to search for
+
+**Required:**
+
+- `action` - Operation to perform (create, read, update, delete, search)
+
+- `key` - Unique identifier for the item (required for most operations)
+
+**Optional:**
+
+- `content` - Data to store (required for create/update)
+
+- `collection` - Collection ID for data isolation
+
+- `sort field` - Secondary sorting field
+
+- `metadata` - Additional custom attributes
+
+- `search query` - Text to search for
 
 ### Response Format
-Returns stored items with their IDs, timestamps, and content. Search operations include relevance scores and matched snippets.
+
+The command returns:
+```json
+{
+  "item": {
+    "id": "unique item ID",
+    "key": "your key",
+    "content": "stored data",
+    "created": "timestamp",
+    "modified": "timestamp"
+  },
+  "metadata": {
+    "collection": "collection ID if used"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Store simple data:
 ```
 /datastore
 action: create
 key: user123
 content: {"name": "John Doe", "email": "john@example.com"}
 ```
+Store simple user data with a unique key.
 
 ### Advanced Usage
-Search with filters:
 ```
 /datastore
 action: search
@@ -50,9 +72,9 @@ field: content
 type: fuzzy
 metadata.category: reviews
 ```
+Search for items with fuzzy matching and metadata filters.
 
 ### Specific Use Case
-Update with triggers:
 ```
 /datastore
 action: update
@@ -60,10 +82,8 @@ key: order456
 content: {"status": "shipped", "tracking": "ABC123"}
 trigger urls: {"https://webhook.site/notify": "api-key-123"}
 ```
+Update order status and trigger external webhook notification.
 
 ### Notes
-- Items are uniquely identified by key + sortField combination
-- Use itemId for direct access to specific items
-- Search supports fuzzy, exact, and prefix matching
-- Triggers can notify external URLs on data changes
-- URL-encode keys and sortFields in API calls
+
+Items are uniquely identified by key + sortField combination. Use itemId for direct access to specific items. Search supports fuzzy, exact, and prefix matching. Triggers can notify external URLs on data changes. URL-encode keys and sortFields in API calls.

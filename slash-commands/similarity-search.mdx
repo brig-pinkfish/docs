@@ -1,11 +1,7 @@
 ---
 title: "Similarity Search Guide"
-description: "Learn how to use the similarity-search slash command to find and rank similar strings"
+description: "Find and rank similar strings using Levenshtein distance"
 ---
-
-# Similarity Search
-
-Compare and rank similar strings using Levenshtein distance.
 
 ## What can you do with it?
 
@@ -21,29 +17,42 @@ items to search: array of strings to compare against
 ```
 
 ### Parameters
-- **search term**: The string you want to find matches for
-- **items to search**: Array of strings to search through
-- **use smart extraction** (optional): Extract and compare only the most relevant parts of paths
-- **exclude patterns** (optional): Patterns to exclude during smart extraction
-- **split value** (optional): Character used to split paths when using smart extraction
-- **max results** (optional): Maximum number of results to return
+
+**Required:**
+
+- `search term` - The string you want to find matches for
+
+- `items to search` - Array of strings to search through
+
+**Optional:**
+
+- `use smart extraction` - Extract and compare only the most relevant parts of paths (default: false)
+
+- `exclude patterns` - Patterns to exclude during smart extraction (default: none)
+
+- `split value` - Character used to split paths when using smart extraction (default: /)
+
+- `max results` - Maximum number of results to return (default: 5)
 
 ### Response Format
-Returns a ranked list of matches with their similarity distances (lower distance = more similar).
+
+The command returns:
+```
+A ranked list of matches with their similarity distances (lower distance = more similar)
+```
 
 ## Examples
 
 ### Basic Usage
-Find similar product names:
 ```
 /similarity-search
 search term: lpsum string to compare
 items to search: ["first lpsum string", "another possible match", "completely different text", "lpsum sample"]
 max results: 3
 ```
+Find similar product names from a list
 
 ### Advanced Usage
-Compare file paths with smart extraction:
 ```
 /similarity-search
 search term: lpsum journal name
@@ -52,194 +61,13 @@ use smart extraction: true
 exclude patterns: ["x", "_"]
 split value: /
 ```
+Compare file paths with smart extraction to focus on relevant parts
 
 ### Specific Use Case
-Find similar customer names in a database:
 ```
 /similarity-search
 search term: John Smith
 items to search: ["Jon Smith", "John Smyth", "Jane Smith", "John Schmidt", "Johnny Smith"]
 max results: 5
 ```
-
-## Overview
-
-The Similarity Search skill provides functionality for:
-- Finding closest string matches using Levenshtein distance
-- Ranking results by similarity score
-- Smart extraction for path-like structures
-- Configurable result filtering and limits
-- Pattern exclusion for refined matching
-
-## Connection Requirements
-
-This skill uses an internal helper service and doesn't require external connections.
-
-## Key Features
-
-### String Matching
-- **Levenshtein Distance**: Calculate edit distance between strings
-- **Ranked Results**: Sort matches by similarity score (lower is better)
-- **Configurable Limits**: Control maximum number of results returned
-- **Full String Comparison**: Compare entire strings for similarity
-
-### Smart Extraction
-- **Path Processing**: Extract relevant parts from path-like structures
-- **Pattern Exclusion**: Exclude specific patterns during extraction
-- **Custom Splitting**: Configure split characters for path parsing
-- **Intelligent Matching**: Focus on meaningful path components
-
-## Common Operations
-
-### Basic Similarity Search
-```javascript
-POST: /similarity-search
-{
-  "searchTerm": "lorem ipsum text",
-  "items": [
-    "lorem ipsum sample",
-    "different content",
-    "ipsum lorem variation",
-    "completely unrelated"
-  ],
-  "maxResults": 3
-}
-```
-
-### Smart Extraction for Paths
-```javascript
-POST: /similarity-search
-{
-  "searchTerm": "product catalog",
-  "items": [
-    "website/pages/product-catalog/main.html",
-    "website/pages/user-profile/settings.html",
-    "website/pages/product-catalog-v2/index.html",
-    "mobile/screens/catalog/product-list.js"
-  ],
-  "useSmartExtraction": true,
-  "excludePatterns": ["html", "js", "v2"],
-  "splitValue": "/",
-  "maxResults": 5
-}
-```
-
-## Configuration Options
-
-### Required Parameters
-- **searchTerm**: The string you want to find matches for
-- **items**: Array of strings to search through
-
-### Optional Parameters
-- **useSmartExtraction** (default: false): Enable path-aware extraction
-- **excludePatterns** (default: []): Patterns to exclude during extraction
-- **splitValue** (default: '/'): Character for splitting paths
-- **maxResults** (default: 5): Maximum results to return
-
-## Response Structure
-
-### Basic Response
-```javascript
-{
-  "searchTerm": "example search",
-  "results": [
-    {
-      "item": "example search match",
-      "distance": 5
-    },
-    {
-      "item": "example text",
-      "distance": 8
-    },
-    {
-      "item": "sample search",
-      "distance": 10
-    }
-  ],
-  "config": {
-    "useSmartExtraction": false,
-    "excludePatterns": [],
-    "splitValue": "",
-    "maxResults": 3
-  }
-}
-```
-
-### Smart Extraction Response
-```javascript
-{
-  "searchTerm": "product catalog",
-  "results": [
-    {
-      "item": "website/pages/product-catalog/main.html",
-      "distance": 0
-    },
-    {
-      "item": "website/pages/product-catalog-v2/index.html",
-      "distance": 2
-    },
-    {
-      "item": "mobile/screens/catalog/product-list.js",
-      "distance": 8
-    }
-  ],
-  "config": {
-    "useSmartExtraction": true,
-    "excludePatterns": ["html", "js", "v2"],
-    "splitValue": "/",
-    "maxResults": 5
-  }
-}
-```
-
-## Distance Scoring
-
-### Levenshtein Distance
-- **0**: Exact match
-- **1-5**: Very similar (minor differences)
-- **6-10**: Moderately similar
-- **11-20**: Somewhat similar
-- **21+**: Low similarity
-
-### Interpretation
-- Lower distance scores indicate higher similarity
-- Distance represents minimum number of edits needed to transform one string into another
-- Edits include insertions, deletions, and substitutions
-
-## Smart Extraction Use Cases
-
-### File Paths
-```javascript
-// Finding similar file paths
-"components/Button.tsx" → matches "src/components/Button.tsx"
-```
-
-### URL Paths
-```javascript
-// Finding similar routes
-"api/users/profile" → matches "api/v1/users/profile"
-```
-
-### Category Hierarchies
-```javascript
-// Finding similar categories
-"electronics/phones" → matches "category/electronics/smartphones"
-```
-
-## Important Notes
-
-- **Case Sensitivity**: Matching is case-sensitive by default
-- **Unicode Support**: Handles Unicode characters properly
-- **Performance**: Optimized for moderate-sized string arrays
-- **Memory Usage**: Consider memory limits for very large item arrays
-- **Smart Extraction**: Only use when dealing with path-like structures
-
-## Best Practices
-
-1. **Appropriate Limits**: Set reasonable maxResults to avoid overwhelming responses
-2. **Smart Extraction**: Only enable for path-like data structures
-3. **Pattern Exclusion**: Use excludePatterns to filter out noise (file extensions, version numbers)
-4. **Preprocessing**: Clean input data for better matching results
-5. **Threshold Filtering**: Consider filtering results by distance threshold
-6. **Performance**: For large datasets, consider batching requests
-7. **Validation**: Validate input arrays are not empty before processing 
+Find similar customer names in a database for deduplication 

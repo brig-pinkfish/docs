@@ -5,56 +5,69 @@ description: "Learn how to use the pdf-form-filler slash command to fill out PDF
 
 ## What can you do with it?
 
-Fill PDF forms programmatically with data. Supports text fields, checkboxes, and dropdowns with intelligent field matching and multiple fallback strategies.
+Fill PDF forms programmatically with data. Supports text fields, checkboxes, and dropdowns with intelligent field matching and multiple fallback strategies. Perfect for automating form submissions, batch processing applications, and streamlining document workflows.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/pdf-form-filler
-pdf file: the PDF form to fill
-field data: the data to fill into the form
+/pdf-form-filler [pdf-file] [field-data]
 ```
 
 ### Parameters
-- **pdf file**: URL or path to the PDF form
-- **field data**: Key-value pairs of field names and values
-- **checkbox values** (optional): Boolean or string values for checkboxes
-- **dropdown selections** (optional): Values to select in dropdown fields
+
+**Required:**
+
+- `pdf file` - URL or path to the PDF form
+
+- `field data` - Key-value pairs of field names and values
+
+**Optional:**
+
+- `checkbox values` - Boolean or string values for checkboxes
+
+- `dropdown selections` - Values to select in dropdown fields
 
 ### Response Format
-Returns a base64-encoded filled PDF with metadata including filename and mime type.
+
+The command returns:
+```json
+{
+  "pdf": "base64-encoded filled PDF",
+  "metadata": {
+    "filename": "filled_form.pdf",
+    "mime_type": "application/pdf",
+    "fields_filled": "number of fields populated"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Fill a simple form:
 ```
 /pdf-form-filler
 pdf file: application_form.pdf
 field data: {"name": "John Doe", "email": "john@example.com", "date": "2024-01-15"}
 ```
+Fill a simple form with basic text field data.
 
 ### Advanced Usage
-Fill complex form with checkboxes:
 ```
 /pdf-form-filler
 pdf file: registration_form.pdf
 field data: {"firstName": "Jane", "lastName": "Smith", "agreeToTerms": true, "newsletter": "checked"}
 ```
+Fill complex form including checkbox fields with various value formats.
 
 ### Specific Use Case
-Fill tax form with dropdowns:
 ```
 /pdf-form-filler
 pdf file: tax_form.pdf
 field data: {"taxYear": "2023", "filingStatus": "Single", "income": "50000", "deductions": "Standard"}
 ```
+Fill tax form with dropdown selections and numeric fields.
 
 ### Notes
-The skill uses intelligent field matching with fallbacks:
-- Direct field name matching
-- Similar name pattern matching
-- Positional fallback as last resort
-- Multiple checkbox methods (.check(), setValue variations)
-- Dropdown option matching with fuzzy search 
+
+Uses intelligent field matching with fallbacks: direct field name matching, similar name pattern matching, and positional fallback as last resort. Supports multiple checkbox methods (.check(), setValue variations). Dropdown option matching includes fuzzy search for best match. 

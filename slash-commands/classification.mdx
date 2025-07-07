@@ -5,106 +5,66 @@ description: "Learn how to use the classification slash command to categorize an
 
 ## What can you do with it?
 
-Automatically categorize text, documents, or other content into predefined or custom categories. Useful for organizing data, routing requests, or analyzing content types.
+Automatically categorize text, documents, or other content into predefined or custom categories. Useful for organizing data, routing requests, or analyzing content types. The command can either use your provided categories or intelligently create its own based on the content.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/classification
-content: the text or content to classify
-categories: list of possible categories
+/classification [content] [optional-parameters]
 ```
 
 ### Parameters
-- **content**: The text or content to classify
-- **categories**: List of possible categories or classification criteria
-- **file** (optional): File URL containing content to classify
+
+**Required:**
+
+- `content` - The text or content to classify
+
+**Optional:**
+
+- `categories` - List of possible categories or classification criteria (if not provided, AI will create appropriate categories)
+
+- `file` - File URL containing content to classify
 
 ### Response Format
-Returns classification results as JSON with the identified category and confidence level.
+
+The command returns:
+```json
+{
+  "category_name": ["item1", "item2"],
+  "another_category": ["item3", "item4"],
+  "metadata": {
+    "total_items": "number of items classified",
+    "categories_created": "number of categories"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Classify customer feedback:
 ```
 /classification
-content: "The product arrived damaged and customer service was unhelpful"
-categories: ["positive", "negative", "neutral"]
+content: The product arrived damaged and customer service was unhelpful
+categories: positive, negative, neutral
 ```
+Classify customer feedback into sentiment categories.
 
 ### Advanced Usage
-Classify documents by type:
 ```
 /classification
-file: document_url
-categories: ["invoice", "contract", "report", "correspondence", "other"]
+content: I can't log into my account and need to reset my password
+categories: billing, technical, account, feature request, other
 ```
+Route support tickets to appropriate departments based on content.
 
 ### Specific Use Case
-Route support tickets:
 ```
 /classification
-content: "I can't log into my account and need to reset my password"
-categories: ["billing", "technical", "account", "feature request", "other"]
+content: $40 lunch with mom, $250 dinner with AcmeCo group, $12 present for cousin Jimmy, $1000 booth for Amazon Invent conference
 ```
+Let AI automatically create categories (business/personal) for expense classification.
 
-## Why Use Classification?
+### Notes
 
-The `/classification` command helps you quickly categorize and organize any list of items. Perfect for:
-
-- Sorting expenses into categories
-- Organizing tasks by priority
-- Grouping customer feedback
-- Categorizing inventory items
-- Grouping customer support tickets
-
-## Basic Usage
-
-Simply use the command followed by your list of items:
-
-```
-/classification the following into business and personal expenses:
-* $40 lunch with mom
-* $250 dinner with AcmeCo group
-* $12 present for cousin Jimmy
-* $1000 booth for Amazon Invent conference
-```
-
-Example Output:
-
-```json
-{
-  "business": [
-    "$250 dinner with AcmeCo group",
-    "$1000 booth for Amazon Invent conference"
-  ],
-  "personal": ["$40 lunch with mom", "$12 present for cousin Jimmy"]
-}
-```
-
-## Let the LLM decide
-
-You can also ask the LLM to create topics or categories for you.
-
-```
-/classification the following customer service questions. Make up your own topics. 
-1. How do I cancel my subscription?
-2. What is your return policy?
-3. How can I track my order?
-4. What is the status of my order?
-5. How do I change my billing information?
-```
-
-Example Output:
-
-```json
-{
-  "billing": ["How do I change my billing information?"],
-  "cancellation": ["How do I cancel my subscription?"],
-  "tracking": ["How can I track my order?"],
-  "return": ["What is your return policy?"],
-  "status": ["What is the status of my order?"]
-}
-```
+The classification command supports both predefined categories and automatic category generation. When categories are not specified, the AI will analyze the content and create appropriate groupings. Supports various content types including text, lists, and file inputs.
