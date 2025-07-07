@@ -1,208 +1,295 @@
 ---
-title: "SharePoint Command Guide"
-description: "Learn how to use the SharePoint slash command to manage documents, lists, and sites"
+title: "SharePoint Guide"
+description: "Manage documents, lists, sites, and collaborate through SharePoint"
 ---
 
-The `/sharepoint` command enables you to work with SharePoint sites, documents, and lists. Perfect for:
+## What can you do with it?
 
-- Managing document libraries
-- Working with SharePoint lists
-- Searching sites
-- Uploading and downloading files
-- Creating and updating list items
+SharePoint enables you to manage your organization's documents, lists, and sites programmatically. You can search for sites, create and manage lists with custom columns, add and update list items, upload and download documents, organize files in folders, share documents with links, and manage site content. This integration is perfect for document management workflows, automated list operations, content organization, and building collaborative applications that interact with SharePoint sites.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with SharePoint:
-
+### Basic Command Structure
 ```
-/sharepoint list all sites using connection ID abc123
+/your-SharePoint-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/sharepoint upload document to site "Marketing" using connection ID abc123
-```
+### Parameters
 
-```
-/sharepoint get items from list "Tasks" in site "Projects" using connection ID abc123
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform with SharePoint
+- `pc-connection-id` - Your PinkConnect SharePoint connection ID
 
-### Site Management
-- Search for sites
-- List available sites
-- Get site details
-- Access site IDs
-- Navigate site structure
-
-### Document Operations
-- Upload files
-- Download documents
-- List files/folders
-- Create folders
-- Move and copy files
-
-### List Management
-- View SharePoint lists
-- Create list items
-- Update items
-- Delete items
-- Work with custom columns
-
-### File Operations
-- Share documents
-- Update metadata
-- Delete files
-- Rename items
-- Check permissions
-
-## Example Commands
+## Tools
 
 ### List Sites
+Search for SharePoint sites by name or list all sites
+
+**Parameters:**
+- `search-term` (optional) - Site name to search for
+
+**Example:**
 ```
-/sharepoint show all available sites with connection abc123
+/your-SharePoint-connection
+action: list-sites
+pc-connection-id: your-connection-id
 ```
 
-### Search Sites
+**Response:**
+```json
+[
+  {
+    "name": "Team Site",
+    "url": "https://company.sharepoint.com/sites/team",
+    "siteId": "company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012",
+    "description": "Main team collaboration site"
+  }
+]
 ```
-/sharepoint find sites containing "Finance" with connection abc123
+
+### Get Site Lists
+Retrieve all lists in a SharePoint site
+
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+
+**Example:**
+```
+/your-SharePoint-connection
+action: get-site-lists
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "list-guid-123",
+      "displayName": "Project Tasks",
+      "description": "Track project tasks and assignments",
+      "createdDateTime": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Create List
+Create a new list in a SharePoint site
+
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `list-name` (required) - Name for the new list
+- `list-template` (required) - Template type (genericList, tasks, events, announcements)
+- `columns` (optional) - Array of column definitions
+
+**Example:**
+```
+/your-SharePoint-connection
+action: create-list
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+list-name: Customer Feedback
+list-template: genericList
+```
+
+**Response:**
+```json
+{
+  "id": "new-list-guid-456",
+  "displayName": "Customer Feedback",
+  "createdDateTime": "2024-03-20T14:15:00Z",
+  "list": {
+    "template": "genericList"
+  }
+}
+```
+
+### Get List Items
+Retrieve all items from a SharePoint list
+
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `list-id` (required) - The ID of the list
+
+**Example:**
+```
+/your-SharePoint-connection
+action: get-list-items
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+list-id: list-guid-123
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "1",
+      "fields": {
+        "Title": "Complete documentation",
+        "Status": "In Progress",
+        "AssignedTo": "John Doe",
+        "DueDate": "2024-03-25"
+      }
+    }
+  ]
+}
+```
+
+### Add List Item
+Create a new item in a SharePoint list
+
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `list-id` (required) - The ID of the list
+- `fields` (required) - Object containing field values
+
+**Example:**
+```
+/your-SharePoint-connection
+action: add-list-item
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+list-id: list-guid-123
+fields: {"Title": "New Task", "Status": "Not Started", "Priority": "High"}
+```
+
+**Response:**
+```json
+{
+  "id": "2",
+  "fields": {
+    "Title": "New Task",
+    "Status": "Not Started",
+    "Priority": "High",
+    "Created": "2024-03-20T15:30:00Z"
+  }
+}
 ```
 
 ### Upload Document
-```
-/sharepoint upload file to "Documents" folder in site "Team Site" using connection abc123
-```
+Upload a file to a SharePoint document library
 
-### List Documents
-```
-/sharepoint show all files in root folder of site ID 4d8b95a0-8ed5 using connection abc123
-```
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `file-path` (required) - Destination path for the file
+- `content` (required) - Binary content of the file
 
-### Work with Lists
+**Example:**
 ```
-/sharepoint get all items from "Tasks" list in "Project Management" site with connection abc123
-```
-
-### Create List Item
-```
-/sharepoint add item to "Contacts" list with name "John Doe" email "john@example.com" using connection abc123
+/your-SharePoint-connection
+action: upload-document
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+file-path: /Shared Documents/Reports/Q1-Report.pdf
+content: [binary content]
 ```
 
-## Important Notes
+**Response:**
+```json
+{
+  "id": "doc-guid-789",
+  "name": "Q1-Report.pdf",
+  "size": 1048576,
+  "webUrl": "https://company.sharepoint.com/sites/team/Shared%20Documents/Reports/Q1-Report.pdf",
+  "createdDateTime": "2024-03-20T16:00:00Z"
+}
+```
 
-### Connection ID Required
-- Always provide your PinkConnect SharePoint connection ID
-- Format: "using connection ID [your-id]"
-- Ask user if not provided
+### Download Document
+Download a file from SharePoint
 
-### Site IDs
-- Get site ID from list sites operation
-- Use full site ID for operations
-- Format: "hostname,guid,guid"
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `item-id` (required) - The ID of the document
 
-## Site Operations
+**Example:**
+```
+/your-SharePoint-connection
+action: download-document
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+item-id: doc-guid-789
+```
 
-### Finding Sites
-- Search by site name
-- Returns array of sites
-- Each site has ID, name, URL
-- Use site ID for further operations
+**Response:**
+```json
+{
+  "status": "downloaded",
+  "filename": "Q1-Report.pdf",
+  "size": 1048576,
+  "contentType": "application/pdf"
+}
+```
 
-### Site Properties
-- **name**: Display name
-- **url**: Web URL
-- **siteId**: Unique identifier
-- **description**: Site description
+### Create Folder
+Create a new folder in SharePoint
 
-## Document Library
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `parent-id` (required) - The ID of the parent folder (use root for top level)
+- `folder-name` (required) - Name for the new folder
 
-### Upload Files
-- Specify target path
-- Support for folders
-- Binary file upload
-- Preserve metadata
+**Example:**
+```
+/your-SharePoint-connection
+action: create-folder
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+parent-id: root
+folder-name: 2024 Projects
+```
 
-### Download Files
-- Use item ID
-- Get file content
-- Maintain file type
-- Support large files
+**Response:**
+```json
+{
+  "id": "folder-guid-321",
+  "name": "2024 Projects",
+  "folder": {
+    "childCount": 0
+  },
+  "webUrl": "https://company.sharepoint.com/sites/team/Shared%20Documents/2024%20Projects"
+}
+```
 
-### Folder Operations
-- Create new folders
-- List folder contents
-- Navigate hierarchy
-- Move between folders
+### Create Share Link
+Generate a shareable link for a document
 
-## SharePoint Lists
+**Parameters:**
+- `site-id` (required) - The ID of the SharePoint site
+- `item-id` (required) - The ID of the document
+- `link-type` (optional) - Type of link: view or edit (default: view)
+- `scope` (optional) - Link scope: anonymous or organization (default: anonymous)
 
-### List Operations
-- View all lists in site
-- Create new lists
-- Access list items
-- Expand field data
+**Example:**
+```
+/your-SharePoint-connection
+action: create-share-link
+pc-connection-id: your-connection-id
+site-id: company.sharepoint.com,4d8b95a0-8ed5-4cab-9cfb-4e7fe277556b,12345678-1234-1234-1234-123456789012
+item-id: doc-guid-789
+link-type: view
+scope: anonymous
+```
 
-### Item Management
-- Add new items
-- Update existing items
-- Delete items
-- Query with filters
+**Response:**
+```json
+{
+  "id": "share-link-123",
+  "link": {
+    "type": "view",
+    "scope": "anonymous",
+    "webUrl": "https://company.sharepoint.com/:b:/s/team/EaBC123..."
+  },
+  "hasPassword": false,
+  "expirationDateTime": null
+}
+```
 
-### Custom Columns
-- View column schema
-- Create custom columns
-- Update column properties
-- Delete unused columns
+## Notes 
 
-## Sharing Options
-
-### Create Share Links
-- Anonymous access
-- View-only links
-- Edit permissions
-- Expiration dates
-
-### Link Types
-- **view**: Read-only access
-- **edit**: Modify permissions
-- **anonymous**: No login required
-- **organization**: Internal only
-
-## File Management
-
-### Move Operations
-- Change parent folder
-- Maintain permissions
-- Update references
-- Preserve metadata
-
-### Copy Operations
-- Duplicate files
-- New location
-- Rename on copy
-- Keep original
-
-## Best Practices
-
-1. **Get Site ID First**
-   - List or search sites
-   - Store ID for operations
-   - Use full ID format
-
-2. **Check Permissions**
-   - Verify access rights
-   - Handle permission errors
-   - Request appropriate access
-
-3. **Handle Large Files**
-   - Use appropriate timeouts
-   - Check file size limits
-   - Consider chunked uploads
-
-## Tips
-- Always include connection ID
-- Get site IDs before operations
-- Use expand parameter for full data
-- Test with small files first
-- Keep track of item IDs for updates 
+SharePoint uses MCP (Model Context Protocol) tools for most operations. A PinkConnect connection ID is required for all operations. Site IDs have a specific format containing hostname, site GUID, and web GUID separated by commas. List templates include genericList, tasks, events, and announcements. Both document libraries and custom lists are supported. The integration supports file operations, list management, and sharing capabilities. 

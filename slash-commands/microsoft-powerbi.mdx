@@ -1,100 +1,41 @@
 ---
-title: "Microsoft Power BI API Command Guide"
-description: "Learn how to use the Microsoft Power BI API slash command to create, manage, and share data visualizations, dashboards, and reports"
+title: "Microsoft Power BI Guide"
+description: "Create, manage, and share data visualizations, dashboards, and reports with Power BI"
 ---
 
-The `/microsoft-powerbi` command enables you to create, manage, and share data visualizations, dashboards, and reports through Microsoft Power BI. Perfect for:
+## What can you do with it?
 
-- Managing workspaces and reports
-- Creating and sharing dashboards
-- Dataset management and refresh
-- Report embedding and export
-- Data visualization automation
+Microsoft Power BI allows you to manage business intelligence assets programmatically. You can access workspaces, create and clone reports, manage dashboards, refresh datasets, export reports in various formats, embed reports with secure tokens, monitor data sources and gateways, and organize analytics content. This integration is perfect for automated reporting, data visualization management, and business intelligence workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Power BI:
-
+### Basic Command Structure
 ```
-/microsoft-powerbi get all workspaces and their reports
+/your-Microsoft-Power-BI-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform with Power BI
+
+## Tools
+
+### List Workspaces
+Get all workspaces you have access to
+
+**Parameters:**
+- None required
+
+**Example:**
 ```
-/microsoft-powerbi refresh dataset "Sales Data 2024" in workspace
-```
-
-```
-/microsoft-powerbi export report "Quarterly Performance" to PDF
-```
-
-## Key Features
-
-### Workspace Management
-- List workspaces
-- Create new workspaces
-- Manage workspace permissions
-- Organize content
-- Capacity monitoring
-
-### Report Operations
-- Get reports and details
-- Clone reports
-- Export to various formats
-- Generate embed tokens
-- Manage report pages
-
-### Dashboard Management
-- List dashboards
-- Update dashboard properties
-- Create dashboard tiles
-- Share dashboards
-- Monitor usage
-
-### Dataset Operations
-- Refresh datasets
-- Monitor refresh status
-- Manage data sources
-- Check gateway status
-- Configure refresh schedules
-
-## Example Commands
-
-### Workspace Operations
-```
-/microsoft-powerbi create new workspace "Financial Analytics 2025"
+/your-Microsoft-Power-BI-connection
+action: list-workspaces
 ```
 
-### Report Management
-```
-/microsoft-powerbi clone report "Quarterly Performance" to Marketing workspace
-```
-
-### Dataset Refresh
-```
-/microsoft-powerbi trigger refresh for dataset in Marketing Analytics workspace
-```
-
-### Export Operations
-```
-/microsoft-powerbi generate embed token for report with view access
-```
-
-## Workspace Operations
-
-### Get Workspaces
-```javascript
-const url = POWERBI_URL + "myorg/groups";
-```
-
-### Create Workspace
-```javascript
-{
-  "name": "Financial Analytics 2025"
-}
-```
-
-### Workspace Response
-```javascript
+**Response:**
+```json
 {
   "value": [
     {
@@ -102,55 +43,54 @@ const url = POWERBI_URL + "myorg/groups";
       "name": "Marketing Analytics",
       "isReadOnly": false,
       "isOnDedicatedCapacity": true,
-      "capacityId": "8a5e290f-6b73-4681-82f5-abcd123456",
       "type": "Workspace"
     }
   ]
 }
 ```
 
-## Report Operations
+### List Reports
+Get all reports in a specific workspace
 
-### Get Reports in Workspace
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/reports`;
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: list-reports
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
 ```
 
-### Get Report Details
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/reports/${reportId}`;
-```
-
-### Clone Report
-```javascript
+**Response:**
+```json
 {
-  "name": "Quarterly Performance - Marketing Copy",
-  "targetModelId": "cfafbeb1-8037-4d0c-896e-a46fb27ff229",
-  "targetWorkspaceId": "9f41b6a8-0241-4301-9731-0dca082b0c0e"
+  "value": [
+    {
+      "id": "5b218778-e7a5-4d73-8187-f10824fb3d0f",
+      "name": "Quarterly Performance",
+      "webUrl": "https://app.powerbi.com/groups/3d9b93c6-7b6d-4801-a491-1738910904fd/reports/5b218778-e7a5-4d73-8187-f10824fb3d0f",
+      "datasetId": "cfafbeb1-8037-4d0c-896e-a46fb27ff229"
+    }
+  ]
 }
 ```
 
-### Export Report
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/reports/${reportId}/Export?format=PDF`;
+### List Dashboards
+Get all dashboards in a workspace
+
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: list-dashboards
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
 ```
 
-## Dashboard Operations
-
-### Get Dashboards
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/dashboards`;
-```
-
-### Update Dashboard
-```javascript
-{
-  "displayName": "Executive Overview - 2025"
-}
-```
-
-### Dashboard Response
-```javascript
+**Response:**
+```json
 {
   "value": [
     {
@@ -163,139 +103,74 @@ const url = POWERBI_URL + `myorg/groups/${workspaceId}/dashboards`;
 }
 ```
 
-## Dataset Management
+### Get Report Details
+Retrieve detailed information about a specific report
 
-### Get Datasets
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/datasets`;
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+- `report-id` (required) - The ID of the report
+
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: get-report-details
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+report-id: 5b218778-e7a5-4d73-8187-f10824fb3d0f
+```
+
+**Response:**
+```json
+{
+  "id": "5b218778-e7a5-4d73-8187-f10824fb3d0f",
+  "name": "Quarterly Performance",
+  "webUrl": "https://app.powerbi.com/groups/3d9b93c6-7b6d-4801-a491-1738910904fd/reports/5b218778-e7a5-4d73-8187-f10824fb3d0f",
+  "datasetId": "cfafbeb1-8037-4d0c-896e-a46fb27ff229",
+  "createdDateTime": "2024-10-15T14:30:45.123Z",
+  "modifiedDateTime": "2025-02-20T09:12:33.456Z"
+}
 ```
 
 ### Refresh Dataset
-```javascript
-// POST request with empty payload
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/datasets/${datasetId}/refreshes`;
+Trigger a refresh operation for a dataset
+
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+- `dataset-id` (required) - The ID of the dataset
+
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: refresh-dataset
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+dataset-id: cfafbeb1-8037-4d0c-896e-a46fb27ff229
+```
+
+**Response:**
+```json
+{
+  "requestId": "bf17ac4e-93e3-4e8c-a2e6-5f8fc833e1bc",
+  "status": "Accepted",
+  "message": "Dataset refresh operation has been accepted and is in progress."
+}
 ```
 
 ### Get Refresh History
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/datasets/${datasetId}/refreshes`;
+View the refresh history for a dataset
+
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+- `dataset-id` (required) - The ID of the dataset
+
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: get-refresh-history
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+dataset-id: cfafbeb1-8037-4d0c-896e-a46fb27ff229
 ```
 
-### Dataset Response
-```javascript
-{
-  "value": [
-    {
-      "id": "cfafbeb1-8037-4d0c-896e-a46fb27ff229",
-      "name": "Sales Data 2024",
-      "configuredBy": "john.doe@example.com",
-      "isRefreshable": true,
-      "isEffectiveIdentityRequired": false,
-      "isOnPremGatewayRequired": false
-    }
-  ]
-}
-```
-
-## Embedding and Tokens
-
-### Generate Embed Token
-```javascript
-{
-  "accessLevel": "View",
-  "allowSaveAs": false,
-  "datasetId": "cfafbeb1-8037-4d0c-896e-a46fb27ff229"
-}
-```
-
-### Token Response
-```javascript
-{
-  "token": "H4sIAAAAAAAEAB2Ux6K7CBKE3z...",
-  "tokenId": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-  "expiration": "2025-03-10T12:30:45Z"
-}
-```
-
-### Access Levels
-- **View**: Read-only access
-- **Edit**: Full editing capabilities
-- **Create**: Can create new content
-
-## Data Sources and Gateways
-
-### Get Data Sources
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/datasets/${datasetId}/datasources`;
-```
-
-### Check Gateway Status
-```javascript
-const url = POWERBI_URL + `myorg/gateways/${gatewayId}/status`;
-```
-
-### Data Source Response
-```javascript
-{
-  "value": [
-    {
-      "datasourceId": "d79b4d48-71b5-4791-9a2c-f42e78f13a2a",
-      "datasourceType": "SQL",
-      "connectionDetails": {
-        "server": "sql-server.example.com",
-        "database": "SalesDB"
-      },
-      "gatewayId": "87654321-abcd-1234-efgh-0987654321ab",
-      "credentialType": "Windows"
-    }
-  ]
-}
-```
-
-## Report Structure
-
-### Report Properties
-- **id**: Unique report identifier
-- **name**: Report display name
-- **webUrl**: Direct access URL
-- **embedUrl**: Embedding URL
-- **datasetId**: Associated dataset
-- **createdDateTime**: Creation timestamp
-
-### Report Pages
-```javascript
-const url = POWERBI_URL + `myorg/groups/${workspaceId}/reports/${reportId}/pages`;
-```
-
-### Page Response
-```javascript
-{
-  "value": [
-    {
-      "name": "ReportSection1",
-      "displayName": "Overview",
-      "order": 0
-    },
-    {
-      "name": "ReportSection2",
-      "displayName": "Financial Analysis",
-      "order": 1
-    }
-  ]
-}
-```
-
-## Refresh Operations
-
-### Refresh Status Types
-- **Unknown**: Status not determined
-- **Completed**: Successfully completed
-- **Failed**: Refresh failed
-- **InProgress**: Currently refreshing
-- **NotStarted**: Queued but not started
-
-### Refresh History Response
-```javascript
+**Response:**
+```json
 {
   "value": [
     {
@@ -303,136 +178,117 @@ const url = POWERBI_URL + `myorg/groups/${workspaceId}/reports/${reportId}/pages
       "refreshType": "Manual",
       "startTime": "2025-03-09T08:30:45.123Z",
       "endTime": "2025-03-09T08:32:15.456Z",
-      "status": "Completed",
-      "serviceExceptionJson": null
+      "status": "Completed"
     }
   ]
 }
 ```
 
-## Export Formats
+### Clone Report
+Create a copy of an existing report
 
-### Supported Formats
-- **PDF**: Portable Document Format
-- **PPTX**: PowerPoint presentation
-- **PNG**: Image format
-- **XLSX**: Excel spreadsheet
-- **CSV**: Comma-separated values
+**Parameters:**
+- `workspace-id` (required) - The ID of the source workspace
+- `report-id` (required) - The ID of the report to clone
+- `new-name` (required) - Name for the cloned report
+- `target-workspace-id` (optional) - Destination workspace ID
+- `target-dataset-id` (optional) - Different dataset to use
 
-### Export Response
-```javascript
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: clone-report
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+report-id: 5b218778-e7a5-4d73-8187-f10824fb3d0f
+new-name: Quarterly Performance - Marketing Copy
+target-workspace-id: 9f41b6a8-0241-4301-9731-0dca082b0c0e
+```
+
+**Response:**
+```json
 {
-  "status": 200,
-  "headers": {
-    "Content-Type": "application/pdf",
-    "Content-Disposition": "attachment; filename=Quarterly Performance.pdf"
-  },
-  "output": {
-    "file": "binary-file-data",
-    "message": "Report exported successfully."
-  }
+  "id": "7c4aacc9-4e9b-48ab-9c12-3df24ca98765",
+  "name": "Quarterly Performance - Marketing Copy",
+  "webUrl": "https://app.powerbi.com/groups/9f41b6a8-0241-4301-9731-0dca082b0c0e/reports/7c4aacc9-4e9b-48ab-9c12-3df24ca98765"
 }
 ```
 
-## Best Practices
+### Export Report
+Export a report to PDF or PowerPoint
 
-1. **Workspace Organization**
-   - Use descriptive workspace names
-   - Organize by department or project
-   - Implement proper access controls
-   - Monitor capacity usage
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+- `report-id` (required) - The ID of the report
+- `format` (required) - Export format: PDF or PPTX
 
-2. **Dataset Management**
-   - Schedule regular refreshes
-   - Monitor refresh failures
-   - Optimize data source connections
-   - Use incremental refresh when possible
-
-3. **Report Design**
-   - Create reusable templates
-   - Implement consistent branding
-   - Optimize for mobile viewing
-   - Use appropriate visualizations
-
-4. **Security and Compliance**
-   - Implement row-level security
-   - Use service principals for automation
-   - Monitor data access
-   - Follow governance policies
-
-## Common Use Cases
-
-### Automated Reporting
+**Example:**
 ```
-/microsoft-powerbi create daily sales report and email to stakeholders
+/your-Microsoft-Power-BI-connection
+action: export-report
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+report-id: 5b218778-e7a5-4d73-8187-f10824fb3d0f
+format: PDF
 ```
 
-### Data Refresh Automation
-```
-/microsoft-powerbi schedule dataset refresh after data warehouse update
-```
-
-### Dashboard Sharing
-```
-/microsoft-powerbi generate embed tokens for customer portal integration
-```
-
-### Performance Monitoring
-```
-/microsoft-powerbi check refresh status and alert on failures
-```
-
-## Error Handling
-
-### Common Issues
-- Dataset refresh failures
-- Gateway connectivity problems
-- Permission denied errors
-- Capacity limitations
-
-### Error Response
-```javascript
+**Response:**
+```json
 {
-  "error": {
-    "code": "DataSourceConnectionFailed",
-    "message": "Connection to data source failed.",
-    "details": []
-  }
+  "file": "binary-file-data",
+  "message": "Report exported successfully.",
+  "filename": "Quarterly Performance.pdf"
 }
 ```
 
-## Performance Optimization
+### Generate Embed Token
+Generate a secure token for embedding reports
 
-### Efficient Operations
-- Use specific workspace filters
-- Implement proper caching
-- Monitor API rate limits
-- Optimize dataset queries
+**Parameters:**
+- `workspace-id` (required) - The ID of the workspace
+- `report-id` (required) - The ID of the report
+- `access-level` (optional) - Access level: View or Edit (default: View)
+- `allow-save-as` (optional) - Allow saving copies (default: false)
 
-### Capacity Management
-- Monitor dedicated capacity usage
-- Implement load balancing
-- Schedule operations during off-peak
-- Use premium features appropriately
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: generate-embed-token
+workspace-id: 3d9b93c6-7b6d-4801-a491-1738910904fd
+report-id: 5b218778-e7a5-4d73-8187-f10824fb3d0f
+access-level: View
+```
 
-## Integration Tips
+**Response:**
+```json
+{
+  "token": "H4sIAAAAAAAEAB2Ux6K7CBKE3z...",
+  "tokenId": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+  "expiration": "2025-03-10T12:30:45Z"
+}
+```
 
-### Automation Workflows
-- Combine with data pipeline tools
-- Implement error notifications
-- Use webhooks for real-time updates
-- Create monitoring dashboards
+### Create Workspace
+Create a new Power BI workspace
 
-### Embedding
-- Implement proper authentication
-- Use app-owns-data model
-- Handle token expiration
-- Optimize embed performance
+**Parameters:**
+- `name` (required) - Name for the new workspace
 
-## Tips
-- Always check workspace permissions before operations
-- Monitor dataset refresh schedules to avoid conflicts
-- Use meaningful names for cloned reports and workspaces
-- Implement proper error handling for refresh operations
-- Cache embed tokens appropriately to avoid rate limits
-- Use dedicated capacity for production workloads 
+**Example:**
+```
+/your-Microsoft-Power-BI-connection
+action: create-workspace
+name: Financial Analytics 2025
+```
+
+**Response:**
+```json
+{
+  "id": "a1c3e5g7-i9k1-m3o5-q7s9-u1w3y5z7b9d1",
+  "name": "Financial Analytics 2025",
+  "isReadOnly": false,
+  "type": "Workspace"
+}
+```
+
+## Notes 
+
+Power BI workspaces organize reports, dashboards, and datasets. Dataset refresh operations are asynchronous and return a request ID for tracking. Export formats include PDF and PPTX (PowerPoint). Embed tokens expire and must be regenerated periodically. Dedicated capacity provides enhanced performance for workspaces. Gateway status should be checked when working with on-premises data sources. 

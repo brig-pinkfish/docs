@@ -1,176 +1,210 @@
 ---
-title: "Microsoft PowerPoint Command Guide"
-description: "Learn how to use the Microsoft PowerPoint slash command to manage presentations and slides"
+title: "Microsoft PowerPoint Guide"
+description: "Manage PowerPoint presentations, download and upload files, and create shareable links"
 ---
 
-The `/microsoft-powerpoint` command enables you to manage your presentations and slides through Microsoft PowerPoint via the Microsoft Graph API. Perfect for:
+## What can you do with it?
 
-- Managing presentation files
-- Downloading and uploading presentations
-- Creating shareable links
-- Organizing presentation content
-- File management automation
+Microsoft PowerPoint allows you to manage presentations programmatically through the Microsoft Graph API. You can list PowerPoint files in your OneDrive, download presentations for viewing or editing, upload new or updated presentations, create temporary shareable links, and retrieve slide thumbnails. This integration is perfect for presentation management, automated sharing, and content organization workflows. Note that direct slide manipulation requires downloading, editing locally, and re-uploading.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with PowerPoint:
-
+### Basic Command Structure
 ```
-/microsoft-powerpoint download presentation "Quarterly Review.pptx"
+/your-Microsoft-PowerPoint-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform with PowerPoint
+
+## Tools
+
+### List Presentations
+List all PowerPoint presentations in your OneDrive
+
+**Parameters:**
+- `folder-path` (optional) - Specific folder to list from
+
+**Example:**
 ```
-/microsoft-powerpoint upload new presentation to Documents folder
-```
-
-```
-/microsoft-powerpoint create shareable link for "Team Training.pptx"
-```
-
-## Key Features
-
-### File Management
-- Download presentations
-- Upload presentations
-- List presentation files
-- Search for presentations
-- File organization
-
-### Sharing and Links
-- Create temporary public links
-- Generate shareable URLs
-- Set expiration dates
-- Anonymous access control
-- Link management
-
-### Content Access
-- Get presentation thumbnails
-- Access slide previews
-- File metadata retrieval
-- Content organization
-- Version management
-
-## Example Commands
-
-### File Operations
-```
-/microsoft-powerpoint list all PowerPoint files in my drive
+/your-Microsoft-PowerPoint-connection
+action: list-presentations
 ```
 
-### Download Operations
-```
-/microsoft-powerpoint download "Sales Presentation.pptx" for editing
-```
-
-### Upload Operations
-```
-/microsoft-powerpoint upload updated presentation to shared folder
-```
-
-### Sharing Operations
-```
-/microsoft-powerpoint generate public link for presentation with 24-hour expiration
-```
-
-## File Discovery
-
-### List PowerPoint Files
-```javascript
-const url = POWERPOINT_URL + "me/drive/root/children";
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "0123456789abc!123",
+      "name": "Presentation1.pptx",
+      "size": 204800,
+      "createdDateTime": "2024-03-15T10:30:00Z",
+      "lastModifiedDateTime": "2024-03-15T14:45:00Z"
+    },
+    {
+      "id": "0123456789abc!124",
+      "name": "Quarterly.pptx",
+      "size": 307200
+    }
+  ]
+}
 ```
 
-### Search for Presentations
-```javascript
-const url = POWERPOINT_URL + "me/drive/root/search(q='.pptx')";
+### Get Presentation by Path
+Retrieve a specific presentation by its file path
+
+**Parameters:**
+- `file-path` (required) - Path to the PowerPoint file
+
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: get-by-path
+file-path: /Presentations/Quarterly.pptx
 ```
 
-### Get File by Path
-```javascript
-const url = POWERPOINT_URL + "me/drive/root:/Presentations/Quarterly.pptx";
-```
-
-### File Response
-```javascript
+**Response:**
+```json
 {
   "id": "0123456789abc!123",
-  "name": "Presentation1.pptx",
+  "name": "Quarterly.pptx",
   "size": 204800,
-  "file": {},
-  "createdDateTime": "2025-01-15T10:30:00Z",
-  "lastModifiedDateTime": "2025-01-15T14:20:00Z"
-}
-```
-
-## File Operations
-
-### Download Presentation
-```javascript
-const url = POWERPOINT_URL + `me/drive/items/${itemId}/content`;
-```
-
-### Upload Presentation
-```javascript
-// PUT request with binary content
-const url = POWERPOINT_URL + "me/drive/root:/Presentations/NewPresentation.pptx:/content";
-```
-
-### Upload Response
-```javascript
-{
-  "id": "0123456789abc!123",
-  "name": "NewPresentation.pptx",
-  "size": 204800,
-  "file": {},
-  "createdDateTime": "2025-01-15T15:00:00Z"
-}
-```
-
-## Link Creation
-
-### Create Shareable Link
-```javascript
-{
-  "type": "view",
-  "scope": "anonymous",
-  "expirationDateTime": "2025-03-07T12:00:00Z"
-}
-```
-
-### Link Response
-```javascript
-{
-  "id": "[ITEM ID]",
-  "roles": ["read"],
-  "shareId": "[SHARE ID]",
-  "expirationDateTime": "[EXPIRATION DATE TIME]",
-  "hasPassword": false,
-  "link": {
-    "scope": "anonymous",
-    "type": "view",
-    "webUrl": "[LINK]"
+  "webUrl": "https://onedrive.live.com/...",
+  "file": {
+    "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
   }
 }
 ```
 
-### Link Types
-- **view**: Read-only access
-- **edit**: Full editing capabilities
-- **embed**: Embedding in websites
+### Search Presentations
+Search for PowerPoint presentations by name
 
-### Link Scopes
-- **anonymous**: No authentication required
-- **organization**: Organization members only
-- **users**: Specific users only
+**Parameters:**
+- `search-query` (required) - Search term (e.g., presentation name or .pptx)
 
-## Thumbnail Operations
-
-### Get Thumbnails
-```javascript
-const url = POWERPOINT_URL + `me/drive/items/${itemId}/thumbnails`;
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: search-presentations
+search-query: quarterly report
 ```
 
-### Thumbnail Response
-```javascript
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "0123456789abc!123",
+      "name": "Quarterly Report Q1.pptx",
+      "size": 204800,
+      "parentReference": {
+        "path": "/drive/root:/Presentations"
+      }
+    }
+  ]
+}
+```
+
+### Download Presentation
+Download a PowerPoint presentation
+
+**Parameters:**
+- `item-id` (required) - The ID of the presentation to download
+
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: download-presentation
+item-id: 0123456789abc!123
+```
+
+**Response:**
+```json
+{
+  "status": "downloaded",
+  "filename": "Presentation1.pptx",
+  "size": 204800,
+  "contentType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+}
+```
+
+### Upload Presentation
+Upload a new or updated PowerPoint presentation
+
+**Parameters:**
+- `file-path` (required) - Destination path for the file
+- `content` (required) - Binary content of the presentation
+
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: upload-presentation
+file-path: /Presentations/NewPresentation.pptx
+content: [binary content]
+```
+
+**Response:**
+```json
+{
+  "id": "0123456789abc!125",
+  "name": "NewPresentation.pptx",
+  "size": 204800,
+  "webUrl": "https://onedrive.live.com/...",
+  "createdDateTime": "2024-03-15T16:00:00Z"
+}
+```
+
+### Create Shareable Link
+Generate a temporary public link for a presentation
+
+**Parameters:**
+- `item-id` (required) - The ID of the presentation
+- `link-type` (optional) - Type of link: view or edit (default: view)
+- `expiration-hours` (optional) - Hours until expiration (default: 24)
+
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: create-share-link
+item-id: 0123456789abc!123
+link-type: view
+expiration-hours: 48
+```
+
+**Response:**
+```json
+{
+  "id": "share123",
+  "roles": ["read"],
+  "shareId": "u!aHR0cHM6Ly8...",
+  "expirationDateTime": "2025-03-17T12:00:00Z",
+  "link": {
+    "scope": "anonymous",
+    "type": "view",
+    "webUrl": "https://1drv.ms/p/s!..."
+  }
+}
+```
+
+### Get Slide Thumbnails
+Retrieve thumbnail images for presentation slides
+
+**Parameters:**
+- `item-id` (required) - The ID of the presentation
+
+**Example:**
+```
+/your-Microsoft-PowerPoint-connection
+action: get-thumbnails
+item-id: 0123456789abc!123
+```
+
+**Response:**
+```json
 {
   "value": [
     {
@@ -195,144 +229,6 @@ const url = POWERPOINT_URL + `me/drive/items/${itemId}/thumbnails`;
 }
 ```
 
-## File Properties
+## Notes 
 
-### Basic Properties
-- **id**: Unique file identifier
-- **name**: File name with extension
-- **size**: File size in bytes
-- **file**: File-specific metadata
-- **createdDateTime**: Creation timestamp
-- **lastModifiedDateTime**: Last modification time
-
-### Advanced Properties
-- **webUrl**: Direct access URL
-- **downloadUrl**: Download link
-- **parentReference**: Parent folder info
-- **createdBy**: Creator information
-- **lastModifiedBy**: Last modifier info
-
-## Content Types
-
-### PowerPoint MIME Type
-```
-application/vnd.openxmlformats-officedocument.presentationml.presentation
-```
-
-### File Extensions
-- **.pptx**: PowerPoint presentation
-- **.pptm**: Macro-enabled presentation
-- **.potx**: PowerPoint template
-- **.potm**: Macro-enabled template
-
-## Best Practices
-
-1. **File Management**
-   - Use descriptive file names
-   - Organize in logical folders
-   - Maintain version control
-   - Regular backup procedures
-
-2. **Link Sharing**
-   - Set appropriate expiration dates
-   - Use minimal required permissions
-   - Monitor link usage
-   - Revoke when necessary
-
-3. **Content Organization**
-   - Create folder hierarchies
-   - Use consistent naming conventions
-   - Tag files appropriately
-   - Implement search strategies
-
-4. **Security Considerations**
-   - Validate file permissions
-   - Monitor access logs
-   - Use organization scope when possible
-   - Regular security audits
-
-## Common Use Cases
-
-### Presentation Management
-```
-/microsoft-powerpoint organize quarterly presentations by department
-```
-
-### Content Sharing
-```
-/microsoft-powerpoint create temporary links for external stakeholder review
-```
-
-### Backup Operations
-```
-/microsoft-powerpoint download all presentations for local backup
-```
-
-### Template Distribution
-```
-/microsoft-powerpoint upload corporate templates to shared library
-```
-
-## Error Handling
-
-### Common Issues
-- File not found errors
-- Permission denied
-- Upload size limits
-- Network timeouts
-
-### File Locking
-- Files open in desktop PowerPoint may be locked
-- Check file status before operations
-- Handle concurrent access gracefully
-- Implement retry mechanisms
-
-## Limitations
-
-### API Constraints
-- No direct slide manipulation
-- Limited content editing capabilities
-- File-level operations only
-- Requires local processing for advanced editing
-
-### Editing Requirements
-- Download file for complex edits
-- Use appropriate libraries for modification
-- Re-upload modified content
-- Maintain file integrity
-
-## Integration Tips
-
-### Workflow Automation
-- Combine with email systems
-- Integrate with approval processes
-- Automate content distribution
-- Schedule regular operations
-
-### Content Processing
-- Extract slide content for analysis
-- Generate presentation summaries
-- Create content indexes
-- Implement search functionality
-
-## Performance Optimization
-
-### Efficient Operations
-- Cache file metadata
-- Batch multiple operations
-- Use appropriate timeouts
-- Monitor API limits
-
-### File Handling
-- Stream large files
-- Compress when possible
-- Validate before upload
-- Handle errors gracefully
-
-## Tips
-- Always obtain item ID before performing file operations
-- Set mandatory expiration dates for public links (next day recommended)
-- Use search functionality to find presentations efficiently
-- Handle file locking when presentations are open in desktop apps
-- Implement proper error handling for network operations
-- Cache thumbnails for better user experience 
+PowerPoint files use the MIME type application/vnd.openxmlformats-officedocument.presentationml.presentation. There is no direct API for manipulating individual slides or shapes - presentations must be downloaded, edited locally, and re-uploaded. Files open in desktop PowerPoint may be locked for editing via the API. Proper permissions (Files.ReadWrite or Files.Read) are required in Azure AD. The Paragon proxy is not supported for PowerPoint operations. 

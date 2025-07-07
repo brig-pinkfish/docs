@@ -1,93 +1,277 @@
 ---
-title: "HubSpot Command Guide"
-description: "Learn how to use the HubSpot slash command to manage your CRM data"
+title: "HubSpot Guide"
+description: "Manage contacts, companies, deals, and tickets with HubSpot CRM"
 ---
 
-The `/hubspot` command enables you to manage contacts, companies, deals, and tickets in HubSpot CRM. Perfect for:
+## What can you do with it?
 
-- Managing contacts and companies
-- Creating and tracking deals
-- Handling support tickets
-- Searching CRM records
-- Updating customer information
+The HubSpot integration enables comprehensive CRM management including contacts, deals, and support tickets. You can search for existing records, create new entries, update information, and manage associations between different objects. This integration supports full lifecycle management from initial contact through deal closure and ongoing support, making it ideal for sales teams and customer service operations.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with HubSpot:
-
+### Basic Command Structure
 ```
-/hubspot find contact john.doe@example.com
+/your-hubspot-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (search, create, update, fetch)
+
+**Optional:**
+
+- `object_type` - The HubSpot object type (contact, deal, ticket)
+
+- `properties` - Specific properties to retrieve or update
+
+## Tools
+
+### Search Contacts
+Search for contacts using various filters and properties
+
+**Parameters:**
+- `email` (optional) - Email address to search for
+- `firstname` (optional) - First name to search for
+- `lastname` (optional) - Last name to search for
+- `query` (optional) - General search query
+- `properties` (optional) - Properties to return in results
+- `limit` (optional) - Maximum number of results (default: 10)
+
+**Example:**
 ```
-/hubspot create deal "Enterprise Solution" for $50,000 closing March 15
+/your-hubspot-connection
+action: search_contact
+email: john.doe@example.com
+properties: firstname, lastname, email, phone
 ```
 
-```
-/hubspot create ticket "Login issue" priority HIGH for customer@example.com
-```
-
-## Key Features
-
-### Contact Management
-- Search contacts by email or name
-- Create new contacts
-- Update contact information
-- Associate contacts with deals
-
-### Deal Pipeline
-- Create new deals
-- Update deal stages
-- Track deal amounts
-- Set close dates
-- Associate deals with contacts
-
-### Ticket Management
-- Create support tickets
-- Update ticket priority
-- Track ticket status
-- Associate tickets with contacts
-
-### Search & Filtering
-- Search across all object types
-- Filter by properties
-- Sort results
-- Paginate through large datasets
-
-## Example Commands
-
-### Find Contact
-```
-/hubspot search for contact with email jane@company.com
+**Response:**
+```json
+{
+  "total": "[Number of matching contacts]",
+  "results": "[Array of contact objects with requested properties]"
+}
 ```
 
 ### Create Contact
+Create a new contact record
+
+**Parameters:**
+- `email` (required) - Contact email address
+- `firstname` (optional) - Contact first name
+- `lastname` (optional) - Contact last name
+- `phone` (optional) - Contact phone number
+
+**Example:**
 ```
-/hubspot create contact: Jane Smith, jane@company.com, phone: 555-0123
+/your-hubspot-connection
+action: create_contact
+email: newcontact@example.com
+firstname: Jane
+lastname: Smith
+phone: 1234567890
+```
+
+**Response:**
+```json
+{
+  "id": "[Created contact ID]",
+  "properties": "[Contact properties object]"
+}
+```
+
+### Update Contact
+Update existing contact properties
+
+**Parameters:**
+- `contact_id` (required) - The ID of the contact to update
+- `properties` (required) - Object containing properties to update
+
+**Example:**
+```
+/your-hubspot-connection
+action: update_contact
+contact_id: 123
+firstname: Updated First Name
+phone: 9876543210
+```
+
+**Response:**
+```json
+{
+  "id": "[Contact ID]",
+  "properties": "[Updated contact properties]"
+}
 ```
 
 ### Create Deal
+Create a new deal and optionally associate it with a contact
+
+**Parameters:**
+- `dealname` (required) - Name of the deal
+- `dealstage` (required) - Current stage of the deal
+- `amount` (optional) - Deal amount
+- `closedate` (optional) - Expected close date
+- `contact_id` (optional) - ID of contact to associate with
+
+**Example:**
 ```
-/hubspot create deal "Q1 Enterprise Package" amount $75,000 stage "Contract Sent" for contact ID 123
+/your-hubspot-connection
+action: create_deal
+dealname: New Business Deal
+dealstage: appointmentscheduled
+amount: 5000
+closedate: 2025-03-01T12:00:00Z
+contact_id: 123
+```
+
+**Response:**
+```json
+{
+  "id": "[Created deal ID]",
+  "properties": "[Deal properties object]"
+}
 ```
 
 ### Update Deal
+Update deal properties including stage and amount
+
+**Parameters:**
+- `deal_id` (required) - The ID of the deal to update
+- `dealstage` (optional) - New deal stage
+- `amount` (optional) - Updated deal amount
+- `dealname` (optional) - Updated deal name
+- `closedate` (optional) - Updated close date
+
+**Example:**
 ```
-/hubspot update deal 789 to stage "Closed Won" amount $80,000
+/your-hubspot-connection
+action: update_deal
+deal_id: 789
+dealstage: presentationscheduled
+amount: 7500
+dealname: Updated Deal Name
+```
+
+**Response:**
+```json
+{
+  "id": "[Deal ID]",
+  "properties": "[Updated deal properties]"
+}
 ```
 
 ### Create Ticket
+Create a support ticket and optionally associate it with a contact
+
+**Parameters:**
+- `subject` (required) - Ticket subject
+- `content` (required) - Ticket description
+- `priority` (optional) - Ticket priority (HIGH, MEDIUM, LOW)
+- `pipeline` (optional) - Pipeline ID (default: 0)
+- `pipeline_stage` (optional) - Pipeline stage ID (default: 1)
+- `contact_id` (optional) - ID of contact to associate with
+
+**Example:**
 ```
-/hubspot create HIGH priority ticket "System outage" for john@customer.com
+/your-hubspot-connection
+action: create_ticket
+subject: Technical Support Required
+content: Customer is experiencing login issues
+priority: HIGH
+contact_id: 123
 ```
 
-### List Deals
-```
-/hubspot show all deals in "Contract Sent" stage
+**Response:**
+```json
+{
+  "id": "[Created ticket ID]",
+  "properties": "[Ticket properties object]"
+}
 ```
 
-## Tips
-- Search for contacts first to get their ID for associations
-- Use standard HubSpot deal stages (appointmentscheduled, presentationscheduled, etc.)
-- Set ticket priorities as HIGH, MEDIUM, or LOW
-- Include close dates for accurate pipeline forecasting 
+### Update Ticket
+Update ticket properties including status and priority
+
+**Parameters:**
+- `ticket_id` (required) - The ID of the ticket to update
+- `pipeline_stage` (optional) - New pipeline stage
+- `priority` (optional) - Updated priority
+- `content` (optional) - Updated description
+
+**Example:**
+```
+/your-hubspot-connection
+action: update_ticket
+ticket_id: 321
+pipeline_stage: 2
+priority: MEDIUM
+content: Updated ticket description with customer feedback
+```
+
+**Response:**
+```json
+{
+  "id": "[Ticket ID]",
+  "properties": "[Updated ticket properties]"
+}
+```
+
+### Fetch Deals
+Retrieve a list of deals with pagination and filtering
+
+**Parameters:**
+- `limit` (required) - Maximum number of results per page
+- `after` (optional) - Pagination cursor from previous response
+- `properties` (optional) - Properties to return
+- `associations` (optional) - Associated objects to retrieve
+- `archived` (optional) - Whether to return archived results
+
+**Example:**
+```
+/your-hubspot-connection
+action: fetch_deals
+limit: 10
+properties: dealname, amount, dealstage, closedate
+associations: contact, company
+```
+
+**Response:**
+```json
+{
+  "results": "[Array of deal objects]",
+  "paging": "[Pagination information including next cursor]"
+}
+```
+
+### Fetch Tickets
+Retrieve support tickets with filtering and sorting
+
+**Parameters:**
+- `limit` (optional) - Maximum number of results (default: 50)
+- `properties` (optional) - Properties to return
+- `priority_filter` (optional) - Filter by priority (HIGH, MEDIUM, LOW)
+- `sort` (optional) - Sort order (default: -createdate)
+
+**Example:**
+```
+/your-hubspot-connection
+action: fetch_tickets
+limit: 50
+properties: subject, content, hs_pipeline_stage, hs_ticket_priority
+priority_filter: HIGH
+```
+
+**Response:**
+```json
+{
+  "total": "[Total number of tickets]",
+  "results": "[Array of ticket objects]"
+}
+```
+
+## Notes 
+
+When searching for contacts, you can use multiple filter groups with OR logic between groups and AND logic within groups. Deal stages and ticket priorities use specific HubSpot values that should match your portal configuration. Association type IDs are predefined: use typeId 3 for contact-to-deal associations and typeId 16 for contact-to-ticket associations. Properties can be specified multiple times in fetch operations for granular control over returned data. 

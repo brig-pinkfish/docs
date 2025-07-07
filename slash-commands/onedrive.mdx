@@ -1,174 +1,303 @@
 ---
-title: "OneDrive Command Guide"
-description: "Learn how to use the OneDrive slash command to manage files and folders"
+title: "OneDrive Guide"
+description: "Manage files and folders in your cloud storage"
 ---
 
-The `/onedrive` command enables you to manage files and folders in Microsoft OneDrive. Perfect for:
+## What can you do with it?
 
-- Listing and searching files
-- Downloading documents
-- Managing folders
-- Sharing files
-- Accessing special folders
+OneDrive enables you to manage your cloud files and folders programmatically. You can list files and folders in any directory, search for specific files across your entire drive, upload new files or create folders, download files for viewing or processing, move and copy files between locations, share files with others through links or invitations, and access special folders like Desktop or Documents. This integration is perfect for file backup automation, document management workflows, content synchronization, and building applications that interact with cloud storage.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with OneDrive:
-
+### Basic Command Structure
 ```
-/onedrive list files in root folder using connection ID abc123
+/your-OneDrive-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform with OneDrive
+- `pc-connection-id` - Your PinkConnect OneDrive connection ID
+
+## Tools
+
+### List Items
+List files and folders in a directory
+
+**Parameters:**
+- `folder-path` (optional) - Path to the folder (default: root)
+
+**Example:**
 ```
-/onedrive search for "quarterly report" using connection ID abc123
-```
-
-```
-/onedrive download file with ID xyz789 using connection ID abc123
-```
-
-## Key Features
-
-### File Operations
-- List items in folders
-- Search across OneDrive
-- Download files
-- Copy files
-- Check file versions
-
-### Folder Management
-- Navigate folder structure
-- Access special folders
-- Create new folders
-- List folder contents
-- Get folder metadata
-
-### Sharing & Permissions
-- Check file permissions
-- Share with specific people
-- Invite collaborators
-- View shared files
-- Manage access rights
-
-### File Information
-- Get file metadata
-- View thumbnails
-- Check file size
-- See modification dates
-- Access version history
-
-## Example Commands
-
-### List Files
-```
-/onedrive show all files in root folder with connection abc123
+/your-OneDrive-connection
+action: list-items
+pc-connection-id: your-connection-id
+folder-path: /Documents/Projects
 ```
 
-### Search Files
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "item-123",
+      "name": "Q1 Report.docx",
+      "size": 524288,
+      "file": {
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "lastModifiedDateTime": "2024-03-15T10:30:00Z",
+      "webUrl": "https://onedrive.live.com/..."
+    },
+    {
+      "id": "folder-456",
+      "name": "Images",
+      "folder": {
+        "childCount": 15
+      }
+    }
+  ]
+}
 ```
-/onedrive find all PDF files containing "invoice" with connection abc123
+
+### Search Items
+Search for files and folders by name
+
+**Parameters:**
+- `search-query` (required) - Search term for file or folder names
+
+**Example:**
+```
+/your-OneDrive-connection
+action: search-items
+pc-connection-id: your-connection-id
+search-query: budget spreadsheet
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "item-789",
+      "name": "2024 Budget Spreadsheet.xlsx",
+      "size": 1048576,
+      "file": {
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "parentReference": {
+        "path": "/drive/root:/Finance"
+      }
+    }
+  ]
+}
+```
+
+### Upload File
+Upload a new file to OneDrive
+
+**Parameters:**
+- `file-path` (required) - Destination path including filename
+- `content` (required) - File content to upload
+
+**Example:**
+```
+/your-OneDrive-connection
+action: upload-file
+pc-connection-id: your-connection-id
+file-path: /Documents/report.pdf
+content: [binary content]
+```
+
+**Response:**
+```json
+{
+  "id": "new-item-123",
+  "name": "report.pdf",
+  "size": 2097152,
+  "file": {
+    "mimeType": "application/pdf"
+  },
+  "createdDateTime": "2024-03-20T14:00:00Z",
+  "webUrl": "https://onedrive.live.com/..."
+}
 ```
 
 ### Download File
-```
-/onedrive download file ID 01HRDJMGPNAGXLOFE4UR using connection abc123
-```
+Download a file from OneDrive
 
-### Access Special Folders
-```
-/onedrive show files in Documents folder with connection abc123
-```
+**Parameters:**
+- `item-id` (required) - The ID of the file to download
 
-### Share File
+**Example:**
 ```
-/onedrive share file ID xyz789 with user@example.com using connection abc123
-```
-
-### Recent Files
-```
-/onedrive show my recently accessed files with connection abc123
+/your-OneDrive-connection
+action: download-file
+pc-connection-id: your-connection-id
+item-id: item-123
 ```
 
-## Important Notes
+**Response:**
+```json
+{
+  "filename": "Q1 Report.docx",
+  "content": "[binary content]",
+  "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "size": 524288
+}
+```
 
-### Connection ID Required
-- Always provide your PinkConnect OneDrive connection ID
-- Format: "using connection ID [your-id]"
-- Ask user if not provided
+### Create Folder
+Create a new folder in OneDrive
 
-### File Types
-- Files have `.file` property with mimeType
-- Folders have `.folder` property
-- Check type before downloading
+**Parameters:**
+- `parent-path` (required) - Parent folder path
+- `folder-name` (required) - Name for the new folder
 
-### Excel Files
-- Downloads as .xlsx format
-- Ready to save directly
-- CSV conversion requires separate step
+**Example:**
+```
+/your-OneDrive-connection
+action: create-folder
+pc-connection-id: your-connection-id
+parent-path: /Documents
+folder-name: 2024 Projects
+```
 
-## Special Folders
+**Response:**
+```json
+{
+  "id": "new-folder-789",
+  "name": "2024 Projects",
+  "folder": {
+    "childCount": 0
+  },
+  "createdDateTime": "2024-03-20T15:00:00Z",
+  "webUrl": "https://onedrive.live.com/..."
+}
+```
 
-Access these built-in folders:
-- **desktop**: Desktop files
-- **documents**: Documents folder
-- **photos**: Pictures folder
-- **music**: Music files
-- **videos**: Video files
+### Move Item
+Move a file or folder to a new location
 
-## File Properties
+**Parameters:**
+- `item-id` (required) - The ID of the item to move
+- `destination-folder-id` (required) - The ID of the destination folder
 
-Common properties returned:
-- **id**: Unique identifier
-- **name**: File/folder name
-- **size**: File size in bytes
-- **webUrl**: Web link to file
-- **lastModifiedDateTime**: Last edit time
+**Example:**
+```
+/your-OneDrive-connection
+action: move-item
+pc-connection-id: your-connection-id
+item-id: item-123
+destination-folder-id: folder-456
+```
 
-## Download Handling
+**Response:**
+```json
+{
+  "id": "item-123",
+  "name": "Q1 Report.docx",
+  "parentReference": {
+    "id": "folder-456",
+    "path": "/drive/root:/Documents/Archive"
+  }
+}
+```
 
-When downloading files:
-1. Check if item is folder first
-2. Skip folders (can't download)
-3. Use file ID for download
-4. Save with original filename
+### Create Share Link
+Generate a shareable link for a file
 
-## Sharing Options
+**Parameters:**
+- `item-id` (required) - The ID of the file to share
+- `link-type` (optional) - Type of link: view or edit (default: view)
+- `scope` (optional) - Link scope: anonymous or organization (default: anonymous)
 
-### Invite People
-- Specify email addresses
-- Set permission levels
-- Require sign-in option
-- Send notification emails
+**Example:**
+```
+/your-OneDrive-connection
+action: create-share-link
+pc-connection-id: your-connection-id
+item-id: item-123
+link-type: view
+scope: anonymous
+```
 
-### Permission Types
-- **read**: View only
-- **write**: Edit access
-- **owner**: Full control
+**Response:**
+```json
+{
+  "id": "share-link-456",
+  "link": {
+    "type": "view",
+    "scope": "anonymous",
+    "webUrl": "https://1drv.ms/w/s/..."
+  },
+  "hasPassword": false
+}
+```
 
-## Search Tips
+### Get Recent Files
+Retrieve recently accessed files
 
-- Use quotes for exact phrases
-- Search includes file contents
-- Results include metadata
-- Filter by file type if needed
+**Parameters:**
+None required
 
-## Fallback Endpoints
+**Example:**
+```
+/your-OneDrive-connection
+action: get-recent-files
+pc-connection-id: your-connection-id
+```
 
-For operations not in standard tools:
-- Drive info and quota
-- Special folder access
-- Permission management
-- File sharing/invites
-- Thumbnail retrieval
-- Version history
-- File copying
-- Recent files
-- Shared with me
-- Metadata updates
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "item-recent-1",
+      "name": "Meeting Notes.docx",
+      "lastAccessedDateTime": "2024-03-20T10:00:00Z",
+      "file": {
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      }
+    }
+  ]
+}
+```
 
-## Tips
-- Always include connection ID in commands
-- Check item type before operations
-- Use search for finding files quickly
-- Access special folders for common locations
-- Save Excel files before converting to CSV 
+### Get Shared Files
+List files shared with you
+
+**Parameters:**
+None required
+
+**Example:**
+```
+/your-OneDrive-connection
+action: get-shared-files
+pc-connection-id: your-connection-id
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "shared-item-1",
+      "name": "Team Budget.xlsx",
+      "sharedBy": {
+        "user": {
+          "displayName": "John Doe",
+          "email": "john@company.com"
+        }
+      },
+      "sharedDateTime": "2024-03-15T08:00:00Z"
+    }
+  ]
+}
+```
+
+## Notes 
+
+OneDrive uses MCP (Model Context Protocol) tools for most operations. A PinkConnect connection ID is required for all operations. Files have a .file property with mimeType, while folders have a .folder property with childCount. Special folders like Desktop, Documents, and Photos can be accessed through specific endpoints. For Excel files, the content is already decoded and ready to save as .xlsx - CSV conversion requires saving the file first. 

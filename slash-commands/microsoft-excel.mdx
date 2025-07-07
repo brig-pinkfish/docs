@@ -1,170 +1,249 @@
 ---
-title: "Microsoft Excel Command Guide"
-description: "Learn how to use the Microsoft Excel slash command to manage spreadsheets and data"
+title: "Microsoft Excel Guide"
+description: "Manage spreadsheets, worksheets, tables, and data through Excel online"
 ---
 
-The `/microsoft-excel` command enables you to work with Excel spreadsheets in OneDrive for Business and SharePoint. Perfect for:
+## What can you do with it?
 
-- Managing worksheets
-- Updating cell values
-- Creating and modifying tables
-- Searching for workbooks
-- Analyzing spreadsheet data
+Microsoft Excel integration allows you to programmatically manage spreadsheets and data through the Microsoft Graph API. You can search for Excel files, create and manage worksheets, update cell values, work with tables including adding, updating and deleting rows, and perform data operations like filtering and sorting. This integration is perfect for automated reporting, data processing workflows, spreadsheet management, and building data-driven applications that interact with Excel files stored in OneDrive for Business or SharePoint.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Excel files:
-
+### Basic Command Structure
 ```
-/microsoft-excel find file "LotsOfData.xlsx"
+/your-Microsoft-Excel-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform with Excel
+
+## Tools
+
+### Search Excel Files
+Find Excel files by name in your OneDrive
+
+**Parameters:**
+- `filename` (required) - Name or partial name of the Excel file
+
+**Example:**
 ```
-/microsoft-excel update cell A1 in Sheet1 to "New Value"
+/your-Microsoft-Excel-connection
+action: search-file
+filename: Sales Report
 ```
 
-```
-/microsoft-excel create table from A1 to D10 with headers
-```
-
-## Key Features
-
-### File Operations
-- Search for Excel files
-- Get workbook IDs
-- Access file metadata
-- Open by path or ID
-- Check last modified dates
-
-### Worksheet Management
-- List all worksheets
-- Create new worksheets
-- Delete worksheets
-- Rename worksheets
-- Reorder worksheet positions
-
-### Cell Operations
-- Update cell values
-- Read cell data
-- Work with ranges
-- Batch updates
-- Format preservation
-
-### Table Management
-- Create tables
-- Add/update/delete rows
-- Filter table data
-- Sort tables
-- Access table properties
-
-## Example Commands
-
-### Find Excel File
-```
-/microsoft-excel search for file named "Sales Report"
+**Response:**
+```json
+{
+  "value": [
+    {
+      "name": "Sales Report 2024.xlsx",
+      "id": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
+      "lastModified": "2025-02-05T00:43:08Z",
+      "webUrl": "https://onedrive.live.com/...",
+      "workbookId": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR"
+    }
+  ]
+}
 ```
 
 ### List Worksheets
+Get all worksheets in a workbook
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+
+**Example:**
 ```
-/microsoft-excel show all sheets in workbook ID 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+/your-Microsoft-Excel-connection
+action: list-worksheets
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "{00000000-0001-0000-0000-000000000000}",
+      "name": "Sheet1",
+      "position": 0,
+      "visibility": "Visible"
+    },
+    {
+      "id": "{00000000-0002-0000-0000-000000000000}",
+      "name": "Summary",
+      "position": 1
+    }
+  ]
+}
 ```
 
 ### Create Worksheet
+Add a new worksheet to a workbook
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `sheet-name` (required) - Name for the new worksheet
+
+**Example:**
 ```
-/microsoft-excel add new sheet named "Q4 Data" to workbook
+/your-Microsoft-Excel-connection
+action: create-worksheet
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+sheet-name: Q1 Data
+```
+
+**Response:**
+```json
+{
+  "id": "{75A18F35-34AA-4F44-97CC-FDC3C05D9F40}",
+  "name": "Q1 Data",
+  "position": 2,
+  "visibility": "Visible"
+}
 ```
 
 ### Update Cell Value
+Update the value of a specific cell or range
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Cell address (e.g., A1) or range (e.g., A1:B2)
+- `value` (required) - Value(s) to insert
+
+**Example:**
 ```
-/microsoft-excel set cell B2 in Sheet1 to "Updated Value"
+/your-Microsoft-Excel-connection
+action: update-cell
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1
+value: Total Sales
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1",
+  "values": [["Total Sales"]]
+}
 ```
 
 ### Create Table
+Create a new table in a worksheet
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `table-range` (required) - Range for the table (e.g., A1:D10)
+- `has-headers` (optional) - Whether first row contains headers (default: true)
+
+**Example:**
 ```
-/microsoft-excel create table in Sheet1 from A1 to E20 with headers
+/your-Microsoft-Excel-connection
+action: create-table
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+table-range: A1:D10
+has-headers: true
+```
+
+**Response:**
+```json
+{
+  "id": "Table1",
+  "name": "Table1",
+  "showHeaders": true,
+  "showTotals": false,
+  "style": "TableStyleMedium2"
+}
 ```
 
 ### Add Table Row
-```
-/microsoft-excel add row to table1 with values ["John", "Doe", "Sales", 50000]
-```
+Add a new row to an existing table
 
-## File Access Methods
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `table-id` (required) - The ID of the table
+- `row-data` (required) - Array of values for the new row
 
-### By ID
-Use when you have the workbook ID:
+**Example:**
 ```
-/microsoft-excel access workbook 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
-```
-
-### By Path
-Use when you know the file location:
-```
-/microsoft-excel open file at path "/Documents/Reports/sales.xlsx"
+/your-Microsoft-Excel-connection
+action: add-table-row
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+table-id: Table1
+row-data: ["Product A", 100, 25.99, 2599.00]
 ```
 
-## Storage Support
+**Response:**
+```json
+{
+  "index": 10,
+  "values": [["Product A", 100, 25.99, 2599.00]]
+}
+```
 
-### Supported
-- ✓ OneDrive for Business
-- ✓ SharePoint
-- ✓ Microsoft 365
+### Get Table Data
+Retrieve all data from a table
 
-### Not Supported
-- ✗ OneDrive Consumer
-- ✗ Local files
-- ✗ .xls format (only .xlsx)
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `table-id` (required) - The ID of the table
 
-## Worksheet Operations
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: get-table-data
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+table-id: Table1
+```
 
-### Properties
-- **name**: Worksheet name
-- **position**: Order in workbook (0-based)
-- **visibility**: Visible/Hidden status
-- **id**: Unique identifier
+**Response:**
+```json
+{
+  "value": [
+    {
+      "index": 0,
+      "values": [["Product A", 100, 25.99, 2599.00]]
+    },
+    {
+      "index": 1,
+      "values": [["Product B", 50, 35.99, 1799.50]]
+    }
+  ]
+}
+```
 
-### Actions
-- Create new sheets
-- Delete existing sheets
-- Rename worksheets
-- Change sheet order
-- Hide/show sheets
+### Delete Worksheet
+Remove a worksheet from a workbook
 
-## Table Features
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet to delete
 
-### Creation Options
-- Define range (e.g., A1:D10)
-- Specify headers (true/false)
-- Auto-expand capability
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: delete-worksheet
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Old Data
+```
 
-### Table Operations
-- **Add rows**: Insert new data
-- **Update rows**: Modify existing data
-- **Delete rows**: Remove data
-- **Filter**: Apply data filters
-- **Sort**: Order by columns
+**Response:**
+```json
+{
+  "status": "deleted",
+  "message": "Worksheet 'Old Data' successfully deleted"
+}
+```
 
-## Best Practices
+## Notes 
 
-1. **Always get workbook ID first**
-   - Search by filename
-   - Store ID for future operations
-
-2. **URL encode special characters**
-   - Worksheet IDs with brackets
-   - File paths with spaces
-
-3. **Handle permissions**
-   - Files.Read for viewing
-   - Files.ReadWrite for editing
-
-4. **Error handling**
-   - Check for session expiration
-   - Verify file access rights
-
-## Tips
-- Use OneDrive for Business, not consumer version
-- Work with .xlsx files only
-- First row naming: avoid "headers" as variable name
-- Include proper authorization
-- Cache workbook IDs for efficiency 
+Only .xlsx files (Office Open XML format) are supported - .xls files cannot be used. Works with OneDrive for Business and SharePoint, but not OneDrive Consumer accounts. Both PinkConnect and Paragon proxies are supported with different endpoint structures. Worksheet IDs containing special characters must be URL encoded. When working with tables, always fetch the workbook ID first using the search function. 

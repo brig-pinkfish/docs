@@ -1,297 +1,202 @@
 ---
-title: "Copper CRM Command Guide"
-description: "Learn how to use the Copper CRM slash command to manage customer relationships and sales"
+title: "Copper CRM Guide"
+description: "Manage customer relationships and sales with Copper CRM"
 ---
 
-The `/copper-crm` command enables you to manage customer relationships and sales operations with Copper CRM. Perfect for:
+## What can you do with it?
 
-- Managing leads and contacts
-- Tracking opportunities
-- Organizing companies
-- Managing projects and tasks
-- Recording activities
+The Copper CRM integration enables you to manage your complete customer relationship workflow including leads, people, companies, opportunities, projects, tasks, and activities. You can create new records, update existing information, search across all record types, and manage custom fields. This integration is perfect for teams looking to streamline their sales processes and maintain organized customer data with full CRUD operations across all Copper CRM entities.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Copper CRM:
-
+### Basic Command Structure
 ```
-/copper-crm create lead "Acme Corporation" with email "contact@acme.com"
+/your-copper-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (create, update, get, search, delete)
+- `record_type` - The type of record (leads, people, companies, opportunities, projects, tasks, activities)
+
+**Optional:**
+
+- `custom_fields` - Custom field values for your organization
+- `sort_by` - Field to sort search results by
+
+## Tools
+
+### Create Record
+Create a new record in Copper CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to create (leads, people, companies, opportunities, projects, tasks, activities)
+- `name` (required) - Name of the record
+- `email` (optional) - Email address with category (work, personal, etc.)
+- `phone_numbers` (optional) - Array of phone numbers with categories
+- `address` (optional) - Physical address details
+- `customer_source_id` (optional) - Source tracking ID
+- `custom_fields` (optional) - Array of custom field values
+
+**Example:**
 ```
-/copper-crm search opportunities containing "Acme Deal"
+/your-copper-connection
+action: create
+record_type: leads
+name: Acme Corporation
+email: contact@acme.com
+email_category: work
+phone: +1234567890
+phone_category: work
+street: 123 Main St
+city: Anytown
+state: CA
+postal_code: 12345
+country: USA
 ```
 
-```
-/copper-crm update person 123456 with phone "+0987654321"
-```
-
-## Key Features
-
-### Record Management
-- Create new records
-- Update existing records
-- Delete records
-- Retrieve by ID
-- Bulk operations
-
-### Search Capabilities
-- Text-based search
-- Custom field filtering
-- Multiple record types
-- Advanced queries
-- Pagination support
-
-### Record Types
-- Leads
-- People (contacts)
-- Companies
-- Opportunities
-- Projects
-- Tasks
-- Activities
-
-### Data Organization
-- Custom fields
-- Categories
-- Customer sources
-- Address management
-- Contact information
-
-## Example Commands
-
-### Create Lead
-```
-/copper-crm create lead "New Company" with email "info@newcompany.com" and phone "+1234567890"
+**Response:**
+```json
+{
+  "id": "[Created record ID]",
+  "name": "[Record name]",
+  "date_created": "[Creation timestamp]"
+}
 ```
 
-### Search Opportunities
+### Update Record
+Update an existing record in Copper CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to update
+- `id` (required) - The unique ID of the record
+- `name` (optional) - Updated name
+- `phone_numbers` (optional) - Updated phone numbers
+- `email` (optional) - Updated email
+- `custom_fields` (optional) - Updated custom field values
+
+**Example:**
 ```
-/copper-crm search opportunities by name "Enterprise Deal"
+/your-copper-connection
+action: update
+record_type: people
+id: 123456
+name: John Doe
+phone: +0987654321
+phone_category: mobile
 ```
 
-### Update Contact
-```
-/copper-crm update person 123456 with new mobile number "+0987654321"
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "name": "[Updated name]",
+  "date_modified": "[Modification timestamp]"
+}
 ```
 
-### Get Company Details
+### Get Record by ID
+Retrieve a specific record using its unique ID
+
+**Parameters:**
+- `record_type` (required) - Type of record to retrieve
+- `id` (required) - The unique ID of the record
+
+**Example:**
 ```
-/copper-crm get company 123456 with full details
+/your-copper-connection
+action: get
+record_type: companies
+id: 123456
 ```
 
-### Delete Project
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "name": "[Record name]",
+  "date_created": "[Creation timestamp]",
+  "[additional_fields]": "[Record details]"
+}
 ```
-/copper-crm delete project 123456
+
+### Search Records
+Search for records based on various criteria
+
+**Parameters:**
+- `record_type` (required) - Type of records to search
+- `name` (optional) - Name to search for
+- `page_size` (optional) - Number of results per page (default: 25)
+- `sort_by` (optional) - Field to sort by
+- `custom_fields` (optional) - Search by custom field values
+
+**Example:**
+```
+/your-copper-connection
+action: search
+record_type: opportunities
+name: Acme Deal
+page_size: 25
+sort_by: name
+```
+
+**Response:**
+```json
+{
+  "results": "[Array of matching records]",
+  "count": "[Number of results]"
+}
+```
+
+### Delete Record
+Delete a specific record from Copper CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to delete
+- `id` (required) - The unique ID of the record
+
+**Example:**
+```
+/your-copper-connection
+action: delete
+record_type: projects
+id: 123456
+```
+
+**Response:**
+```json
+{
+  "message": "Record deleted successfully."
+}
 ```
 
 ### Search by Custom Field
+Search for records using custom field filters
+
+**Parameters:**
+- `record_type` (required) - Type of records to search
+- `custom_field_id` (required) - Custom field definition ID
+- `custom_field_value` (required) - Value to search for
+
+**Example:**
 ```
-/copper-crm find leads where custom field 1001 equals "Premium Customer"
-```
-
-## Record Structure
-
-### Basic Properties
-- **id**: Unique record identifier
-- **name**: Record name/title
-- **date_created**: Creation timestamp
-- **date_modified**: Last update timestamp
-
-### Contact Information
-- **email**: Email addresses with categories
-- **phone_numbers**: Phone numbers with types
-- **address**: Physical address details
-- **website**: Company website
-
-### Custom Fields
-- **custom_field_definition_id**: Field identifier
-- **value**: Field value
-- **category**: Field category
-
-## Lead Management
-
-### Lead Properties
-- **name**: Lead/company name
-- **email**: Primary contact email
-- **phone_numbers**: Contact numbers
-- **address**: Business address
-- **customer_source_id**: Lead source
-
-### Lead Lifecycle
-1. Create lead record
-2. Qualify and research
-3. Convert to opportunity
-4. Track through pipeline
-5. Close or archive
-
-## Contact Management
-
-### Person Records
-- **name**: Contact name
-- **email**: Email addresses
-- **phone_numbers**: Phone contacts
-- **company_id**: Associated company
-- **title**: Job title
-
-### Company Records
-- **name**: Company name
-- **address**: Business address
-- **phone_numbers**: Main numbers
-- **website**: Company website
-- **industry**: Business sector
-
-## Opportunity Tracking
-
-### Opportunity Properties
-- **name**: Deal name
-- **value**: Deal value
-- **stage**: Pipeline stage
-- **close_date**: Expected close
-- **probability**: Win probability
-
-### Pipeline Management
-- Track deal progression
-- Update stages
-- Monitor forecasts
-- Analyze performance
-
-## Search Operations
-
-### Basic Search
-```
-/copper-crm search leads by name "Technology"
+/your-copper-connection
+action: search_custom
+record_type: leads
+custom_field_id: 1001
+custom_field_value: Custom Value
 ```
 
-### Advanced Filtering
-- Custom field values
-- Date ranges
-- Multiple criteria
-- Sort options
-
-### Search Parameters
-- **page_size**: Results per page
-- **sort_by**: Sort field
-- **name**: Name filter
-- **custom_fields**: Custom criteria
-
-## Contact Information
-
-### Email Structure
-```javascript
+**Response:**
+```json
 {
-  "email": "contact@company.com",
-  "category": "work" // work, home, other
+  "results": "[Array of records matching custom field criteria]",
+  "count": "[Number of results]"
 }
 ```
 
-### Phone Structure
-```javascript
-{
-  "number": "+1234567890",
-  "category": "work" // work, mobile, home, fax, other
-}
-```
+## Notes 
 
-### Address Structure
-```javascript
-{
-  "street": "123 Main St",
-  "city": "Anytown",
-  "state": "CA",
-  "postal_code": "12345",
-  "country": "USA"
-}
-```
-
-## Custom Fields
-
-### Field Types
-- Text fields
-- Number fields
-- Date fields
-- Dropdown selections
-- Boolean flags
-
-### Usage
-- Store additional data
-- Track custom metrics
-- Segment records
-- Filter searches
-
-## Project Management
-
-### Project Properties
-- **name**: Project title
-- **description**: Project details
-- **status**: Current status
-- **assignee_id**: Assigned user
-- **due_date**: Completion date
-
-### Task Management
-- Create project tasks
-- Assign responsibilities
-- Track progress
-- Set deadlines
-
-## Activity Tracking
-
-### Activity Types
-- Calls
-- Emails
-- Meetings
-- Notes
-- Custom activities
-
-### Activity Properties
-- **type**: Activity type
-- **details**: Activity description
-- **date**: Activity date
-- **user_id**: Responsible user
-
-## Best Practices
-
-1. **Data Quality**
-   - Use consistent naming
-   - Complete all relevant fields
-   - Maintain accurate contact info
-   - Regular data cleanup
-
-2. **Search Optimization**
-   - Use specific criteria
-   - Leverage custom fields
-   - Implement pagination
-   - Sort results appropriately
-
-3. **Record Organization**
-   - Categorize contacts properly
-   - Use custom fields effectively
-   - Link related records
-   - Maintain relationships
-
-4. **Pipeline Management**
-   - Update opportunity stages
-   - Track deal values
-   - Monitor close dates
-   - Analyze win rates
-
-## Response Handling
-
-### Success Responses
-- **201**: Record created
-- **200**: Record updated/retrieved
-- **204**: Record deleted
-
-### Error Handling
-- Validate required fields
-- Check permissions
-- Handle rate limits
-- Manage API errors
-
-## Tips
-- Use descriptive record names for easy identification
-- Leverage custom fields for industry-specific data
-- Maintain consistent contact categorization
-- Regular backup and sync of important data
-- Monitor API usage and rate limits 
+Copper CRM uses Unix timestamps for date fields. Phone numbers and emails can have categories such as work, personal, or mobile. Custom fields require the custom_field_definition_id which is specific to your Copper instance. The record_type parameter accepts leads, people, companies, opportunities, projects, tasks, or activities. When creating or updating records with addresses, all address fields (street, city, state, postal_code, country) should be provided together. 

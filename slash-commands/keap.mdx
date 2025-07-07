@@ -1,398 +1,334 @@
 ---
-title: "Keap API Command Guide"
-description: "Learn how to use the Keap API slash command to manage customer relationships and sales"
+title: "Keap Guide"
+description: "Manage customer relationships and sales with Keap CRM"
 ---
 
-The `/keap` command enables you to manage customer relationships and sales through the Keap CRM platform. Perfect for:
+## What can you do with it?
 
-- Managing companies and contacts
-- Customer relationship management
-- Sales automation
-- Contact information tracking
-- Business data organization
+The Keap integration enables comprehensive customer relationship management with focus on companies and contacts. You can manage your complete customer database including creating, updating, and organizing companies and contacts with detailed address information, multiple communication channels, and custom fields. This integration is perfect for small to medium businesses looking to streamline their customer management and sales processes with robust contact organization capabilities.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Keap CRM:
-
+### Basic Command Structure
 ```
-/keap create new company "Acme Corporation" with contact details
+/your-keap-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (list, get, create, update, delete)
+- `record_type` - The type of record (companies, contacts)
+
+**Optional:**
+
+- `id` - The unique ID of the record for specific operations
+- `fields` - Specific fields to include in the operation
+
+## Tools
+
+### List Companies
+Retrieve a list of all companies in Keap
+
+**Parameters:**
+- `action` (required) - Set to "list"
+- `record_type` (required) - Set to "companies"
+
+**Example:**
 ```
-/keap add contact "John Doe" to CRM with email and phone
+/your-keap-connection
+action: list
+record_type: companies
 ```
 
-```
-/keap update company information for existing client
-```
-
-## Key Features
-
-### Company Management
-- Create new companies
-- Update company details
-- Retrieve company information
-- Delete companies
-- Manage company relationships
-
-### Contact Management
-- Add new contacts
-- Update contact information
-- Retrieve contact details
-- Delete contacts
-- Organize contact data
-
-### Data Organization
-- Address management
-- Phone number tracking
-- Email organization
-- Website information
-- Business details
-
-## Example Commands
-
-### Create Company
-```
-/keap create company "Beta Industries" with website and contact info
-```
-
-### Add Contact
-```
-/keap add contact "Alice Johnson" with mobile number and address
-```
-
-### Update Information
-```
-/keap update company "Gamma Enterprises" to "Gamma Enterprises LLC"
-```
-
-### Retrieve Data
-```
-/keap get all companies in CRM system
-```
-
-### Delete Records
-```
-/keap remove company with ID 345678 from system
-```
-
-## Company Operations
-
-### List All Companies
-```javascript
-const url = KEAP_URL + "companies";
+**Response:**
+```json
+{
+  "companies": "[Array of company objects with id, company_name, email_address, phone_number, website]"
+}
 ```
 
 ### Get Company by ID
-```javascript
-const url = KEAP_URL + `companies/${company_id}`;
+Retrieve details of a specific company
+
+**Parameters:**
+- `action` (required) - Set to "get"
+- `record_type` (required) - Set to "companies"
+- `id` (required) - The unique company ID
+
+**Example:**
+```
+/your-keap-connection
+action: get
+record_type: companies
+id: 123456
 ```
 
-### Create New Company
-```javascript
+**Response:**
+```json
 {
-  "company_name": "Gamma Enterprises",
-  "email_address": "contact@gamma.com",
-  "phone_number": "+1122334455",
-  "website": "https://www.gamma.com",
-  "address": {
-    "line1": "456 Elm St",
-    "line2": "Floor 2",
-    "city": "Othertown",
-    "state": "NY",
-    "postal_code": "67890",
-    "country": "USA"
-  }
+  "id": "[Company ID]",
+  "company_name": "[Company name]",
+  "email_address": "[Company email]",
+  "phone_number": "[Company phone]",
+  "website": "[Company website]",
+  "address": "[Complete address object]"
+}
+```
+
+### Create Company
+Add a new company to Keap
+
+**Parameters:**
+- `action` (required) - Set to "create"
+- `record_type` (required) - Set to "companies"
+- `company_name` (required) - Company name
+- `email_address` (optional) - Company email
+- `phone_number` (optional) - Company phone
+- `website` (optional) - Company website
+- `address_line1` (optional) - Street address
+- `address_line2` (optional) - Suite/floor
+- `city` (optional) - City
+- `state` (optional) - State
+- `postal_code` (optional) - ZIP code
+- `country` (optional) - Country
+
+**Example:**
+```
+/your-keap-connection
+action: create
+record_type: companies
+company_name: Gamma Enterprises
+email_address: contact@gamma.com
+phone_number: +1122334455
+website: https://www.gamma.com
+address_line1: 456 Elm St
+address_line2: Floor 2
+city: Othertown
+state: NY
+postal_code: 67890
+country: USA
+```
+
+**Response:**
+```json
+{
+  "id": "[Created company ID]",
+  "company_name": "[Company name]",
+  "email_address": "[Company email]",
+  "address": "[Complete address object]"
 }
 ```
 
 ### Update Company
-```javascript
+Update details of an existing company
+
+**Parameters:**
+- `action` (required) - Set to "update"
+- `record_type` (required) - Set to "companies"
+- `id` (required) - The unique company ID
+- `company_name` (optional) - Updated company name
+- `email_address` (optional) - Updated email
+- `phone_number` (optional) - Updated phone
+- `website` (optional) - Updated website
+- `address_fields` (optional) - Updated address information
+
+**Example:**
+```
+/your-keap-connection
+action: update
+record_type: companies
+id: 345678
+company_name: Gamma Enterprises LLC
+email_address: info@gamma.com
+```
+
+**Response:**
+```json
 {
-  "company_name": "Gamma Enterprises LLC",
-  "email_address": "info@gamma.com",
-  "phone_number": "+1122334455",
-  "website": "https://www.gamma.com"
+  "id": "[Company ID]",
+  "company_name": "[Updated company name]",
+  "email_address": "[Updated email]"
 }
 ```
 
-## Contact Operations
+### Delete Company
+Remove a company from Keap
 
-### List All Contacts
-```javascript
-const url = KEAP_URL + "contacts";
+**Parameters:**
+- `action` (required) - Set to "delete"
+- `record_type` (required) - Set to "companies"
+- `id` (required) - The unique company ID
+
+**Example:**
+```
+/your-keap-connection
+action: delete
+record_type: companies
+id: 345678
+```
+
+**Response:**
+```json
+{
+  "message": "Company deleted successfully."
+}
+```
+
+### List Contacts
+Retrieve a list of all contacts in Keap
+
+**Parameters:**
+- `action` (required) - Set to "list"
+- `record_type` (required) - Set to "contacts"
+
+**Example:**
+```
+/your-keap-connection
+action: list
+record_type: contacts
+```
+
+**Response:**
+```json
+{
+  "contacts": "[Array of contact objects with id, given_name, family_name, email_addresses, phone_numbers]"
+}
 ```
 
 ### Get Contact by ID
-```javascript
-const url = KEAP_URL + `contacts/${contact_id}`;
+Retrieve details of a specific contact
+
+**Parameters:**
+- `action` (required) - Set to "get"
+- `record_type` (required) - Set to "contacts"
+- `id` (required) - The unique contact ID
+
+**Example:**
+```
+/your-keap-connection
+action: get
+record_type: contacts
+id: 123456
 ```
 
-### Create New Contact
-```javascript
+**Response:**
+```json
 {
-  "given_name": "Alice",
-  "family_name": "Johnson",
-  "email_addresses": [
-    {
-      "email": "alice.johnson@example.com",
-      "field": "EMAIL1"
-    }
-  ],
-  "phone_numbers": [
-    {
-      "number": "+1122334455",
-      "type": "Mobile"
-    }
-  ],
-  "address": {
-    "line1": "456 Elm St",
-    "city": "Othertown",
-    "state": "NY",
-    "postal_code": "67890",
-    "country": "USA"
-  }
+  "id": "[Contact ID]",
+  "given_name": "[First name]",
+  "family_name": "[Last name]",
+  "email_addresses": "[Array of email objects]",
+  "phone_numbers": "[Array of phone objects]",
+  "address": "[Complete address object]"
+}
+```
+
+### Create Contact
+Add a new contact to Keap
+
+**Parameters:**
+- `action` (required) - Set to "create"
+- `record_type` (required) - Set to "contacts"
+- `given_name` (required) - First name
+- `family_name` (required) - Last name
+- `email` (optional) - Email address
+- `phone` (optional) - Phone number
+- `phone_type` (optional) - Phone type (Work, Mobile, Home)
+- `address_line1` (optional) - Street address
+- `city` (optional) - City
+- `state` (optional) - State
+- `postal_code` (optional) - ZIP code
+- `country` (optional) - Country
+
+**Example:**
+```
+/your-keap-connection
+action: create
+record_type: contacts
+given_name: Alice
+family_name: Johnson
+email: alice.johnson@example.com
+phone: +1122334455
+phone_type: Mobile
+address_line1: 456 Elm St
+city: Othertown
+state: NY
+postal_code: 67890
+country: USA
+```
+
+**Response:**
+```json
+{
+  "id": "[Created contact ID]",
+  "given_name": "[First name]",
+  "family_name": "[Last name]",
+  "email_addresses": "[Array of email objects]",
+  "phone_numbers": "[Array of phone objects]"
 }
 ```
 
 ### Update Contact
-```javascript
+Update details of an existing contact
+
+**Parameters:**
+- `action` (required) - Set to "update"
+- `record_type` (required) - Set to "contacts"
+- `id` (required) - The unique contact ID
+- `given_name` (optional) - Updated first name
+- `family_name` (optional) - Updated last name
+- `email` (optional) - Updated email
+- `phone` (optional) - Updated phone
+- `address_fields` (optional) - Updated address information
+
+**Example:**
+```
+/your-keap-connection
+action: update
+record_type: contacts
+id: 345678
+email: alice.new@example.com
+address_line1: 789 Pine St
+city: Newtown
+state: FL
+```
+
+**Response:**
+```json
 {
-  "given_name": "Alice",
-  "family_name": "Johnson",
-  "email_addresses": [
-    {
-      "email": "alice.new@example.com",
-      "field": "EMAIL1"
-    }
-  ],
-  "address": {
-    "line1": "789 Pine St",
-    "city": "Newtown",
-    "state": "FL",
-    "postal_code": "98765",
-    "country": "USA"
-  }
+  "id": "[Contact ID]",
+  "given_name": "[First name]",
+  "family_name": "[Last name]",
+  "email_addresses": "[Updated email array]",
+  "address": "[Updated address object]"
 }
 ```
 
-## Data Structures
+### Delete Contact
+Remove a contact from Keap
 
-### Company Information
-- **id**: Unique company identifier
-- **company_name**: Business name
-- **email_address**: Primary email
-- **phone_number**: Contact phone
-- **website**: Company website
-- **address**: Physical location
+**Parameters:**
+- `action` (required) - Set to "delete"
+- `record_type` (required) - Set to "contacts"
+- `id` (required) - The unique contact ID
 
-### Contact Information
-- **id**: Unique contact identifier
-- **given_name**: First name
-- **family_name**: Last name
-- **email_addresses**: Email array
-- **phone_numbers**: Phone array
-- **address**: Contact address
-
-### Address Structure
-- **line1**: Primary address line
-- **line2**: Secondary address line
-- **city**: City name
-- **state**: State/province
-- **postal_code**: ZIP/postal code
-- **country**: Country code
-
-## Email and Phone Handling
-
-### Email Addresses
-```javascript
-"email_addresses": [
-  {
-    "email": "contact@example.com",
-    "field": "EMAIL1"
-  }
-]
+**Example:**
+```
+/your-keap-connection
+action: delete
+record_type: contacts
+id: 345678
 ```
 
-### Phone Numbers
-```javascript
-"phone_numbers": [
-  {
-    "number": "+1234567890",
-    "type": "Work"
-  },
-  {
-    "number": "+0987654321",
-    "type": "Mobile"
-  }
-]
-```
-
-### Phone Types
-- **Work**: Business phone
-- **Mobile**: Cell phone
-- **Home**: Personal phone
-- **Fax**: Fax number
-
-## Response Formats
-
-### Company Response
-```javascript
+**Response:**
+```json
 {
-  "id": 123456,
-  "company_name": "Acme Corporation",
-  "email_address": "info@acme.com",
-  "phone_number": "+1234567890",
-  "website": "https://www.acme.com",
-  "address": {
-    "line1": "123 Main St",
-    "line2": "Suite 400",
-    "city": "Anytown",
-    "state": "CA",
-    "postal_code": "12345",
-    "country": "USA"
-  }
+  "message": "Contact deleted successfully."
 }
 ```
 
-### Contact Response
-```javascript
-{
-  "id": 123456,
-  "given_name": "John",
-  "family_name": "Doe",
-  "email_addresses": [
-    {
-      "email": "john.doe@example.com",
-      "field": "EMAIL1"
-    }
-  ],
-  "phone_numbers": [
-    {
-      "number": "+1234567890",
-      "type": "Work"
-    }
-  ],
-  "address": {
-    "line1": "123 Main St",
-    "city": "Anytown",
-    "state": "CA",
-    "postal_code": "12345",
-    "country": "USA"
-  }
-}
-```
+## Notes 
 
-## Best Practices
-
-1. **Data Quality**
-   - Validate email formats
-   - Standardize phone numbers
-   - Complete address information
-   - Use consistent naming
-
-2. **Organization**
-   - Link contacts to companies
-   - Maintain updated information
-   - Use descriptive names
-   - Regular data cleanup
-
-3. **Integration**
-   - Sync with other systems
-   - Automate data entry
-   - Monitor data changes
-   - Backup important data
-
-4. **Security**
-   - Protect sensitive data
-   - Use proper authentication
-   - Monitor access logs
-   - Follow privacy regulations
-
-## Common Use Cases
-
-### Lead Management
-```
-/keap create new lead company with contact information for follow-up
-```
-
-### Customer Onboarding
-```
-/keap add new customer contact with complete profile information
-```
-
-### Data Migration
-```
-/keap import existing customer data into Keap CRM system
-```
-
-### Contact Updates
-```
-/keap update contact information for existing customers
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid email formats
-- Missing required fields
-- Duplicate entries
-- Invalid phone numbers
-
-### Status Codes
-- **200**: Success
-- **201**: Created
-- **204**: Deleted
-- **400**: Bad request
-- **404**: Not found
-
-## Data Validation
-
-### Required Fields
-- Company name for companies
-- Given name for contacts
-- Valid email format
-- Proper phone format
-
-### Optional Fields
-- Address information
-- Website URLs
-- Additional phone numbers
-- Secondary email addresses
-
-## Integration Tips
-
-### CRM Workflow
-- Automate lead capture
-- Track customer interactions
-- Update contact status
-- Generate reports
-
-### Data Synchronization
-- Regular data updates
-- Conflict resolution
-- Backup procedures
-- Change tracking
-
-## Performance Optimization
-
-### Efficient Operations
-- Batch updates when possible
-- Cache frequently accessed data
-- Use appropriate filters
-- Monitor API limits
-
-### Data Management
-- Regular cleanup
-- Remove duplicates
-- Update outdated information
-- Archive old records
-
-## Tips
-- Always validate email formats before creating contacts
-- Use consistent address formatting for better data quality
-- Link contacts to companies for better relationship tracking
-- Regularly update contact information to maintain accuracy
-- Use descriptive company names for easy identification
-- Implement proper error handling for API operations 
+Keap uses numeric IDs for both companies and contacts. Email addresses are stored as arrays with field identifiers like "EMAIL1". Phone numbers include type categories such as Work, Mobile, or Home. Address information is stored as structured objects with separate fields for each component. When updating records, only provide the fields you want to change - other fields will remain unchanged. The system supports multiple email addresses and phone numbers per contact. 

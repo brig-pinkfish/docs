@@ -1,98 +1,170 @@
 ---
-title: "Salesforce Command Guide"
-description: "Learn how to use the Salesforce slash command to manage your CRM workflow"
+title: "Salesforce Guide"
+description: "Manage your CRM workflow with Salesforce integration"
 ---
 
-The `/salesforce` command enables you to manage your Salesforce CRM data including leads, contacts, opportunities, and more. Perfect for:
+## What can you do with it?
 
-- Managing leads and contacts
-- Creating and updating opportunities
-- Tracking tasks and activities
-- Running reports
-- Managing cases
+The Salesforce integration allows you to manage your complete CRM workflow including leads, contacts, opportunities, tasks, and cases. You can query records, create new entries, update existing data, and generate reports directly from your conversations. This integration supports full CRUD operations on Salesforce objects and enables you to automate your sales and customer service processes.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Salesforce objects:
-
+### Basic Command Structure
 ```
-/salesforce find all leads with status "Working - Contacted"
+/your-salesforce-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (query, create, update, get_report)
+
+**Optional:**
+
+- `object_type` - The Salesforce object type (Lead, Contact, Opportunity, Task, Case, etc.)
+
+- `fields` - Specific fields to retrieve or update
+
+## Tools
+
+### Query Records
+Retrieve records from Salesforce using SOQL queries
+
+**Parameters:**
+- `query` (required) - The SOQL query to execute
+- `object_type` (optional) - The object type to query
+
+**Example:**
 ```
-/salesforce create task for lead John Smith: "Follow up on proposal"
+/your-salesforce-connection
+action: query
+query: SELECT Id, LastName, Company FROM Lead WHERE Status = 'Working - Contacted'
 ```
 
-```
-/salesforce update opportunity "Big Deal" stage to "Closed Won"
-```
-
-## Key Features
-
-### Lead Management
-- Search and filter leads
-- Update lead status
-- Assign leads to users
-- Convert leads to opportunities
-
-### Contact & Account Management
-- Find contacts by email
-- Create new contacts
-- Link contacts to accounts
-- Update contact information
-
-### Opportunity Tracking
-- Create opportunities
-- Update opportunity stages
-- Track deal progress
-- Set close dates
-
-### Task Management
-- Create follow-up tasks
-- Assign tasks to users
-- Set priorities and due dates
-- Link tasks to records
-
-### Case Management
-- Create support cases
-- Update case status
-- Assign to support agents
-- Track resolution
-
-### Reporting
-- Run existing reports
-- Extract report data
-- Filter report results
-
-## Example Commands
-
-### Search Records
-```
-/salesforce find contacts at company "Acme Corp"
+**Response:**
+```json
+{
+  "records": "[Array of matching records with requested fields]",
+  "totalSize": "[Number of records returned]"
+}
 ```
 
 ### Create Task
+Create a new task in Salesforce
+
+**Parameters:**
+- `subject` (required) - Task subject
+- `who_id` (optional) - ID for contacts and leads
+- `what_id` (optional) - ID for other objects
+- `owner_id` (required) - ID of the task owner
+- `status` (optional) - Task status (defaults to "Not Started")
+- `priority` (optional) - Task priority (defaults to "Normal")
+- `description` (optional) - Task description
+
+**Example:**
 ```
-/salesforce create task for contact jane@example.com: "Schedule demo call" due tomorrow
+/your-salesforce-connection
+action: create_task
+subject: Lead needs Follow-up
+who_id: 00Qaj00000AQUchEAH
+owner_id: 005aj000009hjfpAAA
+status: Not Started
+priority: Normal
+description: Follow up needed for lead: Maccleod from Emerson Transport
 ```
 
-### Update Opportunity
+**Response:**
+```json
+{
+  "id": "[Created task ID]",
+  "success": "[Boolean indicating success]"
+}
 ```
-/salesforce update opportunity "Q4 Enterprise Deal" amount to $150,000
+
+### Update Record
+Update an existing Salesforce record
+
+**Parameters:**
+- `object_type` (required) - The type of object to update
+- `record_id` (required) - The ID of the record to update
+- `fields` (required) - Object containing field names and values to update
+
+**Example:**
+```
+/your-salesforce-connection
+action: update
+object_type: Opportunity
+record_id: 006aj00000AQUckEAH
+stage_name: Closed Lost
+next_step: Need Analysis
+```
+
+**Response:**
+```json
+{
+  "success": "[Boolean indicating if update was successful]",
+  "errors": "[Array of any errors encountered]"
+}
 ```
 
 ### Create Case
+Create a new support case in Salesforce
+
+**Parameters:**
+- `subject` (required) - Case subject
+- `description` (required) - Case description
+- `status` (optional) - Case status
+- `priority` (optional) - Case priority
+- `origin` (optional) - Case origin
+- `type` (optional) - Case type
+- `contact_email` (optional) - Contact email (uses SuppliedEmail if contact not found)
+- `contact_phone` (optional) - Contact phone (uses SuppliedPhone if contact not found)
+- `contact_name` (optional) - Contact name (uses SuppliedName if contact not found)
+
+**Example:**
 ```
-/salesforce create case: "Login issue" for customer@example.com priority High
+/your-salesforce-connection
+action: create_case
+subject: Product Issue
+description: Customer reporting defect in product
+status: New
+priority: High
+origin: Email
+contact_email: customer@example.com
+contact_name: New Customer
 ```
 
-### Run Report
-```
-/salesforce run report "Monthly Sales Pipeline"
+**Response:**
+```json
+{
+  "id": "[Created case ID]",
+  "success": "[Boolean indicating success]"
+}
 ```
 
-## Tips
-- Use specific field names for accurate updates
-- Link tasks to the right record type (WhoId for people, WhatId for objects)
-- Check record creation status to ensure success
-- Use email addresses to find contacts quickly 
+### Get Report
+Retrieve data from a Salesforce report
+
+**Parameters:**
+- `report_name` (required) - The name of the report to retrieve
+
+**Example:**
+```
+/your-salesforce-connection
+action: get_report
+report_name: Monthly Sales Report
+```
+
+**Response:**
+```json
+{
+  "reportId": "[Report ID]",
+  "reportName": "[Report name]",
+  "data": "[Report data including rows and aggregates]"
+}
+```
+
+## Notes 
+
+When creating tasks, use WhoId for contacts and leads, and WhatId for other objects. PATCH updates return empty responses on success, so avoid mixing PATCH operations with other actions. For case creation, the system will first attempt to find existing contacts by email; if not found, it will use the Supplied fields instead. All SOQL queries must be properly encoded using encodeURIComponent(). 

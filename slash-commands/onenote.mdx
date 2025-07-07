@@ -1,377 +1,170 @@
 ---
-title: "OneNote API Command Guide"
-description: "Learn how to use the OneNote API slash command to manage your digital notebooks and notes"
+title: "OneNote Guide"
+description: "Manage digital notebooks, create and update notes, and organize information"
 ---
 
-The `/onenote` command enables you to manage your digital notebooks and notes through the OneNote API. Perfect for:
+## What can you do with it?
 
-- Creating and managing OneNote pages
-- Updating note content
-- Searching through notes
-- Organizing digital notebooks
-- Note-taking automation
+OneNote allows you to manage your digital notebooks programmatically through the Microsoft Graph API. You can create new pages in specific sections, update existing page content by appending or modifying notes, retrieve page content and metadata, delete pages you no longer need, and search across all your pages to find specific information. This integration is perfect for note-taking automation, knowledge management systems, meeting notes organization, and building applications that interact with OneNote notebooks.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with OneNote:
-
+### Basic Command Structure
 ```
-/onenote create new page "Meeting Notes" with content about today's discussion
+/your-OneNote-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/onenote search for pages containing "project meeting"
-```
+### Parameters
 
-```
-/onenote update page with additional notes
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform with OneNote
 
-### Page Management
-- Create new pages
-- Update existing pages
-- Delete pages
-- Get page content
-- Page organization
-
-### Content Operations
-- HTML content creation
-- Content appending
-- Rich text formatting
-- Structured note layout
-- Content templates
-
-### Search and Discovery
-- Search pages by keywords
-- Filter by date and content
-- Page metadata access
-- Content indexing
-- Quick retrieval
-
-## Example Commands
-
-### Page Creation
-```
-/onenote create meeting notes page for project planning session
-```
-
-### Content Updates
-```
-/onenote add action items to existing meeting notes page
-```
-
-### Search Operations
-```
-/onenote find all pages about quarterly reviews
-```
-
-### Page Management
-```
-/onenote get content from specific page by ID
-```
-
-## Page Operations
+## Tools
 
 ### Create Page
-```javascript
-// POST to sections/{section-id}/pages
-{
-  "title": "Meeting Notes",
-  "content": "<!DOCTYPE html><html><head><title>Meeting Notes</title></head><body><p>Notes from the meeting...</p></body></html>"
-}
+Create a new page in a OneNote section
+
+**Parameters:**
+- `section-id` (required) - The ID of the section where the page will be created
+- `title` (required) - Title for the new page
+- `content` (required) - HTML content for the page
+
+**Example:**
+```
+/your-OneNote-connection
+action: create-page
+section-id: 1-abc123
+title: Meeting Notes - March 20
+content: <!DOCTYPE html><html><head><title>Meeting Notes</title></head><body><p>Attendees: John, Sarah, Mike</p><p>Topics discussed:</p><ul><li>Q1 Review</li><li>Budget Planning</li></ul></body></html>
 ```
 
-### Create Response
-```javascript
+**Response:**
+```json
 {
   "id": "1-def456",
-  "title": "Meeting Notes",
+  "title": "Meeting Notes - March 20",
   "createdDateTime": "2025-01-15T09:00:00Z",
   "lastModifiedDateTime": "2025-01-15T09:00:00Z",
-  "contentUrl": "https://graph.microsoft.com/v1.0/me/onenote/pages/1-def456/content",
-  "links": {
-    "oneNoteClientUrl": {
-      "href": "onenote:https://..."
-    }
-  }
+  "contentUrl": "https://graph.microsoft.com/v1.0/users/me/onenote/pages/1-def456/content"
 }
 ```
 
-### Update Page Content
-```javascript
-// PATCH to pages/{page-id}/content
-[
-  {
-    "target": "body",
-    "action": "append",
-    "content": "<p>Additional notes...</p>"
-  }
-]
+### Update Page
+Append or modify content on an existing page
+
+**Parameters:**
+- `page-id` (required) - The ID of the page to update
+- `target` (required) - Where to apply the update (e.g., body, title)
+- `action` (required) - Type of update: append, replace, or insert
+- `content` (required) - HTML content to add or modify
+
+**Example:**
+```
+/your-OneNote-connection
+action: update-page
+page-id: 1-def456
+target: body
+action: append
+content: <p>Action items:</p><ul><li>Send follow-up email by Friday</li><li>Schedule next meeting</li></ul>
 ```
 
-### Get Page Content
-```javascript
-const url = ONENOTE_URL + `me/onenote/pages/${pageId}`;
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Page updated successfully"
+}
 ```
 
-### Page Content Response
-```javascript
+### Get Page
+Retrieve the content and metadata of a specific page
+
+**Parameters:**
+- `page-id` (required) - The ID of the page to retrieve
+
+**Example:**
+```
+/your-OneNote-connection
+action: get-page
+page-id: 1-def456
+```
+
+**Response:**
+```json
 {
   "id": "1-def456",
-  "title": "Meeting Notes",
-  "content": "<!DOCTYPE html><html><head><title>Meeting Notes</title></head><body><p>Notes from the meeting...</p></body></html>",
+  "title": "Meeting Notes - March 20",
+  "content": "<!DOCTYPE html><html><head><title>Meeting Notes</title></head><body><p>Attendees: John, Sarah, Mike</p><p>Topics discussed:</p><ul><li>Q1 Review</li><li>Budget Planning</li></ul><p>Action items:</p><ul><li>Send follow-up email by Friday</li><li>Schedule next meeting</li></ul></body></html>",
   "createdDateTime": "2025-01-15T09:00:00Z",
-  "lastModifiedDateTime": "2025-01-15T09:15:00Z",
-  "contentUrl": "https://graph.microsoft.com/v1.0/me/onenote/pages/1-def456/content"
+  "lastModifiedDateTime": "2025-01-15T09:30:00Z",
+  "parentSection": {
+    "id": "1-abc123",
+    "displayName": "Work Meetings"
+  }
 }
 ```
 
-## Search Operations
+### Delete Page
+Remove a page from OneNote
 
-### Search Pages
-```javascript
-const url = ONENOTE_URL + `me/onenote/pages?$search=${query}`;
+**Parameters:**
+- `page-id` (required) - The ID of the page to delete
+
+**Example:**
+```
+/your-OneNote-connection
+action: delete-page
+page-id: 1-def456
 ```
 
-### Search Response
-```javascript
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Page deleted successfully"
+}
+```
+
+### Search Pages
+Find pages that match a search query
+
+**Parameters:**
+- `query` (required) - Search term to find in page titles or content
+
+**Example:**
+```
+/your-OneNote-connection
+action: search-pages
+query: budget planning
+```
+
+**Response:**
+```json
 {
   "value": [
     {
       "id": "1-ghi789",
-      "title": "Project Meeting Notes",
+      "title": "Q1 Budget Planning Meeting",
       "createdDateTime": "2025-01-10T10:00:00Z",
-      "lastModifiedDateTime": "2025-01-10T10:30:00Z",
-      "contentUrl": "https://graph.microsoft.com/v1.0/me/onenote/pages/1-ghi789/content"
+      "parentSection": {
+        "displayName": "Finance"
+      },
+      "preview": "Discussion about Q1 budget allocations..."
     },
     {
       "id": "1-jkl012",
-      "title": "Client Meeting Summary",
+      "title": "Annual Budget Review",
       "createdDateTime": "2025-01-12T14:00:00Z",
-      "lastModifiedDateTime": "2025-01-12T14:45:00Z",
-      "contentUrl": "https://graph.microsoft.com/v1.0/me/onenote/pages/1-jkl012/content"
+      "parentSection": {
+        "displayName": "Planning"
+      },
+      "preview": "Overview of annual budget planning process..."
     }
   ]
 }
 ```
 
-### Search Parameters
-- **$search**: Full-text search query
-- **$filter**: Filter by specific criteria
-- **$orderby**: Sort results
-- **$top**: Limit number of results
-- **$skip**: Skip number of results
+## Notes 
 
-## HTML Content Structure
-
-### Basic HTML Template
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Page Title</title>
-</head>
-<body>
-    <h1>Main Heading</h1>
-    <p>Paragraph content...</p>
-    <ul>
-        <li>List item 1</li>
-        <li>List item 2</li>
-    </ul>
-</body>
-</html>
-```
-
-### Rich Content Examples
-```html
-<body>
-    <h1>Meeting Notes</h1>
-    <h2>Attendees</h2>
-    <ul>
-        <li>John Doe</li>
-        <li>Jane Smith</li>
-    </ul>
-    
-    <h2>Action Items</h2>
-    <ol>
-        <li><strong>Task 1:</strong> Complete project proposal</li>
-        <li><strong>Task 2:</strong> Schedule follow-up meeting</li>
-    </ol>
-    
-    <h2>Notes</h2>
-    <p>Key discussion points:</p>
-    <ul>
-        <li>Budget considerations</li>
-        <li>Timeline requirements</li>
-        <li>Resource allocation</li>
-    </ul>
-</body>
-```
-
-## Update Operations
-
-### Content Actions
-- **append**: Add content to end of target
-- **insert**: Insert content at specific position
-- **prepend**: Add content to beginning of target
-- **replace**: Replace existing content
-
-### Update Targets
-- **body**: Main page body
-- **title**: Page title
-- **#elementId**: Specific element by ID
-- **div**: Specific div elements
-
-### Update Examples
-```javascript
-// Append to body
-{
-  "target": "body",
-  "action": "append",
-  "content": "<h2>Additional Section</h2><p>New content here...</p>"
-}
-
-// Insert after specific element
-{
-  "target": "#notes-section",
-  "action": "insert",
-  "position": "after",
-  "content": "<p>Inserted after notes section</p>"
-}
-```
-
-## Page Properties
-
-### Basic Properties
-- **id**: Unique page identifier
-- **title**: Page title
-- **createdDateTime**: Creation timestamp
-- **lastModifiedDateTime**: Last modification time
-- **contentUrl**: URL to page content
-
-### Extended Properties
-- **level**: Page hierarchy level
-- **order**: Page order in section
-- **parentSection**: Parent section information
-- **parentNotebook**: Parent notebook information
-
-## Connection Requirements
-
-### PinkConnect
-- Uses PC_BASE_URL + v1.0/ endpoint
-- Requires OneNote connection ID
-- Standard Graph API authentication
-
-### Paragon Proxy
-- Uses PARA_BASE_URL + onenote/v1.0/ endpoint
-- Alternative authentication method
-- Different endpoint structure
-
-## Best Practices
-
-1. **Content Structure**
-   - Use semantic HTML elements
-   - Maintain proper heading hierarchy
-   - Include descriptive titles
-   - Organize content logically
-
-2. **Search Optimization**
-   - Use descriptive page titles
-   - Include relevant keywords
-   - Structure content with headings
-   - Add meaningful tags
-
-3. **Update Strategy**
-   - Use specific update targets
-   - Batch related updates
-   - Validate HTML content
-   - Handle concurrent updates
-
-4. **Error Handling**
-   - Check section existence
-   - Validate HTML structure
-   - Handle permission errors
-   - Implement retry logic
-
-## Common Use Cases
-
-### Meeting Notes
-```
-/onenote create meeting notes with attendees, agenda, and action items
-```
-
-### Project Documentation
-```
-/onenote update project page with latest status and milestones
-```
-
-### Research Notes
-```
-/onenote search for research notes on specific topics
-```
-
-### Task Management
-```
-/onenote create task list page with priorities and deadlines
-```
-
-## Error Handling
-
-### Common Issues
-- Invalid HTML content
-- Section not found
-- Permission denied
-- Content too large
-
-### Error Response
-```javascript
-{
-  "error": {
-    "code": "InvalidRequest",
-    "message": "The request is invalid.",
-    "innerError": {
-      "code": "InvalidContent",
-      "message": "The content provided is not valid HTML."
-    }
-  }
-}
-```
-
-## Performance Optimization
-
-### Efficient Operations
-- Use batch updates when possible
-- Cache page IDs
-- Minimize content size
-- Optimize HTML structure
-
-### Content Management
-- Structure content hierarchically
-- Use consistent formatting
-- Implement content templates
-- Regular content cleanup
-
-## Integration Tips
-
-### Workflow Automation
-- Create templates for common notes
-- Automate recurring note creation
-- Integrate with calendar systems
-- Set up notification triggers
-
-### Content Processing
-- Extract text from HTML content
-- Generate summaries
-- Create content indexes
-- Implement search functionality
-
-## Tips
-- Always use proper HTML structure for page content
-- Include DOCTYPE and basic HTML tags for compatibility
-- Use semantic HTML elements for better organization
-- Implement search functionality to find content quickly
-- Handle HTML encoding properly for special characters
-- Cache page IDs to avoid repeated lookups
-- Use descriptive titles and headings for better searchability 
+Both PinkConnect and Paragon proxies are supported with different endpoint structures. Page content must be provided as valid HTML including DOCTYPE, html, head, and body tags. The update action supports append, replace, and insert operations on different page elements. Search functionality looks through both page titles and content. Section IDs are required for creating pages - these can be obtained through the OneNote sections API. 

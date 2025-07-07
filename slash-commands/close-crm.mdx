@@ -1,151 +1,189 @@
 ---
-title: "Close CRM Command Guide"
-description: "Learn how to use the Close CRM slash command for sales and customer management"
+title: "Close CRM Guide"
+description: "Manage customer relationships and sales with Close CRM"
 ---
 
-The `/close-crm` command enables you to manage customer relationships and sales processes in Close CRM. Perfect for:
+## What can you do with it?
 
-- Managing leads
-- Creating contacts
-- Tracking opportunities
-- Recording activities
-- Sales automation
+The Close CRM integration enables you to manage your complete sales workflow including leads, contacts, opportunities, and activities. You can create new records with contact information, update existing data, search across all record types using both simple queries and advanced JSON filters, and manage custom fields. This integration is ideal for sales teams focused on relationship building and deal tracking with comprehensive contact management capabilities.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Close CRM:
-
+### Basic Command Structure
 ```
-/close-crm create lead "Acme Corporation" with contact John Doe john@example.com
+/your-close-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (create, update, get, search, delete)
+- `record_type` - The type of record (lead, contact, opportunity, activity)
+
+**Optional:**
+
+- `query` - Search query for finding records
+- `custom_fields` - Custom field values specific to your Close CRM setup
+
+## Tools
+
+### Create Record
+Create a new record in Close CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to create (lead, contact, opportunity, activity)
+- `name` (required) - Name of the record
+- `contact_name` (optional) - Name of associated contact
+- `emails` (optional) - Array of email addresses
+- `phones` (optional) - Array of phone numbers
+- `custom_fields` (optional) - Custom field values
+
+**Example:**
 ```
-/close-crm search leads containing "Acme"
+/your-close-connection
+action: create
+record_type: lead
+name: Acme Corporation
+contact_name: John Doe
+email: john.doe@example.com
+phone: +1234567890
 ```
 
-```
-/close-crm update contact contact_abc123 phone +1234567890
-```
-
-## Key Features
-
-### Lead Management
-- Create new leads
-- Update lead information
-- Search leads
-- Track lead status
-- Custom fields
-
-### Contact Management
-- Add contacts to leads
-- Update contact details
-- Multiple emails/phones
-- Search contacts
-
-### Opportunity Tracking
-- Create opportunities
-- Update deal stages
-- Track revenue
-- Manage pipeline
-
-### Activity Recording
-- Log calls
-- Record emails
-- Track meetings
-- Add notes
-
-## Example Commands
-
-### Create Lead
-```
-/close-crm create lead "Tech Startup Inc" with contact Jane Smith jane@startup.com
+**Response:**
+```json
+{
+  "id": "[Created record ID]",
+  "name": "[Record name]",
+  "date_created": "[Creation timestamp]"
+}
 ```
 
-### Search Leads
+### Update Record
+Update an existing record in Close CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to update
+- `id` (required) - The unique ID of the record
+- `name` (optional) - Updated name
+- `phones` (optional) - Updated phone numbers
+- `emails` (optional) - Updated email addresses
+- `custom_fields` (optional) - Updated custom field values
+
+**Example:**
 ```
-/close-crm find leads with name containing "Tech"
+/your-close-connection
+action: update
+record_type: contact
+id: contact_abc123
+name: Jane Doe
+phone: +0987654321
 ```
 
-### Update Contact
-```
-/close-crm update contact contact_123 name "John Smith" phone +9876543210
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "name": "[Updated name]",
+  "date_updated": "[Update timestamp]"
+}
 ```
 
-### Get Lead Details
+### Get Record by ID
+Retrieve a specific record using its unique ID
+
+**Parameters:**
+- `record_type` (required) - Type of record to retrieve
+- `id` (required) - The unique ID of the record
+
+**Example:**
 ```
-/close-crm get lead lead_abc123
+/your-close-connection
+action: get
+record_type: lead
+id: lead_abc123
 ```
 
-### Delete Opportunity
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "name": "[Record name]",
+  "date_created": "[Creation timestamp]",
+  "[additional_fields]": "[Record details]"
+}
 ```
-/close-crm delete opportunity opportunity_xyz789
+
+### Search Records
+Search for records using a simple query
+
+**Parameters:**
+- `record_type` (required) - Type of records to search
+- `query` (required) - Search query string
+
+**Example:**
+```
+/your-close-connection
+action: search
+record_type: lead
+query: Acme
+```
+
+**Response:**
+```json
+{
+  "data": "[Array of matching records]",
+  "total_results": "[Number of results]"
+}
+```
+
+### Delete Record
+Delete a specific record from Close CRM
+
+**Parameters:**
+- `record_type` (required) - Type of record to delete
+- `id` (required) - The unique ID of the record
+
+**Example:**
+```
+/your-close-connection
+action: delete
+record_type: opportunity
+id: opportunity_abc123
+```
+
+**Response:**
+```json
+{
+  "message": "Record deleted successfully."
+}
 ```
 
 ### Advanced Search
+Search for records using advanced JSON filters
+
+**Parameters:**
+- `record_type` (required) - Type of records to search
+- `filter_field` (required) - Field to filter on
+- `filter_value` (required) - Value to search for
+
+**Example:**
 ```
-/close-crm search contacts with email john.doe@example.com
+/your-close-connection
+action: advanced_search
+record_type: contact
+filter_field: emails.email
+filter_value: john.doe@example.com
 ```
 
-## Record Types
-
-- `lead`: Companies/Organizations
-- `contact`: Individual people
-- `opportunity`: Sales deals
-- `activity`: Calls, emails, meetings
-
-## Creating Records
-
-### Lead with Contact
+**Response:**
 ```json
 {
-  "name": "Company Name",
-  "contacts": [{
-    "name": "Contact Name",
-    "emails": [{"email": "email@example.com"}],
-    "phones": [{"phone": "+1234567890"}]
-  }]
+  "data": "[Array of records matching filter criteria]",
+  "total_results": "[Number of results]"
 }
 ```
 
-### Custom Fields
-```json
-{
-  "custom": {
-    "cf_field_id": "Custom Value"
-  }
-}
-```
+## Notes 
 
-## Search Options
-
-### Simple Search
-- Query parameter: `?query=searchterm`
-- Searches across fields
-
-### Advanced JSON Search
-```json
-{
-  "query": {
-    "emails.email": "specific@email.com"
-  }
-}
-```
-
-## Response Format
-
-### Success Response
-- Record ID
-- All record fields
-- Timestamps
-- Related data
-
-### List Response
-- Array of records
-- Total results count
-- Pagination info
-
-## Tips
-- Use lead IDs for updates (format: lead_abc123)
-- Contacts must be associated with leads
-- Custom field IDs start with cf_
-- Search supports partial matches 
+Close CRM uses string-based IDs with prefixes like "lead_", "contact_", "opportunity_", etc. Contact information is stored as arrays - emails and phones can have multiple entries per record. Custom fields use the format "cf_custom_field_id" and values are specific to your Close CRM configuration. Advanced search supports nested field queries like "emails.email" for searching within contact email arrays. Record creation for leads can include embedded contact information in a single request. 

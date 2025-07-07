@@ -1,135 +1,185 @@
 ---
-title: "Freshsales Command Guide"
-description: "Learn how to use the Freshsales slash command for CRM and sales management"
+title: "Freshsales Guide"
+description: "Manage customer relationships and sales with Freshsales CRM"
 ---
 
-The `/freshsales` command enables you to manage customer relationships and sales processes. Perfect for:
+## What can you do with it?
 
-- Managing leads and contacts
-- Tracking deals
-- Managing accounts
-- Searching records
-- Sales automation
+The Freshsales integration provides comprehensive customer relationship management and sales automation capabilities. You can create, retrieve, update, and delete various record types including leads, contacts, accounts, and deals. The integration also supports advanced search functionality with filtering and sorting, making it easy to manage your entire sales pipeline and customer data from initial lead capture through deal closure.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Freshsales:
-
+### Basic Command Structure
 ```
-/freshsales create lead John Doe email john@example.com
+/your-freshsales-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (create, get, update, delete, search)
+- `record_type` - The type of record (leads, contacts, accounts, deals, or custom modules)
+
+**Optional:**
+
+- `fields` - Specific fields to include in the operation
+- `filters` - Search criteria for filtering records
+
+## Tools
+
+### Create Record
+Create a new record in Freshsales
+
+**Parameters:**
+- `record_type` (required) - Type of record to create (leads, contacts, accounts, deals)
+- `first_name` (required for leads/contacts) - First name
+- `last_name` (required for leads/contacts) - Last name
+- `email` (optional) - Email address
+- `phone` (optional) - Phone number
+- `address` (optional) - Physical address
+- `name` (required for accounts) - Account/company name
+- `website` (optional for accounts) - Company website
+- `custom_fields` (optional) - Any custom field values
+
+**Example:**
 ```
-/freshsales get contact 123456
-```
-
-```
-/freshsales search leads with email john@example.com
-```
-
-## Key Features
-
-### Lead Management
-- Create new leads
-- Update lead info
-- Track lead status
-- Convert to contacts
-- Custom fields
-
-### Contact Management
-- Create contacts
-- Update details
-- Link to accounts
-- Track interactions
-
-### Account Management
-- Create accounts
-- Update company info
-- Link contacts
-- Track relationships
-
-### Deal Tracking
-- Create deals
-- Update deal stages
-- Track progress
-- Manage pipeline
-
-### Search & Filter
-- Search by attributes
-- Filter results
-- Sort records
-- Paginate results
-
-## Example Commands
-
-### Create Lead
-```
-/freshsales create lead "John Doe" email john.doe@example.com phone +1234567890
+/your-freshsales-connection
+action: create
+record_type: leads
+first_name: John
+last_name: Doe
+email: john.doe@example.com
+phone: +1234567890
+address: 123 Main St, Anytown, CA
 ```
 
-### Get Contact
-```
-/freshsales get contact 123456
-```
-
-### Update Account
-```
-/freshsales update account 123456 name "Acme Corporation" website www.acme.com
-```
-
-### Delete Deal
-```
-/freshsales delete deal 123456
-```
-
-### Search Leads
-```
-/freshsales search leads where email is john.doe@example.com
-```
-
-### Advanced Search
-```
-/freshsales search contacts where created_at after 2025-01-01 sort by created_at descending
-```
-
-## Record Types
-
-- `leads` - Potential customers
-- `contacts` - Existing contacts
-- `accounts` - Companies/Organizations
-- `deals` - Sales opportunities
-- Custom modules available
-
-## Search Operators
-
-- `is` - Exact match
-- `contains` - Partial match
-- `starts_with` - Begins with
-- `ends_with` - Ends with
-- `greater_than` - Numeric comparison
-- `less_than` - Numeric comparison
-
-## Sort Options
-
-- `attribute`: Field to sort by
-- `order`: `asc` or `desc`
-
-## Pagination
-
-- `page`: Page number
-- `per_page`: Results per page (max 100)
-
-## Custom Fields
-
-Access custom fields directly:
+**Response:**
 ```json
 {
-  "custom_field": "Custom Value"
+  "id": "[Created record ID]",
+  "first_name": "[First name]",
+  "last_name": "[Last name]",
+  "email": "[Email address]",
+  "created_at": "[Creation timestamp]"
 }
 ```
 
-## Tips
-- Use filtered search for complex queries
-- Include custom fields in payloads
-- Check pagination for large results
-- Use appropriate record types 
+### Get Record by ID
+Retrieve a specific record using its unique ID
+
+**Parameters:**
+- `record_type` (required) - Type of record to retrieve
+- `id` (required) - The unique ID of the record
+
+**Example:**
+```
+/your-freshsales-connection
+action: get
+record_type: contacts
+id: 123456
+```
+
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "first_name": "[First name]",
+  "last_name": "[Last name]",
+  "email": "[Email address]",
+  "phone": "[Phone number]",
+  "created_at": "[Creation timestamp]"
+}
+```
+
+### Update Record
+Update an existing record in Freshsales
+
+**Parameters:**
+- `record_type` (required) - Type of record to update
+- `id` (required) - The unique ID of the record
+- `fields` (required) - Object containing fields to update
+
+**Example:**
+```
+/your-freshsales-connection
+action: update
+record_type: accounts
+id: 123456
+name: Acme Corporation
+website: https://www.acme.com
+address: 789 Oak St, Newtown, TX
+```
+
+**Response:**
+```json
+{
+  "id": "[Record ID]",
+  "name": "[Updated name]",
+  "website": "[Updated website]",
+  "updated_at": "[Update timestamp]"
+}
+```
+
+### Delete Record
+Delete a specific record from Freshsales
+
+**Parameters:**
+- `record_type` (required) - Type of record to delete
+- `id` (required) - The unique ID of the record
+
+**Example:**
+```
+/your-freshsales-connection
+action: delete
+record_type: deals
+id: 123456
+```
+
+**Response:**
+```json
+{
+  "message": "Record deleted successfully."
+}
+```
+
+### Search Records
+Search for records based on query parameters
+
+**Parameters:**
+- `record_type` (required) - Type of records to search
+- `attribute` (required) - Field to search on
+- `operator` (required) - Search operator (is, is_not, contains, etc.)
+- `value` (required) - Value to search for
+- `sort_by` (optional) - Attribute to sort by
+- `sort_order` (optional) - Sort order (asc or desc)
+- `page` (optional) - Page number for pagination (default: 1)
+- `per_page` (optional) - Records per page (default: 10)
+
+**Example:**
+```
+/your-freshsales-connection
+action: search
+record_type: leads
+attribute: email
+operator: is
+value: john.doe@example.com
+sort_by: created_at
+sort_order: desc
+```
+
+**Response:**
+```json
+{
+  "records": "[Array of matching records]",
+  "meta": {
+    "total": "[Total number of matches]",
+    "page": "[Current page]",
+    "per_page": "[Records per page]"
+  }
+}
+```
+
+## Notes 
+
+The record_type parameter accepts leads, contacts, accounts, deals, or custom module names. When creating or updating records, required fields vary by record type - leads and contacts require first_name and last_name, while accounts require a name field. Search operations support various operators including is, is_not, contains, starts_with, and ends_with. Custom fields can be included in any create or update operation by adding them to the request. 

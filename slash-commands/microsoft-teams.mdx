@@ -1,366 +1,176 @@
 ---
-title: "Microsoft Teams Command Guide"
-description: "Learn how to use the Microsoft Teams slash command to manage team communication and collaboration"
+title: "Microsoft Teams Guide"
+description: "Manage team communication and collaboration through channels and messaging"
 ---
 
-The `/microsoft-teams` command enables you to manage your team's communication and collaboration through Microsoft Teams. Perfect for:
+## What can you do with it?
 
-- Sending messages to channels
-- Managing team communications
-- Automating notifications
-- Channel management
-- Team collaboration workflows
+Microsoft Teams enables you to manage your team's communication and collaboration programmatically. You can list teams you've joined, browse channels within teams, send messages to channels, and create rich formatted messages with HTML content. This integration is perfect for automated notifications, team updates, workflow alerts, and integrating external systems with your Teams workspace.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Microsoft Teams:
-
+### Basic Command Structure
 ```
-/microsoft-teams send message "Hello team!" to General channel
+/your-Microsoft-Teams-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/microsoft-teams get all my joined teams and their channels
-```
+### Parameters
 
-```
-/microsoft-teams send rich message with subject and HTML content
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform with Teams
 
-### Team Management
-- Get joined teams
-- List team channels
-- Access team information
-- Team membership details
-- Team settings
-
-### Channel Communication
-- Send text messages
-- Send rich HTML messages
-- Add message subjects
-- Set message importance
-- Channel notifications
-
-### Message Features
-- Plain text messages
-- HTML formatted content
-- Message subjects
-- Importance levels
-- Automated messaging
-
-## Example Commands
-
-### Team Discovery
-```
-/microsoft-teams list all teams I'm a member of
-```
-
-### Channel Messaging
-```
-/microsoft-teams send "Project update: Phase 1 complete" to Project Alpha channel
-```
-
-### Rich Messaging
-```
-/microsoft-teams send HTML message with subject "Weekly Report" and high importance
-```
-
-### Channel Management
-```
-/microsoft-teams get all channels for Marketing team
-```
-
-## Team Operations
+## Tools
 
 ### Get Joined Teams
-```javascript
-const url = TEAMS_URL + "me/joinedTeams";
+List all teams you are a member of
+
+**Parameters:**
+None required
+
+**Example:**
+```
+/your-Microsoft-Teams-connection
+action: get-joined-teams
 ```
 
-### Teams Response
-```javascript
+**Response:**
+```json
 {
-  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#teams",
-  "@odata.count": 1,
-  "value": [
-    {
-      "id": "team-id",
-      "displayName": "Marketing Team",
-      "description": "Marketing department collaboration",
-      "isArchived": false,
-      "visibility": "private",
-      "webUrl": "https://teams.microsoft.com/l/team/...",
-      "tenantId": "tenant-id"
-    }
-  ]
-}
-```
-
-### Team Properties
-- **id**: Unique team identifier
-- **displayName**: Team name
-- **description**: Team description
-- **isArchived**: Archive status
-- **visibility**: Team visibility (private/public)
-- **webUrl**: Direct team link
-
-## Channel Operations
-
-### Get Team Channels
-```javascript
-const url = TEAMS_URL + `teams/${teamId}/channels`;
-```
-
-### Channel Response
-```javascript
-{
-  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#teams('team-id')/channels",
   "@odata.count": 2,
   "value": [
     {
-      "id": "channel-id",
-      "displayName": "General",
-      "description": "General team discussions",
-      "email": null,
-      "webUrl": "https://teams.microsoft.com/l/channel/...",
-      "membershipType": "standard",
-      "isArchived": false
+      "id": "07ae54af-4798-4a8e-82c8-7622ea72ab93",
+      "displayName": "Engineering Team",
+      "description": "Main engineering collaboration",
+      "isArchived": false,
+      "tenantId": "b46265dc-2bc5-4871-a9e8-a9a15c21eaf5"
+    },
+    {
+      "id": "team-id-2",
+      "displayName": "Product Team",
+      "description": "Product development discussions"
     }
   ]
 }
 ```
 
-### Channel Properties
-- **id**: Unique channel identifier
-- **displayName**: Channel name
-- **description**: Channel description
-- **webUrl**: Direct channel link
-- **membershipType**: Channel type
-- **isArchived**: Archive status
+### Get Team Channels
+List all channels in a specific team
 
-## Message Operations
+**Parameters:**
+- `team-id` (required) - The ID of the team
 
-### Send Simple Message
-```javascript
-// POST to teams/{teamId}/channels/{channelId}/messages
+**Example:**
+```
+/your-Microsoft-Teams-connection
+action: get-channels
+team-id: 07ae54af-4798-4a8e-82c8-7622ea72ab93
+```
+
+**Response:**
+```json
 {
-  "body": {
-    "content": "Hello World!"
-  }
+  "@odata.count": 3,
+  "value": [
+    {
+      "id": "19:gnTox9eJhkJTinUgyLpLFzaTA7RjwQgQjiP_SG1LpvE1@thread.tacv2",
+      "displayName": "General",
+      "description": "General team discussions",
+      "createdDateTime": "2024-11-20T14:44:11.727Z",
+      "membershipType": "standard"
+    },
+    {
+      "id": "channel-id-2",
+      "displayName": "Development",
+      "description": "Code reviews and technical discussions"
+    }
+  ]
 }
 ```
 
-### Send Rich Message
-```javascript
-{
-  "subject": "Weekly Report",
-  "body": {
-    "contentType": "html",
-    "content": "<h2>Project Status</h2><p>All milestones completed on time.</p>"
-  },
-  "importance": "high"
-}
+### Send Channel Message
+Send a text message to a team channel
+
+**Parameters:**
+- `team-id` (required) - The ID of the team
+- `channel-id` (required) - The ID of the channel
+- `message` (required) - The message content to send
+
+**Example:**
+```
+/your-Microsoft-Teams-connection
+action: send-message
+team-id: 07ae54af-4798-4a8e-82c8-7622ea72ab93
+channel-id: 19:gnTox9eJhkJTinUgyLpLFzaTA7RjwQgQjiP_SG1LpvE1@thread.tacv2
+message: Hello team! The deployment was successful.
 ```
 
-### Message Response
-```javascript
+**Response:**
+```json
 {
   "id": "1732208611283",
-  "createdDateTime": "2024-11-21T17:03:31.283Z",
   "body": {
-    "content": "Hello from Automation!",
+    "content": "Hello team! The deployment was successful.",
     "contentType": "text"
   },
   "from": {
     "user": {
       "displayName": "John Doe",
-      "id": "user-id",
-      "userIdentityType": "aadUser"
+      "id": "1c205ba6-26bc-41de-bcf3-761cababdd25"
     }
   },
+  "createdDateTime": "2024-11-21T17:03:31.283Z",
   "channelIdentity": {
-    "channelId": "channel-id",
-    "teamId": "team-id"
+    "channelId": "19:gnTox9eJhkJTinUgyLpLFzaTA7RjwQgQjiP_SG1LpvE1@thread.tacv2",
+    "teamId": "07ae54af-4798-4a8e-82c8-7622ea72ab93"
   },
-  "importance": "normal",
+  "importance": "normal"
+}
+```
+
+### Send Rich Message
+Send a formatted message with HTML content and subject
+
+**Parameters:**
+- `team-id` (required) - The ID of the team
+- `channel-id` (required) - The ID of the channel
+- `subject` (required) - The message subject
+- `content` (required) - HTML formatted content
+- `importance` (optional) - Message importance: normal, high, or urgent (default: normal)
+
+**Example:**
+```
+/your-Microsoft-Teams-connection
+action: send-rich-message
+team-id: 07ae54af-4798-4a8e-82c8-7622ea72ab93
+channel-id: 19:gnTox9eJhkJTinUgyLpLFzaTA7RjwQgQjiP_SG1LpvE1@thread.tacv2
+subject: Weekly Status Update
+content: <h2>Project Status</h2><ul><li>✅ Feature A completed</li><li>🔄 Feature B in progress</li></ul>
+importance: high
+```
+
+**Response:**
+```json
+{
+  "id": "1732208611284",
+  "subject": "Weekly Status Update",
+  "body": {
+    "content": "<h2>Project Status</h2><ul><li>✅ Feature A completed</li><li>🔄 Feature B in progress</li></ul>",
+    "contentType": "html"
+  },
+  "from": {
+    "user": {
+      "displayName": "John Doe",
+      "id": "1c205ba6-26bc-41de-bcf3-761cababdd25"
+    }
+  },
+  "createdDateTime": "2024-11-21T17:05:45.123Z",
+  "importance": "high",
   "messageType": "message"
 }
 ```
 
-## Message Types
+## Notes 
 
-### Content Types
-- **text**: Plain text messages
-- **html**: Rich HTML content
-
-### Importance Levels
-- **normal**: Standard priority
-- **high**: High priority
-- **urgent**: Urgent priority
-
-### Message Structure
-- **subject**: Optional message subject
-- **body**: Message content
-- **importance**: Priority level
-- **attachments**: File attachments
-
-## Message Formatting
-
-### HTML Content
-```javascript
-{
-  "body": {
-    "contentType": "html",
-    "content": `
-      <h2>Project Update</h2>
-      <ul>
-        <li>Phase 1: Complete ✅</li>
-        <li>Phase 2: In Progress 🔄</li>
-        <li>Phase 3: Planned 📋</li>
-      </ul>
-    `
-  }
-}
-```
-
-### Text Content
-```javascript
-{
-  "body": {
-    "contentType": "text",
-    "content": "Simple text message without formatting"
-  }
-}
-```
-
-## Error Handling
-
-### Common Issues
-- Team not found
-- Channel not found
-- Permission denied
-- Message too long
-
-### Error Response
-```javascript
-{
-  "error": {
-    "code": "Forbidden",
-    "message": "Insufficient privileges to complete the operation.",
-    "innerError": {
-      "code": "InsufficientPermissions"
-    }
-  }
-}
-```
-
-## Best Practices
-
-1. **Message Content**
-   - Keep messages concise and clear
-   - Use appropriate formatting
-   - Include relevant context
-   - Avoid excessive notifications
-
-2. **Channel Selection**
-   - Choose appropriate channels
-   - Respect channel purposes
-   - Consider message relevance
-   - Use private channels when needed
-
-3. **Automation Ethics**
-   - Avoid spam-like behavior
-   - Respect team communication norms
-   - Use appropriate timing
-   - Provide value with each message
-
-4. **Error Handling**
-   - Check team and channel existence
-   - Handle permission errors gracefully
-   - Implement retry logic
-   - Log failures appropriately
-
-## Common Use Cases
-
-### Status Updates
-```
-/microsoft-teams send daily build status to Development channel
-```
-
-### Alert Notifications
-```
-/microsoft-teams notify Operations channel about system alerts
-```
-
-### Report Distribution
-```
-/microsoft-teams send weekly report summary to Management channel
-```
-
-### Event Announcements
-```
-/microsoft-teams announce upcoming events to All Hands channel
-```
-
-## Integration Workflows
-
-### Automated Notifications
-- CI/CD pipeline updates
-- System monitoring alerts
-- Task completion notifications
-- Scheduled reports
-
-### Team Coordination
-- Meeting reminders
-- Deadline notifications
-- Project milestones
-- Status updates
-
-## Performance Considerations
-
-### Rate Limiting
-- Respect API rate limits
-- Implement proper delays
-- Batch operations when possible
-- Monitor usage quotas
-
-### Message Optimization
-- Combine related updates
-- Use threading when appropriate
-- Avoid duplicate messages
-- Cache team/channel IDs
-
-## Security and Permissions
-
-### Required Permissions
-- **ChannelMessage.Send**: Send messages
-- **Team.ReadBasic.All**: Read team info
-- **Channel.ReadBasic.All**: Read channel info
-
-### Authentication
-- Use appropriate authentication method
-- Handle token expiration
-- Implement proper scopes
-- Monitor permission changes
-
-## Connection Requirements
-
-### PinkConnect
-- Requires Microsoft Teams connection ID
-- Uses PC_BASE_URL + v1.0/ endpoint
-- Standard Graph API authentication
-
-### Paragon Proxy
-- Uses PARA_BASE_URL + microsoftTeams/
-- Alternative authentication method
-- Different endpoint structure
-
-## Tips
-- Always get team ID from joined teams list before accessing channels
-- Use team and channel IDs rather than names for API calls
-- Include "body" attribute in all message payloads
-- Handle HTML content carefully to avoid formatting issues
-- Implement proper error handling for network failures
-- Cache team and channel information to reduce API calls 
+Both PinkConnect and Paragon proxies are supported for Teams operations. Rich messages support HTML formatting for enhanced visual presentation. Messages are sent on behalf of the authenticated user. Team and channel IDs are required for messaging - use the listing tools to obtain these IDs first. The membershipType field in channels indicates standard or private channels. 
