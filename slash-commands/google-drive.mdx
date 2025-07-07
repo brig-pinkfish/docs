@@ -1,157 +1,246 @@
 ---
-title: "Google Drive Command Guide"
-description: "Learn how to use the Google Drive slash command to manage files and folders"
+title: "Google Drive Guide"
+description: "Manage files and folders in Google Drive with powerful search, upload, and organization capabilities"
 ---
 
-The `/google-drive` command enables you to manage files and folders in Google Drive. Perfect for:
+## What can you do with it?
 
-- Uploading files
-- Searching documents
-- Managing folders
-- Sharing files
-- Reading content
+Google Drive allows you to manage files and folders programmatically. You can search for files by name or content, upload new files, read file contents, organize files into folders, add comments, and update file metadata. This integration supports both text-based and binary files, making it perfect for document management, file organization, and automated workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Drive:
-
+### Basic Command Structure
 ```
-/google-drive find file "Project Report.pdf"
+/google-drive [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/google-drive upload "document.txt" to folder "Work Documents"
-```
+### Parameters
 
-```
-/google-drive list files in folder "Projects"
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform (search, read, upload, list-folder, add-comment, move-file, update-metadata)
 
-### File Search
-- Search by exact name
-- Search by partial name
-- Filter by file type
-- Find in folders
+**Optional:**
 
-### File Operations
-- Upload new files
-- Read file content
-- Download files
-- Update metadata
-- Add comments
+- `connection` - The connection method to use (defaults to googledrive)
 
-### Folder Management
-- Create folders
-- List folder contents
-- Move files between folders
-- Find folder IDs
-
-### File Sharing
-- Share with users
-- Set permissions
-- Generate public links
-
-## Example Commands
+## Tools
 
 ### Search Files
+Find files by exact name match or partial name search
+
+**Parameters:**
+- `file-name` (required) - The name of the file to search for
+- `exact-match` (optional) - Whether to search for exact name match (default: true)
+
+**Example:**
 ```
-/google-drive find file named "Budget 2024.xlsx"
+/google-drive
+action: search
+file-name: quarterly-report.pdf
+exact-match: true
 ```
 
-### Upload File
-```
-/google-drive upload "report.pdf" to folder "Reports"
-```
-
-### List Folder Contents
-```
-/google-drive show all files in folder "Marketing"
-```
-
-### Read Text File
-```
-/google-drive read content of file "notes.txt"
-```
-
-### Move File
-```
-/google-drive move "document.docx" from "Drafts" to "Final"
-```
-
-### Add Comment
-```
-/google-drive add comment "Please review" to file "proposal.pdf"
-```
-
-## File Upload Process
-
-### Step 1: Create Metadata
+**Response:**
 ```json
 {
-  "name": "filename.ext",
-  "mimeType": "application/pdf",
-  "parents": ["folderId"]
+  "files": [
+    {
+      "id": "15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4",
+      "name": "quarterly-report.pdf",
+      "mimeType": "application/pdf"
+    }
+  ]
 }
 ```
 
-### Step 2: Upload Content
-- Text files: Send as plain text
-- Binary files: Decode base64 first
-- Set correct Content-Type
+### Read File
+Read the contents of a file (automatically handles text and binary files)
 
-## File Reading Rules
+**Parameters:**
+- `file-id` (required) - The ID of the file to read
+- `file-url` (optional) - Google Drive URL (will extract file ID automatically)
 
-### Text-Based Files
-- `.txt`, `.json`, `.csv`, `.html`, `.xml`, `.js`
-- Use `alt=media` endpoint
-- Returns content directly
-
-### Binary Files
-- PDFs, images, Office docs
-- Use download endpoint
-- Returns download URL
-
-## Search Queries
-
-### Exact Match
+**Example:**
 ```
-name='Document.pdf'
+/google-drive
+action: read
+file-id: 15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4
 ```
 
-### Partial Match
-```
-name contains 'Report'
-```
-
-### Folder Search
-```
-name='Projects' and mimeType='application/vnd.google-apps.folder'
+**Response:**
+```json
+{
+  "content": "File content here for text files",
+  "downloadUri": "https://... for binary files"
+}
 ```
 
-### Files in Folder
+### Upload File
+Create a new file with content
+
+**Parameters:**
+- `file-name` (required) - Name for the new file
+- `content` (required) - File content (text or base64-encoded binary)
+- `mime-type` (required) - MIME type of the file
+- `folder-id` (optional) - Parent folder ID
+- `description` (optional) - File description
+
+**Example:**
 ```
-'folderId' in parents
+/google-drive
+action: upload
+file-name: report.txt
+content: This is my report content
+mime-type: text/plain
+folder-id: 1A2B3C4D5E6F
 ```
 
-## MIME Types
+**Response:**
+```json
+{
+  "id": "new-file-id-here",
+  "name": "report.txt",
+  "mimeType": "text/plain"
+}
+```
 
-### Common File Types
-- PDF: `application/pdf`
-- Image: `image/png`, `image/jpeg`
-- Text: `text/plain`
-- JSON: `application/json`
+### List Folder Contents
+Get all files in a specific folder
 
-### Google Workspace
-- Folder: `application/vnd.google-apps.folder`
-- Doc: `application/vnd.google-apps.document`
-- Sheet: `application/vnd.google-apps.spreadsheet`
-- Slide: `application/vnd.google-apps.presentation`
+**Parameters:**
+- `folder-id` (required) - The ID of the folder
+- `folder-name` (optional) - Folder name (will search for ID if not provided)
 
-## Tips
-- Always encode query parameters
-- Check MIME type before reading files
-- Use exact name match first
-- Handle multiple search results
-- Decode base64 before uploading binary files 
+**Example:**
+```
+/google-drive
+action: list-folder
+folder-name: Projects
+```
+
+**Response:**
+```json
+{
+  "files": [
+    {
+      "id": "file-id-1",
+      "name": "project-plan.doc",
+      "mimeType": "application/msword"
+    },
+    {
+      "id": "file-id-2",
+      "name": "budget.xlsx",
+      "mimeType": "application/vnd.ms-excel"
+    }
+  ]
+}
+```
+
+### Add Comment
+Add a comment to a file
+
+**Parameters:**
+- `file-id` (required) - The ID of the file
+- `comment` (required) - The comment text to add
+
+**Example:**
+```
+/google-drive
+action: add-comment
+file-id: 15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4
+comment: Please review and update before final submission
+```
+
+**Response:**
+```json
+{
+  "id": "AAABZAeZDPE",
+  "content": "Please review and update before final submission"
+}
+```
+
+### Move File
+Move a file to a different folder
+
+**Parameters:**
+- `file-id` (required) - The ID of the file to move
+- `destination-folder-id` (required) - The destination folder ID
+- `source-folder-id` (required) - The current parent folder ID
+
+**Example:**
+```
+/google-drive
+action: move-file
+file-id: 15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4
+destination-folder-id: new-folder-id
+source-folder-id: old-folder-id
+```
+
+**Response:**
+```json
+{
+  "id": "15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4",
+  "name": "file-name.ext",
+  "parents": ["new-folder-id"]
+}
+```
+
+### Update Metadata
+Update file description or other metadata
+
+**Parameters:**
+- `file-id` (required) - The ID of the file
+- `description` (optional) - New description for the file
+- `name` (optional) - New name for the file
+
+**Example:**
+```
+/google-drive
+action: update-metadata
+file-id: 15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4
+description: Updated project documentation
+```
+
+**Response:**
+```json
+{
+  "id": "15wNr-IDhScfP7d6sqdAPl-tSFrxhzZJ4",
+  "name": "file-name.ext",
+  "description": "Updated project documentation"
+}
+```
+
+## Examples
+
+### Basic Usage
+```
+/google-drive
+action: search
+file-name: meeting-notes.txt
+```
+Search for a file named "meeting-notes.txt" in your Google Drive
+
+### Advanced Usage
+```
+/google-drive
+action: upload
+file-name: analysis-report.pdf
+content: [base64-encoded-pdf-content]
+mime-type: application/pdf
+folder-id: 1A2B3C4D5E6F
+description: Q4 2024 Financial Analysis
+```
+Upload a PDF file with metadata to a specific folder
+
+### Specific Use Case
+```
+/google-drive
+action: read
+file-url: https://docs.google.com/document/d/1xyz789/edit
+```
+Read a Google Doc using its sharing URL instead of manually finding the file ID
+
+### Notes 
+
+Supported file types include all Google Workspace formats (Docs, Sheets, Slides), Microsoft Office files, PDFs, images, and text files. Binary content should be base64-encoded when uploading. The system automatically detects file types and handles them appropriately for reading operations. 
