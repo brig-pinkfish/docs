@@ -1,130 +1,189 @@
 ---
-title: "Google Docs Command Guide"
-description: "Learn how to use the Google Docs slash command to create and edit documents"
+title: "Google Docs Guide"
+description: "Create and edit Google Docs documents programmatically with text formatting and structure"
 ---
 
-The `/google-docs` command enables you to create and edit Google Docs documents. Perfect for:
+## What can you do with it?
 
-- Creating new documents
-- Adding text content
-- Formatting documents
-- Creating lists
-- Organizing content
+Google Docs allows you to create and modify documents programmatically. You can create new documents with custom titles, insert text at specific positions, format content with bullets and styles, and structure documents with sections. This integration is perfect for document automation, report generation, and content creation workflows. Note that document sharing requires the Google Drive integration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Docs:
-
+### Basic Command Structure
 ```
-/google-docs create document "Project Proposal"
+/your-Google-Docs-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/google-docs add "Introduction text" to document 1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s
-```
+### Parameters
 
-```
-/google-docs create bulleted list in document at position 16 to 28
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform on documents
 
-### Document Creation
-- Create new documents
-- Set document title
-- Get document ID
-- Access revision info
-
-### Text Insertion
-- Add text at specific positions
-- Insert paragraphs
-- Add section headers
-- Include line breaks
-
-### Formatting
-- Create bulleted lists
-- Format paragraphs
-- Apply text styles
-- Structure content
-
-### Batch Updates
-- Multiple edits at once
-- Efficient modifications
-- Structured changes
-
-## Example Commands
+## Tools
 
 ### Create Document
+Create a new blank Google Docs document
+
+**Parameters:**
+- `title` (required) - Title for the new document
+
+**Example:**
 ```
-/google-docs create new document titled "Meeting Notes"
+/your-Google-Docs-connection
+action: create-document
+title: Project Proposal
 ```
 
-### Add Text
-```
-/google-docs insert "Main Title\n\n" at position 1 in document ABC123
-```
-
-### Create Structure
-```
-/google-docs add sections "Introduction", "Main Content", "Conclusion" to document ABC123
-```
-
-### Format as List
-```
-/google-docs make bullet list from position 16 to 28 in document ABC123
-```
-
-## Document Creation Process
-
-### Step 1: Create Document
+**Response:**
 ```json
 {
-  "title": "Project Proposal"
+  "documentId": "1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s",
+  "title": "Project Proposal",
+  "revisionId": "ALBJ4LuaGac_EPHDouWox6oP8IRLO9YTTQF7P0jJBnwYn8qJ_WCFjSxEPesGBsVTKlmdY7DWehIZ5utzOeiTyg"
 }
 ```
 
-### Step 2: Add Content
+### Insert Text
+Insert text at a specific position in the document
+
+**Parameters:**
+- `document-id` (required) - The ID of the document to modify
+- `text` (required) - Text content to insert
+- `index` (required) - Position where text should be inserted (1 for beginning)
+
+**Example:**
+```
+/your-Google-Docs-connection
+action: insert-text
+document-id: 1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s
+text: Main document title\n\n
+index: 1
+```
+
+**Response:**
 ```json
 {
-  "requests": [
+  "replies": [
     {
       "insertText": {
-        "location": { "index": 1 },
-        "text": "Document content here\n\n"
+        "text": "Main document title\n\n"
       }
     }
   ]
 }
 ```
 
-## Index Positioning
+### Create Structured Document
+Create a document with multiple sections and formatting
 
-- Index 1: Start of document
-- Each character increases index by 1
-- Line breaks (`\n`) count as 1 character
-- Plan positions based on text length
+**Parameters:**
+- `document-id` (required) - The ID of the document to modify
+- `sections` (required) - List of sections with their content and positions
+- `format-type` (optional) - Formatting to apply (e.g., bullets, numbering)
 
-## Bullet List Types
+**Example:**
+```
+/your-Google-Docs-connection
+action: create-structured-document
+document-id: 1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s
+sections: Main Title at index 1, Section 1 at index 16, Section 2 at index 28, Section 3 at index 40
+format-type: bullets
+```
 
-- `BULLET_DISC_CIRCLE`: Standard bullets
-- `BULLET_ARROW_DIAMOND`: Arrow bullets
-- `NUMBERED_DECIMAL_ALPHA`: Numbered lists
+**Response:**
+```json
+{
+  "replies": [
+    {
+      "insertText": {
+        "text": "Main Title"
+      }
+    },
+    {
+      "createParagraphBullets": {
+        "range": {
+          "startIndex": 16,
+          "endIndex": 28
+        }
+      }
+    }
+  ]
+}
+```
 
-## Important Notes
+### Add Bullet Points
+Format text as bulleted lists
 
-### Index Rules
-- Index must be less than segment end
-- If segment ends at 100, use 99 or lower
-- Calculate positions carefully
+**Parameters:**
+- `document-id` (required) - The ID of the document to modify
+- `start-index` (required) - Starting position of text to format
+- `end-index` (required) - Ending position of text to format
+- `bullet-style` (optional) - Bullet style (default: BULLET_DISC_CIRCLE)
 
-### Sharing Documents
-To share documents:
-1. Use Google Drive integration
-2. Use command: `/googledrive share "filename" with email@example.com`
-3. Grant appropriate permissions
+**Example:**
+```
+/your-Google-Docs-connection
+action: add-bullets
+document-id: 1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s
+start-index: 16
+end-index: 28
+bullet-style: BULLET_DISC_CIRCLE
+```
 
-## Tips
-- Plan document structure before creation
-- Track character positions for edits
-- Use batch updates for efficiency
-- Remember line breaks affect positioning 
+**Response:**
+```json
+{
+  "replies": [
+    {
+      "createParagraphBullets": {
+        "range": {
+          "startIndex": 16,
+          "endIndex": 28
+        }
+      }
+    }
+  ]
+}
+```
+
+### Batch Update
+Perform multiple document modifications in a single request
+
+**Parameters:**
+- `document-id` (required) - The ID of the document to modify
+- `requests` (required) - List of modification requests to apply
+
+**Example:**
+```
+/your-Google-Docs-connection
+action: batch-update
+document-id: 1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s
+requests: Insert "Title" at index 1, Insert "Content" at index 10, Add bullets from 20 to 30
+```
+
+**Response:**
+```json
+{
+  "documentId": "1jjk1pwboxpelntexnhDiOYXxbT4LIJR5wtVGsmHqS7s",
+  "replies": [
+    {
+      "insertText": {
+        "text": "Title"
+      }
+    },
+    {
+      "insertText": {
+        "text": "Content"
+      }
+    },
+    {
+      "createParagraphBullets": {}
+    }
+  ]
+}
+```
+
+## Notes 
+
+When modifying documents, the index position must be less than the end index of the referenced segment. Index positions start at 1 for the beginning of the document. Document sharing functionality requires the Google Drive integration - use the Google Drive slash command to share documents by file name. Bullet preset options include BULLET_DISC_CIRCLE for standard bullet formatting. 

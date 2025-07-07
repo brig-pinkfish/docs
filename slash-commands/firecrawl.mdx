@@ -1,88 +1,216 @@
-### id
-firecrawl
+---
+title: "Firecrawl Guide"
+description: "With Firecrawl, retrieve a map of the URLs given a starting URL"
+---
 
-### skill
-Firecrawl
+## What can you do with it?
 
-### description
-With Firecrawl, retrieve a map of the URLs given a starting URL.
+Firecrawl allows you to scrape and extract content from websites by providing URLs. It can retrieve clean markdown content, HTML, links, screenshots, and structured data from web pages. The tool supports browser automation actions like scrolling and waiting, making it ideal for scraping dynamic content and creating comprehensive web maps starting from a given URL.
 
-### tags
-- web crawl mapping
+## How to use it?
 
-### prompt
-```javascript
-<firecrawl_skill>
-This is an internal skill. Use:
-SCRAPER_FC_URL = INTERNAL_SKILL_URL + 'scraperfc/' //POST to this URL and nothing else. *Mandatory*
+### Basic Command Structure
+```
+/firecrawl [urls] [formats] [actions]
+```
 
-Example Postbody
-const POST_BODY = {
-    "urls": ["https://example.com", "https://another-example.com"],
-     // === OUTPUT FORMAT OPTIONS ===
-    "formats": [
-        "markdown",           // IMPORTANT: By default: only include this option, other options must be excluded
-    ],
-    // === BROWSER ACTIONS ===
-    // This is default value
-    "actions": [
-        {
-            "type": "screenshot",          
-            "fullPage": true
-        },
-        {
-            "type": "scroll",
-            "selector": "body",
-            "direction": "down",          // "up" or "down"
-        }
-    ],
-    "waitFor": 2000,
-    "includeTags": ["div", "p", "h1", "h2"],
-    "excludeTags": ["script", "style", "noscript"],
-    "onlyMainContent": true,
-    "removeBase64Images": true,
-    "file_links_expire_in_days": 7
-}
+### Parameters
 
-urls: Array of URLs to scrape (required)
-formats: Output formats for the scraped content. Available formats:
-    [
-        "markdown",             // Clean markdown content.
-        "html",                 // Processed HTML
-        "rawHtml",              // Raw HTML source
-        "links",                // Extracted links array
-        "screenshot",           // Base64 screenshot data
-        "screenshot@fullPage",  // Full page screenshot
-        "json",                 // Structured data extraction
-        "changeTracking"        // Change detection data
-    ]
-actions: Browser actions to perform before scraping ("wait", "click", "scroll", "screenshot"). If there is screenshot action then remove "screenshot@fullPage" in "formats" if any.
-waitFor: Time to wait in milliseconds before scraping (default: 1000)
-includeTags: HTML tags to include in the output
-excludeTags: HTML tags to exclude from the output
-onlyMainContent: Boolean to extract only the main content
-removeBase64Images: Boolean to remove base64-encoded images
-file_links_expire_in_days: Number of days until file links expire
+**Required:**
 
-Sample response:
+- `urls` - Array of URLs to scrape (e.g., ["https://example.com", "https://another-example.com"])
+
+**Optional:**
+
+- `formats` - Output formats for the scraped content (default: ["markdown"])
+
+- `actions` - Browser actions to perform before scraping
+
+- `waitFor` - Time to wait in milliseconds before scraping (default: 1000)
+
+- `includeTags` - HTML tags to include in the output
+
+- `excludeTags` - HTML tags to exclude from the output
+
+- `onlyMainContent` - Boolean to extract only the main content
+
+- `removeBase64Images` - Boolean to remove base64-encoded images
+
+- `file_links_expire_in_days` - Number of days until file links expire
+
+### Response Format
+
+The command returns:
+```json
 {
-    "https://www.google.com/": {
-        "success": true,
-        "data": {
-            "markdown": "markdown here... ",
-            "metadata": {
-                "language": "en",
-                "title": "Google",
-                "referrer": "origin",
-                "scrapeId": "2c29af85-dc7e-4301-b80a-c4da8bf178cb",
-                "sourceURL": "https://www.google.com/",
-                "url": "https://www.google.com/",
-                "statusCode": 200
-            }
-        },
-        "file_urls": []
-    }
+  "https://www.google.com/": {
+    "success": true,
+    "data": {
+      "markdown": "markdown content here...",
+      "metadata": {
+        "language": "en",
+        "title": "Google",
+        "referrer": "origin",
+        "scrapeId": "2c29af85-dc7e-4301-b80a-c4da8bf178cb",
+        "sourceURL": "https://www.google.com/",
+        "url": "https://www.google.com/",
+        "statusCode": 200
+      }
+    },
+    "file_urls": []
+  }
 }
+```
 
-</firecrawl_skill>
-``` 
+## Examples
+
+### Basic Usage
+```
+/firecrawl
+urls: ["https://example.com"]
+```
+Scrapes a single URL and returns the content in markdown format by default.
+
+### Advanced Usage
+```
+/firecrawl
+urls: ["https://example.com", "https://another-example.com"]
+formats: ["markdown", "screenshot", "links"]
+actions: [{"type": "scroll", "selector": "body", "direction": "down"}, {"type": "screenshot", "fullPage": true}]
+waitFor: 2000
+```
+Scrapes multiple URLs with screenshots and link extraction, performs scrolling action, and waits 2 seconds before scraping.
+
+### Specific Use Case
+```
+/firecrawl
+urls: ["https://news.site.com/article"]
+formats: ["markdown"]
+onlyMainContent: true
+excludeTags: ["script", "style", "noscript"]
+includeTags: ["div", "p", "h1", "h2"]
+```
+Extracts only the main article content from a news website, excluding scripts and styles while focusing on content tags.
+
+### Notes 
+
+Available formats include "markdown", "html", "rawHtml", "links", "screenshot", "screenshot@fullPage", "json", and "changeTracking". Browser actions support "wait", "click", "scroll", and "screenshot" types. When using screenshot action, remove "screenshot@fullPage" from formats if present. The tool uses an internal endpoint SCRAPER_FC_URL for processing requests.
+
+### Content Extraction
+- Scrape multiple URLs
+- Extract main content
+- Remove unwanted elements
+- Clean HTML output
+- Convert to markdown
+
+### Output Formats
+- Markdown (default)
+- HTML (processed)
+- Raw HTML
+- JSON structure
+- Screenshots
+- Link extraction
+
+### Browser Actions
+- Take screenshots
+- Scroll pages
+- Wait for content
+- Click elements
+- Full page capture
+
+### Content Filtering
+- Include specific tags
+- Exclude unwanted tags
+- Main content only
+- Remove base64 images
+
+## Example Commands
+
+### Basic Scrape
+```
+/firecrawl scrape https://example.com
+```
+
+### Multiple URLs
+```
+/firecrawl scrape https://site1.com and https://site2.com as markdown
+```
+
+### With Screenshot
+```
+/firecrawl capture https://example.com with full page screenshot
+```
+
+### Extract Links
+```
+/firecrawl get all links from https://example.com
+```
+
+### Custom Tags
+```
+/firecrawl scrape https://example.com including only div, p, h1, h2 tags
+```
+
+## Configuration Options
+
+### Output Formats
+- `markdown`: Clean markdown content
+- `html`: Processed HTML
+- `rawHtml`: Original HTML
+- `links`: Array of links
+- `screenshot`: Base64 image
+- `json`: Structured data
+
+### Browser Actions
+```json
+{
+  "type": "screenshot",
+  "fullPage": true
+}
+```
+
+```json
+{
+  "type": "scroll",
+  "direction": "down"
+}
+```
+
+### Wait Options
+- Default: 1000ms
+- Custom: specify milliseconds
+- Ensures content loads
+
+## Tag Filtering
+
+### Include Tags
+- `div`, `p`, `h1`, `h2`
+- Article content tags
+- Custom selections
+
+### Exclude Tags
+- `script`, `style`, `noscript`
+- Ads and tracking
+- Unwanted elements
+
+## Response Data
+
+### Success Response
+- Scraped content
+- Metadata (title, language)
+- Source URL
+- Status code
+- File URLs
+
+### Metadata Includes
+- Page title
+- Language
+- Referrer
+- Scrape ID
+- Status code
+
+## Tips
+- Use markdown format for clean text
+- Enable screenshots for visual content
+- Filter tags for cleaner output
+- Set appropriate wait times for dynamic content 

@@ -1,140 +1,252 @@
 ---
-title: "Google Maps Command Guide"
-description: "Learn how to use the Google Maps slash command to access location data, search places, and get directions"
+title: "Google Maps Guide"
+description: "Access location data, search places, get directions, and elevation information using Google Maps"
 ---
 
-The `/google-maps` command enables you to access Google Maps services for location-based information. Perfect for:
+## What can you do with it?
 
-- Converting addresses to coordinates
-- Finding places and businesses
-- Getting directions between locations
-- Calculating distances and travel times
-- Retrieving elevation data
+Google Maps allows you to access comprehensive location services programmatically. You can convert addresses to coordinates (geocoding), search for places by name or type, get detailed information about specific locations, calculate distances and travel times between multiple points, obtain elevation data, and get turn-by-turn directions. This integration is perfect for location-based applications, travel planning, and geographic data analysis.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Maps:
-
+### Basic Command Structure
 ```
-/google-maps geocode address "1600 Amphitheatre Parkway, Mountain View, CA"
+/your-Google-Maps-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform with Google Maps
+
+## Tools
+
+### Geocode Address
+Convert an address to geographic coordinates
+
+**Parameters:**
+- `address` (required) - The address to geocode
+
+**Example:**
 ```
-/google-maps find restaurants near 37.7749,-122.4194 within 1000 meters
-```
-
-```
-/google-maps get directions from Seattle to San Francisco by car
-```
-
-## Key Features
-
-### Geocoding
-- Convert addresses to coordinates
-- Get detailed address components
-- Find place IDs for locations
-- Retrieve formatted addresses
-- Access geographic boundaries
-
-### Places Search
-- Search businesses by category
-- Find places within a radius
-- Get business ratings and reviews
-- Check opening hours
-- Access contact information
-
-### Directions & Distance
-- Get turn-by-turn directions
-- Calculate travel distances
-- Estimate travel times
-- Compare different routes
-- Support multiple travel modes
-
-### Elevation Data
-- Get elevation for coordinates
-- Check multiple locations
-- Access resolution data
-- Query terrain information
-
-## Example Commands
-
-### Geocode an Address
-```
-/google-maps convert address "Times Square, New York" to coordinates
+/your-Google-Maps-connection
+action: geocode
+address: 1600 Amphitheatre Parkway, Mountain View, CA
 ```
 
-### Search for Places
+**Response:**
+```json
+{
+  "results": [
+    {
+      "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+      "formatted_address": "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA",
+      "geometry": {
+        "location": {
+          "lat": 37.4224764,
+          "lng": -122.0842499
+        }
+      }
+    }
+  ]
+}
 ```
-/google-maps find coffee shops within 500m of location 40.7580,-73.9855
+
+### Search Places
+Search for places by text query within a specified area
+
+**Parameters:**
+- `query` (required) - What you're searching for (e.g., "restaurants", "hotels")
+- `location` (required) - Geographic coordinates as "latitude,longitude"
+- `radius` (required) - Search radius in meters
+
+**Example:**
+```
+/your-Google-Maps-connection
+action: search-places
+query: restaurants
+location: 37.7749,-122.4194
+radius: 1000
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "name": "Restaurant Name",
+      "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+      "formatted_address": "123 Main St, San Francisco, CA 94105",
+      "geometry": {
+        "location": {
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      },
+      "rating": 4.5,
+      "types": ["restaurant", "food"]
+    }
+  ]
+}
 ```
 
 ### Get Place Details
+Get detailed information about a specific place
+
+**Parameters:**
+- `place-id` (required) - The unique identifier for a place
+
+**Example:**
 ```
-/google-maps show details for place ID ChIJN1t_tDeuEmsRUsoyG83frY4
+/your-Google-Maps-connection
+action: place-details
+place-id: ChIJN1t_tDeuEmsRUsoyG83frY4
+```
+
+**Response:**
+```json
+{
+  "result": {
+    "name": "Business Name",
+    "formatted_address": "123 Main St, Anytown, CA 12345",
+    "formatted_phone_number": "(555) 123-4567",
+    "website": "https://www.example.com",
+    "rating": 4.5,
+    "reviews": [
+      {
+        "author_name": "Reviewer Name",
+        "rating": 5,
+        "text": "Great place!"
+      }
+    ],
+    "opening_hours": {
+      "weekday_text": [
+        "Monday: 9:00 AM – 8:00 PM"
+      ],
+      "open_now": true
+    }
+  }
+}
 ```
 
 ### Calculate Distance
+Calculate distance and travel time between origins and destinations
+
+**Parameters:**
+- `origins` (required) - Starting points (pipe-separated for multiple)
+- `destinations` (required) - Ending points (pipe-separated for multiple)
+- `mode` (required) - Travel mode: driving, walking, bicycling, or transit
+
+**Example:**
 ```
-/google-maps calculate distance from Seattle to Portland by driving
+/your-Google-Maps-connection
+action: distance-matrix
+origins: Seattle
+destinations: San Francisco
+mode: driving
+```
+
+**Response:**
+```json
+{
+  "origin_addresses": ["Seattle, WA, USA"],
+  "destination_addresses": ["San Francisco, CA, USA"],
+  "rows": [
+    {
+      "elements": [
+        {
+          "duration": {
+            "text": "12 hours 46 mins",
+            "value": 45987
+          },
+          "distance": {
+            "text": "808 mi",
+            "value": 1299738
+          }
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ### Get Directions
+Get turn-by-turn directions between locations
+
+**Parameters:**
+- `origin` (required) - Starting point as address or coordinates
+- `destination` (required) - Ending point as address or coordinates
+- `mode` (required) - Travel mode: driving, walking, bicycling, or transit
+
+**Example:**
 ```
-/google-maps get walking directions from "Central Park" to "Times Square"
+/your-Google-Maps-connection
+action: directions
+origin: Seattle
+destination: San Francisco
+mode: driving
 ```
 
-### Check Elevation
+**Response:**
+```json
+{
+  "routes": [
+    {
+      "summary": "I-5 N",
+      "legs": [
+        {
+          "distance": {
+            "text": "808 mi"
+          },
+          "duration": {
+            "text": "12 hours 46 mins"
+          },
+          "steps": [
+            {
+              "html_instructions": "Head northwest on Madison St toward 3rd Ave",
+              "distance": {
+                "text": "0.1 mi"
+              },
+              "travel_mode": "DRIVING"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ```
-/google-maps get elevation at coordinates 37.7749,-122.4194
+
+### Get Elevation
+Get elevation data for specific locations
+
+**Parameters:**
+- `locations` (required) - Pipe-separated list of lat,lng coordinates
+
+**Example:**
+```
+/your-Google-Maps-connection
+action: elevation
+locations: 37.7749,-122.4194|36.7783,-119.4179
 ```
 
-## Travel Modes
+**Response:**
+```json
+{
+  "results": [
+    {
+      "elevation": 1608.637939453125,
+      "location": {
+        "lat": 37.7749,
+        "lng": -122.4194
+      },
+      "resolution": 4.771975994110107
+    }
+  ]
+}
+```
 
-Supported modes for directions and distance:
-- **driving**: By car (default)
-- **walking**: On foot
-- **bicycling**: By bicycle
-- **transit**: Public transportation
+## Notes 
 
-## Place Types
-
-Common place searches:
-- **restaurant**: Dining establishments
-- **hotel**: Accommodations
-- **museum**: Cultural attractions
-- **hospital**: Medical facilities
-- **bank**: Financial institutions
-- **gas_station**: Fuel stations
-- **shopping_mall**: Retail centers
-
-## Response Information
-
-### Geocoding Results
-- Latitude and longitude
-- Formatted address
-- Address components
-- Place ID
-- Location type
-
-### Place Search Results
-- Business name
-- Address
-- Rating (1-5 stars)
-- Price level
-- Opening hours
-- Phone number
-- Website
-
-### Direction Results
-- Total distance
-- Travel time
-- Step-by-step instructions
-- Route summary
-- Alternative routes
-
-## Tips
-- Use specific addresses for accurate geocoding
-- Combine location searches with radius limits
-- Check place details for reviews and hours
-- Compare travel modes for best routes
-- Use pipe (|) to separate multiple locations 
+All user-provided inputs are automatically encoded to prevent errors. For multiple origins or destinations, separate them with pipe characters (|). Coordinates should be provided in decimal degrees format (latitude,longitude). Travel modes include driving, walking, bicycling, and transit. Place IDs obtained from search results can be used to get detailed information about specific locations. 

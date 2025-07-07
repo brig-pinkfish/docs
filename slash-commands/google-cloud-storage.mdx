@@ -1,132 +1,203 @@
 ---
-title: "Google Cloud Storage Command Guide"
-description: "Learn how to use the Google Cloud Storage slash command to manage files in GCP"
+title: "Google Cloud Storage Guide"
+description: "Manage objects and buckets in Google Cloud Storage with file upload and retrieval capabilities"
 ---
 
-The `/google-cloud-storage` command enables you to manage objects and buckets in Google Cloud Storage. Perfect for:
+## What can you do with it?
 
-- Managing buckets
-- Uploading files
-- Downloading objects
-- Listing storage contents
-- Cloud file management
+Google Cloud Storage allows you to manage cloud storage objects programmatically. You can list all buckets in a project, upload files to specific buckets, download objects, manage object metadata, and organize your cloud storage resources. This integration is perfect for backup solutions, file storage workflows, and cloud-based content management.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Cloud Storage:
-
+### Basic Command Structure
 ```
-/google-cloud-storage list all buckets in project my-project
+/your-Google-Cloud-Storage-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/google-cloud-storage upload file.txt to bucket my-bucket
-```
+### Parameters
 
-```
-/google-cloud-storage download object report.pdf from bucket my-bucket
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform on Google Cloud Storage
 
-### Bucket Management
-- List all buckets
-- Create new buckets
-- Delete buckets
-- View bucket metadata
-- Check permissions
-
-### File Operations
-- Upload files
-- Download objects
-- Delete objects
-- List bucket contents
-- Move/copy files
-
-### Object Management
-- Set object metadata
-- Manage permissions
-- Generate URLs
-- Handle versions
-
-## Example Commands
+## Tools
 
 ### List Buckets
+List all storage buckets in a Google Cloud project
+
+**Parameters:**
+- `project-name` (required) - The Google Cloud project name
+
+**Example:**
 ```
-/google-cloud-storage show all buckets in project production-project
+/your-Google-Cloud-Storage-connection
+action: list-buckets
+project-name: my-project-123
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": "my-bucket-123",
+      "name": "my-bucket-123",
+      "timeCreated": "2024-01-15T10:30:00.000Z",
+      "location": "US",
+      "storageClass": "STANDARD"
+    },
+    {
+      "id": "backup-bucket-456",
+      "name": "backup-bucket-456",
+      "timeCreated": "2024-02-20T14:45:00.000Z",
+      "location": "EU",
+      "storageClass": "NEARLINE"
+    }
+  ]
+}
 ```
 
 ### Upload File
+Upload a file to a specific bucket
+
+**Parameters:**
+- `bucket-name` (required) - Name of the target bucket
+- `file-name` (required) - Name for the file in the bucket
+- `file-content` (required) - Content of the file to upload
+
+**Example:**
 ```
-/google-cloud-storage upload document.pdf to bucket company-documents
+/your-Google-Cloud-Storage-connection
+action: upload-file
+bucket-name: my-bucket-123
+file-name: reports/quarterly-report.txt
+file-content: This is the content of my quarterly report...
+```
+
+**Response:**
+```json
+{
+  "id": "my-bucket-123/reports/quarterly-report.txt",
+  "name": "reports/quarterly-report.txt",
+  "bucket": "my-bucket-123",
+  "size": "45",
+  "timeCreated": "2024-03-15T09:30:00.000Z",
+  "contentType": "text/plain"
+}
 ```
 
 ### List Objects
+List all objects in a bucket
+
+**Parameters:**
+- `bucket-name` (required) - Name of the bucket to list objects from
+- `prefix` (optional) - Filter results to objects with names that begin with this prefix
+- `max-results` (optional) - Maximum number of items to return
+
+**Example:**
 ```
-/google-cloud-storage list all files in bucket my-data-bucket
+/your-Google-Cloud-Storage-connection
+action: list-objects
+bucket-name: my-bucket-123
+prefix: reports/
+max-results: 50
 ```
 
-### Download File
+**Response:**
+```json
+{
+  "items": [
+    {
+      "name": "reports/quarterly-report.txt",
+      "size": "45",
+      "timeCreated": "2024-03-15T09:30:00.000Z"
+    },
+    {
+      "name": "reports/annual-summary.pdf",
+      "size": "102400",
+      "timeCreated": "2024-01-10T11:20:00.000Z"
+    }
+  ]
+}
 ```
-/google-cloud-storage download file report-2024.csv from bucket analytics-bucket
+
+### Download Object
+Download an object from a bucket
+
+**Parameters:**
+- `bucket-name` (required) - Name of the bucket containing the object
+- `object-name` (required) - Name of the object to download
+
+**Example:**
+```
+/your-Google-Cloud-Storage-connection
+action: download-object
+bucket-name: my-bucket-123
+object-name: reports/quarterly-report.txt
+```
+
+**Response:**
+```json
+{
+  "name": "reports/quarterly-report.txt",
+  "content": "This is the content of my quarterly report...",
+  "contentType": "text/plain",
+  "size": "45"
+}
 ```
 
 ### Delete Object
-```
-/google-cloud-storage delete file old-backup.zip from bucket backup-storage
-```
+Delete an object from a bucket
 
-## API Endpoints
+**Parameters:**
+- `bucket-name` (required) - Name of the bucket containing the object
+- `object-name` (required) - Name of the object to delete
 
-### List Buckets
+**Example:**
 ```
-GET: storage/v1/b?project={projectName}
-```
-
-### Upload Object
-```
-POST: upload/storage/v1/b/{bucketName}/o?uploadType=media&name={fileName}
+/your-Google-Cloud-Storage-connection
+action: delete-object
+bucket-name: my-bucket-123
+object-name: reports/old-report.txt
 ```
 
-### List Objects
-```
-GET: storage/v1/b/{bucketName}/o
-```
-
-### Get Object
-```
-GET: storage/v1/b/{bucketName}/o/{objectName}
+**Response:**
+```json
+{
+  "status": "deleted",
+  "object": "reports/old-report.txt"
+}
 ```
 
-## Upload Options
+### Get Object Metadata
+Get metadata information about an object
 
-### Media Upload
-- Direct file upload
-- Set content type
-- Specify file name
-- Handle large files
+**Parameters:**
+- `bucket-name` (required) - Name of the bucket containing the object
+- `object-name` (required) - Name of the object
 
-### Metadata
-- Custom metadata
-- Content type
-- Cache control
-- Access control
+**Example:**
+```
+/your-Google-Cloud-Storage-connection
+action: get-object-metadata
+bucket-name: my-bucket-123
+object-name: reports/quarterly-report.txt
+```
 
-## Required Information
+**Response:**
+```json
+{
+  "name": "reports/quarterly-report.txt",
+  "bucket": "my-bucket-123",
+  "size": "45",
+  "timeCreated": "2024-03-15T09:30:00.000Z",
+  "updated": "2024-03-15T09:30:00.000Z",
+  "contentType": "text/plain",
+  "storageClass": "STANDARD",
+  "md5Hash": "rL0Y20zC+Fzt72VPzMSk2A=="
+}
+```
 
-### Project ID
-- Required for bucket operations
-- Found in GCP Console
-- Format: `my-project-123`
+## Notes 
 
-### Bucket Names
-- Globally unique
-- Follow naming rules
-- No uppercase letters
-- 3-63 characters
-
-## Tips
-- Always specify project ID for bucket operations
-- Use proper content types for uploads
-- Handle large files with resumable uploads
-- Check permissions before operations 
+File paths in bucket names use forward slashes (/) to create a folder-like structure. The content type is automatically detected for common file types when uploading. Storage classes include STANDARD, NEARLINE, COLDLINE, and ARCHIVE. When uploading files, text content can be provided directly, while binary files should be base64-encoded. 

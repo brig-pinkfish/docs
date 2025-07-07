@@ -1,137 +1,285 @@
 ---
-title: "Google Calendar Command Guide"
-description: "Learn how to use the Google Calendar slash command to manage events and schedules"
+title: "Google Calendar Guide"
+description: "Manage events and schedules in Google Calendar with timezone-aware event handling"
 ---
 
-The `/google-calendar` command enables you to manage events, schedules, and calendar information. Perfect for:
+## What can you do with it?
 
-- Creating events
-- Checking schedules
-- Managing meetings
-- Finding free time
-- Setting reminders
+Google Calendar allows you to manage calendar events programmatically. You can list events, create new appointments, update existing events, check availability with free/busy information, manage attendees, set reminders, and handle recurring events. This integration supports timezone-aware scheduling, making it perfect for meeting coordination, event planning, and calendar automation.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Calendar:
-
+### Basic Command Structure
 ```
-/google-calendar show today's events
+/your-Google-Calendar-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform on calendar events
+
+## Tools
+
+### List Calendars
+Get all calendars accessible to the user
+
+**Parameters:**
+- None required
+
+**Example:**
 ```
-/google-calendar create meeting "Team Sync" tomorrow at 2pm for 1 hour
+/your-Google-Calendar-connection
+action: list-calendars
 ```
 
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": "primary",
+      "summary": "My Calendar",
+      "timeZone": "America/Los_Angeles"
+    }
+  ]
+}
 ```
-/google-calendar check free time between 9am and 5pm
-```
-
-## Key Features
-
-### Event Management
-- Create new events
-- Update existing events
-- Delete events
-- Set recurring events
-- Add attendees
-
-### Schedule Viewing
-- List today's events
-- View upcoming events
-- Check specific dates
-- See event details
-
-### Free/Busy Checking
-- Find available times
-- Check multiple calendars
-- View busy periods
-- Schedule meetings
-
-### Calendar Settings
-- Access calendar list
-- View timezone settings
-- Manage reminders
-- Configure notifications
-
-## Example Commands
 
 ### List Events
+Get events from a calendar within a date range
+
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `time-min` (optional) - Start date/time in ISO format
+- `time-max` (optional) - End date/time in ISO format
+- `timezone` (optional) - Timezone for the query
+
+**Example:**
 ```
-/google-calendar show all events for today
+/your-Google-Calendar-connection
+action: list-events
+calendar-id: primary
+time-min: 2024-01-15T00:00:00-08:00
+time-max: 2024-01-15T23:59:59-08:00
+timezone: America/Los_Angeles
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": "event123",
+      "summary": "Team Meeting",
+      "start": {
+        "dateTime": "2024-01-15T10:00:00-08:00",
+        "timeZone": "America/Los_Angeles"
+      },
+      "end": {
+        "dateTime": "2024-01-15T11:00:00-08:00",
+        "timeZone": "America/Los_Angeles"
+      }
+    }
+  ]
+}
 ```
 
 ### Create Event
+Create a new calendar event
+
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `summary` (required) - Event title
+- `start-datetime` (required) - Start date/time with timezone offset
+- `end-datetime` (required) - End date/time with timezone offset
+- `timezone` (required) - Event timezone
+- `location` (optional) - Event location
+- `description` (optional) - Event description
+- `attendees` (optional) - Comma-separated email addresses
+
+**Example:**
 ```
-/google-calendar create "Team Meeting" on Jan 15 at 5pm for 1 hour in Conference Room A
+/your-Google-Calendar-connection
+action: create-event
+summary: Team Meeting
+start-datetime: 2024-01-15T17:00:00-08:00
+end-datetime: 2024-01-15T18:00:00-08:00
+timezone: America/Los_Angeles
+location: Conference Room A
+attendees: john@company.com, jane@company.com
 ```
 
-### Create with Attendees
-```
-/google-calendar schedule "Project Review" tomorrow 2-3pm with john@company.com, jane@company.com
+**Response:**
+```json
+{
+  "id": "newEvent456",
+  "summary": "Team Meeting",
+  "htmlLink": "https://calendar.google.com/event?eid=...",
+  "start": {
+    "dateTime": "2024-01-15T17:00:00-08:00",
+    "timeZone": "America/Los_Angeles"
+  }
+}
 ```
 
 ### Update Event
+Update an existing calendar event
+
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `event-id` (required) - Event ID to update
+- `summary` (optional) - New event title
+- `start-datetime` (optional) - New start time
+- `end-datetime` (optional) - New end time
+- `location` (optional) - New location
+- `attendees` (optional) - Updated attendee list
+
+**Example:**
 ```
-/google-calendar move meeting ID abc123 to 3pm
+/your-Google-Calendar-connection
+action: update-event
+event-id: event123
+start-datetime: 2024-01-15T15:00:00-07:00
+location: Conference Room B
+```
+
+**Response:**
+```json
+{
+  "id": "event123",
+  "summary": "Team Meeting",
+  "location": "Conference Room B",
+  "start": {
+    "dateTime": "2024-01-15T15:00:00-07:00"
+  }
+}
 ```
 
 ### Delete Event
+Delete a calendar event
+
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `event-id` (required) - Event ID to delete
+
+**Example:**
 ```
-/google-calendar delete event ID abc123
+/your-Google-Calendar-connection
+action: delete-event
+event-id: event123
 ```
 
-### Check Free Time
-```
-/google-calendar when am I free today between 9am and 5pm
-```
-
-### Recurring Events
-```
-/google-calendar create weekly "Team Standup" every Monday at 9am for 30 minutes
+**Response:**
+```json
+{
+  "status": "deleted"
+}
 ```
 
-## Date and Time Handling
+### Check Free/Busy
+Check availability for one or more calendars
 
-### Timezone Support
-- Automatically detects your timezone
-- Handles daylight saving time
-- Supports international timezones
+**Parameters:**
+- `time-min` (required) - Start of time range
+- `time-max` (required) - End of time range
+- `timezone` (required) - Timezone for the query
+- `calendars` (optional) - Comma-separated calendar IDs (default: "primary")
 
-### Date Formats
-- Natural language: "tomorrow", "next Monday"
-- Specific dates: "Jan 15", "2024-01-15"
-- Relative times: "in 2 hours", "at 3pm"
+**Example:**
+```
+/your-Google-Calendar-connection
+action: check-freebusy
+time-min: 2024-01-15T00:00:00-08:00
+time-max: 2024-01-15T23:59:59-08:00
+timezone: America/Los_Angeles
+calendars: primary, user@company.com
+```
 
-## Event Details
+**Response:**
+```json
+{
+  "calendars": {
+    "primary": {
+      "busy": [
+        {
+          "start": "2024-01-15T10:00:00-08:00",
+          "end": "2024-01-15T11:00:00-08:00"
+        }
+      ]
+    }
+  }
+}
+```
 
-### Required Fields
-- Summary (event title)
-- Start time
-- End time
+### Create Recurring Event
+Create an event that repeats on a schedule
 
-### Optional Fields
-- Location
-- Description
-- Attendees (email addresses)
-- Reminders
-- Recurrence rules
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `summary` (required) - Event title
+- `start-datetime` (required) - First occurrence start time
+- `end-datetime` (required) - First occurrence end time
+- `timezone` (required) - Event timezone
+- `recurrence` (required) - Recurrence rule (e.g., "WEEKLY", "DAILY")
+- `frequency-details` (optional) - Additional recurrence details
 
-## Reminder Options
+**Example:**
+```
+/your-Google-Calendar-connection
+action: create-recurring-event
+summary: Weekly Team Sync
+start-datetime: 2024-01-15T10:00:00-08:00
+end-datetime: 2024-01-15T11:00:00-08:00
+timezone: America/Los_Angeles
+recurrence: WEEKLY
+frequency-details: BYDAY=MO
+```
 
-- Popup reminders (minutes before)
-- Email reminders
-- Default calendar reminders
+**Response:**
+```json
+{
+  "id": "recurringEvent789",
+  "summary": "Weekly Team Sync",
+  "recurrence": [
+    "RRULE:FREQ=WEEKLY;BYDAY=MO"
+  ]
+}
+```
 
-## Recurrence Patterns
+### Set Reminders
+Add or update reminders for an event
 
-- Daily: `FREQ=DAILY`
-- Weekly: `FREQ=WEEKLY;BYDAY=MO,WE,FR`
-- Monthly: `FREQ=MONTHLY`
-- Custom patterns supported
+**Parameters:**
+- `calendar-id` (optional) - Calendar ID (default: "primary")
+- `event-id` (required) - Event ID
+- `popup-minutes` (optional) - Minutes before event for popup reminder
+- `email-minutes` (optional) - Minutes before event for email reminder
 
-## Tips
-- Events are created in your primary calendar by default
-- Attendee updates trigger new invitations
-- Deleted events notify all attendees
-- Use natural language for dates and times 
+**Example:**
+```
+/your-Google-Calendar-connection
+action: set-reminders
+event-id: event123
+popup-minutes: 15
+email-minutes: 30
+```
+
+**Response:**
+```json
+{
+  "id": "event123",
+  "reminders": {
+    "useDefault": false,
+    "overrides": [
+      {"method": "popup", "minutes": 15},
+      {"method": "email", "minutes": 30}
+    ]
+  }
+}
+```
+
+## Notes 
+
+All date/time values must include timezone offsets (e.g., -08:00 for PST). The system automatically retrieves the user's timezone from Google Calendar settings. When listing events without specifying a date range, it defaults to the current day in the user's timezone. Recurring events use RRULE format for recurrence patterns. Maximum 2500 events can be retrieved per request. 

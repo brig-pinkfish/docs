@@ -1,114 +1,95 @@
 ---
-title: "Google Slides Command Guide"
-description: "Learn how to use the Google Slides slash command to create and edit presentations"
+title: "Google Slides Guide"
+description: "Create and edit presentations with slides, shapes, text, and images programmatically"
 ---
 
-The `/google-slides` command enables you to create and edit Google Slides presentations programmatically. Perfect for:
+## What can you do with it?
 
-- Creating presentation slides
-- Adding text and images
-- Formatting slide content
-- Automating slide generation
-- Building dynamic presentations
+Google Slides allows you to create and modify presentations programmatically. You can get presentation details, create new slides with various layouts, insert and update text content, add shapes and images, modify element properties like colors and positions, and delete elements. This integration is perfect for automated presentation generation, dynamic content updates, and presentation templating workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Google Slides:
-
+### Basic Command Structure
 ```
-/google-slides create new slide with title "Project Overview"
+/your-Google-Slides-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/google-slides add text "Welcome to our presentation" to slide
-```
+### Parameters
 
-```
-/google-slides insert image from URL into current slide
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform on presentations
 
-### Slide Management
-- Create new slides
-- Get presentation data
-- Update slide content
-- Delete slide elements
-- Manage slide layouts
-
-### Content Creation
-- Add text boxes
-- Insert images
-- Create shapes
-- Format elements
-- Position objects
-
-### Batch Operations
-- Multiple updates
-- Grouped operations
-- Efficient API usage
-- Error handling
-- Performance optimization
-
-## Example Commands
-
-### Create New Slide
-```
-/google-slides add new slide with "Title and Body" layout
-```
-
-### Add Text Content
-```
-/google-slides insert text "Project Status Update" into title placeholder
-```
-
-### Insert Image
-```
-/google-slides add image from "https://example.com/chart.png" to slide
-```
-
-### Create Shape
-```
-/google-slides create rectangle shape with blue background
-```
-
-### Update Formatting
-```
-/google-slides change text color to red for selected text box
-```
-
-## Presentation ID Extraction
-
-### From URL
-```javascript
-// URL: https://docs.google.com/presentation/d/[PRESENTATION_ID]/edit#slide=id.[SLIDE_ID]
-const presentationId = url.split('/d/')[1].split('/')[0];
-```
-
-### Common URL Formats
-- Edit mode: `/presentation/d/ID/edit`
-- View mode: `/presentation/d/ID/view`
-- Embed mode: `/presentation/d/ID/embed`
-
-## Core Operations
+## Tools
 
 ### Get Presentation
-```javascript
-// Retrieve presentation data
-const url = GOOGLE_SLIDES_URL + presentationId;
+Retrieve presentation details including slides and elements
+
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+
+**Example:**
+```
+/your-Google-Slides-connection
+action: get-presentation
+presentation-id: 1ABC123def456
+```
+
+**Response:**
+```json
+{
+  "presentationId": "1ABC123def456",
+  "title": "My Presentation",
+  "slides": [
+    {
+      "objectId": "p1",
+      "pageElements": [
+        {
+          "objectId": "text_box_1",
+          "shape": {
+            "shapeType": "TEXT_BOX",
+            "text": {
+              "textElements": [
+                {
+                  "textRun": {
+                    "content": "Hello World!"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ### Create Slide
-```javascript
+Add a new slide to an existing presentation
+
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `layout` (required) - Slide layout type: TITLE_AND_BODY, TITLE_ONLY, BLANK, SECTION_HEADER, or TITLE_AND_TWO_COLUMNS
+- `position` (optional) - Insertion index for the slide
+
+**Example:**
+```
+/your-Google-Slides-connection
+action: create-slide
+presentation-id: 1ABC123def456
+layout: TITLE_AND_BODY
+position: 1
+```
+
+**Response:**
+```json
 {
-  "requests": [
+  "presentationId": "1ABC123def456",
+  "replies": [
     {
       "createSlide": {
-        "objectId": "new_slide_id",
-        "insertionIndex": 1,
-        "slideLayoutReference": {
-          "predefinedLayout": "TITLE_AND_BODY"
-        }
+        "objectId": "new_slide_id"
       }
     }
   ]
@@ -116,289 +97,162 @@ const url = GOOGLE_SLIDES_URL + presentationId;
 ```
 
 ### Insert Text
-```javascript
+Add or update text in a shape or text box
+
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `object-id` (required) - The ID of the text box or shape
+- `text` (required) - Text content to insert
+- `position` (optional) - Insertion index within the text (default: 0)
+
+**Example:**
+```
+/your-Google-Slides-connection
+action: insert-text
+presentation-id: 1ABC123def456
+object-id: text_box_1
+text: Welcome to our presentation!
+position: 0
+```
+
+**Response:**
+```json
 {
-  "requests": [
+  "presentationId": "1ABC123def456",
+  "replies": [{}]
+}
+```
+
+### Create Shape
+Add a new shape to a slide
+
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `slide-id` (required) - The ID of the slide
+- `shape-type` (required) - Type of shape: RECTANGLE, ELLIPSE, or other supported types
+- `width` (required) - Width in points
+- `height` (required) - Height in points
+- `x-position` (required) - X coordinate in points
+- `y-position` (required) - Y coordinate in points
+
+**Example:**
+```
+/your-Google-Slides-connection
+action: create-shape
+presentation-id: 1ABC123def456
+slide-id: p1
+shape-type: RECTANGLE
+width: 100
+height: 50
+x-position: 100
+y-position: 100
+```
+
+**Response:**
+```json
+{
+  "presentationId": "1ABC123def456",
+  "replies": [
     {
-      "insertText": {
-        "objectId": "text_box_1",
-        "insertionIndex": 0,
-        "text": "New text content"
+      "createShape": {
+        "objectId": "shape_1"
       }
     }
   ]
 }
 ```
 
-## Slide Layouts
+### Update Shape Color
+Modify the background color of an existing shape
 
-### Available Layouts
-- **TITLE_ONLY**: Title slide
-- **TITLE_AND_BODY**: Standard content slide
-- **BLANK**: Empty slide
-- **SECTION_HEADER**: Section divider
-- **TITLE_AND_TWO_COLUMNS**: Two-column layout
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `object-id` (required) - The ID of the shape
+- `red` (required) - Red color value (0-1)
+- `green` (required) - Green color value (0-1)
+- `blue` (required) - Blue color value (0-1)
 
-### Layout Selection
-```javascript
-"slideLayoutReference": {
-  "predefinedLayout": "TITLE_AND_BODY"
+**Example:**
+```
+/your-Google-Slides-connection
+action: update-shape-color
+presentation-id: 1ABC123def456
+object-id: shape_1
+red: 1
+green: 0
+blue: 0
+```
+
+**Response:**
+```json
+{
+  "presentationId": "1ABC123def456",
+  "replies": [{}]
 }
 ```
 
-## Shape Creation
+### Insert Image
+Add an image from URL to a slide
 
-### Basic Shape
-```javascript
-{
-  "createShape": {
-    "objectId": "shape_1",
-    "shapeType": "RECTANGLE",
-    "elementProperties": {
-      "pageObjectId": "p1",
-      "size": {
-        "width": {"magnitude": 100, "unit": "PT"},
-        "height": {"magnitude": 50, "unit": "PT"}
-      },
-      "transform": {
-        "translateX": 100,
-        "translateY": 100,
-        "unit": "PT"
-      }
-    }
-  }
-}
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `slide-id` (required) - The ID of the slide
+- `image-url` (required) - URL of the image to insert
+- `width` (required) - Width in points
+- `height` (required) - Height in points
+- `x-position` (required) - X coordinate in points
+- `y-position` (required) - Y coordinate in points
+
+**Example:**
+```
+/your-Google-Slides-connection
+action: insert-image
+presentation-id: 1ABC123def456
+slide-id: p1
+image-url: https://example.com/logo.jpg
+width: 200
+height: 100
+x-position: 100
+y-position: 100
 ```
 
-### Shape Types
-- RECTANGLE
-- ELLIPSE
-- TRIANGLE
-- ARROW
-- CALLOUT
-- STAR
-- PLUS
-- DIAMOND
-
-## Image Insertion
-
-### From URL
-```javascript
+**Response:**
+```json
 {
-  "createImage": {
-    "objectId": "image_1",
-    "url": "https://example.com/image.jpg",
-    "elementProperties": {
-      "pageObjectId": "p1",
-      "size": {
-        "width": {"magnitude": 200, "unit": "PT"},
-        "height": {"magnitude": 100, "unit": "PT"}
-      },
-      "transform": {
-        "translateX": 100,
-        "translateY": 100,
-        "unit": "PT"
-      }
-    }
-  }
-}
-```
-
-### Image Requirements
-- Publicly accessible URL
-- Supported formats: PNG, JPG, GIF
-- Maximum size: 25MB
-- Proper dimensions
-
-## Formatting and Styling
-
-### Update Shape Properties
-```javascript
-{
-  "updateShapeProperties": {
-    "objectId": "shape_1",
-    "fields": "shapeBackgroundFill.solidFill.color",
-    "shapeProperties": {
-      "shapeBackgroundFill": {
-        "solidFill": {
-          "color": {
-            "rgbColor": {
-              "red": 1,
-              "green": 0,
-              "blue": 0
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-### Color Specification
-- RGB values (0.0 to 1.0)
-- Hex colors converted to RGB
-- Theme colors
-- Transparency support
-
-## Coordinate System
-
-### Position and Size
-- Origin (0,0) at top-left
-- Units: PT (points)
-- 72 PT = 1 inch
-- Positive X: right
-- Positive Y: down
-
-### Transform Properties
-- **translateX/Y**: Position
-- **scaleX/Y**: Size scaling
-- **shearX/Y**: Skewing
-- **unit**: Measurement unit
-
-## Batch Operations
-
-### Multiple Requests
-```javascript
-{
-  "requests": [
+  "presentationId": "1ABC123def456",
+  "replies": [
     {
-      "createSlide": {
-        "objectId": "slide_1",
-        "slideLayoutReference": {
-          "predefinedLayout": "TITLE_AND_BODY"
-        }
-      }
-    },
-    {
-      "insertText": {
-        "objectId": "title_text",
-        "text": "New Slide Title"
+      "createImage": {
+        "objectId": "image_1"
       }
     }
   ]
 }
 ```
 
-### Batch Benefits
-- Reduced API calls
-- Atomic operations
-- Better performance
-- Consistent state
+### Delete Element
+Remove an element from a slide
 
-## Object Management
+**Parameters:**
+- `presentation-id` (required) - The ID of the presentation
+- `object-id` (required) - The ID of the element to delete
 
-### Object IDs
-- Must be unique within presentation
-- Use descriptive prefixes
-- Store for future updates
-- Required for modifications
-
-### Naming Conventions
-```javascript
-// Good object ID examples
-"title_text_slide_1"
-"image_logo_header"
-"shape_button_cta"
-"chart_sales_q1"
+**Example:**
+```
+/your-Google-Slides-connection
+action: delete-element
+presentation-id: 1ABC123def456
+object-id: shape_1
 ```
 
-## Error Handling
-
-### Common Errors
-- **400**: Invalid request format
-- **403**: Permission denied
-- **404**: Presentation not found
-- **429**: Rate limit exceeded
-
-### Error Prevention
-- Validate object IDs
-- Check permissions
-- Verify URLs
-- Handle rate limits
-
-## Best Practices
-
-1. **Object Management**
-   - Use descriptive object IDs
-   - Store IDs for updates
-   - Avoid ID conflicts
-   - Plan object hierarchy
-
-2. **Batch Operations**
-   - Group related changes
-   - Minimize API calls
-   - Handle errors gracefully
-   - Test request size limits
-
-3. **Performance**
-   - Cache presentation data
-   - Optimize image sizes
-   - Use efficient layouts
-   - Monitor API usage
-
-4. **Content Quality**
-   - Validate image URLs
-   - Check text encoding
-   - Verify color formats
-   - Test on different devices
-
-## Common Use Cases
-
-### Report Generation
-```
-/google-slides create monthly report slides with charts and data
-```
-
-### Template Creation
-```
-/google-slides build presentation template with company branding
-```
-
-### Data Visualization
-```
-/google-slides insert charts and graphs from data analysis
-```
-
-### Automated Updates
-```
-/google-slides update presentation with latest metrics and KPIs
-```
-
-## Response Structure
-
-### Successful Response
-```javascript
+**Response:**
+```json
 {
-  "status": 200,
-  "output": {
-    "presentationId": "presentation_id",
-    "replies": [
-      {
-        "createSlide": {
-          "objectId": "new_slide_id"
-        }
-      }
-    ]
-  }
+  "presentationId": "1ABC123def456",
+  "replies": [{}]
 }
 ```
 
-### Error Response
-```javascript
-{
-  "status": 400,
-  "error": {
-    "code": 400,
-    "message": "Invalid request format"
-  }
-}
-```
+## Notes 
 
-## Tips
-- Use batch operations to group related changes efficiently
-- Store object IDs for future updates and modifications
-- Validate image URLs before insertion to avoid errors
-- Use descriptive object IDs with prefixes for better organization
-- Test coordinate positioning with small values first
-- Handle permissions properly for shared presentations 
+Presentation IDs can be extracted from Google Slides URLs using the pattern: /d/[PRESENTATION_ID]/. Coordinates use points (PT) as units where 72 PT equals 1 inch. The origin (0,0) is at the top-left corner. Object IDs must be unique within a presentation. Batch operations can be performed by grouping multiple requests together. Maximum request size is 10MB. 

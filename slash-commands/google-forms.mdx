@@ -1,200 +1,320 @@
 ---
-title: "Google Forms Command Guide"
-description: "Learn how to use the Google Forms slash command to create and manage forms"
+title: "Google Forms Guide"
+description: "Create and manage forms, add questions, and retrieve responses programmatically"
 ---
 
-The `/google-forms` command enables you to create, update, and manage Google Forms and responses. Perfect for:
+## What can you do with it?
 
-- Creating forms
-- Adding questions
-- Managing responses
-- Setting permissions
-- Collecting feedback
+Google Forms allows you to create and manage online forms programmatically. You can create new forms, add various types of questions (text, multiple choice, checkboxes, scales, dates), update existing forms, retrieve form responses, set up webhooks for real-time notifications, and manage form permissions. This integration is perfect for survey automation, feedback collection, and dynamic form generation. Note that listing all forms requires the Google Drive integration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Google Forms:
-
+### Basic Command Structure
 ```
-/google-forms create form "Customer Survey" with description "Please share your feedback"
+/your-Google-Forms-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform on forms
+
+## Tools
+
+### Get Form
+Retrieve form details, structure, and questions
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+
+**Example:**
 ```
-/google-forms add question "What is your name?" to form FORM_ID
+/your-Google-Forms-connection
+action: get-form
+form-id: 1ABC123def456
 ```
 
+**Response:**
+```json
+{
+  "formId": "1ABC123def456",
+  "info": {
+    "title": "Sample Form",
+    "description": "This is a sample form"
+  },
+  "items": [
+    {
+      "itemId": "item123",
+      "title": "What is your name?",
+      "questionItem": {
+        "question": {
+          "textQuestion": {}
+        }
+      }
+    }
+  ]
+}
 ```
-/google-forms get responses for form FORM_ID
-```
-
-## Key Features
-
-### Form Management
-- Create new forms
-- Update form details
-- Get form structure
-- Set permissions
-- Delete forms
-
-### Question Types
-- Text questions
-- Multiple choice
-- Checkboxes
-- Dropdowns
-- Linear scale
-- Date/time
-- File upload
-
-### Response Handling
-- View responses
-- Export data
-- Set up webhooks
-- Monitor submissions
-
-## Example Commands
 
 ### Create Form
+Create a new form with title and description
+
+**Parameters:**
+- `title` (required) - Title for the new form
+- `description` (optional) - Description of the form
+
+**Example:**
 ```
-/google-forms create new form titled "Event Registration"
+/your-Google-Forms-connection
+action: create-form
+title: Customer Feedback Survey
+description: Please share your experience with our service
 ```
 
-### Get Form Details
+**Response:**
+```json
+{
+  "formId": "1XYZ789abc123",
+  "info": {
+    "title": "Customer Feedback Survey",
+    "description": "Please share your experience with our service"
+  },
+  "responderUri": "https://docs.google.com/forms/d/1XYZ789abc123/viewform"
+}
 ```
-/google-forms show form FORM_ID
+
+### Update Form
+Update form title, description or settings
+
+**Parameters:**
+- `form-id` (required) - The ID of the form to update
+- `title` (optional) - New title for the form
+- `description` (optional) - New description for the form
+
+**Example:**
+```
+/your-Google-Forms-connection
+action: update-form
+form-id: 1ABC123def456
+title: Updated Customer Survey
+description: New and improved feedback form
+```
+
+**Response:**
+```json
+{
+  "formId": "1ABC123def456",
+  "info": {
+    "title": "Updated Customer Survey",
+    "description": "New and improved feedback form"
+  }
+}
 ```
 
 ### Add Text Question
+Add a text question to a form
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `question` (required) - The question text
+- `required` (optional) - Whether the question is required (default: false)
+- `position` (optional) - Position index for the question
+
+**Example:**
 ```
-/google-forms add text question "What is your email?" to form FORM_ID required
+/your-Google-Forms-connection
+action: add-text-question
+form-id: 1ABC123def456
+question: What is your email address?
+required: true
+position: 0
 ```
 
-### Add Multiple Choice
+**Response:**
+```json
+{
+  "itemId": "item456"
+}
 ```
-/google-forms add radio question "Select your department" with options Sales, Marketing, Engineering to form FORM_ID
+
+### Add Multiple Choice Question
+Add a multiple choice question (radio, checkbox, or dropdown)
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `question` (required) - The question text
+- `type` (required) - Question type: RADIO, CHECKBOX, or DROP_DOWN
+- `options` (required) - Comma-separated list of options
+- `required` (optional) - Whether the question is required
+- `position` (optional) - Position index for the question
+
+**Example:**
+```
+/your-Google-Forms-connection
+action: add-choice-question
+form-id: 1ABC123def456
+question: Choose your favorite color
+type: RADIO
+options: Red, Blue, Green, Yellow
+required: true
+position: 1
+```
+
+**Response:**
+```json
+{
+  "itemId": "item789"
+}
+```
+
+### Add Scale Question
+Add a linear scale question
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `question` (required) - The question text
+- `low` (required) - Lowest value on scale
+- `high` (required) - Highest value on scale
+- `low-label` (optional) - Label for low end
+- `high-label` (optional) - Label for high end
+- `position` (optional) - Position index
+
+**Example:**
+```
+/your-Google-Forms-connection
+action: add-scale-question
+form-id: 1ABC123def456
+question: How likely are you to recommend us?
+low: 1
+high: 10
+low-label: Not at all likely
+high-label: Extremely likely
+```
+
+**Response:**
+```json
+{
+  "itemId": "item321"
+}
 ```
 
 ### Update Question
+Update an existing question
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `item-id` (required) - The ID of the question to update
+- `question` (required) - Updated question text
+- `options` (optional) - Updated options for choice questions
+
+**Example:**
 ```
-/google-forms update question ITEM_ID in form FORM_ID to add option "Other"
+/your-Google-Forms-connection
+action: update-question
+form-id: 1ABC123def456
+item-id: item789
+question: Select your preferred colors
+options: Red, Blue, Green, Yellow, Purple
+```
+
+**Response:**
+```json
+{
+  "itemId": "item789"
+}
+```
+
+### Delete Question
+Remove a question from a form
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `item-id` (required) - The ID of the question to delete
+
+**Example:**
+```
+/your-Google-Forms-connection
+action: delete-question
+form-id: 1ABC123def456
+item-id: item789
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
 ```
 
 ### Get Responses
+Retrieve all form responses
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+
+**Example:**
 ```
-/google-forms show all responses for form FORM_ID
+/your-Google-Forms-connection
+action: get-responses
+form-id: 1ABC123def456
 ```
 
-### Make Form Public
-```
-/google-forms make form FORM_ID public
-```
-
-## Question Types
-
-### Text Input
+**Response:**
 ```json
 {
-  "textQuestion": {}
+  "responses": [
+    {
+      "responseId": "response123",
+      "createTime": "2023-06-15T10:30:45.123Z",
+      "answers": {
+        "item123": {
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "John Doe"
+              }
+            ]
+          }
+        },
+        "item789": {
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Blue"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
 }
 ```
 
-### Paragraph Text
+### Set Up Webhook
+Set up a webhook to receive form submissions
+
+**Parameters:**
+- `form-id` (required) - The ID of the form
+- `webhook-url` (required) - URL to receive notifications
+
+**Example:**
+```
+/your-Google-Forms-connection
+action: setup-webhook
+form-id: 1ABC123def456
+webhook-url: https://your-webhook-endpoint.com/callback
+```
+
+**Response:**
 ```json
 {
-  "paragraphQuestion": {}
+  "id": "watch123",
+  "expiryTime": "2023-07-15T10:30:45.123Z"
 }
 ```
 
-### Multiple Choice
-```json
-{
-  "choiceQuestion": {
-    "type": "RADIO",
-    "options": [
-      {"value": "Option 1"},
-      {"value": "Option 2"}
-    ]
-  }
-}
-```
+## Notes 
 
-### Checkboxes
-```json
-{
-  "choiceQuestion": {
-    "type": "CHECKBOX",
-    "options": [
-      {"value": "Option A"},
-      {"value": "Option B"}
-    ]
-  }
-}
-```
-
-### Dropdown
-```json
-{
-  "choiceQuestion": {
-    "type": "DROP_DOWN",
-    "options": [
-      {"value": "Choice 1"},
-      {"value": "Choice 2"}
-    ]
-  }
-}
-```
-
-### Linear Scale
-```json
-{
-  "scaleQuestion": {
-    "low": 1,
-    "high": 5,
-    "lowLabel": "Disagree",
-    "highLabel": "Agree"
-  }
-}
-```
-
-## Required Information
-
-### Form ID
-- Required for most operations
-- Found in form URL: `https://docs.google.com/forms/d/FORM_ID/edit`
-
-### Item ID
-- Required for question updates
-- Returned when creating questions
-- Found in form structure
-
-## Permissions
-
-### Public Access
-```json
-{
-  "role": "reader",
-  "type": "anyone"
-}
-```
-
-### Specific Users
-```json
-{
-  "role": "reader",
-  "type": "user",
-  "emailAddress": "user@example.com"
-}
-```
-
-## Important Notes
-
-- Cannot list all forms (use Google Drive instead)
-- Questions are referenced by itemId
-- Responses include timestamps
-- Webhooks available for real-time updates
-
-## Tips
-- Always provide form ID for operations
-- Set required fields for important questions
-- Use appropriate question types
-- Test forms before sharing
-- Monitor responses regularly 
+Form IDs and Item IDs are required for most operations and must be obtained from existing forms. To list all forms, use the Google Drive integration. Question types include text, paragraph text, multiple choice (radio/checkbox/dropdown), linear scale, date, time, and file upload. Form responses are returned with answers mapped to their corresponding item IDs. 

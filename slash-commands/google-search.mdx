@@ -1,84 +1,268 @@
 ---
 title: "Google Search Guide"
-description: "Learn how to use the google-search slash command to search the web"
+description: "Search the web with advanced filters, localization, and specialized search types"
 ---
 
 ## What can you do with it?
 
-Search the web using Google's search engine with advanced filtering options. Access organic results, knowledge graphs, related questions, and more with localization and filtering capabilities. Perfect for research, competitive analysis, trend monitoring, and gathering real-time information.
+Google Search allows you to perform comprehensive web searches programmatically. You can search for general web content, images, videos, news, shopping results, patents, and local businesses. The integration supports advanced filtering by location, language, date ranges, and content type, with options for pagination and result customization. This is perfect for research automation, content discovery, and data gathering workflows.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/google-search [query]
+/your-Google-Search-connection [action] [required-parameters] [optional-parameters]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `query` - Your search terms
+- `action` - The type of search to perform
 
-**Optional:**
+## Tools
 
-- `location` - City-level location for localized results
+### Web Search
+Perform a standard Google web search
 
-- `language` - Language code (en, es, fr, etc.)
+**Parameters:**
+- `query` (required) - What you want to search for
+- `location` (optional) - City-level location for search origin
+- `language` (optional) - Two-letter language code (e.g., en, es, fr)
+- `country` (optional) - Two-letter country code (e.g., us, uk, fr)
+- `num-results` (optional) - Maximum results per page (default: 10)
 
-- `country` - Country code (us, uk, fr, etc.)
+**Example:**
+```
+/your-Google-Search-connection
+action: web-search
+query: Latest news about renewable energy
+location: New York
+language: en
+country: us
+```
 
-- `search type` - Regular, images, videos, news, shopping, etc.
-
-- `safe search` - Filter adult content
-
-- `results per page` - Number of results to return
-
-### Response Format
-
-The command returns:
+**Response:**
 ```json
 {
-  "organic_results": ["array of search results"],
-  "knowledge_graph": "featured information if available",
-  "related_questions": ["people also ask"],
-  "pagination": {
-    "current": "current page",
-    "total_results": "estimated total"
+  "search_information": {
+    "total_results": 1250000,
+    "time_taken_displayed": 0.45
+  },
+  "organic_results": [
+    {
+      "position": 1,
+      "title": "Renewable Energy News - Latest Updates",
+      "link": "https://example.com/renewable-news",
+      "snippet": "Get the latest news and updates on renewable energy...",
+      "source": "Example News"
+    }
+  ]
+}
+```
+
+### Image Search
+Search for images across the web
+
+**Parameters:**
+- `query` (required) - Image search query
+- `safe-search` (optional) - Filter adult content (active or off)
+- `num-results` (optional) - Maximum results per page
+
+**Example:**
+```
+/your-Google-Search-connection
+action: image-search
+query: solar panel installation
+safe-search: active
+```
+
+**Response:**
+```json
+{
+  "images_results": [
+    {
+      "position": 1,
+      "title": "Solar Panel Installation Guide",
+      "link": "https://example.com/solar-guide",
+      "original": "https://example.com/images/solar-panel.jpg",
+      "thumbnail": "https://example.com/thumb/solar-panel.jpg"
+    }
+  ]
+}
+```
+
+### News Search
+Search for news articles
+
+**Parameters:**
+- `query` (required) - News search query
+- `time-range` (optional) - Filter by date (e.g., past hour, past 24 hours, past week)
+- `location` (optional) - Location-specific news
+
+**Example:**
+```
+/your-Google-Search-connection
+action: news-search
+query: technology startups
+time-range: past week
+location: San Francisco
+```
+
+**Response:**
+```json
+{
+  "news_results": [
+    {
+      "position": 1,
+      "title": "Tech Startup Raises $50M in Series B",
+      "link": "https://technews.com/startup-funding",
+      "source": "Tech News",
+      "date": "2 days ago",
+      "snippet": "A promising tech startup announced..."
+    }
+  ]
+}
+```
+
+### Video Search
+Search for videos
+
+**Parameters:**
+- `query` (required) - Video search query
+- `duration` (optional) - Filter by duration (short, medium, long)
+
+**Example:**
+```
+/your-Google-Search-connection
+action: video-search
+query: machine learning tutorial
+duration: medium
+```
+
+**Response:**
+```json
+{
+  "video_results": [
+    {
+      "position": 1,
+      "title": "Machine Learning Basics - Complete Tutorial",
+      "link": "https://video.com/ml-tutorial",
+      "displayed_link": "video.com",
+      "duration": "15:30",
+      "platform": "YouTube"
+    }
+  ]
+}
+```
+
+### Local Search
+Search for local businesses and places
+
+**Parameters:**
+- `query` (required) - Local search query
+- `location` (required) - Location for local results
+- `radius` (optional) - Search radius in miles
+
+**Example:**
+```
+/your-Google-Search-connection
+action: local-search
+query: Italian restaurants
+location: Chicago
+radius: 5
+```
+
+**Response:**
+```json
+{
+  "local_results": [
+    {
+      "position": 1,
+      "title": "Luigi's Italian Restaurant",
+      "address": "123 Main St, Chicago, IL",
+      "rating": 4.5,
+      "reviews": 245,
+      "phone": "(312) 555-0123",
+      "hours": "Open until 10 PM"
+    }
+  ]
+}
+```
+
+### Shopping Search
+Search for products and prices
+
+**Parameters:**
+- `query` (required) - Product search query
+- `min-price` (optional) - Minimum price filter
+- `max-price` (optional) - Maximum price filter
+
+**Example:**
+```
+/your-Google-Search-connection
+action: shopping-search
+query: wireless headphones
+min-price: 50
+max-price: 200
+```
+
+**Response:**
+```json
+{
+  "shopping_results": [
+    {
+      "position": 1,
+      "title": "Premium Wireless Headphones",
+      "price": "$149.99",
+      "extracted_price": 149.99,
+      "link": "https://shop.com/headphones",
+      "source": "Electronics Store",
+      "rating": 4.3,
+      "reviews": 1250
+    }
+  ]
+}
+```
+
+### Advanced Search
+Search with advanced filters and parameters
+
+**Parameters:**
+- `query` (required) - Search query
+- `date-range` (optional) - Custom date range filter
+- `file-type` (optional) - Specific file type (pdf, doc, xls)
+- `site` (optional) - Limit to specific website
+- `exclude-terms` (optional) - Terms to exclude from results
+
+**Example:**
+```
+/your-Google-Search-connection
+action: advanced-search
+query: climate change research
+date-range: past year
+file-type: pdf
+site: .edu
+```
+
+**Response:**
+```json
+{
+  "organic_results": [
+    {
+      "position": 1,
+      "title": "Climate Change Research Paper 2024",
+      "link": "https://university.edu/research/climate-2024.pdf",
+      "file_format": "PDF",
+      "snippet": "Comprehensive analysis of climate change impacts..."
+    }
+  ],
+  "search_information": {
+    "query_displayed": "climate change research filetype:pdf site:.edu"
   }
 }
 ```
 
-## Examples
+## Notes 
 
-### Basic Usage
-```
-/google-search
-query: best coffee shops in Seattle
-```
-Simple web search for local business information.
-
-### Advanced Usage
-```
-/google-search
-query: latest technology news
-location: San Francisco
-language: en
-country: us
-search type: news
-```
-Localized news search with language and region filters.
-
-### Specific Use Case
-```
-/google-search
-query: laptop reviews 2024
-search type: regular
-safe search: active
-results per page: 20
-```
-Product research with safe search enabled and extended results.
-
-### Notes
-
-Supports multiple search types: regular, images, videos, news, shopping, patents. Provides knowledge graph information when available. Includes related questions and searches. Offers pagination for browsing multiple result pages. Respects localization settings for relevant regional results.
+Search results are paginated with 10 results per page by default. The start parameter accepts multiples of 10 for pagination (0, 10, 20). For local results, pagination uses multiples of 20. Location parameters can be city-level (e.g., "New York") or use country/language codes. The safe search filter helps exclude adult content. Different search types (images, videos, news, etc.) return specialized result formats.

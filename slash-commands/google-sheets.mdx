@@ -1,97 +1,265 @@
 ---
-title: "Google Sheets Command Guide"
-description: "Learn how to use the Google Sheets slash command to create and manage spreadsheets"
+title: "Google Sheets Guide"
+description: "Create and edit spreadsheets programmatically with data manipulation and formatting capabilities"
 ---
 
-The `/google-sheets` command enables you to create, read, update, and manage Google Sheets spreadsheets. Perfect for:
+## What can you do with it?
 
-- Creating new spreadsheets
-- Reading and updating data
-- Managing sheets/tabs
-- Creating pivot tables
-- Formatting spreadsheets
-- Bulk data operations
+Google Sheets allows you to create and modify spreadsheets programmatically. You can create new spreadsheets, add and manage sheets (tabs), read and update cell values, clear data ranges, copy formatting between sheets, and create pivot tables. This integration is perfect for data automation, report generation, and spreadsheet management workflows. For listing all spreadsheets, you'll need to use the Google Drive integration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Google Sheets:
-
+### Basic Command Structure
 ```
-/google-sheets create new spreadsheet "Q1 Sales Report"
+/your-Google-Sheets-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform on spreadsheets
+
+## Tools
+
+### Get Spreadsheet Info
+Retrieve information about a spreadsheet including sheets and properties
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+
+**Example:**
 ```
-/google-sheets in spreadsheet [ID] read data from "Sheet1"
+/your-Google-Sheets-connection
+action: get-spreadsheet-info
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
 ```
 
-```
-/google-sheets update row 5 in "Inventory" sheet with Product: "Widget", Quantity: 100
-```
-
-## Key Features
-
-### Spreadsheet Operations
-- Create new spreadsheets
-- Get spreadsheet information
-- List all sheets/tabs
-- Create new sheets
-
-### Data Management
-- Read data from ranges
-- Update cell values
-- Clear data ranges
-- Append new rows
-- Delete rows
-
-### Advanced Features
-- Create pivot tables
-- Copy formatting
-- Merge cells
-- Filter and sort data
-
-## Example Commands
-
-### Create Spreadsheet
-```
-/google-sheets create spreadsheet "Project Tracker" with sheets: Tasks, Timeline, Budget
+**Response:**
+```json
+{
+  "spreadsheetId": "1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE",
+  "properties": {
+    "title": "Expense report"
+  },
+  "sheets": [
+    {
+      "properties": {
+        "sheetId": 1483315145,
+        "title": "Expense report"
+      }
+    }
+  ]
+}
 ```
 
-### Read Data
+### Read Sheet Data
+Get data from a specific range in a sheet
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `sheet-name` (required) - Name of the sheet/tab
+- `range` (required) - Cell range to read (e.g., "A1:Z100" or "1:1" for first row)
+
+**Example:**
 ```
-/google-sheets read all data from "Sales" sheet in spreadsheet [ID]
+/your-Google-Sheets-connection
+action: read-data
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
+sheet-name: Expense report
+range: A1:D10
 ```
 
-### Update Data
-```
-/google-sheets in spreadsheet [ID] update "Inventory" A2:C2 with ["Product A", 50, "$25.99"]
+**Response:**
+```json
+{
+  "range": "Expense report!A1:D10",
+  "values": [
+    ["HEADER1", "HEADER2", "HEADER3", "HEADER4"],
+    ["1", "Who is the manager of Coldplay?", "ROSTR-ARTIST", "PENDING"],
+    ["2", "Who is the manager of Metallica?", "ROSTR-ARTIST", "PENDING"]
+  ]
+}
 ```
 
-### Add New Sheet
+### Update Sheet Data
+Update values in a specific range
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `sheet-name` (required) - Name of the sheet/tab
+- `range` (required) - Cell range to update
+- `values` (required) - Data to write (as a 2D array)
+
+**Example:**
 ```
-/google-sheets add new sheet "Q2 Results" to spreadsheet [ID]
+/your-Google-Sheets-connection
+action: update-data
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
+sheet-name: Expense report
+range: A1:B2
+values: [["Name", "Amount"], ["Office Supplies", "150.00"]]
+```
+
+**Response:**
+```json
+{
+  "spreadsheetId": "1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE",
+  "updatedRange": "Expense report!A1:B2",
+  "updatedRows": 2,
+  "updatedColumns": 2,
+  "updatedCells": 4
+}
 ```
 
 ### Clear Data
+Clear values from a specific range
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `sheet-name` (required) - Name of the sheet/tab
+- `range` (required) - Cell range to clear
+
+**Example:**
 ```
-/google-sheets clear rows 10-20 from "Old Data" sheet
+/your-Google-Sheets-connection
+action: clear-data
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
+sheet-name: Expense report
+range: A1:K30
+```
+
+**Response:**
+```json
+{
+  "spreadsheetId": "1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE",
+  "clearedRange": "Expense report!A1:K30"
+}
+```
+
+### Create New Sheet
+Add a new sheet (tab) to an existing spreadsheet
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `sheet-name` (required) - Name for the new sheet
+
+**Example:**
+```
+/your-Google-Sheets-connection
+action: create-sheet
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
+sheet-name: Q4 Report
+```
+
+**Response:**
+```json
+{
+  "spreadsheetId": "1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE",
+  "replies": [
+    {
+      "addSheet": {
+        "properties": {
+          "sheetId": 1539677652,
+          "title": "Q4 Report",
+          "index": 3
+        }
+      }
+    }
+  ]
+}
+```
+
+### Create Spreadsheet
+Create a new Google Sheets spreadsheet
+
+**Parameters:**
+- `title` (required) - Title for the new spreadsheet
+
+**Example:**
+```
+/your-Google-Sheets-connection
+action: create-spreadsheet
+title: Annual Budget 2024
+```
+
+**Response:**
+```json
+{
+  "spreadsheetId": "1iexMDwcCjFWHWehe59rXQTv8i8fYoUuiJm1kEsJUKo0",
+  "properties": {
+    "title": "Annual Budget 2024"
+  },
+  "sheets": [
+    {
+      "properties": {
+        "sheetId": 0,
+        "title": "Sheet1"
+      }
+    }
+  ],
+  "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1iexMDwcCjFWHWehe59rXQTv8i8fYoUuiJm1kEsJUKo0/edit"
+}
+```
+
+### Copy Format
+Copy formatting from one range to another
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `source-sheet-id` (required) - Sheet ID of the source
+- `destination-sheet-id` (required) - Sheet ID of the destination
+- `source-range` (optional) - Source range boundaries
+- `destination-range` (optional) - Destination range boundaries
+
+**Example:**
+```
+/your-Google-Sheets-connection
+action: copy-format
+spreadsheet-id: 1gstIO5p3YjuOqAIP1PzLGdm6YtL1dI0lXjPiFNqcfKQ
+source-sheet-id: 1483315145
+destination-sheet-id: 1539677652
+```
+
+**Response:**
+```json
+{
+  "spreadsheetId": "1gstIO5p3YjuOqAIP1PzLGdm6YtL1dI0lXjPiFNqcfKQ",
+  "replies": [{}]
+}
 ```
 
 ### Create Pivot Table
+Create a pivot table from data
+
+**Parameters:**
+- `spreadsheet-id` (required) - The ID of the spreadsheet
+- `sheet-id` (required) - Sheet ID where pivot table will be created
+- `source-data` (required) - Source data range
+- `sort-order` (optional) - Sort order (ASCENDING or DESCENDING)
+
+**Example:**
 ```
-/google-sheets create pivot table in "Summary" sheet from data in "Sales" A1:D100
+/your-Google-Sheets-connection
+action: create-pivot
+spreadsheet-id: 1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE
+sheet-id: 1539677652
+source-data: A1:D100
+sort-order: ASCENDING
 ```
 
-## Finding Spreadsheet IDs
+**Response:**
+```json
+{
+  "spreadsheetId": "1tT6pLVw3yRe1ojY4kUyJ3zxc1Sd8UK7dkStnDEktLmE",
+  "replies": [
+    {
+      "updateCells": {}
+    }
+  ]
+}
+```
 
-To find a spreadsheet ID:
-1. Open the spreadsheet in Google Sheets
-2. Look at the URL: `https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit`
-3. The ID is the long string between `/d/` and `/edit`
+## Notes 
 
-**Tip**: Connect Google Drive for easier spreadsheet management without needing IDs.
-
-## Tips
-- Always specify the sheet name when working with data
-- Use A1 notation for ranges (e.g., "A1:C10")
-- The command will fetch sheet information automatically
-- For large datasets, work with specific ranges rather than entire sheets 
+To list all spreadsheets, use the Google Drive integration. Always fetch spreadsheet data first before performing operations. Never assume sheet IDs - retrieve them dynamically. When referring to "sheet," it can mean either a specific tab within a spreadsheet or the entire spreadsheet. Range notation follows A1 notation (e.g., "A1:B10" or "Sheet1!A1:B10"). 

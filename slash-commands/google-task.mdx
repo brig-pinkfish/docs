@@ -1,352 +1,280 @@
 ---
-title: "Google Task Command Guide"
-description: "Learn how to use the Google Task slash command to manage task lists and tasks"
+title: "Google Task Guide"
+description: "Manage task lists and tasks in Google Tasks with comprehensive task management capabilities"
 ---
 
-The `/google-task` command enables you to manage Google Tasks, including task lists and individual tasks. Perfect for:
+## What can you do with it?
 
-- Creating and managing task lists
-- Adding and updating tasks
-- Setting due dates and notes
-- Creating subtasks
-- Marking tasks as complete
-- Organizing personal and team tasks
+Google Task allows you to manage task lists and individual tasks programmatically. You can create, read, update, and delete task lists, add tasks with due dates and notes, organize tasks into subtasks, mark tasks as completed, and clear completed tasks. This integration is perfect for task management workflows, to-do list automation, and project organization.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Google Tasks:
-
+### Basic Command Structure
 ```
-/google-task create new task list "Home Renovation"
+/your-Google-Task-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform on task lists or tasks
+
+## Tools
+
+### List All Task Lists
+Get all task lists for the authenticated user
+
+**Parameters:**
+- None required
+
+**Example:**
 ```
-/google-task add task "Buy paint" with due date March 15th
-```
-
-```
-/google-task mark task as completed
-```
-
-## Key Features
-
-### Task List Management
-- Create new task lists
-- Get all task lists
-- Update task list names
-- Delete task lists
-- Organize by categories
-
-### Task Operations
-- Add new tasks
-- Update task details
-- Mark as complete
-- Create subtasks
-- Set due dates
-- Add notes and descriptions
-
-### Advanced Features
-- Move tasks between positions
-- Parent-child relationships
-- Batch operations
-- Clear completed tasks
-- Search and filter
-
-## Example Commands
-
-### Create Task List
-```
-/google-task create "Work Projects" task list
+/your-Google-Task-connection
+action: list-tasklists
 ```
 
-### Add Task with Details
-```
-/google-task add "Call contractor" with due date March 7th and notes "Discuss timeline"
-```
-
-### Create Subtask
-```
-/google-task create subtask "Measure bathroom dimensions" under "Purchase tiles"
-```
-
-### Mark Complete
-```
-/google-task complete task "Buy paint"
-```
-
-### Update Task
-```
-/google-task update task to "Buy premium paint" with new due date
-```
-
-## Task List ID Extraction
-
-### From URL
-```javascript
-// URL: https://mail.google.com/tasks/canvas?tasklistid=[TASK_LIST_ID]&...
-const taskListId = taskListUrl.split('tasklistid=')[1].split('&')[0];
-```
-
-### Common URL Formats
-- Gmail Tasks: `/tasks/canvas?tasklistid=ID`
-- Google Calendar: `/calendar/r/week?tasklistid=ID`
-- Direct links: `/tasks/list/ID`
-
-## Task List Operations
-
-### Get All Task Lists
-```javascript
-// Retrieve all user's task lists
-const url = GOOGLE_TASK_URL + "users/@me/lists";
-```
-
-### Create Task List
-```javascript
+**Response:**
+```json
 {
-  "title": "Home Renovation"
-}
-```
-
-### Update Task List
-```javascript
-{
-  "title": "Home Renovation 2025"
-}
-```
-
-### Delete Task List
-```javascript
-// DELETE request returns 204 status
-```
-
-## Task Operations
-
-### Get Tasks in List
-```javascript
-// Get all tasks
-const url = GOOGLE_TASK_URL + `lists/${TASK_LIST_ID}/tasks`;
-
-// Include completed tasks
-const url = GOOGLE_TASK_URL + `lists/${TASK_LIST_ID}/tasks?showCompleted=true`;
-
-// Include hidden tasks
-const url = GOOGLE_TASK_URL + `lists/${TASK_LIST_ID}/tasks?showHidden=true`;
-```
-
-### Create Task
-```javascript
-{
-  "title": "Purchase tiles",
-  "notes": "Ceramic tiles for bathroom floor - 20 sq ft",
-  "due": "2025-03-20T00:00:00.000Z"
-}
-```
-
-### Create Subtask
-```javascript
-{
-  "title": "Measure bathroom dimensions",
-  "parent": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM",
-  "due": "2025-03-18T00:00:00.000Z"
-}
-```
-
-## Task Properties
-
-### Basic Fields
-- **title**: Task name (required)
-- **notes**: Detailed description
-- **due**: Due date in ISO format
-- **status**: "needsAction" or "completed"
-- **position**: Order in list
-
-### Advanced Fields
-- **parent**: Parent task ID for subtasks
-- **completed**: Completion timestamp
-- **updated**: Last modification time
-- **selfLink**: API reference URL
-
-## Task Status Management
-
-### Mark as Completed
-```javascript
-{
-  "status": "completed"
-}
-```
-
-### Reopen Task
-```javascript
-{
-  "status": "needsAction"
-}
-```
-
-### Update with Details
-```javascript
-{
-  "title": "Buy premium paint",
-  "notes": "Need 2 gallons of eggshell white for living room - get the premium brand",
-  "due": "2025-03-16T00:00:00.000Z"
-}
-```
-
-## Task Movement
-
-### Move Task Position
-```javascript
-// Use PATCH with query parameters
-const url = GOOGLE_TASK_URL + `lists/${TASK_LIST_ID}/tasks/${TASK_ID}?previous=${PREVIOUS_TASK_ID}&parent=${PARENT_TASK_ID}`;
-```
-
-### Position Parameters
-- **previous**: Task ID to position after
-- **parent**: Parent task ID (for subtasks)
-- Both parameters optional
-
-## Response Structures
-
-### Task List Response
-```javascript
-{
-  "kind": "tasks#taskLists",
   "items": [
     {
-      "kind": "tasks#taskList",
       "id": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTA",
       "title": "My Tasks",
-      "updated": "2023-07-15T10:30:22.000Z",
-      "selfLink": "https://www.googleapis.com/tasks/v1/users/@me/lists/MTIzNDU2Nzg5MDEyMzQ1Njc4OTA"
+      "updated": "2023-07-15T10:30:22.000Z"
     }
   ]
 }
 ```
 
-### Task Response
-```javascript
+### Create Task List
+Create a new task list
+
+**Parameters:**
+- `title` (required) - Name of the new task list
+
+**Example:**
+```
+/your-Google-Task-connection
+action: create-tasklist
+title: Home Renovation
+```
+
+**Response:**
+```json
 {
-  "kind": "tasks#task",
-  "id": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI",
-  "title": "Buy paint",
-  "updated": "2025-03-05T08:22:13.000Z",
-  "position": "00000000000000000001",
-  "notes": "Need 2 gallons of eggshell white for living room",
-  "status": "needsAction",
-  "due": "2025-03-15T00:00:00.000Z"
+  "id": "OTAxMjM0NTY3ODkwMTIzNDU2Nzg5",
+  "title": "Home Renovation",
+  "updated": "2025-03-08T09:15:32.000Z"
 }
 ```
 
-## Date Handling
+### Update Task List
+Update an existing task list
 
-### Due Date Format
-```javascript
-// ISO 8601 format
-"due": "2025-03-20T00:00:00.000Z"
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list to update
+- `title` (required) - New title for the task list
 
-// Date only (no time)
-"due": "2025-03-20T00:00:00.000Z"
+**Example:**
+```
+/your-Google-Task-connection
+action: update-tasklist
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+title: Home Renovation 2025
 ```
 
-### Date Display
-- Format for user: "March 15, 2025"
-- API format: ISO 8601 string
-- Time zone considerations
-- Date-only tasks
+**Response:**
+```json
+{
+  "id": "OTAxMjM0NTY3ODkwMTIzNDU2Nzg5",
+  "title": "Home Renovation 2025",
+  "updated": "2025-03-08T09:25:45.000Z"
+}
+```
 
-## Batch Operations
+### Delete Task List
+Delete a task list
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list to delete
+
+**Example:**
+```
+/your-Google-Task-connection
+action: delete-tasklist
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
+```
+
+### List Tasks
+Get all tasks in a specific task list
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+- `show-completed` (optional) - Include completed tasks (default: false)
+- `show-hidden` (optional) - Include hidden tasks (default: false)
+
+**Example:**
+```
+/your-Google-Task-connection
+action: list-tasks
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+show-completed: true
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI",
+      "title": "Buy paint",
+      "status": "needsAction",
+      "due": "2025-03-15T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### Create Task
+Create a new task in a task list
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+- `title` (required) - Title of the task
+- `notes` (optional) - Additional notes for the task
+- `due` (optional) - Due date in ISO format
+- `parent` (optional) - Parent task ID to create a subtask
+
+**Example:**
+```
+/your-Google-Task-connection
+action: create-task
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+title: Purchase tiles
+notes: Ceramic tiles for bathroom floor - 20 sq ft
+due: 2025-03-20T00:00:00.000Z
+```
+
+**Response:**
+```json
+{
+  "id": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM",
+  "title": "Purchase tiles",
+  "notes": "Ceramic tiles for bathroom floor - 20 sq ft",
+  "status": "needsAction",
+  "due": "2025-03-20T00:00:00.000Z"
+}
+```
+
+### Update Task
+Update an existing task
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+- `task-id` (required) - The ID of the task to update
+- `title` (optional) - New title for the task
+- `notes` (optional) - Updated notes
+- `due` (optional) - New due date
+- `status` (optional) - Task status ("needsAction" or "completed")
+
+**Example:**
+```
+/your-Google-Task-connection
+action: update-task
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+task-id: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI
+title: Buy premium paint
+status: completed
+```
+
+**Response:**
+```json
+{
+  "id": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI",
+  "title": "Buy premium paint",
+  "status": "completed",
+  "completed": "2025-03-08T09:45:22.000Z"
+}
+```
+
+### Move Task
+Move a task to a different position or make it a subtask
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+- `task-id` (required) - The ID of the task to move
+- `previous` (optional) - ID of the task that should come before this task
+- `parent` (optional) - ID of the parent task to make this a subtask
+
+**Example:**
+```
+/your-Google-Task-connection
+action: move-task
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+task-id: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI
+parent: MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM
+```
+
+**Response:**
+```json
+{
+  "id": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI",
+  "title": "Buy premium paint",
+  "parent": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM",
+  "position": "00000000000000000002"
+}
+```
+
+### Delete Task
+Delete a specific task
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+- `task-id` (required) - The ID of the task to delete
+
+**Example:**
+```
+/your-Google-Task-connection
+action: delete-task
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
+task-id: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
+```
 
 ### Clear Completed Tasks
-```javascript
-// Remove all completed tasks from list
-const url = GOOGLE_TASK_URL + `lists/${TASK_LIST_ID}/clear`;
+Remove all completed tasks from a task list
+
+**Parameters:**
+- `tasklist-id` (required) - The ID of the task list
+
+**Example:**
+```
+/your-Google-Task-connection
+action: clear-completed
+tasklist-id: OTAxMjM0NTY3ODkwMTIzNDU2Nzg5
 ```
 
-### Multiple Task Updates
-- Update tasks individually
-- Use efficient API calls
-- Handle errors per task
-- Maintain consistency
-
-## Best Practices
-
-1. **Task Organization**
-   - Use descriptive task list names
-   - Group related tasks together
-   - Utilize subtasks for complex projects
-   - Set realistic due dates
-
-2. **API Usage**
-   - Cache task list IDs
-   - Batch related operations
-   - Handle rate limits
-   - Use appropriate query parameters
-
-3. **Data Management**
-   - Format dates consistently
-   - Validate task relationships
-   - Handle parent-child dependencies
-   - Clean up completed tasks
-
-4. **User Experience**
-   - Display dates in readable format
-   - Show task hierarchy clearly
-   - Indicate completion status
-   - Provide clear feedback
-
-## Common Use Cases
-
-### Project Management
-```
-/google-task create project task list with milestones and deadlines
+**Response:**
+```json
+{
+  "status": "cleared"
+}
 ```
 
-### Daily Planning
-```
-/google-task add today's tasks with priorities and time estimates
-```
+## Notes 
 
-### Team Coordination
-```
-/google-task create shared task list for team collaboration
-```
-
-### Personal Organization
-```
-/google-task organize personal tasks by categories and due dates
-```
-
-## Error Handling
-
-### Common Errors
-- Invalid task list ID
-- Task not found
-- Permission denied
-- Invalid date format
-
-### Error Prevention
-- Validate IDs before use
-- Check task existence
-- Format dates properly
-- Handle API limits
-
-## Integration Tips
-
-### With Calendar
-- Sync due dates with calendar events
-- Show tasks in calendar view
-- Set reminders for due dates
-- Coordinate scheduling
-
-### With Email
-- Create tasks from emails
-- Send task updates via email
-- Link tasks to email threads
-- Automate task creation
-
-## Tips
-- Extract task list ID from Gmail Tasks URL when needed
-- Use ISO 8601 format for due dates in API calls
-- Create subtasks by specifying parent task ID
-- Clear completed tasks periodically to maintain clean lists
-- Use descriptive notes for complex tasks
-- Leverage task positioning for priority ordering 
+Task list IDs can be extracted from Google Tasks URLs using the pattern: tasklistid=[TASK_LIST_ID]. Due dates should be provided in ISO 8601 format. Tasks can be organized hierarchically using parent-child relationships. The status field accepts "needsAction" for pending tasks and "completed" for finished tasks. 

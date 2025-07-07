@@ -1,104 +1,273 @@
 ---
-title: "Gmail Command Guide"
-description: "Learn how to use the Gmail slash command to manage emails"
+title: "Gmail Guide"
+description: "Send, receive, and manage emails with labels, search, and attachment handling"
 ---
 
-The `/gmail` command enables you to send, receive, and manage emails in Gmail. Perfect for:
+## What can you do with it?
 
-- Sending emails
-- Reading emails
-- Searching messages
-- Managing labels
-- Handling attachments
+Gmail allows you to manage email communications programmatically. You can send emails with custom content, retrieve and read specific emails, search messages by various criteria including date ranges, manage email labels for organization, handle attachments properly, and modify message properties. This integration is perfect for email automation, inbox management, and communication workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Gmail:
-
+### Basic Command Structure
 ```
-/gmail send email to john@example.com subject "Meeting Tomorrow" body "Let's meet at 10am"
+/your-Gmail-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/gmail search emails from last week
-```
+### Parameters
 
-```
-/gmail show email ID 193d95c09459b8cc
-```
+**Required:**
 
-## Key Features
+- `action` - The operation to perform with Gmail
 
-### Email Operations
-- Send emails
-- Read email content
-- Get email details
-- Access attachments
-- View email threads
-
-### Search Functionality
-- Search by date range
-- Search by sender/recipient
-- Search by subject
-- Search in specific folders
-- Advanced query filters
-
-### Label Management
-- Apply labels to emails
-- Remove labels
-- Move emails between folders
-- Create custom labels
-
-### Attachment Handling
-- Save attachments
-- Support for all file types
-- Preserve original formats
-
-## Example Commands
+## Tools
 
 ### Send Email
+Send a new email message
+
+**Parameters:**
+- `to` (required) - Email address of the recipient
+- `subject` (required) - Subject of the email
+- `body` (required) - Content of the email
+- `from` (optional) - Sender email (defaults to authenticated user)
+
+**Example:**
 ```
-/gmail compose email to jane@company.com subject "Project Update" message "The project is on track..."
+/your-Gmail-connection
+action: send-email
+to: jane@example.com
+subject: Test Email from Automation
+body: This is a test email sent from an automation. Cheers, Your Automation
+```
+
+**Response:**
+```json
+{
+  "id": "193d95c09459b8cc",
+  "threadId": "193d95c09459b8cc",
+  "labelIds": ["SENT"]
+}
+```
+
+### Get Email
+Retrieve a specific email by ID
+
+**Parameters:**
+- `message-id` (required) - The ID of the email message
+
+**Example:**
+```
+/your-Gmail-connection
+action: get-email
+message-id: 1936f3ac1c009ee
+```
+
+**Response:**
+```json
+{
+  "id": "193d6f3ac1c009ee",
+  "threadId": "193d6f3ac1c009ee",
+  "labelIds": ["CATEGORY_PERSONAL", "INBOX"],
+  "snippet": "Hello, I'm a product manager working on...",
+  "payload": {
+    "headers": [
+      {
+        "name": "From",
+        "value": "sender@example.com"
+      },
+      {
+        "name": "Subject",
+        "value": "Important Message"
+      }
+    ],
+    "parts": [
+      {
+        "mimeType": "text/plain",
+        "body": {
+          "data": "[EMAIL CONTENT]"
+        }
+      }
+    ]
+  }
+}
 ```
 
 ### Search Emails
+Search for emails using Gmail search syntax
+
+**Parameters:**
+- `query` (required) - Search query using Gmail search operators
+- `label` (optional) - Filter by specific label
+- `from-date` (optional) - Start date for search (Unix timestamp)
+- `to-date` (optional) - End date for search (Unix timestamp)
+
+**Example:**
 ```
-/gmail find emails from support@service.com after January 1, 2024
+/your-Gmail-connection
+action: search-emails
+query: from:important@company.com
+label: INBOX
+from-date: 1388552400
+to-date: 1391230800
 ```
 
-### Read Email
-```
-/gmail show details of email ID 193d95c09459b8cc
+**Response:**
+```json
+{
+  "messages": [
+    {
+      "id": "193d95c09459b8cc",
+      "threadId": "193d95c09459b8cc"
+    },
+    {
+      "id": "193d95bb59a438f6",
+      "threadId": "193d95bb59a438f6"
+    }
+  ],
+  "resultSizeEstimate": 2
+}
 ```
 
-### Search by Date
+### List Labels
+Get all labels in the Gmail account
+
+**Parameters:**
+- None required
+
+**Example:**
 ```
-/gmail search sent emails between January 1 and January 31, 2024
+/your-Gmail-connection
+action: list-labels
 ```
 
-### Apply Label
+**Response:**
+```json
+{
+  "labels": [
+    {
+      "id": "INBOX",
+      "name": "INBOX",
+      "type": "system"
+    },
+    {
+      "id": "Label_1281231071272897110",
+      "name": "Archived Clients",
+      "type": "user"
+    }
+  ]
+}
 ```
-/gmail add label "Important" to email ID 193d95c09459b8cc
+
+### Add Label
+Add a label to an email message
+
+**Parameters:**
+- `message-id` (required) - The ID of the email message
+- `label-name` (required) - Name of the label to add
+
+**Example:**
+```
+/your-Gmail-connection
+action: add-label
+message-id: 1932ba8492f8c06e
+label-name: Important
+```
+
+**Response:**
+```json
+{
+  "id": "1932ba8492f8c06e",
+  "threadId": "1932ba8492f8c06e",
+  "labelIds": [
+    "IMPORTANT",
+    "Label_1463535654189801540",
+    "CATEGORY_PERSONAL"
+  ]
+}
+```
+
+### Remove Label
+Remove a label from an email message
+
+**Parameters:**
+- `message-id` (required) - The ID of the email message
+- `label-name` (required) - Name of the label to remove
+
+**Example:**
+```
+/your-Gmail-connection
+action: remove-label
+message-id: 1932ba8492f8c06e
+label-name: INBOX
+```
+
+**Response:**
+```json
+{
+  "id": "1932ba8492f8c06e",
+  "threadId": "1932ba8492f8c06e",
+  "labelIds": [
+    "IMPORTANT",
+    "CATEGORY_PERSONAL"
+  ]
+}
 ```
 
 ### Move Email
+Move an email to a different label/folder
+
+**Parameters:**
+- `message-id` (required) - The ID of the email message
+- `to-label` (required) - Destination label name
+- `from-label` (optional) - Label to remove (often INBOX)
+
+**Example:**
 ```
-/gmail move email ID 193d95c09459b8cc to "Archived Clients" folder
+/your-Gmail-connection
+action: move-email
+message-id: 1932ba8492f8c06e
+to-label: Archived Clients
+from-label: INBOX
 ```
 
-## Search Operators
+**Response:**
+```json
+{
+  "id": "1932ba8492f8c06e",
+  "labelIds": [
+    "Label_1281231071272897110"
+  ]
+}
+```
 
-Gmail search syntax:
-- **from:**: Sender email
-- **to:**: Recipient email
-- **subject:**: Email subject
-- **after:**: After date (Unix timestamp)
-- **before:**: Before date (Unix timestamp)
-- **in:**: Folder (inbox, sent, drafts)
-- **has:attachment**: Emails with attachments
+### Handle Attachments
+Download and save email attachments
 
-## Tips
-- Use "me" to reference your own email address when sending
-- Dates in searches use Unix timestamps (seconds)
-- Email IDs are unique identifiers from Gmail
-- Labels are case-insensitive when searching 
+**Parameters:**
+- `message-id` (required) - The ID of the email with attachments
+- `save-location` (optional) - Where to save attachments
+
+**Example:**
+```
+/your-Gmail-connection
+action: handle-attachments
+message-id: 193d6f3ac1c009ee
+```
+
+**Response:**
+```json
+{
+  "attachments": [
+    {
+      "filename": "document.pdf",
+      "mimeType": "application/pdf",
+      "size": 102400,
+      "saved": true
+    }
+  ]
+}
+```
+
+## Notes 
+
+Email content is base64 encoded when sending. The 'me' keyword represents the authenticated user and should only be used for the sender, never the recipient. Date searches use Unix timestamps in seconds. Label searches are case-insensitive. Binary attachments (pdf, images, office files) must be handled with proper file type detection to avoid corruption. Gmail search operators like "from:", "to:", "subject:", "has:attachment" can be used in search queries. 
