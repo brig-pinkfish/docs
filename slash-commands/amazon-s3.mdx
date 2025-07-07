@@ -1,101 +1,442 @@
 ---
-title: "Amazon S3 Command Guide"
-description: "Learn how to use the Amazon S3 slash command to manage cloud storage"
+title: Amazon S3 Guide
+description: With Amazon S3, manage files and folders in buckets. Upload, download, organize, and access your files with presigned URLs.
 ---
 
-The `/amazon-s3` command enables you to manage files, folders, and buckets in Amazon S3. Perfect for:
+# Amazon S3
 
-- Uploading and downloading files
-- Creating and managing folders
-- Listing bucket contents
-- Generating presigned URLs
-- Managing cloud storage
+## What can you do with it?
 
-## Basic Usage
+Amazon S3 is a cloud storage service that allows you to store and retrieve any amount of data from anywhere. With this skill, you can:
 
-Use the command to interact with S3:
+- **File Management**: Upload, download, and delete files of any type (text, images, PDFs, etc.)
+- **Folder Organization**: Create and delete folders to organize your files
+- **Bucket Operations**: List all buckets in your account
+- **Content Listing**: List files and folders with metadata (size, last modified date, etc.)
+- **Binary File Access**: Direct access to images, PDFs, and other binary files
+- **Presigned URLs**: Generate temporary URLs for secure file sharing
+- **Text File Operations**: Upload and view text/JSON files with content validation
 
-```
-/amazon-s3 upload file.pdf to bucket "my-docs" folder "reports"
-```
+## How to use it?
 
-```
-/amazon-s3 list all files in bucket "my-bucket" folder "images"
-```
+To use Amazon S3, you'll need to connect your S3 account first. Once connected, you can perform file operations using the command format:
 
 ```
-/amazon-s3 download "report.xlsx" from bucket "data" folder "exports"
+/your-amazon-s3-connection [operation] [parameters]
 ```
 
-## Key Features
+## Tools
 
-### File Operations
-- Upload files to S3
-- Download files from S3
-- Delete files
-- View file contents
-- Generate presigned URLs
+### 1. List Buckets
+List all buckets in your S3 account.
 
-### Folder Management
-- Create folders
-- Delete folders
-- List folder contents
-- Navigate folder structure
+**Parameters:**
+- None required
 
-### Bucket Operations
-- List all buckets
-- List bucket contents
-- Filter by prefix
-- Set storage class
-
-### Access Control
-- Generate presigned URLs
-- Set expiration times
-- Temporary access links
-
-## Example Commands
-
-### Upload File
+**Example:**
 ```
-/amazon-s3 upload "presentation.pptx" to bucket "company-files" folder "presentations"
+/your-amazon-s3-connection list buckets
 ```
 
-### List Files
-```
-/amazon-s3 show all files in bucket "project-assets" folder "documents"
-```
-
-### Download File
-```
-/amazon-s3 download "logo.png" from bucket "marketing" folder "brand-assets"
-```
-
-### Create Folder
-```
-/amazon-s3 create folder "2024-reports" in bucket "financial-data"
-```
-
-### Generate Presigned URL
-```
-/amazon-s3 generate presigned URL for "product-demo.mp4" in bucket "videos" expires in 1 hour
-```
-
-### View Text File
-```
-/amazon-s3 show contents of "config.json" in bucket "app-settings"
+**Response:**
+```json
+{
+  "output": {
+    "ListAllMyBucketsResult": {
+      "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+      "Owner": {
+        "ID": "a0733835038b406a2851b787a2b77c622de0175d348c75ae3d7394b8ca91fabe",
+        "DisplayName": "benjaminrigby"
+      },
+      "Buckets": {
+        "Bucket": [
+          {
+            "Name": "my-bucket",
+            "CreationDate": "2024-12-10T12:00:00Z"
+          }
+        ]
+      }
+    }
+  }
+}
 ```
 
-## File Types
+### 2. Create Folder
+Create an empty folder in an S3 bucket.
 
-S3 supports all file types:
-- **Documents**: PDF, DOCX, XLSX, PPTX
-- **Images**: PNG, JPG, GIF, SVG
-- **Data**: JSON, CSV, XML, TXT
-- **Media**: MP4, MP3, MOV
-- **Archives**: ZIP, TAR, GZ
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder_name`: The name of the folder to create
 
-## Tips
-- Folder names should end with a forward slash (/)
-- Use presigned URLs for temporary file sharing
-- Binary files (images, PDFs) can be directly accessed via URLs
-- Text files can be viewed directly without downloading 
+**Example:**
+```
+/your-amazon-s3-connection create folder in bucket "my-bucket" named "documents"
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "output": {
+    "message": "Folder 'documents/' created successfully in bucket 'my-bucket'."
+  }
+}
+```
+
+### 3. Delete Folder
+Delete a folder and all its contents from an S3 bucket.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder_name`: The name of the folder to delete
+
+**Example:**
+```
+/your-amazon-s3-connection delete folder "documents" from bucket "my-bucket"
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Folder deleted successfully"
+}
+```
+
+### 4. Upload File
+Upload a file to a specific bucket and folder.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file
+- `content`: The file content (text or binary)
+- `content_type`: The MIME type of the file
+
+**Example:**
+```
+/your-amazon-s3-connection upload file "document.txt" to bucket "my-bucket" folder "documents" with content "Hello World"
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "output": {
+    "message": "File 'document.txt' uploaded successfully to 'my-bucket/documents/'."
+  }
+}
+```
+
+### 5. Download File
+Download a file from a specific bucket and folder.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file to download
+
+**Example:**
+```
+/your-amazon-s3-connection download file "document.txt" from bucket "my-bucket" folder "documents"
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "headers": {
+    "Content-Type": "text/plain",
+    "Content-Length": 1234,
+    "X-Paragon-Use-Raw-Response": 1
+  },
+  "output": {
+    "fileContent": "Hello World",
+    "message": "File 'document.txt' downloaded successfully from 'my-bucket/documents/'."
+  }
+}
+```
+
+### 6. List Files
+List all files and folders in a specific bucket and folder.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path to list (optional)
+- `prefix`: Filter files by prefix (optional)
+- `max_keys`: Maximum number of keys to return (default: 1000)
+
+**Example:**
+```
+/your-amazon-s3-connection list files in bucket "my-bucket" folder "documents"
+```
+
+**Response:**
+```json
+{
+  "status": 200,
+  "output": {
+    "files": [
+      {
+        "key": "documents/file1.txt",
+        "size": 1234,
+        "lastModified": "2024-12-10T12:00:00Z"
+      },
+      {
+        "key": "documents/file2.jpg",
+        "size": 5678,
+        "lastModified": "2024-12-10T13:00:00Z"
+      }
+    ],
+    "message": "Listed all files in 'my-bucket/documents/'."
+  }
+}
+```
+
+### 7. List Objects
+List objects within a bucket with detailed metadata.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `prefix`: Filter objects by prefix (optional)
+- `delimiter`: Delimiter for grouping (optional, default: "/")
+- `max_keys`: Maximum number of keys to return (default: 1000)
+
+**Example:**
+```
+/your-amazon-s3-connection list objects in bucket "my-bucket" with prefix "documents/"
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "ListBucketResult": {
+      "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+      "Name": "my-bucket",
+      "Prefix": "documents/",
+      "KeyCount": "3",
+      "MaxKeys": "1000",
+      "Delimiter": "/",
+      "IsTruncated": "false",
+      "Contents": [
+        {
+          "Key": "documents/",
+          "LastModified": "2025-04-19T06:56:04.000Z",
+          "ETag": "\"d41d8cd98f00b204e9800998ecf8427e\"",
+          "ChecksumAlgorithm": "CRC64NVME",
+          "ChecksumType": "FULL_OBJECT",
+          "Size": "0",
+          "StorageClass": "STANDARD"
+        },
+        {
+          "Key": "documents/file.txt",
+          "LastModified": "2025-04-19T07:20:29.000Z",
+          "ETag": "\"098f6bcd4621d373cade4e832627b4f6\"",
+          "ChecksumAlgorithm": "CRC64NVME",
+          "ChecksumType": "FULL_OBJECT",
+          "Size": "1359"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 8. Upload Text/JSON Object
+Upload a text or JSON file to S3.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file
+- `content`: The JSON or text content
+
+**Example:**
+```
+/your-amazon-s3-connection upload JSON file "config.json" to bucket "my-bucket" folder "configs" with content {"name": "app", "version": "1.0"}
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "message": "File config.json is created/updated successfully",
+    "success": true,
+    "path": "configs/config.json"
+  }
+}
+```
+
+### 9. Delete File
+Delete a file from S3.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file to delete
+
+**Example:**
+```
+/your-amazon-s3-connection delete file "config.json" from bucket "my-bucket" folder "configs"
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "File deleted successfully"
+}
+```
+
+### 10. View Object Content
+View the content of an S3 object (JSON or text).
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file to view
+
+**Example:**
+```
+/your-amazon-s3-connection view file "config.json" from bucket "my-bucket" folder "configs"
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "name": "app",
+    "version": "1.0"
+  }
+}
+```
+
+### 11. View Text File Content
+View the content of a text file from S3.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the text file to view
+
+**Example:**
+```
+/your-amazon-s3-connection view text file "readme.txt" from bucket "my-bucket" folder "docs"
+```
+
+**Response:**
+```json
+{
+  "output": "This is a sample text file content.\nIt can contain multiple lines.\nPerfect for documentation and notes."
+}
+```
+
+### 12. Access Binary Files
+Access binary files (images, PDFs, etc.) directly for use in HTML or applications.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the binary file
+
+**Example:**
+```
+/your-amazon-s3-connection access image "photo.png" from bucket "my-bucket" folder "images"
+```
+
+**Response:**
+```
+Returns the binary file with correct content-type headers
+Can be used directly in HTML: <img src="URL" alt="Image from S3">
+```
+
+### 13. Generate Presigned URL
+Generate a presigned URL for temporary access to a file.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path (optional)
+- `filename`: The name of the file
+- `expires`: Expiration time in seconds (optional, default: 3600)
+
+**Example:**
+```
+/your-amazon-s3-connection generate presigned URL for file "photo.png" in bucket "my-bucket" folder "images" expires in 7200 seconds
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "presignedUrl": "https://my-bucket.s3.amazonaws.com/images/photo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...",
+    "message": "Presigned URL generated successfully for images/photo.png",
+    "success": true,
+    "expiresIn": 7200
+  }
+}
+```
+
+### 14. List Folder Contents
+List contents of a specific folder in a bucket with detailed metadata.
+
+**Parameters:**
+- `bucket`: The name of the bucket
+- `folder`: The folder path to list
+- `delimiter`: Delimiter for grouping (optional, default: "/")
+
+**Example:**
+```
+/your-amazon-s3-connection list folder "documents" contents in bucket "my-bucket"
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "ListBucketResult": {
+      "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+      "Name": "my-bucket",
+      "Prefix": "documents/",
+      "Marker": "",
+      "MaxKeys": "1000",
+      "Delimiter": "/",
+      "IsTruncated": "false",
+      "Contents": [
+        {
+          "Key": "documents/file1.txt",
+          "LastModified": "2025-04-19T06:33:08.000Z",
+          "ETag": "\"0be829e74caf986528a6572419cf4e17\"",
+          "ChecksumAlgorithm": "CRC64NVME",
+          "ChecksumType": "FULL_OBJECT",
+          "Size": "52",
+          "Owner": {
+            "ID": "a0733835038b406a2851b787a2b77c622de0175d348c75ae3d7394b8ca91fabe",
+            "DisplayName": "benjaminrigby"
+          },
+          "StorageClass": "STANDARD"
+        }
+      ],
+      "CommonPrefixes": [
+        {
+          "Prefix": "documents/subfolder1/"
+        },
+        {
+          "Prefix": "documents/subfolder2/"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Notes
+
+- **Proxy Support**: Amazon S3 supports both PinkConnect and Paragon proxy connections
+- **Binary Files**: For binary file downloads, the `X-Paragon-Use-Raw-Response: 1` header is mandatory
+- **Content Types**: Proper content-type headers are important for file uploads and downloads
+- **Folder Structure**: S3 uses a flat structure with keys that simulate folders using "/" delimiters
+- **Presigned URLs**: Generated URLs expire after the specified time and provide temporary access without credentials
+- **File Handling**: Supports all file types including text, JSON, images, PDFs, and other binary formats
+- **Metadata**: List operations return detailed metadata including size, last modified date, ETag, and storage class
+- **Error Handling**: DELETE operations return 204 status with no content when successful 
