@@ -1,199 +1,88 @@
----
-title: "Firecrawl Command Guide"
-description: "Learn how to use the Firecrawl slash command to scrape and map websites"
----
+### id
+firecrawl
 
-## What can you do with it?
+### skill
+Firecrawl
 
-Extract clean, structured content from websites including text, links, screenshots, and metadata. Perfect for content extraction, web monitoring, and data collection with browser automation support.
+### description
+With Firecrawl, retrieve a map of the URLs given a starting URL.
 
-## How to use it?
+### tags
+- web crawl mapping
 
-### Basic Command Structure
-```
-/firecrawl [urls] [format]
-```
+### prompt
+```javascript
+<firecrawl_skill>
+This is an internal skill. Use:
+SCRAPER_FC_URL = INTERNAL_SKILL_URL + 'scraperfc/' //POST to this URL and nothing else. *Mandatory*
 
-### Parameters
-
-**Required:**
-
-- `urls` - Array of URLs to scrape
-
-**Optional:**
-
-- `format` - Output format: markdown, html, links, screenshot, json (default: markdown)
-
-- `actions` - Browser actions like scroll, click, wait, screenshot
-
-- `wait time` - Milliseconds to wait before scraping
-
-- `only main content` - Extract only the main content area
-
-- `include tags` - Specific HTML tags to include
-
-- `exclude tags` - HTML tags to exclude
-
-### Response Format
-
-The command returns:
-```json
-{
-  "content": "scraped content in requested format",
-  "metadata": {
-    "title": "page title",
-    "language": "detected language",
-    "status": "success or error"
-  }
+Example Postbody
+const POST_BODY = {
+    "urls": ["https://example.com", "https://another-example.com"],
+     // === OUTPUT FORMAT OPTIONS ===
+    "formats": [
+        "markdown",           // IMPORTANT: By default: only include this option, other options must be excluded
+    ],
+    // === BROWSER ACTIONS ===
+    // This is default value
+    "actions": [
+        {
+            "type": "screenshot",          
+            "fullPage": true
+        },
+        {
+            "type": "scroll",
+            "selector": "body",
+            "direction": "down",          // "up" or "down"
+        }
+    ],
+    "waitFor": 2000,
+    "includeTags": ["div", "p", "h1", "h2"],
+    "excludeTags": ["script", "style", "noscript"],
+    "onlyMainContent": true,
+    "removeBase64Images": true,
+    "file_links_expire_in_days": 7
 }
-```
 
-## Examples
+urls: Array of URLs to scrape (required)
+formats: Output formats for the scraped content. Available formats:
+    [
+        "markdown",             // Clean markdown content.
+        "html",                 // Processed HTML
+        "rawHtml",              // Raw HTML source
+        "links",                // Extracted links array
+        "screenshot",           // Base64 screenshot data
+        "screenshot@fullPage",  // Full page screenshot
+        "json",                 // Structured data extraction
+        "changeTracking"        // Change detection data
+    ]
+actions: Browser actions to perform before scraping ("wait", "click", "scroll", "screenshot"). If there is screenshot action then remove "screenshot@fullPage" in "formats" if any.
+waitFor: Time to wait in milliseconds before scraping (default: 1000)
+includeTags: HTML tags to include in the output
+excludeTags: HTML tags to exclude from the output
+onlyMainContent: Boolean to extract only the main content
+removeBase64Images: Boolean to remove base64-encoded images
+file_links_expire_in_days: Number of days until file links expire
 
-### Basic Usage
-```
-/firecrawl
-urls: ["https://example.com"]
-```
-Scrape a webpage and return content as markdown.
-
-### Advanced Usage
-```
-/firecrawl
-urls: ["https://example.com/products"]
-actions: scroll down, wait 2 seconds, take screenshot
-format: markdown and screenshot
-```
-Scrape with browser automation actions and capture screenshots.
-
-### Specific Use Case
-```
-/firecrawl
-urls: ["https://news.example.com/article"]
-only main content: true
-exclude tags: ["script", "style", "nav", "footer"]
-```
-Extract only the main article content while excluding navigation and footer elements.
-
-### Notes
-
-Supports multiple output formats including markdown (default), HTML, raw HTML, JSON, screenshots, and link extraction. Browser actions available include screenshot, scroll, wait, and click. Tag filtering allows including or excluding specific HTML elements. Default wait time is 1000ms to ensure content loads.
-
-### Content Extraction
-- Scrape multiple URLs
-- Extract main content
-- Remove unwanted elements
-- Clean HTML output
-- Convert to markdown
-
-### Output Formats
-- Markdown (default)
-- HTML (processed)
-- Raw HTML
-- JSON structure
-- Screenshots
-- Link extraction
-
-### Browser Actions
-- Take screenshots
-- Scroll pages
-- Wait for content
-- Click elements
-- Full page capture
-
-### Content Filtering
-- Include specific tags
-- Exclude unwanted tags
-- Main content only
-- Remove base64 images
-
-## Example Commands
-
-### Basic Scrape
-```
-/firecrawl scrape https://example.com
-```
-
-### Multiple URLs
-```
-/firecrawl scrape https://site1.com and https://site2.com as markdown
-```
-
-### With Screenshot
-```
-/firecrawl capture https://example.com with full page screenshot
-```
-
-### Extract Links
-```
-/firecrawl get all links from https://example.com
-```
-
-### Custom Tags
-```
-/firecrawl scrape https://example.com including only div, p, h1, h2 tags
-```
-
-## Configuration Options
-
-### Output Formats
-- `markdown`: Clean markdown content
-- `html`: Processed HTML
-- `rawHtml`: Original HTML
-- `links`: Array of links
-- `screenshot`: Base64 image
-- `json`: Structured data
-
-### Browser Actions
-```json
+Sample response:
 {
-  "type": "screenshot",
-  "fullPage": true
+    "https://www.google.com/": {
+        "success": true,
+        "data": {
+            "markdown": "markdown here... ",
+            "metadata": {
+                "language": "en",
+                "title": "Google",
+                "referrer": "origin",
+                "scrapeId": "2c29af85-dc7e-4301-b80a-c4da8bf178cb",
+                "sourceURL": "https://www.google.com/",
+                "url": "https://www.google.com/",
+                "statusCode": 200
+            }
+        },
+        "file_urls": []
+    }
 }
-```
 
-```json
-{
-  "type": "scroll",
-  "direction": "down"
-}
-```
-
-### Wait Options
-- Default: 1000ms
-- Custom: specify milliseconds
-- Ensures content loads
-
-## Tag Filtering
-
-### Include Tags
-- `div`, `p`, `h1`, `h2`
-- Article content tags
-- Custom selections
-
-### Exclude Tags
-- `script`, `style`, `noscript`
-- Ads and tracking
-- Unwanted elements
-
-## Response Data
-
-### Success Response
-- Scraped content
-- Metadata (title, language)
-- Source URL
-- Status code
-- File URLs
-
-### Metadata Includes
-- Page title
-- Language
-- Referrer
-- Scrape ID
-- Status code
-
-## Tips
-- Use markdown format for clean text
-- Enable screenshots for visual content
-- Filter tags for cleaner output
-- Set appropriate wait times for dynamic content 
+</firecrawl_skill>
+``` 
