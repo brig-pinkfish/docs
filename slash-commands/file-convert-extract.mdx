@@ -1,304 +1,63 @@
 ---
-title: "File Convert Extract Command Guide"
-description: "Learn how to use the File Convert Extract slash command to convert and extract content from various file formats"
+title: "File Convert Extract Guide"
+description: "Learn how to use the file-convert-extract slash command to convert and extract content from various file formats"
 ---
 
-The `/file-convert-extract` command enables you to convert between file formats and extract content from documents. Perfect for:
+## What can you do with it?
 
-- Converting Excel to CSV
-- Extracting text from PDFs
-- Converting Markdown to PDF/DOCX
-- Processing Word and PowerPoint files
-- Validating CSV data
+Convert between file formats and extract text content. Supports Excel to CSV, PDF/Word/PowerPoint to text, Markdown to Word/PDF, and HTML to PDF conversions.
 
-## Basic Usage
+## How to use it?
 
-Use the command to convert and extract files:
-
+### Basic Command Structure
 ```
-/file-convert-extract convert "report.xlsx" to CSV format
+/file-convert-extract
+file: the file to convert or extract from
+convert to: desired output format
 ```
 
+### Parameters
+- **file**: URL of the file to convert or extract
+- **convert to**: Target format (csv, txt, docx, pdf)
+- **validate** (optional): Validate CSV structure and data quality
+- **pdf format** (optional): Page size for PDF output (a4, letter)
+- **pdf orientation** (optional): Page orientation (portrait, landscape)
+
+### Response Format
+Returns converted file URLs with metadata including file size, mime type, and filename.
+
+## Examples
+
+### Basic Usage
+Convert Excel to CSV:
 ```
-/file-convert-extract extract text from "document.pdf"
-```
-
-```
-/file-convert-extract convert "readme.md" to PDF with A4 format
-```
-
-## Key Features
-
-### File Conversion
-- Excel (.xlsx) to CSV
-- Markdown (.md) to PDF/DOCX
-- HTML to PDF
-- Multi-sheet Excel processing
-- Format preservation
-
-### Text Extraction
-- PDF to plain text
-- Word documents to text
-- PowerPoint to text
-- Content preservation
-- Metadata extraction
-
-### Data Validation
-- CSV structure validation
-- Data quality checks
-- Error reporting
-- Warning notifications
-- Consistency verification
-
-### Output Options
-- Multiple format support
-- Custom PDF settings
-- Sheet-by-sheet processing
-- Batch operations
-
-## Example Commands
-
-### Excel to CSV
-```
-/file-convert-extract convert Excel file to CSV format
+/file-convert-extract
+file: https://example.com/data.xlsx
+convert to: csv
 ```
 
-### PDF Text Extraction
+### Advanced Usage
+Extract text from PDF with validation:
 ```
-/file-convert-extract extract all text from PDF document
-```
-
-### Markdown to PDF
-```
-/file-convert-extract convert markdown to PDF with letter size landscape
+/file-convert-extract
+file: https://example.com/report.pdf
+convert to: txt
 ```
 
-### Multi-sheet Excel
+### Specific Use Case
+Convert Markdown to PDF with formatting:
 ```
-/file-convert-extract convert workbook to separate CSV files per sheet
-```
-
-### With Validation
-```
-/file-convert-extract convert Excel and validate resulting CSV data
-```
-
-## Supported Conversions
-
-### Excel Processing
-- **Single sheet**: .xlsx → .csv
-- **Multi-sheet**: .xlsx → multiple .csv files
-- **Validation**: Optional CSV validation
-- **Metadata**: Row/column counts
-
-### Text Extraction
-- **PDF**: .pdf → .txt
-- **Word**: .docx → .txt
-- **PowerPoint**: .pptx → .txt
-- **Clean text**: Formatted output
-
-### Document Conversion
-- **Markdown**: .md → .docx or .pdf
-- **HTML**: .html → .pdf
-- **Format options**: Size and orientation
-- **Quality**: High-fidelity conversion
-
-## Input Sources
-
-### File URLs
-```javascript
-{
-  "file_urls": ["https://example.com/document.pdf"],
-  "file_links_expire_in_days": 7
-}
+/file-convert-extract
+file: https://example.com/document.md
+convert to: pdf
+pdf format: a4
+pdf orientation: portrait
 ```
 
-### Artifact Files
-```javascript
-// Use files from previous steps
-const artifact = config.findArtifact('report.xlsx', { stepId: 'step_id' });
-const payload = {
-  file_urls: [artifact.url],
-  file_links_expire_in_days: 7
-};
-```
-
-## PDF Conversion Options
-
-### Format Settings
-- **pdf_format**: 'a4' or 'letter'
-- **pdf_orientation**: 'portrait' or 'landscape'
-- **Quality**: High-resolution output
-- **Compatibility**: Standard PDF format
-
-### Conversion Examples
-```
-/file-convert-extract convert markdown to A4 portrait PDF
-/file-convert-extract convert HTML to letter landscape PDF
-```
-
-## Response Structure
-
-### Single File Response
-```javascript
-{
-  "files": [
-    {
-      "file_url": "https://pinkfish.app/files/original.pdf",
-      "filename": "document.pdf",
-      "converted": {
-        "file_url": "https://pinkfish.app/files/converted.txt",
-        "filename": "document_converted.txt",
-        "mime_type": "text/plain"
-      }
-    }
-  ],
-  "total": 1
-}
-```
-
-### Multi-sheet Excel Response
-```javascript
-{
-  "converted": {
-    "sheets": [
-      {
-        "sheetName": "Sales",
-        "file_url": "https://pinkfish.app/files/workbook_Sales.csv",
-        "filename": "workbook_Sales.csv",
-        "rowCount": 50,
-        "columnCount": 8
-      }
-    ],
-    "totalSheets": 2
-  }
-}
-```
-
-## CSV Validation
-
-### Validation Features
-- Structure verification
-- Data type checking
-- Missing value detection
-- Format consistency
-- Error categorization
-
-### Validation Response
-```javascript
-{
-  "validation": {
-    "isValid": true,
-    "errorCount": 0,
-    "warningCount": 1,
-    "errors": [],
-    "warnings": ["Column 'Date' has 2 empty cells"]
-  },
-  "validationStatus": "passed_with_warnings"
-}
-```
-
-## File Handling
-
-### Download and Save
-```javascript
-// Single converted file
-await config.downloadFromUrl(file.converted.file_url, {
-  saveToFile: true,
-  outputFilenames: file.converted.filename
-});
-
-// Multi-sheet files
-for (const sheet of file.converted.sheets) {
-  await config.downloadFromUrl(sheet.file_url, {
-    saveToFile: true,
-    outputFilenames: sheet.filename
-  });
-}
-```
-
-### Binary File Handling
-- Use `config.downloadFromUrl()` for binary files
-- Automatic type detection
-- Proper encoding preservation
-- No manual binary handling needed
-
-## Best Practices
-
-1. **File Source Management**
-   - Use artifact URLs directly
-   - Set appropriate expiration days
-   - Validate source file accessibility
-
-2. **Conversion Strategy**
-   - Choose appropriate output formats
-   - Consider file size limitations
-   - Plan for multi-sheet processing
-
-3. **Validation Usage**
-   - Enable validation for data quality
-   - Review warnings and errors
-   - Handle validation failures
-
-4. **Output Handling**
-   - Save converted files properly
-   - Use correct download methods
-   - Preserve file metadata
-
-## Common Use Cases
-
-### Data Processing
-```
-/file-convert-extract convert sales spreadsheet to CSV for analysis
-```
-
-### Document Processing
-```
-/file-convert-extract extract text from contract PDFs for review
-```
-
-### Report Generation
-```
-/file-convert-extract convert markdown reports to professional PDFs
-```
-
-### Data Migration
-```
-/file-convert-extract convert legacy Excel files to modern CSV format
-```
-
-## Error Handling
-
-### Common Issues
-- Unsupported file formats
-- Corrupted source files
-- Network access problems
-- Size limitations
-
-### Error Recovery
-- Validate source files first
-- Check file accessibility
-- Handle partial conversions
-- Retry failed operations
-
-## Performance Considerations
-
-### File Size Limits
-- Large files take longer
-- Memory constraints apply
-- Network transfer time
-- Processing complexity
-
-### Optimization Tips
-- Batch similar operations
-- Use appropriate formats
-- Monitor processing time
-- Cache converted results
-
-## Tips
-- Use artifact URLs directly without re-uploading content
-- Enable CSV validation for data quality assurance
-- Choose PDF format and orientation based on content layout
-- Handle multi-sheet Excel files with separate CSV outputs
-- Use downloadFromUrl() for proper binary file handling
-- Set reasonable expiration days for temporary file links 
+### Notes
+Supported conversions:
+- Excel (.xlsx) → CSV (.csv) - single or multi-sheet
+- PDF/Word/PowerPoint → Text (.txt)
+- Markdown (.md) → Word (.docx) or PDF
+- HTML → PDF
+- CSV validation available with validate parameter

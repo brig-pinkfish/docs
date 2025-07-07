@@ -1,55 +1,66 @@
 ---
-title: "Classify Command Guide"
-description: "Learn how to use the classify slash command to categorize and organize information"
+title: "Summarization Command Guide"
+description: "Summarize text, documents, and content into concise overviews"
 ---
 
-## Why Use Summarize?
+## What can you do with it?
 
-The `/summarize` command helps you quickly create concise summaries of any text content. Perfect for:
+The `/summarization` command enables you to create concise summaries of text, documents, and other content using AI. You can summarize long articles, extract key points from PDFs, condense meeting notes, create executive summaries, and generate brief overviews of complex documents in various formats.
 
-- Condensing long documents
-- Creating meeting notes highlights
-- Extracting key points from articles
-- Summarizing email threads
-- Creating executive summaries
+## How to use it?
 
-## Basic Usage
-
-Simply use the command followed by your text:
-
+### Basic Command Structure
 ```
-/summarize the following meeting notes:
-We talked about Q4 targets and the new marketing strategy. We also discussed the budget constraints and the project timeline. We approved the new client onboarding process and a lot of other stuff....
+/summarization [content] [options]
 ```
 
-## Summarizing Files
+### Parameters
 
-You can also ask for a file to be summarized. For example
+**Required:**
 
+- `content` - The text or file to summarize
+
+**Optional:**
+
+- `file` - URL or reference to a document to summarize (PDF, text files)
+- `format` - Output format: json, plaintext, markdown, or html (defaults to json)
+- `length` - Desired summary length: brief, medium, or detailed
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": "summarized content",
+  "key_points": ["main point 1", "main point 2"],
+  "word_count": "approximate word count",
+  "format": "output format used"
+}
 ```
-/summarize the following meeting notes:
-[Uploaded TXT file]
+
+## Examples
+
+### Basic Usage
 ```
-
-## Output formats
-
-By default, the output is a JSON object. If you want a more readable format, you can ask for it in markdown. For example
-
+/summarization
+content: [long article text]
 ```
-/summarize the following meeting notes in markdown format
-We talked about Q4 targets and the new marketing strategy. We also discussed the budget constraints and the project timeline. We approved the new client onboarding proces and a lot of other stuff....
+Creates a concise summary of the provided text content.
+
+### Advanced Usage
 ```
+/summarization
+file: research-paper.pdf
+format: markdown
+length: detailed
+```
+Generates a detailed summary of a PDF research paper in markdown format with comprehensive key points.
 
-## Tips
-
-- Include all relevant context
-- Ask for bullet points or paragraphs
-- Specify desired summary length if needed
-- Add any specific focus areas you want emphasized
-
-## Filetype Support
-
-- Text files (.txt)
-- PDF (.pdf)
-- Wav (.wav)
-- Mp3 (.mp3)
+### Specific Use Case
+```
+/summarization
+file: meeting-transcript.txt
+format: plaintext
+length: brief
+```
+Creates a brief plain text summary of meeting notes, highlighting only the most important decisions and action items.

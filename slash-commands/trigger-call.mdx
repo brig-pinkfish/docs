@@ -1,120 +1,67 @@
 ---
-title: "Trigger Calls Command Guide"
-description: "Learn how to use the Trigger Calls slash command to start other workflows"
+title: "Trigger Call Guide"
+description: "Learn how to use the trigger-call slash command to make API calls to automation triggers"
 ---
 
-The `/trigger-call` command allows you to start other workflows from within your current workflow. Think of it like a remote control that can start other automated processes. Perfect for:
+## What can you do with it?
 
-- Chaining multiple workflows together
-- Starting background processes
-- Coordinating complex workflows
-- Triggering dependent workflows
-- Managing sequential workflow tasks
+Call automation triggers via API to execute workflows programmatically. Supports both synchronous (wait for results) and asynchronous (fire-and-forget) execution modes.
 
-## Basic Usage
+## How to use it?
 
-Start another workflow using the trigger command:
-
+### Basic Command Structure
 ```
 /trigger-call
-Trigger URL: [Your workflow endpoint URL]
-Trigger API Key: [Your API key]
+url: trigger endpoint URL
+api key: your authentication key
+payload: data to send
 ```
 
-## Required Parameters
+### Parameters
+- **url**: The trigger endpoint URL (required)
+- **api key**: Your API authentication key (required)
+- **payload**: JSON data to send to the trigger
+- **wait** (optional): Wait for completion (true) or fire-and-forget (false)
+- **headers** (optional): Additional custom headers
 
-- `Trigger URL`: The web address where your target workflow lives
+### Response Format
+With wait=true: Returns complete execution results including all step outputs and logs.
+With wait=false: Returns immediately with run ID in headers.
 
-  - Must be a valid URL
-  - Should be the complete endpoint address
-  - Usually provided in your workflow settings
+## Examples
 
-- `Trigger API Key`: Your security key for accessing the workflow
-  - Unique to your account
-  - Required for authentication
-  - Keep this private and secure
-
-See [API Triggers documentation](/api-reference/introduction) for more information.
-
-## Optional Parameters
-
-### Execution Control
-
-- `wait`: Controls whether to wait for the triggered workflow to complete
-  - `true`: Wait for completion (default)
-    - You'll get full results back
-    - Sees the complete execution
-    - Good for dependent processes
-  - `false`: Don't wait (fire and forget)
-    - Starts the workflow and moves on
-    - Faster execution
-    - Good for background tasks
-
-## How It Works
-
-### When Waiting for Results (wait: true)
-
-1. Triggers the workflow
-2. Waits for completion
-3. Returns detailed results including:
-   - Workflow details
-   - Step-by-step results
-   - Execution times
-   - Success/failure status
-
-### When Not Waiting (wait: false)
-
-1. Triggers the workflow
-2. Immediately returns a confirmation
-3. Provides a Run ID for reference (in the header of the response)
-4. Continues with your current workflow
-
-## Example Commands
-
-### Basic Trigger with Waiting
-
+### Basic Usage
+Simple trigger call:
 ```
-/trigger-call call
-Trigger URL: https://your-workflow-endpoint.com
-Trigger API Key: your-api-key-here
+/trigger-call
+url: https://api.example.com/trigger/abc123
+api key: your-api-key-here
+payload: {"action": "process", "id": 12345}
 ```
 
-### Fire-and-Forget Trigger
-
+### Advanced Usage
+Synchronous call with custom data:
 ```
-/trigger-call call
-Trigger URL: https://your-workflow-endpoint.com
-Trigger API Key: your-api-key-here
+/trigger-call
+url: https://api.example.com/automation/xyz789
+api key: secret-key
+wait: true
+payload: {"customer": "john@example.com", "operation": "update", "data": {"status": "active"}}
+```
+
+### Specific Use Case
+Fire-and-forget notification:
+```
+/trigger-call
+url: https://api.example.com/notify
+api key: notification-key
 wait: false
+payload: {"message": "Task completed", "priority": "high"}
 ```
 
-## Monitoring and Tracking
-
-The Monitor interface provides a centralized view of all your trigger call executions. You can:
-
-- Track the sequence of events across multiple workflows
-- View the timing and duration of each triggered workflow
-- Inspect the full execution chain when workflows trigger other workflows
-- Debug issues by following the complete execution path
-- Monitor the status of background tasks started with `wait: false`
-
-## Important Considerations
-
-### Avoiding Infinite Loops
-
-Be cautious when implementing trigger calls to prevent infinite loops or excessive execution:
-
-- Never create circular trigger dependencies where workflows trigger each other endlessly
-- Implement safeguards like execution counters or time-based checks
-- Consider using the datastore to track execution state and prevent loops
-- Monitor your workflow usage to catch any unintended rapid triggering
-
-### Building Job Queues
-
-You can combine trigger calls with the datastore to create a job queue system. See [Job Queues](/how-to/job-queue) for more information.
-
-### Storing your API Key as a secret
-
-If you want to keep your API key out of your generated steps in plain text, you can store it as a secret in the datastore and then retrieve it at runtime. See [Secrets](/essentials/secrets) for more information. This approach would also allow you to rotate your API key without having to update your workflow.
-
-The Trigger Calls command makes it easy to connect your workflows. Start with the basics and expand as needed!
+### Notes
+- Run ID is available in X-Pf-Run-Id header
+- Synchronous calls return detailed step results
+- Asynchronous calls return immediately with no body
+- Look for selectedResult in response for configured output
+- Step results include logs and execution times

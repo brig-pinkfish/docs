@@ -1,82 +1,77 @@
 ---
-title: "Form Processing Command Guide"
-description: "Learn how to use the Form Processing slash command to extract data from forms"
+title: "Process Form Command Guide"
+description: "Extract structured data from form documents using AI"
 ---
 
-The `/form-processing` command allows you to extract form fields and their values using a machine learning model specifically trained for this purpose. Over the last year, LLM models like Claude and OpenAI have eclipsed custom models like this. But every now and then, a custom trained model like this may have greater accuracy. So if you're struggling with a LLM to do document processing on scanned or PDF forms, give this a try.
+## What can you do with it?
 
-## Basic Usage
+The `/process-form` command enables you to automatically extract structured data from form documents using DocAI technology. You can process filled forms, applications, surveys, and questionnaires to extract field names and values into organized data, eliminating manual data entry and accelerating document processing workflows.
 
-Process a form by either uploading a file or providing a URL:
+## How to use it?
 
+### Basic Command Structure
 ```
-/form-processing
-File: [Upload your form file]
-```
-
-or
-
-```
-/form-processing
-URL: [URL to your form file]
+/process-form [form-document]
 ```
 
-## Input Formats
+### Parameters
 
-Supported file types include:
-- PDF documents
-- Scanned images (PNG, JPEG)
-- Digital forms
+**Required:**
 
-## Output Format
+- `form-document` - The form file to process (URL or uploaded file)
 
-The command returns a JSON object containing:
+**Optional:**
 
-1. Field Extractions:
-   - Field names and their extracted values
-   - Confidence scores for each extraction
-   - Field types (e.g., checkbox status, text fields)
+- `output_format` - Format for extracted data: json or csv (defaults to json)
+- `include_confidence` - Include confidence scores for extracted values (true/false)
 
-2. Metadata:
-   - Processing timestamp
-   - File information
-   - Model version
+### Response Format
 
-Example output:
-
-```
+The command returns:
+```json
 {
-    "json": {
-        "PHARMACY": {
-            "fieldValue": "filled_checkbox",
-            "confidence": 0.9997177124023438
-        },
-        "Member ID Number": {
-            "fieldValue": "871381692",
-            "confidence": 0.9334482550621033
-        },
-        "Date of Birth:": {
-            "fieldValue": "20-MARCH-1960",
-            "confidence": 0.9115520119667053
-        }
-    },
-    "table": []
+  "extracted_fields": {
+    "field_name": "field_value",
+    "another_field": "another_value"
+  },
+  "metadata": {
+    "form_type": "detected form type",
+    "pages_processed": "number of pages",
+    "extraction_confidence": "overall confidence score"
+  }
 }
 ```
 
-## Understanding the Results
+## Examples
 
-### Field Values
-- Text fields: Contains the extracted text
-- Checkboxes: Reports as either "filled_checkbox" or "unfilled_checkbox"
-- Empty fields: May return "-" or be omitted
+### Basic Usage
+```
+/process-form
+form-document: application-form.pdf
+```
+Extracts all field data from a PDF application form.
 
-### Confidence Scores
-- Range from 0 to 1 (0% to 100% confidence)
-- Higher scores indicate greater confidence in the extraction
-- Generally:
-  - greater than 0.9: Very high confidence
-  - 0.7-0.9: Good confidence
-  - less than 0.7: Lower confidence, may need review
+### Advanced Usage
+```
+/process-form
+form-document: survey-responses.pdf
+output_format: csv
+include_confidence: true
+```
+Processes survey responses and outputs data in CSV format with confidence scores for each extracted value.
 
-The Form Processing command provides a reliable way to extract data from structured forms. While newer LLM models have broader capabilities, this specialized tool can still outperform them for specific form processing tasks.
+### Specific Use Case
+```
+/process-form
+form-document: tax-form-w2.pdf
+output_format: json
+```
+Extracts structured data from a tax form for further processing or integration.
+
+### Notes
+
+**Supported Form Types:**
+- PDF forms (filled)
+- Scanned form images
+- Multi-page documents
+- Various form layouts and structures

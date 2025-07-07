@@ -1,83 +1,76 @@
 ---
 title: "3D App Command Guide"
-description: "Learn how to use the 3D App slash command to create interactive 3D web applications"
+description: "Create interactive 3D web applications powered by Babylon.js"
 ---
-The `/3d-app` command enables you to create web-based 3D applications powered by Babylon.js. It's experimental. You could try: 
 
-- Creating interactive 3D product experiences
-- Building product configurators
-- Developing architectural walkthroughs
-- Constructing educational 3D models
-- Help documentation for your product
+## What can you do with it?
 
-See the Babylon.js documentation here https://www.babylonjs.com/ 
-And the amazing forum here https://forum.babylonjs.com/
+The `/3d-app` command enables you to create complete, interactive 3D web applications using Babylon.js. You can build product viewers, configurators, educational models, architectural walkthroughs, and interactive 3D experiences that run directly in the browser with camera controls, lighting, materials, and animations.
 
-There's so so much you can do with Babylon. At some point, you'll get too complex for Pinkfish to handle because 3d is just so deep. But you should be able to do some simple stuff. Building a pipeline to create viewers for 3d models of your product should be within reach, for example.
+## How to use it?
 
-## Basic Usage
-
-Use the command followed by a description of the 3D experience you want to create. Be specific about:
-- Scene elements and objects
-- Camera positioning
-- Lighting setup
-- Interactions and animations
-- Material properties
-
+### Basic Command Structure
 ```
-/3d-app create a scene with a rotating product model
-For model use file: [uploaded glb file or URL to glb file]
+/3d-app [scene-description]
 ```
 
-## Example 
-Here's a product viewer we created for a pair of shoes using the `/3d-app` command. 
+### Parameters
+
+**Required:**
+
+- `scene-description` - Detailed description of the 3D scene you want to create including objects, lighting, camera setup, and interactions
+
+**Optional:**
+
+- `For model use file: [file-url]` - URL to a GLB/GLTF 3D model file to include in the scene
+- `Camera type: [camera-type]` - Specify camera type (ArcRotate, Free, Follow, Universal)
+- `Lighting: [lighting-setup]` - Custom lighting configuration
+- `Materials: [material-properties]` - Specific material and texture requirements
+- `Animations: [animation-details]` - Animation and interaction specifications
+
+### Response Format
+
+The command returns:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Babylon.js 3D Application</title>
+    <style>[CSS styles]</style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script>[JavaScript 3D scene code]</script>
+</body>
+</html>
 ```
-/3d-app create a simple viewer for a 3D model 
+
+## Examples
+
+### Basic Usage
+```
+/3d-app create a simple 3D scene with a rotating sphere
+```
+Creates a basic 3D scene with a sphere that rotates automatically, including camera controls and basic lighting.
+
+### Advanced Usage
+```
+/3d-app create an interactive product viewer with multiple objects
 For model use file: https://bjs-playground.s3.us-east-1.amazonaws.com/sneakers.glb
+Camera type: ArcRotate
+Lighting: Point lights with color changing effects
+Materials: Metallic and glass materials
+Animations: Smooth rotation and hover effects
 ```
+Creates a comprehensive product viewer with custom models, advanced lighting, multiple materials, and interactive animations.
 
-<img src="/images/examples/3d.shoes.png" alt="3D Model Viewer" />
-
-I had  have a conversation with Pinkfish here to get the model bigger. Because it started out very small (almost invisible). You'll find that models you get from the web often have peculiarities that you'll need to figure out. 
-
-[Model credit](https://sketchfab.com/3d-models/sneakers-689c29ec3a8a4f44b32f616bcb97cfaa) 
-
-## Key Features
-
-### Camera Types
-- ArcRotateCamera: Orbits around a target point
-- FreeCamera: First-person perspective
-- FollowCamera: Follows a target object
-- UniversalCamera: Combines keyboard and mouse controls
-
-### Lighting Options
-- HemisphericLight: Ambient lighting from above
-- PointLight: Light emitting from a point
-- SpotLight: Focused cone of light
-- DirectionalLight: Parallel light rays
-
-### Materials
-- StandardMaterial: Basic material with properties
-- PBRMaterial: Physically based rendering
-- BackgroundMaterial: For skyboxes
-- Custom shaders: For advanced effects
-
-### Interactions
-- Pointer events (click, hover)
-- Keyboard controls
-- Physics interactions
-- Custom animations
-
-## Saving and Sharing
-
-After you've created your 3D app in one step, you can save it to a file and share it. 
-Be sure to run the save operation in another step (eg: not the same step as the 3D app creation).
+### Specific Use Case
 ```
-/filestorage write [3D app from the previous step] as "product-viewer-3d"
+/3d-app create an architectural walkthrough of a simple room
+Camera type: Free
+Lighting: Realistic indoor lighting with shadows
+Materials: Wood floors, painted walls, glass windows
+Animations: Smooth camera movement through the space
 ```
-
-This creates a shareable link for:
-- Direct access to the application
-- Embedding in web pages
-- Testing and review
-- Collaboration
+Creates a first-person architectural walkthrough with realistic materials and lighting for interior visualization.

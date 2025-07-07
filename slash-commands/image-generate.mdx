@@ -1,107 +1,81 @@
 ---
-title: "Image Generation Command Guide"
-description: "Learn how to use the image generation slash command"
+title: "Image Generate Command Guide"
+description: "Create AI-generated images from text descriptions"
 ---
 
-## Why Use Image Generation?
+## What can you do with it?
 
-Transform your text descriptions into high-quality images using advanced AI generation. This powerful tool can:
+The `/image-generate` command enables you to create unique images from text descriptions using AI. You can generate artwork, product mockups, marketing visuals, concept designs, and illustrations by simply describing what you want to see, with control over style, composition, and quality.
 
-### Marketing Assets
+## How to use it?
 
-* **Social Media Posts**: Create engaging visuals for social platforms
-
-* **Advertisement Graphics**: Generate custom advertising imagery
-
-* **Blog Illustrations**: Create unique featured images for content
-
-* **Email Graphics**: Design eye-catching newsletter visuals
-
-* **Banner Images**: Generate headers and hero images
-
-### Product Visualization
-
-* **Product Concepts**: Visualize product ideas and variations
-
-* **Packaging Design**: Generate packaging mockups
-
-* **Product Placement**: Create context images for products
-
-* **Color Variants**: Generate product in different colors
-
-* **Lifestyle Shots**: Create lifestyle context for products
-
-### Design Inspiration
-
-* **Mood Boards**: Generate inspiration imagery
-
-* **Style Exploration**: Create different design directions
-
-* **Color Schemes**: Visualize color combinations
-
-* **Pattern Design**: Generate repeatable patterns
-
-* **Layout Ideas**: Create composition concepts
-
-## Basic Usage
-
-The `/image-generation` command creates images using AI generation capabilities. The basic syntax is:
-
+### Basic Command Structure
 ```
-/image-generation [prompt]
+/image-generate [description]
 ```
 
-Where [prompt] is your text description of the desired image.
+### Parameters
 
-## Command Examples
+**Required:**
 
-### 1. Simple Generation
+- `description` - Text description of the image you want to generate
 
+**Optional:**
+
+- `aspect_ratio` - Image dimensions: 1:1, 16:9, 9:16, 4:3, or 3:4 (defaults to 1:1)
+- `style` - Visual style preferences (realistic, artistic, cartoon, etc.)
+- `quality` - Output quality: standard or high (defaults to standard)
+- `num_outputs` - Number of variations to generate: 1-4 (defaults to 1)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "image_url": "URL to the generated image",
+  "output": ["array of generated image URLs"],
+  "metrics": {
+    "generation_time": "time in seconds",
+    "image_count": "number of images generated"
+  },
+  "prompt_used": "the processed prompt sent to the model"
+}
 ```
-/image-generation black forest gateau cake spelling out the words Pinkfish, tasty, food photography, dynamic shot
+
+## Examples
+
+### Basic Usage
 ```
-
-### 2. Product Photography
-
+/image-generate
+description: a modern office space with plants and natural lighting
 ```
-/image-generation professional product photo of a coffee mug on white background
+Generates a single image of an office space based on the description.
+
+### Advanced Usage
 ```
-
-### 3. Marketing Content
-
+/image-generate
+description: futuristic city skyline at sunset with flying vehicles
+aspect_ratio: 16:9
+style: cyberpunk aesthetic with neon lights
+quality: high
+num_outputs: 3
 ```
-/image-generation modern office desk setup with laptop and coffee cup
+Creates three high-quality variations of a futuristic cityscape in widescreen format.
+
+### Specific Use Case
 ```
+/image-generate
+description: minimalist logo design for a tech startup named CloudSync
+aspect_ratio: 1:1
+style: clean, professional, blue and white color scheme
+```
+Generates a logo design concept for branding purposes with specific style requirements.
 
-## Image Settings
+### Notes
 
-The system automatically optimizes these settings for your image:
-
-* **Aspect Ratio**: 1:1 (square) is the default format
-* **Output Format**: WebP format for optimal quality and size
-* **Output Quality**: 80% quality setting
-* **Processing Steps**: 4 inference steps for generation
-
-## Best Practices
-
-1. **Prompt Writing**
-
-   * Be specific and detailed
-   * Describe the key elements
-   * Include composition details
-   * Mention lighting and mood
-
-2. **Subject Focus**
-
-   * Clearly state the main subject
-   * Describe the desired perspective
-   * Mention important details
-   * Include context if needed
-
-3. **Style Description**
-
-   * Use clear style terms
-   * Mention artistic influences
-   * Describe desired mood
-   * Include technical preferences
+**Limitations:**
+- Cannot generate images of specific real people
+- Avoids creating harmful or inappropriate content
+- Results may vary based on prompt complexity
+- Generation typically takes 10-30 seconds
 

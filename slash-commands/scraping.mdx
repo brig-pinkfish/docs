@@ -1,317 +1,99 @@
 ---
-title: "Scraping Commands Guide"
-description: "Learn how to use scraper skill in your workflows"
+title: "Scraping Command Guide"
+description: "Extract data from websites with browser automation"
 ---
 
-## Introduction
+## What can you do with it?
 
-The scraper allows you to navigate to a particular location in a website and then bring back the contents. In the simplest case, you give the scraper a URL and it gives you back the contents of that page as text, optionally with a screenshot.
+The `/scraping` command enables you to extract data from websites using browser automation. You can scrape content from dynamic pages, interact with page elements, capture screenshots, extract structured data, and automate web workflows with actions like clicking, typing, and navigation.
 
-- Using _actions_, you can click buttons, navigate menus, and even loop through filling out forms with data you've collected in a previous step.
-- Using _AI Vision_ you can answer questions about content on the page or structure the response that you get back in a format that you specify.
+## How to use it?
 
-Authentication:
-
-- Using _browser connections_ that you've created in Connections you can login automatically.
-- Or alternatively, using _secrets_ you've stored in the datastore you can fill in username, password, and apikey details without needing to copy/paste those details into your workflow as plaintext.
-
-## Basic Scraping
-
-Scrape a web page with the `/scraper` command followed by one or more URLs:
-
+### Basic Command Structure
 ```
-/scraper
-url: https://example.com
+/scraping [url] [options]
 ```
 
-Scrape and specify the return format:
+### Parameters
 
-```
-/scraper
-url: https://example.com
-format: markdown
-```
+**Required:**
 
-### Format Options
+- `url` - The website URL(s) to scrape (can be array for multiple URLs)
 
-- `format: markdown` - Returns content in readable text format (default)
-- `format: html` - Returns HTML content
+**Optional:**
 
-### Content Filtering
+- `formats` - Output format: markdown or html (defaults to markdown)
+- `onlyMainContent` - Extract only main content excluding navigation/footers (defaults to true)
+- `actions` - Array of browser actions to perform before scraping
+- `waitFor` - Milliseconds to wait for page to load (defaults to 1000)
+- `includeTags` - HTML tags/classes/IDs to include
+- `excludeTags` - HTML tags/classes/IDs to exclude
 
-- `include: article, .main-content, #content` - Specify elements to include
-- `exclude: nav, .sidebar, #footer` - Specify elements to exclude
-- `mainContent: false` - Include all content (default is true, which focuses on main content)
+### Response Format
 
-## Available Actions
-
-Use actions when you need to navigate to a certain location before doing your scrape.
-
-**Action Types**
-
-1. **Navigation Actions**
-
-   - `goTo: [URL]` - Navigate to a specific page
-   - `wait: [milliseconds]` - Pause for specified time
-   - `scrollBottom` - Scroll to bottom of page
-   - `scrollTo: [selector]` - Scroll to specific element
-
-2. **Interactive Actions**
-
-   - `click: [text or selector]` - Click on an element
-   - `hover: [text or selector]` - Move mouse over element
-   - `fill: [field] with [text]` - Enter text into input field
-   - `select: [option]` - Choose from dropdown menu
-   - `check: [checkbox]` - Toggle checkbox/radio button
-   - `press: [key]` - Press keyboard key (Enter, Tab, etc.)
-
-3. **Advanced Actions**
-   - `screenshot: options: [fullpage (true|false), jpeg|png, quality (0-100)]` - Capture screenshot
-   - `vision: [prompt, options]` - Use AI to retrieve or analyze page content with same options as for screenshot, defaults to jpeg, quality 75
-   - `runcode: [Playwright code]` - Execute custom Playwrite code
-   - `loop: [actions]` - Repeat actions with input data
-
-### Waiting
-
-Waiting between actions is a common pattern in scraping and often necessary. You can use the `wait` action to pause for a specified amount of time. So if something isn't working, try adding a wait in between actions.
-
-### Examples
-
-**Basic Navigation:**
-
-```
-/scraper
-goTo: https://example.com
-wait: 2000
-click: "Accept Cookies"
-scrollBottom
-screenshot: full page
+The command returns:
+```json
+{
+  "scrapeResults": [{
+    "url": "scraped URL",
+    "success": true/false,
+    "data": {
+      "markdown": "extracted content",
+      "metadata": {
+        "title": "page title",
+        "description": "meta description"
+      }
+    }
+  }]
+}
 ```
 
-**Form Filling:**
+## Examples
 
+### Basic Usage
 ```
-/scraper
-goTo: https://example.com
-fill: color input with "red"
-fill: address input with "1400 Church Rd. Phila, PA 19119"
-click: "Submit"
-wait: 1000
-screenshot
+/scraping
+url: https://example.com/products
 ```
+Scrapes the main content from a product page in markdown format.
 
-**Working with Dropdown Lists:**
-
+### Advanced Usage
 ```
-/scraper
-goTo: https://shop.example.com
-select: "Sort by Price" from "Sort By" menu
-wait: 500
-vision: "Extract all product prices as a table"
+/scraping
+url: https://example.com/search
+actions:
+- write "laptops" in the search box
+- click the search button
+- wait 2 seconds
+formats: markdown and html
 ```
+Performs a search for laptops, waits for results, then scrapes both markdown and HTML content.
 
-## Advanced Features
-
-**Loop Example:**
-
+### Specific Use Case
 ```
-/scraper
-goTo: https://shop.example.com
-loop begin:
-  - click: "Add to Cart" in .product-card
-  - wait: 1000
-loop end
+/scraping
+url: https://example.com/dashboard
+actions:
+- click on "Login"
+- fill username field with "user@example.com"
+- fill password field with "mypassword"
+- click submit button
+- wait 3 seconds
+- take a full page screenshot
 ```
+Logs into a dashboard, waits for it to load, takes a screenshot, then scrapes the content.
 
-**Loop with Data Example:**
-First assemble data into an array of objects. You might do this in a previous step and then refer to the output of that step. Let's say that your data output for Step 1 looks like this:
+### Notes
 
-```
-[
-   {"color":"#ff0000","datetime":"2024-12-21T08:30","email":"test@pinkfish.ai","month":"2026-12","number":"22"},
-   {"color":"#00ff00","datetime":"2023-12-21T08:30","email":"hello@pinkfish.ai","month":"2025-12","number":"23"},
-   {"color":"#0000ff","datetime":"2022-12-21T08:30","email":"dev@pinkfish.ai","month":"2024-02","number":"24"}
-]
-```
+**Action Types:**
+- wait, click, hover, write, select, check, press
+- scroll_bottom, goto, screenshot, vision
+- runcode (execute JavaScript)
+- loop_begin/loop_end (for repetitive actions)
 
-Then you would write your scraper in Step 2 like this:
-
-```
-Using the result from the previous step as inputData for the loop:
-/scraper
-* goto https://testpages.eviltester.com/styled/html5-form-test.html
-loop begin
-   - fill color input with "color" data
-   - fill datetime-local input with "datetime" data
-   - fill email input with "email" data
-   - fill month input with "month" data
-   - fill number input with "number" data
-   - click submit button
-   - wait 5 secs
-loop end
-* also wait 2 secs between each action
-```
-
-### Logging Into Websites
-
-**Using Browser Connections**
-If you've created a browser connection, you can use it with the scraper. When you're creating your prompt, first select the saved browser connection and then give your scraper prompt. In the example below assuming that you've created a browser connection called "salesforceLogin"
-
-```
-/browser-connection "salesforceLogin"
-/scraper
-* goto https://YOURCOMPANY.lightning.force.com/lightning/setup/ManageUsers/home
-```
-
-Note that when you use a browser connection, you are already logged in (similar to how you'd already be logged in if you logged in and then visited the page in question), so you don't need to first go to the login page. You can jump right to your destination URL.
-
-**Using Vault**
-You can use items stored in Vault in combination with scraping to fill in username, password, and API key fields in order to avoid entering your credentials into your automation in plain text.
-
-Assuming you've previously stored an item in Vault called "salesforceLogin", you could run the scraper with your Vault item as follows:
-
-```
-/get-secret salesforceLogin
-/scraper
-* goto https://YOURCOMPANY.lightning.force.com/lightning/page/home
-- fill username input with username from secret
-- fill password input with password from secret
-- click "login" button
-- wait 5 secs
-* goto https://YOURCOMPANY.lightning.force.com/lightning/setup/ManageUsers/home
-```
-
-In this case, you are first logging in and then going to your destination page. Note that if the site requires 2FA or a one-time password, this technique won't work with the scraper. You should use Browser Connection (above) instead.
-
-### Parent Scoping
-
-Specify a parent container to narrow down element selection:
-
-```
-/scraper
-click: "Submit" in .form-container
-```
-
-### AI Vision
-
-Use Vision AI to extract specific information:
-
-```
-/scraper
-goTo: https://shop.example.com
-vision: "Give me all products under $50 and list their features"
-```
-
-### Batch Processing
-
-Process multiple pages at once:
-
-```
-/scraper
-urls:
-  - https://example.com/page1
-  - https://example.com/page2
-format: markdown
-wait: 1000
-screenshot: full page
-```
-
-## Common Examples
-
-1. **Login and Extract Content**
-
-```
-/get-secret ExampleComLogin
-/scraper
-goTo: https://www.example.com
-fill: Username with username from secret
-fill: Password with password from secret
-click: "Login"
-wait: 2000
-vision: "Give me all dashboard statistics"
-```
-
-2. **Shopping Cart Process**
-
-```
-/scraper
-goTo: https://shop.example.com
-select: "Sort by Price: Low to High"
-wait: 1000
-click: "Add to Cart" in .first-product
-click: "Checkout"
-screenshot: full page
-```
-
-3. **Content Analysis**
-
-```
-/scraper
-goTo: https://blog.example.com
-scrollBottom
-vision: "Summarize the main points of the article"
-screenshot
-```
-
-4. **Form Submission**
-
-```
-/scraper
-goTo: https://forms.example.com
-fill: Name with "John Doe"
-fill: Email with "john@example.com"
-check: "Accept Terms"
-click: "Submit"
-wait: 2000
-screenshot
-```
-
-## Selector Types
-
-When targeting elements on a page, you can use several different methods:
-
-1. **By Text Content**
-
-   - `click: "Login"` - Clicks element containing exact text "Login"
-   - `click: "Sign up for free"` - Works with longer phrases too
-
-2. **By Placeholder Text**
-
-   - `fill: "Search..." with "laptops"` - Targets input field with placeholder text
-   - `click: "Enter your username"` - Works with any placeholder text
-
-3. **CSS Selectors**
-
-   - `click: #login-button` - Using ID (#)
-   - `click: .submit-btn` - Using class name (.)
-   - `click: button.primary` - Element type with class
-   - `click: .form > .submit` - Using hierarchy
-   - `click: [data-testid="submit"]` - Using attributes
-
-4. **XPath Selectors**
-
-   - `click: //button[@type="submit"]` - Button with specific type
-   - `click: //div[@class="menu"]//a` - Links within menu div
-   - `click: //h1[contains(text(), "Welcome")]` - Heading containing text
-   - `click: //label[text()="Password"]/following-sibling::input` - Input field after label
-   - `click: //*[@id="main"]//button[2]` - Second button in main container
-
-5. **Combined Approaches**
-   - `click: "Submit" in .form-container` - Text within specific container
-   - `click: "Login" in #auth-modal` - Text within ID
-   - `hover: "Menu" in .nav-bar` - Combining text and class
-   - `click: "Next" in //div[@class="pagination"]` - Text within XPath-selected container
-
-Remember:
-
-- Text matching is case-sensitive
-- For elements with spaces in selectors, use quotes: `".main content"`
-- When using text, prefer exact matches over partial ones
-- CSS selectors provide simple targeting for basic needs
-- XPath provides more powerful selection capabilities:
-  - Can traverse up the DOM tree
-  - Can select elements based on their contents
-  - Supports complex relationships between elements
-- Always try to use the most specific selector that works
-
-Happy scraping!
+**Element Selection:**
+- selector: CSS selector (#id, .class)
+- byText: exact text match
+- byPlaceholder: placeholder attribute
+- byLabel: label text
+- byRole: ARIA role and name

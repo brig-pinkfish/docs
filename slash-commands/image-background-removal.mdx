@@ -1,86 +1,81 @@
 ---
-title: "Background Removal Command Guide"
-description: "Learn how to use the background removal slash command"
+title: "Image Background Removal Command Guide"
+description: "Remove backgrounds from images automatically"
 ---
 
-## Why Use Background Removal?
+## What can you do with it?
 
-Transform your images by cleanly removing backgrounds with AI technology. This powerful tool can:
+The `/image-background-removal` command enables you to automatically remove backgrounds from images using AI. You can isolate subjects from photos, create transparent backgrounds for product images, prepare images for compositing, and clean up photos for professional use without manual editing.
 
-### Product Photography
+## How to use it?
 
-* **Clean Product Images**: Create professional product shots with white backgrounds
-
-* **E-commerce Ready**: Prepare images for marketplace listings
-
-* **Product Catalogs**: Standardize product images for catalogs
-
-* **Product Variants**: Remove backgrounds from product variations
-
-* **Mobile Photography**: Clean up quick product shots
-
-### Marketing Materials
-
-* **Social Media**: Create professional posts with isolated subjects
-
-* **Email Marketing**: Prepare clean images for campaigns
-
-* **Website Content**: Create transparent images for web use
-
-* **Digital Ads**: Prepare images for advertising platforms
-
-* **Presentations**: Create professional slides with clean images
-
-## Basic Usage
-
-The `/background-removal` command removes backgrounds from images. You can use it by providing an image URL:
-
+### Basic Command Structure
 ```
-/background-removal [image URL]
+/image-background-removal [image]
 ```
 
-## Command Examples
+### Parameters
 
-### 1. Simple Removal
+**Required:**
 
+- `image` - The image to process (URL or uploaded file)
+
+**Optional:**
+
+- `output_format` - Format for the result: png or webp (defaults to png for transparency)
+- `edge_refinement` - Refine edges for cleaner cutouts (true/false)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": "URL to the processed image with background removed",
+  "signedUrl": "signed URL for direct access",
+  "status": "processing status",
+  "metadata": {
+    "original_image": "input image URL",
+    "processing_time": "time in seconds"
+  }
+}
 ```
-/background-removal https://example.com/product-image.jpg
+
+## Examples
+
+### Basic Usage
 ```
-
-### 2. Product Photo
-
+/image-background-removal
+image: portrait-photo.jpg
 ```
-/background-removal https://example.com/shoes.jpg
+Removes the background from a portrait photo, leaving only the subject.
+
+### Advanced Usage
 ```
-
-### 3. Marketing Asset
-
+/image-background-removal
+image: product-photo.png
+output_format: webp
+edge_refinement: true
 ```
-/background-removal https://example.com/team-photo.jpg
+Processes a product photo with refined edges and outputs in WebP format for web optimization.
+
+### Specific Use Case
 ```
+/image-background-removal
+image: team-member-headshot.jpg
+output_format: png
+```
+Creates a professional headshot with transparent background for use in presentations or websites.
 
-## Best Practices
+### Notes
 
-1. **Image Quality**
+**Supported Image Formats:**
+- JPEG/JPG
+- PNG
+- WebP
+- BMP
 
-   * Use high-resolution images
-   * Ensure good lighting
-   * Have clear subject focus
-   * Maintain good contrast
-
-2. **Subject Clarity**
-
-   * Clear separation from background
-   * Good lighting on edges
-   * Minimal motion blur
-   * Sharp focus on subject
-
-3. **Common Uses**
-
-   * Product photography
-   * Portrait editing
-   * Logo creation
-   * Marketing materials
-
-
-Remember: The quality of your input image directly affects the background removal results. Use clear, well-lit images with distinct subjects for the best outcome!
+**Output Considerations:**
+- PNG format preserves transparency
+- WebP offers smaller file sizes with transparency
+- Processing typically takes 5-15 seconds
+- Works best with clear subject-background contrast

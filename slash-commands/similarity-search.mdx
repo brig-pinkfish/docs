@@ -1,11 +1,66 @@
 ---
-title: "Similarity Search"
-description: "Compare and rank similar strings using Levenshtein distance"
+title: "Similarity Search Guide"
+description: "Learn how to use the similarity-search slash command to find and rank similar strings"
 ---
 
 # Similarity Search
 
-Compare and rank similar strings using Levenshtein distance algorithm for fuzzy string matching and text similarity analysis.
+Compare and rank similar strings using Levenshtein distance.
+
+## What can you do with it?
+
+Find the most similar strings from a list by comparing them to a search term. This is useful for fuzzy matching, finding near-duplicates, or ranking items by similarity.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/similarity-search
+search term: the string you want to find matches for
+items to search: array of strings to compare against
+```
+
+### Parameters
+- **search term**: The string you want to find matches for
+- **items to search**: Array of strings to search through
+- **use smart extraction** (optional): Extract and compare only the most relevant parts of paths
+- **exclude patterns** (optional): Patterns to exclude during smart extraction
+- **split value** (optional): Character used to split paths when using smart extraction
+- **max results** (optional): Maximum number of results to return
+
+### Response Format
+Returns a ranked list of matches with their similarity distances (lower distance = more similar).
+
+## Examples
+
+### Basic Usage
+Find similar product names:
+```
+/similarity-search
+search term: lpsum string to compare
+items to search: ["first lpsum string", "another possible match", "completely different text", "lpsum sample"]
+max results: 3
+```
+
+### Advanced Usage
+Compare file paths with smart extraction:
+```
+/similarity-search
+search term: lpsum journal name
+items to search: ["category/type/lpsum journal name/728x90_top", "category/type/lpsum science journal/300x250_bottom", "category/type/random name/728x90_top"]
+use smart extraction: true
+exclude patterns: ["x", "_"]
+split value: /
+```
+
+### Specific Use Case
+Find similar customer names in a database:
+```
+/similarity-search
+search term: John Smith
+items to search: ["Jon Smith", "John Smyth", "Jane Smith", "John Schmidt", "Johnny Smith"]
+max results: 5
+```
 
 ## Overview
 
@@ -19,22 +74,6 @@ The Similarity Search skill provides functionality for:
 ## Connection Requirements
 
 This skill uses an internal helper service and doesn't require external connections.
-
-## Basic Usage
-
-```javascript
-// Simple similarity search
-const searchRequest = {
-  "searchTerm": "example search",
-  "items": [
-    "example text",
-    "sample search",
-    "different content",
-    "example search match"
-  ],
-  "maxResults": 3
-};
-```
 
 ## Key Features
 

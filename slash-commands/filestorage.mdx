@@ -1,7 +1,70 @@
 ---
-title: "File Storage Command Guide"
-description: "Learn how to use the /filestorage slash command"
+title: "Filestorage Guide"
+description: "Learn how to use the filestorage slash command for file storage operations"
 ---
+
+## What can you do with it?
+
+Store, retrieve, update, and manage files in the cloud storage system. Supports text and binary files with metadata, link expiration control, and public file sharing options.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/filestorage
+action: upload, get, list, update, or delete
+filename: name of the file
+content: file content or data
+```
+
+### Parameters
+- **action**: Operation to perform (upload, get, list, update, delete)
+- **filename**: Name of the file (required for most operations)
+- **content**: File content for upload/update
+- **metadata** (optional): Additional information about the file
+- **expiration** (optional): Link expiry (1-7 days or "never" for public)
+- **collection** (optional): Collection ID for file organization
+
+### Response Format
+Returns file URLs, metadata, and signed URLs for access. List operations return arrays of file information.
+
+## Examples
+
+### Basic Usage
+Upload a text file:
+```
+/filestorage
+action: upload
+filename: report.txt
+content: Monthly sales report content here
+expiration: 7 days
+```
+
+### Advanced Usage
+Make file public:
+```
+/filestorage
+action: update
+filename: public-document.pdf
+expiration: never
+metadata: {"category": "public", "version": "2.0"}
+```
+
+### Specific Use Case
+List and extract content:
+```
+/filestorage
+action: list all files with content extraction
+format: detailed
+extract: pdf, docx, xlsx files
+```
+
+### Notes
+- Supports text and binary files (images, PDFs, documents, etc.)
+- Files can be made public with expiration="never"
+- Use PATCH for updating binary files without re-uploading
+- Automatic content extraction for PDFs, Word, Excel, PowerPoint
+- Maximum link expiration is 7 days (unless public)
 
 ## Why Use File Storage?
 
@@ -24,7 +87,7 @@ The file storage system provides a simple yet powerful way to store and manage f
 
 ### Notice about Race Conditions
 
-There is no race condition prevention in place. If you have multiple workflows that are trying to write to the same file, you will experience unexpected results.
+There is no race condition prevention in place. If you have multiple automations that are trying to write to the same file, you will experience unexpected results.
 
 ## Basic Usage from Slash Command
 
@@ -32,7 +95,7 @@ The `/filestorage` command lets you create, read, update, and delete files in th
 
 ## Basic Usage from Filestorage UI
 
-In the left nav, click "File Storage" where you'll see a list of files that you've created through your workflows or directly via the UI. Click Upload to upload a new file.
+In the left nav, click "File Storage" where you'll see a list of files that you've created through your automations or directly via the UI. Click Upload to upload a new file.
 
 ## File Storage Fundamentals
 
@@ -46,7 +109,7 @@ In the left nav, click "File Storage" where you'll see a list of files that you'
 
 ### Real-World Example
 
-Perhaps you want to store an email template for use across your workflows. You could write a file with the following slash command:
+Perhaps you want to store an email template for use across your automations. You could write a file with the following slash command:
 
 ```
 /filestorage create a new file with:
@@ -56,10 +119,10 @@ metadata: {"company": "Pinkfish", "version": "1.0"}
 file_links_expire_in_days: "1"
 ```
 
-Now you can use the file in your workflows. To retrieve it you would write a prompt like this:
+Now you can use the file in your automations. To retrieve it you would write a prompt like this:
 `/filestorage retrieve contents of file welcome-email-template.json from file storage`
 
-Note that the reason I set file_links_expire_in_days to 1 is because that expiry is related to the signed URL that Pinkfish generates for you to access the file. And I only need it to be accessible for the duration of the Workflow run.
+Note that the reason I set file_links_expire_in_days to 1 is because that expiry is related to the signed URL that Pinkfish generates for you to access the file. And I only need it to be accessible for the duration of the Automation run.
 
 ## Command Options
 

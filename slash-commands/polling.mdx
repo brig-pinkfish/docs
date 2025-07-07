@@ -1,102 +1,41 @@
 ---
 title: "Polling Command Guide"
-description: "Learn how to use the Polling slash command for long-running operations and external service callbacks"
+description: "Monitor long-running operations and trigger callbacks on completion"
 ---
 
-The `/polling` command enables you to create long-running polling jobs that wait for external services to complete and trigger callbacks. Perfect for:
+## What can you do with it?
 
-- Long-running async operations
-- External service monitoring
-- Webhook-style callbacks
-- Background job processing
-- Service completion tracking
+The `/polling` command enables you to monitor long-running operations from external services and automatically trigger callbacks when they complete. You can track job statuses, wait for processing to finish, handle asynchronous workflows, and integrate with services that require polling for results like video processing, data analysis, or web crawling.
 
-## Basic Usage
+## How to use it?
 
-Use the command to set up polling operations:
-
+### Basic Command Structure
 ```
-/polling monitor Firecrawl job until completion then notify
+/polling start [configuration]
 ```
 
-```
-/polling wait for video processing to finish then send results
-```
+### Parameters
 
-```
-/polling check API status every 30 seconds for 10 minutes
-```
+**Required:**
 
-## Key Features
+- `pollUrl` - The URL to poll for status updates
+- `pollUrlToken` - Authentication token for polling requests
+- `callbackUrl` - URL to call when polling succeeds
+- `callbackUrlToken` - Authentication token for callback
+- `expectedResultPattern` - Pattern to match for success (path or string)
+- `callbackPayload` - Data to send when job completes
+- `pollTime` - Total time to poll (1m to 12h)
+- `pollFrequency` - How often to check (5s to 5m)
 
-### Long-Running Operations
-- Configurable polling duration (1m-12h)
-- Flexible polling frequency
-- Automatic retry handling
-- Error recovery
-- Timeout management
+**Optional:**
 
-### Pattern Matching
-- JSON path matching
-- String content matching
-- Flexible success criteria
-- Custom validation
-- Result extraction
+- `headers` - Additional headers for polling requests
+- `errorCallback` - Different URL for error notifications
 
-### Callback System
-- Webhook-style notifications
-- Template-based payloads
-- Dynamic data injection
-- Error callbacks
-- Completion tracking
+### Response Format
 
-## Example Commands
-
-### Firecrawl Monitoring
-```
-/polling monitor website crawl job and notify when complete
-```
-
-### Video Processing
-```
-/polling wait for video analysis to complete with 5-minute timeout
-```
-
-### API Monitoring
-```
-/polling check service health every minute until restored
-```
-
-### Data Processing
-```
-/polling monitor analysis job and extract results when ready
-```
-
-## Polling Configuration
-
-### Start Polling Job
-```javascript
-// POST to /polling/start
-{
-  "callbackUrlToken": "your callback token",
-  "callbackUrl": "https://your-app.com/callback",
-  "expectedResultPattern": {
-    "type": "path",
-    "pattern": "result.output.text"
-  },
-  "callbackPayload": {
-    "message": "Job completed",
-    "data": "{{results.result.output.text}}"
-  },
-  "pollUrl": "https://api.example.com/job/status",
-  "pollUrlToken": "your polling token",
-  "pollTime": "5m",
-  "pollFrequency": "30s"
-}
-```
-
-### Start Response
-```javascript
+The command returns:
+```json
 {
   "message": "Polling started successfully",
   "jobId": "poll_1234567890_abc123",
@@ -106,276 +45,60 @@ Use the command to set up polling operations:
 }
 ```
 
-## Pattern Matching
+## Examples
 
-### Path Pattern
-```javascript
-{
-  "type": "path",
-  "pattern": "result.output.text"
-}
+### Basic Usage
 ```
-
-**Use Cases:**
-- Check if `result.status` exists
-- Verify `data.items[0].id` is present
-- Confirm `response.completed` is available
-
-### String Match Pattern
-```javascript
-{
-  "type": "stringMatch",
-  "pattern": "completed successfully"
-}
+/polling start monitoring job 123
+poll url: https://api.example.com/job/status/123
+with token: your-api-token
+notify webhook: https://your-app.com/webhook
+webhook token: webhook-token
+wait for: status.completed to exist
+send message: Job 123 completed
+check every: 30 seconds
+for up to: 5 minutes
 ```
+Polls a job status endpoint every 30 seconds for up to 5 minutes until status.completed exists.
 
-**Use Cases:**
-- Look for "processing complete" in response
-- Find "success" status messages
-- Match specific completion indicators
-
-## Callback Payloads
-
-### Template System
-Use `{{results}}` to inject polling results into your callback payload:
-
-#### Direct Result Injection
-```javascript
-{
-  "status": "completed",
-  "result": "{{results}}"
-}
+### Advanced Usage
 ```
-
-#### Path-Based Injection
-```javascript
-{
-  "message": "Job completed with status: {{results.status}}",
-  "output": "{{results.result.output.text}}"
-}
+/polling monitor firecrawl job abc-123
+poll url: https://api.firecrawl.dev/v1/crawl/abc-123
+api key: firecrawl-api-key
+callback url: https://your-automation/callback
+callback token: callback-token
+wait for text: completed
+send crawl results with id, total pages, and data
+poll every: 1 minute
+timeout after: 30 minutes
 ```
+Monitors a web crawling job, extracting specific data from results using template variables.
 
-#### Mixed Templates
-```javascript
-{
-  "notification": "Processing finished: {{results.message}}",
-  "data": "{{results.data}}",
-  "timestamp": "2023-10-18T10:30:00Z"
-}
+### Specific Use Case
 ```
-
-## Time Configuration
-
-### Poll Time (Total Duration)
-- **Range**: 1m to 12h
-- **Examples**: "1m", "30m", "2h", "5h30m"
-- **Units**: s (seconds), m (minutes), h (hours)
-
-### Poll Frequency (Check Interval)
-- **Allowed Values**: "5s", "10s", "20s", "30s", "1m", "3m", "5m"
-- **Must be shorter than poll time**
-- **Determines check frequency**
-
-## Job Status Monitoring
-
-### Get Job Status
-```javascript
-// GET /polling/status/{jobId}
+/polling wait for video processing
+check url: https://video-api.com/process/video-456
+using token: video-api-key
+notify when done: https://your-app.com/video-ready
+auth token: app-token
+wait for: output.url to be available
+send video id and download url when ready
+check every: 2 minutes
+maximum wait: 1 hour
 ```
+Waits for video processing to complete, then sends the download URL when ready.
 
-### Status Response
-```javascript
-{
-  "id": "poll_1234567890_abc123",
-  "status": "active",
-  "attempts": 5,
-  "maxAttempts": 10,
-  "startTime": 1634567890000,
-  "endTime": 1634567920000,
-  "duration": 30000,
-  "lastError": "error message if any"
-}
-```
+### Notes
 
-### Status Types
-- **active**: Currently polling
-- **completed**: Successfully completed
-- **failed**: Failed with error
-- **timeout**: Exceeded poll time
+**Pattern Types:**
+- path: Checks if a JSON path exists (e.g., "result.status")
+- stringMatch: Checks if response contains specific text
 
-## Common Use Cases
+**Time Formats:**
+- Poll Time: 1m to 12h (e.g., "30m", "2h")
+- Poll Frequency: 5s, 10s, 20s, 30s, 1m, 3m, 5m
 
-### Firecrawl Website Crawling
-```javascript
-{
-  "callbackUrlToken": "your callback token",
-  "pollUrlToken": "your polling token",
-  "callbackUrl": "https://mcpurlfornkfish/agentid/{agent-id}/chatid/{chat-id}",
-  "expectedResultPattern": {
-    "type": "path",
-    "pattern": "status"
-  },
-  "callbackPayload": {
-    "crawlId": "{{results.id}}",
-    "status": "{{results.status}}",
-    "totalPages": "{{results.total}}",
-    "completedPages": "{{results.completed}}",
-    "creditsUsed": "{{results.creditsUsed}}",
-    "data": "{{results.data}}",
-    "message": "Website crawl completed: {{results.completed}}/{{results.total}} pages processed"
-  },
-  "pollUrl": "https://api.firecrawl.dev/v1/crawl/123-456-789",
-  "pollTime": "15m",
-  "pollFrequency": "30s"
-}
-```
-
-### Video Processing
-```javascript
-{
-  "callbackUrlToken": "your callback token",
-  "pollUrlToken": "your polling token",
-  "callbackUrl": "https://your-app.com/video-processed",
-  "expectedResultPattern": {
-    "type": "stringMatch",
-    "pattern": "processing complete"
-  },
-  "callbackPayload": {
-    "videoId": "vid-456",
-    "message": "Video processing finished",
-    "result": "{{results}}"
-  },
-  "pollUrl": "https://video-api.com/jobs/vid-456",
-  "pollTime": "30m",
-  "pollFrequency": "1m"
-}
-```
-
-### Data Analysis Job
-```javascript
-{
-  "callbackUrlToken": "your callback token",
-  "pollUrlToken": "your polling token",
-  "callbackUrl": "https://your-app.com/analysis-complete",
-  "expectedResultPattern": {
-    "type": "path",
-    "pattern": "analysis.results.insights"
-  },
-  "callbackPayload": {
-    "analysisId": "analysis-789",
-    "insights": "{{results.analysis.results.insights}}",
-    "summary": "Analysis completed with {{results.analysis.results.dataPoints}} data points"
-  },
-  "pollUrl": "https://analytics.com/jobs/analysis-789",
-  "pollTime": "1h",
-  "pollFrequency": "2m"
-}
-```
-
-## Error Handling
-
-### Automatic Error Handling
-The polling service handles:
-- **HTTP 4xx errors**: Stops polling, sends error callback
-- **HTTP 5xx errors**: Retries according to frequency
-- **Network timeouts**: Retries according to frequency
-- **Pattern match failures**: Continues polling until timeout
-- **Job timeout**: Sends timeout callback
-
-### Error Callback
-```javascript
-{
-  ...originalCallbackPayload,
-  "error": "Error description",
-  "attempts": 5,
-  "duration": 300000
-}
-```
-
-## Best Practices
-
-### Frequency Selection
-1. **Fast jobs (< 1 min)**: Use 5s or 10s frequency
-2. **Medium jobs (1-10 min)**: Use 30s frequency
-3. **Long jobs (> 10 min)**: Use 1m+ frequency
-
-### Poll URL Design
-- Return consistent JSON structure
-- Include status information
-- Provide progress indicators
-- Return error details for failures
-
-### Pattern Matching
-- Use path patterns for structured responses
-- Prefer specific paths over generic ones
-- Test patterns with sample data
-- Include fallback validation
-
-### Callback Payloads
-- Keep payloads concise but informative
-- Test template paths with sample data
-- Include error handling information
-- Provide completion timestamps
-
-## Performance Optimization
-
-### Efficient Polling
-- Choose appropriate frequencies
-- Set realistic timeouts
-- Monitor resource usage
-- Implement circuit breakers
-
-### Resource Management
-- Limit concurrent polling jobs
-- Clean up completed jobs
-- Monitor memory usage
-- Implement job queuing
-
-## Integration Patterns
-
-### Webhook Integration
-```javascript
-// Use polling as webhook alternative
-{
-  "callbackUrl": "https://your-app.com/webhook-endpoint",
-  "callbackPayload": {
-    "event": "job.completed",
-    "data": "{{results}}"
-  }
-}
-```
-
-### Automation Workflows
-```javascript
-// Chain with other automation steps
-{
-  "callbackUrl": "https://automation.com/next-step",
-  "callbackPayload": {
-    "trigger": "continue-workflow",
-    "input": "{{results.output}}"
-  }
-}
-```
-
-## Security Considerations
-
-### Token Management
-- Use secure callback tokens
-- Rotate tokens regularly
-- Validate token permissions
-- Monitor token usage
-
-### URL Validation
-- Validate callback URLs
-- Use HTTPS endpoints
-- Implement rate limiting
-- Monitor for abuse
-
-## Tips
-- Use INTERNAL_SKILL_URL + 'polling' as the base URL (mandatory)
-- Set realistic poll times based on expected completion duration
-- Choose poll frequency based on job type and urgency
-- Test template paths with sample response data before deployment
-- Include error information in callback payloads for debugging
-- Monitor polling job status to ensure proper completion
-- Design poll URLs to return consistent, structured responses 
+**Template Variables:**
+- Use {{results}} to inject polling results into callbacks
+- Access nested data with {{results.path.to.data}}

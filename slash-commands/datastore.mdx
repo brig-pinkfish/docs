@@ -1,348 +1,69 @@
 ---
-title: "Datastore Command Guide"
-description: "Learn how to use the data store slash command"
+title: "Datastore Guide"
+description: "Learn how to use the datastore slash command to interact with NoSQL data storage"
 ---
 
-## Why Use a Data Store?
+## What can you do with it?
 
-The data store provides a flexible way to organize and retrieve your data using a key + sort field system. Think of it like a smart filing cabinet where you can:
+Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities.
 
-- **Organize Related Data**: Group similar items under the same key (like putting related files in the same folder)
-- **Find Specific Items**: Quickly locate exact items using the sort field
-- **Scale Easily**: Store multiple related items without creating complex folder structures
-- **Share Selectively**: Control access to individual items or groups of items
-- **View Data Your Way**: Display content as documents or tables based on your needs
+## How to use it?
 
-### Common Use Cases
-
-- Store all meeting notes under key `meeting-notes` with dates as sort fields
-- Keep employee records under key `employees` with email addresses as sort fields
-- Track inventory across categories using category names as sort fields
-- Manage project documentation with project codes as sort fields
-- Use as a [job queue](/how-to/job-queue)
-
-## Basic Usage
-
-The `/datastore` command lets you create, read, update, and delete items in the data store. After typing `/datastore`, you can specify your action and options in natural language.
-
-## Key and Sort Field Fundamentals
-
-### Important Rules
-
-- The combination of `key` + `sortField` must be unique
-- If you don't specify a `sortField`, one will be automatically generated for you
-- You can have multiple items with the same `key` as long as they have different `sortField` values
-- Think of `key` as a folder name and `sortField` as a unique identifier within that folder
-
-### Real-World Example
-
-Imagine managing employee reviews:
-
+### Basic Command Structure
 ```
-key: employee-reviews
-sortField: [employee.email]
+/datastore
+action: create, read, update, delete, or search
+key: unique identifier for your data
+content: the data to store
 ```
 
-This structure lets you:
+### Parameters
+- **action**: Operation to perform (create, read, update, delete, search)
+- **key**: Unique identifier for the item (required for most operations)
+- **content**: Data to store (required for create/update)
+- **collection** (optional): Collection ID for data isolation
+- **sort field** (optional): Secondary sorting field
+- **metadata** (optional): Additional custom attributes
+- **search query** (optional): Text to search for
 
-- Keep all reviews under one key
-- Find a specific employee's review instantly
-- Store multiple reviews for different employees
-- Avoid duplicate reviews for the same employee
-- Easily share specific reviews with managers
+### Response Format
+Returns stored items with their IDs, timestamps, and content. Search operations include relevance scores and matched snippets.
 
-### Key and Sort Field Patterns
+## Examples
 
-1. **Single Key Only (Auto-generated Sort Field)**
-
-   ```
-   key: meeting-notes
-   ```
-
-   - Sort field will be auto-generated
-   - Good for: Quick storage when uniqueness isn't a concern
-   - Example: Daily notes where exact retrieval isn't needed
-
-2. **Key + Date Sort Field**
-
-   ```
-   key: meeting-notes
-   sortField: 2024-03-15
-   ```
-
-   - Creates unique daily entries
-   - Good for: Time-series data, daily logs
-   - Example: Can't have two items with key "meeting-notes" and sortField "2024-03-15"
-
-3. **Key + Email Sort Field**
-
-   ```
-   key: employee-reviews
-   sortField: jane.smith@company.com
-   ```
-
-   - One record per employee
-   - Good for: Per-user data
-   - Example: Can't have duplicate reviews for the same email
-
-4. **Key + Category Sort Field**
-
-   ```
-   key: inventory
-   sortField: electronics-001
-   ```
-
-   - Unique identifier within category
-   - Good for: Categorized items requiring unique IDs
-
-5. **Key + ID Sort Field**
-   ```
-   key: customers
-   sortField: CUST-001
-   ```
-   - Explicit unique identifiers
-   - Good for: Systems requiring specific IDs
-
-## Command Options
-
-### Creating Items
-
-Basic syntax:
-
+### Basic Usage
+Store simple data:
 ```
-/datastore create a new item with:
-key: [your-key]
-sortField: [optional-sort-field]
-content: [your-content]
-metadata: [your-metadata]
-viewerType: [table/document]
-permissions: [array of permissions]
-triggerUrls: [optional-trigger-urls]
+/datastore
+action: create
+key: user123
+content: {"name": "John Doe", "email": "john@example.com"}
 ```
 
-### Available Options
-
-#### Required Fields
-
-- `key`: (Required) Primary identifier for your item. Think of it as a folder or category name.
-  ```
-  key: sales-reports
-  ```
-
-#### Optional Fields
-
-- `sortField`: Secondary identifier that makes the item unique when combined with key
-
-  ```
-  sortField: 2024-Q1
-  ```
-
-- `content`: The main content of your item
-
-  ```
-  content: Q1 Sales Analysis
-  ```
-
-- `metadata`: Custom attributes as a JSON object
-
-  ```
-  metadata: {
-    "region": "North America",
-    "department": "Sales"
-  }
-  ```
-
-  For tables:
-
-  ```
-  metadata: {
-    "displayType": "csv",
-    "csvData": "Month,Revenue,Units\nJan,50000,500\nFeb,55000,550"
-  }
-  ```
-
-- `logoUrl`: URL for a logo to display in the viewer
-
-  ```
-  logoUrl: http://www.imgstore.com/myimg.jpg
-  ```
-
-- `permissions`: Array of view/edit permissions
-
-  ```
-  permissions: ["view"] // Read-only access
-  permissions: ["view", "edit"] // Read and write access
-  permissions: [] // Private
-  ```
-
-- `viewerType`: How the content should be displayed
-
-  ```
-  viewerType: "table" // For spreadsheet-like data
-  viewerType: "document" // For document-style content
-  ```
-
-- `triggerUrls`: URLs to be called when the item changes
-  ```
-  triggerUrls: {
-    "URL1": "APIKEY1"
-  }
-  ```
-
-### About Triggers
-
-Datastore items can have triggers attached that fire when the item is updated. When you attach a trigger URL to an item:
-
-- The trigger will be called any time the item changes (content, metadata, or any other field)
-- Each URL in the triggerUrls object will be called with its corresponding API key
-- The trigger receives information about what changed in the item
-- You can update items without firing triggers using the "trigger off" option
-
-Example of creating an item with a trigger:
-
+### Advanced Usage
+Search with filters:
 ```
-/datastore create a new item with:
-key: jobs
-sortField: job-2024-03-15-001
-content: Process monthly report
-metadata: {
-    "status": "not_started",
-    "type": "report_generation"
-}
-triggerUrls: {
-    "https://api.myservice.com/webhook": "my-api-key-123"
-}
+/datastore
+action: search
+search query: customer feedback
+field: content
+type: fuzzy
+metadata.category: reviews
 ```
 
-To update an item without firing triggers, use:
-
+### Specific Use Case
+Update with triggers:
 ```
-/datastore update item with trigger off:
-key: jobs
-sortField: job-2024-03-15-001
-content: Updated content
-```
-
-## Real-World Examples
-
-1. **Project Documentation**
-
-```
-/datastore create a new item with:
-key: projects
-sortField: mobile-app-redesign
-content: Mobile App Redesign Documentation
-metadata: {
-    "status": "in-progress",
-    "team": "design"
-}
-permissions: ["view", "edit"]
-viewerType: "document"
+/datastore
+action: update
+key: order456
+content: {"status": "shipped", "tracking": "ABC123"}
+trigger urls: {"https://webhook.site/notify": "api-key-123"}
 ```
 
-2. **Sales Reports by Region**
-
-```
-/datastore create a new item with:
-key: sales-data
-sortField: europe-2024-q1
-content: European Region Q1 Sales
-metadata: {
-    "displayType": "csv",
-    "csvData": "Country,Revenue,Units\nFrance,75000,750\nGermany,82000,820"
-}
-viewerType: "table"
-permissions: ["view"]
-```
-
-3. **Employee Training Records**
-
-```
-/datastore create a new item with:
-key: training-completion
-sortField: alice.johnson@company.com
-content: Security Training 2024
-metadata: {
-    "completionDate": "2024-03-15",
-    "score": "95%"
-}
-```
-
-4. **Product Inventory by Category**
-
-```
-/datastore create a new item with:
-key: inventory
-sortField: smartphones
-content: Smartphone Inventory
-metadata: {
-    "displayType": "csv",
-    "csvData": "Model,Stock,Price\niPhone 15,50,999\nPixel 8,30,899"
-}
-viewerType: "table"
-permissions: ["view", "edit"]
-```
-
-## Managing Items
-
-### Reading Items
-
-By key only (returns all items with that key):
-
-```
-/datastore get items with key: projects
-```
-
-By key and sort field (returns specific item):
-
-```
-/datastore get item with key: projects and sortField: mobile-app-redesign
-```
-
-### Updating Items
-
-```
-/datastore update item with:
-key: projects
-sortField: mobile-app-redesign
-content: Updated project documentation
-```
-
-### Deleting Items
-
-```
-/datastore delete item with key: projects and sortField: mobile-app-redesign
-```
-
-## Best Practices
-
-1. **Keys**
-
-   - Use plural nouns for collections (e.g., "projects", "employees")
-   - Keep them simple and descriptive
-   - Use consistent naming patterns
-
-2. **Sort Fields**
-
-   - Use dates for time-based organization (YYYY-MM-DD)
-   - Use emails for per-user data
-   - Use IDs for unique records
-   - Use categories for grouping related items
-
-3. **Metadata**
-
-   - Use for searchable attributes
-   - Keep structure consistent within similar items
-   - Avoid storing large amounts of data
-
-4. **Permissions**
-
-   - Use view-only when possible
-   - Carefully consider who needs edit access
-   - Review shared links periodically
-
-5. **Triggers**
-   - Use triggers for automation workflows
-   - Consider using "trigger off" for maintenance updates
-   - Keep track of your trigger URLs and API keys
-   - Test trigger endpoints before adding them to production items
+### Notes
+- Items are uniquely identified by key + sortField combination
+- Use itemId for direct access to specific items
+- Search supports fuzzy, exact, and prefix matching
+- Triggers can notify external URLs on data changes
+- URL-encode keys and sortFields in API calls

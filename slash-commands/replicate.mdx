@@ -1,258 +1,86 @@
 ---
-title: "Replicate"
-description: "Integration with Replicate AI platform for image generation, audio synthesis, and other AI model operations"
+title: "Replicate Command Guide"
+description: "Run AI models for image generation and audio synthesis"
 ---
 
-# Replicate
+## What can you do with it?
 
-Integration with Replicate AI platform for running various AI models including image generation, audio synthesis, and other machine learning operations.
+The `/replicate` command enables you to run various AI models through the Replicate platform. You can generate images from text descriptions, synthesize speech from text, remove backgrounds from images, and leverage other AI capabilities using state-of-the-art models without managing infrastructure.
 
-## Overview
+## How to use it?
 
-The Replicate skill provides functionality for:
-- Image generation and manipulation
-- Text-to-speech and audio processing
-- Background removal and image editing
-- Running various AI models on demand
-- Managing file outputs with configurable expiration
-
-## Connection Requirements
-
-This skill uses an internal service and doesn't require external connections.
-
-## Basic Usage
-
-```javascript
-// Basic image generation
-POST: {INTERNAL_SKILL_URL}/replicate/run
-{
-  "authorId": "black-forest-labs",
-  "modelId": "flux-schnell",
-  "input": {
-    "prompt": "A serene mountain landscape at sunset",
-    "aspect_ratio": "16:9"
-  }
-}
+### Basic Command Structure
+```
+/replicate [model] [input]
 ```
 
-## Key Features
+### Parameters
 
-### Image Generation
-- **Fast Generation**: Quick image creation with flux-schnell
-- **High Quality**: Detailed images with flux-dev
-- **Custom Aspects**: Various aspect ratios and formats
-- **Multiple Outputs**: Generate multiple variations
+**Required:**
 
-### Audio Processing
-- **Text-to-Speech**: Convert text to natural speech
-- **Voice Selection**: Multiple voice options and emotions
-- **Speed Control**: Adjustable speech rate
-- **Audio Formats**: Various output formats
+- `model` - The model to run (e.g., flux-schnell, speech-02-turbo)
+- `input` - Input parameters specific to the model
 
-### Image Editing
-- **Background Removal**: Automatic background removal
-- **Image Transformation**: Various image processing operations
-- **Format Conversion**: Convert between image formats
-- **Quality Control**: Adjustable output quality
+**Optional:**
 
-## Supported Content Types
+- `version` - Specific model version to use
+- `fileLinksExpireInDays` - How long generated files remain accessible (1-30 days, defaults to 7)
+- `num_outputs` - Number of outputs to generate (for image models)
 
-### ✅ Supported
-- **Images**: Generate, edit, and transform images
-- **Audio**: Generate speech and audio processing
+### Response Format
 
-### ❌ Not Supported
-- **Video**: Video generation and processing not available
-
-## Common Operations
-
-### Image Generation (Fast)
-```javascript
-POST: replicate/run
-{
-  "authorId": "black-forest-labs",
-  "modelId": "flux-schnell",
-  "input": {
-    "prompt": "A futuristic cityscape at night",
-    "aspect_ratio": "16:9",
-    "num_outputs": 1,
-    "output_format": "webp",
-    "go_fast": true
-  }
-}
-```
-
-### Image Generation (Quality)
-```javascript
-POST: replicate/run
-{
-  "authorId": "black-forest-labs",
-  "modelId": "flux-dev",
-  "input": {
-    "prompt": "Portrait of a person in Renaissance style",
-    "aspect_ratio": "1:1",
-    "num_outputs": 1,
-    "output_format": "png"
-  }
-}
-```
-
-### Text-to-Speech
-```javascript
-POST: replicate/run
-{
-  "authorId": "minimax",
-  "modelId": "speech-02-turbo",
-  "input": {
-    "text": "Welcome to our application. How can I help you today?",
-    "voice_id": "Young_Woman",
-    "speed": 1.0,
-    "emotion": "friendly"
-  }
-}
-```
-
-### Background Removal
-```javascript
-POST: replicate/run
-{
-  "authorId": "851-labs",
-  "modelId": "background-remover",
-  "input": {
-    "image": "https://example.com/image.jpg",
-    "format": "png"
-  }
-}
-```
-
-## Recommended Models
-
-### Image Generation
-- **flux-schnell**: Fast image generation (black-forest-labs/flux-schnell)
-- **flux-dev**: High-quality image generation (black-forest-labs/flux-dev)
-
-### Audio Processing
-- **speech-02-turbo**: Text-to-speech conversion (minimax/speech-02-turbo)
-
-### Image Editing
-- **background-remover**: Automatic background removal (851-labs/background-remover)
-
-## Request Structure
-
-### Required Parameters
-```javascript
-{
-  "authorId": "string",     // Model author (e.g., "black-forest-labs")
-  "modelId": "string",      // Model identifier (e.g., "flux-schnell")
-  "input": {}              // Model-specific input parameters
-}
-```
-
-### Optional Parameters
-```javascript
-{
-  "version": "string",              // Specific model version
-  "fileLinksExpireInDays": 7        // File expiration (1-30 days)
-}
-```
-
-## Response Structure
-
-### Successful Response
-```javascript
+The command returns:
+```json
 {
   "output": [
     {
-      "url": "https://replicate.delivery/...",
-      "mimeType": "image/webp"
+      "url": "https://generated-file-url",
+      "mimeType": "image/webp or audio/wav"
     }
-  ]
+  ],
+  "model": "model used",
+  "processing_time": "time in seconds"
 }
 ```
 
-### Audio Response
-```javascript
-{
-  "output": [
-    {
-      "url": "https://replicate.delivery/...",
-      "mimeType": "audio/wav"
-    }
-  ]
-}
+## Examples
+
+### Basic Usage
 ```
+/replicate generate an image using flux-schnell
+prompt: A modern office space with plants
+aspect ratio: 16:9
+```
+Generates a quick image of an office space using the fast Flux model.
 
-## Model Parameters
+### Advanced Usage
+```
+/replicate text to speech using speech-02-turbo
+text: Welcome to our automated customer service. How can I help you today?
+voice: Young Woman
+speed: normal
+emotion: friendly
+keep files for: 30 days
+```
+Generates friendly speech audio with a young woman's voice that remains accessible for 30 days.
 
-### Flux Image Models (flux-schnell/flux-dev)
-- **prompt**: Text description (required)
-- **aspect_ratio**: "1:1", "16:9", "9:16", "4:3", "3:2"
-- **num_outputs**: Number of images (1-4)
-- **output_format**: "webp", "jpg", "png"
-- **go_fast**: Boolean for speed optimization (flux-schnell only)
+### Specific Use Case
+```
+/replicate remove background using background-remover
+image url: https://example.com/product-photo.jpg
+output format: png
+```
+Removes the background from a product photo and returns a transparent PNG.
 
-### Speech Model (speech-02-turbo)
-- **text**: Text to convert (required)
-- **voice_id**: "Deep_Voice_Man", "Young_Woman", "Mature_Man"
-- **speed**: Speech rate (0.5-2.0)
-- **emotion**: "auto", "happy", "friendly", "sad", "angry"
+### Notes
 
-### Background Remover
-- **image**: Image URL (required)
-- **format**: Output format ("png", "jpg")
+**Recommended Models:**
+- flux-schnell: Fast image generation
+- flux-dev: High-quality image generation (slower)
+- speech-02-turbo: Text-to-speech synthesis
+- background-remover: Remove image backgrounds
 
-## File Management
-
-### File Expiration
-- Default: 7 days
-- Range: 1-30 days
-- Configurable per request
-
-### File URLs
-- Files are hosted on Replicate's CDN
-- URLs are temporary based on expiration setting
-- Download files if long-term storage needed
-
-## Aspect Ratios
-
-### Common Ratios
-- **1:1**: Square format
-- **16:9**: Widescreen landscape
-- **9:16**: Portrait/mobile format
-- **4:3**: Traditional landscape
-- **3:2**: Photography standard
-
-## Voice Options
-
-### Available Voices
-- **Deep_Voice_Man**: Deep male voice
-- **Young_Woman**: Young female voice
-- **Mature_Man**: Mature male voice
-- **Professional_Woman**: Professional female voice
-
-### Emotions
-- **auto**: Automatic emotion detection
-- **neutral**: Neutral tone
-- **happy**: Cheerful tone
-- **friendly**: Warm, approachable tone
-- **sad**: Melancholic tone
-- **angry**: Intense tone
-
-## Important Notes
-
-- **Content Types**: Only images and audio are supported (no video)
-- **File Expiration**: Plan for file expiration when using generated content
-- **Model Versions**: Some models may have specific version requirements
-- **Rate Limits**: Respect usage limits for high-volume operations
-- **Input Validation**: Validate input parameters based on model requirements
-
-## Best Practices
-
-1. **Model Selection**: Use flux-schnell for speed, flux-dev for quality
-2. **Prompt Engineering**: Write clear, descriptive prompts for better results
-3. **File Management**: Download important files before expiration
-4. **Error Handling**: Implement retry logic for failed generations
-5. **Cost Optimization**: Choose appropriate models for your use case
-6. **Content Guidelines**: Follow Replicate's content policy guidelines
-7. **Version Pinning**: Use specific model versions for consistency
-8. **Batch Processing**: Group similar requests for efficiency 
+**Supported Content Types:**
+- Images: Generate, edit, and transform
+- Audio: Generate speech and process audio
+- Video: Not currently supported 

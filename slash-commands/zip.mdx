@@ -1,187 +1,63 @@
 ---
 title: "Zip Command Guide"
-description: "Learn how to use the Zip slash command to compress and extract files"
+description: "Compress and extract files with the zip command"
 ---
 
-The `/zip` command enables you to compress and decompress files. Perfect for:
+## What can you do with it?
 
-- Creating zip archives
-- Extracting compressed files
-- Bundling multiple files
-- Reducing file sizes
-- Managing file collections
+The `/zip` command enables you to compress files into zip archives and extract contents from existing zip files. You can bundle multiple files together, reduce file sizes for easier sharing, extract compressed archives, and manage collections of files efficiently in your automations.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with compressed files:
-
+### Basic Command Structure
 ```
-/zip compress file.pdf into archive.zip
+/zip [action] [files] [options]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation to perform (compress, extract, bundle, unzip)
+
+**Optional:**
+
+- `files` - File names or patterns to process (defaults to finding uploaded files)
+- `output name` - Name for the created archive (defaults to archive.zip)
+- `file pattern` - Regex pattern to find files (e.g., '\\.pdf$' for PDFs)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "success": "true/false",
+  "outputPath": "path to created archive or extracted files",
+  "zipSize": "size of created archive in bytes",
+  "extractedFiles": ["list of extracted file names"],
+  "totalFiles": "count of processed files"
+}
+```
+
+## Examples
+
+### Basic Usage
+```
+/zip compress document.pdf into report.zip
+```
+Creates a zip archive containing a single PDF file with a specific output name.
+
+### Advanced Usage
+```
+/zip bundle multiple files
+files: report.pdf, data.csv, chart.png
+output name: project-files.zip
+```
+Bundles multiple files of different types into a single named archive for easy distribution.
+
+### Specific Use Case
 ```
 /zip extract contents from uploaded.zip
+output location: /tmp/output
 ```
-
-```
-/zip bundle report.pdf and data.csv into results.zip
-```
-
-## Key Features
-
-### Compression
-- Zip single files
-- Bundle multiple files
-- Create named archives
-- Reduce file sizes
-- Maintain file structure
-
-### Extraction
-- Unzip archives
-- Extract all contents
-- Preserve file names
-- Access compressed data
-- Handle various formats
-
-### File Management
-- Find uploaded files
-- Locate output files
-- Work with URLs
-- Handle file references
-- Process downloads
-
-## Example Commands
-
-### Compress Single File
-```
-/zip compress document.pdf into compressed.zip
-```
-
-### Bundle Multiple Files
-```
-/zip create archive from report.pdf, data.csv, and chart.png
-```
-
-### Extract Archive
-```
-/zip extract all files from archive.zip
-```
-
-### Process Uploaded Zip
-```
-/zip unzip the uploaded file
-```
-
-### Find and Compress
-```
-/zip find all PDFs and compress into pdfs.zip
-```
-
-## File Operations
-
-### Compression Process
-1. Locate source files
-2. Create zip archive
-3. Add files to archive
-4. Save with specified name
-5. Return success status
-
-### Extraction Process
-1. Find zip file
-2. Extract to output folder
-3. List extracted files
-4. Maintain directory structure
-5. Report total files
-
-## Finding Files
-
-### Upload References
-- Search by filename pattern
-- Use regex for matching
-- Find specific extensions
-- Access uploaded files
-
-### Output Files
-- Locate by exact name
-- Check specific steps
-- Access generated files
-- Use file references
-
-## Return Information
-
-### Zip Operation
-- **success**: Operation status
-- **outputPath**: Archive location
-- **zipSize**: Compressed size
-- **buffer**: File data
-
-### Unzip Operation
-- **success**: Operation status
-- **extractedFiles**: List of files
-- **totalFiles**: Count extracted
-
-### File References
-- **url**: File location
-- **name**: Filename
-- **size**: File size
-- **type**: MIME type
-
-## Usage Patterns
-
-### Single File Compression
-```
-/zip compress report.pdf to report.zip
-```
-
-### Multiple File Bundle
-```
-/zip bundle invoice.pdf and receipt.jpg into transaction.zip
-```
-
-### Extract and Process
-```
-/zip extract data.zip then process the CSV files
-```
-
-### Find and Compress
-```
-/zip find all .log files and create logs.zip
-```
-
-## File Location
-
-### Input Sources
-- Uploaded files
-- Generated outputs
-- Downloaded files
-- Previous step results
-
-### Output Location
-- Extracts to /tmp/output
-- Archives saved locally
-- Accessible via URL
-- Available for download
-
-## Best Practices
-
-1. **Verify Files Exist**
-   - Check file availability
-   - Handle missing files
-   - Validate before processing
-
-2. **Name Archives Clearly**
-   - Use descriptive names
-   - Include date/context
-   - Avoid overwrites
-
-3. **Check Extraction Results**
-   - Verify file count
-   - Confirm success status
-   - List extracted files
-
-## Tips
-- Use regex patterns to find files by extension
-- Always check if files exist before processing
-- Extracted files go to /tmp/output directory
-- File references have .url property for downloads
-- Bundle related files for easier management 
+Extracts all contents from an uploaded zip file to the default output directory for further processing.

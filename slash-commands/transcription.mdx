@@ -1,60 +1,80 @@
 ---
-title: "Transcribe Command Guide"
-description: "Learn how to use the transcribe slash command to convert audio to text"
+title: "Transcription Command Guide"
+description: "Convert audio files into text transcripts"
 ---
 
-## Why Use Transcribe?
+## What can you do with it?
 
-The `/transcribe` command converts audio content into text. Perfect for:
+The `/transcription` command enables you to convert audio files into text using AI-powered speech recognition. You can transcribe recordings, meetings, interviews, podcasts, and any audio content into readable text in various formats for further processing or documentation.
 
-- Converting meeting recordings to text
-- Transcribing interviews
-- Creating subtitles for videos
-- Documenting voice notes
-- Processing podcast content
+## How to use it?
 
-## Basic Usage
-
-Simply use the command with an audio URL or uploaded file:
-
+### Basic Command Structure
 ```
-/transcribe https://example.com/audio/meeting-recording.mp3
+/transcription [audio-file] [options]
 ```
 
-Or with an uploaded file:
+### Parameters
 
+**Required:**
+
+- `audio-file` - The audio file to transcribe (URL or uploaded file)
+
+**Optional:**
+
+- `format` - Output format: json, plaintext, markdown, or html (defaults to json)
+- `language` - Specify the audio language for better accuracy (auto-detected if not specified)
+- `timestamps` - Include timestamps in the transcript (true/false)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": "The transcribed text content",
+  "duration": "audio duration in seconds",
+  "language": "detected or specified language",
+  "format": "output format used"
+}
 ```
-/transcribe
-[Uploaded audio file]
+
+## Examples
+
+### Basic Usage
 ```
-
-## Language Support
-
-Currently, the transcription service:
-- Only transcribes English-language speech
-- Outputs transcriptions in English
-- Does not support translation to other languages
-
-## Output Formats
-
-By default, the output is a JSON object. For a more readable format, specify markdown:
-
+/transcription
+audio-file: meeting-recording.mp3
 ```
-/transcribe in markdown format
-[Uploaded audio file]
+Transcribes an audio file into text with default JSON formatting.
+
+### Advanced Usage
 ```
+/transcription
+audio-file: interview.wav
+format: markdown
+language: English
+timestamps: true
+```
+Transcribes an interview with timestamps included, formatted as markdown with specified language for accuracy.
 
-## Supported Formats
+### Specific Use Case
+```
+/transcription
+audio-file: podcast-episode.mp3
+format: plaintext
+language: Spanish
+```
+Transcribes a Spanish podcast episode into plain text format for easy reading and sharing.
 
-Audio files:
-AAC (audio/aac)
-FLAC (audio/flac)
-MP3 (audio/mp3)
-WAV (audio/wav)
-OGG Vorbis (audio/ogg)
-AIFF (audio/aiff)
+### Notes
 
-Note: Each format should be provided with the appropriate MIME type (e.g., audio/mp3, audio/wav). The system will automatically detect and process the correct format.
+**Supported Audio Formats:**
+- MP3 (.mp3)
+- WAV (.wav)
+- M4A (.m4a)
+- FLAC (.flac)
+- OGG (.ogg)
 
-## File Size Limits
-- Maximum file size: 25MB
+**Language Support:**
+- Automatic language detection
+- Over 50 languages supported

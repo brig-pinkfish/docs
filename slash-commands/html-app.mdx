@@ -1,95 +1,87 @@
 ---
 title: "HTML App Command Guide"
-description: "Learn how to use the HTML App slash command to create a front end application"
+description: "Create interactive HTML web applications"
 ---
 
-## Why Use HTML App?
+## What can you do with it?
 
-The `/html-app` command enables you to create simple front end applications. Perfect for:
+The `/html-app` command enables you to create complete HTML applications with interactive functionality. You can build web interfaces, forms, dashboards, calculators, and single-page applications with modern styling and JavaScript interactivity, all generated as self-contained HTML files.
 
-- Creating internal tools and dashboards
-- Building form-based applications
-- Developing data collection interfaces
-- Constructing interactive web experiences
-- Prototyping web applications
+## How to use it?
 
-## Basic Usage
-
-Use the command followed by a description of the application you want to create. Be specific about functionality, design preferences, and user interactions.
-
+### Basic Command Structure
 ```
-/html-app create an app that allows my internal users to submit IT help tickets. On submit, show a success message and clear the form.
+/html-app [description]
 ```
 
-<img src="/images/examples/html.app.png" alt="HTML App Ticket Form" />
+### Parameters
 
-## Additional Examples
+**Required:**
 
-### Basic Form Application
+- `description` - Description of the HTML application you want to create
 
-```
-/html-app create a contact form with fields for name, email, and message. Include form validation and a success message.
-```
+**Optional:**
 
-### Data Display
+- `features` - Specific features or functionality to include
+- `style` - Visual style preferences (modern, minimal, colorful, etc.)
+- `interactivity` - JavaScript behaviors and interactions needed
 
-```
-/html-app create a dashboard that displays employee attendance records in a table with sorting capabilities
-```
+### Response Format
 
-### Interactive Tool
-
-```
-/html-app create a calculator that converts between different currencies using current exchange rates
-```
-
-### User Management
-
-```
-/html-app create a user registration page with email verification and password strength indicators
-```
-
-## Iterating and Refinement
-
-Getting your application exactly right might take a few (or a dozen) iterations. You can have a conversation with Pinkfish to refine your application until it meets your needs. Every now and then, Pinkfish will kind of totally forget what it's supposed to be doing. If that happens, delete the conversations that led to the bad state. Re-run the result that was last working well. And start from there again... but try a slightly different prompt.
-
-## Saving and Sharing Your Applications
-
-Save and share your HTML applications in two steps:
-
-1. Create your application using the /html-app command
-
-2. Save it to [global file storage](/slash-commands/filestorage) in a subsequent step:
-
-```
-/filestorage write the result from the previous step to "customer-feedback-form.html"
+The command returns:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <style>[Custom CSS]</style>
+</head>
+<body>
+    [HTML content]
+    <script>[JavaScript code]</script>
+</body>
+</html>
 ```
 
-This provides a shareable link that allows others to:
+## Examples
 
-- Access the application directly
-- Embed it in other pages
-- Test functionality
-- Review the implementation
-- Collaborate on improvements
-
-Pro tip: Use descriptive names when saving your applications to make them easier to find and manage later.
-
-## Creating a Backend for Your Frontend
-
-While the HTML App command creates standalone front-end applications, you can connect them to backend services:
-
-1. Create separate workflows to serve as your backend services
-2. Add HTML triggers to these backend workflows
-3. Return to your frontend application and ask to connect the buttons/functions to your backend
-4. Provide the API endpoints and API keys for connection
-
-Example Backend Integration:
-
+### Basic Usage
 ```
-/html-app update my IT ticket form to submit to this endpoint:
-https://mytriggerEndpoint
-API Key: xyz123
+/html-app
+description: create a simple todo list application
 ```
+Generates a basic todo list app with add, delete, and mark complete functionality.
 
-**Important Security Note:** When including API keys in frontend applications, they will be visible in the client-side code. Only use this approach if you're comfortable with public access to your backend services. We're working on a more secure solution for handling authentication and authorization.
+### Advanced Usage
+```
+/html-app
+description: interactive expense tracker with categories
+features: add expenses, categorize, calculate totals, show chart
+style: modern and clean with blue accent colors
+interactivity: form validation, dynamic updates, local storage
+```
+Creates a comprehensive expense tracking application with data visualization and persistence.
+
+### Specific Use Case
+```
+/html-app
+description: contact form with validation
+features: name, email, message fields with submit button
+style: professional business style
+```
+Builds a contact form with client-side validation and professional styling.
+
+### Notes
+
+**Technical Details:**
+- Uses Bulma CSS framework for styling
+- ES5-compatible JavaScript for broad browser support
+- Self-contained HTML files (no external dependencies except CDN)
+- Responsive design that works on mobile and desktop
+
+**Limitations:**
+- Output limited to ~8000 tokens (complex apps will be simplified)
+- Uses traditional JavaScript syntax (var, function declarations)
+- No ES6+ features to ensure compatibility
+- Single-file output only

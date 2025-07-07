@@ -3,28 +3,56 @@ title: "Firecrawl Command Guide"
 description: "Learn how to use the Firecrawl slash command to scrape and map websites"
 ---
 
-The `/firecrawl` command enables you to scrape web content and create site maps from URLs. Perfect for:
+## What can you do with it?
 
-- Scraping web pages
-- Extracting content
-- Taking screenshots
-- Mapping site structure
-- Converting to markdown
+Extract clean, structured content from websites including text, links, screenshots, and metadata. Perfect for content extraction, web monitoring, and data collection with browser automation support.
 
-## Basic Usage
+## How to use it?
 
-Use the command to scrape websites:
-
+### Basic Command Structure
 ```
-/firecrawl scrape https://example.com as markdown
+/firecrawl
+urls: the web pages to scrape
+format: how you want the content (markdown by default)
 ```
 
+### Parameters
+- **urls**: Array of URLs to scrape
+- **format** (optional): Output format - markdown, html, links, screenshot, json
+- **actions** (optional): Browser actions like scroll, click, wait, screenshot
+- **wait time** (optional): Milliseconds to wait before scraping
+- **only main content** (optional): Extract only the main content area
+- **include tags** (optional): Specific HTML tags to include
+- **exclude tags** (optional): HTML tags to exclude
+
+### Response Format
+Returns scraped content in the requested format with metadata including title, language, and status.
+
+## Examples
+
+### Basic Usage
+Scrape a webpage as markdown:
 ```
-/firecrawl map https://example.com and https://another-site.com
+/firecrawl
+urls: ["https://example.com"]
 ```
 
+### Advanced Usage
+Scrape with browser actions:
 ```
-/firecrawl extract content from https://example.com with screenshot
+/firecrawl
+urls: ["https://example.com/products"]
+actions: scroll down, wait 2 seconds, take screenshot
+format: markdown and screenshot
+```
+
+### Specific Use Case
+Extract only main article content:
+```
+/firecrawl
+urls: ["https://news.example.com/article"]
+only main content: true
+exclude tags: ["script", "style", "nav", "footer"]
 ```
 
 ## Key Features

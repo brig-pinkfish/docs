@@ -3,28 +3,58 @@ title: "Crawling Command Guide"
 description: "Learn how to use the Crawling slash command to retrieve website content"
 ---
 
-The `/crawling` command enables you to crawl websites and extract content from multiple pages. Perfect for:
+## What can you do with it?
 
-- Extracting content from websites
-- Bulk data collection
-- Content analysis
-- Documentation scraping
-- Research automation
+Systematically crawl websites to extract content from multiple pages following links. Perfect for comprehensive data collection, documentation scraping, or content migration.
 
-## Basic Usage
+## How to use it?
 
-Use the command to crawl websites:
-
+### Basic Command Structure
 ```
-/crawling crawl "https://example.com" with limit 10 pages
+/crawling
+url: the starting URL to crawl from
+limit: maximum number of pages to crawl
 ```
 
+### Parameters
+- **url**: The starting URL to begin crawling
+- **limit**: Maximum number of pages to crawl (default: 10)
+- **max depth** (optional): How many link levels deep to follow
+- **include paths** (optional): Only crawl URLs matching these patterns
+- **exclude paths** (optional): Skip URLs matching these patterns
+- **formats** (optional): Output formats (markdown, html)
+
+### Response Format
+Returns crawled content from all discovered pages with metadata and the total pages processed.
+
+## Examples
+
+### Basic Usage
+Crawl a documentation site:
 ```
-/crawling extract content from docs section of "https://company.com"
+/crawling
+url: https://docs.example.com
+limit: 20
 ```
 
+### Advanced Usage
+Crawl with path filtering:
 ```
-/crawling scrape "https://blog.com" excluding blog posts
+/crawling
+url: https://example.com
+limit: 50
+include paths: ["docs/*", "guides/*"]
+exclude paths: ["blog/*", "news/*"]
+```
+
+### Specific Use Case
+Deep crawl for migration:
+```
+/crawling
+url: https://old-site.example.com
+limit: 100
+max depth: 5
+formats: markdown and html
 ```
 
 ## Key Features

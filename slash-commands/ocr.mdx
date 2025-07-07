@@ -1,36 +1,78 @@
 ---
 title: "OCR Command Guide"
-description: "Learn how to use the OCR slash command to extract text from images"
+description: "Extract text from images and scanned documents"
 ---
 
-## Why Use OCR?
+## What can you do with it?
 
-The `/ocr` command helps you extract text from images quickly and easily. It's perfect for converting text in:
+The `/ocr` command enables you to extract text from images and scanned documents using optical character recognition. You can convert photos of text into editable content, digitize printed documents, extract form data from scanned forms, and process images containing text in various formats.
 
-- Screenshots
-- Photos of documents
-- Images with text content
-- Handwritten notes
+## How to use it?
 
-## Basic Usage
-
-Simply use the command followed by your image:
-
+### Basic Command Structure
 ```
-/ocr [uploaded image or URL to an image]
-```
-Or specify the output format:
-```
-/ocr [uploaded image or URL to an image] 
-extract only the data from charts and tables
-output as a CSV
+/ocr [image-file] [options]
 ```
 
-## Supported Formats
+### Parameters
 
-- JPG/JPEG
-- PNG
+**Required:**
 
-## Note
+- `image-file` - The image or scanned document to process (URL or uploaded file)
 
-For PDF documents, please use the `/pdf-to-text` command.
+**Optional:**
+
+- `format` - Output format: json or plaintext (defaults to json)
+- `extract-fields` - Extract structured data from forms (true/false)
+- `language` - Specify text language for better accuracy (defaults to English)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": "extracted text content",
+  "fields": {
+    "field_name": "field_value"
+  },
+  "confidence": "recognition confidence score",
+  "format": "output format used"
+}
+```
+
+## Examples
+
+### Basic Usage
+```
+/ocr
+image-file: receipt.jpg
+```
+Extracts all text from an image of a receipt.
+
+### Advanced Usage
+```
+/ocr
+image-file: application-form.png
+extract-fields: true
+format: json
+language: English
+```
+Processes a scanned form, extracting field names and values into structured JSON format.
+
+### Specific Use Case
+```
+/ocr
+image-file: business-card.jpg
+extract-fields: true
+```
+Extracts contact information from a business card image, organizing data into structured fields.
+
+## Notes
+
+**Supported Image Formats:**
+- JPEG/JPG (.jpg, .jpeg)
+- PNG (.png)
+- GIF (.gif)
+- BMP (.bmp)
+- TIFF (.tiff, .tif)
+- WebP (.webp)

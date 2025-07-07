@@ -1,294 +1,64 @@
 ---
-title: "Artifacts Command Guide"
-description: "Learn how to use the Artifacts slash command to work with output files from previous steps"
+title: "Artifacts Guide"
+description: "Learn how to use the artifacts slash command to work with output files from previous steps"
 ---
 
-The `/artifacts` command enables you to work with output files from previous workflow steps. Perfect for:
+## What can you do with it?
 
-- Accessing data from previous steps
-- Processing JSON and CSV files
-- Extracting text from documents
-- Combining results across steps
-- Managing step outputs
+Access and process output files (artifacts) from previous automation steps. Read data, extract content from documents, combine results, and work with various file formats seamlessly.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with artifacts:
-
+### Basic Command Structure
 ```
-/artifacts get data from "results.json" in step a3x7
+/artifacts
+action: get data from previous step
+file: the artifact file name
+step: which step to get it from
 ```
 
+### Parameters
+- **action**: What to do (get, list, extract, combine)
+- **file**: Artifact filename or pattern
+- **step** (optional): Step ID (like 'a3x7') or step number
+- **property** (optional): Specific JSON property to extract
+- **format** (optional): How to process the file
+
+### Response Format
+Returns the requested data parsed and ready to use, or lists available artifacts with their metadata.
+
+## Examples
+
+### Basic Usage
+Get data from a previous step:
 ```
-/artifacts extract text from "report.pdf" in step b2y9
-```
-
-```
-/artifacts list all files from previous steps
-```
-
-## Key Features
-
-### Data Access
-
-- Get JSON data (auto-parsed)
-- Read CSV files (auto-parsed)
-- Access text content
-- Download binary files
-- Extract nested properties
-
-### File Processing
-
-- Extract PDF text
-- Process Word documents
-- Convert Excel to CSV
-- Handle PowerPoint files
-- Support multiple formats
-
-### Step Integration
-
-- Reference specific steps
-- Search across all steps
-- Combine multiple results
-- Process step outputs
-
-### Pattern Matching
-
-- Find files by name
-- Use regex patterns
-- Filter by file type
-- Search multiple files
-
-## Example Commands
-
-### Get JSON Data
-
-```
-/artifacts get data from "config.json" in step a3x7
+/artifacts
+action: get data from step a3x7
+file: results.json
 ```
 
-### Access Nested Properties
-
+### Advanced Usage
+Extract specific property from JSON:
 ```
-/artifacts get user.profile.name from "user.json" in step a3x7
-```
-
-### Extract Document Text
-
-```
-/artifacts extract text from "document.pdf" in step b2y9
+/artifacts
+action: get user email from previous step
+file: user-data.json
+step: b2y9
+property: contact.email
 ```
 
-### List All Artifacts
-
+### Specific Use Case
+Combine results from multiple steps:
 ```
-/artifacts show all files from previous steps
-```
-
-### Find CSV Files
-
-```
-/artifacts find all CSV files from any step
+/artifacts
+action: combine all CSV files into one dataset
+file pattern: *.csv
+steps: all previous steps
 ```
 
-### Combine Step Results
-
-```
-/artifacts combine results from steps a3x7 and b2y9
-```
-
-## Data Access Methods
-
-### Get Artifact Data
-
-- Automatically parses JSON/CSV
-- Returns text for text files
-- Handles binary files
-- Returns null if not found
-
-### Property Path Access
-
-```javascript
-// Get nested property directly
-const name = await config.getArtifactData("user.json", {
-  stepId: "a3x7",
-  propertyPath: "profile.name",
-});
-
-// Access array elements
-const hobby = await config.getArtifactData("data.json", {
-  stepId: "d8w4",
-  propertyPath: "hobbies[1]",
-});
-```
-
-## File Type Support
-
-### JSON Files
-
-- Automatically parsed
-- Access nested properties
-- Property path notation
-- Null handling
-
-### CSV Files
-
-- Parsed into arrays
-- Header detection
-- Data filtering
-- Export capabilities
-
-### Document Files
-
-- **PDF**: Text extraction
-- **Word**: Plain text
-- **Excel**: CSV format
-- **PowerPoint**: Text content
-
-### Binary Files
-
-- Image processing
-- File downloads
-- MIME type detection
-- Buffer handling
-
-## Step References
-
-### By Step ID
-
-```
-/artifacts get "data.json" from step a3x7
-```
-
-### By Step Index
-
-```
-/artifacts get files from step 2
-```
-
-### Search All Steps
-
-```
-/artifacts find "config.json" in any step
-```
-
-## Finding Artifacts
-
-### Specific Files
-
-```javascript
-// Find exact file
-const file = config.findArtifact("report.pdf", { stepId: "a3x7" });
-
-// Find multiple files
-const files = config.findArtifact(".*\\.csv$", { multipleFiles: true });
-```
-
-### Pattern Matching
-
-- Use regex patterns
-- File extension filters
-- Multiple file results
-- Cross-step searches
-
-## Processing Examples
-
-### JSON Processing
-
-```
-/artifacts get sales data from "report.json" step a3x7, filter by status "active"
-```
-
-### CSV Analysis
-
-```
-/artifacts load "data.csv" from step b2y9, calculate totals
-```
-
-### Document Extraction
-
-```
-/artifacts extract text from all PDFs in step c5z1
-```
-
-### Data Combination
-
-```
-/artifacts merge results from steps a3x7 and b2y9 into combined report
-```
-
-## Error Handling
-
-### Missing Files
-
-- Returns null for missing artifacts
-- Provides default data options
-- Graceful error handling
-- Fallback mechanisms
-
-### File Processing Errors
-
-- MIME type validation
-- Format verification
-- Parsing error handling
-- Recovery strategies
-
-## Best Practices
-
-1. **Use Step IDs**
-
-   - More stable than step numbers
-   - Consistent references
-   - Better error handling
-
-2. **Check for Existence**
-
-   - Verify files exist
-   - Handle null returns
-   - Provide defaults
-
-3. **Property Paths**
-
-   - Use for nested JSON access
-   - Avoid deep object traversal
-   - Handle missing properties
-
-4. **File Type Awareness**
-   - Check MIME types
-   - Handle text vs binary
-   - Use appropriate methods
-
-## Common Patterns
-
-### Data Pipeline
-
-```
-/artifacts get input from step 1, process and enhance, save as output
-```
-
-### Report Generation
-
-```
-/artifacts combine data from multiple steps into comprehensive report
-```
-
-### File Conversion
-
-```
-/artifacts convert Excel from step a3x7 to CSV format
-```
-
-### Text Analysis
-
-```
-/artifacts extract text from all documents and analyze content
-```
-
-## Tips
-
-- Always use step IDs for stable references
-- Check for null when artifacts might not exist
-- JSON and CSV files are automatically parsed
-- Use regex patterns to find multiple files
-- Excel files are extracted as CSV format
-- Property paths support array indexing with [n] syntax
+### Notes
+- Automatically parses JSON and CSV files
+- Extracts text from PDFs, Word docs, Excel, and PowerPoint
+- Supports regex patterns for finding multiple files
+- Returns null if artifact not found
+- Step IDs (like 'a3x7') are more stable than step numbers 

@@ -1,204 +1,67 @@
 ---
 title: "PDF to Text Command Guide"
-description: "Learn how to use the pdf to text slash command"
+description: "Extract text content from PDF documents"
 ---
 
-## Why Use PDF to Text?
+## What can you do with it?
 
-The PDF to Text command provides a powerful way to work with PDF documents. You can:
+The `/pdf-to-text` command enables you to extract text from PDF documents for further processing. You can extract all text from a PDF, pull specific sections, answer questions about the content, create summaries, and convert PDF content into editable text formats for analysis or documentation.
 
-- **Extract Information**: Pull out specific text, data from tables, or information from charts
-- **Analyze Documents**: Get insights from reports, legal documents, and financial statements
-- **Convert Formats**: Transform PDF content into structured data
-- **Answer Questions**: Ask specific questions about the document's contents
-- **Generate Summaries**: Create concise summaries of long documents
+## How to use it?
 
-## Basic Usage
-
-The `/pdf-to-text` command lets you interact with PDF documents in natural language. Simply provide a URL to your PDF and specify what you want to do with it.
-
-### Command Structure
-
+### Basic Command Structure
 ```
-/pdf-to-text [your request] [PDF URL]
+/pdf-to-text [pdf-file] [action]
 ```
 
-## Capabilities
+### Parameters
 
-### 1. Full Text Extraction
+**Required:**
 
-```
-/pdf-to-text extract all text from 
-[Uploaded PDF or URL to a PDF]
-```
+- `pdf-file` - The PDF document to process (URL or uploaded file)
 
-- Gets all text content from the document
-- Maintains formatting where possible
-- Works with multi-page documents
+**Optional:**
 
-### 2. Targeted Extraction
+- `action` - What to do with the PDF: extract-all, extract-snippet, answer-question, or summarize (defaults to extract-all)
+- `query` - Specific text to find or question to answer (when using extract-snippet or answer-question)
+- `format` - Output format: json or plaintext (defaults to json)
 
-```
-/pdf-to-text get the section about revenue from 
-[Uploaded PDF or URL to a PDF]
-```
+### Response Format
 
-- Extract specific sections
-- Find particular paragraphs
-- Pull out specific data points
-
-### 3. Question Answering
-
-```
-/pdf-to-text what were the Q4 sales figures in 
-[Uploaded PDF or URL to a PDF]
+The command returns:
+```json
+{
+  "extracted_text": "full or partial text content from PDF",
+  "page_count": "number of pages processed",
+  "query_result": "answer or snippet if requested",
+  "format": "output format used"
+}
 ```
 
-- Ask specific questions about the content
-- Get precise answers
-- Reference multiple parts of the document
+## Examples
 
-### 4. Summarization
-
+### Basic Usage
 ```
-/pdf-to-text summarize the main points from 
-[Uploaded PDF or URL to a PDF]
+/pdf-to-text
+pdf-file: document.pdf
 ```
+Extracts all text content from a PDF document.
 
-- Get concise overviews
-- Focus on key information
-- Maintain important details
-
-## Advanced Features
-
-### Working with Visual Elements
-
-The system can understand and describe:
-
-- Charts and graphs
-- Tables
-- Diagrams
-- Images within the PDF
-
-Example:
-
+### Advanced Usage
 ```
-/pdf-to-text describe the trend shown in the sales chart on page 2 of 
-[Uploaded PDF or URL to a PDF]
+/pdf-to-text
+pdf-file: research-paper.pdf
+action: answer-question
+query: What are the main findings of this study?
+format: plaintext
 ```
+Analyzes a PDF to answer a specific question about its content, returning the answer in plain text.
 
-### Data Extraction
-
-Request specific formats:
-
+### Specific Use Case
 ```
-/pdf-to-text convert the financial table on page 3 to CSV format from 
-[Uploaded PDF or URL to a PDF]
+/pdf-to-text
+pdf-file: contract.pdf
+action: extract-snippet
+query: payment terms
 ```
-
-### Multi-language Support
-
-```
-/pdf-to-text translate this document to Spanish from 
-[Uploaded PDF or URL to a PDF]
-```
-
-## Example Use Cases
-
-1. **Financial Analysis**
-
-```
-/pdf-to-text analyze the quarterly financial statements and highlight any significant changes in revenue from 
-[Uploaded PDF or URL to a PDF]
-```
-
-2. **Legal Document Review**
-
-```
-/pdf-to-text extract all clauses related to termination from 
-[Uploaded PDF or URL to a PDF]
-```
-
-3. **Research Paper Analysis**
-
-```
-/pdf-to-text summarize the methodology section and list the key findings from 
-[Uploaded PDF or URL to a PDF]
-```
-
-4. **Table Extraction**
-
-```
-/pdf-to-text convert all tables in the document to CSV format from [Uploaded PDF or URL to a PDF]
-```
-
-## Limitations and Requirements
-
-- Maximum file size: 32MB
-- Maximum pages: 100
-- PDFs must not be password-protected or encrypted
-- URLs must be accessible and point directly to PDF files
-
-## Best Practices
-
-1. **Be Specific**
-
-   - Clearly state what information you need
-   - Specify page numbers when possible
-   - Reference specific sections or elements
-
-2. **Complex Queries**
-
-   - Break down complex requests into smaller parts
-   - Use specific terminology from the document
-   - Reference visual elements clearly
-
-3. **Data Extraction**
-
-   - Specify desired output format
-   - Include any specific formatting requirements
-   - Mention if specific columns/rows are needed
-
-4. **For Best Results**
-   - Ensure PDFs are text-searchable
-   - Use high-quality scans if working with scanned documents
-   - Provide context when asking questions about specific sections
-
-## Common Commands
-
-1. **Basic Text Extraction**
-
-```
-/pdf-to-text extract all text from 
-[Uploaded PDF or URL to a PDF]
-```
-
-2. **Targeted Summary**
-
-```
-/pdf-to-text give me a 3 paragraph summary focusing on methodology from 
-[Uploaded PDF or URL to a PDF]
-```
-
-3. **Data Analysis**
-
-```
-/pdf-to-text analyze the financial data and create a trend report from 
-[Uploaded PDF or URL to a PDF]
-```
-
-4. **Question Answering**
-
-```
-/pdf-to-text what are the key conclusions from the executive summary in 
-[Uploaded PDF or URL to a PDF]
-```
-
-5. **Format Conversion**
-
-```
-/pdf-to-text convert all tables to JSON format from 
-[Uploaded PDF or URL to a PDF]
-```
-
-Remember: The more specific your request, the better the results will be!
+Extracts specific sections mentioning payment terms from a contract PDF.
