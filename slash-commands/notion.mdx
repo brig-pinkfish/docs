@@ -1,104 +1,432 @@
 ---
-title: "Notion Command Guide"
-description: "Learn how to use the Notion slash command to manage your workspace"
+title: "Notion Guide"
+description: "Manage your Notion workspace including pages, databases, blocks, and content with full API access"
 ---
 
-The `/notion` command enables you to create and manage pages, databases, and content in Notion. Perfect for:
+## What can you do with it?
 
-- Creating pages and databases
-- Managing tasks and projects
-- Updating page content
-- Querying databases
-- Organizing workspace content
+The Notion API allows you to manage your entire Notion workspace programmatically. You can create and update pages, manage databases with properties and entries, add and modify content blocks, and search across your workspace to find specific information.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Notion:
-
+### Basic Command Structure
 ```
-/notion create page "Project Plan" in parent page [ID]
+/your-notion-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/notion create task database with columns: Name, Status, Due Date, Assigned To
-```
+### Parameters
 
-```
-/notion find all tasks with status "In Progress" sorted by due date
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (create, update, retrieve, query, etc.)
+- `page_id` or `database_id` - The target page or database ID
+- `content` - Content data for creation/update operations
 
-### Page Management
-- Create new pages
-- Update page properties
-- Add content blocks
-- Retrieve page information
-- Archive pages
+**Optional:**
 
-### Database Operations
-- Create databases with custom properties
-- Query databases with filters
-- Sort results
-- Add database entries
-- Update existing entries
+- `properties` - Page or database properties
+- `filters` - Query filters for database searches
+- `sorts` - Sort criteria for database queries
+- `block_type` - Type of block to create (paragraph, heading, to_do, etc.)
 
-### Content Blocks
-- Add paragraphs, headings, lists
-- Update block content
-- Append new blocks
-- Format text with rich styling
-
-### Property Types
-- Title (required for all pages)
-- Select/Multi-select options
-- Date and date ranges
-- People assignments
-- Checkboxes
-- Numbers and formulas
-
-## Example Commands
+## Tools
 
 ### Create Page
+Create a new page in a parent page or database.
+
+**Parameters:**
+- `parent_id` (required) - Parent page or database ID
+- `title` (required) - Page title
+- `properties` (optional) - Page properties
+- `content` (optional) - Initial content blocks
+
+**Example:**
 ```
-/notion create page "Meeting Notes" with content "Today's agenda: ..."
+/your-notion-connection
+action: create_page
+parent_id: 98ad959b-2b6a-4774-80ee-00246fb0ea9b
+title: New Project Plan
+content: This is the initial content for the new page
 ```
 
-### Create Database Entry
-```
-/notion add to "Tasks" database: Name: "Review proposal", Status: "In Progress", Due Date: "2023-12-15"
-```
-
-### Query Database
-```
-/notion in "Projects" database, find all items where Status = "Active" and sort by Due Date
+**Response:**
+```json
+{
+  "object": "page",
+  "id": "b55c9c91-384d-452b-81db-d1ef79372b75",
+  "created_time": "2023-05-10T12:00:00.000Z",
+  "properties": {
+    "title": {
+      "type": "title",
+      "title": [
+        {
+          "text": {
+            "content": "New Project Plan"
+          }
+        }
+      ]
+    }
+  },
+  "url": "https://www.notion.so/New-Project-Plan-b55c9c91384d452b81dbd1ef79372b75"
+}
 ```
 
 ### Update Page
+Update the properties of an existing page.
+
+**Parameters:**
+- `page_id` (required) - Page ID to update
+- `properties` (required) - Properties to update
+- `title` (optional) - New page title
+
+**Example:**
 ```
-/notion update page [ID] title to "Updated Project Plan"
+/your-notion-connection
+action: update_page
+page_id: b55c9c91-384d-452b-81db-d1ef79372b75
+title: Updated Project Plan
 ```
 
-### Add Content
+**Response:**
+```json
+{
+  "object": "page",
+  "id": "b55c9c91-384d-452b-81db-d1ef79372b75",
+  "last_edited_time": "2023-05-10T12:30:00.000Z",
+  "properties": {
+    "title": {
+      "type": "title",
+      "title": [
+        {
+          "text": {
+            "content": "Updated Project Plan"
+          }
+        }
+      ]
+    }
+  }
+}
 ```
-/notion add to page [ID]: heading "New Section" and paragraph "Section content..."
+
+### Retrieve Page
+Get information about a specific page.
+
+**Parameters:**
+- `page_id` (required) - Page ID to retrieve
+
+**Example:**
+```
+/your-notion-connection
+action: retrieve_page
+page_id: b55c9c91-384d-452b-81db-d1ef79372b75
 ```
 
-## Database Properties
+**Response:**
+```json
+{
+  "object": "page",
+  "id": "b55c9c91-384d-452b-81db-d1ef79372b75",
+  "created_time": "2023-05-10T12:00:00.000Z",
+  "last_edited_time": "2023-05-10T12:30:00.000Z",
+  "archived": false,
+  "properties": {
+    "title": {
+      "type": "title",
+      "title": [
+        {
+          "text": {
+            "content": "Updated Project Plan"
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
-Common property types:
-- **Title**: Main identifier for entries
-- **Select**: Single choice from options
-- **Multi-select**: Multiple choices
-- **Date**: Single date or date range
-- **People**: Assign to team members
-- **Checkbox**: True/false values
-- **Number**: Numeric values
-- **URL**: Web links
-- **Email**: Email addresses
+### Get Page Content
+Retrieve all blocks contained in a page.
 
-## Tips
-- Parent pages and databases need their IDs (found in Notion URLs)
-- Use filters to query specific database entries
-- Combine multiple sorts for complex organization
-- Rich text supports formatting like bold, italic, and links 
+**Parameters:**
+- `page_id` (required) - Page ID to get content from
+
+**Example:**
+```
+/your-notion-connection
+action: get_page_content
+page_id: b55c9c91-384d-452b-81db-d1ef79372b75
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "results": [
+    {
+      "object": "block",
+      "id": "c8a53e3f-5163-4f95-a840-61b7ec1b93fb",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "This is a new page with some content."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### Create Database
+Create a new database as a child of a page.
+
+**Parameters:**
+- `parent_page_id` (required) - Parent page ID
+- `title` (required) - Database title
+- `properties` (required) - Database schema properties
+
+**Example:**
+```
+/your-notion-connection
+action: create_database
+parent_page_id: 98ad959b-2b6a-4774-80ee-00246fb0ea9b
+title: Task Database
+properties: {"Name": {"title": {}}, "Status": {"select": {"options": [{"name": "Not Started", "color": "red"}, {"name": "In Progress", "color": "blue"}, {"name": "Completed", "color": "green"}]}}, "Due Date": {"date": {}}}
+```
+
+**Response:**
+```json
+{
+  "object": "database",
+  "id": "d9824bdc-8445-4327-be8b-5b47500af6ce",
+  "created_time": "2023-05-10T13:00:00.000Z",
+  "title": [
+    {
+      "text": {
+        "content": "Task Database"
+      }
+    }
+  ],
+  "properties": {
+    "Name": {
+      "type": "title",
+      "title": {}
+    },
+    "Status": {
+      "type": "select",
+      "select": {
+        "options": [
+          {
+            "name": "Not Started",
+            "color": "red"
+          },
+          {
+            "name": "In Progress",
+            "color": "blue"
+          },
+          {
+            "name": "Completed",
+            "color": "green"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+### Query Database
+Query a database with optional filters, sorts, and pagination.
+
+**Parameters:**
+- `database_id` (required) - Database ID to query
+- `filter` (optional) - Filter criteria
+- `sorts` (optional) - Sort criteria
+- `page_size` (optional) - Number of results per page
+
+**Example:**
+```
+/your-notion-connection
+action: query_database
+database_id: d9824bdc-8445-4327-be8b-5b47500af6ce
+filter: {"property": "Status", "select": {"equals": "In Progress"}}
+sorts: [{"property": "Due Date", "direction": "ascending"}]
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "results": [
+    {
+      "object": "page",
+      "id": "7e5f1a5b-8a3c-4685-b9c4-3d4e89670124",
+      "properties": {
+        "Name": {
+          "type": "title",
+          "title": [
+            {
+              "text": {
+                "content": "Complete project proposal"
+              }
+            }
+          ]
+        },
+        "Status": {
+          "type": "select",
+          "select": {
+            "name": "In Progress",
+            "color": "blue"
+          }
+        },
+        "Due Date": {
+          "type": "date",
+          "date": {
+            "start": "2023-05-15"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+### Add Content Blocks
+Add new blocks as children to an existing page or block.
+
+**Parameters:**
+- `parent_id` (required) - Parent page or block ID
+- `blocks` (required) - Array of blocks to add
+- `block_type` (optional) - Type of blocks (paragraph, heading, to_do, etc.)
+
+**Example:**
+```
+/your-notion-connection
+action: add_blocks
+parent_id: b55c9c91-384d-452b-81db-d1ef79372b75
+blocks: [{"type": "heading_2", "content": "New Section"}, {"type": "paragraph", "content": "This is a new paragraph under the heading."}, {"type": "to_do", "content": "Task to complete", "checked": false}]
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "results": [
+    {
+      "object": "block",
+      "id": "d2d8e1f5-c9b7-4a6e-8d3f-2e1a4c5b6d9e",
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "text": {
+              "content": "New Section"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "object": "block",
+      "id": "f3e2d1c0-b9a8-7c6d-5e4f-3g2h1i0j9k8l",
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "text": {
+              "content": "This is a new paragraph under the heading."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### Update Block
+Update the content of a specific block.
+
+**Parameters:**
+- `block_id` (required) - Block ID to update
+- `content` (required) - New block content
+- `block_type` (optional) - Block type if changing
+
+**Example:**
+```
+/your-notion-connection
+action: update_block
+block_id: c8a53e3f-5163-4f95-a840-61b7ec1b93fb
+content: This is updated content for the paragraph
+```
+
+**Response:**
+```json
+{
+  "object": "block",
+  "id": "c8a53e3f-5163-4f95-a840-61b7ec1b93fb",
+  "type": "paragraph",
+  "paragraph": {
+    "rich_text": [
+      {
+        "text": {
+          "content": "This is updated content for the paragraph."
+        }
+      }
+    ]
+  },
+  "last_edited_time": "2023-05-10T15:00:00.000Z"
+}
+```
+
+### Search Workspace
+Search for pages or databases matching query text.
+
+**Parameters:**
+- `query` (required) - Search query text
+- `filter` (optional) - Filter by object type (page/database)
+- `sort` (optional) - Sort criteria
+
+**Example:**
+```
+/your-notion-connection
+action: search
+query: project proposal
+filter: {"property": "object", "value": "page"}
+sort: {"direction": "descending", "timestamp": "last_edited_time"}
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "results": [
+    {
+      "object": "page",
+      "id": "7e5f1a5b-8a3c-4685-b9c4-3d4e89670124",
+      "created_time": "2023-05-10T14:00:00.000Z",
+      "last_edited_time": "2023-05-10T14:00:00.000Z",
+      "properties": {
+        "Name": {
+          "type": "title",
+          "title": [
+            {
+              "text": {
+                "content": "Complete project proposal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+## Notes 
+
+All requests must include the Notion-Version header set to "2022-06-28". Supports rich text formatting, various block types (paragraphs, headings, to-do items, etc.), and complex database properties including select options, dates, and people assignments. Database queries support advanced filtering and sorting capabilities. 

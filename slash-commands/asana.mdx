@@ -1,97 +1,160 @@
 ---
-title: "Asana Command Guide"
-description: "Learn how to use the Asana slash command to manage projects and tasks"
+title: "Asana Guide"
+description: "Manage projects, tasks, and workflows with Asana"
 ---
 
-The `/asana` command enables you to manage projects, tasks, and workflows in Asana. Perfect for:
+## What can you do with it?
 
-- Creating and managing tasks
-- Organizing projects
-- Tracking task completion
-- Assigning work to team members
-- Setting due dates
+The Asana integration enables comprehensive project management including workspaces, projects, and tasks. You can list all workspaces, retrieve projects within workspaces, create new tasks with assignments and due dates, query tasks with filtering options, and update task status. This integration is perfect for teams looking to automate their project workflows, track task progress, and maintain organized project structures across multiple workspaces.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Asana:
-
+### Basic Command Structure
 ```
-/asana create task "Design Weekly Report" in project "Q1 Marketing" due February 15
+/your-asana-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (list_workspaces, get_projects, create_task, query_tasks, update_task)
+
+**Optional:**
+
+- `workspace_id` - Workspace identifier for project operations
+- `project_id` - Project identifier for task operations
+- `task_id` - Task identifier for update operations
+
+## Tools
+
+### List Workspaces
+Retrieve all workspaces accessible to your account
+
+**Parameters:**
+- `action` (required) - Set to "list_workspaces"
+
+**Example:**
 ```
-/asana list all tasks in project "Website Redesign"
+/your-asana-connection
+action: list_workspaces
 ```
 
+**Response:**
+```json
+{
+  "data": "[Array of workspace objects with gid, name, and resource_type]"
+}
 ```
-/asana mark task "Preliminary Design" as complete
+
+### Get Projects in Workspace
+Retrieve all projects within a specific workspace
+
+**Parameters:**
+- `action` (required) - Set to "get_projects"
+- `workspace_id` (required) - The workspace identifier
+
+**Example:**
+```
+/your-asana-connection
+action: get_projects
+workspace_id: 1208925756582198
 ```
 
-## Key Features
-
-### Workspace Management
-- List all workspaces
-- Access workspace projects
-- Navigate between teams
-
-### Project Operations
-- List projects in workspace
-- Create new projects
-- View project details
-- Filter by team
-
-### Task Management
-- Create new tasks
-- Assign to team members
-- Set due dates
-- Mark tasks complete
-- Update task details
-
-### Filtering & Search
-- Filter by completion status
-- Filter by assignee
-- Sort by due date
-- Search across projects
-
-## Example Commands
+**Response:**
+```json
+{
+  "data": "[Array of project objects with gid, name, resource_type, and workspace info]"
+}
+```
 
 ### Create Task
+Create a new task in a project
+
+**Parameters:**
+- `action` (required) - Set to "create_task"
+- `name` (required) - Task name
+- `workspace` (required) - Workspace ID
+- `projects` (optional) - Array of project IDs to add task to
+- `assignee` (optional) - User ID to assign task to
+- `due_on` (optional) - Due date in YYYY-MM-DD format
+
+**Example:**
 ```
-/asana create task "Review marketing copy" assign to jane@company.com due next Monday
+/your-asana-connection
+action: create_task
+name: Design Weekly Report
+workspace: 12345
+projects: 123456
+assignee: user_id_here
+due_on: 2024-02-15
 ```
 
-### List Tasks
-```
-/asana show incomplete tasks in "Product Launch" project
-```
-
-### Update Task
-```
-/asana mark task ID 345678 as complete
-```
-
-### Filter Tasks
-```
-/asana find all tasks assigned to me in "Development" project
+**Response:**
+```json
+{
+  "data": {
+    "gid": "[Created task ID]",
+    "name": "[Task name]",
+    "resource_type": "task",
+    "created_at": "[Creation timestamp]"
+  }
+}
 ```
 
-### List Projects
+### Query Tasks in Project
+Retrieve tasks from a specific project with optional filtering
+
+**Parameters:**
+- `action` (required) - Set to "query_tasks"
+- `project_id` (required) - The project identifier
+- `completed` (optional) - Filter by completion status (true/false)
+- `assignee` (optional) - Filter by assignee user ID
+
+**Example:**
 ```
-/asana list all projects in "Marketing Team" workspace
+/your-asana-connection
+action: query_tasks
+project_id: 123456
+completed: false
+assignee: user123
 ```
 
-## Task Properties
+**Response:**
+```json
+{
+  "data": "[Array of task objects with gid, name, completed status, and assignee info]"
+}
+```
 
-When creating tasks:
-- **name**: Task title (required)
-- **workspace**: Workspace ID
-- **projects**: Array of project IDs
-- **assignee**: User ID or email
-- **due_on**: Due date (YYYY-MM-DD)
-- **notes**: Task description
+### Update Task Status
+Update the completion status of a task
 
-## Tips
-- Use "me" to reference yourself as assignee
-- Tasks can belong to multiple projects
-- Due dates use ISO format (YYYY-MM-DD)
-- Completed tasks remain searchable 
+**Parameters:**
+- `action` (required) - Set to "update_task"
+- `task_id` (required) - The task identifier
+- `completed` (required) - New completion status (true/false)
+
+**Example:**
+```
+/your-asana-connection
+action: update_task
+task_id: 345678
+completed: true
+```
+
+**Response:**
+```json
+{
+  "data": {
+    "gid": "[Task ID]",
+    "name": "[Task name]",
+    "completed": "[New completion status]",
+    "completed_at": "[Completion timestamp if completed]"
+  }
+}
+```
+
+## Notes 
+
+Asana uses string-based GIDs (Global IDs) for all resources including workspaces, projects, and tasks. User identification can be done using "me", an email address, or a user GID. Tasks can be assigned to multiple projects simultaneously. Due dates should be provided in YYYY-MM-DD format. When querying tasks, you can filter by completion status and assignee to narrow down results. All timestamps are returned in ISO 8601 format. 

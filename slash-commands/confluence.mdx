@@ -1,112 +1,395 @@
 ---
-title: "Confluence Command Guide"
-description: "Learn how to use the Confluence slash command to manage documentation and knowledge"
+title: "Confluence Guide"
+description: "Create and manage documentation, share knowledge, and collaborate on content within Confluence spaces and pages"
 ---
 
-The `/confluence` command enables you to create and manage documentation, pages, and spaces in Confluence. Perfect for:
+## What can you do with it?
 
-- Creating documentation pages
-- Managing knowledge bases
-- Organizing content in spaces
-- Searching documentation
-- Collaborating on content
+The Confluence API allows you to create and manage documentation, share knowledge, and collaborate on content. You can create pages and spaces, update existing content, search for information, manage page hierarchies, add comments, and handle user permissions across your Confluence workspace.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Confluence:
-
+### Basic Command Structure
 ```
-/confluence create page "API Documentation" in space DEV
+/your-confluence-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/confluence search for "feature" in space DEV
-```
+### Parameters
 
-```
-/confluence update page 789012 with new content
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (create, update, get, search, etc.)
+- `spaceKey` - The space key for most operations
+- `pageId` - The page ID for page-specific operations
 
-### Page Management
-- Create new pages
-- Update page content
-- View page details
-- Add child pages
-- Get page history
+**Optional:**
 
-### Space Operations
-- List all spaces
-- Create new spaces
-- Navigate spaces
-- Set space permissions
+- `title` - Page or space title
+- `content` - Page content in storage format
+- `version` - Version number for updates
+- `query` - Search query for content search
+- `expand` - Fields to expand in responses
 
-### Content Search
-- Search by text
-- Filter by space
-- Find by page type
-- CQL queries
-- Full-text search
-
-### Collaboration
-- Add comments to pages
-- Track page versions
-- View page authors
-- Monitor changes
-
-## Example Commands
+## Tools
 
 ### Create Page
+Create a new page in a Confluence space.
+
+**Parameters:**
+- `spaceKey` (required) - The space key where the page will be created
+- `title` (required) - Page title
+- `content` (required) - Page content in HTML storage format
+- `parentId` (optional) - Parent page ID for hierarchical structure
+
+**Example:**
 ```
-/confluence create page "Release Notes" in space DOC with content "Version 2.0 features..."
+/your-confluence-connection
+action: create_page
+spaceKey: DEV
+title: New Feature Documentation
+content: <p>This is the documentation for our new feature.</p><h2>Overview</h2><p>The feature allows users to...</p>
+parentId: 123456
 ```
 
-### Search Content
-```
-/confluence find all pages containing "installation" in space DEV
+**Response:**
+```json
+{
+  "id": "789012",
+  "type": "page",
+  "title": "New Feature Documentation",
+  "status": "current",
+  "_links": {
+    "self": "https://your-domain.atlassian.net/wiki/rest/api/content/789012",
+    "webui": "/spaces/DEV/pages/789012/New+Feature+Documentation"
+  }
+}
 ```
 
 ### Update Page
+Update an existing Confluence page.
+
+**Parameters:**
+- `pageId` (required) - The page ID to update
+- `title` (required) - Updated page title
+- `content` (required) - Updated page content in storage format
+- `version` (required) - Version number (increment from current)
+
+**Example:**
 ```
-/confluence update page ID 789012 title to "Updated API Guide" with new content
+/your-confluence-connection
+action: update_page
+pageId: 789012
+title: Updated Feature Documentation
+content: <p>This is the updated documentation for our feature.</p><h2>Overview</h2><p>The feature now includes additional capabilities...</p>
+version: 2
+```
+
+**Response:**
+```json
+{
+  "id": "789012",
+  "type": "page",
+  "title": "Updated Feature Documentation",
+  "status": "current",
+  "version": {
+    "number": 2
+  },
+  "_links": {
+    "self": "https://your-domain.atlassian.net/wiki/rest/api/content/789012",
+    "webui": "/spaces/DEV/pages/789012/Updated+Feature+Documentation"
+  }
+}
+```
+
+### Get Page Content
+Retrieve content and metadata for a specific page.
+
+**Parameters:**
+- `pageId` (required) - The page ID to retrieve
+- `expand` (optional) - Fields to expand (body.storage, version, space, ancestors)
+
+**Example:**
+```
+/your-confluence-connection
+action: get_page
+pageId: 789012
+expand: body.storage,version,space,ancestors
+```
+
+**Response:**
+```json
+{
+  "id": "789012",
+  "type": "page",
+  "title": "Feature Documentation",
+  "space": {
+    "key": "DEV",
+    "name": "Development",
+    "_links": {
+      "webui": "/spaces/DEV"
+    }
+  },
+  "version": {
+    "number": 2,
+    "when": "2023-10-15T14:30:00.000Z",
+    "by": {
+      "displayName": "John Doe",
+      "username": "jdoe"
+    }
+  },
+  "body": {
+    "storage": {
+      "value": "<p>This is the documentation for our feature.</p><h2>Overview</h2><p>The feature allows users to...</p>",
+      "representation": "storage"
+    }
+  }
+}
+```
+
+### Search Content
+Search for pages and content within Confluence.
+
+**Parameters:**
+- `query` (required) - CQL (Confluence Query Language) search query
+- `start` (optional) - Starting index for results
+- `limit` (optional) - Maximum number of results
+
+**Example:**
+```
+/your-confluence-connection
+action: search
+query: space = DEV AND type = page AND text ~ 'feature'
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "id": "789012",
+      "type": "page",
+      "title": "Feature Documentation",
+      "space": {
+        "key": "DEV",
+        "name": "Development"
+      },
+      "_links": {
+        "webui": "/spaces/DEV/pages/789012/Feature+Documentation"
+      }
+    },
+    {
+      "id": "789013",
+      "type": "page",
+      "title": "Another Feature Guide",
+      "space": {
+        "key": "DEV",
+        "name": "Development"
+      },
+      "_links": {
+        "webui": "/spaces/DEV/pages/789013/Another+Feature+Guide"
+      }
+    }
+  ],
+  "start": 0,
+  "limit": 25,
+  "size": 2
+}
+```
+
+### Get Spaces
+Retrieve all spaces in the Confluence instance.
+
+**Parameters:**
+- `start` (optional) - Starting index for results
+- `limit` (optional) - Maximum number of results
+
+**Example:**
+```
+/your-confluence-connection
+action: get_spaces
+limit: 50
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "id": 10001,
+      "key": "DEV",
+      "name": "Development",
+      "type": "global",
+      "status": "current",
+      "_links": {
+        "webui": "/spaces/DEV",
+        "self": "https://your-domain.atlassian.net/wiki/rest/api/space/DEV"
+      }
+    },
+    {
+      "id": 10002,
+      "key": "DOC",
+      "name": "Documentation",
+      "type": "global",
+      "status": "current",
+      "_links": {
+        "webui": "/spaces/DOC",
+        "self": "https://your-domain.atlassian.net/wiki/rest/api/space/DOC"
+      }
+    }
+  ]
+}
 ```
 
 ### Create Space
+Create a new Confluence space.
+
+**Parameters:**
+- `key` (required) - Space key (unique identifier)
+- `name` (required) - Space name
+- `description` (optional) - Space description
+- `type` (optional) - Space type (global, personal)
+
+**Example:**
 ```
-/confluence create space "PROJ" named "Project Documentation" description "All project docs"
+/your-confluence-connection
+action: create_space
+key: PROJ
+name: Project Documentation
+description: Space for Project documentation and resources
+type: global
+```
+
+**Response:**
+```json
+{
+  "id": 10003,
+  "key": "PROJ",
+  "name": "Project Documentation",
+  "type": "global",
+  "status": "current",
+  "description": {
+    "plain": {
+      "value": "Space for Project documentation and resources.",
+      "representation": "plain"
+    }
+  },
+  "_links": {
+    "webui": "/spaces/PROJ",
+    "self": "https://your-domain.atlassian.net/wiki/rest/api/space/PROJ"
+  }
+}
+```
+
+### Get Page Children
+Retrieve child pages of a specific page.
+
+**Parameters:**
+- `pageId` (required) - Parent page ID
+- `start` (optional) - Starting index for results
+- `limit` (optional) - Maximum number of results
+
+**Example:**
+```
+/your-confluence-connection
+action: get_page_children
+pageId: 789012
+limit: 25
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "id": "890123",
+      "type": "page",
+      "title": "Feature Details",
+      "status": "current",
+      "_links": {
+        "webui": "/spaces/DEV/pages/890123/Feature+Details"
+      }
+    },
+    {
+      "id": "890124",
+      "type": "page",
+      "title": "Implementation Guide",
+      "status": "current",
+      "_links": {
+        "webui": "/spaces/DEV/pages/890124/Implementation+Guide"
+      }
+    }
+  ],
+  "start": 0,
+  "limit": 25,
+  "size": 2
+}
 ```
 
 ### Add Comment
+Add a comment to a Confluence page.
+
+**Parameters:**
+- `pageId` (required) - Page ID to comment on
+- `comment` (required) - Comment content in storage format
+
+**Example:**
 ```
-/confluence add comment to page 789012 "Could we add more examples to this section?"
+/your-confluence-connection
+action: add_comment
+pageId: 789012
+comment: <p>This documentation is really helpful. Could we add more examples?</p>
 ```
 
-### List Child Pages
+**Response:**
+```json
+{
+  "id": "345678",
+  "type": "comment",
+  "status": "current",
+  "body": {
+    "storage": {
+      "value": "<p>This documentation is really helpful. Could we add more examples?</p>",
+      "representation": "storage"
+    }
+  },
+  "_links": {
+    "self": "https://your-domain.atlassian.net/wiki/rest/api/content/345678"
+  }
+}
 ```
-/confluence show all child pages of page ID 789012
+
+### Get User Information
+Retrieve user information by account ID.
+
+**Parameters:**
+- `accountId` (required) - User account ID
+
+**Example:**
+```
+/your-confluence-connection
+action: get_user
+accountId: 5b10a2844c20165700ede21g
 ```
 
-## Content Format
+**Response:**
+```json
+{
+  "type": "known",
+  "accountId": "5b10a2844c20165700ede21g",
+  "displayName": "John Doe",
+  "email": "john.doe@example.com",
+  "profilePicture": {
+    "path": "/download/attachments/1234/user-avatar.jpg",
+    "width": 48,
+    "height": 48
+  },
+  "_links": {
+    "self": "https://your-domain.atlassian.net/wiki/rest/api/user?accountId=5b10a2844c20165700ede21g"
+  }
+}
+```
 
-Confluence uses storage format HTML:
-- `<p>` for paragraphs
-- `<h1>`, `<h2>` for headings
-- `<ul>`, `<ol>` for lists
-- `<table>` for tables
-- `<code>` for code blocks
+## Notes 
 
-## CQL Search
-
-Confluence Query Language examples:
-- `space = DEV` - In specific space
-- `type = page` - Only pages
-- `text ~ "keyword"` - Contains text
-- `creator = currentUser()` - Your pages
-- `lastmodified > -7d` - Recently updated
-
-## Tips
-- Space keys are uppercase (e.g., DEV, DOC)
-- Page IDs are numeric
-- Use storage format for content
-- Version numbers required for updates 
+Content should be provided in Confluence storage format (HTML-based). Use CQL (Confluence Query Language) for advanced searching. Page versions must be incremented when updating content. Spaces use unique keys for identification and organization. 

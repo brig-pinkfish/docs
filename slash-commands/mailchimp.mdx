@@ -1,244 +1,64 @@
 ---
-title: "Mailchimp API Command Guide"
-description: "Learn how to use the Mailchimp API slash command to manage email campaigns and subscriber lists"
+title: "Mailchimp Guide"
+description: "Manage email campaigns and subscriber lists with Mailchimp email marketing platform"
 ---
 
-The `/mailchimp` command enables you to manage email campaigns and subscriber lists through Mailchimp's marketing platform. Perfect for:
+## What can you do with it?
 
-- Creating and managing email campaigns
-- Building and organizing audiences
-- Automating email marketing
-- Tracking campaign performance
-- Managing subscriber data
+The Mailchimp API allows you to manage your email marketing campaigns and subscriber lists. You can create, update, and send email campaigns, manage audience lists, add and update contacts, search campaigns and lists, and handle all aspects of your email marketing workflow programmatically.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Mailchimp:
-
+### Basic Command Structure
 ```
-/mailchimp create campaign "Winter Sale" for audience list_id
+/your-mailchimp-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/mailchimp add contact "john.doe@example.com" to list with name "John Doe"
-```
+### Parameters
 
-```
-/mailchimp send campaign immediately to subscribers
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (create, update, send, search, get, delete, add)
+- `entity` - The entity type (campaign, list, contact)
+- `id` - Entity ID for specific operations
 
-### Campaign Management
-- Create regular campaigns
-- Update campaign settings
-- Send campaigns immediately
-- Schedule campaigns
-- Track campaign performance
+**Optional:**
 
-### Audience Management
-- Create subscriber lists
-- Add/update contacts
-- Manage subscriber data
-- Segment audiences
-- Handle unsubscribes
+- `type` - Campaign type (regular, plaintext, rss, variate)
+- `subject_line` - Email subject line
+- `from_name` - Sender name
+- `from_email` - Sender email address
+- `list_id` - List ID for campaigns and contacts
+- `query` - Search query text
 
-### Search and Organization
-- Search campaigns
-- Filter audiences
-- Organize by folders
-- Track engagement
-- Monitor deliverability
-
-## Example Commands
+## Tools
 
 ### Create Campaign
-```
-/mailchimp create regular campaign with subject "Your Subject Here"
-```
+Create a new email campaign in Mailchimp.
 
-### Manage Audiences
-```
-/mailchimp create new audience "Newsletter Subscribers" with company details
-```
+**Parameters:**
+- `type` (required) - Campaign type (regular, plaintext, rss, variate)
+- `list_id` (required) - List ID for recipients
+- `subject_line` (required) - Email subject line
+- `title` (required) - Campaign title
+- `from_name` (required) - Sender name
+- `reply_to` (required) - Reply-to email address
 
-### Add Subscribers
+**Example:**
 ```
-/mailchimp add subscriber with merge fields for personalization
-```
-
-### Send Campaigns
-```
-/mailchimp send campaign_id to audience immediately
-```
-
-### Search Content
-```
-/mailchimp search campaigns for "Winter Sale" keyword
-```
-
-## Campaign Operations
-
-### Create Campaign
-```javascript
-{
-  "type": "regular",
-  "recipients": {
-    "list_id": "your_list_id"
-  },
-  "settings": {
-    "subject_line": "Your Subject Here",
-    "title": "Campaign Title",
-    "from_name": "Your Name",
-    "reply_to": "your_email@example.com"
-  }
-}
+/your-mailchimp-connection
+action: create
+entity: campaign
+type: regular
+list_id: your_list_id
+subject_line: Your Subject Here
+title: Campaign Title
+from_name: Your Name
+reply_to: your_email@example.com
 ```
 
-### Update Campaign
-```javascript
-{
-  "settings": {
-    "subject_line": "Updated Subject Line",
-    "title": "Updated Campaign Title"
-  }
-}
-```
-
-### Send Campaign
-```javascript
-// Send immediately
-const url = MAILCHIMP_URL + `campaigns/${campaignId}/actions/send`;
-```
-
-## Audience Operations
-
-### Create List
-```javascript
-{
-  "name": "New Audience",
-  "contact": {
-    "company": "Your Company",
-    "address1": "123 Main St",
-    "city": "Anytown",
-    "state": "CA",
-    "zip": "12345",
-    "country": "US"
-  },
-  "permission_reminder": "You're receiving this email because you signed up for updates.",
-  "campaign_defaults": {
-    "from_name": "Your Name",
-    "from_email": "your_email@example.com",
-    "subject": "Default Subject",
-    "language": "en"
-  },
-  "email_type_option": true
-}
-```
-
-### Add Contact to List
-```javascript
-{
-  "email_address": "john.doe@example.com",
-  "status": "subscribed",
-  "merge_fields": {
-    "FNAME": "John",
-    "LNAME": "Doe"
-  }
-}
-```
-
-### Update Contact
-```javascript
-{
-  "email_address": "john.new@example.com",
-  "merge_fields": {
-    "FNAME": "John",
-    "LNAME": "Doe"
-  },
-  "status": "subscribed"
-}
-```
-
-## Campaign Types
-
-### Regular Campaigns
-- **type**: "regular"
-- Standard email campaigns
-- One-time sends
-- Immediate or scheduled
-
-### Automated Campaigns
-- **type**: "automation"
-- Triggered by user actions
-- Drip sequences
-- Welcome series
-
-### A/B Test Campaigns
-- **type**: "variate"
-- Split testing
-- Subject line testing
-- Content variations
-
-## Audience Structure
-
-### List Properties
-- **id**: Unique list identifier
-- **name**: List display name
-- **contact**: Company contact info
-- **permission_reminder**: Subscription reminder
-- **campaign_defaults**: Default settings
-
-### Contact Properties
-- **email_address**: Primary email
-- **status**: Subscription status
-- **merge_fields**: Custom data fields
-- **interests**: Preference categories
-- **tags**: Organizational labels
-
-## Subscriber Status
-
-### Status Types
-- **subscribed**: Active subscriber
-- **unsubscribed**: Opted out
-- **cleaned**: Removed due to bounces
-- **pending**: Awaiting confirmation
-- **transactional**: Transactional only
-
-### Status Management
-```javascript
-// Subscribe user
-"status": "subscribed"
-
-// Unsubscribe user
-"status": "unsubscribed"
-
-// Pending confirmation
-"status": "pending"
-```
-
-## Search Operations
-
-### Search Campaigns
-```javascript
-const url = MAILCHIMP_URL + "search-campaigns?query=Winter Sale";
-```
-
-### Search Lists
-```javascript
-const url = MAILCHIMP_URL + "lists?fields=lists.name,lists.id&name=Newsletter";
-```
-
-### Filter Results
-- Use query parameters
-- Specify return fields
-- Limit result sets
-- Sort by criteria
-
-## Response Formats
-
-### Campaign Response
-```javascript
+**Response:**
+```json
 {
   "id": "campaign_id",
   "type": "regular",
@@ -256,8 +76,199 @@ const url = MAILCHIMP_URL + "lists?fields=lists.name,lists.id&name=Newsletter";
 }
 ```
 
-### List Response
-```javascript
+### Update Campaign
+Update settings of an existing campaign in Mailchimp.
+
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to update
+- `subject_line` (optional) - Updated subject line
+- `title` (optional) - Updated campaign title
+- `from_name` (optional) - Updated sender name
+- `reply_to` (optional) - Updated reply-to email
+
+**Example:**
+```
+/your-mailchimp-connection
+action: update
+entity: campaign
+campaign_id: campaign_id
+subject_line: Updated Subject Line
+title: Updated Campaign Title
+```
+
+**Response:**
+```json
+{
+  "id": "campaign_id",
+  "type": "regular",
+  "create_time": "2025-01-13T12:00:00+00:00",
+  "status": "save",
+  "settings": {
+    "subject_line": "Updated Subject Line",
+    "title": "Updated Campaign Title",
+    "from_name": "Your Name",
+    "reply_to": "your_email@example.com"
+  }
+}
+```
+
+### Send Campaign
+Send a campaign that has been created and is in draft status.
+
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to send
+
+**Example:**
+```
+/your-mailchimp-connection
+action: send
+entity: campaign
+campaign_id: campaign_id
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Campaign sent successfully."
+}
+```
+
+### Search Campaigns
+Search for campaigns in Mailchimp based on specific criteria.
+
+**Parameters:**
+- `query` (required) - Search query text
+- `limit` (optional) - Number of results to return
+
+**Example:**
+```
+/your-mailchimp-connection
+action: search
+entity: campaigns
+query: Winter Sale
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "campaigns": [
+    {
+      "id": "campaign_id_1",
+      "type": "regular",
+      "create_time": "2025-01-10T12:00:00+00:00",
+      "status": "sent",
+      "settings": {
+        "subject_line": "Winter Sale - 50% Off",
+        "title": "Winter Sale Campaign"
+      }
+    },
+    {
+      "id": "campaign_id_2",
+      "type": "regular",
+      "create_time": "2025-01-11T12:00:00+00:00",
+      "status": "save",
+      "settings": {
+        "subject_line": "Final Winter Sale",
+        "title": "Final Winter Sale Campaign"
+      }
+    }
+  ]
+}
+```
+
+### Get Campaign
+Retrieve details of a specific campaign using its unique ID.
+
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to retrieve
+
+**Example:**
+```
+/your-mailchimp-connection
+action: get
+entity: campaign
+campaign_id: campaign_id
+```
+
+**Response:**
+```json
+{
+  "id": "campaign_id",
+  "type": "regular",
+  "create_time": "2025-01-13T12:00:00+00:00",
+  "status": "save",
+  "settings": {
+    "subject_line": "Your Subject Here",
+    "title": "Campaign Title",
+    "from_name": "Your Name",
+    "reply_to": "your_email@example.com"
+  },
+  "recipients": {
+    "list_id": "your_list_id"
+  }
+}
+```
+
+### Delete Campaign
+Remove a campaign from Mailchimp using its unique ID.
+
+**Parameters:**
+- `campaign_id` (required) - Campaign ID to delete
+
+**Example:**
+```
+/your-mailchimp-connection
+action: delete
+entity: campaign
+campaign_id: campaign_id
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Campaign deleted successfully."
+}
+```
+
+### Create List
+Create a new list (audience) in Mailchimp.
+
+**Parameters:**
+- `name` (required) - List name
+- `company` (required) - Company name
+- `address1` (required) - Company address
+- `city` (required) - City
+- `state` (required) - State
+- `zip` (required) - ZIP code
+- `country` (required) - Country
+- `from_name` (required) - Default sender name
+- `from_email` (required) - Default sender email
+- `subject` (required) - Default subject
+- `language` (optional) - Default language
+
+**Example:**
+```
+/your-mailchimp-connection
+action: create
+entity: list
+name: New Audience
+company: Your Company
+address1: 123 Main St
+city: Anytown
+state: CA
+zip: 12345
+country: US
+from_name: Your Name
+from_email: your_email@example.com
+subject: Default Subject
+language: en
+```
+
+**Response:**
+```json
 {
   "id": "list_id",
   "name": "New Audience",
@@ -269,16 +280,107 @@ const url = MAILCHIMP_URL + "lists?fields=lists.name,lists.id&name=Newsletter";
     "zip": "12345",
     "country": "US"
   },
-  "stats": {
-    "member_count": 1250,
-    "unsubscribe_count": 25,
-    "cleaned_count": 10
+  "campaign_defaults": {
+    "from_name": "Your Name",
+    "from_email": "your_email@example.com",
+    "subject": "Default Subject",
+    "language": "en"
   }
 }
 ```
 
-### Contact Response
-```javascript
+### Get List
+Retrieve details of a specific list (audience) using its unique ID.
+
+**Parameters:**
+- `list_id` (required) - List ID to retrieve
+
+**Example:**
+```
+/your-mailchimp-connection
+action: get
+entity: list
+list_id: list_id
+```
+
+**Response:**
+```json
+{
+  "id": "list_id",
+  "name": "Existing Audience",
+  "contact": {
+    "company": "Your Company",
+    "address1": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "zip": "12345",
+    "country": "US"
+  },
+  "campaign_defaults": {
+    "from_name": "Your Name",
+    "from_email": "your_email@example.com",
+    "subject": "Default Subject",
+    "language": "en"
+  }
+}
+```
+
+### Search Lists
+Search for lists (audiences) in Mailchimp based on specific criteria.
+
+**Parameters:**
+- `name` (optional) - Search by list name
+- `fields` (optional) - Fields to return
+
+**Example:**
+```
+/your-mailchimp-connection
+action: search
+entity: lists
+name: Newsletter
+fields: lists.name,lists.id
+```
+
+**Response:**
+```json
+{
+  "lists": [
+    {
+      "id": "list_id_1",
+      "name": "Newsletter Audience"
+    },
+    {
+      "id": "list_id_2",
+      "name": "Promotions Audience"
+    }
+  ]
+}
+```
+
+### Add Contact to List
+Add a contact to a specific list (audience) in Mailchimp.
+
+**Parameters:**
+- `list_id` (required) - List ID to add contact to
+- `email_address` (required) - Contact email address
+- `status` (required) - Subscription status (subscribed, unsubscribed, cleaned, pending)
+- `first_name` (optional) - Contact first name
+- `last_name` (optional) - Contact last name
+
+**Example:**
+```
+/your-mailchimp-connection
+action: add
+entity: contact
+list_id: list_id
+email_address: john.doe@example.com
+status: subscribed
+first_name: John
+last_name: Doe
+```
+
+**Response:**
+```json
 {
   "id": "contact_id",
   "email_address": "john.doe@example.com",
@@ -287,151 +389,96 @@ const url = MAILCHIMP_URL + "lists?fields=lists.name,lists.id&name=Newsletter";
     "FNAME": "John",
     "LNAME": "Doe"
   },
-  "stats": {
-    "avg_open_rate": 0.25,
-    "avg_click_rate": 0.05
-  }
+  "timestamp_signup": "2025-01-13T12:00:00+00:00",
+  "timestamp_opt": "2025-01-13T12:00:00+00:00"
 }
 ```
 
-## Merge Fields
+### Update Contact in List
+Update details of an existing contact in a specific list (audience).
 
-### Default Fields
-- **FNAME**: First name
-- **LNAME**: Last name
-- **ADDRESS**: Mailing address
-- **PHONE**: Phone number
-- **BIRTHDAY**: Birth date
+**Parameters:**
+- `list_id` (required) - List ID containing the contact
+- `subscriber_hash` (required) - Subscriber hash or email address
+- `email_address` (optional) - Updated email address
+- `status` (optional) - Updated subscription status
+- `first_name` (optional) - Updated first name
+- `last_name` (optional) - Updated last name
 
-### Custom Fields
-- Create additional fields
-- Various data types
-- Personalization options
-- Segmentation criteria
-
-## Best Practices
-
-1. **Campaign Strategy**
-   - Clear subject lines
-   - Compelling content
-   - Mobile optimization
-   - A/B testing
-
-2. **Audience Management**
-   - Regular list cleaning
-   - Segmentation strategy
-   - Permission-based marketing
-   - Engagement tracking
-
-3. **Deliverability**
-   - Maintain sender reputation
-   - Monitor bounce rates
-   - Handle unsubscribes properly
-   - Use authentication
-
-4. **Compliance**
-   - GDPR compliance
-   - CAN-SPAM compliance
-   - Permission documentation
-   - Data protection
-
-## Common Use Cases
-
-### Newsletter Campaigns
+**Example:**
 ```
-/mailchimp create monthly newsletter campaign for subscribers
+/your-mailchimp-connection
+action: update
+entity: contact
+list_id: list_id
+subscriber_hash: 123abc456def789ghi
+email_address: john.new@example.com
+status: subscribed
+first_name: John
+last_name: Doe
 ```
 
-### Promotional Emails
+**Response:**
+```json
+{
+  "id": "contact_id",
+  "email_address": "john.new@example.com",
+  "status": "subscribed",
+  "merge_fields": {
+    "FNAME": "John",
+    "LNAME": "Doe"
+  },
+  "timestamp_signup": "2025-01-13T12:00:00+00:00",
+  "timestamp_opt": "2025-01-13T12:00:00+00:00"
+}
 ```
-/mailchimp send product launch campaign to segmented audience
+
+### Get Contacts from List
+Retrieve all contacts in a specific list (audience) in Mailchimp.
+
+**Parameters:**
+- `list_id` (required) - List ID to retrieve contacts from
+- `status` (optional) - Filter by subscription status
+- `limit` (optional) - Number of contacts to return
+
+**Example:**
+```
+/your-mailchimp-connection
+action: get
+entity: contacts
+list_id: list_id
+status: subscribed
+limit: 100
 ```
 
-### Welcome Series
+**Response:**
+```json
+{
+  "members": [
+    {
+      "id": "contact_id_1",
+      "email_address": "john.doe@example.com",
+      "status": "subscribed",
+      "merge_fields": {
+        "FNAME": "John",
+        "LNAME": "Doe"
+      },
+      "timestamp_signup": "2025-01-13T12:00:00+00:00"
+    },
+    {
+      "id": "contact_id_2",
+      "email_address": "jane.doe@example.com",
+      "status": "unsubscribed",
+      "merge_fields": {
+        "FNAME": "Jane",
+        "LNAME": "Doe"
+      },
+      "timestamp_signup": "2025-01-12T12:00:00+00:00"
+    }
+  ]
+}
 ```
-/mailchimp create automated welcome sequence for new subscribers
-```
 
-### Re-engagement
-```
-/mailchimp create win-back campaign for inactive subscribers
-```
+## Notes 
 
-## Error Handling
-
-### Common Issues
-- Invalid email addresses
-- Missing required fields
-- List permission errors
-- Campaign send failures
-
-### Status Codes
-- **200**: Success
-- **204**: No content (successful action)
-- **400**: Bad request
-- **401**: Unauthorized
-- **404**: Not found
-
-## Automation Features
-
-### Triggered Campaigns
-- Welcome emails
-- Abandoned cart recovery
-- Birthday campaigns
-- Re-engagement series
-
-### Workflow Setup
-- Define triggers
-- Set conditions
-- Create sequences
-- Monitor performance
-
-## Integration Tips
-
-### API Limits
-- Rate limiting applies
-- Monitor usage quotas
-- Implement retry logic
-- Cache responses
-
-### Data Synchronization
-- Regular data updates
-- Handle conflicts
-- Maintain consistency
-- Backup strategies
-
-## Performance Optimization
-
-### Campaign Efficiency
-- Optimize send times
-- Segment audiences
-- Test subject lines
-- Monitor metrics
-
-### List Health
-- Remove inactive subscribers
-- Handle bounces
-- Update preferences
-- Clean duplicates
-
-## Advanced Features
-
-### Segmentation
-- Behavior-based segments
-- Demographic targeting
-- Engagement levels
-- Purchase history
-
-### Personalization
-- Dynamic content
-- Merge field usage
-- Conditional blocks
-- Product recommendations
-
-## Tips
-- Use descriptive campaign titles for easy organization
-- Regularly clean subscriber lists to maintain deliverability
-- Test campaigns with small segments before full deployment
-- Monitor engagement metrics to optimize future campaigns
-- Implement double opt-in for better list quality
-- Use merge fields for personalized content 
+Campaign types include regular, plaintext, rss, and variate. Contact status can be subscribed, unsubscribed, cleaned, or pending. Lists require complete contact information including company address. Subscriber hash is used for updating contacts and can be the MD5 hash of the email address. Uses Paragon proxy connection. Campaign content and templates are managed separately from campaign settings. Merge fields like FNAME and LNAME are used for personalization. 

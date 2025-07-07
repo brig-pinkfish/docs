@@ -1,271 +1,296 @@
 ---
-title: "Commercetools Command Guide"
-description: "Learn how to use the Commercetools slash command to manage products and orders"
+title: "Commercetools Guide"
+description: "Manage products and orders with Commercetools headless commerce platform"
 ---
 
-The `/commercetools` command enables you to manage e-commerce operations with Commercetools. Perfect for:
+## What can you do with it?
 
-- Managing product catalogs
-- Creating and updating products
-- Searching product data
-- Handling product variants
-- Managing categories and pricing
+The Commercetools API allows you to manage your headless commerce platform. You can create and manage products, search through your catalog, query products with complex predicates, and handle product variants, categories, and pricing across multiple locales and currencies.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Commercetools:
-
+### Basic Command Structure
 ```
-/commercetools list all products
+/your-commercetools-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/commercetools create product "Premium T-Shirt" with price €100
-```
+### Parameters
 
-```
-/commercetools search for products containing "shirt"
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (list, create, search, query)
+- `entity` - The entity type (products, product-projections)
 
-### Product Management
-- List all products
-- Create new products
-- Update existing products
-- Manage product variants
-- Handle product types
+**Optional:**
 
-### Search & Filtering
-- Text-based search
-- Query predicates
-- Category filtering
-- SKU-based searches
-- Complex filtering
+- `query` - Search query text
+- `locale` - Language locale (e.g., "en", "de")
+- `sku` - Product SKU for searching
+- `category_id` - Category ID for filtering
+- `predicate` - Query predicate for complex filtering
 
-### Product Data
-- Master data management
-- Staged vs current versions
-- Multilingual content
-- Price management
-- Image handling
-
-### Categories & Organization
-- Category management
-- Product classification
-- Hierarchical structures
-- Taxonomy organization
-
-## Example Commands
+## Tools
 
 ### List Products
+Retrieve a list of all products in your Commercetools project.
+
+**Parameters:**
+- `limit` (optional) - Number of products to return
+- `offset` (optional) - Number of products to skip
+
+**Example:**
 ```
-/commercetools show all products with pagination
+/your-commercetools-connection
+action: list
+entity: products
+limit: 10
+offset: 0
+```
+
+**Response:**
+```json
+{
+  "offset": 0,
+  "count": 5,
+  "total": 5,
+  "results": [
+    {
+      "id": "f3b17f52-9ab1-478f-899c-e3d2d5c74579",
+      "version": 2,
+      "productType": {
+        "typeId": "product-type",
+        "id": "da5dd5e7-c5e4-4ccd-a753-d92013414cd9"
+      },
+      "masterData": {
+        "current": {
+          "name": {
+            "en": "SAPPHIRE"
+          },
+          "description": {
+            "en": "Sample description"
+          },
+          "slug": {
+            "en": "sapphire1374314429721"
+          },
+          "masterVariant": {
+            "id": 1,
+            "sku": "sku_SAPPHIRE_variant1_1374314429721",
+            "prices": [
+              {
+                "value": {
+                  "currencyCode": "EUR",
+                  "centAmount": 2800
+                }
+              }
+            ],
+            "images": [
+              {
+                "url": "https://example.com/cli/data/252542005_1.jpg",
+                "dimensions": {
+                  "w": 1400,
+                  "h": 1400
+                }
+              }
+            ]
+          }
+        },
+        "published": true,
+        "hasStagedChanges": false
+      }
+    }
+  ]
+}
 ```
 
 ### Create Product
+Create a new product in your Commercetools project.
+
+**Parameters:**
+- `product_type_id` (required) - Product type ID
+- `name` (required) - Product name with locale
+- `slug` (required) - Product slug with locale
+- `description` (optional) - Product description with locale
+- `sku` (required) - SKU for the master variant
+- `price` (required) - Price information with currency
+- `category_id` (optional) - Category ID to assign the product
+
+**Example:**
 ```
-/commercetools create "Premium Tech T-Shirt" in category "clothing" with price €100
+/your-commercetools-connection
+action: create
+entity: product
+product_type_id: 24f510c3-f334-4099-94d8-2c4a10f78472
+name: {"en": "MB PREMIUM TECH T"}
+slug: {"en": "mb-premium-tech-t1369226795424"}
+description: {"en": "Sample description"}
+sku: sku_MB_PREMIUM_TECH_T_variant1_1369226795424
+price: {"currencyCode": "EUR", "centAmount": 10000}
+category_id: cf6d790a-f027-4f46-9a2b-4bc9a31066fb
+```
+
+**Response:**
+```json
+{
+  "id": "e7ba4c75-b1bb-483d-94d8-2c4a10f78472",
+  "version": 1,
+  "productType": {
+    "typeId": "product-type",
+    "id": "24f510c3-f334-4099-94d8-2c4a10f78472"
+  },
+  "masterData": {
+    "current": {
+      "name": {
+        "en": "MB PREMIUM TECH T"
+      },
+      "slug": {
+        "en": "mb-premium-tech-t1369226795424"
+      },
+      "masterVariant": {
+        "sku": "sku_MB_PREMIUM_TECH_T_variant1_1369226795424",
+        "prices": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 10000
+            }
+          }
+        ]
+      },
+      "categories": [
+        {
+          "typeId": "category",
+          "id": "cf6d790a-f027-4f46-9a2b-4bc9a31066fb"
+        }
+      ]
+    },
+    "published": false,
+    "hasStagedChanges": true
+  }
+}
 ```
 
 ### Search Products
+Search for products using text search across product names and descriptions.
+
+**Parameters:**
+- `query` (required) - Search query text
+- `locale` (optional) - Language locale for search (default: "en")
+- `limit` (optional) - Number of results to return
+
+**Example:**
 ```
-/commercetools search for products with text "premium shirt"
-```
-
-### Filter by SKU
-```
-/commercetools find product with SKU "sku_SAPPHIRE_variant1_1374314429721"
-```
-
-### Query by Predicate
-```
-/commercetools find products where slug equals "super-product"
-```
-
-## Product Structure
-
-### Basic Properties
-- **id**: Unique product identifier
-- **version**: Product version number
-- **productType**: Product type reference
-- **masterData**: Current and staged data
-- **taxCategory**: Tax classification
-
-### Master Data
-- **current**: Published version
-- **staged**: Draft version
-- **published**: Publication status
-- **hasStagedChanges**: Pending changes flag
-
-### Product Variants
-- **masterVariant**: Primary variant
-- **variants**: Additional variants
-- **sku**: Stock keeping unit
-- **prices**: Pricing information
-- **images**: Product images
-- **attributes**: Custom attributes
-
-## Search Capabilities
-
-### Text Search
-```
-/commercetools search products with text "premium" in English
+/your-commercetools-connection
+action: search
+entity: product-projections
+query: shirt
+locale: en
+limit: 10
 ```
 
-### Query Predicates
-Use complex filtering with predicates:
-- Field-specific searches
-- Logical operators (and, or)
-- Nested property access
-- Locale-specific queries
-
-### Predicate Examples
-```javascript
-// Search by slug and name
-masterData(current(slug(en="super-product") and name(en="Super Product")))
-
-// Search by variant SKU
-masterData(current(variants(sku="SKU123")))
+**Response:**
+```json
+{
+  "offset": 0,
+  "count": 2,
+  "total": 2,
+  "results": [
+    {
+      "id": "f68c111c-53d5-4f9c-8a6d-c2b015f3a030",
+      "version": 4,
+      "productType": {
+        "typeId": "product-type",
+        "id": "a3b57818-6c9c-45d4-befa-2dbe3cf18756"
+      },
+      "masterData": {
+        "current": {
+          "name": {
+            "en": "Basic T-Shirt"
+          },
+          "slug": {
+            "en": "basic-t-shirt"
+          },
+          "categories": [
+            {
+              "typeId": "category",
+              "id": "b6c9c274-3637-41d4-b40e-e4e10a62ef67"
+            }
+          ],
+          "masterVariant": {
+            "sku": "sku_basic_tshirt_1",
+            "prices": [
+              {
+                "value": {
+                  "currencyCode": "EUR",
+                  "centAmount": 1999
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
 ```
 
-## Product Creation
+### Query Products with Predicates
+Query products using complex predicates for advanced filtering.
 
-### Required Fields
-- **productType**: Product type reference
-- **name**: Multilingual name object
-- **slug**: URL-friendly identifier
-- **masterVariant**: Primary variant data
+**Parameters:**
+- `predicate` (required) - Query predicate for filtering
+- `limit` (optional) - Number of results to return
+- `offset` (optional) - Number of results to skip
 
-### Optional Fields
-- **description**: Product description
-- **categories**: Category references
-- **taxCategory**: Tax classification
-- **variants**: Additional variants
-
-## Pricing Structure
-
-### Price Objects
-- **currencyCode**: Currency (EUR, USD, etc.)
-- **centAmount**: Price in cents
-- **country**: Country-specific pricing
-- **channel**: Sales channel
-
-### Multiple Currencies
-Support for:
-- Multi-currency pricing
-- Regional variations
-- Channel-specific prices
-- Dynamic pricing
-
-## Image Management
-
-### Image Properties
-- **url**: Image URL
-- **dimensions**: Width and height
-- **label**: Image description
-- **variant**: Associated variant
-
-### Image Handling
-- Multiple images per variant
-- Different sizes/formats
-- CDN integration
-- Optimization support
-
-## Localization
-
-### Multilingual Support
-- **name**: Localized names
-- **description**: Localized descriptions
-- **slug**: Localized URLs
-- **attributes**: Localized values
-
-### Locale Codes
-- **en**: English
-- **de**: German
-- **fr**: French
-- **es**: Spanish
-- And many more
-
-## Version Management
-
-### Current vs Staged
-- **current**: Live/published version
-- **staged**: Draft/preview version
-- **published**: Publication status
-- **hasStagedChanges**: Pending updates
-
-### Publishing Workflow
-1. Create/edit staged version
-2. Review changes
-3. Publish to current
-4. Update live catalog
-
-## Query Parameters
-
-### Pagination
-- **offset**: Starting position
-- **limit**: Results per page
-- **count**: Returned items
-- **total**: Total available
-
-### Filtering
-- **where**: Query predicates
-- **text**: Text search
-- **fuzzy**: Fuzzy matching
-- **sort**: Result ordering
-
-## Best Practices
-
-1. **Product Data Quality**
-   - Use descriptive names
-   - Include detailed descriptions
-   - Provide high-quality images
-   - Set appropriate categories
-
-2. **Search Optimization**
-   - Use relevant keywords
-   - Implement proper categorization
-   - Maintain clean SKU structure
-   - Enable text search
-
-3. **Version Control**
-   - Use staged versions for drafts
-   - Publish only reviewed content
-   - Track version changes
-   - Maintain data consistency
-
-4. **Performance**
-   - Use pagination for large datasets
-   - Optimize query predicates
-   - Cache frequently accessed data
-   - Monitor API usage
-
-## Common Patterns
-
-### Product Catalog
+**Example:**
 ```
-/commercetools list products by category "electronics" with prices
+/your-commercetools-connection
+action: query
+entity: products
+predicate: masterData(current(slug(en="super-product") and name(en="Super Product")))
+limit: 20
 ```
 
-### Inventory Search
-```
-/commercetools find products with available variants
+**Response:**
+```json
+{
+  "limit": 20,
+  "offset": 0,
+  "count": 1,
+  "total": 1,
+  "results": [
+    {
+      "id": "f3b17f52-9ab1-478f-899c-e3d2d5c74579",
+      "version": 2,
+      "productType": {
+        "typeId": "product-type",
+        "id": "da5dd5e7-c5e4-4ccd-a753-d92013414cd9"
+      },
+      "masterData": {
+        "current": {
+          "name": {
+            "en": "Super Product"
+          },
+          "slug": {
+            "en": "super-product"
+          },
+          "masterVariant": {
+            "sku": "sku_super_product_1",
+            "prices": [
+              {
+                "value": {
+                  "currencyCode": "EUR",
+                  "centAmount": 2800
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
 ```
 
-### Price Updates
-```
-/commercetools update product prices for currency EUR
-```
+## Notes 
 
-### Category Management
-```
-/commercetools organize products by category hierarchy
-```
-
-## Tips
-- Always URL-encode query predicates
-- Use specific product types for better organization
-- Leverage staged versions for content review
-- Include multilingual support from the start
-- Use descriptive SKUs for easier management 
+Prices are specified in cent amounts (e.g., 2800 = €28.00). Products support multiple locales for names, descriptions, and slugs. The masterData object contains both current (published) and staged (draft) versions. Query predicates must be URL-encoded for API requests. Product types define the structure and attributes available for products. Categories organize products hierarchically. Supports both PinkConnect and Paragon proxy connections. 

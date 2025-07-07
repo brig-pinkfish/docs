@@ -1,93 +1,194 @@
 ---
-title: "Slack Command Guide"
-description: "Learn how to use the Slack slash command for team communication and collaboration"
+title: "Slack Guide"
+description: "Manage your team's communication and collaboration through Slack"
 ---
 
-The `/slack` command enables you to manage team communication through Slack including sending messages, scheduling posts, and searching conversations. Perfect for:
+## What can you do with it?
 
-- Sending direct messages
-- Posting to channels
-- Scheduling messages
-- Finding users and channels
-- Searching message history
+The Slack integration enables comprehensive team communication including sending direct messages, posting to channels, scheduling messages, and retrieving conversation history. You can find users and channels by name, send formatted messages with rich text, schedule messages for later delivery, and search through message history with keyword filtering. This integration is perfect for teams looking to automate their Slack communications, send notifications, and integrate with other business processes.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Slack:
-
+### Basic Command Structure
 ```
-/slack send "Hello team!" to #general
+/your-slack-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (get_users, send_message, get_channels, schedule_message, get_messages)
+
+**Optional:**
+
+- `channel` - Channel ID or name for channel operations
+- `user` - User ID or name for user operations
+- `text` - Message content for sending messages
+
+## Tools
+
+### Get Users List
+Retrieve all users in the workspace
+
+**Parameters:**
+- `action` (required) - Set to "get_users"
+
+**Example:**
 ```
-/slack message @john.doe "Can we discuss the project update?"
+/your-slack-connection
+action: get_users
 ```
 
+**Response:**
+```json
+{
+  "ok": true,
+  "members": "[Array of user objects with id, name, real_name, and profile information including email]"
+}
 ```
-/slack schedule "Weekly standup reminder" to #team-updates for tomorrow at 9am
-```
-
-## Key Features
-
-### Messaging
-- Send direct messages to users
-- Post messages to channels
-- Format messages with markdown
-- Include mentions and links
-
-### User Management
-- Find users by name or email
-- Get user information
-- List team members
-- Check user status
-
-### Channel Operations
-- List all channels
-- Find channel by name
-- Post to public channels
-- Search channel history
-
-### Scheduling
-- Schedule messages for later
-- Set specific delivery times
-- Send recurring reminders
-- Manage scheduled messages
-
-### Search
-- Search messages by keywords
-- Filter by channel
-- Find messages from specific users
-- Retrieve conversation history
-
-## Example Commands
 
 ### Send Direct Message
+Send a direct message to a specific user
+
+**Parameters:**
+- `action` (required) - Set to "send_direct_message"
+- `user_id` (required) - User ID to send message to
+- `text` (required) - Message content
+
+**Example:**
 ```
-/slack DM @jane "Here's the report you requested"
+/your-slack-connection
+action: send_direct_message
+user_id: U080G8LGU4F
+text: Hello John, how are you?
 ```
 
-### Post to Channel
+**Response:**
+```json
+{
+  "ok": true,
+  "channel": "[Direct message channel ID]",
+  "ts": "[Message timestamp]",
+  "message": {
+    "user": "[Sender user ID]",
+    "type": "message",
+    "text": "[Message content]",
+    "team": "[Team ID]"
+  }
+}
 ```
-/slack post to #marketing "New campaign launch details: ..."
+
+### Get Channels List
+Retrieve all channels in the workspace
+
+**Parameters:**
+- `action` (required) - Set to "get_channels"
+
+**Example:**
+```
+/your-slack-connection
+action: get_channels
+```
+
+**Response:**
+```json
+{
+  "ok": true,
+  "channels": "[Array of channel objects with id and name]"
+}
+```
+
+### Send Message to Channel
+Post a message to a specific channel
+
+**Parameters:**
+- `action` (required) - Set to "send_channel_message"
+- `channel` (required) - Channel ID or name (with # prefix)
+- `text` (required) - Message content
+
+**Example:**
+```
+/your-slack-connection
+action: send_channel_message
+channel: #team-updates
+text: Weekly project status summary: Key milestones achieved, current blockers identified
+```
+
+**Response:**
+```json
+{
+  "ok": true,
+  "channel": "[Channel ID]",
+  "ts": "[Message timestamp]",
+  "message": {
+    "user": "[Sender user ID]",
+    "type": "message",
+    "text": "[Message content]",
+    "team": "[Team ID]",
+    "bot_profile": "[Bot profile information if sent by bot]"
+  }
+}
 ```
 
 ### Schedule Message
+Schedule a message to be sent at a specific time
+
+**Parameters:**
+- `action` (required) - Set to "schedule_message"
+- `channel` (required) - Channel ID or name
+- `text` (required) - Message content
+- `post_at` (required) - Unix timestamp for when to send the message
+
+**Example:**
 ```
-/slack schedule "Sprint retrospective at 3pm" to #dev-team for Friday
+/your-slack-connection
+action: schedule_message
+channel: @marketing-team
+text: This week's content calendar: Monday - Blog post, Tuesday - Social media
+post_at: 1702560000
 ```
 
-### Search Messages
-```
-/slack find messages containing "urgent" and "support" in #customer-support
+**Response:**
+```json
+{
+  "ok": true,
+  "scheduled_message_id": "[Scheduled message ID]",
+  "post_at": "[Unix timestamp]",
+  "channel": "[Channel ID]"
+}
 ```
 
-### Find User
+### Get Messages with Keywords
+Retrieve messages from a channel with optional keyword filtering
+
+**Parameters:**
+- `action` (required) - Set to "get_messages"
+- `channel` (required) - Channel ID to retrieve messages from
+- `limit` (optional) - Number of messages to retrieve (default: 100)
+- `keywords` (optional) - Array of keywords to filter messages
+
+**Example:**
 ```
-/slack find user john.doe@company.com
+/your-slack-connection
+action: get_messages
+channel: C1234567890
+limit: 100
+keywords: urgent, support
 ```
 
-## Tips
-- Use @ for users and # for channels
-- Messages can include markdown formatting
-- Schedule messages using Unix timestamps or natural language
-- Search is limited to channels where the bot has access 
+**Response:**
+```json
+{
+  "ok": true,
+  "messages": "[Array of message objects with type, user, text, timestamp, and channel information]",
+  "has_more": "[Boolean indicating if more messages are available]",
+  "response_metadata": {
+    "next_cursor": "[Cursor for pagination]"
+  }
+}
+```
+
+## Notes 
+
+Slack uses unique IDs for users (starting with U), channels (starting with C), and teams (starting with T). You can reference channels by ID or name with # prefix. Direct messages create a special channel between users. Message timestamps are in Unix format with microsecond precision. Scheduled messages use Unix timestamps for the post_at parameter. The integration can only access public channels that the bot has been added to. Message filtering with keywords is done client-side after retrieving messages. Rich text formatting is supported through blocks in message responses. 

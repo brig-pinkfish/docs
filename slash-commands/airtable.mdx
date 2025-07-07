@@ -1,78 +1,169 @@
 ---
-title: "Airtable Command Guide"
-description: "Learn how to use the Airtable slash command to manage databases and records"
+title: "Airtable Guide"
+description: "Create and manage databases and projects with Airtable"
 ---
 
-The `/airtable` command enables you to create and manage databases, tables, and records in Airtable. Perfect for:
+## What can you do with it?
 
-- Managing project databases
-- Tracking tasks and workflows
-- Storing structured data
-- Filtering and sorting records
-- Automating data operations
+The Airtable integration enables comprehensive database management including listing bases, exploring table schemas, retrieving records with advanced filtering, and creating new records. You can work with different field types including text, select options, collaborators, and more. The integration supports powerful filtering with formulas, pagination for large datasets, and bulk record creation. Perfect for teams managing structured data, project tracking, and collaborative databases with rich field types and relationships.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with your Airtable bases:
-
+### Basic Command Structure
 ```
-/airtable list all bases
+/your-airtable-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (list_bases, get_schema, list_records, create_records, filter_records)
+
+**Optional:**
+
+- `base_id` - Base identifier for base-specific operations
+- `table_name` - Table name or ID for table operations
+- `filter_formula` - Formula for filtering records
+
+## Tools
+
+### List Bases
+Retrieve all accessible Airtable bases
+
+**Parameters:**
+- `action` (required) - Set to "list_bases"
+
+**Example:**
 ```
-/airtable in "Project Tracker" base, show all records from "Tasks" table
+/your-airtable-connection
+action: list_bases
 ```
 
+**Response:**
+```json
+{
+  "bases": "[Array of base objects with id, name, and permission level]"
+}
 ```
-/airtable create record in "Tasks" with Name: "New Feature", Status: "Todo"
+
+### Get Base Schema
+Retrieve the schema for a specific base including tables and fields
+
+**Parameters:**
+- `action` (required) - Set to "get_schema"
+- `base_id` (required) - Base identifier
+
+**Example:**
+```
+/your-airtable-connection
+action: get_schema
+base_id: appXXXXXXXXXXXXXX
 ```
 
-## Key Features
-
-### Database Operations
-- List all bases
-- View base schemas
-- Access table structures
-- Manage views
-
-### Record Management
-- Create new records
-- List and filter records
-- Update existing data
-- Bulk operations
-
-### Data Filtering
-- Filter by formula
-- Sort by fields
-- Limit results
-- Custom views
-
-## Example Commands
+**Response:**
+```json
+{
+  "tables": "[Array of table objects with id, name, primaryFieldId, fields array with type/id/name, and views]"
+}
+```
 
 ### List Records
+Retrieve records from a specific table
+
+**Parameters:**
+- `action` (required) - Set to "list_records"
+- `base_id` (required) - Base identifier
+- `table_name` (required) - Table name or ID
+- `page_size` (optional) - Number of records per page (max 100, default 100)
+- `max_records` (optional) - Maximum total records to return
+- `view` (optional) - Specific view name or ID
+- `sort` (optional) - Array of sort criteria with field and direction
+- `fields` (optional) - Specific field names to include
+
+**Example:**
 ```
-/airtable show all records from "Contacts" table in "CRM" base
+/your-airtable-connection
+action: list_records
+base_id: appXXXXXXXXXXXXXX
+table_name: Tasks
+page_size: 50
+fields: Name, Status, Notes
+```
+
+**Response:**
+```json
+{
+  "records": "[Array of record objects with id, createdTime, and fields object containing field values]"
+}
 ```
 
 ### Filter Records
+Retrieve records using a filter formula
+
+**Parameters:**
+- `action` (required) - Set to "filter_records"
+- `base_id` (required) - Base identifier
+- `table_name` (required) - Table name or ID
+- `filter_formula` (required) - Airtable formula for filtering (e.g., "{Status}='In progress'")
+
+**Example:**
 ```
-/airtable find records in "Tasks" where Status = "In progress"
+/your-airtable-connection
+action: filter_records
+base_id: appXXXXXXXXXXXXXX
+table_name: Tasks
+filter_formula: {Status}='In progress'
+```
+
+**Response:**
+```json
+{
+  "records": "[Array of filtered record objects matching the formula criteria]"
+}
 ```
 
 ### Create Records
+Create one or more new records in a table
+
+**Parameters:**
+- `action` (required) - Set to "create_records"
+- `base_id` (required) - Base identifier
+- `table_name` (required) - Table name or ID
+- `records` (required) - Array of record objects with fields
+- `typecast` (optional) - Boolean for automatic data conversion (default: false)
+
+**Example:**
 ```
-/airtable add to "Inventory" table: Name: "Widget A", Quantity: 100, Price: 25.99
+/your-airtable-connection
+action: create_records
+base_id: appXXXXXXXXXXXXXX
+table_name: Tasks
+records: [
+  {
+    "fields": {
+      "Name": "New Task",
+      "Notes": "Task description",
+      "Status": "Todo"
+    }
+  },
+  {
+    "fields": {
+      "Name": "Another Task",
+      "Status": "In progress"
+    }
+  }
+]
+typecast: true
 ```
 
-### Bulk Create
-```
-/airtable add multiple records to "Orders":
-- Customer: "Alice", Product: "Widget A", Quantity: 5
-- Customer: "Bob", Product: "Widget B", Quantity: 3
+**Response:**
+```json
+{
+  "records": "[Array of created record objects with id, createdTime, and fields]"
+}
 ```
 
-## Tips
-- Use base names for easier reference (the system will find the ID)
-- Table names and IDs can be used interchangeably
-- Apply filters to find specific records quickly
-- Use typecast option for automatic data conversion 
+## Notes 
+
+Airtable uses app-prefixed base IDs (appXXXXXXXXXXXXXX) and rec-prefixed record IDs. Table names and table IDs can be used interchangeably. Field types include singleLineText, multilineText, singleSelect, multipleSelect, singleCollaborator, and many others. Filter formulas use Airtable's formula syntax with field names in curly braces like {Status}='Done'. The typecast option enables automatic data conversion from strings to appropriate field types. Pagination is supported with pageSize (max 100) and offset parameters. Views can filter and sort records according to predefined configurations. All field names are case-sensitive and must match exactly as defined in the base schema. 

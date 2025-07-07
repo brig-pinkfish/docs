@@ -1,118 +1,352 @@
 ---
-title: "Linear Command Guide"
-description: "Learn how to use the Linear slash command for project and issue management"
+title: "Linear Guide"
+description: "Manage issues, projects, teams, and workflows with Linear"
 ---
 
-The `/linear` command enables you to manage issues, projects, and workflows in Linear. Perfect for:
+## What can you do with it?
 
-- Creating and tracking issues
-- Managing development projects
-- Assigning tasks to team members
-- Updating issue status
-- Adding comments and labels
+The Linear integration provides comprehensive project management and issue tracking through GraphQL API. You can manage issues with detailed tracking, organize teams and projects, track workflow states, assign tasks, add comments, and manage labels for organization. This integration supports the full Linear workflow including creating issues, updating status, team collaboration, and project management. Perfect for development teams looking to automate their Linear workflows and integrate with other tools.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Linear:
-
+### Basic Command Structure
 ```
-/linear create issue "Fix login bug" in team Development priority high
+/your-linear-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (get_user, get_issues, create_issue, update_issue, get_teams, get_projects, etc.)
+
+**Optional:**
+
+- `team_id` - Team identifier for team-specific operations
+- `issue_id` - Issue identifier for issue-specific operations
+- `project_id` - Project identifier for project operations
+
+## Tools
+
+### Get Current User
+Retrieve information about the authenticated user
+
+**Parameters:**
+- `action` (required) - Set to "get_user"
+
+**Example:**
 ```
-/linear list all issues assigned to me
+/your-linear-connection
+action: get_user
 ```
 
+**Response:**
+```json
+{
+  "viewer": {
+    "id": "[User ID]",
+    "name": "[User name]",
+    "email": "[User email]"
+  }
+}
 ```
-/linear update issue DEV-123 status to "In Progress"
+
+### Get Issues
+Retrieve a list of issues with filtering options
+
+**Parameters:**
+- `action` (required) - Set to "get_issues"
+- `team_id` (optional) - Filter by specific team
+
+**Example:**
+```
+/your-linear-connection
+action: get_issues
 ```
 
-## Key Features
+**Response:**
+```json
+{
+  "issues": {
+    "nodes": "[Array of issue objects with id, identifier, title, description, priority, state, assignee, team, and timestamps]"
+  }
+}
+```
 
-### Issue Management
-- Create new issues
-- Update issue details
-- Change issue states
-- Set priorities (1-4)
-- Add time estimates
+### Get Issue by ID
+Retrieve detailed information about a specific issue
 
-### Team Operations
-- List all teams
-- View team members
-- Get team issues
-- Filter by team
+**Parameters:**
+- `action` (required) - Set to "get_issue"
+- `issue_id` (required) - The issue identifier
 
-### Project Tracking
-- View projects
-- Check project progress
-- See project timelines
-- Track deliverables
+**Example:**
+```
+/your-linear-connection
+action: get_issue
+issue_id: issue-123
+```
 
-### Workflow States
-- Move issues through workflow
-- View available states
-- Update issue status
-- Track progress
-
-### Collaboration
-- Add comments to issues
-- Assign to team members
-- Apply labels
-- View issue history
-
-## Example Commands
+**Response:**
+```json
+{
+  "issue": {
+    "id": "[Issue ID]",
+    "identifier": "[Issue identifier like DEV-123]",
+    "title": "[Issue title]",
+    "description": "[Issue description]",
+    "priority": "[Priority level]",
+    "estimate": "[Story points]",
+    "state": "[Current state with name and type]",
+    "assignee": "[Assignee information]",
+    "team": "[Team information]",
+    "labels": "[Array of labels]",
+    "comments": "[Array of comments]"
+  }
+}
+```
 
 ### Create Issue
+Create a new issue in Linear
+
+**Parameters:**
+- `action` (required) - Set to "create_issue"
+- `title` (required) - Issue title
+- `description` (required) - Issue description
+- `team_id` (required) - Team identifier
+- `priority` (optional) - Priority level (1-4, where 1 is urgent)
+- `assignee_id` (optional) - User ID to assign the issue to
+- `label_ids` (optional) - Array of label IDs
+
+**Example:**
 ```
-/linear create issue "Add dark mode" description "Support dark theme" team DEV priority 2 assign to john@example.com
+/your-linear-connection
+action: create_issue
+title: New feature request
+description: Add dark mode support
+team_id: team-123
+priority: 3
+assignee_id: user-456
+label_ids: label-789
 ```
 
-### List Issues
-```
-/linear show all issues in team Development with state "In Progress"
+**Response:**
+```json
+{
+  "issueCreate": {
+    "success": "[Boolean indicating success]",
+    "issue": {
+      "id": "[Created issue ID]",
+      "identifier": "[Issue identifier]",
+      "title": "[Issue title]",
+      "description": "[Issue description]",
+      "url": "[Linear app URL]"
+    }
+  }
+}
 ```
 
 ### Update Issue
+Update an existing issue
+
+**Parameters:**
+- `action` (required) - Set to "update_issue"
+- `issue_id` (required) - Issue identifier
+- `title` (optional) - Updated title
+- `description` (optional) - Updated description
+- `priority` (optional) - Updated priority
+- `state_id` (optional) - New workflow state ID
+
+**Example:**
 ```
-/linear update DEV-123 title to "Critical: Fix authentication bug" priority 1
+/your-linear-connection
+action: update_issue
+issue_id: issue-123
+title: Updated issue title
+description: Updated description
+priority: 1
+state_id: state-789
 ```
 
-### Add Comment
+**Response:**
+```json
+{
+  "issueUpdate": {
+    "success": "[Boolean indicating success]",
+    "issue": {
+      "id": "[Issue ID]",
+      "identifier": "[Issue identifier]",
+      "title": "[Updated title]",
+      "description": "[Updated description]",
+      "state": "[New state information]"
+    }
+  }
+}
 ```
-/linear add comment to DEV-123 "Working on this now, should be done by EOD"
+
+### Get Teams
+Retrieve all teams and their information
+
+**Parameters:**
+- `action` (required) - Set to "get_teams"
+
+**Example:**
+```
+/your-linear-connection
+action: get_teams
 ```
 
-### List Teams
+**Response:**
+```json
+{
+  "teams": {
+    "nodes": "[Array of team objects with id, name, key, description, issue count, and members]"
+  }
+}
 ```
-/linear list all teams with member count
+
+### Get Team Issues
+Retrieve issues for a specific team
+
+**Parameters:**
+- `action` (required) - Set to "get_team_issues"
+- `team_id` (required) - Team identifier
+
+**Example:**
+```
+/your-linear-connection
+action: get_team_issues
+team_id: team-123
 ```
 
-### View Project
+**Response:**
+```json
+{
+  "team": {
+    "id": "[Team ID]",
+    "name": "[Team name]",
+    "issues": {
+      "nodes": "[Array of team-specific issues]"
+    }
+  }
+}
 ```
-/linear show project "Q1 2025 Roadmap" with progress
+
+### Get Projects
+Retrieve all projects with progress and details
+
+**Parameters:**
+- `action` (required) - Set to "get_projects"
+
+**Example:**
+```
+/your-linear-connection
+action: get_projects
 ```
 
-## Priority Levels
+**Response:**
+```json
+{
+  "projects": {
+    "nodes": "[Array of project objects with id, name, description, state, progress, target date, lead, and teams]"
+  }
+}
+```
 
-Linear priorities:
-- **0**: No priority
-- **1**: Urgent
-- **2**: High
-- **3**: Medium
-- **4**: Low
+### Get Workflow States
+Retrieve workflow states for teams
 
-## Workflow States
+**Parameters:**
+- `action` (required) - Set to "get_workflow_states"
 
-Common states:
-- **Backlog**: Not started
-- **Todo**: Ready to start
-- **In Progress**: Being worked on
-- **In Review**: Under review
-- **Done**: Completed
-- **Canceled**: Won't do
+**Example:**
+```
+/your-linear-connection
+action: get_workflow_states
+```
 
-## Tips
-- Team IDs are required for creating issues
-- Use issue identifiers (e.g., DEV-123) or IDs
-- States are team-specific
-- Labels help with organization and filtering 
+**Response:**
+```json
+{
+  "workflowStates": {
+    "nodes": "[Array of workflow state objects with id, name, type, position, color, and team]"
+  }
+}
+```
+
+### Create Comment
+Add a comment to an issue
+
+**Parameters:**
+- `action` (required) - Set to "create_comment"
+- `issue_id` (required) - Issue identifier
+- `body` (required) - Comment text
+
+**Example:**
+```
+/your-linear-connection
+action: create_comment
+issue_id: issue-123
+body: This is a comment on the issue
+```
+
+**Response:**
+```json
+{
+  "commentCreate": {
+    "success": "[Boolean indicating success]",
+    "comment": {
+      "id": "[Comment ID]",
+      "body": "[Comment text]",
+      "user": "[User information]",
+      "createdAt": "[Creation timestamp]"
+    }
+  }
+}
+```
+
+### Get Labels
+Retrieve labels for filtering and organization
+
+**Parameters:**
+- `action` (required) - Set to "get_labels"
+
+**Example:**
+```
+/your-linear-connection
+action: get_labels
+```
+
+**Response:**
+```json
+{
+  "issueLabels": {
+    "nodes": "[Array of label objects with id, name, color, and description]"
+  }
+}
+```
+
+### Get Users
+Retrieve team members for assignment
+
+**Parameters:**
+- `action` (required) - Set to "get_users"
+
+**Example:**
+```
+/your-linear-connection
+action: get_users
+```
+
+**Response:**
+```json
+{
+  "users": {
+    "nodes": "[Array of user objects with id, name, email, avatar URL, active status, and admin rights]"
+  }
+}
+```
+
+## Notes 
+
+Linear uses GraphQL API with all requests as POST to the graphql endpoint. Team IDs are mandatory for creating issues - always ask users for team_id when required. Issue identifiers follow the pattern TEAM-NUMBER (e.g., DEV-123). Priority levels are 1-4 where 1 is urgent and 4 is low. Workflow states have types like backlog, unstarted, started, completed, and canceled. All timestamps are in ISO 8601 format. Labels have color codes for visual organization. The system supports nested data structures for comprehensive issue tracking. 

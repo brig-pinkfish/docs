@@ -1,115 +1,298 @@
 ---
-title: "Shopify Command Guide"
-description: "Learn how to use the Shopify slash command to manage your e-commerce store"
+title: "Shopify Guide"
+description: "Manage your e-commerce store through Shopify"
 ---
 
-The `/shopify` command enables you to manage your e-commerce store including products, customers, and orders. Perfect for:
+## What can you do with it?
 
-- Managing products and inventory
-- Processing customer orders
-- Tracking customer information
-- Updating product details
-- Creating new listings
+The Shopify integration enables comprehensive e-commerce store management including customer management, order processing, and product catalog administration. You can retrieve and search customers, create new customer accounts with addresses, manage orders from creation to updates, and maintain your product catalog with variants and pricing. This integration is perfect for automating e-commerce workflows, syncing data with other business systems, and managing your online store operations programmatically.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Shopify:
-
+### Basic Command Structure
 ```
-/shopify list all products
+/your-shopify-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (get_customers, create_customer, get_orders, create_order, get_products, create_product, etc.)
+
+**Optional:**
+
+- `customer_id` - Customer ID for customer-specific operations
+- `order_id` - Order ID for order-specific operations
+- `product_id` - Product ID for product-specific operations
+
+## Tools
+
+### Get Customers
+Retrieve all customers from your store
+
+**Parameters:**
+- `action` (required) - Set to "get_customers"
+
+**Example:**
 ```
-/shopify find customer with email john@example.com
-```
-
-```
-/shopify create product "New T-Shirt" price $19.99 SKU "TSHIRT-001"
-```
-
-## Key Features
-
-### Product Management
-- List all products
-- Create new products
-- Update product details
-- Manage variants
-- Set pricing
-
-### Customer Management
-- Search customers
-- Create customer profiles
-- Update customer info
-- Track order history
-- View spending data
-
-### Order Processing
-- View orders
-- Create new orders
-- Update order status
-- Add order notes
-- Track fulfillment
-
-### Inventory Control
-- Track stock levels
-- Update quantities
-- Manage SKUs
-- Set product variants
-
-## Example Commands
-
-### List Products
-```
-/shopify show all products in store
+/your-shopify-connection
+action: get_customers
 ```
 
-### Search Customer
+**Response:**
+```json
+{
+  "customers": "[Array of customer objects with id, email, name, orders_count, state, total_spent, and timestamps]"
+}
 ```
-/shopify find customer jane.doe@example.com
+
+### Search Customers
+Search for customers using a query
+
+**Parameters:**
+- `action` (required) - Set to "search_customers"
+- `query` (required) - Search query (e.g., "email:john@example.com")
+
+**Example:**
+```
+/your-shopify-connection
+action: search_customers
+query: email:john.smith@example.com
+```
+
+**Response:**
+```json
+{
+  "customers": "[Array of matching customer objects with id, email, name, and orders_count]"
+}
 ```
 
 ### Create Customer
+Create a new customer account
+
+**Parameters:**
+- `action` (required) - Set to "create_customer"
+- `first_name` (required) - Customer's first name
+- `last_name` (required) - Customer's last name
+- `email` (required) - Customer's email address
+- `phone` (optional) - Customer's phone number
+- `address` (optional) - Customer's address information
+
+**Example:**
 ```
-/shopify create customer "Jane Doe" email jane@example.com address "123 Oak Street, Montreal, QC"
+/your-shopify-connection
+action: create_customer
+first_name: Jane
+last_name: Doe
+email: jane.doe@example.com
+phone: 555-555-5555
+address: 123 Oak Street, Montreal, Quebec, H1H1H1, Canada
 ```
 
-### Create Product
-```
-/shopify add product "Premium T-Shirt" description "High quality cotton" price $29.99 variant "Large"
+**Response:**
+```json
+{
+  "customer": {
+    "id": "[Created customer ID]",
+    "email": "[Customer email]",
+    "first_name": "[Customer first name]",
+    "last_name": "[Customer last name]"
+  }
+}
 ```
 
-### View Orders
+### Update Customer
+Update an existing customer's information
+
+**Parameters:**
+- `action` (required) - Set to "update_customer"
+- `customer_id` (required) - Customer ID to update
+- `first_name` (optional) - Updated first name
+- `last_name` (optional) - Updated last name
+- `phone` (optional) - Updated phone number
+
+**Example:**
 ```
-/shopify list recent orders with status paid
+/your-shopify-connection
+action: update_customer
+customer_id: 207119552
+first_name: Jane
+last_name: Doe
+phone: 555-555-1234
+```
+
+**Response:**
+```json
+{
+  "customer": {
+    "id": "[Customer ID]",
+    "email": "[Customer email]",
+    "first_name": "[Updated first name]",
+    "last_name": "[Updated last name]",
+    "phone": "[Updated phone number]"
+  }
+}
+```
+
+### Get Orders
+Retrieve all orders from your store
+
+**Parameters:**
+- `action` (required) - Set to "get_orders"
+
+**Example:**
+```
+/your-shopify-connection
+action: get_orders
+```
+
+**Response:**
+```json
+{
+  "orders": "[Array of order objects with id, email, total_price, currency, financial_status, and line_items]"
+}
 ```
 
 ### Create Order
+Create a new order
+
+**Parameters:**
+- `action` (required) - Set to "create_order"
+- `email` (required) - Customer email
+- `line_items` (required) - Array of items with variant_id and quantity
+- `billing_address` (required) - Billing address information
+- `shipping_address` (optional) - Shipping address information
+
+**Example:**
 ```
-/shopify create order for jane@example.com with 2x product variant 447654529
+/your-shopify-connection
+action: create_order
+email: jane.doe@example.com
+line_items: [{"variant_id": 447654529, "quantity": 2}]
+billing_address: {"first_name": "Jane", "last_name": "Doe", "address1": "123 Oak Street", "city": "Montreal", "province": "Quebec", "country": "Canada", "zip": "H1H1H1"}
+```
+
+**Response:**
+```json
+{
+  "order": {
+    "id": "[Created order ID]",
+    "email": "[Customer email]",
+    "total_price": "[Order total]",
+    "currency": "[Currency code]"
+  }
+}
+```
+
+### Update Order
+Update an existing order
+
+**Parameters:**
+- `action` (required) - Set to "update_order"
+- `order_id` (required) - Order ID to update
+- `email` (optional) - Updated customer email
+- `note` (optional) - Order note
+
+**Example:**
+```
+/your-shopify-connection
+action: update_order
+order_id: 450789470
+email: jane.doe@example.com
+note: Updated order note
+```
+
+**Response:**
+```json
+{
+  "order": {
+    "id": "[Order ID]",
+    "email": "[Updated email]",
+    "note": "[Updated note]"
+  }
+}
+```
+
+### Get Products
+Retrieve all products from your store
+
+**Parameters:**
+- `action` (required) - Set to "get_products"
+
+**Example:**
+```
+/your-shopify-connection
+action: get_products
+```
+
+**Response:**
+```json
+{
+  "products": "[Array of product objects with id, title, and variants including id, title, and price]"
+}
+```
+
+### Create Product
+Create a new product
+
+**Parameters:**
+- `action` (required) - Set to "create_product"
+- `title` (required) - Product title
+- `body_html` (optional) - Product description
+- `vendor` (optional) - Product vendor
+- `product_type` (optional) - Product type
+- `variants` (optional) - Array of product variants with options, price, and SKU
+
+**Example:**
+```
+/your-shopify-connection
+action: create_product
+title: New T-Shirt
+body_html: This is a great t-shirt
+vendor: Shopify
+product_type: Apparel
+variants: [{"option1": "Small", "price": "19.99", "sku": "123"}]
+```
+
+**Response:**
+```json
+{
+  "product": {
+    "id": "[Created product ID]",
+    "title": "[Product title]"
+  }
+}
 ```
 
 ### Update Product
+Update an existing product
+
+**Parameters:**
+- `action` (required) - Set to "update_product"
+- `product_id` (required) - Product ID to update
+- `title` (optional) - Updated product title
+- `variants` (optional) - Updated product variants
+
+**Example:**
 ```
-/shopify update product 632910393 title to "Limited Edition T-Shirt" price $34.99
+/your-shopify-connection
+action: update_product
+product_id: 632910393
+title: Updated T-Shirt
+variants: [{"id": 447654530, "price": "21.99"}]
 ```
 
-## Order Status
+**Response:**
+```json
+{
+  "product": {
+    "id": "[Product ID]",
+    "title": "[Updated title]"
+  }
+}
+```
 
-Common statuses:
-- **paid**: Payment received
-- **pending**: Awaiting payment
-- **refunded**: Order refunded
-- **fulfilled**: Order shipped
-- **cancelled**: Order cancelled
+## Notes 
 
-## Customer States
-
-- **enabled**: Active customer
-- **disabled**: Inactive account
-- **invited**: Pending invitation
-
-## Tips
-- Product IDs and variant IDs are numeric
-- Prices are in store's default currency
-- Customer search supports email queries
-- Orders require valid customer and product IDs 
+Shopify uses the Admin API version 2023-04 with REST endpoints. Customer search supports queries like "email:customer@example.com" for precise matching. Orders require line items with variant IDs and quantities. Address information includes first_name, last_name, address1, city, province, country, and zip fields. Products can have multiple variants with different options, prices, and SKUs. Financial status for orders includes values like "paid", "pending", "authorized". All monetary values are returned as strings. The API supports pagination for large datasets. 

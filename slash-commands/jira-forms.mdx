@@ -1,364 +1,277 @@
 ---
-title: "Jira Forms API Command Guide"
-description: "Learn how to use the Jira Forms API slash command to manage forms in Jira issues"
+title: "Jira Forms Guide"
+description: "Manage Jira Forms including creating, editing, submitting, and exporting forms attached to issues and service desk requests"
 ---
 
-The `/jira-forms` command enables you to manage Jira Forms attached to issues and service desk requests. Perfect for:
+## What can you do with it?
 
-- Creating and managing forms on issues
-- Collecting structured data
-- Processing form submissions
-- Managing form visibility
-- Exporting form data
-- Service desk integration
+The Jira Forms API allows you to manage forms attached to Jira issues and service desk request types. You can create, edit, submit, and export forms, manage form visibility, copy forms between issues, and handle form attachments and external data.
 
-## Basic Usage
+## How to use it?
 
-Use the command to work with Jira Forms:
-
+### Basic Command Structure
 ```
-/jira-forms get form data from issue ABC-123
+/your-jira-forms-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/jira-forms create new customer feedback form on issue
-```
+### Parameters
 
-```
-/jira-forms submit form answers for bug report
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (get, save, delete, submit, etc.)
+- `issueIdOrKey` - The Jira issue ID or key
+- `formId` - The form ID (for most actions)
 
-### Form Management
-- Get forms on issues
-- Add forms to issues
-- Update form answers
-- Delete forms
-- Copy forms between issues
+**Optional:**
 
-### Form Actions
-- Submit forms
-- Reopen forms
-- Change visibility
-- Export data
-- Manage attachments
+- `visibility` - Form visibility (internal/external)
+- `requestLanguage` - Language for service desk forms
+- `serviceDeskId` - Service desk ID for portal forms
+- `requestTypeId` - Request type ID for portal forms
 
-### Data Export
-- PDF export
-- Excel export
-- Simplified answers
-- Attachment metadata
-- External form data
-
-## Example Commands
-
-### Get Form Data
-```
-/jira-forms retrieve form "c18bde7a-d846-11ed-afa1-0242ac120002" from issue ABC-123
-```
-
-### Save Form Answers
-```
-/jira-forms update form with employee name "John Doe" and department "Engineering"
-```
-
-### Submit Form
-```
-/jira-forms submit completed form for issue processing
-```
-
-### Export Form Data
-```
-/jira-forms export form to PDF for documentation
-```
-
-### Copy Forms
-```
-/jira-forms copy forms from issue ABC-123 to issue DEF-456
-```
-
-## Form Operations
+## Tools
 
 ### Get Form on Issue
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}`;
+Retrieve a specific form attached to an issue.
+
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
+- `formId` (required) - The form ID
+
+**Example:**
+```
+/your-jira-forms-connection
+action: get
+issueIdOrKey: PROJ-123
+formId: c18bde7a-d846-11ed-afa1-0242ac120002
 ```
 
-### Save Form Answers
-```javascript
+**Response:**
+```json
 {
-  "answers": {
-    "field-1": "Employee Name: John Doe",
-    "field-2": "Department: Engineering",
-    "field-3": "Start Date: 2023-04-15"
+  "id": "c18bde7a-d846-11ed-afa1-0242ac120002",
+  "updated": "2023-04-11T08:59:18Z",
+  "design": {
+    "settings": {
+      "name": "New employee onboarding",
+      "language": "en"
+    }
+  },
+  "state": {
+    "visibility": "internal",
+    "status": "open",
+    "answers": {}
   }
 }
 ```
 
-### Add Form to Issue
-```javascript
+### Save Form Answers
+Save answers to a form on an issue.
+
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
+- `formId` (required) - The form ID
+- `answers` (required) - Object with field answers
+
+**Example:**
+```
+/your-jira-forms-connection
+action: save
+issueIdOrKey: PROJ-123
+formId: c18bde7a-d846-11ed-afa1-0242ac120002
+answers: {"field-1": "Employee Name: John Doe", "field-2": "Department: Engineering"}
+```
+
+**Response:**
+```json
 {
-  "formId": "template-form-789",
-  "name": "Customer Feedback Form",
-  "visibility": "external"
+  "id": "c18bde7a-d846-11ed-afa1-0242ac120002",
+  "updated": "2023-04-11T09:15:22Z",
+  "state": {
+    "answers": {
+      "field-1": "Employee Name: John Doe",
+      "field-2": "Department: Engineering"
+    }
+  }
 }
 ```
 
-## Form Structure
+### List Forms on Issue
+Get all forms attached to an issue.
 
-### Design Elements
-- **conditions**: Form logic
-- **layout**: Form structure
-- **questions**: Field definitions
-- **sections**: Form organization
-- **settings**: Configuration
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
 
-### Form Settings
-- **name**: Form title
-- **language**: Display language
-- **submit**: Submission options
-- **primaryLocale**: Main locale
-- **lock**: Lock after submission
-- **pdf**: PDF generation
-
-### Form State
-- **visibility**: "internal" or "external"
-- **status**: "open" or "submitted"
-- **answers**: Field responses
-
-## Form Actions
-
-### Submit Form
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/action/submit`;
+**Example:**
+```
+/your-jira-forms-connection
+action: list
+issueIdOrKey: PROJ-123
 ```
 
-### Reopen Form
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/action/reopen`;
-```
-
-### Change to External
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/action/external`;
-```
-
-### Change to Internal
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/action/internal`;
-```
-
-## Data Export Options
-
-### PDF Export
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/format/pdf`;
-// Returns: PDF file download
-```
-
-### Excel Export
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/format/xlsx`;
-// Returns: Excel file download
-```
-
-### Simplified Answers
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/format/answers`;
-```
-
-## Answer Format
-
-### Simplified Response
-```javascript
+**Response:**
+```json
 [
   {
-    "label": "Employee Name",
-    "fieldKey": "field-1",
-    "answer": "John Doe",
-    "choice": null
+    "id": "form-123",
+    "name": "Bug Report Form",
+    "status": "open",
+    "visibility": "internal"
   },
   {
-    "label": "Priority Level",
-    "fieldKey": "field-3",
-    "answer": "High",
-    "choice": "high"
+    "id": "form-456",
+    "name": "Feature Request Form",
+    "status": "submitted",
+    "visibility": "external"
   }
 ]
 ```
 
-### Field Types
-- **Text fields**: Simple string answers
-- **Choice fields**: Answer + choice value
-- **Date fields**: ISO date format
-- **Number fields**: Numeric values
+### Add Form to Issue
+Add a new form to an issue.
 
-## Form Management
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
+- `formId` (required) - Template form ID to add
+- `name` (required) - Name for the new form
+- `visibility` (optional) - Form visibility (internal/external)
 
-### List Forms on Issue
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form`;
+**Example:**
+```
+/your-jira-forms-connection
+action: add
+issueIdOrKey: PROJ-123
+formId: template-form-789
+name: Customer Feedback Form
+visibility: external
 ```
 
-### Delete Form
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}`;
-// Method: DELETE
+**Response:**
+```json
+{
+  "id": "new-form-012",
+  "name": "Customer Feedback Form",
+  "status": "open",
+  "visibility": "external",
+  "created": "2023-04-11T10:30:00Z"
+}
+```
+
+### Submit Form
+Submit a form to lock it from further editing.
+
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
+- `formId` (required) - The form ID
+
+**Example:**
+```
+/your-jira-forms-connection
+action: submit
+issueIdOrKey: PROJ-123
+formId: c18bde7a-d846-11ed-afa1-0242ac120002
+```
+
+**Response:**
+```json
+{
+  "status": "submitted"
+}
+```
+
+### Export Form
+Export a form to PDF or Excel format.
+
+**Parameters:**
+- `issueIdOrKey` (required) - The issue ID or key
+- `formId` (required) - The form ID
+- `format` (required) - Export format (pdf/xlsx/answers)
+
+**Example:**
+```
+/your-jira-forms-connection
+action: export
+issueIdOrKey: PROJ-123
+formId: c18bde7a-d846-11ed-afa1-0242ac120002
+format: pdf
+```
+
+**Response:**
+```json
+{
+  "downloadUrl": "Link to download the exported file",
+  "contentType": "application/pdf"
+}
 ```
 
 ### Copy Forms Between Issues
-```javascript
+Copy one or more forms from one issue to another.
+
+**Parameters:**
+- `sourceIssueIdOrKey` (required) - Source issue ID or key
+- `targetIssueIdOrKey` (required) - Target issue ID or key
+- `formIds` (required) - Array of form IDs to copy
+
+**Example:**
+```
+/your-jira-forms-connection
+action: copy
+sourceIssueIdOrKey: PROJ-123
+targetIssueIdOrKey: PROJ-456
+formIds: ["form-123", "form-456"]
+```
+
+**Response:**
+```json
 {
-  "ids": [
-    {"value": "form-123"},
-    {"value": "form-456"}
+  "errors": [],
+  "copiedForms": [
+    {
+      "id": "form-123",
+      "newId": "form-789"
+    },
+    {
+      "id": "form-456",
+      "newId": "form-012"
+    }
   ]
 }
 ```
 
-## Service Desk Integration
+### Get Service Desk Form
+Get a form template for a service desk request type.
 
-### Portal Form Template
-```javascript
-const url = JIRA_FORMS_URL + `servicedesk/${serviceDeskId}/requesttype/${requestTypeId}/form`;
+**Parameters:**
+- `serviceDeskId` (required) - Service desk ID
+- `requestTypeId` (required) - Request type ID
+- `requestLanguage` (optional) - Language code
+
+**Example:**
+```
+/your-jira-forms-connection
+action: getServiceDeskForm
+serviceDeskId: 10001
+requestTypeId: 63
+requestLanguage: en
 ```
 
-### External Form Data
-```javascript
-const url = JIRA_FORMS_URL + `servicedesk/${serviceDeskId}/requesttype/${requestTypeId}/form/externaldata`;
-```
-
-### Portal Configuration
-- **portalRequestTypeIds**: Associated request types
-- **submitOnCreate**: Auto-submit behavior
-- **validateOnCreate**: Validation on creation
-
-## Form Attachments
-
-### Get Attachment Metadata
-```javascript
-const url = JIRA_FORMS_URL + `issue/${issueIdOrKey}/form/${formId}/attachment`;
-```
-
-### Attachment Information
-- **id**: Attachment identifier
-- **filename**: Original file name
-- **size**: File size in bytes
-- **mimeType**: File MIME type
-- **uploadedAt**: Upload timestamp
-
-## External Form Features
-
-### Public Access
-```javascript
+**Response:**
+```json
 {
-  "publicUrl": "https://forms.atlassian.com/public/form-xyz",
-  "embedCode": "<iframe src='https://forms.atlassian.com/embed/form-xyz'></iframe>",
-  "externalAccess": true
+  "id": "c18bde7a-d846-11ed-afa1-0242ac120002",
+  "design": {
+    "questions": {
+      "q1": {
+        "label": "What type of issue are you reporting?",
+        "type": "dropdown",
+        "required": true,
+        "options": ["Bug", "Feature Request", "Support"]
+      }
+    }
+  }
 }
 ```
 
-### External Data Fields
-- Dynamic field options
-- User assignments
-- Priority levels
-- Custom configurations
+## Notes 
 
-## Best Practices
-
-1. **Form Design**
-   - Use clear field labels
-   - Organize with sections
-   - Set appropriate validation
-   - Consider user experience
-
-2. **Data Management**
-   - Validate answers before saving
-   - Handle missing fields gracefully
-   - Export data regularly
-   - Maintain data integrity
-
-3. **Visibility Control**
-   - Set appropriate visibility levels
-   - Manage external access carefully
-   - Consider data sensitivity
-   - Follow security policies
-
-4. **Integration**
-   - Link forms to workflows
-   - Automate form creation
-   - Process submissions efficiently
-   - Monitor form usage
-
-## Common Use Cases
-
-### Bug Report Form
-```
-/jira-forms create bug report form with steps to reproduce and environment details
-```
-
-### Customer Feedback
-```
-/jira-forms add customer satisfaction form to service request
-```
-
-### Employee Onboarding
-```
-/jira-forms create onboarding checklist form with required information
-```
-
-### Feature Request
-```
-/jira-forms design feature request form with priority and business justification
-```
-
-## Error Handling
-
-### Common Issues
-- Form not found
-- Invalid form ID
-- Permission denied
-- Validation failures
-
-### Response Validation
-- Check form existence
-- Validate field formats
-- Handle submission errors
-- Monitor form status
-
-## Performance Considerations
-
-### Form Loading
-- Cache form templates
-- Optimize form structure
-- Minimize API calls
-- Handle large forms
-
-### Data Processing
-- Batch form operations
-- Export data efficiently
-- Handle file attachments
-- Monitor form performance
-
-## Integration Tips
-
-### Workflow Integration
-- Trigger actions on submission
-- Validate required fields
-- Update issue status
-- Send notifications
-
-### Automation
-- Auto-create forms
-- Process submissions
-- Generate reports
-- Archive completed forms
-
-## Tips
-- Use descriptive form names and field labels for clarity
-- Set appropriate form visibility based on data sensitivity
-- Export form data regularly for backup and analysis
-- Leverage form templates for consistent data collection
-- Monitor form submission rates and user feedback
-- Integrate forms with Jira workflows for automated processing 
+Supports both issue-based forms and service desk portal forms. Form exports are available in PDF, Excel, and simplified answer formats. Form visibility can be set to internal (team only) or external (customer-facing). 

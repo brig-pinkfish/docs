@@ -1,105 +1,240 @@
 ---
-title: "SendGrid Command Guide"
-description: "Learn how to use the SendGrid slash command to send emails and manage campaigns"
+title: "SendGrid Guide"
+description: "Manage your email campaigns and subscriber lists with SendGrid email delivery service"
 ---
 
-The `/sendgrid` command enables you to send emails and manage email campaigns through SendGrid. Perfect for:
+## What can you do with it?
 
-- Sending transactional emails
-- Managing email templates
-- Scheduling emails
-- Sending bulk emails
-- Adding attachments
+The SendGrid API allows you to send transactional and marketing emails programmatically. You can send emails to multiple recipients, use dynamic templates, attach files, schedule emails for future delivery, manage sender verification, and handle all aspects of email delivery with high reliability and scalability.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with SendGrid:
-
+### Basic Command Structure
 ```
-/sendgrid send email to recipient@example.com from sender@example.com subject "Hello!" message "Welcome to our service"
+/your-sendgrid-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (send, list, get, verify)
+- `entity` - The entity type (email, template, sender)
+- `to` - Recipient email address
+- `from` - Sender email address
+- `subject` - Email subject line
+- `content` - Email content
+
+**Optional:**
+
+- `cc` - Carbon copy recipients
+- `bcc` - Blind carbon copy recipients
+- `template_id` - Template ID for template-based emails
+- `attachments` - File attachments
+- `send_at` - Scheduled send time (Unix timestamp)
+- `personalizations` - Personalization data
+
+## Tools
+
+### Send Basic Email
+Send a basic email to multiple recipients including CC and BCC.
+
+**Parameters:**
+- `to` (required) - Primary recipient email address
+- `from` (required) - Sender email address
+- `subject` (required) - Email subject line
+- `content` (required) - Email content with type
+- `cc` (optional) - Carbon copy recipients
+- `bcc` (optional) - Blind carbon copy recipients
+
+**Example:**
 ```
-/sendgrid send email using template d-template123456 to user@example.com
-```
-
-```
-/sendgrid schedule email to customer@example.com for tomorrow at 9am subject "Reminder"
-```
-
-## Key Features
-
-### Email Sending
-- Send to single or multiple recipients
-- Add CC and BCC recipients
-- Plain text or HTML content
-- Use dynamic templates
-- Schedule delivery
-
-### Template Management
-- List email templates
-- Use dynamic templates
-- Personalize content
-- Version control
-
-### Attachments
-- Add file attachments
-- Multiple file types
-- Inline attachments
-- Base64 encoding
-
-### Sender Management
-- Verified senders
-- Sender authentication
-- From name customization
-
-## Example Commands
-
-### Basic Email
-```
-/sendgrid send to john@example.com from noreply@company.com subject "Welcome" body "Thanks for signing up!"
-```
-
-### Multiple Recipients
-```
-/sendgrid send to recipient1@example.com cc recipient2@example.com, recipient3@example.com subject "Team Update"
-```
-
-### Using Template
-```
-/sendgrid send using template ID d-abc123 to customer@example.com with data: name="John", amount="$50"
+/your-sendgrid-connection
+action: send
+entity: email
+to: recipient@example.com
+from: sender@example.com
+subject: Hello, World!
+content: {"type": "text/plain", "value": "Heya!"}
+cc: ["recipient2@example.com", "recipient3@example.com"]
 ```
 
-### With Attachment
-```
-/sendgrid send to client@example.com subject "Invoice" body "Please find attached" attach invoice.pdf
-```
-
-### Scheduled Email
-```
-/sendgrid schedule email for December 25 at 9am to list@example.com subject "Holiday Greetings"
+**Response:**
+```json
+{
+  "status": 202,
+  "message": "Accepted"
+}
 ```
 
-### List Templates
+### Send Template Email
+Send an email using a pre-built dynamic template.
+
+**Parameters:**
+- `to` (required) - Recipient email address
+- `from` (required) - Sender email address
+- `subject` (required) - Email subject line
+- `template_id` (required) - Template ID
+- `content` (optional) - Default content if template fails
+- `personalizations` (optional) - Template variables
+
+**Example:**
 ```
-/sendgrid list all dynamic email templates
+/your-sendgrid-connection
+action: send
+entity: template_email
+to: recipient@example.com
+from: sender@example.com
+subject: Hello, World!
+template_id: YOUR_TEMPLATE_ID
+content: {"type": "text/plain", "value": "Heya!"}
+personalizations: {"name": "John", "company": "Example Corp"}
 ```
 
-## Email Content Types
+**Response:**
+```json
+{
+  "status": 202,
+  "message": "Accepted"
+}
+```
 
-- **text/plain**: Plain text emails
-- **text/html**: HTML formatted emails
-- **multipart**: Both text and HTML
+### Send Email with Attachment
+Send an email with file attachments.
 
-## Template IDs
+**Parameters:**
+- `to` (required) - Recipient email address
+- `from` (required) - Sender email address
+- `subject` (required) - Email subject line
+- `content` (required) - Email content
+- `attachments` (required) - Array of attachment objects with content, type, filename, and disposition
 
-SendGrid templates use prefixes:
-- **d-**: Dynamic template ID
-- **v-**: Version ID
-- **s-**: Sender ID
+**Example:**
+```
+/your-sendgrid-connection
+action: send
+entity: email_with_attachment
+to: recipient@example.com
+from: sender@example.com
+subject: Hello, World!
+content: {"type": "text/html", "value": "Hey, Please find attachment."}
+attachments: [
+  {
+    "content": "[base64_encoded_file_content]",
+    "type": "application/pdf",
+    "filename": "document.pdf",
+    "disposition": "attachment"
+  }
+]
+```
 
-## Tips
-- Verify sender addresses before sending
-- Use templates for consistent branding
-- Schedule emails using Unix timestamps
-- Test with small batches before bulk sending 
+**Response:**
+```json
+{
+  "status": 202,
+  "message": "Accepted"
+}
+```
+
+### Send Scheduled Email
+Send an email at a specific scheduled time.
+
+**Parameters:**
+- `to` (required) - Recipient email address
+- `from` (required) - Sender email address
+- `subject` (required) - Email subject line
+- `content` (required) - Email content
+- `send_at` (required) - Unix timestamp for scheduled send time
+
+**Example:**
+```
+/your-sendgrid-connection
+action: send
+entity: scheduled_email
+to: recipient@example.com
+from: sender@example.com
+subject: Scheduled Email!
+content: {"type": "text/plain", "value": "This email was scheduled."}
+send_at: 1702560000
+```
+
+**Response:**
+```json
+{
+  "status": 202,
+  "message": "Accepted"
+}
+```
+
+### Get Sender ID
+Retrieve sender ID information by email address.
+
+**Parameters:**
+- `email` (required) - Sender email address to look up
+
+**Example:**
+```
+/your-sendgrid-connection
+action: get
+entity: sender
+email: sender@yourdomain.com
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "id": "s1234567",
+      "email": "sender@yourdomain.com",
+      "nickname": "Marketing Team",
+      "verified": true,
+      "verification_status": "approved"
+    }
+  ]
+}
+```
+
+### List Dynamic Templates
+Retrieve a list of dynamic templates available in your SendGrid account.
+
+**Parameters:**
+- `generations` (optional) - Filter by template generation (dynamic, legacy)
+- `page_size` (optional) - Number of templates per page
+
+**Example:**
+```
+/your-sendgrid-connection
+action: list
+entity: templates
+generations: dynamic
+page_size: 50
+```
+
+**Response:**
+```json
+{
+  "result": [
+    {
+      "id": "d-template123456",
+      "name": "Welcome Email",
+      "generation": "dynamic",
+      "updated_at": "2024-01-20T15:30:00Z",
+      "versions": [
+        {
+          "id": "v-version123456",
+          "template_id": "d-template123456",
+          "active": 1,
+          "name": "Version 1",
+          "subject": "Welcome to Our Platform",
+          "updated_at": "2024-01-20T15:30:00Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Notes 
+
+All emails return HTTP 202 status for successful acceptance into the delivery queue. Content types include "text/plain" and "text/html". Attachments must be base64 encoded. Scheduled emails use Unix timestamps for send_at parameter. Template IDs start with "d-" prefix for dynamic templates. Sender verification is required for "from" addresses. Supports both PinkConnect and Paragon proxy connections. Personalizations allow dynamic content insertion in templates. File attachments support various MIME types including application/pdf, image/jpeg, and application/octet-stream. 

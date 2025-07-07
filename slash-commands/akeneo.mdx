@@ -1,4 +1,355 @@
 ---
-title: "Akeneo Command Guide"
-description: "Learn how to use the Akeneo slash command to manage product information and data"
+title: "Akeneo Guide"
+description: "Manage product information and data with Akeneo Product Information Management (PIM) system"
 ---
+
+## What can you do with it?
+
+The Akeneo API allows you to manage product information in a centralized PIM system. You can create, update, and delete products, manage product attributes and families, search and filter products, handle asset media files, and associate assets with products across multiple locales and channels.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-akeneo-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (list, create, search, update, delete, upload, associate)
+- `entity` - The entity type (products, asset-media-files, assets)
+- `identifier` - Product or asset identifier for specific operations
+
+**Optional:**
+
+- `family` - Product family code
+- `categories` - Array of category codes
+- `enabled` - Product enabled status
+- `locale` - Locale code (e.g., "en_US", "fr_FR")
+- `scope` - Channel scope
+- `search_filter` - JSON search filter for queries
+
+## Tools
+
+### List Products
+Retrieve a list of all products from your Akeneo PIM.
+
+**Parameters:**
+- `limit` (optional) - Number of products to return
+- `page` (optional) - Page number for pagination
+
+**Example:**
+```
+/your-akeneo-connection
+action: list
+entity: products
+limit: 10
+page: 1
+```
+
+**Response:**
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://example.com/products?page=1&limit=10&with_count=false"
+    },
+    "first": {
+      "href": "https://example.com/products?page=1&limit=10&with_count=false"
+    },
+    "next": {
+      "href": "https://example.com/products?page=2&limit=10&with_count=false"
+    }
+  },
+  "current_page": 1,
+  "_embedded": {
+    "items": [
+      {
+        "identifier": "product_1",
+        "family": "clothing",
+        "categories": ["summer_collection"],
+        "enabled": true,
+        "values": {
+          "name": [
+            {
+              "locale": "en_US",
+              "scope": null,
+              "data": "T-Shirt"
+            }
+          ],
+          "description": [
+            {
+              "locale": "en_US",
+              "scope": null,
+              "data": "A comfortable cotton t-shirt."
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Create Product
+Create a new product in your Akeneo PIM.
+
+**Parameters:**
+- `identifier` (required) - Unique product identifier
+- `family` (required) - Product family code
+- `categories` (optional) - Array of category codes
+- `enabled` (optional) - Product enabled status
+- `values` (optional) - Product attribute values
+
+**Example:**
+```
+/your-akeneo-connection
+action: create
+entity: product
+identifier: new_product
+family: accessories
+categories: ["new_arrivals"]
+enabled: true
+values: {
+  "name": [{"locale": "en_US", "scope": null, "data": "Leather Wallet"}],
+  "description": [{"locale": "en_US", "scope": null, "data": "A premium leather wallet."}]
+}
+```
+
+**Response:**
+```json
+{
+  "identifier": "new_product",
+  "family": "accessories",
+  "categories": ["new_arrivals"],
+  "enabled": true,
+  "values": {
+    "name": [
+      {
+        "locale": "en_US",
+        "scope": null,
+        "data": "Leather Wallet"
+      }
+    ],
+    "description": [
+      {
+        "locale": "en_US",
+        "scope": null,
+        "data": "A premium leather wallet."
+      }
+    ]
+  }
+}
+```
+
+### Search Products
+Search for products using advanced filtering criteria.
+
+**Parameters:**
+- `search_filter` (required) - JSON search filter object
+- `limit` (optional) - Number of results to return
+- `page` (optional) - Page number for pagination
+
+**Example:**
+```
+/your-akeneo-connection
+action: search
+entity: products
+search_filter: {
+  "name": [{"operator": "CONTAINS", "value": "wallet"}]
+}
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "_links": {
+    "self": {
+      "href": "https://example.com/products?page=1&with_count=false&search=..."
+    },
+    "first": {
+      "href": "https://example.com/products?page=1&with_count=false&search=..."
+    }
+  },
+  "current_page": 1,
+  "_embedded": {
+    "items": [
+      {
+        "identifier": "001201JA20",
+        "enabled": true,
+        "family": "bfa",
+        "categories": ["bfa_products_kit_kit_subscription"],
+        "values": {
+          "name": [
+            {
+              "locale": null,
+              "scope": null,
+              "data": "Bag201"
+            }
+          ],
+          "item_id": [
+            {
+              "locale": null,
+              "scope": null,
+              "data": "1234"
+            }
+          ],
+          "sku": [
+            {
+              "locale": null,
+              "scope": null,
+              "data": "001201JA20"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Update Product
+Update an existing product's information.
+
+**Parameters:**
+- `identifier` (required) - Product identifier to update
+- `family` (optional) - Updated product family
+- `enabled` (optional) - Updated enabled status
+- `values` (optional) - Updated attribute values
+
+**Example:**
+```
+/your-akeneo-connection
+action: update
+entity: product
+identifier: product_1
+family: updated_family
+enabled: false
+values: {
+  "description": [{"locale": "en_US", "scope": null, "data": "Updated product description."}]
+}
+```
+
+**Response:**
+```json
+{
+  "status": 201,
+  "message": "Product updated successfully"
+}
+```
+
+### Delete Product
+Delete a product from your Akeneo PIM.
+
+**Parameters:**
+- `identifier` (required) - Product identifier to delete
+
+**Example:**
+```
+/your-akeneo-connection
+action: delete
+entity: product
+identifier: product_1
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "message": "Product deleted successfully"
+}
+```
+
+### Upload Asset Media File
+Upload a media file to create an asset in Akeneo.
+
+**Parameters:**
+- `file` (required) - Binary file data
+- `content_type` (required) - File content type
+
+**Example:**
+```
+/your-akeneo-connection
+action: upload
+entity: asset-media-file
+file: [binary_file_data]
+content_type: multipart/form-data
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "headers": {
+    "asset-media-file-code": "9cd2e3f5dc37a212b9d04aea523bb5b3ed30743b",
+    "location": "https://example.com/asset-media-files/9cd2e3f5dc37a212b9d04aea523bb5b3ed30743b"
+  }
+}
+```
+
+### Associate Asset to Asset Family
+Associate an uploaded media file with an asset in a specific asset family.
+
+**Parameters:**
+- `asset_family_code` (required) - Asset family code
+- `code` (required) - Asset code
+- `values` (required) - Asset attribute values including media references
+
+**Example:**
+```
+/your-akeneo-connection
+action: associate
+entity: asset
+asset_family_code: product_images
+code: Double_Head_Lip_Glaze_Makeup
+values: {
+  "media": [{"locale": null, "channel": null, "data": "9cd2e3f5dc37a212b9d04aea523bb5b3ed30743b_Double_Head_Lip_Glaze_Makeup.jpeg"}],
+  "media_preview": [{"locale": null, "channel": null, "data": "9cd2e3f5dc37a212b9d04aea523bb5b3ed30743b_Double_Head_Lip_Glaze_Makeup.jpeg"}],
+  "main_colors": [{"locale": null, "channel": null, "data": ["red", "purple"]}]
+}
+```
+
+**Response:**
+```json
+{
+  "status": 201,
+  "headers": {
+    "location": "https://example.com/asset-families/product_images/assets/Double_Head_Lip_Glaze_Makeup"
+  }
+}
+```
+
+### Add Asset to Product
+Add an asset to a product's asset collection attribute.
+
+**Parameters:**
+- `identifier` (required) - Product identifier
+- `asset_attribute` (required) - Asset collection attribute code
+- `asset_codes` (required) - Array of asset codes to add
+
+**Example:**
+```
+/your-akeneo-connection
+action: add_asset
+entity: product
+identifier: product_1
+asset_attribute: ASSET_PROD
+asset_codes: ["Double_Head_Lip_Glaze_Makeup"]
+```
+
+**Response:**
+```json
+{
+  "status": 204,
+  "headers": {
+    "location": "https://example.com/products/product_1"
+  }
+}
+```
+
+## Notes 
+
+Search filters must be JSON encoded and URL encoded for API requests. Products support multilingual attributes with locale and scope specifications. Asset media files require multipart/form-data content type. Product families define the structure and available attributes for products. Categories organize products hierarchically. The system supports complex bundle data for product kits. Supports both PinkConnect and Paragon proxy connections. Asset codes are returned in response headers after upload.

@@ -1,112 +1,192 @@
 ---
-title: "Jira Command Guide"
-description: "Learn how to use the Jira slash command to manage projects and issues"
+title: "Jira Guide"
+description: "Manage projects, tasks, and bugs with Jira"
 ---
 
-The `/jira` command enables you to manage projects, issues, and tasks in Jira. Perfect for:
+## What can you do with it?
 
-- Creating and tracking issues
-- Managing project tasks
-- Searching and filtering issues
-- Assigning work to team members
-- Updating issue status
+The Jira integration enables comprehensive project management and issue tracking including creating issues, updating issue details, searching with JQL queries, managing assignments, and retrieving project information. You can create bugs, tasks, and stories with structured descriptions, update issue fields, search across projects using Jira's powerful JQL language, and assign issues to team members. This integration is perfect for development teams and project managers who need to automate their issue tracking workflows.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Jira:
-
+### Basic Command Structure
 ```
-/jira create bug "Checkout flow error" in project PROJ priority High
+/your-jira-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/jira find all my issues with status "In Progress"
-```
+### Parameters
 
-```
-/jira assign PROJ-123 to user@example.com
-```
+**Required:**
 
-## Key Features
+- `action` - The operation you want to perform (create_issue, update_issue, get_issue, search_issues, get_projects, assign_issue)
 
-### Issue Management
-- Create new issues
-- Update issue details
-- Change issue status
-- Set priorities
-- Add descriptions
+**Optional:**
 
-### Project Operations
-- List all projects
-- View project details
-- Create issues in projects
-- Filter by project
+- `project_key` - Project identifier for issue operations
+- `issue_id` - Issue ID or key for specific issue operations
+- `jql_query` - JQL query string for advanced searching
 
-### Search Capabilities
-- JQL (Jira Query Language) searches
-- Filter by assignee
-- Filter by status
-- Filter by date range
-- Custom field searches
-
-### Assignment
-- Assign issues to users
-- Find users by email
-- Reassign tasks
-- View assignee details
-
-## Example Commands
+## Tools
 
 ### Create Issue
+Create a new issue in a project
+
+**Parameters:**
+- `action` (required) - Set to "create_issue"
+- `project_key` (required) - Project key (e.g., "PROJ")
+- `summary` (required) - Issue title
+- `description` (required) - Issue description
+- `issue_type` (required) - Type of issue (Bug, Task, Story, etc.)
+- `priority_id` (optional) - Priority ID (1=Highest, 2=High, 3=Medium, 4=Low, 5=Lowest)
+
+**Example:**
 ```
-/jira create bug "Login fails on mobile" in project PROJ with description "Steps: 1. Open app 2. Enter credentials 3. Error appears"
+/your-jira-connection
+action: create_issue
+project_key: PROJ
+summary: Bug in checkout flow
+description: Steps to reproduce: 1. Go to checkout 2. Select payment method 3. Click Submit
+issue_type: Bug
+priority_id: 2
 ```
 
-### Search Issues
-```
-/jira search for issues assigned to me with status "To Do"
+**Response:**
+```json
+{
+  "id": "[Created issue ID]",
+  "key": "[Issue key like PROJ-123]",
+  "self": "[API URL for the issue]"
+}
 ```
 
 ### Update Issue
+Update an existing issue's fields
+
+**Parameters:**
+- `action` (required) - Set to "update_issue"
+- `issue_id` (required) - Issue ID or key
+- `summary` (optional) - Updated summary
+- `description` (optional) - Updated description
+
+**Example:**
 ```
-/jira update PROJ-123 summary to "Updated: Checkout flow critical error"
+/your-jira-connection
+action: update_issue
+issue_id: PROJ-123
+summary: Updated summary for bug in checkout flow
+description: Updated description with new steps and logs
 ```
 
-### Advanced Search
+**Response:**
+```json
+{
+  "status": "204",
+  "message": "Issue updated successfully"
+}
 ```
-/jira find issues in project PROJ with priority High created in last 7 days
+
+### Get Issue
+Retrieve details of a specific issue
+
+**Parameters:**
+- `action` (required) - Set to "get_issue"
+- `issue_id` (required) - Issue ID or key
+
+**Example:**
+```
+/your-jira-connection
+action: get_issue
+issue_id: PROJ-123
+```
+
+**Response:**
+```json
+{
+  "id": "[Issue ID]",
+  "key": "[Issue key]",
+  "fields": {
+    "summary": "[Issue summary]",
+    "description": "[Issue description]",
+    "status": "[Current status]",
+    "priority": "[Priority level]",
+    "project": "[Project information]"
+  }
+}
+```
+
+### Search Issues
+Search for issues using JQL query
+
+**Parameters:**
+- `action` (required) - Set to "search_issues"
+- `jql_query` (required) - JQL search query
+- `start_at` (optional) - Starting index for pagination (default: 0)
+- `max_results` (optional) - Maximum results to return (default: 50)
+- `fields` (optional) - Specific fields to return
+
+**Example:**
+```
+/your-jira-connection
+action: search_issues
+jql_query: project = PROJ AND priority = High AND created >= -7d
+start_at: 0
+max_results: 10
+fields: summary, status, priority
+```
+
+**Response:**
+```json
+{
+  "startAt": "[Starting index]",
+  "maxResults": "[Max results]",
+  "total": "[Total matching issues]",
+  "issues": "[Array of matching issues with requested fields]"
+}
+```
+
+### Get Projects
+Retrieve all accessible projects
+
+**Parameters:**
+- `action` (required) - Set to "get_projects"
+
+**Example:**
+```
+/your-jira-connection
+action: get_projects
+```
+
+**Response:**
+```json
+{
+  "projects": "[Array of project objects with id, key, name, and project type]"
+}
 ```
 
 ### Assign Issue
+Assign an issue to a user by email address
+
+**Parameters:**
+- `action` (required) - Set to "assign_issue"
+- `issue_id` (required) - Issue ID or key
+- `assignee_email` (required) - Email address of the assignee
+
+**Example:**
 ```
-/jira assign issue PROJ-123 to john.doe@company.com
+/your-jira-connection
+action: assign_issue
+issue_id: PROJ-123
+assignee_email: user@example.com
 ```
 
-### List Projects
+**Response:**
+```json
+{
+  "status": "204",
+  "message": "Issue assigned successfully"
+}
 ```
-/jira show all projects
-```
 
-## JQL Examples
+## Notes 
 
-Common JQL queries:
-- `assignee = currentUser()` - Your issues
-- `status = "In Progress"` - By status
-- `priority = High` - By priority
-- `created >= -7d` - Last 7 days
-- `project = PROJ AND status = "To Do"` - Combined filters
-
-## Issue Types
-
-Common types:
-- **Bug**: Software defects
-- **Task**: General work items
-- **Story**: User stories
-- **Epic**: Large features
-- **Sub-task**: Part of larger issue
-
-## Tips
-- Use project keys (e.g., PROJ) not full names
-- Priorities: 1=Highest, 2=High, 3=Medium, 4=Low, 5=Lowest
-- JQL is case-insensitive for operators
-- Email addresses automatically resolve to account IDs 
+Jira uses structured document format for descriptions with type "doc" and nested content arrays. Issue types include Bug, Task, Story, Epic, and custom types defined in your instance. Priority IDs are numeric: 1=Highest, 2=High, 3=Medium, 4=Low, 5=Lowest. JQL (Jira Query Language) supports complex searches with operators like AND, OR, and functions like currentUser(). Assignment requires a two-step process: first finding the user's account ID by email, then assigning using the account ID. All timestamps use ISO 8601 format. 

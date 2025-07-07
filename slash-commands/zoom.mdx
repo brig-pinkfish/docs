@@ -1,98 +1,373 @@
 ---
-title: "Zoom Command Guide"
-description: "Learn how to use the Zoom slash command to manage meetings and webinars"
+title: "Zoom Guide"
+description: "Manage Zoom meetings, webinars, users, and video conferencing through the Zoom API"
 ---
 
-The `/zoom` command enables you to create, manage, and track Zoom meetings and webinars. Perfect for:
+## What can you do with it?
 
-- Scheduling meetings
-- Creating webinars
-- Managing participants
-- Tracking attendance
-- Updating meeting settings
+The Zoom API allows you to manage video conferencing through programmatic access. You can create and manage meetings, schedule webinars, retrieve user information, update meeting settings, and track participant data for comprehensive video conferencing management.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Zoom:
-
+### Basic Command Structure
 ```
-/zoom create meeting "Team Standup" tomorrow at 10am for 30 minutes
+/your-zoom-connection [action] [required-parameters] [optional-parameters]
 ```
 
+### Parameters
+
+**Required:**
+
+- `action` - The action to perform (create, get, update, delete, list)
+- `userId` - User ID (often "me" for current user)
+- `meetingId` or `webinarId` - Meeting or webinar ID for specific operations
+
+**Optional:**
+
+- `topic` - Meeting or webinar topic
+- `start_time` - Scheduled start time
+- `duration` - Meeting duration in minutes
+- `timezone` - Meeting timezone
+- `settings` - Meeting configuration settings
+
+## Tools
+
+### List User Meetings
+Retrieve a list of meetings for the current user.
+
+**Parameters:**
+- `userId` (required) - User ID (use "me" for current user)
+- `type` (optional) - Meeting type filter
+- `page_size` (optional) - Number of results per page
+
+**Example:**
 ```
-/zoom list my upcoming meetings
+/your-zoom-connection
+action: list_meetings
+userId: me
+page_size: 30
 ```
 
+**Response:**
+```json
+{
+  "meetings": [
+    {
+      "agenda": "My Meeting",
+      "created_at": "2022-03-23T05:31:16Z",
+      "duration": 60,
+      "host_id": "30R7kT7bTIKSNUFEuH_Qlg",
+      "id": 97763643886,
+      "join_url": "https://example.com/j/11111",
+      "start_time": "2022-03-23T06:00:00Z",
+      "timezone": "America/Los_Angeles",
+      "topic": "My Meeting",
+      "type": 2,
+      "uuid": "aDYlohsHRtCd4ii1uC2+hA=="
+    }
+  ],
+  "page_count": 1,
+  "total_records": 1
+}
 ```
-/zoom create webinar "Product Launch" on July 15 at 3pm
+
+### Get User Details
+Retrieve details about a specific user.
+
+**Parameters:**
+- `userId` (required) - User ID (use "me" for current user)
+
+**Example:**
+```
+/your-zoom-connection
+action: get_user
+userId: me
 ```
 
-## Key Features
-
-### Meeting Management
-- Create scheduled meetings
-- Update meeting details
-- Delete meetings
-- Get meeting information
-- Configure meeting settings
-
-### Webinar Management
-- Create webinars
-- Set registration requirements
-- Track participants
-- Configure webinar settings
-
-### User Operations
-- Get user details
-- List user meetings
-- View user settings
-
-### Settings & Configuration
-- Host and participant video
-- Waiting room controls
-- Recording options
-- Security settings
-- Audio options
-
-## Example Commands
+**Response:**
+```json
+{
+  "id": "FoGxYEx_abcdefg",
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john.doe@example.com",
+  "type": 2,
+  "status": "active",
+  "pmi": 1234567890,
+  "timezone": "America/Los_Angeles",
+  "created_at": "2023-01-01T12:00:00Z",
+  "language": "en-US",
+  "phone_number": "+15551234567",
+  "role_name": "Owner"
+}
+```
 
 ### Create Meeting
+Create a new scheduled meeting.
+
+**Parameters:**
+- `userId` (required) - User ID (use "me" for current user)
+- `topic` (required) - Meeting topic
+- `type` (required) - Meeting type (1=instant, 2=scheduled, 3=recurring)
+- `start_time` (required) - Meeting start time
+- `duration` (required) - Meeting duration in minutes
+- `timezone` (optional) - Meeting timezone
+- `agenda` (optional) - Meeting agenda
+- `settings` (optional) - Meeting settings object
+
+**Example:**
 ```
-/zoom schedule "Project Review" on Monday at 2pm for 1 hour with waiting room enabled
+/your-zoom-connection
+action: create_meeting
+userId: me
+topic: Project Kickoff Meeting
+type: 2
+start_time: 2023-05-15T10:00:00Z
+duration: 60
+timezone: America/Los_Angeles
+agenda: Discuss project goals and timeline
+settings: {"host_video": true, "participant_video": true, "waiting_room": true}
 ```
 
-### List Meetings
+**Response:**
+```json
+{
+  "id": 12345678901,
+  "host_id": "FoGxYEx_abcdefg",
+  "topic": "Project Kickoff Meeting",
+  "type": 2,
+  "status": "waiting",
+  "start_time": "2023-05-15T10:00:00Z",
+  "duration": 60,
+  "timezone": "America/Los_Angeles",
+  "agenda": "Discuss project goals and timeline",
+  "created_at": "2023-05-01T09:30:00Z",
+  "start_url": "https://zoom.us/s/12345678901?zak=xxxx",
+  "join_url": "https://zoom.us/j/12345678901",
+  "password": "123456",
+  "settings": {
+    "host_video": true,
+    "participant_video": true,
+    "waiting_room": true
+  }
+}
 ```
-/zoom show all my meetings this week
+
+### Get Meeting Details
+Retrieve details about a specific meeting.
+
+**Parameters:**
+- `meetingId` (required) - Meeting ID
+
+**Example:**
+```
+/your-zoom-connection
+action: get_meeting
+meetingId: 12345678901
+```
+
+**Response:**
+```json
+{
+  "id": 12345678901,
+  "host_id": "FoGxYEx_abcdefg",
+  "topic": "Project Kickoff Meeting",
+  "type": 2,
+  "status": "waiting",
+  "start_time": "2023-05-15T10:00:00Z",
+  "duration": 60,
+  "timezone": "America/Los_Angeles",
+  "agenda": "Discuss project goals and timeline",
+  "created_at": "2023-05-01T09:30:00Z",
+  "start_url": "https://zoom.us/s/12345678901?zak=xxxx",
+  "join_url": "https://zoom.us/j/12345678901",
+  "password": "123456",
+  "settings": {
+    "host_video": true,
+    "participant_video": true,
+    "waiting_room": true
+  }
+}
 ```
 
 ### Update Meeting
+Update an existing meeting's details.
+
+**Parameters:**
+- `meetingId` (required) - Meeting ID
+- `topic` (optional) - Updated meeting topic
+- `duration` (optional) - Updated duration
+- `agenda` (optional) - Updated agenda
+- `settings` (optional) - Updated meeting settings
+
+**Example:**
 ```
-/zoom update meeting 12345678901 duration to 90 minutes and allow join before host
+/your-zoom-connection
+action: update_meeting
+meetingId: 12345678901
+topic: Updated Project Kickoff Meeting
+duration: 90
+agenda: Updated: Discuss project goals, timeline, and resource allocation
+settings: {"join_before_host": true, "waiting_room": false}
+```
+
+**Response:**
+```json
+{
+  "status": "success"
+}
+```
+
+### Delete Meeting
+Delete a scheduled meeting.
+
+**Parameters:**
+- `meetingId` (required) - Meeting ID
+
+**Example:**
+```
+/your-zoom-connection
+action: delete_meeting
+meetingId: 12345678901
+```
+
+**Response:**
+```json
+{
+  "status": "success"
+}
+```
+
+### List Webinars
+List all webinars for a specific user.
+
+**Parameters:**
+- `userId` (required) - User ID (use "me" for current user)
+- `page_size` (optional) - Number of results per page
+
+**Example:**
+```
+/your-zoom-connection
+action: list_webinars
+userId: me
+page_size: 30
+```
+
+**Response:**
+```json
+{
+  "webinars": [
+    {
+      "uuid": "abcdefghijklmnop",
+      "id": 98765432101,
+      "host_id": "FoGxYEx_abcdefg",
+      "topic": "Quarterly Product Update",
+      "type": 5,
+      "start_time": "2023-06-15T14:00:00Z",
+      "duration": 60,
+      "timezone": "America/Los_Angeles",
+      "agenda": "New product features and roadmap",
+      "created_at": "2023-05-20T10:00:00Z",
+      "join_url": "https://zoom.us/j/98765432101"
+    }
+  ],
+  "page_count": 1,
+  "total_records": 1
+}
 ```
 
 ### Create Webinar
+Create a new webinar.
+
+**Parameters:**
+- `userId` (required) - User ID (use "me" for current user)
+- `topic` (required) - Webinar topic
+- `type` (required) - Webinar type (5=webinar, 6=recurring webinar)
+- `start_time` (required) - Webinar start time
+- `duration` (required) - Webinar duration in minutes
+- `timezone` (optional) - Webinar timezone
+- `agenda` (optional) - Webinar agenda
+- `settings` (optional) - Webinar settings object
+
+**Example:**
 ```
-/zoom create webinar "Quarterly Update" on June 15 at 2pm with registration required
+/your-zoom-connection
+action: create_webinar
+userId: me
+topic: New Feature Launch Webinar
+type: 5
+start_time: 2023-07-15T15:00:00Z
+duration: 60
+timezone: America/Los_Angeles
+agenda: Introducing our latest product features
+settings: {"host_video": true, "practice_session": true, "auto_recording": "cloud"}
 ```
 
-### Get Participants
+**Response:**
+```json
+{
+  "id": 98765432102,
+  "host_id": "FoGxYEx_abcdefg",
+  "topic": "New Feature Launch Webinar",
+  "type": 5,
+  "start_time": "2023-07-15T15:00:00Z",
+  "duration": 60,
+  "timezone": "America/Los_Angeles",
+  "agenda": "Introducing our latest product features",
+  "created_at": "2023-06-01T11:30:00Z",
+  "join_url": "https://zoom.us/j/98765432102",
+  "registration_url": "https://zoom.us/webinar/register/WN_abcdefghijklmno",
+  "settings": {
+    "host_video": true,
+    "practice_session": true,
+    "auto_recording": "cloud"
+  }
+}
 ```
-/zoom show participants for webinar 98765432101
+
+### Get Webinar Participants
+Retrieve a list of participants for a specific webinar.
+
+**Parameters:**
+- `webinarId` (required) - Webinar ID
+- `page_size` (optional) - Number of results per page
+
+**Example:**
+```
+/your-zoom-connection
+action: get_webinar_participants
+webinarId: 98765432101
+page_size: 30
 ```
 
-## Meeting Settings
+**Response:**
+```json
+{
+  "participants": [
+    {
+      "id": "user123",
+      "name": "Alice Smith",
+      "user_email": "alice@example.com",
+      "join_time": "2023-06-15T14:05:00Z",
+      "leave_time": "2023-06-15T15:00:00Z",
+      "duration": 55,
+      "attentiveness_score": "Good"
+    },
+    {
+      "id": "user456",
+      "name": "Bob Johnson",
+      "user_email": "bob@example.com",
+      "join_time": "2023-06-15T14:00:00Z",
+      "leave_time": "2023-06-15T15:00:00Z",
+      "duration": 60,
+      "attentiveness_score": "Good"
+    }
+  ],
+  "page_count": 1,
+  "total_records": 3
+}
+```
 
-Key settings you can configure:
-- **host_video**: Start with host video on/off
-- **participant_video**: Start with participant video on/off
-- **join_before_host**: Allow participants to join early
-- **mute_upon_entry**: Mute participants when they join
-- **waiting_room**: Enable waiting room
-- **auto_recording**: Set to "none", "local", or "cloud"
+## Notes 
 
-## Tips
-- Use "me" as userId to reference your own account
-- Meeting IDs are provided when creating meetings
-- Webinars require different settings than regular meetings
-- Cloud recording is useful for webinars and important meetings 
+Meeting types: 1=instant, 2=scheduled, 3=recurring with no fixed time, 8=recurring with fixed time. Webinar types: 5=webinar, 6=recurring webinar, 9=recurring webinar with fixed time. All times should be in ISO 8601 format. Use "me" as userId for operations on the current user's account. 

@@ -1,114 +1,419 @@
 ---
-title: "Stripe Command Guide"
-description: "Learn how to use the Stripe slash command to manage payments and subscriptions"
+title: "Stripe Guide"
+description: "Manage your payments and subscriptions with Stripe including customers, products, subscriptions, and financial transactions"
 ---
 
-The `/stripe` command enables you to manage payments, customers, and subscriptions through Stripe. Perfect for:
+## What can you do with it?
 
-- Managing customers
-- Creating subscriptions
-- Tracking payments
-- Managing products and pricing
-- Viewing transactions
+The Stripe API allows you to manage payment processing and subscription billing. You can create and manage customers, set up products and pricing plans, handle subscriptions, track balance transactions, and manage your entire payment infrastructure programmatically.
 
-## Basic Usage
+## How to use it?
 
-Use the command to interact with Stripe:
-
+### Basic Command Structure
 ```
-/stripe create customer email "john@example.com" name "John Doe"
+/your-stripe-connection [action] [required-parameters] [optional-parameters]
 ```
 
-```
-/stripe list all active subscriptions
-```
+### Parameters
 
-```
-/stripe create subscription for customer cus_1234567890 with price price_1234567890
-```
+**Required:**
 
-## Key Features
+- `action` - The action to perform (create, update, get, list)
+- `entity` - The entity type (customer, subscription, product, etc.)
+- `id` - Entity ID for specific operations
 
-### Customer Management
-- Create new customers
-- Update customer information
-- List all customers
-- Get customer details
-- Link customers to subscriptions
+**Optional:**
 
-### Subscription Management
-- Create subscriptions
-- List active subscriptions
-- Update subscription plans
-- Cancel subscriptions
-- Set trial periods
+- `email` - Customer email address
+- `name` - Customer or product name
+- `description` - Description for entities
+- `amount` - Price amount in cents
+- `currency` - Currency code (e.g., "usd")
+- `interval` - Billing interval (month, year)
 
-### Product & Pricing
-- Create products
-- List available products
-- Manage pricing plans
-- Set billing intervals
-- Activate/deactivate products
-
-### Financial Operations
-- View balance transactions
-- Track payments
-- Monitor refunds
-- Check transaction status
-
-## Example Commands
+## Tools
 
 ### Create Customer
+Create a new customer in Stripe.
+
+**Parameters:**
+- `email` (required) - Customer email address
+- `name` (required) - Customer name
+- `description` (optional) - Customer description
+
+**Example:**
 ```
-/stripe create customer "Jane Smith" email jane@company.com description "Premium subscriber"
+/your-stripe-connection
+action: create
+entity: customer
+email: customer@example.com
+name: John Doe
+description: New customer for subscription service
 ```
 
-### Create Subscription
+**Response:**
+```json
+{
+  "id": "cus_1234567890",
+  "object": "customer",
+  "email": "customer@example.com",
+  "name": "John Doe",
+  "description": "New customer for subscription service"
+}
 ```
-/stripe subscribe customer cus_1234567890 to price price_9876543210 with 14 day trial
+
+### Update Customer
+Update an existing customer's information in Stripe.
+
+**Parameters:**
+- `customer_id` (required) - Customer ID to update
+- `name` (optional) - Updated customer name
+- `description` (optional) - Updated description
+- `email` (optional) - Updated email address
+
+**Example:**
+```
+/your-stripe-connection
+action: update
+entity: customer
+customer_id: cus_1234567890
+name: Jane Doe
+description: Updated customer information
+```
+
+**Response:**
+```json
+{
+  "id": "cus_1234567890",
+  "object": "customer",
+  "email": "customer@example.com",
+  "name": "Jane Doe",
+  "description": "Updated customer information"
+}
+```
+
+### Get Customer
+Retrieve a customer's details by their unique ID.
+
+**Parameters:**
+- `customer_id` (required) - Customer ID to retrieve
+
+**Example:**
+```
+/your-stripe-connection
+action: get
+entity: customer
+customer_id: cus_1234567890
+```
+
+**Response:**
+```json
+{
+  "id": "cus_1234567890",
+  "object": "customer",
+  "email": "customer@example.com",
+  "name": "Jane Doe",
+  "description": "Updated customer information"
+}
 ```
 
 ### List Customers
+Retrieve a list of customers.
+
+**Parameters:**
+- `limit` (optional) - Number of customers to return
+- `starting_after` (optional) - Customer ID to start after
+
+**Example:**
 ```
-/stripe show all customers
+/your-stripe-connection
+action: list
+entity: customers
+limit: 10
 ```
 
-### Get Customer Details
+**Response:**
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "cus_1234567890",
+      "object": "customer",
+      "email": "customer1@example.com",
+      "name": "Customer One"
+    },
+    {
+      "id": "cus_0987654321",
+      "object": "customer",
+      "email": "customer2@example.com",
+      "name": "Customer Two"
+    }
+  ]
+}
 ```
-/stripe get customer cus_1234567890
+
+### Create Subscription
+Create a new subscription for an existing customer.
+
+**Parameters:**
+- `customer_id` (required) - Customer ID for the subscription
+- `price_id` (required) - Price ID for the subscription
+- `trial_period_days` (optional) - Trial period in days
+
+**Example:**
+```
+/your-stripe-connection
+action: create
+entity: subscription
+customer_id: cus_1234567890
+price_id: price_1234567890
+trial_period_days: 14
+```
+
+**Response:**
+```json
+{
+  "id": "sub_1234567890",
+  "object": "subscription",
+  "customer": "cus_1234567890",
+  "status": "active",
+  "items": {
+    "object": "list",
+    "data": [
+      {
+        "id": "si_1234567890",
+        "object": "subscription_item",
+        "price": {
+          "id": "price_1234567890",
+          "object": "price",
+          "product": "prod_1234567890"
+        }
+      }
+    ]
+  }
+}
+```
+
+### List Subscriptions
+Retrieve a list of subscriptions.
+
+**Parameters:**
+- `customer_id` (optional) - Filter by specific customer
+- `status` (optional) - Filter by subscription status
+- `limit` (optional) - Number of subscriptions to return
+
+**Example:**
+```
+/your-stripe-connection
+action: list
+entity: subscriptions
+customer_id: cus_1234567890
+status: active
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "sub_1234567890",
+      "object": "subscription",
+      "customer": "cus_1234567890",
+      "status": "active"
+    },
+    {
+      "id": "sub_0987654321",
+      "object": "subscription",
+      "customer": "cus_0987654321",
+      "status": "canceled"
+    }
+  ]
+}
 ```
 
 ### Create Product
+Create a new product in Stripe.
+
+**Parameters:**
+- `name` (required) - Product name
+- `description` (optional) - Product description
+- `active` (optional) - Whether the product is active
+
+**Example:**
 ```
-/stripe create product "Premium Plan" description "All features included" active
+/your-stripe-connection
+action: create
+entity: product
+name: Premium Plan
+description: Access to all premium features
+active: true
 ```
 
-### List Transactions
+**Response:**
+```json
+{
+  "id": "prod_1234567890",
+  "object": "product",
+  "name": "Premium Plan",
+  "description": "Access to all premium features",
+  "active": true
+}
 ```
-/stripe show recent balance transactions
+
+### Get Product
+Retrieve a product's details by its unique ID.
+
+**Parameters:**
+- `product_id` (required) - Product ID to retrieve
+
+**Example:**
+```
+/your-stripe-connection
+action: get
+entity: product
+product_id: prod_1234567890
 ```
 
-## Object IDs
+**Response:**
+```json
+{
+  "id": "prod_1234567890",
+  "object": "product",
+  "name": "Premium Plan",
+  "description": "Access to all premium features",
+  "active": true
+}
+```
 
-Stripe uses prefixed IDs:
-- **cus_**: Customer ID
-- **sub_**: Subscription ID
-- **prod_**: Product ID
-- **price_**: Price ID
-- **plan_**: Plan ID (legacy)
-- **txn_**: Transaction ID
+### List Products
+Retrieve a list of products available in Stripe.
 
-## Subscription Status
+**Parameters:**
+- `active` (optional) - Filter by active status
+- `limit` (optional) - Number of products to return
 
-Common statuses:
-- **active**: Currently active
-- **trialing**: In trial period
-- **past_due**: Payment failed
-- **canceled**: Subscription ended
-- **unpaid**: Requires payment
+**Example:**
+```
+/your-stripe-connection
+action: list
+entity: products
+active: true
+limit: 10
+```
 
-## Tips
-- Always use proper ID prefixes
-- Amounts are in cents (1000 = $10.00)
-- Set Content-Type header for POST requests
-- Use trial periods to onboard customers 
+**Response:**
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "prod_1234567890",
+      "object": "product",
+      "name": "Premium Plan",
+      "description": "Access to all premium features",
+      "active": true
+    },
+    {
+      "id": "prod_0987654321",
+      "object": "product",
+      "name": "Basic Plan",
+      "description": "Access to basic features",
+      "active": true
+    }
+  ]
+}
+```
+
+### List Balance Transactions
+Retrieve a list of balance transactions for the account.
+
+**Parameters:**
+- `type` (optional) - Filter by transaction type
+- `limit` (optional) - Number of transactions to return
+- `starting_after` (optional) - Transaction ID to start after
+
+**Example:**
+```
+/your-stripe-connection
+action: list
+entity: balance_transactions
+type: payment
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "txn_1234567890",
+      "object": "balance_transaction",
+      "amount": 10000,
+      "currency": "usd",
+      "description": "Payout",
+      "status": "available",
+      "type": "payment"
+    },
+    {
+      "id": "txn_0987654321",
+      "object": "balance_transaction",
+      "amount": -5000,
+      "currency": "usd",
+      "description": "Refund",
+      "status": "pending",
+      "type": "refund"
+    }
+  ]
+}
+```
+
+### List Plans
+Retrieve a list of pricing plans available in Stripe.
+
+**Parameters:**
+- `product_id` (optional) - Filter by specific product
+- `active` (optional) - Filter by active status
+- `limit` (optional) - Number of plans to return
+
+**Example:**
+```
+/your-stripe-connection
+action: list
+entity: plans
+product_id: prod_1234567890
+active: true
+```
+
+**Response:**
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "plan_1234567890",
+      "object": "plan",
+      "amount": 1000,
+      "currency": "usd",
+      "interval": "month",
+      "product": "prod_1234567890",
+      "active": true
+    },
+    {
+      "id": "plan_0987654321",
+      "object": "plan",
+      "amount": 5000,
+      "currency": "usd",
+      "interval": "year",
+      "product": "prod_0987654321",
+      "active": true
+    }
+  ]
+}
+```
+
+## Notes 
+
+All requests require the Content-Type header set to "application/x-www-form-urlencoded". Amounts are specified in the smallest currency unit (cents for USD). Supports both PinkConnect and Paragon proxy connections. Customer IDs, subscription IDs, and product IDs are required for specific operations. Balance transactions show all money movement in your Stripe account. 
