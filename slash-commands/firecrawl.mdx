@@ -11,51 +11,73 @@ Extract clean, structured content from websites including text, links, screensho
 
 ### Basic Command Structure
 ```
-/firecrawl
-urls: the web pages to scrape
-format: how you want the content (markdown by default)
+/firecrawl [urls] [format]
 ```
 
 ### Parameters
-- **urls**: Array of URLs to scrape
-- **format** (optional): Output format - markdown, html, links, screenshot, json
-- **actions** (optional): Browser actions like scroll, click, wait, screenshot
-- **wait time** (optional): Milliseconds to wait before scraping
-- **only main content** (optional): Extract only the main content area
-- **include tags** (optional): Specific HTML tags to include
-- **exclude tags** (optional): HTML tags to exclude
+
+**Required:**
+
+- `urls` - Array of URLs to scrape
+
+**Optional:**
+
+- `format` - Output format: markdown, html, links, screenshot, json (default: markdown)
+
+- `actions` - Browser actions like scroll, click, wait, screenshot
+
+- `wait time` - Milliseconds to wait before scraping
+
+- `only main content` - Extract only the main content area
+
+- `include tags` - Specific HTML tags to include
+
+- `exclude tags` - HTML tags to exclude
 
 ### Response Format
-Returns scraped content in the requested format with metadata including title, language, and status.
+
+The command returns:
+```json
+{
+  "content": "scraped content in requested format",
+  "metadata": {
+    "title": "page title",
+    "language": "detected language",
+    "status": "success or error"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Scrape a webpage as markdown:
 ```
 /firecrawl
 urls: ["https://example.com"]
 ```
+Scrape a webpage and return content as markdown.
 
 ### Advanced Usage
-Scrape with browser actions:
 ```
 /firecrawl
 urls: ["https://example.com/products"]
 actions: scroll down, wait 2 seconds, take screenshot
 format: markdown and screenshot
 ```
+Scrape with browser automation actions and capture screenshots.
 
 ### Specific Use Case
-Extract only main article content:
 ```
 /firecrawl
 urls: ["https://news.example.com/article"]
 only main content: true
 exclude tags: ["script", "style", "nav", "footer"]
 ```
+Extract only the main article content while excluding navigation and footer elements.
 
-## Key Features
+### Notes
+
+Supports multiple output formats including markdown (default), HTML, raw HTML, JSON, screenshots, and link extraction. Browser actions available include screenshot, scroll, wait, and click. Tag filtering allows including or excluding specific HTML elements. Default wait time is 1000ms to ensure content loads.
 
 ### Content Extraction
 - Scrape multiple URLs

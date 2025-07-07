@@ -5,52 +5,76 @@ description: "Learn how to use the Crawl Map slash command to retrieve website U
 
 ## What can you do with it?
 
-Discover all pages on a website by crawling from a starting URL. Useful for site analysis, content auditing, SEO research, or preparing for bulk scraping operations.
+Discover all pages on a website by crawling from a starting URL. Useful for site analysis, content auditing, SEO research, or preparing for bulk scraping operations. Maps entire websites by following internal links and generates comprehensive URL lists.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/crawl-map
-url: the starting URL to map from
+/crawl-map [url]
 ```
 
 ### Parameters
-- **url**: The starting URL to begin mapping
-- **include subdomains** (optional): Include subdomain URLs in the map
-- **ignore sitemap** (optional): Skip using the sitemap for discovery
-- **search** (optional): Filter results to URLs containing specific keywords
+
+**Required:**
+
+- `url` - The starting URL to begin mapping
+
+**Optional:**
+
+- `include subdomains` - Include subdomain URLs in the map
+
+- `ignore sitemap` - Skip using the sitemap for discovery
+
+- `search` - Filter results to URLs containing specific keywords
 
 ### Response Format
-Returns a list of all discovered URLs from the website.
+
+The command returns:
+```json
+{
+  "success": true,
+  "links": [
+    "https://example.com",
+    "https://example.com/about",
+    "https://example.com/contact"
+  ],
+  "metadata": {
+    "total_pages": "number of pages found",
+    "crawl_time": "time taken"
+  }
+}
+```
 
 ## Examples
 
 ### Basic Usage
-Map an entire website:
 ```
 /crawl-map
 url: https://example.com
 ```
+Map an entire website starting from the homepage.
 
 ### Advanced Usage
-Map with subdomain inclusion:
 ```
 /crawl-map
 url: https://example.com
 include subdomains: true
 ignore sitemap: false
 ```
+Map website including all subdomains while utilizing the sitemap.
 
 ### Specific Use Case
-Find all product pages:
 ```
 /crawl-map
 url: https://shop.example.com
 search: product
 ```
+Find all pages containing "product" in the URL for targeted scraping.
 
-## Key Features
+### Notes
+
+Supports subdomain inclusion/exclusion for comprehensive or focused mapping. Can utilize or ignore sitemap.xml for discovery strategy. Search filtering helps find specific page types or content areas. Respects robots.txt and crawling guidelines.
 
 ### URL Discovery
 - Map entire websites
