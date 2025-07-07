@@ -1,47 +1,48 @@
 ---
-title: "Crawl Map Command Guide"
-description: "Learn how to use the Crawl Map slash command to retrieve website URL maps"
+title: "Crawl Map Guide"
+description: "With Crawl Map, retrieve a map of the URLs given a starting URL"
 ---
 
 ## What can you do with it?
 
-Discover all pages on a website by crawling from a starting URL. Useful for site analysis, content auditing, SEO research, or preparing for bulk scraping operations. Maps entire websites by following internal links and generates comprehensive URL lists.
+Crawl Map provides the easiest way to go from a single URL to a map of the entire website. This is extremely useful when you need to prompt the end-user to choose which links to scrape, need to quickly know the links on a website, need to scrape pages of a website that are related to a specific topic using the search parameter, or only need to scrape specific pages of a website.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/crawl-map [url]
+/crawl-map [urls] [includeSubdomains] [ignoreSitemap] [search]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `url` - The starting URL to begin mapping
+- `urls` - Array of starting URLs (e.g., ["https://lights.com/"])
 
 **Optional:**
 
-- `include subdomains` - Include subdomain URLs in the map
+- `includeSubdomains` - Boolean to include subdomains in the map (default: true)
 
-- `ignore sitemap` - Skip using the sitemap for discovery
+- `ignoreSitemap` - Boolean to skip using the sitemap for discovery (default: false)
 
-- `search` - Filter results to URLs containing specific keywords
+- `search` - Search term to filter results for specific content (e.g., "Foscarini")
 
 ### Response Format
 
 The command returns:
 ```json
 {
-  "success": true,
-  "links": [
-    "https://example.com",
-    "https://example.com/about",
-    "https://example.com/contact"
-  ],
-  "metadata": {
-    "total_pages": "number of pages found",
-    "crawl_time": "time taken"
+  "https://lights.com/": {
+    "success": true,
+    "links": [
+      "https://lights.com",
+      "https://lights.com/pages/contact",
+      "https://lights.com/pages/about-us",
+      "https://lights.com/pages/help",
+      "https://lights.com/pages/return-policy",
+      "https://lights.com/pages/warranty-policy"
+    ]
   }
 }
 ```
@@ -51,30 +52,32 @@ The command returns:
 ### Basic Usage
 ```
 /crawl-map
-url: https://example.com
+urls: ["https://lights.com/"]
 ```
-Map an entire website starting from the homepage.
+Maps the entire website starting from the homepage with default settings.
 
 ### Advanced Usage
 ```
 /crawl-map
-url: https://example.com
-include subdomains: true
-ignore sitemap: false
+urls: ["https://lights.com/"]
+includeSubdomains: true
+ignoreSitemap: false
+search: "Foscarini"
 ```
-Map website including all subdomains while utilizing the sitemap.
+Maps the website including subdomains, uses the sitemap, and filters results to pages containing "Foscarini".
 
 ### Specific Use Case
 ```
 /crawl-map
-url: https://shop.example.com
-search: product
+urls: ["https://example.com/"]
+includeSubdomains: false
+search: "products"
 ```
-Find all pages containing "product" in the URL for targeted scraping.
+Maps only the main domain without subdomains and filters for pages containing "products".
 
-### Notes
+### Notes 
 
-Supports subdomain inclusion/exclusion for comprehensive or focused mapping. Can utilize or ignore sitemap.xml for discovery strategy. Search filtering helps find specific page types or content areas. Respects robots.txt and crawling guidelines.
+The tool uses an internal endpoint SCRAPER_FC_URL + 'scraperfc/map' for processing requests. The response includes a success flag and an array of discovered links for each starting URL.
 
 ### URL Discovery
 - Map entire websites
