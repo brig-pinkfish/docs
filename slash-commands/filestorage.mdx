@@ -3,329 +3,311 @@ title: "Filestorage Guide"
 description: "Learn how to use the filestorage slash command for file storage operations"
 ---
 
-## What can you do with it?
-
-Store, retrieve, update, and manage files in the cloud storage system. Supports text and binary files with metadata, link expiration control, and public file sharing options. Perfect for configuration management, system logging, document storage, and file sharing with controlled access periods.
-
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/filestorage [action] [parameters]
+/selected-filestore [action] [filename] [content]
 ```
 
 ### Parameters
 
 **Required:**
-
-- `action` - Operation to perform (upload, get, list, update, delete, append)
-
+- `action` - Operation to perform (upload, create, append, get, list, delete, update)
 - `filename` - Name of the file (required for most operations)
 
 **Optional:**
+- `content` - File content for upload/create/append operations
+- `metadata` - Additional information about the file
+- `file_links_expire_in_days` - Link expiry: 1-7 days or "never" for public files
+- `file_links_expire_in_minutes` - Minute-level precision for link expiry
+- `get_file_contents` - Set to true to retrieve file content along with metadata
+- `format` - Set to "light" for minimal file listing
 
-- `content` - File content for upload/update/append operations
+### File Link Expiration
 
-- `metadata` - Additional information about the file as JSON object
-
-- `expiration` - Link expiry (1-7 days or "never" for public)
-
-- `collection` - Collection ID for file organization
-
-- `format` - Output format for list operations (detailed or light)
+- **Days**: 1-7 days or "never" to make file public
+- **Minutes**: Can be used for minute-level precision
+- **Combined**: Use both (e.g., days="1", minutes="30" = 1 day 30 minutes)
+- **Default**: 1 day if not specified
+- **Maximum**: 7 days total
+- **Public files**: Use days="never" (minutes ignored)
 
 ### Response Format
 
-The command returns:
+File creation/update:
 ```json
 {
-  "filename": "name of the file",
-  "signedUrl": "temporary access URL",
-  "metadata": {
-    "created": "timestamp",
-    "modified": "timestamp",
-    "custom": "user metadata"
-  }
+  "message": "File created successfully",
+  "file_url": "URL HERE"
 }
 ```
 
-## Examples
-
-### Basic Usage
-```
-/filestorage
-action: upload
-filename: report.txt
-content: Monthly sales report content here
-expiration: 7 days
-```
-Upload a text file with 7-day link expiration for temporary sharing.
-
-### Advanced Usage
-```
-/filestorage
-action: append
-filename: system-logs-2024.txt
-content: New log entry at 2024-03-15T15:30:00Z
-metadata: {"severity": "info", "source": "api"}
-```
-Append new content to an existing log file while preserving previous entries.
-
-### Specific Use Case
-```
-/filestorage
-action: update
-filename: public-document.pdf
-expiration: never
-metadata: {"category": "public", "version": "2.0"}
-```
-Make a file publicly accessible by setting expiration to never.
-
-### Notes
-
-Supports text and binary files including images, PDFs, and documents. Files can be made public with expiration="never". Maximum link expiration is 7 days unless public. Automatic content extraction available for PDFs, Word, Excel, and PowerPoint files. No race condition prevention - multiple automations writing to same file may cause unexpected results.
-
-- Store configuration files with version tracking
-- Maintain system logs with append functionality
-- Manage documents with rich metadata
-- Share files with controlled access periods
-- Track file access and modifications
-
-### Notice about Race Conditions
-
-There is no race condition prevention in place. If you have multiple automations that are trying to write to the same file, you will experience unexpected results.
-
-## Basic Usage from Slash Command
-
-The `/filestorage` command lets you create, read, update, and delete files in the storage system. After typing `/filestorage`, you can specify your action and options in natural language.
-
-## Basic Usage from Filestorage UI
-
-In the left nav, click "File Storage" where you'll see a list of files that you've created through your automations or directly via the UI. Click Upload to upload a new file.
-
-## File Storage Fundamentals
-
-### Important Rules
-
-- Each file must have a unique filename
-- Files can include optional metadata
-- File links can be set to expire after 1-7 days or made public
-- Content can be appended to existing files
-- File access history is automatically tracked
-
-### Real-World Example
-
-Perhaps you want to store an email template for use across your automations. You could write a file with the following slash command:
-
-```
-/filestorage create a new file with:
-filename: welcome-email-template.json
-content: {"subject": "Welcome to Pinkfish", "body": "<p>Hello {{name}},</p><p>We're glad to have you onboard!</p>"}
-metadata: {"company": "Pinkfish", "version": "1.0"}
-file_links_expire_in_days: "1"
-```
-
-Now you can use the file in your automations. To retrieve it you would write a prompt like this:
-`/filestorage retrieve contents of file welcome-email-template.json from file storage`
-
-Note that the reason I set file_links_expire_in_days to 1 is because that expiry is related to the signed URL that Pinkfish generates for you to access the file. And I only need it to be accessible for the duration of the Automation run.
-
-## Command Options
-
-### Creating Files
-
-Basic syntax:
-
-```
-/filestorage create a new file with:
-filename: [your-filename]
-content: [your-content]
-metadata: [optional-metadata]
-file_links_expire_in_days: [expiration-period]
-```
-
-### Available Options
-
-#### Required Fields
-
-- `filename`: (Required) Unique identifier for your file
-  ```
-  filename: system-logs.txt
-  ```
-- `content`: (Required) The content to store in the file
-  ```
-  content: Log entry at 2024-03-15T10:00:00Z
-  ```
-
-#### Optional Fields
-
-- `metadata`: Additional information about the file
-
-  ```
-  metadata: {
-    "environment": "production",
-    "version": "1.0",
-    "author": "DevOps Team"
-  }
-  ```
-
-- `file_links_expire_in_days`: Control how long file links remain valid
-  ```
-  file_links_expire_in_days: "7"  // Valid values: "1" through "7" or "never"
-  ```
-
-## Real-World Examples
-
-1. **Configuration Management**
-
-```
-/filestorage create a new file with:
-filename: app-config.json
-content: {
-    "api_endpoint": "https://api.example.com",
-    "timeout": 30,
-    "retry_attempts": 3
+File metadata:
+```json
+{
+  "filename": "test999.json",
+  "filepath": "file-storage/path/test999.json",
+  "type": "application/json",
+  "createdAt": "2024-11-17T18:04:22.197Z",
+  "updatedAt": "2024-11-17T18:09:46.455Z",
+  "metadata": "file metadata",
+  "isPublic": true,
+  "signedUrl": "https://...",
+  "accessList": [
+    {
+      "action": "create",
+      "providerId": "user-id",
+      "date": "2024-11-17T18:04:22.197Z"
+    }
+  ]
 }
-metadata: {
-    "environment": "production",
-    "version": "2.1",
-    "last_updated_by": "system-admin"
-}
+```
+
+## Tools
+
+### Upload File
+Upload a file from buffer or file input
+
+**Parameters:**
+- `action` (required) - Set to "upload"
+- `file` (required) - File or buffer to upload
+- `metadata` (optional) - File metadata
+- `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
+- `file_links_expire_in_minutes` (optional) - Minute-level precision
+
+**Example:**
+```
+/selected-filestore upload file with:
+file: [file buffer or file input]
+metadata: "Document uploaded from automation"
 file_links_expire_in_days: "7"
 ```
 
-2. **System Logging**
+### Create or Replace Document
+Create a new file or replace existing one with text content
 
+**Parameters:**
+- `action` (required) - Set to "create"
+- `filename` (required) - Name of the file
+- `content` (required) - File content
+- `metadata` (optional) - File metadata
+- `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
+- `file_links_expire_in_minutes` (optional) - Minute-level precision
+
+**Example:**
 ```
-/filestorage create a new file with:
-filename: system-logs-2024-03.txt
-content: Initial log entry
-metadata: {
-    "log_type": "system",
-    "retention_period": "90 days"
-}
+/selected-filestore create a new file with:
+filename: config.json
+content: {"api_endpoint": "https://api.example.com", "timeout": 30}
+metadata: "Production configuration file"
 file_links_expire_in_days: "never"
 ```
 
-3. **Document Storage**
+### Append to Document
+Append content to an existing file
 
+**Parameters:**
+- `action` (required) - Set to "append"
+- `filename` (required) - Name of the file
+- `content` (required) - Content to append
+- `metadata` (optional) - Updated metadata
+- `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
+- `file_links_expire_in_minutes` (optional) - Minute-level precision
+
+**Example:**
 ```
-/filestorage create a new file with:
+/selected-filestore append to file:
+filename: system-logs.txt
+content: "New log entry at 2024-03-15T15:30:00Z"
+metadata: "Updated log file"
+file_links_expire_in_days: "1"
+```
+
+### Get Document
+Retrieve file metadata or content
+
+**Parameters:**
+- `action` (required) - Set to "get"
+- `filename` (required) - Name of the file
+- `get_file_contents` (optional) - Set to true to retrieve content
+- `file_links_expire_in_days` (optional) - Link expiry for returned signedUrl
+
+**Examples:**
+
+Get metadata only:
+```
+/selected-filestore get file metadata:
+filename: quarterly-report.txt
+```
+
+Get metadata and content:
+```
+/selected-filestore get file with content:
+filename: quarterly-report.txt
+get_file_contents: true
+```
+
+Get with custom link expiry:
+```
+/selected-filestore get file:
+filename: quarterly-report.txt
+file_links_expire_in_days: "7"
+```
+
+### List Files
+List all files with full or light details
+
+**Parameters:**
+- `action` (required) - Set to "list"
+- `format` (optional) - Set to "light" for minimal info
+- `file_links_expire_in_days` (optional) - Link expiry for returned signedUrls
+
+**Examples:**
+
+List with full details:
+```
+/selected-filestore list files with:
+file_links_expire_in_days: "7"
+```
+
+List with minimal info:
+```
+/selected-filestore list files:
+format: light
+```
+
+### Delete Document
+Delete a file from storage
+
+**Parameters:**
+- `action` (required) - Set to "delete"
+- `filename` (required) - Name of the file
+
+**Example:**
+```
+/selected-filestore delete file:
+filename: old-report.txt
+```
+
+### Update File Link Expiry
+Update link expiration settings for existing files
+
+**Parameters:**
+- `action` (required) - Set to "update"
+- `filename` (required) - Name of the file
+- `file_links_expire_in_days` (required) - New link expiry (1-7 days or "never")
+- `file_links_expire_in_minutes` (optional) - Minute-level precision
+- `metadata` (optional) - Updated metadata
+
+**Examples:**
+
+Make file public:
+```
+/selected-filestore update file expiry:
+filename: public-document.pdf
+file_links_expire_in_days: "never"
+```
+
+Set custom expiry:
+```
+/selected-filestore update file expiry:
+filename: temp-file.txt
+file_links_expire_in_days: "2"
+file_links_expire_in_minutes: "30"
+```
+
+## What can you do with it?
+
+Store, retrieve, update, and manage files in the cloud storage system. Supports text and binary files with metadata, link expiration control, and public file sharing options. Perfect for configuration management, system logging, document storage, and file sharing with controlled access periods.
+
+## File Types and Content Extraction
+
+### Supported File Types
+
+**Document files:** PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT
+**Image files:** PNG, JPG, JPEG, WEBP
+**Audio files:** MP3, WAV
+**Video files:** MP4, MOV
+**Data files:** CSV, JSON, HTML
+**Archive files:** ZIP
+
+### Content Extraction
+
+For supported document types (PDF, DOCX, XLSX, PPTX, CSV), the system automatically extracts content when retrieving files. This works for:
+
+- PDF files
+- Word documents (DOC, DOCX)
+- Excel files (XLS, XLSX)
+- PowerPoint files (PPT, PPTX)
+- CSV files
+
+### File Type Handling
+
+**Text files** (JSON, TXT, HTML, CSV):
+- Use `get_file_contents: true` to retrieve content directly
+- Can be updated with POST method
+
+**Binary files** (PNG, JPG, PDF, MP3, etc.):
+- Use signedUrl from metadata to access file content
+- Use PATCH method to update metadata and link expiry without resending content
+
+## Examples
+
+### Configuration Management
+```
+/selected-filestore create a new file with:
+filename: app-config.json
+content: {"api_endpoint": "https://api.example.com", "timeout": 30, "retry_attempts": 3}
+metadata: "Production environment configuration v2.1"
+file_links_expire_in_days: "7"
+```
+
+### System Logging
+```
+/selected-filestore create a new file with:
+filename: system-logs-2024-03.txt
+content: "Initial log entry"
+metadata: "System logs for March 2024"
+file_links_expire_in_days: "never"
+```
+
+### Document Storage
+```
+/selected-filestore create a new file with:
 filename: quarterly-report-q1-2024.txt
-content: Q1 2024 Financial Report
-metadata: {
-    "department": "Finance",
-    "status": "draft",
-    "reviewers": ["jane.doe", "john.smith"]
-}
+content: "Q1 2024 Financial Report Content"
+metadata: "Finance department quarterly report - draft status"
 file_links_expire_in_days: "3"
 ```
 
-## Managing Files
-
-### Creating Files
-
+### Log File Management
 ```
-/filestorage create a new file with:
+/selected-filestore append to file:
 filename: system-logs-2024-03.txt
-content: Initial log entry
-metadata: {"log_type": "system", "retention_period": "90 days"}
+content: "ERROR: Database connection failed at 2024-03-15T15:30:00Z"
+metadata: "Log updated with error entry"
+file_links_expire_in_days: "1"
+```
+
+### Making Files Public
+```
+/selected-filestore update file expiry:
+filename: public-document.pdf
 file_links_expire_in_days: "never"
+metadata: "Document made public for external sharing"
 ```
 
-Note that if you create a file with the same name as an existing file, it will overwrite the existing file.
+## Notes
 
-### Updating Files
-
-Append to existing file:
-
-```
-/filestorage append to file:
-filename: system-logs-2024-03.txt
-content: New log entry at 2024-03-15T15:30:00Z
-metadata: {"severity": "info"}
-```
-
-### Reading Files
-
-Get file metadata only:
-
-```
-/filestorage get metadata for file: quarterly-report-q1-2024.txt
-```
-
-Get file content and metadata:
-
-```
-/filestorage get file with contents: quarterly-report-q1-2024.txt
-```
-
-List all files with full details including metadata and signedUrls:
-
-```
-/filestorage list files
-```
-
-List files files with minimal results (filename / filepath, date created):
-
-```
-/filestorage list files light
-```
-
-### Deleting Files
-
-```
-/filestorage delete file: quarterly-report-q1-2024.txt
-```
-
-## Best Practices
-
-1. **Filenames**
-
-   - Use descriptive, meaningful names
-   - Include dates for time-sensitive files
-   - Follow a consistent naming convention
-   - Avoid special characters
-
-2. **Metadata**
-
-   - Include version information
-   - Add context about the file's purpose
-   - Track who created or modified the file
-   - Document any dependencies
-
-3. **File Access**
-
-   - Use appropriate expiration periods
-   - Set longer expiration for frequently accessed files
-   - Use "never" expiry only when necessary
-   - Regularly review public files
-
-4. **Content Management**
-
-   - Keep file sizes reasonable
-   - Use append for logs and similar data
-   - Regular cleanup of outdated files
-   - Maintain backup copies of critical files
-
-5. **Security**
-   - Review access logs regularly
-   - Use shortest practical expiration periods
-   - Don't store sensitive data
-
-## File Access and Security
-
-### Access Control
-
-- Files are accessible via signed URLs
-- URLs expire based on the `file_links_expire_in_days` setting
-- Access history is maintained in the `accessList`
-
-### Monitoring and Tracking
-
-- Each file maintains an access log
-- Log entries include:
-  - Action performed
-  - Provider ID (user id)
-  - Timestamp
-- Full history available through metadata endpoint
+- Each file must have a unique filename within your storage
+- Files can include optional metadata for organization and tracking
+- Default link expiry is 1 day if not specified
+- Maximum expiry is 7 days (except for public files)
+- Use `file_links_expire_in_days: "never"` to make files public
+- Access history is automatically tracked for all files
+- Content extraction is available for common document formats
+- For binary files, use the signedUrl to access content
+- **Race conditions**: There is no race condition prevention in place. If you have multiple automations writing to the same file, you will experience unexpected results
+- **File overwriting**: Creating a file with an existing filename will overwrite the existing file completely
+- **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting. Access history is maintained in the `accessList` with entries including action performed, provider ID, and timestamp
