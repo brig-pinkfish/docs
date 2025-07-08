@@ -23,6 +23,7 @@ description: "Learn how to use the filestorage slash command for file storage op
 - `file_links_expire_in_minutes` - Minute-level precision for link expiry
 - `get_file_contents` - Set to true to retrieve file content along with metadata
 - `format` - Set to "light" for minimal file listing
+- `replaceExisting` - Whether to replace existing files with same filename (defaults to "true"; if "false", adds timestamp to filename)
 
 ### File Link Expiration
 
@@ -96,6 +97,7 @@ Upload a file from buffer or file input
 - `metadata` (optional) - File metadata
 - `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
 - `file_links_expire_in_minutes` (optional) - Minute-level precision
+- `replaceExisting` (optional) - Whether to replace existing files with same filename (defaults to "true")
 
 **Example:**
 ```
@@ -103,6 +105,7 @@ Upload a file from buffer or file input
 file: [file buffer or file input]
 metadata: "Document uploaded from automation"
 file_links_expire_in_days: "7"
+replaceExisting: "false"
 ```
 
 ### Create or Replace Document
@@ -115,6 +118,7 @@ Create a new file or replace existing one with text content
 - `metadata` (optional) - File metadata
 - `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
 - `file_links_expire_in_minutes` (optional) - Minute-level precision
+- `replaceExisting` (optional) - Whether to replace existing files with same filename (defaults to "true")
 
 **Example:**
 ```
@@ -123,6 +127,7 @@ filename: config.json
 content: {"api_endpoint": "https://api.example.com", "timeout": 30}
 metadata: "Production configuration file"
 file_links_expire_in_days: "never"
+replaceExisting: "true"
 ```
 
 ### Append to Document
@@ -286,6 +291,7 @@ filename: app-config.json
 content: {"api_endpoint": "https://api.example.com", "timeout": 30, "retry_attempts": 3}
 metadata: "Production environment configuration v2.1"
 file_links_expire_in_days: "7"
+replaceExisting: "true"
 ```
 
 ### System Logging
@@ -304,6 +310,7 @@ filename: quarterly-report-q1-2024.txt
 content: "Q1 2024 Financial Report Content"
 metadata: "Finance department quarterly report - draft status"
 file_links_expire_in_days: "3"
+replaceExisting: "false"
 ```
 
 ### Log File Management
@@ -334,5 +341,5 @@ metadata: "Document made public for external sharing"
 - Content extraction is available for common document formats
 - For binary files, use the signedUrl to access content
 - **Race conditions**: There is no race condition prevention in place. If you have multiple automations writing to the same file, you will experience unexpected results
-- **File overwriting**: Creating a file with an existing filename will overwrite the existing file completely
+- **File overwriting**: By default, creating a file with an existing filename will overwrite the existing file completely. Use `replaceExisting: "false"` to add a timestamp to the filename instead
 - **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting. Access history is maintained in the `accessList` with entries including action performed, provider ID, and timestamp
