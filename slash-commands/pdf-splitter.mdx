@@ -1,0 +1,73 @@
+---
+title: "PDF Splitter Guide"
+description: "Learn how to use the pdf-splitter slash command to split PDF files into smaller chunks"
+---
+
+## What can you do with it?
+
+Split PDF files into smaller chunks. Supports both URL-based splitting and direct file uploads, perfect for breaking down large documents into manageable pieces. Puts chunks into the file store collection that you specify. Does not retrun the chunks directly, since there may be many.
+
+## How to use it?
+
+### Basic Command Structure
+```
+Use pdf-splitter skill with collectionId:XXX
+file: the PDF file to split
+pages per chunk: number of pages per split file
+```
+
+### Parameters
+- **file**: URL of the PDF file to split or PDF content to upload
+- **pages per chunk**: Number of pages per split chunk (e.g., 2 means 2 pages per file)
+- **collection id** (required): Collection ID for grouping split files - must be provided in user prompt
+- **file links expire in days** (optional): Number of days before download links expire - defaults to 4
+- **split into pages type** (optional): Always set to "PDF" for PDF splitting
+
+### Response Format
+Returns an array of split PDF files with metadata including file IDs, filenames with page ranges, file sizes, and a collection ID. Provides URLs for accessing files instead of automatically downloading them.
+
+## Examples
+
+### Basic Usage
+Split PDF into 2-page chunks:
+```
+Use pdf-splitter skill with collectionId:GL7O7FAfCY3RvWgv4E56
+file: https://example.com/document.pdf
+pages per chunk: 2
+```
+
+### Advanced Usage
+Split PDF with custom expiration:
+```
+Use pdf-splitter skill with collectionId:ABC123DEF456
+file: https://example.com/manual.pdf
+pages per chunk: 3
+file links expire in days: 7
+```
+
+### From Artifact
+Split PDF from previous step:
+```
+Use pdf-splitter skill with collectionId:XYZ789GHI012
+file: [PDF artifact from previous step]
+pages per chunk: 1
+file links expire in days: 3
+```
+
+### Direct Upload
+Upload and split PDF content:
+```
+Use pdf-splitter skill with collectionId:DEF456JKL345
+file: [PDF content to upload]
+pages per chunk: 5
+file links expire in days: 4
+```
+
+### Notes
+- Each split file includes page range information in the filename
+- Files are grouped under a collection ID for easy management
+- Supports splitting large PDFs into any number of pages per chunk
+- Maintains original PDF quality and formatting in split files
+- Returns file IDs and URLs for accessing individual chunks
+- Do not automatically download files (could be hundreds) - provide URLs to user instead
+- Collection ID is required for all PDF splitting operations 
