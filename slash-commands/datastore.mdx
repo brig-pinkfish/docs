@@ -3,87 +3,381 @@ title: "Datastore Guide"
 description: "Learn how to use the datastore slash command to interact with NoSQL data storage"
 ---
 
-## What can you do with it?
-
-Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities. Ideal for user preferences, application state, dynamic content, and any data that needs persistent storage with search functionality.
-
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/datastore [action] [key] [content]
+/selected-datastore [action] [key | key+sortField | itemId] [content]
 ```
 
 ### Parameters
 
 **Required:**
+- `action` - Operation to perform (create, read, update, delete, search, list)
+- `collection` - Collection ID for data isolation (automatically set when you select a collection from the slash command menu)
 
-- `action` - Operation to perform (create, read, update, delete, search)
-
-- `key` - Unique identifier for the item (required for most operations)
+**Required (one of):**
+- `key` - Primary identifier for your item
+- `itemId` - Unique document ID
+- `key` + `sortField` - Primary and secondary identifiers for specific item
 
 **Optional:**
+- `sortField` - Secondary identifier that makes the item unique when combined with key
+- `content` - The main content of your item
+- `metadata` - Custom attributes as a JSON object
+- `triggerUrls` - URLs to be called when the item changes
 
-- `content` - Data to store (required for create/update)
-
-- `collection` - Collection ID for data isolation
-
-- `sort field` - Secondary sorting field
-
-- `metadata` - Additional custom attributes
-
-- `search query` - Text to search for
-
-### Response Format
-
-The command returns:
-```json
-{
-  "item": {
-    "id": "unique item ID",
-    "key": "your key",
-    "content": "stored data",
-    "created": "timestamp",
-    "modified": "timestamp"
-  },
-  "metadata": {
-    "collection": "collection ID if used"
-  }
+For tables:
+```
+metadata: {
+  "displayType": "csv",
+  "csvData": "Month,Revenue,Units\nJan,50000,500\nFeb,55000,550"
 }
 ```
 
-## Examples
+### Response Format
 
-### Basic Usage
+Single item:
+```json
+{
+  "id": "unique item ID",
+  "key": "your key",
+  "sortField": "your sort field",
+  "content": "stored data",
+  "createdAt": "2025-01-09T00:40:35.303Z",
+  "updatedAt": "2025-01-09T00:40:35.303Z",
+  "metadata": {}
+}
 ```
-/datastore
-action: create
+
+List of items (light format):
+```json
+[
+  {
+    "id": "myKey1",
+    "createdAt": "2025-01-09T00:40:35.303Z",
+    "sortField": "mySortField",
+    "key": "myKey1",
+    "updatedAt": "2025-01-09T00:40:35.303Z"
+  }
+]
+```
+
+## Tools
+
+### Create/Update Item
+Create a new item or update an existing one. If key and sortField already exist, this will update the existing item.
+
+**Parameters:**
+- `action` (required) - Set to "create" or "update"
+- `key` (required) - Primary identifier
+- `content` (optional) - Item content
+- `sortField` (optional) - Secondary identifier
+- `metadata` (optional) - Custom attributes
+- `triggerUrls` (optional) - Webhook URLs
+- `triggerChanges` (optional) - Set to false to prevent firing triggers
+
+**Example:**
+```
+/selected-datastore create a new item with:
 key: user123
 content: {"name": "John Doe", "email": "john@example.com"}
 ```
-Store simple user data with a unique key.
 
-### Advanced Usage
+### Read Items
+Retrieve items from the datastore
+
+**Parameters:**
+- `action` (required) - Set to "read" or "get"
+
+**Required (one of):**
+- `key` - Primary identifier (returns all items with that key)
+- `key` + `sortField` - Primary and secondary identifiers for specific item
+- `itemId` - Unique document ID
+
+**Examples:**
+
+By item ID:
 ```
-/datastore
-action: search
-search query: customer feedback
+/selected-datastore get item with itemId: abc123def456
+```
+
+By key and sort field:
+```
+/selected-datastore get item with key: projects and sortField: mobile-app-redesign
+```
+
+By key only (returns all items with that key):
+```
+/selected-datastore get items with key: projects
+```
+
+### List All Items
+Retrieve all items with optional filtering and pagination
+
+**Parameters:**
+- `action` (required) - Set to "list"
+- `limit` (optional) - Maximum number of results (default: 50, max: 1000)
+- `orderedBy` (optional) - Sort field and direction (e.g., "createdAt:desc")
+- `format` (optional) - Set to "light" for minimal information
+
+**Example:**
+```
+/selected-datastore list items with:
+limit: 50
+orderedBy: createdAt:desc
+format: light
+```
+
+### Update Item by ID
+Update an existing item using its unique ID
+
+**Parameters:**
+- `action` (required) - Set to "update"
+- `itemId` (required) - Unique document ID
+- `content` (optional) - Updated content
+- `metadata` (optional) - Updated metadata
+- `triggerChanges` (optional) - Set to false to prevent firing triggers
+
+**Examples:**
+
+Update with triggers:
+```
+/selected-datastore update item with:
+itemId: abc123def456
+content: Updated project documentation
+```
+
+Update without firing triggers:
+```
+/selected-datastore update item with:
+itemId: abc123def456
+content: Updated content
+triggerChanges: false
+```
+
+### Delete Item
+Remove an item from the datastore
+
+**Parameters:**
+- `action` (required) - Set to "delete"
+
+**Required (one of):**
+- `itemId` - Unique document ID (recommended)
+- `key` - Primary identifier (deletes all items with that key)
+- `key` + `sortField` - Primary and secondary identifiers for specific item
+
+**Examples:**
+
+By item ID (recommended):
+```
+/selected-datastore delete item with itemId: abc123def456
+```
+
+By key and sort field:
+```
+/selected-datastore delete item with key: projects and sortField: mobile-app-redesign
+```
+
+By key only (deletes all items with that key):
+```
+/selected-datastore delete items with key: projects
+```
+
+### Search Items
+Search for items in the datastore with advanced filtering
+
+**Parameters:**
+- `action` (required) - Set to "search"
+- `q` (required) - Search query string
+- `field` (optional) - Field to search: "all" (default), "content", "sortField", "key"
+- `type` (optional) - Search type: "fuzzy" (default), "exact", "prefix"
+- `threshold` (optional) - Fuzzy sensitivity 0.0 (strict) to 1.0 (lenient), default: 0.3
+- `limit` (optional) - Max results (default: 50, max: 1000)
+- `compiled` (optional) - Output format: false (default - JSON with snippets), true (plain text)
+- `content.*` (optional) - Filter by content fields
+- `metadata.*` (optional) - Filter by metadata fields
+
+**Examples:**
+
+Basic search:
+```
+/selected-datastore search
+q: customer feedback
 field: content
 type: fuzzy
-metadata.category: reviews
 ```
-Search for items with fuzzy matching and metadata filters.
 
-### Specific Use Case
+Advanced search with filters:
 ```
-/datastore
-action: update
-key: order456
-content: {"status": "shipped", "tracking": "ABC123"}
-trigger urls: {"https://webhook.site/notify": "api-key-123"}
+/selected-datastore search
+q: genoa
+field: content
+type: exact
+metadata.category: work
+compiled: false
 ```
-Update order status and trigger external webhook notification.
 
-### Notes
+**Search Response (compiled=false):**
+```json
+{
+  "results": [
+    {
+      "docId": "8CTVmqIIJDmDGN5HpYm5",
+      "fieldMatched": "content",
+      "matchedSnippet": "...Well, Prince, so **Genoa** and Lucca are now just family estates...",
+      "score": 0.84,
+      "relevance": "high"
+    }
+  ]
+}
+```
 
-Items are uniquely identified by key + sortField combination. Use itemId for direct access to specific items. Search supports fuzzy, exact, and prefix matching. Triggers can notify external URLs on data changes. URL-encode keys and sortFields in API calls.
+**Search Response (compiled=true):**
+```
+ID: 8CTVmqIIJDmDGN5HpYm5
+Content: Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes.
+
+ID: EPScUGDABP2xQWgphvcc
+Content: Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes.
+```
+
+## What can you do with it?
+
+Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities. Ideal for user preferences, application state, dynamic content, and any data that needs persistent storage with search functionality.
+
+## Key and Sort Field Fundamentals
+
+### Important Rules
+
+- The combination of `key` + `sortField` must be unique within a collection
+- If you don't specify a `sortField`, one will be automatically generated for you
+- You can have multiple items with the same `key` as long as they have different `sortField` values
+- Think of `key` as a folder name and `sortField` as a unique identifier within that folder
+- Working with `itemId` is the most direct and efficient way to interact with datastore items
+
+### Key and Sort Field Patterns
+
+1. **Single Key Only (Auto-generated Sort Field)**
+   ```
+   key: meeting-notes
+   ```
+   - Sort field will be auto-generated
+   - Good for: Quick storage when uniqueness isn't a concern
+
+2. **Key + Date Sort Field**
+   ```
+   key: meeting-notes
+   sortField: 2024-03-15
+   ```
+   - Creates unique daily entries
+   - Good for: Time-series data, daily logs
+
+3. **Key + Email Sort Field**
+   ```
+   key: employee-reviews
+   sortField: jane.smith@company.com
+   ```
+   - One record per employee
+   - Good for: Per-user data
+
+4. **Key + Category Sort Field**
+   ```
+   key: inventory
+   sortField: electronics-001
+   ```
+   - Unique identifier within category
+   - Good for: Categorized items requiring unique IDs
+
+## Examples
+
+### Project Documentation
+```
+/selected-datastore create a new item with:
+key: projects
+sortField: mobile-app-redesign
+content: Mobile App Redesign Documentation
+metadata: {
+    "status": "in-progress",
+    "team": "design"
+}
+```
+
+### Sales Reports by Region
+```
+/selected-datastore create a new item with:
+key: sales-data
+sortField: europe-2024-q1
+content: European Region Q1 Sales
+metadata: {
+    "displayType": "csv",
+    "csvData": "Country,Revenue,Units\nFrance,75000,750\nGermany,82000,820"
+}
+```
+
+### Employee Training Records
+```
+/selected-datastore create a new item with:
+key: training-completion
+sortField: alice.johnson@company.com
+content: Security Training 2024
+metadata: {
+    "completionDate": "2024-03-15",
+    "score": "95%"
+}
+```
+
+### Product Inventory by Category
+```
+/selected-datastore create a new item with:
+key: inventory
+sortField: smartphones
+content: Smartphone Inventory
+metadata: {
+    "displayType": "csv",
+    "csvData": "Model,Stock,Price\niPhone 15,50,999\nPixel 8,30,899"
+}
+```
+
+## Triggers
+
+Datastore items can have triggers attached that fire when the item is updated. When you attach a trigger URL:
+
+- The trigger will be called any time the item changes (content, metadata, or any other field)
+- Each URL in the triggerUrls object will be called with its corresponding API key
+- The trigger receives information about what changed in the item
+- You can prevent triggers from firing by setting `triggerChanges: false`
+
+### Creating Item with Trigger
+```
+/selected-datastore create a new item with:
+key: jobs
+sortField: job-2024-03-15-001
+content: Process monthly report
+metadata: {
+    "status": "not_started",
+    "type": "report_generation"
+}
+triggerUrls: {
+    "https://api.myservice.com/webhook": "my-api-key-123"
+}
+```
+
+### Updating Without Triggering
+```
+/selected-datastore update item with:
+key: jobs
+sortField: job-2024-03-15-001
+content: Updated content
+triggerChanges: false
+```
+
+## Notes
+
+- Items are uniquely identified by key + sortField combination within a collection
+- Use itemId for direct access to specific items (most efficient method)
+- Search supports fuzzy, exact, and prefix matching with configurable thresholds
+- Triggers can notify external URLs on data changes
+- When updating, only sent values are replaced; others remain unchanged
+- GET operations by key/sortField return an array of items, but GET operations by specific itemId return a single object
+- When you select a collection from the slash command menu, the collection ID is automatically preset for you
