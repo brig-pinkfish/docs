@@ -6,3 +6,41 @@ description: "Create long-running polling jobs to wait for external services to 
 ## What can you do with it?
 
 Polling allows you to create long-running monitoring jobs that wait for external services to complete. This is perfect for tracking job statuses, waiting for processing to finish, handling asynchronous workflows, and integrating with services that require polling for results like video processing, data analysis, or web crawling. The service automatically handles retries, timeouts, and triggers callbacks when operations complete.
+
+
+## How to use it?
+
+### Basic Command Structure
+```
+/polling [pollUrl] [callbackUrl] [expectedResultPattern] [pollTime] [pollFrequency]
+```
+
+### Parameters
+
+**Required:**
+
+- `pollUrl` - URL to poll for results (e.g., "https://api.example.com/job/status")
+- `pollUrlToken` - Authentication token for the polling URL
+- `callbackUrl` - URL to call when polling succeeds (e.g., "https://your-app.com/callback")  
+- `callbackUrlToken` - Authentication token for the callback URL
+- `expectedResultPattern` - Pattern to match for success with type and pattern
+- `callbackPayload` - Data to send to callback URL (supports {{results}} templates)
+- `pollTime` - Total time to poll (1m-12h, e.g., "5m", "2h")
+- `pollFrequency` - How often to poll (5s, 10s, 20s, 30s, 1m, 3m, 5m)
+
+**Optional:**
+
+- None
+
+### Response Format
+
+The command returns:
+```json
+{
+  "message": "Polling started successfully",
+  "jobId": "poll_1234567890_abc123",
+  "estimatedDuration": "5m",
+  "frequency": "30s",
+  "maxAttempts": 10
+}
+```
