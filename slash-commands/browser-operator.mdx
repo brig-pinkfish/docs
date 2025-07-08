@@ -1,0 +1,257 @@
+---
+title: "Browser Operator"
+description: "Automate web interactions using plain English, no APIs needed."
+---
+
+## Demo Videos
+
+<CardGroup>
+  <Card
+    title="Browser Operator Demo"
+    href="https://youtu.be/6udGLo3YEiM?feature=shared"
+    icon="play"
+  >
+    Watch the Browser Operator in action
+  </Card>
+  <Card
+    title="Download & Unzip using Browser Operator"
+    href="https://youtu.be/rAIQcDVsUBk?feature=shared"
+    icon="play"
+  >
+    Learn how to download and unzip files automatically
+  </Card>
+</CardGroup>
+
+## What is the Browser Operator?
+
+Many critical business processes involve interacting with websites that don't have APIs. This often leads to tedious, manual work like copying data from a spreadsheet and pasting it into a web form, one entry at a time. This process is not only slow but also prone to human error.
+
+The **Browser Operator** is an AI-powered tool designed to solve this exact problem. It acts like a human assistant, programmatically navigating and interacting with any website based on simple, plain-English instructions. It can fill out forms, click buttons, extract data, and loop through thousands of records, all without a single line of code.
+
+## Key Capabilities
+
+<CardGroup>
+  <Card title="Natural Language Control">
+    Instruct the Browser Operator like you would a human intern. Simply tell it
+    what to do (e.g., "Fill in the Email Address field with...") and it
+    understands and executes the task.
+  </Card>
+  <Card title="Intelligent Looping">
+    Combine the Browser Operator with data from any source. You can teach it the
+    process for one row of data, and it will automatically repeat the steps for
+    every other row.
+  </Card>
+  <Card title="Self-Healing Automation">
+    Unlike traditional RPA which breaks with minor UI changes, the Browser
+    Operator understands your *intent*. If a button moves or a field's ID
+    changes, it can intelligently re-locate the element, making your automations
+    incredibly robust.
+  </Card>
+  <Card title="Securely Handles Logins">
+    Automate tasks on internal portals and sites behind a login wall. Using
+    **Browser Operator Logins** in Connections, you can record a login session
+    once, and the Operator will securely reuse it for all future runs.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+The Browser Operator creates a special workflow step that combines AI with live browser automation.
+
+### Getting Started
+
+When you select Browser Operator from the slash menu (`/browser operator`), it spins up a browser inside your workflow step. The interface transforms to show:
+
+- **Right Pane**: A live browser window that the operator controls
+- **Center Panel**: A table showing your instructions in structured format (Action, Target, Value)
+- **Chat Interface**: Where you communicate with the Browser Operator using natural language
+
+<Note>The slash menu is disabled in a browser operator step.</Note>
+
+### Basic Operations
+
+Chat with the Browser Operator to tell it what to do. It can:
+
+- **Navigate** to your desired webpages
+- **Click** on buttons, links, and interactive elements
+- **Type and fill out** forms with data
+- **Select** from dropdown boxes and menus
+- **Extract content** (scrape) from pages
+- **Loop through tasks** with different variables each time
+
+The Browser Operator can reference:
+
+- Information from previous steps in your workflow
+- Files attached to your workflow
+- Variables and data from any source in your automation
+
+### Managing Instructions
+
+As you give instructions, they get organized into a simple table format:
+
+- **Action**: What to do (Navigate, Click, Fill in, etc.)
+- **Target**: Where to do it (URL, button name, form field, etc.)
+- **Value**: What data to use (text to type, option to select, etc.)
+
+You can use the menu controls to:
+
+- Reorder instructions by moving them up or down
+- Delete instructions you no longer need
+- Modify the sequence before execution
+
+### Built-in Guidance
+
+Prompt bubbles above the chat interface guide you through the process and suggest common actions.
+
+### Finishing Up
+
+Once you've defined all the steps you want the Browser Operator to perform:
+
+1. **Click "Finish Task"** - The Browser Operator consolidates all your instructions in the table order and presents you with the final automation code
+2. **Run & Verify** - Click "Run" to spin up a fresh browser that executes all instructions sequentially, allowing you to verify the automation works as expected
+3. **Review Replays** - After the browser completes its tasks, you can see the browser operator replays to understand exactly what happened during execution
+
+**Restart Option**: If you need to start over, click the **Restart** button (located beside "Finish Task") to reset the Browser Operator step and clear out the entire instruction table, giving you a clean slate to rebuild your automation.
+
+<Note>
+  **Note on Replays**: If the browser operator session is too short, you may not
+  see the replay functionality.
+</Note>
+
+<Note>
+**Looping Capabilities**: The Browser Operator excels at repetitive tasks. You can ask it to loop through data with different variables each time, such as: `"Fill in first name from the name column, city, and state in the address column. Loop through all the items in the csv from previous step <step_reference>."`
+</Note>
+
+## File Downloads
+
+Web automation usually struggles with file downloads because they trigger "Save As" dialogs that stop the process.
+
+The Browser Operator handles this differently - it captures downloads directly into your workflow memory so you can use them in the next steps.
+
+### Example: Downloading and Unzipping a File
+
+Let's say you need to download a ZIP archive from a website and process its contents.
+
+<Steps>
+    <Step title="Click the Download Link">
+        In the Browser Operator, navigate to the page and simply instruct it to click the download link.
+        ```
+        Click on "Download" button
+        ```
+        The Operator will click the link and capture the resulting file download.
+    </Step>
+    <Step title="Access the Downloaded File">
+        The downloaded file is now available in the step's output under the `downloads` key in the Results tab. You can see its name, size, and other metadata.
+        <CodeBlock language="json">
+        ```json
+        {
+          "downloads": [
+            {
+              "fileName": "confidential_files.zip",
+              "url": "https://skills.pinkfish.ai/files/...",
+              "mime": "application/zip",
+              "size": 999
+            }
+          ]
+        }
+        ```
+        </CodeBlock>
+    </Step>
+    <Step title="Unzip the Archive">
+        In a new step, you can now work with this file. Since Pinkfish understands file types, you can ask it to unzip the archive from the previous step.
+        ```
+        can you unzip all the files from the output files of step 1
+        ```
+    </Step>
+    <Step title="Process the Contents">
+        Pinkfish will execute the command and the unzipped files will become available as outputs of this new step. You can then use additional steps to process these files - for example, summarizing text files using Claude, analyzing data files, or extracting specific information.
+    </Step>
+</Steps>
+
+This lets you build workflows that download files from the web, unzip them, and process the contents - all in one automation.
+
+## Self-Healing Automation
+
+Traditional browser automation breaks when websites change. If a developer changes a button from "Submit" to "Register", most tools would fail.
+
+The Browser Operator works differently. It understands what you're trying to do, not just the exact words. If it can't find "Submit", it'll look for similar buttons like "Register". This means your automations keep working even when websites change.
+
+## Advanced Features
+
+### Login Management
+
+For websites that need login, you don't have to log in every time. Set up a Browser Operator Login connection once and reuse it across all your automations.
+
+#### Setting Up Logins
+
+<Steps>
+  <Step title="Navigate to Integrations">
+    Go to the **Integrations** tab in your Pinkfish workspace.
+  </Step>
+  <Step title="Access Browser Operator Logins">
+    Select **Browser Operator Logins** from the available integrations.
+  </Step>
+  <Step title="Add New Connection">
+    Click **Add connection** to create a new browser login connection.
+  </Step>
+  <Step title="Fill Connection Details">
+    Complete the required fields in the modal: - **Application Name**: The name
+    of the service you're integrating with (e.g., "Google", "Airtable", "SAP") -
+    **Connection Name**: A descriptive name to distinguish multiple connections
+    for the same app (e.g., "Production Browser Connection", "Staging Browser
+    Connection", "Personal Login") - **Login URL**: The URL where the login page
+    is located (e.g., "https://www.google.com/")
+  </Step>
+  <Step title="Perform the Login">
+    Pinkfish will open a browser window where you can log in as you normally
+    would. This includes: - Entering your username and password - Completing
+    two-factor authentication (2FA) if required - Solving any captchas that
+    appear - Going through any additional security steps your organization
+    requires
+  </Step>
+  <Step title="Confirm Login Success">
+    Once you've successfully logged in, click **"I've Logged in"** to save the
+    authenticated session.
+  </Step>
+</Steps>
+
+#### Using Saved Logins
+
+After setting up the connection, it will appear in the Browser Operator sub-menu when you:
+
+1. Type `/browser operator` in any automation step
+2. Select from the available options, including your saved login connections
+3. Choose your saved connection to start with an authenticated session
+
+This saves you from logging in manually every time.
+
+### CAPTCHA Handling
+
+The Browser Operator can handle modern CAPTCHAs like Cloudflare and reCAPTCHA letting you automate more websites.
+
+### Advanced Browser Operator Settings
+
+Power users can access advanced browser operator settings through the gear icon (⚙️) in the Browser Operator interface.
+
+**Note:** This is a advanced feature that only appears when you have an active browser operator login.
+
+#### Browser Behavior
+
+- **Block Ads**: Blocks advertisements to improve page load times and reduce distractions.
+- **Solve Captchas**: Automatically solves standard captchas.
+- **Enable Native Select Polyfill**: Uses native select elements for better website compatibility.
+
+#### Captcha Settings
+
+Some websites use custom captchas. You can tell the Browser Operator where to find these elements:
+
+- **Captcha Image Selector**: Specify the CSS selector or element ID where the captcha image is located (e.g., `#captcha-image`)
+- **Captcha Input Selector**: Specify the CSS selector or element ID where the captcha solution should be entered (e.g., `#captcha-input`)
+
+This is useful for websites with custom captcha systems.
+
+#### Proxy Settings
+
+- **Enable Proxies**: Use proxy servers for privacy or to bypass geographical restrictions.
+
+These settings help you handle complex websites that don't follow standard patterns.
