@@ -14,6 +14,8 @@ Split PDF files into smaller chunks. Supports both URL-based splitting and direc
 Use pdf-splitter skill with collectionId:XXX
 file: the PDF file to split
 pages per chunk: number of pages per split file
+metadata: (optional) custom metadata object
+replaceExisting: (optional) true/false - defaults to true
 ```
 
 ### Parameters
@@ -22,9 +24,11 @@ pages per chunk: number of pages per split file
 - **collection id** (required): Collection ID for grouping split files - must be provided in user prompt
 - **file links expire in days** (optional): Number of days before download links expire - defaults to 4
 - **split into pages type** (optional): Always set to "PDF" for PDF splitting
+- **metadata** (optional): Custom metadata object to attach to files (e.g., `{"project": "onboarding"}`)
+- **replaceExisting** (optional): Whether to replace existing files with same filename - defaults to "true"
 
 ### Response Format
-Returns an array of split PDF files with metadata including file IDs, filenames with page ranges, file sizes, and a collection ID. Provides URLs for accessing files instead of automatically downloading them.
+Returns an array of split PDF files with metadata including file IDs, filenames with page ranges, file sizes, enhanced metadata (including originalFilename, batchId, and custom metadata), and a collection ID. Provides URLs for accessing files instead of automatically downloading them.
 
 ## Examples
 
@@ -45,6 +49,16 @@ pages per chunk: 3
 file links expire in days: 7
 ```
 
+### With Custom Metadata
+Split PDF with custom metadata for project tracking:
+```
+Use pdf-splitter skill with collectionId:ABC123DEF456
+file: https://example.com/manual.pdf
+pages per chunk: 3
+metadata: {"project": "onboarding", "department": "HR"}
+replaceExisting: false
+```
+
 ### From Artifact
 Split PDF from previous step:
 ```
@@ -61,6 +75,8 @@ Use pdf-splitter skill with collectionId:DEF456JKL345
 file: [PDF content to upload]
 pages per chunk: 5
 file links expire in days: 4
+metadata: {"source": "upload", "batch": "2025-07-08"}
+replaceExisting: true
 ```
 
 ### Notes
@@ -70,4 +86,7 @@ file links expire in days: 4
 - Maintains original PDF quality and formatting in split files
 - Returns file IDs and URLs for accessing individual chunks
 - Do not automatically download files (could be hundreds) - provide URLs to user instead
-- Collection ID is required for all PDF splitting operations 
+- Collection ID is required for all PDF splitting operations
+- Custom metadata can be attached to all split files for project tracking and organization
+- Response includes enhanced metadata with originalFilename, batchId, and any custom metadata provided
+- Use replaceExisting: false to prevent overwriting files with the same name (defaults to true) 

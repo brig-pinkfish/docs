@@ -1,73 +1,90 @@
 ---
 title: "PDF Form Filler Guide"
-description: "Learn how to use the pdf-form-filler slash command to fill out PDF forms programmatically"
+description: "Learn how to use the pdf-form-filler slash command to fill PDF forms programmatically"
 ---
 
 ## What can you do with it?
 
-Fill PDF forms programmatically with data. Supports text fields, checkboxes, and dropdowns with intelligent field matching and multiple fallback strategies. Perfect for automating form submissions, batch processing applications, and streamlining document workflows.
+Fill PDF forms with text fields, checkboxes, and dropdowns using robust fallback strategies. Handles complex PDF structures where field names don't match visible labels, with multiple methods for reliable form completion.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/pdf-form-filler [pdf-file] [field-data]
+/pdf-form-filler
+pdf file: the PDF form to fill
+form data: the data to fill into the form
 ```
 
 ### Parameters
-
-**Required:**
-
-- `pdf file` - URL or path to the PDF form
-
-- `field data` - Key-value pairs of field names and values
-
-**Optional:**
-
-- `checkbox values` - Boolean or string values for checkboxes
-
-- `dropdown selections` - Values to select in dropdown fields
+- **pdf file**: URL of the PDF form to fill or PDF content to upload
+- **form data**: Object containing field names and values to fill
+- **field mapping** (optional): Custom mapping between data keys and PDF field names
+- **fallback strategy** (optional): Method for handling missing fields (skip, error, best-match)
 
 ### Response Format
-
-The command returns:
-```json
-{
-  "pdf": "base64-encoded filled PDF",
-  "metadata": {
-    "filename": "filled_form.pdf",
-    "mime_type": "application/pdf",
-    "fields_filled": "number of fields populated"
-  }
-}
-```
+Returns a filled PDF as base64 encoded data with metadata including file name and mime type. Uses PDF-lib for reliable form processing.
 
 ## Examples
 
 ### Basic Usage
+Fill simple PDF form:
 ```
 /pdf-form-filler
-pdf file: application_form.pdf
-field data: {"name": "John Doe", "email": "john@example.com", "date": "2024-01-15"}
+pdf file: https://example.com/application.pdf
+form data: {
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "555-1234"
+}
 ```
-Fill a simple form with basic text field data.
 
 ### Advanced Usage
+Fill complex form with checkboxes and dropdowns:
 ```
 /pdf-form-filler
-pdf file: registration_form.pdf
-field data: {"firstName": "Jane", "lastName": "Smith", "agreeToTerms": true, "newsletter": "checked"}
+pdf file: https://example.com/survey.pdf
+form data: {
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "agree": true,
+  "category": "Premium",
+  "subscribe": "checked"
+}
 ```
-Fill complex form including checkbox fields with various value formats.
 
-### Specific Use Case
+### From Artifact
+Fill PDF form from previous step:
 ```
 /pdf-form-filler
-pdf file: tax_form.pdf
-field data: {"taxYear": "2023", "filingStatus": "Single", "income": "50000", "deductions": "Standard"}
+pdf file: [PDF artifact from previous step]
+form data: {
+  "applicantName": "Mike Johnson",
+  "dateOfBirth": "1990-01-15",
+  "hasLicense": true
+}
 ```
-Fill tax form with dropdown selections and numeric fields.
+
+### With Custom Mapping
+Map data to specific PDF field names:
+```
+/pdf-form-filler
+pdf file: https://example.com/form.pdf
+form data: {
+  "customer_name": "Sarah Wilson",
+  "contact_email": "sarah@company.com"
+}
+field mapping: {
+  "customer_name": "Name_Field_1",
+  "contact_email": "Email_Address"
+}
+```
 
 ### Notes
-
-Uses intelligent field matching with fallbacks: direct field name matching, similar name pattern matching, and positional fallback as last resort. Supports multiple checkbox methods (.check(), setValue variations). Dropdown option matching includes fuzzy search for best match. 
+- Uses PDF-lib for reliable form processing across different PDF types
+- Implements multiple fallback strategies for field identification
+- Handles text fields, checkboxes, and dropdowns with different methods
+- Automatically categorizes fields by type for optimized processing
+- Provides comprehensive logging for debugging field matching
+- Returns base64 encoded PDF with 'pdf' key for proper display
+- Supports similarity matching when exact field names don't match 
