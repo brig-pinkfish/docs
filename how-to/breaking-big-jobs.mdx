@@ -1,0 +1,156 @@
+---
+title: "Breaking Big Jobs into Smaller Tasks"
+description: "Learn how to use the worker pattern to handle complex workflows that might timeout or become unwieldy"
+---
+
+## The Problem: When Workflows Get Too Big
+
+Have you ever tried to create a workflow that needs to process 100 customer records, generate 50 reports, or handle a massive dataset? You might run into these issues:
+
+- **Timeouts**: Workflows can only run for 10 minutes total
+- **Complexity**: Large workflows become hard to debug and maintain
+- **Failure Risk**: If step 47 out of 50 fails, you lose all your progress
+- **Resource Limits**: Processing everything at once can overwhelm systems
+
+## The Solution: The Worker Pattern
+
+Think of it like a factory assembly line. Instead of one person trying to build an entire car, you have:
+
+- **One worker** who knows how to install a tire
+- **Many tires** that need to be installed (front left, front right, back left, back right)
+- **A supervisor** who hands each tire to the worker, one at a time
+
+Even though each tire goes in a different position, the worker uses the **same process** to install each one.
+
+In workflow terms:
+- **The worker** = A simple workflow that does one specific task really well
+- **The items** = Different data that gets processed the same way (Customer1 data, Customer2 data, Customer3 data, etc.)
+- **The supervisor** = A system that feeds work to your worker
+
+Just like the tire installer uses the same steps for each tire (regardless of position), your worker workflow uses the same steps for each customer (regardless of the specific customer data).
+
+## How It Works (Simple Version)
+
+### Step 1: Design Your Worker
+Create a workflow that does **one thing perfectly**. For example:
+- "Process a single customer record"
+- "Generate a report for one department"
+- "Analyze one image file"
+
+### Step 2: Prepare Your Work Items
+Create a list of all the things your worker needs to process:
+- Customer IDs: `[1001, 1002, 1003, 1004...]`
+- Department names: `["Sales", "Marketing", "HR", "Engineering"]`
+- File paths: `["image1.jpg", "image2.jpg", "image3.jpg"]`
+
+### Step 3: Feed Work to Your Worker
+Instead of processing everything at once, send one item at a time to your worker:
+- Worker processes Customer 1001 → completes in 2 minutes
+- Worker processes Customer 1002 → completes in 2 minutes
+- Worker processes Customer 1003 → completes in 2 minutes
+- And so on...
+
+## Real-World Example: Customer Report Processing
+
+### The Old Way (Problematic)
+```
+❌ One Big Workflow:
+1. Get all 500 customer records
+2. For each customer, generate a report
+3. Email all reports
+4. Update all customer statuses
+
+Problem: This would take 45 minutes and timeout!
+```
+
+### The New Way (Worker Pattern)
+```
+✅ Worker Workflow (runs once per customer):
+1. Receive customer ID as input
+2. Generate report for that customer
+3. Email the report
+4. Update customer status
+5. Mark job as complete
+
+✅ Coordinator System:
+- Creates 500 separate "jobs" (one per customer)
+- Each job triggers the worker workflow
+- Workers run independently (2 minutes each)
+- No timeouts, easy to track progress
+```
+
+## Benefits of This Approach
+
+### 🔄 **Reliability**
+- If one customer fails, the others continue processing
+- Easy to retry just the failed items
+- No risk of losing all progress
+
+### 🐛 **Easier Debugging**
+- Test your worker with just one item first
+- Debug issues on a single case
+- Clear logs for each individual job
+
+### ⚡ **Better Performance**
+- Each worker runs quickly (under 10 minutes)
+- Multiple workers can run simultaneously
+- No resource bottlenecks
+
+### 📊 **Progress Tracking**
+- See exactly which items are done
+- Monitor processing in real-time
+- Know how many items remain
+
+## Practical Examples
+
+### Example 1: Email Campaign
+Instead of: "Send 1000 emails in one workflow"
+Do: "Send one email per workflow run"
+
+**Worker**: Takes an email address and customer data, personalizes and sends one email
+**Jobs**: 1000 separate jobs, each with one email address
+
+### Example 2: Data Analysis
+Instead of: "Analyze entire sales database"
+Do: "Analyze one month of data per run"
+
+**Worker**: Takes a month/year, analyzes that period's data, generates insights
+**Jobs**: 12 separate jobs (one per month)
+
+### Example 3: File Processing
+Instead of: "Process all uploaded images"
+Do: "Process one image per run"
+
+**Worker**: Takes one image file, resizes it, applies filters, saves result
+**Jobs**: One job per image file
+
+## When to Use This Pattern
+
+✅ **Good candidates:**
+- Processing lists of similar items
+- Repetitive tasks with different inputs
+- Large datasets that might cause timeouts
+- Tasks where you need progress tracking
+
+❌ **Not needed for:**
+- Simple, fast workflows
+- Tasks that must run as a single unit
+- Workflows already under 5 minutes
+
+## Getting Started
+
+1. **Identify the repetitive part** of your workflow
+2. **Extract it into a simple worker** that handles one item
+3. **Test your worker** with a single item
+4. **Create a list of all items** to process
+5. **Set up a system** to feed items to your worker
+
+## Technical Implementation
+
+If you're ready to implement this pattern technically, check out our detailed guide on [Using Datastore as a Job Queue](/how-to/job-queue), which shows you exactly how to build this system using Pinkfish's datastore and triggers.
+
+## Remember
+
+The worker pattern is about **doing less, more often** instead of **doing everything at once**. It's like eating a meal one bite at a time instead of trying to swallow it whole!
+
+Start simple, test with one item, then scale up. Your workflows will be more reliable, easier to debug, and much more manageable. 
