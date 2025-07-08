@@ -6,3 +6,68 @@ description: "Create long-running polling jobs to wait for external services to 
 ## What can you do with it?
 
 Polling allows you to create long-running monitoring jobs that wait for external services to complete. This is perfect for tracking job statuses, waiting for processing to finish, handling asynchronous workflows, and integrating with services that require polling for results like video processing, data analysis, or web crawling. The service automatically handles retries, timeouts, and triggers callbacks when operations complete.
+
+
+
+## Examples
+
+### Basic Usage
+```
+/polling
+pollUrl: https://api.example.com/job/status
+pollUrlToken: your-polling-token
+callbackUrl: https://your-app.com/callback
+callbackUrlToken: your-callback-token
+expectedResultPattern: {"type": "path", "pattern": "result.output.text"}
+callbackPayload: {"message": "Job completed", "data": "{{results.result.output.text}}"}
+pollTime: 5m
+pollFrequency: 30s
+```
+Polls a job status endpoint every 30 seconds for up to 5 minutes until `result.output.text` exists.
+
+### Website Crawling
+```
+/polling
+pollUrl: https://api.firecrawl.dev/v1/crawl/123-456-789
+pollUrlToken: your-firecrawl-token
+callbackUrl: https://your-app.com/crawl-complete
+callbackUrlToken: your-callback-token
+expectedResultPattern: {"type": "path", "pattern": "status"}
+callbackPayload: {"crawlId": "{{results.id}}", "status": "{{results.status}}", "pages": "{{results.completed}}/{{results.total}}", "message": "Crawl completed"}
+pollTime: 15m
+pollFrequency: 30s
+```
+Monitors a Firecrawl website crawling job and sends detailed results when complete.
+
+### Video Processing
+```
+/polling
+pollUrl: https://video-api.com/jobs/vid-456
+pollUrlToken: your-video-token
+callbackUrl: https://your-app.com/video-processed
+callbackUrlToken: your-callback-token
+expectedResultPattern: {"type": "stringMatch", "pattern": "processing complete"}
+callbackPayload: {"videoId": "vid-456", "message": "Video processing finished", "result": "{{results}}"}
+pollTime: 30m
+pollFrequency: 1m
+```
+Waits for video processing to complete by checking for "processing complete" string in response.
+
+### Notes
+
+**Pattern Types:**
+- `path` - Checks if a JSON path exists (e.g., "result.status")
+- `stringMatch` - Checks if response contains specific text
+
+**Template Variables:**
+- Use `{{results}}` in callback payload to inject polling results
+- Use `{{results.path.to.data}}` to inject specific data from results
+
+**Time Formats:**
+- Poll Time: 1m to 12h (e.g., "5m", "2h", "30m")
+- Poll Frequency: 5s, 10s, 20s, 30s, 1m, 3m, 5m
+
+**Error Handling:**
+- Automatically retries on network errors
+- Stops on HTTP 4xx errors
+- Sends error callback on timeout or failure
