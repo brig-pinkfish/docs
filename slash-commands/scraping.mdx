@@ -28,6 +28,11 @@ The `/scraping` command enables you to extract data from websites using browser 
 - `waitFor` - Milliseconds to wait for page to load (defaults to 1000)
 - `includeTags` - HTML tags/classes/IDs to include
 - `excludeTags` - HTML tags/classes/IDs to exclude
+- `vision` - Use AI to analyze page content with prompts
+- `screenshot` - Capture screenshots (fullpage, jpeg/png, quality options)
+- `loop` - Repeat actions with input data from previous steps
+- `secrets` - Use vault items for authentication
+- `browserConnection` - Use saved browser connections for login
 
 ### Response Format
 
@@ -69,31 +74,147 @@ formats: markdown and html
 ```
 Performs a search for laptops, waits for results, then scrapes both markdown and HTML content.
 
-### Specific Use Case
+### Authentication with Vault
+```
+/get-secret ExampleComLogin
+/scraping
+url: https://www.example.com
+actions:
+- fill Username with username from secret
+- fill Password with password from secret
+- click "Login"
+- wait 2 seconds
+- vision: "Give me all dashboard statistics"
+```
+Uses stored secrets for secure authentication and AI vision for data extraction.
+
+### Loop with Data Processing
 ```
 /scraping
-url: https://example.com/dashboard
+url: https://testpages.eviltester.com/styled/html5-form-test.html
 actions:
-- click on "Login"
-- fill username field with "user@example.com"
-- fill password field with "mypassword"
-- click submit button
-- wait 3 seconds
-- take a full page screenshot
+- loop begin:
+  - fill color input with "color" data
+  - fill datetime-local input with "datetime" data
+  - fill email input with "email" data
+  - fill number input with "number" data
+  - click submit button
+  - wait 5 seconds
+- loop end
+- wait 2 seconds between each action
 ```
-Logs into a dashboard, waits for it to load, takes a screenshot, then scrapes the content.
+Processes multiple data entries using loop functionality with data from previous steps.
+
+### Shopping Cart Analysis
+```
+/scraping
+url: https://shop.example.com
+actions:
+- select "Sort by Price: Low to High"
+- wait 1 second
+- vision: "Extract all product names and prices under $50"
+- click "Add to Cart" in .first-product
+- click "Checkout"
+- screenshot: fullpage
+```
+Combines sorting, AI vision analysis, and cart interaction with screenshot capture.
 
 ### Notes
 
-**Action Types:**
-- wait, click, hover, write, select, check, press
-- scroll_bottom, goto, screenshot, vision
-- runcode (execute JavaScript)
-- loop_begin/loop_end (for repetitive actions)
+## Available Actions
 
-**Element Selection:**
-- selector: CSS selector (#id, .class)
-- byText: exact text match
-- byPlaceholder: placeholder attribute
-- byLabel: label text
-- byRole: ARIA role and name
+**Navigation Actions:**
+- `goTo: [URL]` - Navigate to a specific page
+- `wait: [milliseconds]` - Pause for specified time
+- `scrollBottom` - Scroll to bottom of page
+- `scrollTo: [selector]` - Scroll to specific element
+
+**Interactive Actions:**
+- `click: [text or selector]` - Click on an element
+- `hover: [text or selector]` - Move mouse over element
+- `fill: [field] with [text]` - Enter text into input field
+- `select: [option]` - Choose from dropdown menu
+- `check: [checkbox]` - Toggle checkbox/radio button
+- `press: [key]` - Press keyboard key (Enter, Tab, etc.)
+
+**Advanced Actions:**
+- `screenshot: options: [fullpage (true|false), jpeg|png, quality (0-100)]` - Capture screenshot
+- `vision: [prompt, options]` - Use AI to retrieve or analyze page content
+- `runcode: [Playwright code]` - Execute custom Playwright code
+- `loop: [actions]` - Repeat actions with input data
+
+## Authentication & Connections
+
+**Browser Connections:**
+Use saved browser connections for automatic login:
+
+```
+/browser-connection "salesforceLogin"
+/scraping
+url: https://YOURCOMPANY.lightning.force.com/lightning/setup/ManageUsers/home
+```
+
+**Vault Integration:**
+Use stored secrets for authentication:
+
+```
+/get-secret salesforceLogin
+/scraping
+url: https://YOURCOMPANY.lightning.force.com/lightning/page/home
+actions:
+- fill username input with username from secret
+- fill password input with password from secret
+- click "login" button
+- wait 5 seconds
+```
+
+## AI Vision
+
+Use Vision AI to extract specific information from pages:
+
+```
+/scraping
+url: https://shop.example.com
+actions:
+- vision: "Give me all products under $50 and list their features"
+```
+
+## Loop Functionality
+
+**Loop with Data Example:**
+Use data from previous steps in loops:
+
+```
+/scraping
+url: https://testpages.eviltester.com/styled/html5-form-test.html
+actions:
+- loop begin:
+  - fill color input with "color" data
+  - fill datetime-local input with "datetime" data
+  - fill email input with "email" data
+  - click submit button
+  - wait 5 seconds
+- loop end
+```
+
+## Element Selection
+
+**By Text Content:**
+- `click: "Login"` - Clicks element containing exact text
+- `fill: "Search..." with "laptops"` - Targets input by placeholder
+
+**CSS Selectors:**
+- `click: #login-button` - Using ID
+- `click: .submit-btn` - Using class name
+- `click: button.primary` - Element type with class
+- `click: .form > .submit` - Using hierarchy
+
+**XPath Selectors:**
+- `click: //button[@type="submit"]` - Button with specific type
+- `click: //div[@class="menu"]//a` - Links within menu div
+- `click: //h1[contains(text(), "Welcome")]` - Heading containing text
+- `click: //label[text()="Password"]/following-sibling::input` - Input after label
+
+**Parent Scoping:**
+- `click: "Submit" in .form-container` - Text within specific container
+- `click: "Login" in #auth-modal` - Text within ID
