@@ -26,18 +26,11 @@ Monitor your queues with real-time status information:
 
 - **Pending Jobs**: View the number of jobs waiting to be processed
 - **Running Jobs**: Track currently executing workflows
-- **Queue Actions**: Access bulk upload and management options
+- **Queue Actions**: Access batch management and monitoring options
 
-## Bulk Upload
+## Integration with Other Services
 
-Efficiently add multiple jobs to your queue:
-
-1. **Data Upload**: Upload job data with ID, Name, and Reason fields
-2. **Worker Automation**: Assign which automation will process each queue item
-3. **Completion Actions**: Configure what happens when jobs finish:
-   - **No action**: Simply complete the job
-   - **Execute trigger**: Fire a trigger after completion
-   - **Call webhook URL**: Send a webhook notification
+The Queue service works seamlessly with other Pinkfish services to provide comprehensive workflow orchestration capabilities.
 
 ## Worker Automation
 
@@ -68,4 +61,76 @@ The Queue service is designed to help you scale your automation workflows effici
 
 ---
 
-**Questions?** Reach out to our support team at [support@pinkfish.ai](mailto:support@pinkfish.ai) for more information. 
+# Batch Service
+
+The Batch service provides a powerful way to break down large jobs into manageable pieces and process them systematically through queues.
+
+## What is the Batch Service?
+
+The Batch service helps you handle large-scale processing tasks by:
+
+- **Creating batches** of related work items with a unique batchId
+- **Breaking down big jobs** into individual processable items
+- **Distributing work** across queue systems for parallel processing
+- **Tracking completion** and triggering actions when batches finish
+
+## How Batch Works
+
+### Batch Creation
+
+When you create a batch:
+
+1. **Define your work items** - Each item represents one unit of work to be processed
+2. **Assign a workflow** - Choose which automation will process each item
+3. **Select a queue** - Choose which queue will handle the processing
+4. **Configure completion actions** - Set what happens when the entire batch finishes
+
+### Batch Processing Flow
+
+```
+1. Batch Service creates batch with unique batchId
+2. Each batch item is assigned to specified workflow
+3. All items are placed into the selected queue
+4. Queue processes each item independently
+5. Queue tracks completion of all items with same batchId
+6. When batch completes, configured completion actions trigger
+```
+
+## Batch Features
+
+### Batch Management
+
+- **Unique Identification**: Each batch gets a unique batchId for tracking
+- **Flexible Item Structure**: Define custom data for each batch item
+- **Workflow Assignment**: Assign any automation to process batch items
+- **Queue Selection**: Choose which queue handles the processing
+
+### Completion Actions
+
+Configure what happens when all items in a batch are complete:
+
+- **No action**: Simply mark the batch as complete
+- **Execute trigger**: Fire a specific trigger when batch finishes
+- **Call webhook URL**: Send HTTP notification to external systems
+
+### Monitoring & Tracking
+
+- **Batch Status**: Track overall batch progress and completion
+- **Item-level Tracking**: Monitor individual item processing status
+- **Real-time Updates**: Get live updates on batch processing progress
+- **Integration**: Works seamlessly with Queue monitoring dashboards
+
+## Connection to Queue Service
+
+The Batch service integrates tightly with the Queue service:
+
+- **Batch items** are placed into queues for processing
+- **Queue workers** process individual batch items
+- **Queue tracking** monitors batch completion status
+- **Completion triggers** are fired by the queue when batches finish
+
+This separation allows you to use batches for large-scale processing while leveraging queue capabilities for reliable, scalable execution.
+
+---
+
+**Questions?** Reach out on Discord https://discord.com/invite/HaDg7R4VZG

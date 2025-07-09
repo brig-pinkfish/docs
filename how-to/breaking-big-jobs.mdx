@@ -1,156 +1,116 @@
 ---
 title: "Breaking Big Jobs into Smaller Tasks"
-description: "Learn how to use the worker pattern to handle complex workflows that might timeout or become unwieldy"
+description: "Learn how to use the Queue service to handle complex workflows that might timeout or become unwieldy"
 ---
 
-## The Problem: When Workflows Get Too Big
+## The Problem: When Your Job is Too Big
 
-Have you ever tried to create a workflow that needs to process 100 customer records, generate 50 reports, or handle a massive dataset? You might run into these issues:
+Have you tried to create a workflow that needs to process 1000 customer records, send 100 page PDF to the LLM, generate 50 reports, or handle a massive dataset? You might run into these issues:
 
 - **Timeouts**: Workflows can only run for 10 minutes total
 - **Complexity**: Large workflows become hard to debug and maintain
 - **Failure Risk**: If step 47 out of 50 fails, you lose all your progress
-- **Resource Limits**: Processing everything at once can overwhelm systems
+- **Resource Limits**: Processing everything at once can overwhelm systems such as LLMs that can quickly hit context window limits with large amounts of data
 
-## The Solution: The Worker Pattern
+## The Solution: The Producer-Consumer Pattern
 
-Think of it like a factory assembly line. Instead of one person trying to build an entire car, you have:
+Think of it like a factory assembly line with three specialized stations:
 
-- **One worker** who knows how to install a tire
-- **Many tires** that need to be installed (front left, front right, back left, back right)
-- **A supervisor** who hands each tire to the worker, one at a time
+1. **Producer** (Station 1): Receives the big task and breaks it into individual items in a single batch
+2. **Consumer** (Station 2): Processes each batch item one at a time
+3. **Aggregator** (Station 3): Collects all the completed batch items and creates the final result
 
-Even though each tire goes in a different position, the worker uses the **same process** to install each one.
+Using Pinkfish's Queue service, you can orchestrate these three workflows to handle any size batch efficiently.
 
-In workflow terms:
-- **The worker** = A simple workflow that does one specific task really well
-- **The items** = Different data that gets processed the same way (Customer1 data, Customer2 data, Customer3 data, etc.)
-- **The supervisor** = A system that feeds work to your worker
+## How it works
 
-Just like the tire installer uses the same steps for each tire (regardless of position), your worker workflow uses the same steps for each customer (regardless of the specific customer data).
+### Workflow 1: Producer
 
-## How It Works (Simple Version)
+**Purpose**: Break down your big job into individual items in a single batch
 
-### Step 1: Design Your Worker
-Create a workflow that does **one thing perfectly**. For example:
-- "Process a single customer record"
-- "Generate a report for one department"
-- "Analyze one image file"
+This workflow:
 
-### Step 2: Prepare Your Work Items
-Create a list of all the things your worker needs to process:
-- Customer IDs: `[1001, 1002, 1003, 1004...]`
-- Department names: `["Sales", "Marketing", "HR", "Engineering"]`
-- File paths: `["image1.jpg", "image2.jpg", "image3.jpg"]`
+- Receives your initial request (e.g., "process 500 customers")
+- Uses the Batch service to create a batch with unique batchId
+- Breaks the work into individual batch items
+- Batch service places all items into a Queue to be processed
+- Assigns the Consumer to process each batch item
 
-### Step 3: Feed Work to Your Worker
-Instead of processing everything at once, send one item at a time to your worker:
-- Worker processes Customer 1001 → completes in 2 minutes
-- Worker processes Customer 1002 → completes in 2 minutes
-- Worker processes Customer 1003 → completes in 2 minutes
-- And so on...
+### Workflow 2: Consumer
 
-## Real-World Example: Customer Report Processing
+**Purpose**: Process individual batch items and store results
 
-### The Old Way (Problematic)
-```
-❌ One Big Workflow:
-1. Get all 500 customer records
-2. For each customer, generate a report
-3. Email all reports
-4. Update all customer statuses
+This workflow:
 
-Problem: This would take 45 minutes and timeout!
-```
+- Gets triggered for each batch item
+- Processes one batch item at a time (e.g., one customer record)
+- Stores results in datastore or filestore with batchId metadata
+- Marks the batch item as complete
+- Handles retries automatically if something fails
 
-### The New Way (Worker Pattern)
-```
-✅ Worker Workflow (runs once per customer):
-1. Receive customer ID as input
-2. Generate report for that customer
-3. Email the report
-4. Update customer status
-5. Mark job as complete
+### Workflow 3: Aggregator
 
-✅ Coordinator System:
-- Creates 500 separate "jobs" (one per customer)
-- Each job triggers the worker workflow
-- Workers run independently (2 minutes each)
-- No timeouts, easy to track progress
-```
+**Purpose**: Compile final results when all batch items are done
 
-## Benefits of This Approach
+This workflow:
+
+- Gets triggered automatically when the batch completes
+- Retrieves all batch results from datastore/filestore using the batchId
+- Compiles the final output (reports, summaries, etc.)
+- Sends notifications or delivers final results
+- Cleans up temporary data if needed
+
+## Benefits of the Producer-Consumer Pattern
 
 ### 🔄 **Reliability**
-- If one customer fails, the others continue processing
-- Easy to retry just the failed items
+
+- Each workflow is simple and focused
+- Failed items retry automatically
+- Batch tracking shows exactly what's complete
 - No risk of losing all progress
 
 ### 🐛 **Easier Debugging**
-- Test your worker with just one item first
-- Debug issues on a single case
-- Clear logs for each individual job
+
+- Test each workflow independently
+- Clear separation of concerns
+- Detailed queue monitoring
+- Easy to identify bottlenecks
 
 ### ⚡ **Better Performance**
-- Each worker runs quickly (under 10 minutes)
-- Multiple workers can run simultaneously
+
+- Consumers run in parallel
+- Automatic concurrency management
 - No resource bottlenecks
+- Scales to handle any volume
 
 ### 📊 **Progress Tracking**
+
+- Real-time batch monitoring
 - See exactly which items are done
-- Monitor processing in real-time
-- Know how many items remain
+- Queue dashboard shows progress
+- Automatic retry handling
 
-## Practical Examples
+### 🧠 **LLM Optimization**
 
-### Example 1: Email Campaign
-Instead of: "Send 1000 emails in one workflow"
-Do: "Send one email per workflow run"
+- Works within LLM context window limits
+- Processes large datasets by breaking them into manageable chunks
+- Avoids overwhelming AI models with too much data at once
+- Enables consistent processing quality across all items
 
-**Worker**: Takes an email address and customer data, personalizes and sends one email
-**Jobs**: 1000 separate jobs, each with one email address
+## Best Practices
 
-### Example 2: Data Analysis
-Instead of: "Analyze entire sales database"
-Do: "Analyze one month of data per run"
+- **Start Small**: Test with a few batch items before scaling
+- **Monitor Performance**: Use queue dashboard to optimize concurrency
+- **Handle Failures**: Design consumer to be fault-tolerant
+- **Store Results**: Use datastore for metadata, filestore for large outputs (always include batchId for easy aggregation)
+- **Clean Up**: Use aggregator to archive or delete temporary data
 
-**Worker**: Takes a month/year, analyzes that period's data, generates insights
-**Jobs**: 12 separate jobs (one per month)
+The Producer-Consumer pattern transforms complex, risky workflows into reliable, scalable systems. By breaking big jobs into three focused workflows, you get better performance, easier debugging, and complete visibility into your automation processes.
 
-### Example 3: File Processing
-Instead of: "Process all uploaded images"
-Do: "Process one image per run"
+---
 
-**Worker**: Takes one image file, resizes it, applies filters, saves result
-**Jobs**: One job per image file
+**Note**: This pattern is also known as the **Work Queue Pattern**, **Batch Processing Pattern**, or **Fan-out/Fan-in Pattern** in computer science.
 
-## When to Use This Pattern
+---
 
-✅ **Good candidates:**
-- Processing lists of similar items
-- Repetitive tasks with different inputs
-- Large datasets that might cause timeouts
-- Tasks where you need progress tracking
-
-❌ **Not needed for:**
-- Simple, fast workflows
-- Tasks that must run as a single unit
-- Workflows already under 5 minutes
-
-## Getting Started
-
-1. **Identify the repetitive part** of your workflow
-2. **Extract it into a simple worker** that handles one item
-3. **Test your worker** with a single item
-4. **Create a list of all items** to process
-5. **Set up a system** to feed items to your worker
-
-## Technical Implementation
-
-If you're ready to implement this pattern technically, check out our detailed guide on [Using Datastore as a Job Queue](/how-to/job-queue), which shows you exactly how to build this system using Pinkfish's datastore and triggers.
-
-## Remember
-
-The worker pattern is about **doing less, more often** instead of **doing everything at once**. It's like eating a meal one bite at a time instead of trying to swallow it whole!
-
-Start simple, test with one item, then scale up. Your workflows will be more reliable, easier to debug, and much more manageable. 
+**Questions?** Reach out on Discord https://discord.com/invite/HaDg7R4VZG
