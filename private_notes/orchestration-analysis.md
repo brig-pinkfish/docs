@@ -19,8 +19,26 @@ Pinkfish takes a **simplified, developer-first approach** to workflow orchestrat
 #### 1. **Robot/Agent Management** 🔴 HIGH PRIORITY
 
 - **UiPath has**: Dedicated robot management, robot pools, machine templates, attended vs unattended robots
-- **Pinkfish appears to have**: Simplified execution without explicit robot/agent concepts
-- **📈 IMPROVEMENT**: Add documentation explaining how Pinkfish handles execution resources vs UiPath's robot model
+- **Pinkfish has**: Cloud worker execution with queue concurrency controls
+- **📈 IMPROVEMENT**: Document how Cloud Worker + Queue model replaces robot management
+
+## Pinkfish Cloud Worker Solution vs UiPath Robots
+
+| **UiPath "Robot" Job**  | **Pinkfish Cloud Worker Solution**                         |
+| ----------------------- | ---------------------------------------------------------- |
+| **Resource Management** | ✅ Cloud worker auto-scaling + customer concurrency limits |
+| **Execution Control**   | ✅ Queue-specific concurrency settings                     |
+| **Isolation**           | ✅ Cloud worker isolation (better than robots!)            |
+| **Monitoring**          | ✅ Monitor dashboard by queue with status                  |
+| **Scaling**             | ✅ Automatic scaling up to quota limits                    |
+
+**Why This is Superior:**
+
+- **No infrastructure management** - Cloud workers handle it
+- **True auto-scaling** - No need to provision robots
+- **Better isolation** - Cloud workers vs shared robot processes
+- **Simpler mental model** - Just queues and concurrency, not robot pools
+- **Cost efficient** - Pay per execution, not per robot license
 
 #### 2. **Environment Management** 🟡 MEDIUM PRIORITY
 
