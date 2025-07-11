@@ -7,6 +7,27 @@ description: "Find and rank similar strings using Levenshtein distance"
 
 Find the most similar strings from a list by comparing them to a search term. This is useful for fuzzy matching, finding near-duplicates, or ranking items by similarity.
 
+## How does it work?
+
+The similarity search uses **Levenshtein distance** to measure how similar two strings are. This algorithm calculates the minimum number of single-character edits (insertions, deletions, or substitutions) needed to transform one string into another.
+
+**Distance Scoring:**
+- **Distance 0**: Identical strings
+- **Distance 1**: One character different ("cat" vs "bat")
+- **Distance 2**: Two edits needed ("cat" vs "dog")
+- **Lower scores = more similar**
+
+**Smart Extraction:**
+When enabled, smart extraction focuses on meaningful parts of text by:
+1. **Splitting** text using the specified character (default: `/`)
+2. **Excluding** common patterns like version numbers, dates, file extensions
+3. **Comparing** only the relevant extracted parts
+
+**Example:** Instead of comparing entire file paths, it extracts just the meaningful filename parts:
+- `"documents/reports/quarterly_sales_report_2024_v2.pdf"` → `"quarterly sales report"`
+- `"documents/archive/quarterly_sales_report_2023_final.pdf"` → `"quarterly sales report"`
+- **Result:** Distance 0 (identical after extraction)
+
 ## How to use it?
 
 ### Basic Command Structure
@@ -55,13 +76,13 @@ Find similar product names from a list
 ### Advanced Usage
 ```
 /similarity-search
-search term: lpsum journal name
-items to search: ["category/type/lpsum journal name/728x90_top", "category/type/lpsum science journal/300x250_bottom", "category/type/random name/728x90_top"]
+search term: quarterly sales report
+items to search: ["documents/reports/quarterly_sales_report_2024_v2.pdf", "documents/reports/monthly_sales_summary_2024_final.pdf", "documents/reports/quarterly_financial_report_2024_draft.pdf", "documents/archive/quarterly_sales_report_2023_final.pdf"]
 use smart extraction: true
-exclude patterns: ["x", "_"]
+exclude patterns: ["2024", "2023", "v2", "final", "draft"]
 split value: /
 ```
-Compare file paths with smart extraction to focus on relevant parts
+Find similar document names by extracting meaningful parts from file paths, ignoring version numbers and dates
 
 ### Specific Use Case
 ```
