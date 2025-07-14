@@ -1,31 +1,32 @@
 ---
 title: "Replicate Guide"
-description: "Run AI models for image generation and audio synthesis"
+description: "Replicate API for text to speech, image generation, image background removal"
 ---
 
 ## What can you do with it?
 
-The `/replicate` command enables you to run various AI models through the Replicate platform. You can generate images from text descriptions, synthesize speech from text, remove backgrounds from images, and leverage other AI capabilities using state-of-the-art models without managing infrastructure.
+The `/replicate` command enables you to run various AI models through the Replicate platform. You can generate images or speech from text, and so much more! 
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/replicate [model] [input]
+/replicate [task description]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `model` - The model to run (e.g., flux-schnell, speech-02-turbo)
+- `authorId` - The author ID of the model (e.g., black-forest-labs, minimax, 851-labs)
+- `modelId` - The model ID (e.g., flux-schnell, speech-02-turbo, background-remover)
 - `input` - Input parameters specific to the model
 
 **Optional:**
 
 - `version` - Specific model version to use
 - `fileLinksExpireInDays` - How long generated files remain accessible (1-30 days, defaults to 7)
-- `num_outputs` - Number of outputs to generate (for image models)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
 
 ### Response Format
 
@@ -37,50 +38,103 @@ The command returns:
       "url": "https://generated-file-url",
       "mimeType": "image/webp or audio/wav"
     }
-  ],
-  "model": "model used",
-  "processing_time": "time in seconds"
+  ]
 }
 ```
 
 ## Examples
 
-### Basic Usage
+### Basic Image Generation
 ```
-/replicate generate an image using flux-schnell
+/replicate generate an image 
+authorId: black-forest-labs
+modelId: flux-schnell
 prompt: A modern office space with plants
-aspect ratio: 16:9
+aspect_ratio: 16:9
 ```
 Generates a quick image of an office space using the fast Flux model.
 
-### Advanced Usage
+### Text-to-Speech
 ```
-/replicate text to speech using speech-02-turbo
+/replicate text to speech
+authorId: minimax
+modelId: speech-02-turbo
 text: Welcome to our automated customer service. How can I help you today?
-voice: Young Woman
-speed: normal
-emotion: friendly
-keep files for: 30 days
+voice_id: Friendly_Person
+speed: 1.0
+emotion: happy
+fileLinksExpireInDays: 30
 ```
-Generates friendly speech audio with a young woman's voice that remains accessible for 30 days.
+Generates happy speech audio with a friendly voice that remains accessible for 30 days.
 
-### Specific Use Case
+### Background Removal
 ```
-/replicate remove background using background-remover
-image url: https://example.com/product-photo.jpg
-output format: png
+/replicate remove background
+authorId: 851-labs
+modelId: background-remover
+image: https://example.com/product-photo.jpg
+format: png
 ```
 Removes the background from a product photo and returns a transparent PNG.
 
+### Text-Based Image Editing
+```
+/replicate edit image
+authorId: black-forest-labs
+modelId: flux-kontext-max
+prompt: Add a sunset sky background to this image
+input_image: https://example.com/portrait.jpg (or select from your files)
+aspect_ratio: match_input_image
+output_format: png
+```
+Uses the premium flux-kontext-max model to edit an existing image with text instructions, providing high-quality results with improved typography generation.
+
 ### Notes
 
-**Recommended Models:**
-- flux-schnell: Fast image generation
-- flux-dev: High-quality image generation (slower)
-- speech-02-turbo: Text-to-speech synthesis
-- background-remover: Remove image backgrounds
-
 **Supported Content Types:**
-- Images: Generate, edit, and transform
-- Audio: Generate speech and process audio
-- Video: Not currently supported 
+- Images: Generate, edit, and transform images
+- Audio: Generate speech and audio processing
+- Video: NOT SUPPORTED
+
+### Model Parameters
+
+#### Text-to-Speech (minimax/speech-02-turbo)
+- **text** (required): Text to convert to speech (max 5000 chars). Use `<#x#>` for pause control (0.01-99.99s)
+- **pitch**: Speech pitch (-12 to 12, default: 0)
+- **speed**: Speech speed (0.5 to 2, default: 1)
+- **volume**: Speech volume (0 to 10, default: 1)
+- **bitrate**: Bitrate (32000, 64000, 128000, 256000, default: 128000)
+- **channel**: Audio channels ("mono", "stereo", default: "mono")
+- **emotion**: Speech emotion ("auto", "neutral", "happy", "sad", "angry", "fearful", "disgusted", "surprised", default: "auto")
+- **voice_id**: Voice ID (default: "Wise_Woman"). Options: Wise_Woman, Friendly_Person, Inspirational_girl, Deep_Voice_Man, Calm_Woman, Casual_Guy, Lively_Girl, Patient_Man, Young_Knight, Determined_Man, Lovely_Girl, Decent_Boy, Imposing_Manner, Elegant_Man, Abbess, Sweet_Girl_2, Exuberant_Girl
+- **sample_rate**: Sample rate (8000, 16000, 22050, 24000, 32000, 44100, default: 32000)
+- **language_boost**: Language enhancement ("None", "Automatic", "Chinese", "Chinese,Yue", "English", "Arabic", "Russian", "Spanish", "French", "Portuguese", "German", "Turkish", "Dutch", "Ukrainian", "Vietnamese", "Indonesian", "Japanese", "Italian", "Korean", "Thai", "Polish", "Romanian", "Greek", "Czech", "Finnish", "Hindi", default: "None")
+- **english_normalization**: Enable English text normalization for better number reading (boolean, default: false, slightly increases latency)
+
+#### Image Generation (black-forest-labs/flux-schnell)
+- **prompt** (required): Prompt for generated image
+- **aspect_ratio**: Aspect ratio ("1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21", default: "1:1")
+- **num_outputs**: Number of outputs to generate (1 to 4, default: 1)
+- **num_inference_steps**: Number of denoising steps (1 to 4, default: 4). Lower steps = faster but lower quality
+- **seed**: Random seed for reproducible generation (integer, optional)
+- **output_format**: Format of output images ("webp", "jpg", "png", default: "webp")
+- **output_quality**: Quality when saving images (0 to 100, default: 80). Not relevant for PNG outputs
+- **disable_safety_checker**: Disable safety checker for generated images (boolean, default: false)
+- **go_fast**: Run faster predictions with fp8 quantized model (boolean, default: true). Note: outputs not deterministic when enabled
+- **megapixels**: Approximate megapixels for generated image ("1", "0.25", default: "1")
+
+#### Background Removal (851-labs/background-remover)
+- **image** (required): Input image (URI format)
+- **threshold**: Threshold for hard segmentation (0.0-1.0, default: 0). If 0.0, uses soft alpha
+- **reverse**: If true, remove the foreground instead of the background (boolean, default: false)
+- **background_type**: Background type (default: "rgba"). Options: 'rgba', 'map', 'green', 'white', [R,G,B] array, 'blur', 'overlay', or path to an image
+- **format**: Output format (default: "png"). Examples: png, jpg
+
+#### Text-Based Image Editing (black-forest-labs/flux-kontext-max)
+- **prompt** (required): Text description of what you want to generate, or instruction on how to edit the given image
+- **input_image**: Optional: Image to use as reference. Must be jpeg, png, gif, or webp (URI format, nullable)
+- **aspect_ratio**: Aspect ratio ("match_input_image", "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "4:5", "5:4", "21:9", "9:21", "2:1", "1:2", default: "match_input_image")
+- **prompt_upsampling**: Automatic prompt improvement (boolean, default: false)
+- **seed**: Random seed for reproducible generation (integer, nullable, optional)
+- **output_format**: Output format ("jpg", "png", default: "png")
+- **safety_tolerance**: Safety tolerance (0-6, default: 2). 0 is most strict, 6 is most permissive. Max 2 when input images are used 
