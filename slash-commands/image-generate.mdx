@@ -1,11 +1,11 @@
 ---
-title: "Image Generate Guide"
-description: "Create AI-generated images from text descriptions"
+title: "Image Generate Command Guide"
+description: "Create AI-generated images from text descriptions using black-forest-labs/flux-schnell"
 ---
 
 ## What can you do with it?
 
-The `/image-generate` command enables you to create unique images from text descriptions using AI. You can generate artwork, product mockups, marketing visuals, concept designs, and illustrations by simply describing what you want to see, with control over style, composition, and quality.
+The `/image-generate` command enables you to create unique images from text descriptions using the high-performance Flux Schnell model. You can generate artwork, product mockups, marketing visuals, concept designs, illustrations, and professional graphics by simply describing what you want to see, with precise control over style, composition, and quality.
 
 ## How to use it?
 
@@ -18,64 +18,136 @@ The `/image-generate` command enables you to create unique images from text desc
 
 **Required:**
 
-- `description` - Text description of the image you want to generate
+- `prompt` - Text description of the image you want to generate
 
 **Optional:**
 
-- `aspect_ratio` - Image dimensions: 1:1, 16:9, 9:16, 4:3, or 3:4 (defaults to 1:1)
-- `style` - Visual style preferences (realistic, artistic, cartoon, etc.)
-- `quality` - Output quality: standard or high (defaults to standard)
+- `aspect_ratio` - Image dimensions: "1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21" (defaults to "1:1")
 - `num_outputs` - Number of variations to generate: 1-4 (defaults to 1)
+- `num_inference_steps` - Number of denoising steps: 1-4 (defaults to 4). Lower steps = faster but lower quality
+- `seed` - Random seed for reproducible generation (integer, optional)
+- `output_format` - Format of output images: "webp", "jpg", "png" (defaults to "webp")
+- `output_quality` - Quality when saving images: 0-100 (defaults to 80). Not relevant for PNG outputs
+- `disable_safety_checker` - Disable safety checker for generated images (boolean, defaults to false)
+- `go_fast` - Run faster predictions with fp8 quantized model (boolean, defaults to true). Note: outputs not deterministic when enabled
+- `megapixels` - Approximate megapixels for generated image: "1", "0.25" (defaults to "1")
+- `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
 
 ### Response Format
 
 The command returns:
 ```json
 {
-  "image_url": "URL to the generated image",
-  "output": ["array of generated image URLs"],
-  "metrics": {
-    "generation_time": "time in seconds",
-    "image_count": "number of images generated"
-  },
-  "prompt_used": "the processed prompt sent to the model"
+  "output": [
+    {
+      "url": "https://generated-file-url",
+      "mimeType": "image/webp"
+    }
+  ]
 }
 ```
 
+**Note:** All generated images are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `fileLinksExpireInDays` parameter.
+
 ## Examples
 
-### Basic Usage
+### Basic Image Generation
 ```
 /image-generate
-description: a modern office space with plants and natural lighting
+prompt: A modern office space with plants and natural lighting
 ```
-Generates a single image of an office space based on the description.
+Generates a single square image of an office space with default settings.
 
-### Advanced Usage
+### Marketing Visual Creation
 ```
 /image-generate
-description: futuristic city skyline at sunset with flying vehicles
+prompt: Professional product photography of a sleek wireless headphones on a marble surface with soft studio lighting
 aspect_ratio: 16:9
-style: cyberpunk aesthetic with neon lights
-quality: high
-num_outputs: 3
+output_format: png
+output_quality: 95
+num_inference_steps: 4
 ```
-Creates three high-quality variations of a futuristic cityscape in widescreen format.
+Creates a high-quality product photo perfect for e-commerce or marketing materials.
 
-### Specific Use Case
+### Artistic Illustration
 ```
 /image-generate
-description: minimalist logo design for a tech startup named CloudSync
-aspect_ratio: 1:1
-style: clean, professional, blue and white color scheme
+prompt: Watercolor painting of a serene mountain landscape with a crystal clear lake reflecting autumn colors
+aspect_ratio: 4:3
+num_outputs: 3
+seed: 12345
 ```
-Generates a logo design concept for branding purposes with specific style requirements.
+Generates three variations of an artistic landscape using a fixed seed for consistency.
+
+### Logo and Branding
+```
+/image-generate
+prompt: Minimalist logo design for a tech startup, clean geometric shapes, blue and white color scheme, modern typography
+aspect_ratio: 1:1
+output_format: png
+disable_safety_checker: false
+```
+Creates a logo concept with transparent background support.
+
+### Social Media Content
+```
+/image-generate
+prompt: Instagram-style flat lay of a cozy reading nook with books, coffee cup, and warm lighting, aesthetic composition
+aspect_ratio: 9:16
+output_format: webp
+go_fast: true
+megapixels: 1
+```
+Generates vertical content optimized for Instagram stories with fast processing.
+
+### Character Design
+```
+/image-generate
+prompt: Character design of a friendly robot mascot for a children's app, colorful, approachable, cartoon style
+aspect_ratio: 1:1
+num_outputs: 4
+num_inference_steps: 4
+output_quality: 90
+```
+Creates multiple character variations for design iteration.
+
+### Architectural Visualization
+```
+/image-generate
+prompt: Architectural rendering of a sustainable eco-friendly house with solar panels, green roof, large windows, modern design
+aspect_ratio: 21:9
+output_format: jpg
+output_quality: 85
+fileLinksExpireInDays: 7
+```
+Generates a wide-format architectural visualization that stays accessible for a week.
 
 ### Notes
+
+**Model Capabilities:**
+- Fast generation (typically 10-30 seconds)
+- High-quality outputs with professional results
+- Excellent for commercial and creative use cases
+- Supports various artistic styles and photorealistic imagery
 
 **Limitations:**
 - Cannot generate images of specific real people
 - Avoids creating harmful or inappropriate content
 - Results may vary based on prompt complexity
-- Generation typically takes 10-30 seconds
+- Video generation is not supported
+
+### Model Parameters (black-forest-labs/flux-schnell)
+
+#### Image Generation Parameters
+- **prompt** (required): Prompt for generated image
+- **aspect_ratio**: Aspect ratio ("1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21", default: "1:1")
+- **num_outputs**: Number of outputs to generate (1 to 4, default: 1)
+- **num_inference_steps**: Number of denoising steps (1 to 4, default: 4). Lower steps = faster but lower quality
+- **seed**: Random seed for reproducible generation (integer, optional)
+- **output_format**: Format of output images ("webp", "jpg", "png", default: "webp")
+- **output_quality**: Quality when saving images (0 to 100, default: 80). Not relevant for PNG outputs
+- **disable_safety_checker**: Disable safety checker for generated images (boolean, default: false)
+- **go_fast**: Run faster predictions with fp8 quantized model (boolean, default: true). Note: outputs not deterministic when enabled
+- **megapixels**: Approximate megapixels for generated image ("1", "0.25", default: "1")
 

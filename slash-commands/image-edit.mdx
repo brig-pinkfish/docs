@@ -1,0 +1,195 @@
+---
+title: "Image Edit Command Guide"
+description: "Premium text-based image editing with maximum performance using black-forest-labs/flux-kontext-max"
+---
+
+## What can you do with it?
+
+The `/image-edit` command enables you to perform advanced text-based image editing using the premium Flux Kontext Max model. You can modify existing images through natural language instructions, add or remove elements, change styles, improve typography, enhance compositions, and create sophisticated image manipulations with professional-grade results.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/image-edit [instruction]
+```
+
+### Parameters
+
+**Required:**
+
+- `prompt` - Text description of what you want to generate, or instruction on how to edit the given image
+
+**Optional:**
+
+- `input_image` - Image to use as reference (URL or uploaded file). Must be jpeg, png, gif, or webp
+- `aspect_ratio` - Aspect ratio: "match_input_image", "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "4:5", "5:4", "21:9", "9:21", "2:1", "1:2" (defaults to "match_input_image")
+- `prompt_upsampling` - Automatic prompt improvement (boolean, defaults to false)
+- `seed` - Random seed for reproducible generation (integer, optional)
+- `output_format` - Output format: "jpg", "png" (defaults to "png")
+- `safety_tolerance` - Safety tolerance: 0-6 (defaults to 2). 0 is most strict, 6 is most permissive. Max 2 when input images are used
+- `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": [
+    {
+      "url": "https://generated-file-url",
+      "mimeType": "image/png"
+    }
+  ]
+}
+```
+
+**Note:** All edited images are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `fileLinksExpireInDays` parameter.
+
+## Examples
+
+### Basic Image Editing
+```
+/image-edit
+prompt: Add a sunset sky background to this portrait
+input_image: portrait-photo.jpg
+```
+Replaces the background of a portrait with a beautiful sunset sky.
+
+### Product Enhancement
+```
+/image-edit
+prompt: Remove the scratches and improve the lighting on this product photo
+input_image: product-watch.jpg
+output_format: png
+safety_tolerance: 1
+```
+Enhances product photos by removing imperfections and improving lighting quality.
+
+### Style Transfer
+```
+/image-edit
+prompt: Transform this photo into a watercolor painting style while keeping the subject recognizable
+input_image: landscape-photo.jpg
+aspect_ratio: match_input_image
+output_format: png
+```
+Converts a photograph into an artistic watercolor painting style.
+
+### Typography and Text Addition
+```
+/image-edit
+prompt: Add elegant serif typography saying "Grand Opening" at the top of this restaurant interior image
+input_image: restaurant-interior.jpg
+aspect_ratio: 16:9
+output_format: png
+prompt_upsampling: true
+```
+Adds professional typography to marketing images with improved text generation.
+
+### Object Removal
+```
+/image-edit
+prompt: Remove the power lines from this landscape photo and make the sky look more natural
+input_image: mountain-landscape.jpg
+aspect_ratio: match_input_image
+seed: 42
+```
+Removes unwanted objects from photos while maintaining natural appearance.
+
+### Fashion and Apparel Editing
+```
+/image-edit
+prompt: Change the color of the dress from red to navy blue while maintaining the fabric texture
+input_image: model-dress.jpg
+aspect_ratio: 3:4
+output_format: jpg
+safety_tolerance: 2
+```
+Modifies clothing colors and styles in fashion photography.
+
+### Interior Design Visualization
+```
+/image-edit
+prompt: Replace the furniture in this living room with modern minimalist pieces in white and black
+input_image: living-room.jpg
+aspect_ratio: 4:3
+output_format: png
+prompt_upsampling: true
+```
+Visualizes interior design changes for real estate or design presentations.
+
+### Logo and Branding Integration
+```
+/image-edit
+prompt: Add the company logo in the bottom right corner and make it blend naturally with the image
+input_image: corporate-event.jpg
+aspect_ratio: match_input_image
+output_format: png
+fileLinksExpireInDays: 7
+```
+Integrates branding elements seamlessly into marketing photographs.
+
+### Creative Compositing
+```
+/image-edit
+prompt: Transform this daytime cityscape into a futuristic cyberpunk scene with neon lights and flying cars
+input_image: city-skyline.jpg
+aspect_ratio: 21:9
+output_format: png
+seed: 123
+```
+Creates dramatic scene transformations for creative projects.
+
+### Professional Retouching
+```
+/image-edit
+prompt: Professional headshot retouching: smooth skin, brighten eyes, improve lighting, maintain natural look
+input_image: headshot-raw.jpg
+aspect_ratio: 1:1
+output_format: jpg
+safety_tolerance: 1
+```
+Provides professional photo retouching while maintaining authenticity.
+
+### Notes
+
+**Model Capabilities:**
+- Premium text-based editing with maximum performance
+- Excellent typography generation and text integration
+- Advanced object manipulation and removal
+- Professional-grade style transfers
+- Precise color and lighting adjustments
+- Complex scene transformations
+
+**Key Features:**
+- Input image support for reference-based editing
+- Maintains aspect ratio of input images by default
+- Advanced prompt upsampling for better results
+- Reproducible results with seed control
+- Professional safety filtering
+
+**Best Practices:**
+- Use specific, descriptive prompts for better results
+- Enable prompt_upsampling for complex edits
+- Use PNG format for images requiring transparency
+- Use JPG format for final output to reduce file size
+- Lower safety_tolerance for more creative freedom (max 2 with input images)
+
+**Limitations:**
+- Requires input image for most editing tasks
+- Safety tolerance is limited when using input images
+- Processing time varies based on edit complexity
+- Results depend on input image quality and prompt clarity
+
+### Model Parameters (black-forest-labs/flux-kontext-max)
+
+#### Text-Based Image Editing Parameters
+- **prompt** (required): Text description of what you want to generate, or instruction on how to edit the given image
+- **input_image**: Optional: Image to use as reference. Must be jpeg, png, gif, or webp (URI format, nullable)
+- **aspect_ratio**: Aspect ratio ("match_input_image", "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "4:5", "5:4", "21:9", "9:21", "2:1", "1:2", default: "match_input_image")
+- **prompt_upsampling**: Automatic prompt improvement (boolean, default: false)
+- **seed**: Random seed for reproducible generation (integer, nullable, optional)
+- **output_format**: Output format ("jpg", "png", default: "png")
+- **safety_tolerance**: Safety tolerance (0-6, default: 2). 0 is most strict, 6 is most permissive. Max 2 when input images are used 

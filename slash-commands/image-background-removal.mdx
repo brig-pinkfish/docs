@@ -1,11 +1,11 @@
 ---
-title: "Image Background Removal Guide"
-description: "Remove backgrounds from images automatically"
+title: "Image Background Removal Command Guide"
+description: "Remove backgrounds from images automatically using 851-labs/background-remover"
 ---
 
 ## What can you do with it?
 
-The `/image-background-removal` command enables you to automatically remove backgrounds from images using AI. You can isolate subjects from photos, create transparent backgrounds for product images, prepare images for compositing, and clean up photos for professional use without manual editing.
+The `/image-background-removal` command enables you to automatically remove backgrounds from images using the advanced 851-labs background remover model. You can isolate subjects from photos, create transparent backgrounds for product images, prepare images for compositing, generate cutouts for graphic design, and clean up photos for professional use without manual editing.
 
 ## How to use it?
 
@@ -22,8 +22,12 @@ The `/image-background-removal` command enables you to automatically remove back
 
 **Optional:**
 
-- `output_format` - Format for the result: png or webp (defaults to png for transparency)
-- `edge_refinement` - Refine edges for cleaner cutouts (true/false)
+- `threshold` - Threshold for hard segmentation: 0.0-1.0 (defaults to 0). If 0.0, uses soft alpha
+- `reverse` - If true, remove the foreground instead of the background (boolean, defaults to false)
+- `background_type` - Background type (defaults to "rgba"). Options: 'rgba', 'map', 'green', 'white', [R,G,B] array, 'blur', 'overlay', or path to an image
+- `format` - Output format (defaults to "png"). Examples: png, jpg
+- `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
 
 ### Response Format
 
@@ -32,49 +36,122 @@ The command returns:
 {
     "output": [
         {
-            "url": "https://.... ",
+            "url": "https://generated-file-url",
             "mimeType": "image/png"
         }
     ]
 }
 ```
 
+**Note:** All processed images are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `fileLinksExpireInDays` parameter.
+
 ## Examples
 
-### Basic Usage
+### Basic Background Removal
 ```
 /image-background-removal
 image: portrait-photo.jpg
 ```
-Removes the background from a portrait photo, leaving only the subject.
+Removes the background from a portrait photo, leaving only the subject with transparent background.
 
-### Advanced Usage
+### Product Photography
 ```
 /image-background-removal
-image: product-photo.png
-output_format: webp
-edge_refinement: true
+image: product-shoe.jpg
+format: png
+background_type: rgba
+threshold: 0
 ```
-Processes a product photo with refined edges and outputs in WebP format for web optimization.
+Creates a clean product cutout with transparent background perfect for e-commerce listings.
 
-### Specific Use Case
+### White Background Replacement
 ```
 /image-background-removal
-image: team-member-headshot.jpg
-output_format: png
+image: model-headshot.jpg
+background_type: white
+format: jpg
+threshold: 0.1
 ```
-Creates a professional headshot with transparent background for use in presentations or websites.
+Replaces the original background with a clean white background for professional headshots.
+
+### Green Screen Effect
+```
+/image-background-removal
+image: person-portrait.png
+background_type: green
+format: png
+```
+Replaces the background with green color for chroma key compositing in video editing.
+
+### Foreground Removal (Reverse)
+```
+/image-background-removal
+image: landscape-with-person.jpg
+reverse: true
+background_type: rgba
+format: png
+```
+Removes the foreground subject instead of the background, useful for creating background plates.
+
+### Custom Color Background
+```
+/image-background-removal
+image: pet-photo.jpg
+background_type: [135, 206, 235]
+format: jpg
+```
+Sets a custom sky blue background using RGB values [135, 206, 235].
+
+### Blur Background Effect
+```
+/image-background-removal
+image: group-photo.jpg
+background_type: blur
+format: jpg
+threshold: 0.05
+```
+Creates a portrait mode effect by blurring the background while keeping subjects sharp.
+
+### Batch Processing Setup
+```
+/image-background-removal
+image: team-member-1.jpg
+format: png
+background_type: rgba
+fileLinksExpireInDays: 7
+```
+Processes team photos for website use with consistent transparent backgrounds that remain accessible for a week.
 
 ### Notes
 
-**Supported Image Formats:**
-- JPEG/JPG
-- PNG
-- WebP
-- BMP
+**Model Capabilities:**
+- High-quality edge detection and preservation
+- Supports various background replacement options
+- Excellent for both portrait and product photography
+- Fast processing (typically 5-15 seconds)
+- Handles complex subjects like hair and fur
 
-**Output Considerations:**
-- PNG format preserves transparency
-- WebP offers smaller file sizes with transparency
-- Processing typically takes 5-15 seconds
+**Supported Image Formats:**
+- Input: JPEG/JPG, PNG, WebP, GIF
+- Output: PNG (for transparency), JPG (for solid backgrounds)
+
+**Best Practices:**
+- Use PNG format for transparent backgrounds
+- Use JPG for solid color backgrounds to reduce file size
+- Higher threshold values create harder edges
+- Lower threshold values (including 0) create softer, more natural edges
 - Works best with clear subject-background contrast
+
+**Limitations:**
+- Processing time may vary based on image complexity
+- Very fine details like hair may require manual touch-up
+- Performance depends on lighting and contrast in original image
+
+### Model Parameters (851-labs/background-remover)
+
+#### Background Removal Parameters
+- **image** (required): Input image (URI format)
+- **threshold**: Threshold for hard segmentation (0.0-1.0, default: 0). If 0.0, uses soft alpha
+- **reverse**: If true, remove the foreground instead of the background (boolean, default: false)
+- **background_type**: Background type (default: "rgba"). Options: 'rgba', 'map', 'green', 'white', [R,G,B] array, 'blur', 'overlay', or path to an image
+- **format**: Output format (default: "png"). Examples: png, jpg

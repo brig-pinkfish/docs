@@ -1,0 +1,262 @@
+---
+title: "Audio Generate Command Guide"
+description: "Convert text to speech using minimax/speech-02-turbo with advanced voice control"
+---
+
+## What can you do with it?
+
+The `/audio-generate` command enables you to convert text to speech using the advanced Minimax Speech-02-Turbo model. You can create professional voiceovers, generate multilingual audio content, produce podcasts, create audiobooks, develop voice assistants, and generate high-quality speech with extensive control over voice characteristics, emotions, and audio quality.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/audio-generate [text]
+```
+
+### Parameters
+
+**Required:**
+
+- `text` - Text to convert to speech (max 5000 characters). Use `<#x#>` for pause control (0.01-99.99s)
+
+**Optional:**
+
+- `pitch` - Speech pitch: -12 to 12 (defaults to 0)
+- `speed` - Speech speed: 0.5 to 2 (defaults to 1)
+- `volume` - Speech volume: 0 to 10 (defaults to 1)
+- `bitrate` - Audio bitrate: 32000, 64000, 128000, 256000 (defaults to 128000)
+- `channel` - Audio channels: "mono", "stereo" (defaults to "mono")
+- `emotion` - Speech emotion: "auto", "neutral", "happy", "sad", "angry", "fearful", "disgusted", "surprised" (defaults to "auto")
+- `voice_id` - Voice selection (defaults to "Wise_Woman"). See available voices below
+- `sample_rate` - Sample rate: 8000, 16000, 22050, 24000, 32000, 44100 (defaults to 32000)
+- `language_boost` - Language enhancement (defaults to "None"). See language options below
+- `english_normalization` - Enable English text normalization for better number reading (boolean, defaults to false)
+- `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
+
+### Response Format
+
+The command returns:
+```json
+{
+  "output": [
+    {
+      "url": "https://generated-file-url",
+      "mimeType": "audio/wav"
+    }
+  ]
+}
+```
+
+**Note:** All generated audio files are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `fileLinksExpireInDays` parameter.
+
+## Examples
+
+### Basic Text-to-Speech
+```
+/audio-generate
+text: Welcome to our customer service. How can I help you today?
+```
+Generates basic speech with default voice and settings.
+
+### Professional Voiceover
+```
+/audio-generate
+text: Introducing our revolutionary new product that will change the way you work forever.
+voice_id: Deep_Voice_Man
+emotion: neutral
+pitch: -2
+speed: 0.9
+volume: 8
+bitrate: 256000
+sample_rate: 44100
+```
+Creates professional male voiceover with deep voice and high-quality audio.
+
+### Interactive Voice Response (IVR)
+```
+/audio-generate
+text: Press 1 for sales, <#2#> press 2 for support, <#2#> or stay on the line for an operator.
+voice_id: Friendly_Person
+emotion: happy
+speed: 1.0
+channel: mono
+english_normalization: true
+```
+Generates IVR prompts with pauses and number normalization for better clarity.
+
+### Multilingual Content
+```
+/audio-generate
+text: Bonjour et bienvenue dans notre magasin. Comment puis-je vous aider aujourd'hui?
+voice_id: Elegant_Man
+language_boost: French
+emotion: neutral
+pitch: 1
+speed: 1.1
+```
+Creates French speech with language-specific enhancements.
+
+### Podcast Introduction
+```
+/audio-generate
+text: Welcome to Tech Talk Weekly, <#1#> the podcast where we dive deep into the latest technology trends and innovations.
+voice_id: Casual_Guy
+emotion: happy
+pitch: 0
+speed: 1.0
+volume: 7
+bitrate: 128000
+channel: stereo
+sample_rate: 44100
+```
+Generates engaging podcast intro with stereo audio and natural pacing.
+
+### Audiobook Narration
+```
+/audio-generate
+text: Chapter One: The Journey Begins. <#3#> It was a dark and stormy night when Sarah first discovered the mysterious letter hidden in her grandmother's attic.
+voice_id: Wise_Woman
+emotion: neutral
+pitch: 0
+speed: 0.8
+volume: 6
+bitrate: 256000
+fileLinksExpireInDays: 7
+```
+Creates audiobook-style narration with slower speed and high bitrate for quality.
+
+### Children's Content
+```
+/audio-generate
+text: Once upon a time, in a magical forest, there lived a friendly dragon named Sparkles who loved to help everyone!
+voice_id: Lively_Girl
+emotion: happy
+pitch: 3
+speed: 1.2
+volume: 8
+channel: mono
+```
+Generates cheerful children's content with animated voice characteristics.
+
+### Corporate Training
+```
+/audio-generate
+text: In this module, you will learn about workplace safety procedures. <#2#> Please pay careful attention to the following guidelines.
+voice_id: Patient_Man
+emotion: neutral
+pitch: -1
+speed: 0.9
+volume: 7
+english_normalization: true
+bitrate: 128000
+```
+Creates professional training audio with clear, measured delivery.
+
+### Emergency Announcement
+```
+/audio-generate
+text: Attention all employees. <#1#> This is an important safety announcement. Please proceed to the nearest exit in an orderly fashion.
+voice_id: Imposing_Manner
+emotion: neutral
+pitch: -3
+speed: 0.8
+volume: 10
+channel: mono
+sample_rate: 32000
+```
+Generates clear, authoritative emergency announcement with maximum volume.
+
+### Marketing Advertisement
+```
+/audio-generate
+text: Don't miss our incredible summer sale! <#1#> Save up to 50% on all items this weekend only!
+voice_id: Exuberant_Girl
+emotion: happy
+pitch: 2
+speed: 1.3
+volume: 9
+bitrate: 256000
+channel: stereo
+```
+Creates energetic marketing audio with enthusiastic delivery.
+
+### Meditation and Wellness
+```
+/audio-generate
+text: Take a deep breath <#3#> and slowly exhale. <#3#> Feel your body relax as you release all tension.
+voice_id: Calm_Woman
+emotion: neutral
+pitch: -1
+speed: 0.6
+volume: 5
+bitrate: 128000
+sample_rate: 44100
+```
+Generates soothing meditation audio with slow, calming delivery.
+
+### Notes
+
+**Model Capabilities:**
+- High-quality neural text-to-speech synthesis
+- 17 different voice personalities
+- Multilingual support with language-specific enhancements
+- Precise emotion control for natural-sounding speech
+- Advanced pause control with `<#x#>` notation
+- Professional audio quality up to 44.1kHz/256kbps
+
+**Available Voice IDs:**
+- **Wise_Woman** - Mature, knowledgeable female voice
+- **Friendly_Person** - Warm, approachable neutral voice
+- **Inspirational_girl** - Uplifting, motivational young female
+- **Deep_Voice_Man** - Rich, authoritative male voice
+- **Calm_Woman** - Soothing, peaceful female voice
+- **Casual_Guy** - Relaxed, conversational male voice
+- **Lively_Girl** - Energetic, animated young female
+- **Patient_Man** - Steady, educational male voice
+- **Young_Knight** - Noble, heroic male voice
+- **Determined_Man** - Confident, resolute male voice
+- **Lovely_Girl** - Sweet, gentle female voice
+- **Decent_Boy** - Polite, well-mannered male voice
+- **Imposing_Manner** - Authoritative, commanding voice
+- **Elegant_Man** - Refined, sophisticated male voice
+- **Abbess** - Dignified, spiritual female voice
+- **Sweet_Girl_2** - Charming, endearing female voice
+- **Exuberant_Girl** - Enthusiastic, spirited female voice
+
+**Language Enhancement Options:**
+- **None** - No language-specific processing
+- **Automatic** - Auto-detect and enhance
+- **Chinese** - Mandarin Chinese enhancement
+- **Chinese,Yue** - Cantonese Chinese enhancement
+- **English** - English language enhancement
+- **Arabic**, **Russian**, **Spanish**, **French**, **Portuguese**, **German**, **Turkish**, **Dutch**, **Ukrainian**, **Vietnamese**, **Indonesian**, **Japanese**, **Italian**, **Korean**, **Thai**, **Polish**, **Romanian**, **Greek**, **Czech**, **Finnish**, **Hindi**
+
+**Best Practices:**
+- Use `<#x#>` for precise pause control (e.g., `<#1.5#>` for 1.5 second pause)
+- Enable english_normalization for better number and abbreviation reading
+- Use higher bitrates (256000) for professional applications
+- Choose appropriate voice_id based on content type and target audience
+- Adjust speed based on content complexity (slower for educational, faster for energetic content)
+
+**Limitations:**
+- Maximum 5000 characters per request
+- Processing time increases with text length and quality settings
+- Some voices may be more suitable for specific languages
+- Pause control syntax must be exact: `<#number#>`
+
+### Model Parameters (minimax/speech-02-turbo)
+
+#### Text-to-Speech Parameters
+- **text** (required): Text to convert to speech (max 5000 chars). Use `<#x#>` for pause control (0.01-99.99s)
+- **pitch**: Speech pitch (-12 to 12, default: 0)
+- **speed**: Speech speed (0.5 to 2, default: 1)
+- **volume**: Speech volume (0 to 10, default: 1)
+- **bitrate**: Bitrate (32000, 64000, 128000, 256000, default: 128000)
+- **channel**: Audio channels ("mono", "stereo", default: "mono")
+- **emotion**: Speech emotion ("auto", "neutral", "happy", "sad", "angry", "fearful", "disgusted", "surprised", default: "auto")
+- **voice_id**: Voice ID (default: "Wise_Woman"). See available voices above
+- **sample_rate**: Sample rate (8000, 16000, 22050, 24000, 32000, 44100, default: 32000)
+- **language_boost**: Language enhancement (default: "None"). See language options above
+- **english_normalization**: Enable English text normalization for better number reading (boolean, default: false, slightly increases latency) 
