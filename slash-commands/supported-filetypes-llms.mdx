@@ -1,0 +1,125 @@
+---
+title: "LLM File Type Support"
+description: "Comprehensive guide to which file types are supported by different LLM models"
+---
+
+This document lists which file types are natively supported by different LLM models, as well as files that can be processed using preprocessors. Preprocessors allow models to support an extended variety of files, but come with the downside that the data is first extracted from the file before sent to the LLM, which potentially removes some of the signal.
+
+## Native File Support by Model
+
+### 🔷 Gemini
+The most comprehensive file support across all models.
+
+#### Images
+- `image/jpeg` (.jpg, .jpeg)
+- `image/png` (.png)
+- `image/webp` (.webp)
+
+#### Videos
+- `video/mp4` (.mp4)
+- `video/webm` (.webm)
+- `video/x-matroska` (.mkv)
+- `video/quicktime` (.mov)
+
+#### Documents
+- `application/pdf` (.pdf)
+- `text/plain` (.txt)
+
+#### Audio
+- `audio/mpeg` (.mp3)
+- `audio/wav` (.wav)
+- `audio/webm` (.webm)
+- `audio/mp4` (.m4a)
+- `audio/opus` (.opus)
+- `audio/aac` (.aac)
+- `audio/flac` (.flac)
+
+### 🔵 Claude
+Focused on images and PDF documents.
+
+#### Images
+- `image/jpeg` (.jpg, .jpeg)
+- `image/png` (.png)
+- `image/gif` (.gif)
+- `image/webp` (.webp)
+
+#### Documents
+- `application/pdf` (.pdf)
+
+### 🟢 GPT (OpenAI)
+Limited to basic image formats.
+
+#### Images
+- `image/jpeg` (.jpg, .jpeg)
+- `image/png` (.png)
+
+### 🟣 Perplexity
+No native file support - text only.
+
+### 🟠 Groq
+No native file support - text only.
+
+## Preprocessor Support
+
+These file types can be processed and converted to text/CSV format for use with **ANY** model. You don't have to do anything special to use the preprocessors, they are all automatic, so the information here is just for your awareness... especially if you're wondering why one model performs better than another at a certain filetypes. Ie: native support is always better than using a preprocessor.
+
+### 📊 Excel Files
+- **MIME Type**: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- **Extension**: `.xlsx`
+- **Preprocessor**: `excel`
+- **Output Format**: CSV
+
+### 📝 Word Documents
+- **MIME Type**: `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
+- **Extension**: `.docx`
+- **Preprocessor**: `word`
+- **Output Format**: Text
+
+### 📽️ PowerPoint Presentations
+- **MIME Type**: `application/vnd.openxmlformats-officedocument.presentationml.presentation`
+- **Extension**: `.pptx`
+- **Preprocessor**: `powerpoint`
+- **Output Format**: Text
+
+### 📄 PDF Documents
+- **MIME Type**: `application/pdf`
+- **Extension**: `.pdf`
+- **Preprocessor**: `pdf`
+- **Output Format**: Text
+- **Note**: Gemini and Claude support PDFs natively, but preprocessing can be useful for other models
+
+### 📈 CSV Files
+- **MIME Type**: `text/csv`
+- **Extension**: `.csv`
+- **Preprocessor**: `csv`
+- **Output Format**: Text
+
+## Summary Table
+
+| File Type | Gemini | Claude | GPT | Perplexity | Groq | Preprocessor Available |
+|-----------|---------|---------|-----|------------|------|----------------------|
+| JPEG/PNG | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| GIF | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| WebP | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PDF | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| TXT | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| MP4 Video | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Audio Files | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Excel (.xlsx) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Word (.docx) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| PowerPoint (.pptx) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| CSV | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+## Usage Notes
+
+1. **Native Support**: Files with native support can be sent directly to the model without preprocessing.
+
+2. **Preprocessor Support**: Files with preprocessor support need to be converted before sending to models that don't natively support them.
+
+3. **Gemini Advantage**: Gemini has the most comprehensive file support, including video and audio processing capabilities.
+
+4. **File Size Limits**: Each model may have different file size limits. Check the specific API documentation for details.
+
+5. **Quality Considerations**: 
+   - Native support typically provides better results as the model can understand the file format directly
+   - Preprocessors extract text/data which may lose some formatting or context 
