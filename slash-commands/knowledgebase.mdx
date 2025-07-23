@@ -1,0 +1,98 @@
+---
+title: "Knowledge Base Guide (RAG)"
+description: "Learn how to use the knowledge base slash command to search and retrieve information from your RAG-enabled collections"
+---
+
+## What can you do with it?
+
+Search and retrieve information from your vector-enabled knowlege base collections using semantic search. Perfect for finding relevant content across large document sets, generating AI-powered answers from your data, and filtering results by metadata attributes. Ideal for documentation search, knowledge management, and content discovery with natural language queries.
+
+### 1. Semantic Search
+
+Get raw search results from your documents with relevance scores. Best when you need to see the actual content chunks and metadata without AI interpretation.
+
+### 2. Semantic Search with AI Answer (RAG)
+
+Get the same search results but with an AI-generated answer that synthesizes the information. Best when you want a direct answer to your question based on the found documents.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/knowledgebase-collection [search-query]
+```
+
+### Parameters
+
+**Required:**
+
+- `search-query` - Natural language question or search terms
+
+**Optional:**
+
+- `action` - Operation type: "ask" (default - generates AI answer) or "search" (returns raw results)
+
+- `filters` - Attribute filters to narrow search results
+
+- `max-results` - Number of results to return (1-50, default: 10)
+
+- `model` - AI model for answer generation (ask only, default: "gpt-4o-mini")
+
+### Response Format
+
+The command returns:
+```json
+{
+  "vectorStoreId": "vector store identifier",
+  "response": "AI-generated answer (ask only)",
+  "data": [{
+    "file_id": "file identifier",
+    "filename": "document name",
+    "score": "relevance score",
+    "content": [{"type": "text", "text": "content snippet"}]
+  }]
+}
+```
+
+## Examples
+
+### Semantic Search
+```
+/knowledgebase-collection
+search-query: customer data formats
+action: search
+```
+Get raw search results about customer data formats from your knowledge base.
+
+### Semantic Search with Filters
+```
+/knowledgebase-collection
+search-query: customer data formats
+action: search
+max-results: 20
+filters: product_area = "crm"
+```
+Search for customer data information filtered to CRM-related documents only.
+
+### AI Answer Generation
+```
+/knowledgebase-collection
+search-query: what are expense policies
+```
+Get an AI-generated answer synthesizing information about expense policies from your documents.
+
+### Notes
+
+Use filters to narrow search results to specific documents or sections, reducing noise and improving relevance. Filters let you target exact subsets of your knowledge base based on metadata attributes.
+
+Available filter operators:
+- `=` equals
+- `!=` not equals  
+- `>` greater than
+- `>=` greater than or equals
+- `<` less than
+- `<=` less than or equals
+- `AND` combine multiple conditions (all must match)
+- `OR` combine multiple conditions (any can match)
+
+Supported value types: strings (use quotes), numbers, booleans. Example: `department = "engineering" AND last_updated > 2024`
