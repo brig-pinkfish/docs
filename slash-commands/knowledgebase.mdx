@@ -1,44 +1,107 @@
 ---
 title: "Knowledge Base"
-description: "Learn how to use the knowledge base slash command to search and retrieve information from your RAG-enabled collections"
+description: "Search and retrieve information from your RAG-enabled knowledge base collections"
 ---
 
 ## What can you do with it?
 
-Search and retrieve information from your vector-enabled knowledge base collections using semantic search. Perfect for finding relevant content across large document sets, generating AI-powered answers from your data, and filtering results by metadata attributes. Ideal for documentation search, knowledge management, and content discovery with natural language queries.
-
-### 1. Semantic Search
-
-Get raw search results from your documents with relevance scores. Best when you need to see the actual content chunks and metadata without AI interpretation.
-
-### 2. Semantic Search with AI Answer (RAG)
-
-Get the same search results but with an AI-generated answer that synthesizes the information. Best when you want a direct answer to your question based on the found documents.
+Search your knowledge base collections using semantic search. Get AI-generated answers from your documents, or retrieve raw search results with relevance scores. Filter by document names, metadata attributes, or date ranges for precise results.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/knowledgebase-collection [search-query]
+/knowledgebase-collection
+search-query: [your question]
 ```
 
 ### Parameters
 
 **Required:**
-
-- `search-query` - Natural language question or search terms
+- `search-query` - Your question or search terms in natural language
 
 **Optional:**
-
-- `action` - Operation type: "ask" (default - generates AI answer) or "search" (returns raw results)
-
-- `filters` - Attribute filters to narrow search results
-
+- `action` - "ask" (default - AI answer) or "search" (raw results)
+- `filters` - Filter results by document attributes
 - `max-results` - Number of results to return (1-50, default: 10)
+- `score-threshold` - Minimum relevance score (0.0-1.0). Higher = more relevant but fewer results
+- `rewrite-query` - Auto-rewrite query for better retrieval (true/false, default: false)
 
-- `model` - AI model for answer generation (ask only, default: "gpt-4o-mini")
+### Filter Format
 
-### Response Format
+Use simple expressions to filter search results:
+
+```
+filters: itemName = "TravelPolicy.pdf"
+filters: area = "hr" AND content_type = "text/plain"
+filters: date > "2024-01-01" OR filename = "handbook.pdf"
+```
+
+**Operators:** `=`, `!=`, `>`, `>=`, `<`, `<=`, `AND`, `OR`
+
+### Query Rewriting
+
+The `rewrite-query` parameter controls whether your natural language query will be automatically rewritten before executing the vector search:
+
+- `rewrite-query: true` - Automatically rewrites your query to improve retrieval performance, which can restructure or clarify ambiguous questions for better relevance
+- `rewrite-query: false` - Your query is used exactly as provided (default)
+
+Use query rewriting to improve recall for suboptimal or ambiguous queries. Disable it when you need full control and predictability over input, or for debugging and precise benchmarking.
+
+## Examples
+
+### Basic Question
+```
+/knowledgebase-collection
+search-query: what are expense policies
+```
+Get an AI-generated answer about expense policies.
+
+### Raw Search Results (document chunks)
+```
+/knowledgebase-collection
+search-query: customer data formats
+action: search
+```
+Get raw search results with relevance scores.
+
+### Filter by Document
+```
+/knowledgebase-collection
+search-query: what are expense policies
+filters: itemName = "TravelPolicy.pdf"
+```
+Search within a specific document only.
+
+### Advanced Filter + Search
+```
+/knowledgebase-collection
+search-query: customer data formats
+action: search
+filters: area = "crm" AND content_type = "text/plain"
+```
+Get raw results filtered to CRM text documents.
+
+### Tuned Search Results
+```
+/knowledgebase-collection
+search-query: API authentication methods
+action: search
+max-results: 20
+score-threshold: 0.6
+```
+Get up to 20 highly relevant results with minimum 60% relevance score.
+
+### Query Rewriting for Better Results
+```
+/knowledgebase-collection
+search-query: how do I auth
+action: search
+rewrite-query: true
+```
+Automatically improve ambiguous or incomplete queries for better retrieval.
+
+## Response Format
 
 The command returns:
 ```json
@@ -53,46 +116,3 @@ The command returns:
   }]
 }
 ```
-
-## Examples
-
-### Semantic Search
-```
-/knowledgebase-collection
-search-query: customer data formats
-action: search
-```
-Get raw search results about customer data formats from your knowledge base.
-
-### Semantic Search with Filters
-```
-/knowledgebase-collection
-search-query: customer data formats
-action: search
-max-results: 20
-filters: product_area = "crm"
-```
-Search for customer data information filtered to CRM-related documents only.
-
-### AI Answer Generation
-```
-/knowledgebase-collection
-search-query: what are expense policies
-```
-Get an AI-generated answer synthesizing information about expense policies from your documents.
-
-### Notes
-
-Use filters to narrow search results to specific documents or sections, reducing noise and improving relevance. Filters let you target exact subsets of your knowledge base based on metadata attributes.
-
-Available filter operators:
-- `=` equals
-- `!=` not equals  
-- `>` greater than
-- `>=` greater than or equals
-- `<` less than
-- `<=` less than or equals
-- `AND` combine multiple conditions (all must match)
-- `OR` combine multiple conditions (any can match)
-
-Supported value types: strings (use quotes), numbers, booleans. Example: `department = "engineering" AND last_updated > 2024`
