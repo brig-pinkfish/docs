@@ -1,0 +1,129 @@
+---
+title: 'Batch Job Guide'
+description: 'Learn how to use the batch slash command to create and run batch jobs through queues'
+---
+
+## What can you do with it?
+
+Create batch jobs to process large datasets in parallel through queues. Each row in your CSV data becomes a separate work item that gets processed by your chosen workflow.
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/batch
+queueId: queue-to-use
+triggerId: workflow-to-run
+csvData:
+header1,header2,header3
+value1,value2,value3
+value4,value5,value6
+```
+
+### Parameters
+
+- **queueId**: The queue where batch items will be placed (required)
+- **triggerId**: The workflow trigger to execute for each item (required)
+- **csvData** OR **csvUrl**: The data to process (required, choose one):
+  - csvData: Inline CSV data with headers
+  - csvUrl: URL pointing to a CSV file
+- **onDoneTriggerId** (optional): Workflow to trigger when batch completes
+- **onDoneWebhookUrl** (optional): Webhook to call when batch completes
+
+### Data Input Options
+
+1. **Inline CSV Data**: Paste CSV directly in the prompt
+2. **CSV URL**: Provide a URL to fetch CSV data
+3. **Step Data**: Reference CSV data from previous workflow steps
+
+### Response Format
+
+Returns batch ID and queue information for tracking progress. Individual items are processed asynchronously through the queue.
+
+**Sample Response**: Array containing single batch object with batchId
+
+```json
+[
+  {
+    "id": "d2ifnc5271is71tj7l7g",
+    "queueId": "d2b8u6cugtkc76ihsnlg",
+    "triggerId": "d2hvtcf1r8gs70d8vn00",
+    "runsRequested": 3,
+    "runsComplete": 2,
+    "runsFailed": 0,
+    "runsTimeout": 0,
+    "status": "running", //Status values: pending, running, complete, canceled
+    "onDoneBehavior": "trigger",
+    "onDoneTriggerId": "trigger-completion-456",
+    "onDoneWebhookUrl": null,
+    "createdBy": "281933711191",
+    "createdAt": "2025-08-19T22:33:20Z",
+    "updatedAt": "2025-08-19T22:33:20Z"
+  }
+]
+```
+
+## Examples
+
+### Basic Usage
+
+Simple batch with inline data:
+
+```
+/batch
+queueId: process-queue
+triggerId: data-processor
+csvData:
+email,name,status
+john@example.com,John Doe,active
+jane@example.com,Jane Smith,pending
+```
+
+### Advanced Usage
+
+Batch with URL and completion trigger:
+
+```
+/batch
+queueId: import-queue
+triggerId: customer-import
+csvUrl: https://example.com/customers.csv
+onDoneTriggerId: send-summary-email
+```
+
+### Specific Use Case
+
+Processing product updates with webhook notification:
+
+```
+/batch
+queueId: product-updates
+triggerId: update-product-workflow
+onDoneWebhookUrl: https://api.example.com/batch-complete
+csvData:
+product_id,price,discount
+SKU001,99.99,10
+SKU002,149.99,15
+SKU003,79.99,0
+```
+
+### Using Step Data
+
+Reference data from previous steps:
+
+```
+/batch
+queueId: process-queue
+triggerId: item-processor
+get csvData or csvUrl from: ADD REFERENCE
+```
+
+### Notes
+
+- Each CSV row becomes a separate queue item
+- Headers are included with each item for context
+- Batch completion triggers fire after all items process
+- Monitor batch progress through queue dashboards
+- Failed items can be retried individually
+- Batches support thousands of items efficiently
