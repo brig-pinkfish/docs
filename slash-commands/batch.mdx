@@ -9,7 +9,11 @@ Create batch jobs to process large datasets in parallel through queues. Each row
 
 ## How to use it?
 
-### Basic Command Structure
+The batch command supports two main operations:
+
+### 1. Start Batch Job
+
+Create and start a new batch job to process data through queues.
 
 ```
 /batch
@@ -21,7 +25,19 @@ value1,value2,value3
 value4,value5,value6
 ```
 
+### 2. Get Batch Status
+
+Check the status of an existing batch job.
+
+```
+/batch get batch status
+queueId: d2j05n2rc75s713t0e5g
+batchId: d2j06dirc75s713t0e6g
+```
+
 ### Parameters
+
+#### For Starting a Batch Job:
 
 - **queueId**: The queue where batch items will be placed (required)
 - **triggerId**: The workflow trigger to execute for each item (required)
@@ -31,6 +47,11 @@ value4,value5,value6
 - **onDoneTriggerId** (optional): Workflow to trigger when batch completes
 - **onDoneWebhookUrl** (optional): Webhook to call when batch completes
 
+#### For Getting Batch Status:
+
+- **queueId**: The queue containing the batch (required)
+- **batchId**: The ID of the batch to check (required)
+
 ### Data Input Options
 
 1. **Inline CSV Data**: Paste CSV directly in the prompt
@@ -39,7 +60,7 @@ value4,value5,value6
 
 ### Response Format
 
-Returns batch ID and queue information for tracking progress. Individual items are processed asynchronously through the queue.
+Both operations return batch information for tracking progress. Starting a batch returns the newly created batch object, while getting batch status returns the current state of an existing batch. Individual items are processed asynchronously through the queue.
 
 **Sample Response**: Array containing single batch object with batchId
 
@@ -66,7 +87,7 @@ Returns batch ID and queue information for tracking progress. Individual items a
 
 ## Examples
 
-### Basic Usage
+### Starting a Batch Job
 
 Simple batch with inline data:
 
@@ -80,7 +101,17 @@ john@example.com,John Doe,active
 jane@example.com,Jane Smith,pending
 ```
 
-### Advanced Usage
+### Getting Batch Status
+
+Check the progress of a running batch:
+
+```
+/batch get batch status
+queueId: d2j05n2rc75s713t0e5g
+batchId: d2j06dirc75s713t0e6g
+```
+
+### Advanced Batch Creation
 
 Batch with URL and completion trigger:
 
