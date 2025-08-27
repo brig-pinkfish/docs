@@ -1,0 +1,122 @@
+---
+title: "Iterable Guide"
+description: "Manage marketing campaigns, user data, and messaging across multiple channels with Iterable"
+---
+
+## What can you do with it?
+
+The Iterable integration enables comprehensive marketing campaign management across multiple channels including email, push notifications, SMS, and in-app messages. You can create and manage campaigns, track user events, manage subscriber lists, and send personalized messages.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-iterable-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `action` - The operation you want to perform (create_campaign, get_messages, etc.)
+
+**Optional:**
+
+- `email` - User email address for user-specific operations
+
+- `userId` - User ID for user-specific operations
+
+- `campaignId` - Campaign identifier for campaign operations
+
+- `templateId` - Template identifier for campaign creation
+
+## Tools
+
+### Create Campaign
+Create a new blast or triggered campaign from an existing template
+
+**Parameters:**
+- `name` (required) - Campaign name
+- `templateId` (required) - ID of the template to use
+- `listIds` (required) - Array of list IDs to target
+
+**Example:**
+```
+/your-iterable-connection
+action: create_campaign
+name: New Campaign Name
+templateId: 12345
+listIds: [67890]
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "campaignId": 54321
+  }
+}
+```
+
+### Get User's Web In-App Messages
+Retrieve a user's web in-app messages including read status and content
+
+**Parameters:**
+- `email` (required) - User email address
+- `count` (optional) - Number of messages to retrieve
+
+**Example:**
+```
+/your-iterable-connection
+action: get_web_messages
+email: test@example.com
+count: 10
+```
+
+**Response:**
+```json
+{
+  "output": {
+    "inAppMessages": [
+      {
+        "messageId": "msg_123",
+        "campaignId": 54321,
+        "createdAt": "2025-08-06T12:00:00.000Z",
+        "expiresAt": "2025-09-06T12:00:00.000Z",
+        "content": {
+          "html": "<html><body><h1>Hello!</h1></body></html>"
+        },
+        "read": false
+      }
+    ]
+  }
+}
+```
+
+### Track User Event
+Track user events for analytics and campaign targeting
+
+**Parameters:**
+- `email` (required) - User email address
+- `eventName` (required) - Name of the event to track
+- `dataFields` (optional) - Additional data fields for the event
+
+**Example:**
+```
+/your-iterable-connection
+action: track_event
+email: user@example.com
+eventName: purchase_completed
+dataFields: {"orderId": "12345", "amount": 99.99}
+```
+
+**Response:**
+```json
+{
+  "success": true
+}
+```
+
+## Notes
+
+User identification can be done via email or userId. Some API endpoints have rate limits. This integration supports email, push notifications, SMS, and in-app messaging channels.
