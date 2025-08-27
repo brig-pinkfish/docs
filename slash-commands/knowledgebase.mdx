@@ -250,30 +250,8 @@ The system extracts text content and makes it searchable through the RAG (Retrie
 - May take a few moments to become fully searchable after upload
 - Use signedUrl from metadata to access original file
 
-## Technical Implementation Notes
-
 ### File Upload Methods
 1. **Direct File Upload**: Use when you have a file buffer or file input from user uploads
 2. **Artifact Upload**: Use when referencing files created in previous automation steps
 3. **Content Creation**: Use when you want to create documents programmatically with text content
 
-### Important Technical Details
-- **Content-Type Headers**: When uploading files (methods 1 & 2), the system automatically handles multipart/form-data headers
-- **Built-in APIs**: Uses browser's built-in `FormData` and `File` constructors (no external packages needed)
-- **Processing Time**: Files are processed asynchronously for RAG search - allow a few moments after upload before searching
-
-### File Management
-- Each file must have a unique filename within your knowledge base collection
-- Files can include optional metadata for organization and tracking
-- Default link expiry is 1 day if not specified
-- Maximum expiry is 7 days (except for public files)
-- Use `file_links_expire_in_days: "never"` to make files public
-- Access history is automatically tracked for all files
-- Content extraction is available for common document formats
-- Uploaded documents are automatically processed and added to the vector store for semantic search
-
-### Knowledge Base Integration
-- **RAG Processing**: Unlike regular file storage, files uploaded to knowledge bases are automatically processed for RAG (Retrieval-Augmented Generation) search
-- **File overwriting**: By default, creating a file with an existing filename will overwrite the existing file completely. Use `replaceExisting: "false"` to add a timestamp to the filename instead
-- **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting
-- **Search Integration**: All uploaded documents become searchable through the knowledge base search functionality within minutes of upload
