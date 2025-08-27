@@ -1,21 +1,32 @@
 ---
 title: "Knowledge Base"
-description: "Search and retrieve information from your RAG-enabled knowledge base collections"
+description: "Search and retrieve information from your RAG-enabled knowledge base collections, plus manage documents within the knowledge base"
 ---
 
 ## What can you do with it?
 
-Search your knowledge base collections using semantic search. Get AI-generated answers from your documents, or retrieve raw search results with relevance scores. Filter by document names, metadata attributes, or date ranges for precise results.
+Search your knowledge base collections using semantic search and manage the documents within them. Get AI-generated answers from your documents, retrieve raw search results with relevance scores, upload new documents, create text files, and organize your knowledge base content. Filter by document names, metadata attributes, or date ranges for precise results.
+
+> **⚠️ Important:** After uploading files to a knowledge base, it may take a few minutes (sometimes but rarely, hours) for the content to be processed and become available for search. This processing time allows the system to extract text, analyze content, and index it for semantic search.
 
 ## How to use it?
 
 ### Basic Command Structure
+
+**For Search Operations:**
 ```
 /knowledgebase-collection
 search-query: [your question]
 ```
 
+**For File Management:**
+```
+/knowledgebase-collection [action] [filename] [content]
+```
+
 ### Parameters
+
+**For Search Operations:**
 
 **Required:**
 - `search-query` - Your question or search terms in natural language
@@ -27,6 +38,21 @@ search-query: [your question]
 - `score-threshold` - Minimum relevance score (0.0-1.0). Higher = more relevant but fewer results
 - `rewrite-query` - Auto-rewrite query for better retrieval (true/false, default: false)
 - `system-prompts` - Instructions for AI response style (ask only). Examples: "Explain like I'm a 10 year old", "Summarize entirely with bullet points"
+
+**For File Management:**
+
+**Required:**
+- `action` - Operation to perform (upload, create, append, get, list, delete, update)
+- `filename` - Name of the file (required for most operations)
+
+**Optional:**
+- `content` - File content for upload/create/append operations
+- `metadata` - Additional information about the file
+- `file_links_expire_in_days` - Link expiry: 1-7 days or "never" for public files
+- `file_links_expire_in_minutes` - Minute-level precision for link expiry
+- `get_file_contents` - Set to true to retrieve file content along with metadata
+- `format` - Set to "light" for minimal file listing
+- `replaceExisting` - Whether to replace existing files with same filename (defaults to "true")
 
 ### Filter Format
 
@@ -49,7 +75,18 @@ The `rewrite-query` parameter controls whether your natural language query will 
 
 Use query rewriting to improve recall for suboptimal or ambiguous queries. Disable it when you need full control and predictability over input, or for debugging and precise benchmarking.
 
+### File Link Expiration
+
+- **Days**: 1-7 days or "never" to make file public
+- **Minutes**: Can be used for minute-level precision
+- **Combined**: Use both (e.g., days="1", minutes="30" = 1 day 30 minutes)
+- **Default**: 1 day if not specified
+- **Maximum**: 7 days total
+- **Public files**: Use days="never" (minutes ignored)
+
 ## Examples
+
+### Search Operations
 
 ### Basic Question
 ```
@@ -110,9 +147,88 @@ system-prompts: "Explain like I'm a 10 year old"
 ```
 Get an AI answer with specific formatting or explanation style.
 
+### File Management Operations
+
+### Upload Documents (3 Ways)
+
+You can add documents to your knowledge base in three different ways:
+
+#### 1. Upload File from Buffer/Input
+Upload a file that's already been processed or uploaded to the automation
+
+```
+/knowledgebase-collection upload file with:
+file: [file buffer or file input]
+metadata: "Policy document uploaded from automation"
+file_links_expire_in_days: "7"
+replaceExisting: "false"
+```
+
+#### 2. Upload from Artifact
+Upload a file that was created in a previous step and saved as an artifact
+
+```
+/knowledgebase-collection upload from artifact:
+artifact: "document_result.json"
+stepId: "previous_step_id"
+metadata: "Document from previous automation step"
+file_links_expire_in_days: "7"
+```
+
+#### 3. Create Document with Content
+Create a new document directly by providing the text content
+
+```
+/knowledgebase-collection create document with:
+filename: "policy-summary.txt"
+content: "Company expense policy summary: Travel expenses must be pre-approved..."
+metadata: "HR policy summary document"
+file_links_expire_in_days: "never"
+replaceExisting: "true"
+```
+
+### Other File Operations
+
+### Append to Document
+Append content to an existing file
+
+```
+/knowledgebase-collection append to file:
+filename: policy-updates.txt
+content: "Update 2024-03-15: New travel policy for international trips"
+metadata: "Policy updates log"
+file_links_expire_in_days: "30"
+```
+
+### Get Document
+Retrieve file metadata or content
+
+```
+/knowledgebase-collection get file with content:
+filename: expense-policy.txt
+get_file_contents: true
+```
+
+### List Files
+List all files in the knowledge base
+
+```
+/knowledgebase-collection list files:
+format: light
+```
+
+### Delete Document
+Delete a file from the knowledge base
+
+```
+/knowledgebase-collection delete file:
+filename: old-policy.txt
+```
+
 ## Response Format
 
-The command returns:
+### Search Operations
+The search commands return:
 ```json
 {
   "vectorStoreId": "vector store identifier",
@@ -125,3 +241,102 @@ The command returns:
   }]
 }
 ```
+
+### File Operations
+File creation/update:
+```json
+{
+  "message": "File created successfully",
+  "id": "file-identifier",
+  "file_url": "https://...",
+  "file_size": 1024,
+  "mime_type": "text/plain",
+  "metadata": {
+    "attr1": "value1",
+    "batchId": "batch_2025-07-28_15-43-47",
+    "originalFilename": "example.txt"
+  },
+  "collectionId": "collection-id"
+}
+```
+
+File metadata (full details):
+```json
+{
+  "filename": "policy.txt",
+  "filepath": "file-storage/collection-id/policy.txt",
+  "type": "text/plain",
+  "createdAt": "2024-11-17T18:04:22.197Z",
+  "updatedAt": "2024-11-17T18:09:46.455Z",
+  "metadata": {"description": "Policy document"},
+  "isPublic": false,
+  "signedUrl": "https://...",
+  "accessList": [
+    {
+      "action": "create",
+      "providerId": "user-id",
+      "date": "2024-11-17T18:04:22.197Z"
+    }
+  ]
+}
+```
+
+## File Types and Content Extraction
+
+### Supported File Types
+
+Knowledge bases support the following file types for upload and content extraction:
+
+**Document files:** PDF, MD, HTML, DOC/DOCX, PPT/PPTX, TXT
+**Data files:** JSON, YML/YAML, CSV, XLS/XLSX
+**Code files:** C/CPP, CS, GO, JAVA, JS/TS, PHP, PY, RB, SH, TEX
+
+### Content Extraction
+
+All supported file types are automatically processed and their content extracted for semantic search in the knowledge base. This includes:
+
+- **Document files**: PDF, Word documents, PowerPoint presentations, Markdown, HTML, plain text
+- **Data files**: JSON, YAML, CSV, Excel spreadsheets  
+- **Code files**: All programming languages are indexed with syntax awareness
+
+The system extracts text content and makes it searchable through the RAG (Retrieval-Augmented Generation) system.
+
+### File Type Handling
+
+**Text-based files** (TXT, MD, HTML, JSON, YAML, CSV, code files):
+- Content is directly indexed and searchable
+- Can be updated with create/append operations
+- Immediately available for semantic search
+
+**Document files** (PDF, DOC/DOCX, PPT/PPTX, XLS/XLSX):
+- Content is extracted and processed for search indexing
+- May take a few moments to become fully searchable after upload
+- Use signedUrl from metadata to access original file
+
+## Technical Implementation Notes
+
+### File Upload Methods
+1. **Direct File Upload**: Use when you have a file buffer or file input from user uploads
+2. **Artifact Upload**: Use when referencing files created in previous automation steps
+3. **Content Creation**: Use when you want to create documents programmatically with text content
+
+### Important Technical Details
+- **Content-Type Headers**: When uploading files (methods 1 & 2), the system automatically handles multipart/form-data headers
+- **Built-in APIs**: Uses browser's built-in `FormData` and `File` constructors (no external packages needed)
+- **Processing Time**: Files are processed asynchronously for RAG search - allow a few moments after upload before searching
+
+### File Management
+- Each file must have a unique filename within your knowledge base collection
+- Files can include optional metadata for organization and tracking
+- Default link expiry is 1 day if not specified
+- Maximum expiry is 7 days (except for public files)
+- Use `file_links_expire_in_days: "never"` to make files public
+- Access history is automatically tracked for all files
+- Content extraction is available for common document formats
+- Uploaded documents are automatically processed and added to the vector store for semantic search
+
+### Knowledge Base Integration
+- **RAG Processing**: Unlike regular file storage, files uploaded to knowledge bases are automatically processed for RAG (Retrieval-Augmented Generation) search
+- **File overwriting**: By default, creating a file with an existing filename will overwrite the existing file completely. Use `replaceExisting: "false"` to add a timestamp to the filename instead
+- **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting
+- **Search Integration**: All uploaded documents become searchable through the knowledge base search functionality within minutes of upload
