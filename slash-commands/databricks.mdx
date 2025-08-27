@@ -1,0 +1,103 @@
+---
+title: "Databricks Guide"
+description: "Learn how to use the Databricks slash command for data analytics and SQL execution"
+---
+
+## What can you do with it?
+
+The `/databricks` command enables you to interact with Databricks SQL warehouses through the Databricks API. Perfect for executing SQL statements, managing queries, and accessing data analytics capabilities in your Databricks workspace.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-databricks-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `warehouse_id` - The ID of your Databricks SQL warehouse
+
+**Optional:**
+
+- `wait_timeout` - Timeout for synchronous execution (5s to 50s) or 0s for asynchronous
+
+## Tools
+
+### Execute SQL Statement
+Submit a SQL statement for execution on a specified warehouse
+
+**Parameters:**
+- `statement` (required) - SQL query to execute
+- `warehouse_id` (required) - Databricks SQL warehouse ID
+- `wait_timeout` (optional) - Execution timeout setting
+
+**Example:**
+```
+/your-databricks-connection
+action: execute_sql
+statement: SELECT * FROM my_table LIMIT 10
+warehouse_id: 1234567890abcdef
+wait_timeout: 30s
+```
+
+**Response:**
+```json
+{
+  "statement_id": "01e00000-0000-0000-0000-000000000000",
+  "status": {
+    "state": "PENDING"
+  },
+  "manifest": {
+    "format": "JSON_ARRAY",
+    "schema": {
+      "column_count": 0,
+      "columns": []
+    },
+    "total_row_count": 0,
+    "total_chunk_count": 0,
+    "chunks": []
+  }
+}
+```
+
+### List Queries
+Retrieve a list of queries in your Databricks workspace
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-databricks-connection
+action: list_queries
+```
+
+**Response:**
+```json
+{
+  "count": 2,
+  "results": [
+    {
+      "id": "query-id-1",
+      "data_source_id": "data-source-id-1",
+      "name": "My Daily Report",
+      "description": "A query to generate daily sales reports.",
+      "query": "SELECT * FROM sales WHERE date = 'TODAY'",
+      "created_at": "2023-05-10T10:00:00.000Z",
+      "updated_at": "2023-05-10T10:00:00.000Z",
+      "user_id": 12345,
+      "is_draft": false,
+      "is_archived": false
+    }
+  ],
+  "page": 1,
+  "page_size": 25
+}
+```
+
+## Notes
+
+A warehouse_id is required to execute statements and can be obtained from your Databricks SQL warehouse settings. The wait_timeout parameter determines if the request is synchronous (5s to 50s) or asynchronous (0s).

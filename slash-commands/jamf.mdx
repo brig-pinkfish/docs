@@ -1,0 +1,88 @@
+---
+title: "Jamf Guide"
+description: "Learn how to use the Jamf slash command for Apple device management"
+---
+
+## What can you do with it?
+
+The `/jamf` command enables you to manage Apple devices through the Jamf Pro API. Perfect for device management, user account administration, computer group management, and automating IT workflows for macOS and iOS devices in your organization.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-jamf-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- None for basic operations
+
+**Optional:**
+
+- `id` - Resource ID for specific operations
+
+## Tools
+
+### Retrieve User List
+Find all user accounts in Jamf Pro
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-jamf-connection
+action: list_users
+```
+
+**Response:**
+```json
+{
+  "accounts": {
+    "size": 2,
+    "account": [
+      {
+        "id": 1,
+        "name": "admin"
+      },
+      {
+        "id": 2,
+        "name": "user1"
+      }
+    ]
+  }
+}
+```
+
+### Create Computer Group
+Create a new computer group in Jamf Pro
+
+**Parameters:**
+- `name` (required) - Name for the new computer group
+- `is_smart` (optional) - Whether the group is smart (true/false)
+
+**Example:**
+```
+/your-jamf-connection
+action: create_computer_group
+name: "New-Group-Name"
+is_smart: false
+```
+
+**Response:**
+```json
+{
+  "computer_group": {
+    "id": 123,
+    "name": "New-Group-Name",
+    "is_smart": false
+  }
+}
+```
+
+## Notes
+
+Jamf Pro is a comprehensive management solution for Apple devices. The API allows for programmatic access to manage devices, users, groups, and various configurations, enabling automation of IT workflows and integration with other systems.

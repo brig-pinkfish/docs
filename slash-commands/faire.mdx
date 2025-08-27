@@ -1,0 +1,120 @@
+---
+title: "Faire Guide"
+description: "Learn how to use the Faire slash command for wholesale marketplace management"
+---
+
+## What can you do with it?
+
+The `/faire` command enables you to manage products, inventory, and orders through the Faire wholesale marketplace API. Perfect for connecting brands with retailers, managing product catalogs, and tracking wholesale orders in your ecommerce operations.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-faire-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- None for basic operations
+
+**Optional:**
+
+- `page` - Page number for pagination
+- `limit` - Number of items per page
+
+## Tools
+
+### Get All Products
+Retrieve a list of products ordered by updated_at
+
+**Parameters:**
+- `page` (optional) - Page number for pagination
+- `limit` (optional) - Number of products per page
+
+**Example:**
+```
+/your-faire-connection
+action: get_products
+page: 1
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "page": 1,
+  "limit": 1,
+  "products": [
+    {
+      "id": "p_123",
+      "brand_id": "b_abc",
+      "name": "Faire's fantastic candle",
+      "short_description": "Our candles smell fantastic.",
+      "description": "A longer description of the fantastic candles.",
+      "sale_state": "FOR_SALE",
+      "lifecycle_state": "PUBLISHED",
+      "unit_multiplier": 2,
+      "minimum_order_quantity": 8,
+      "variants": [
+        {
+          "id": "po_123",
+          "sku": "vanilla-2019",
+          "wholesale_price_cents": 299,
+          "retail_price_cents": 599
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Get All Orders
+Retrieve a list of orders ordered by updated_at
+
+**Parameters:**
+- `page` (optional) - Page number for pagination
+- `limit` (optional) - Number of orders per page
+
+**Example:**
+```
+/your-faire-connection
+action: get_orders
+page: 1
+limit: 10
+```
+
+**Response:**
+```json
+{
+  "page": 1,
+  "limit": 1,
+  "orders": [
+    {
+      "id": "bo_bxdmjbwxid",
+      "display_id": "BXDMJBWXID",
+      "state": "NEW",
+      "created_at": "2019-03-15T00:09:15.000Z",
+      "updated_at": "2019-03-15T00:10:00.000Z",
+      "items": [
+        {
+          "id": "oi_bq425ju5vh",
+          "product_id": "p_fccaefnahr",
+          "variant_id": "po_3745tjzrpc",
+          "quantity": 1,
+          "sku": "goldenretriever",
+          "price_cents": 10000,
+          "product_name": "Golden Dog",
+          "variant_name": "retriever"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Notes
+
+Set Accept and Content-Type to application/json for every request. Faire is a wholesale marketplace that connects brands with retailers for bulk product sales.

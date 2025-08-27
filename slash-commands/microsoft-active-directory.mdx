@@ -1,0 +1,171 @@
+---
+title: "Microsoft Active Directory Guide"
+description: "Learn how to use the Microsoft Active Directory slash command for user and group management"
+---
+
+## What can you do with it?
+
+The `/microsoft-active-directory` command enables you to manage users, groups, and organizational resources in your Microsoft Active Directory through the Microsoft Graph API. Perfect for user administration, group management, directory role management, and organizational structure management.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-microsoft-active-directory-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `user_id` - User ID for specific user operations
+- `group_id` - Group ID for specific group operations
+
+**Optional:**
+
+- `filter` - Filter query for searching users or groups
+- `displayName` - Display name for user or group operations
+- `userPrincipalName` - User principal name for user operations
+
+## Tools
+
+### Get All Users
+Retrieve a list of all users in your directory
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-microsoft-active-directory-connection
+action: list_users
+```
+
+**Response:**
+```json
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users",
+  "@odata.count": 3,
+  "value": [
+    {
+      "id": "user-id-1",
+      "displayName": "John Doe",
+      "givenName": "John",
+      "surname": "Doe",
+      "userPrincipalName": "john.doe@company.com",
+      "mail": "john.doe@company.com",
+      "jobTitle": "Software Engineer",
+      "department": "Engineering",
+      "accountEnabled": true,
+      "userType": "Member"
+    }
+  ]
+}
+```
+
+### Get All Groups
+Retrieve a list of all groups in your directory
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-microsoft-active-directory-connection
+action: list_groups
+```
+
+**Response:**
+```json
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups",
+  "@odata.count": 2,
+  "value": [
+    {
+      "id": "group-id-1",
+      "displayName": "Engineering Team",
+      "description": "All engineering staff",
+      "groupTypes": ["Unified"],
+      "mail": "engineering@company.com",
+      "mailEnabled": true,
+      "mailNickname": "engineering",
+      "securityEnabled": false,
+      "visibility": "Public",
+      "createdDateTime": "2024-01-10T09:00:00Z"
+    }
+  ]
+}
+```
+
+### Search User by Email
+Find a specific user by their email address
+
+**Parameters:**
+- `userPrincipalName` (required) - Email address to search for
+
+**Example:**
+```
+/your-microsoft-active-directory-connection
+action: search_user
+userPrincipalName: john.doe@company.com
+```
+
+**Response:**
+```json
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users",
+  "value": [
+    {
+      "id": "user-id-1",
+      "displayName": "John Doe",
+      "userPrincipalName": "john.doe@company.com",
+      "mail": "john.doe@company.com"
+    }
+  ]
+}
+```
+
+### Search Group by Name
+Find a specific group by its display name
+
+**Parameters:**
+- `displayName` (required) - Group name to search for
+
+**Example:**
+```
+/your-microsoft-active-directory-connection
+action: search_group
+displayName: Engineering Team
+```
+
+**Response:**
+```json
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups",
+  "value": [
+    {
+      "id": "group-id-1",
+      "displayName": "Engineering Team",
+      "description": "All engineering staff",
+      "mailNickname": "engineering"
+    }
+  ]
+}
+```
+
+### Get Group Members
+Retrieve members of a specific group
+
+**Parameters:**
+- `group_id` (required) - ID of the group to get members for
+
+**Example:**
+```
+/your-microsoft-active-directory-connection
+action: get_group_members
+group_id: group-id-1
+```
+
+## Notes
+
+Use proper Graph API permissions (User.Read.All, Group.Read.All, Directory.Read.All etc.). Always extract IDs from .value[] array in list responses. Use $filter for exact matches: userPrincipalName eq 'email' or displayName eq 'name'. Use startsWith() for partial name searches when exact match fails.

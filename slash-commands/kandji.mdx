@@ -1,0 +1,88 @@
+---
+title: "Kandji Guide"
+description: "Learn how to use the Kandji slash command for Apple device management"
+---
+
+## What can you do with it?
+
+The `/kandji` command enables you to manage Apple devices through the Kandji Mobile Device Management (MDM) platform API. Perfect for device management, user administration, blueprint configurations, and security monitoring for macOS and iOS devices in your organization.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-kandji-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `device_id` - Device ID for specific operations
+
+**Optional:**
+
+- `action` - MDM action to perform (e.g., lock, unlock)
+
+## Tools
+
+### Retrieve Device List
+Get a list of devices in a Kandji tenant
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-kandji-connection
+action: list_devices
+```
+
+**Response:**
+```json
+[
+  {
+    "device_id": "03f81208-2b6a-4a77-81f5-cf1633bcfb95",
+    "device_name": "accuhive's MacBook Air",
+    "model": "MacBook Air (M1, 2020)",
+    "serial_number": "FVHHFKF7Q6L4",
+    "platform": "Mac",
+    "os_version": "14.4.1",
+    "last_check_in": "2024-07-23T14:11:37.150080Z",
+    "user": {
+      "email": "accuhive.admin@kandji.io",
+      "name": "acchuive admin",
+      "id": "5344c996-8823-4b37-8d6e-8515fc7c3a0a"
+    },
+    "asset_tag": "sending_tag_to_now",
+    "blueprint_id": "ab102b9d-8e9c-420d-a498-f2a1123091c7",
+    "tags": [
+      "accuhive_02"
+    ]
+  }
+]
+```
+
+### Lock Device
+Send an MDM command to remotely lock a device
+
+**Parameters:**
+- `device_id` (required) - ID of the device to lock
+
+**Example:**
+```
+/your-kandji-connection
+action: lock_device
+device_id: 03f81208-2b6a-4a77-81f5-cf1633bcfb95
+```
+
+**Response:**
+```json
+{
+  "PIN": "496406"
+}
+```
+
+## Notes
+
+Kandji is a Mobile Device Management (MDM) platform for Apple devices. The API allows for programmatic management of devices, users, and configurations. Its capabilities include listing and managing devices, handling automated device enrollments, creating and applying blueprints for configurations, and accessing audit logs for security and compliance monitoring.
