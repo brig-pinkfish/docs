@@ -1,0 +1,244 @@
+---
+title: "Productboard Guide"
+description: "Learn how to use the Productboard slash command for product management and roadmap planning"
+---
+
+## What can you do with it?
+
+The `/productboard` command enables you to manage product roadmaps, features, objectives, and releases through the Productboard API. Perfect for product managers, teams, and stakeholders to create, track, and manage product development initiatives, features, and strategic objectives.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/your-productboard-connection [action] [required-parameters] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `name` - Name for products, features, objectives, or releases
+- `description` - Description of the item being created
+
+**Optional:**
+
+- `owner_email` - Email of the person responsible
+- `status_id` - ID of the status to assign
+- `start_date` - Start date for timeframes
+- `end_date` - End date for timeframes
+- `granularity` - Timeframe granularity (quarter, year, etc.)
+
+## Tools
+
+### List All Products
+Retrieve a list of all products in your Productboard workspace
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-productboard-connection
+action: list_products
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "21659755-321a-4e5c-8975-be80647a5523",
+      "name": "Mobile App",
+      "description": "Our flagship mobile application for on-the-go product management."
+    },
+    {
+      "id": "a4f5b085-3321-4b8c-a4f1-28518e110757",
+      "name": "Web Platform",
+      "description": "The main web interface for our service."
+    }
+  ],
+  "links": {
+    "next": "https://api.productboard.com/products?page=2"
+  }
+}
+```
+
+### List All Features
+Retrieve a list of all features with their status and details
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-productboard-connection
+action: list_features
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "0e53a2b8-9337-4555-8938-b7002b55f14e",
+      "name": "New User Dashboard",
+      "description": "<p>A redesigned dashboard for new user onboarding.</p>",
+      "type": "feature",
+      "archived": false,
+      "status": {
+        "id": "b103135c-22a3-4e6f-8a4b-97d8e4f5555d",
+        "name": "In Progress"
+      },
+      "timeframe": {
+        "startDate": "2025-01-01",
+        "endDate": "2025-03-31",
+        "granularity": "quarter"
+      },
+      "owner": {
+        "email": "owner@example.com"
+      }
+    }
+  ]
+}
+```
+
+### List All Objectives
+Retrieve a list of strategic objectives and their hierarchy
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-productboard-connection
+action: list_objectives
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "c5b2b2b2-5b2b-4b2b-8b2b-2b2b2b2b2b2b",
+      "name": "Become market leader",
+      "description": "<p>Our objective is to become the market leader in the product management space.</p>",
+      "level": 0,
+      "state": "upcoming",
+      "status": {
+        "id": "b103135c-22a3-4e6f-8a4b-97d8e4f5555d",
+        "name": "In Progress"
+      },
+      "timeframe": {
+        "startDate": "2025-01-01",
+        "endDate": "2025-12-31",
+        "granularity": "year"
+      }
+    }
+  ]
+}
+```
+
+### Create New Initiative
+Create a new top-level initiative in your product roadmap
+
+**Parameters:**
+- `name` (required) - Initiative name
+- `description` (required) - Initiative description
+- `owner_email` (required) - Owner's email address
+- `status_id` (required) - Status ID
+- `start_date` (required) - Start date
+- `end_date` (required) - End date
+- `granularity` (required) - Timeframe granularity
+
+**Example:**
+```
+/your-productboard-connection
+action: create_initiative
+name: "New Mobile Experience"
+description: "A top-level initiative to revamp our mobile application."
+owner_email: "owner@example.com"
+status_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+start_date: "2025-08-25"
+end_date: "2025-12-31"
+granularity: "year"
+```
+
+**Response:**
+```json
+{
+  "data": {
+    "id": "1fa41093-547c-4435-86a6-f2b7b4a2c1f9"
+  },
+  "links": {
+    "self": "https://api.productboard.com/objectives/1fa41093-547c-4435-86a6-f2b7b4a2c1f9"
+  }
+}
+```
+
+### List All Companies
+Retrieve a list of companies in your workspace
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-productboard-connection
+action: list_companies
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "c1a6b2c8-912c-4b3c-829d-0f0e1f7b0a72",
+      "name": "Global Tech Inc.",
+      "domain": "globaltech.com",
+      "createdAt": "2025-08-24T14:22:00Z"
+    }
+  ]
+}
+```
+
+### Create New Release
+Create a new product release with timeframe and grouping
+
+**Parameters:**
+- `name` (required) - Release name
+- `description` (required) - Release description
+- `release_group_id` (required) - Release group ID
+- `start_date` (required) - Start date
+- `end_date` (required) - End date
+- `granularity` (required) - Timeframe granularity
+- `state` (required) - Release state
+
+**Example:**
+```
+/your-productboard-connection
+action: create_release
+name: "Q3-2025 Major Update"
+description: "Major quarterly release with new features"
+release_group_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+start_date: "2025-07-01"
+end_date: "2025-09-30"
+granularity: "quarter"
+state: "upcoming"
+```
+
+### List All Releases
+Retrieve a list of all releases in your workspace
+
+**Parameters:**
+- None required
+
+**Example:**
+```
+/your-productboard-connection
+action: list_releases
+```
+
+## Notes
+
+Productboard supports hierarchical structures with features, subfeatures, objectives, and initiatives. Timeframes can be set with granularity options like quarter or year. Some GET endpoints are paginated - follow the `links.next` URL in responses to fetch subsequent pages.
