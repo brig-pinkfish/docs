@@ -1,42 +1,88 @@
 ---
 title: "OCR Guide"
-description: "Extract text from images and scanned documents"
+description: "Extract text from images, PDFs, and scanned documents"
 ---
 
 ## What can you do with it?
 
-The `/ocr` command enables you to extract text from images and scanned documents using optical character recognition. You can convert photos of text into editable content, digitize printed documents, extract form data from scanned forms, and process images containing text in various formats.
+The `/ocr` command enables you to extract text from images, PDFs, and scanned documents using optical character recognition. You can convert photos of text into editable content, digitize printed documents, extract text from PDF files, extract form data from scanned forms, and process images or PDFs containing text in various formats.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/ocr [image-file] [options]
+/ocr [file] [options]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `image-file` - The image or scanned document to process (URL or uploaded file)
+- `file` - The image, PDF, or scanned document to process (URL or uploaded file)
 
 **Optional:**
 
-- `format` - Output format: json or plaintext (defaults to json)
-- `extract-fields` - Extract structured data from forms (true/false)
-- `language` - Specify text language for better accuracy (defaults to English)
+- `language_hints` - Array of language codes for better OCR accuracy (e.g., ["en", "es"])
+- `extract_text_only` - When true (default), returns only the extracted text. When false, includes detailed OCR data like bounding boxes, word positions, page structure, and text annotations for precise layout analysis
 
 ### Response Format
 
-The command returns:
+**Basic Response (extract_text_only: true):**
 ```json
 {
-  "output": "extracted text content",
-  "fields": {
-    "field_name": "field_value"
-  },
-  "confidence": "recognition confidence score",
-  "format": "output format used"
+  "success": true,
+  "capability": "ocr",
+  "totalFiles": 1,
+  "successfulFiles": 1,
+  "failedFiles": 0,
+  "results": [
+    {
+      "fileUrl": "file_url_here",
+      "fileName": "filename.ext",
+      "mimeType": "file/type",
+      "fileType": "image", 
+      "extractedText": "extracted text content"
+    }
+  ]
+}
+```
+
+**Detailed Response (extract_text_only: false):**
+```json
+{
+  "success": true,
+  "capability": "ocr",
+  "totalFiles": 1,
+  "successfulFiles": 1,
+  "failedFiles": 0,
+  "results": [
+    {
+      "fileUrl": "file_url_here",
+      "fileName": "filename.ext",
+      "mimeType": "file/type",
+      "fileType": "image",
+      "extractedText": "extracted text content",
+      "detailedResults": {
+        "textAnnotations": [
+          {
+            "description": "text",
+            "boundingPoly": { "vertices": [...] },
+            "locale": "en"
+          }
+        ],
+        "fullTextAnnotation": {
+          "text": "full text",
+          "pages": [
+            {
+              "width": 1024,
+              "height": 768,
+              "blocks": [...]
+            }
+          ]
+        }
+      }
+    }
+  ]
 }
 ```
 
@@ -45,34 +91,49 @@ The command returns:
 ### Basic Usage
 ```
 /ocr
-image-file: receipt.jpg
+file: receipt.jpg
 ```
 Extracts all text from an image of a receipt.
+
+```
+/ocr
+file: document.pdf
+```
+Extracts all text from a PDF document.
 
 ### Advanced Usage
 ```
 /ocr
-image-file: application-form.png
-extract-fields: true
-format: json
-language: English
+file: application-form.png
+language_hints: ["en"]
+extract_text_only: false
 ```
-Processes a scanned form, extracting field names and values into structured JSON format.
+Processes a scanned form with detailed annotations and language hints.
+
+```
+/ocr
+file: contract.pdf
+language_hints: ["en", "es"]
+```
+Processes a multi-page PDF contract with support for English and Spanish text.
 
 ### Specific Use Case
 ```
 /ocr
-image-file: business-card.jpg
-extract-fields: true
+file: business-card.jpg
+extract_text_only: false
 ```
-Extracts contact information from a business card image, organizing data into structured fields.
+Extracts text from a business card image with detailed bounding box information, word positions, and page structure - useful for building custom layout analysis or data extraction logic.
+
+```
+/ocr
+file: invoice.pdf
+language_hints: ["en"]
+```
+Extracts text from a PDF invoice with English language optimization.
 
 ## Notes
 
-**Supported Image Formats:**
-- JPEG/JPG (.jpg, .jpeg)
-- PNG (.png)
-- GIF (.gif)
-- BMP (.bmp)
-- TIFF (.tiff, .tif)
-- WebP (.webp)
+**Supported File Formats:**
+- **Image files:** JPEG/JPG (.jpg, .jpeg), PNG (.png), GIF (.gif), BMP (.bmp), TIFF (.tiff, .tif), WebP (.webp), SVG (.svg)
+- **PDF files:** Single and multi-page PDF documents (.pdf)
