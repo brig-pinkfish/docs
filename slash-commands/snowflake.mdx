@@ -126,4 +126,119 @@ statement-handle: 01234567-89ab-cdef-0123-456789abcdef
 
 ## Notes
 
-Snowflake supports standard SQL syntax and provides detailed metadata about query results including row types, column names, and data types. 
+Snowflake supports standard SQL syntax and provides detailed metadata about query results including row types, column names, and data types.
+
+<hr> 
+
+## Creating a Custom Connection using OAuth
+
+Pinkfish provides a built-in Snowflake connector that uses private key authentication for secure connections. However, if you prefer OAuth2 authentication over private keys, or if your organization's security policies require OAuth2 flows, you can create a custom OAuth2 connection instead.
+
+This guide walks you through setting up OAuth2 authentication for Snowflake integration as an alternative to the default private key method.
+
+### OAuth vs Private Key Authentication
+
+**Built-in Private Key Method:**
+- Uses RSA key pairs for authentication
+- No user interaction required after setup
+- Ideal for automated workflows and service accounts
+
+**Custom OAuth2 Method (this guide):**
+- Uses OAuth2 authorization flows
+- Requires initial user consent during setup, then automated via refresh tokens
+- Better integration with identity providers and user-based access controls
+- Allows for more granular permission scopes
+
+### Prerequisites
+
+- Account admin role in Snowflake
+- Access to Snowflake SQL interface
+
+### Step 1: Create OAuth2 Client Application
+
+Create a new OAuth2 security integration with the following SQL command:
+
+```sql
+CREATE OR REPLACE SECURITY INTEGRATION my_oauth_integration
+TYPE = OAUTH
+ENABLED = TRUE
+OAUTH_CLIENT = CUSTOM
+OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
+OAUTH_REDIRECT_URI = 'https://proxy.pinkfish.ai/request/callback'
+OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+OAUTH_REFRESH_TOKEN_VALIDITY = 7776000; -- 90 days
+```
+
+### Step 2: Get Authorization and Token URLs
+
+Retrieve the OAuth endpoints by describing the security integration:
+
+```sql
+DESCRIBE SECURITY INTEGRATION my_oauth_integration;
+```
+
+The response will contain the required URLs:
+
+```json
+{
+  "OAUTH_AUTHORIZATION_ENDPOINT": "https://ab12345.ap-southeast-1.snowflakecomputing.com/oauth/authorize",
+  "OAUTH_TOKEN_ENDPOINT": "https://ab12345.ap-southeast-1.snowflakecomputing.com/oauth/token-request",
+  ...
+}
+```
+
+### Step 3: Get Client ID and Secret
+
+Extract the client credentials using the system function:
+
+```sql
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('MY_OAUTH_INTEGRATION');
+```
+
+**Important:** The integration name must be in UPPERCASE.
+
+The response will look like:
+
+```json
+{
+  "OAUTH_CLIENT_SECRET_2": "base64string/U=",
+  "OAUTH_CLIENT_SECRET": "base64string/U=0=",
+  "OAUTH_CLIENT_ID": "base64string/U=+/Q="
+}
+```
+
+### Step 4: Configure OAuth Application
+
+#### 4a. Configure OAuth Flow Settings
+
+Using the URLs from Step 2, fill in the OAuth 2.0 Setup form:
+
+![OAuth 2.0 Setup form showing Authorization URL, Access Token URL, and API Base URL fields](/images/snowflake.oauth.1.png)
+
+**Note:** Replace `zv20369.ap-southeast-1` with your actual Snowflake account identifier from Step 2.
+
+#### 4b. Configure OAuth App Details
+
+Using the credentials from Step 3, fill in the OAuth App Details form:
+
+![OAuth App Details form showing Redirect URL, Client ID, Client Secret, and Scopes fields](/images/snowflake.oauth.2.png)
+
+**Note:** Scopes must be `refresh_token`
+
+### Required Values Summary
+
+From the setup process, you'll need:
+
+- **OAUTH_CLIENT_ID** (from Step 3)
+- **OAUTH_CLIENT_SECRET** (from Step 3)
+- **Authorization and Token endpoints** (from Step 2)
+
+These credentials provide everything needed to configure OAuth2 authentication with your Snowflake instance.
+
+### Additional Notes
+
+- Refresh tokens are valid for 90 days (7,776,000 seconds)
+- The redirect URI is set to `https://proxy.pinkfish.ai/request/callback`
+- Client type is set to 'CONFIDENTIAL' for enhanced security
+- Replace account identifiers in URLs with your actual Snowflake account details
+- **Important:** Only users who are members of your Snowflake account can authenticate through this OAuth2 integration. Note that the account admin who creates the OAuth2 client application cannot use it to authenticate themselves - you'll need a different user account to test the connection 
