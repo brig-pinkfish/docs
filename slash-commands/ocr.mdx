@@ -25,38 +25,54 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
 - `languageHints` - Array of language codes for better OCR accuracy (e.g., ["en", "es"])
 - `extractTextOnly` - When true (default), returns only the extracted text. When false, includes detailed OCR data like bounding boxes, word positions, page structure, and text annotations for precise layout analysis
 - `collectionId` - Specific collection ID to store results. If not provided, uses default MultimediaArtifact collection
-- `async` - When true, processes files asynchronously in background. Automatically enabled for files with more than 50 pages
+- `async` - When true, processes files asynchronously in background. Automatically enabled for large files
 
 ### Response Format
 
-**Basic Response (extractTextOnly: true):**
+**Basic Response (extractTextOnly: true, synchronous):**
 ```json
 {
   "success": true,
+  "async": false,
+  "collectionId": "collection-id-123_artifact",
   "capability": "ocr",
   "totalFiles": 1,
   "successfulFiles": 1,
   "failedFiles": 0,
-  "totalOcrPages": 1,
+  "totalOcrPages": 3,
   "results": [
     {
-      "fileUrl": "file_url_here",
-      "inputFileName": "filename.ext",
-      "inputMimeType": "file/type",
-      "outputFileName": "processed_filename.txt",
-      "outputMimeType": "text/plain",
-      "extractedText": "extracted text content",
-      "fileId": "storage_file_id",
-      "signedUrl": "https://...",
-      "ocrPages": 1,
-      "totalPages": 1,
-      "successRate": "1/1"
+      "fileUrl": "https://example.com/document.pdf",
+      "inputFileName": "document.pdf",
+      "inputMimeType": "application/pdf",
+      "outputFileName": "ocr_document.json",
+      "outputMimeType": "application/json",
+      "extractedText": "Sample extracted text from the document...",
+      "pageResults": [
+        {
+          "page": 1,
+          "extractedText": "Page 1 content here..."
+        },
+        {
+          "page": 2,
+          "extractedText": "Page 2 content here..."
+        },
+        {
+          "page": 3,
+          "extractedText": "Page 3 content here..."
+        }
+      ],
+      "fileId": "fileId123",
+      "signedUrl": "https://skills.pinkfish.ai/files/collection-id-123/ocr_document.json?signed-key=dummy-key",
+      "ocrPages": 3,
+      "totalPages": 3,
+      "successRate": "3/3"
     }
   ]
 }
 ```
 
-**Detailed Response (extractTextOnly: false):**
+**Detailed Response (extractTextOnly: false, synchronous):**
 ```json
 {
   "success": true,
@@ -72,7 +88,7 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
       "inputMimeType": "file/type",
       "outputFileName": "processed_filename.txt",
       "outputMimeType": "text/plain",
-      "extractedText": "extracted text content",
+      "extractedText": "text content here",
       "fileId": "storage_file_id",
       "signedUrl": "https://...",
       "ocrPages": 1,
@@ -102,21 +118,22 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
 }
 ```
 
-**Async Response (async: true OR large file):**
+**Async Response (async: true OR file is big):**
 ```json
 {
   "success": true,
   "capability": "ocr",
   "async": true,
-  "responseId": "ocr-processing-queue-1756995572018-9349gy00v",
+  "collectionId": "collection-id-123_artifact",
+  "responseId": "ocr-processing-queue-1757091370603-abc123",
   "status": "queued",
-  "createdAt": "2025-09-04T14:19:32.018Z",
+  "createdAt": "2025-01-06T16:56:10.604Z",
   "results": [
     {
-      "inputFileName": "guide.pdf",
-      "outputFileName": "guide_ocr_pages.json",
-      "fileId": "uUO1X6Zwdx1zsb",
-      "signedUrl": "https://skills.pinkfish.ai/files/99da35act/guide_ocr_pages.json?signed-key=WC19MGQ="
+      "inputFileName": "document.pdf",
+      "outputFileName": "ocr_document.json",
+      "fileId": "fileId123",
+      "signedUrl": "https://skills.pinkfish.ai/files/collection-id-123/ocr_document.json?signed-key=dummy-key"
     }
   ],
   "totalPages": 3,
@@ -126,7 +143,7 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
 }
 ```
 
-**Note:** The `signedUrl` will be immediately available with a placeholder file that gets overwritten with OCR results when processing completes. The `status` can be "queued", "processing", "completed", or "failed". Files with more than 50 pages are automatically processed asynchronously regardless of the `async` parameter setting.
+**Note:** The `signedUrl` will be immediately available with a placeholder file that gets overwritten with OCR results when processing completes. The `status` can be "queued", "processing", "completed", or "failed". Large files are automatically processed asynchronously regardless of the `async` parameter setting.
 
 ## Examples
 
