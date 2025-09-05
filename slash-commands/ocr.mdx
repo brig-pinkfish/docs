@@ -1,78 +1,189 @@
 ---
 title: "OCR Guide"
-description: "Extract text from images and scanned documents"
+description: "Extract text from images, PDFs, and scanned documents"
 ---
 
 ## What can you do with it?
 
-The `/ocr` command enables you to extract text from images and scanned documents using optical character recognition. You can convert photos of text into editable content, digitize printed documents, extract form data from scanned forms, and process images containing text in various formats.
+The `/ocr` command enables you to extract text from images, PDFs, and scanned documents using optical character recognition. You can convert photos of text into editable content, digitize printed documents, extract text from PDF files, extract form data from scanned forms, and process images or PDFs containing text in various formats.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/ocr [image-file] [options]
+/ocr [file] [options]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `image-file` - The image or scanned document to process (URL or uploaded file)
+- `file` - The image, PDF, or scanned document to process (URL or uploaded file)
 
 **Optional:**
 
-- `format` - Output format: json or plaintext (defaults to json)
-- `extract-fields` - Extract structured data from forms (true/false)
-- `language` - Specify text language for better accuracy (defaults to English)
+- `languageHints` - Array of language codes for better OCR accuracy (e.g., ["en", "es"])
+- `extractTextOnly` - When true (default), returns only the extracted text. When false, includes detailed OCR data like bounding boxes, word positions, page structure, and text annotations for precise layout analysis
+- `collectionId` - Specific collection ID to store results. If not provided, uses default MultimediaArtifact collection
+- `async` - When true, processes files asynchronously in background. Automatically enabled for files with more than 50 pages
 
 ### Response Format
 
-The command returns:
+**Basic Response (extractTextOnly: true):**
 ```json
 {
-  "output": "extracted text content",
-  "fields": {
-    "field_name": "field_value"
-  },
-  "confidence": "recognition confidence score",
-  "format": "output format used"
+  "success": true,
+  "capability": "ocr",
+  "totalFiles": 1,
+  "successfulFiles": 1,
+  "failedFiles": 0,
+  "totalOcrPages": 1,
+  "results": [
+    {
+      "fileUrl": "file_url_here",
+      "inputFileName": "filename.ext",
+      "inputMimeType": "file/type",
+      "outputFileName": "processed_filename.txt",
+      "outputMimeType": "text/plain",
+      "extractedText": "extracted text content",
+      "fileId": "storage_file_id",
+      "signedUrl": "https://...",
+      "ocrPages": 1,
+      "totalPages": 1,
+      "successRate": "1/1"
+    }
+  ]
 }
 ```
+
+**Detailed Response (extractTextOnly: false):**
+```json
+{
+  "success": true,
+  "capability": "ocr",
+  "totalFiles": 1,
+  "successfulFiles": 1,
+  "failedFiles": 0,
+  "totalOcrPages": 1,
+  "results": [
+    {
+      "fileUrl": "file_url_here",
+      "inputFileName": "filename.ext",
+      "inputMimeType": "file/type",
+      "outputFileName": "processed_filename.txt",
+      "outputMimeType": "text/plain",
+      "extractedText": "extracted text content",
+      "fileId": "storage_file_id",
+      "signedUrl": "https://...",
+      "ocrPages": 1,
+      "totalPages": 1,
+      "successRate": "1/1",
+      "detailedResults": {
+        "textAnnotations": [
+          {
+            "description": "text",
+            "boundingPoly": { "vertices": [...] },
+            "locale": "en"
+          }
+        ],
+        "fullTextAnnotation": {
+          "text": "full text",
+          "pages": [
+            {
+              "width": 1024,
+              "height": 768,
+              "blocks": [...]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+**Async Response (async: true OR large file):**
+```json
+{
+  "success": true,
+  "capability": "ocr",
+  "async": true,
+  "responseId": "ocr-processing-queue-1756995572018-9349gy00v",
+  "status": "queued",
+  "createdAt": "2025-09-04T14:19:32.018Z",
+  "results": [
+    {
+      "inputFileName": "guide.pdf",
+      "outputFileName": "guide_ocr_pages.json",
+      "fileId": "uUO1X6Zwdx1zsb",
+      "signedUrl": "https://skills.pinkfish.ai/files/99da35act/guide_ocr_pages.json?signed-key=WC19MGQ="
+    }
+  ],
+  "totalPages": 3,
+  "totalImages": 0,
+  "forceAsync": false,
+  "message": "OCR processing started in background. Results will be saved to file storage when complete."
+}
+```
+
+**Note:** The `signedUrl` will be immediately available with a placeholder file that gets overwritten with OCR results when processing completes. The `status` can be "queued", "processing", "completed", or "failed". Files with more than 50 pages are automatically processed asynchronously regardless of the `async` parameter setting.
 
 ## Examples
 
 ### Basic Usage
 ```
 /ocr
-image-file: receipt.jpg
+file: receipt.jpg
 ```
 Extracts all text from an image of a receipt.
+
+```
+/ocr
+file: document.pdf
+```
+Extracts all text from a PDF document.
 
 ### Advanced Usage
 ```
 /ocr
-image-file: application-form.png
-extract-fields: true
-format: json
-language: English
+file: application-form.png
+languageHints: ["en"]
+extractTextOnly: false
 ```
-Processes a scanned form, extracting field names and values into structured JSON format.
+Processes a scanned form with detailed annotations and language hints.
+
+```
+/ocr
+file: contract.pdf
+languageHints: ["en", "es"]
+```
+Processes a multi-page PDF contract with support for English and Spanish text.
+
+```
+/ocr
+file: large-report.pdf
+async: true
+collectionId: "my-collection"
+```
+Processes a large PDF report asynchronously and stores results in a specific collection.
 
 ### Specific Use Case
 ```
 /ocr
-image-file: business-card.jpg
-extract-fields: true
+file: business-card.jpg
+extractTextOnly: false
 ```
-Extracts contact information from a business card image, organizing data into structured fields.
+Extracts text from a business card image with detailed bounding box information, word positions, and page structure - useful for building custom layout analysis or data extraction logic.
+
+```
+/ocr
+file: invoice.pdf
+languageHints: ["en"]
+```
+Extracts text from a PDF invoice with English language optimization.
 
 ## Notes
 
-**Supported Image Formats:**
-- JPEG/JPG (.jpg, .jpeg)
-- PNG (.png)
-- GIF (.gif)
-- BMP (.bmp)
-- TIFF (.tiff, .tif)
-- WebP (.webp)
+**Supported File Formats:**
+- **Image files:** JPEG/JPG (.jpg, .jpeg), PNG (.png), GIF (.gif), BMP (.bmp), TIFF (.tiff, .tif), WebP (.webp), SVG (.svg)
+- **PDF files:** Single and multi-page PDF documents (.pdf)
