@@ -24,6 +24,8 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
 
 - `languageHints` - Array of language codes for better OCR accuracy (e.g., ["en", "es"])
 - `extractTextOnly` - When true (default), returns only the extracted text. When false, includes detailed OCR data like bounding boxes, word positions, page structure, and text annotations for precise layout analysis
+- `collectionId` - Specific collection ID to store results. If not provided, uses default MultimediaArtifact collection
+- `async` - When true, processes files asynchronously in background. Automatically enabled for files with more than 50 pages
 
 ### Response Format
 
@@ -35,13 +37,20 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
   "totalFiles": 1,
   "successfulFiles": 1,
   "failedFiles": 0,
+  "totalOcrPages": 1,
   "results": [
     {
       "fileUrl": "file_url_here",
-      "fileName": "filename.ext",
-      "mimeType": "file/type",
-      "fileType": "image", 
-      "extractedText": "extracted text content"
+      "inputFileName": "filename.ext",
+      "inputMimeType": "file/type",
+      "outputFileName": "processed_filename.txt",
+      "outputMimeType": "text/plain",
+      "extractedText": "extracted text content",
+      "fileId": "storage_file_id",
+      "signedUrl": "https://...",
+      "ocrPages": 1,
+      "totalPages": 1,
+      "successRate": "1/1"
     }
   ]
 }
@@ -55,13 +64,20 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
   "totalFiles": 1,
   "successfulFiles": 1,
   "failedFiles": 0,
+  "totalOcrPages": 1,
   "results": [
     {
       "fileUrl": "file_url_here",
-      "fileName": "filename.ext",
-      "mimeType": "file/type",
-      "fileType": "image",
+      "inputFileName": "filename.ext",
+      "inputMimeType": "file/type",
+      "outputFileName": "processed_filename.txt",
+      "outputMimeType": "text/plain",
       "extractedText": "extracted text content",
+      "fileId": "storage_file_id",
+      "signedUrl": "https://...",
+      "ocrPages": 1,
+      "totalPages": 1,
+      "successRate": "1/1",
       "detailedResults": {
         "textAnnotations": [
           {
@@ -85,6 +101,32 @@ The `/ocr` command enables you to extract text from images, PDFs, and scanned do
   ]
 }
 ```
+
+**Async Response (async: true OR large file):**
+```json
+{
+  "success": true,
+  "capability": "ocr",
+  "async": true,
+  "responseId": "ocr-processing-queue-1756995572018-9349gy00v",
+  "status": "queued",
+  "createdAt": "2025-09-04T14:19:32.018Z",
+  "results": [
+    {
+      "inputFileName": "guide.pdf",
+      "outputFileName": "guide_ocr_pages.json",
+      "fileId": "uUO1X6Zwdx1zsb",
+      "signedUrl": "https://skills.pinkfish.ai/files/99da35act/guide_ocr_pages.json?signed-key=WC19MGQ="
+    }
+  ],
+  "totalPages": 3,
+  "totalImages": 0,
+  "forceAsync": false,
+  "message": "OCR processing started in background. Results will be saved to file storage when complete."
+}
+```
+
+**Note:** The `signedUrl` will be immediately available with a placeholder file that gets overwritten with OCR results when processing completes. The `status` can be "queued", "processing", "completed", or "failed". Files with more than 50 pages are automatically processed asynchronously regardless of the `async` parameter setting.
 
 ## Examples
 
@@ -116,6 +158,14 @@ file: contract.pdf
 languageHints: ["en", "es"]
 ```
 Processes a multi-page PDF contract with support for English and Spanish text.
+
+```
+/ocr
+file: large-report.pdf
+async: true
+collectionId: "my-collection"
+```
+Processes a large PDF report asynchronously and stores results in a specific collection.
 
 ### Specific Use Case
 ```
