@@ -1,0 +1,62 @@
+---
+title: "Delete Artifacts Guide"
+description: "Learn how to use the delete-artifacts slash command to clean up artifact files from previous steps"
+---
+
+## What can you do with it?
+
+Delete artifact files that were generated in the current workflow run. This is useful for cleaning up files, if you don't want them to persist on Pinkfish storage after a run.
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/delete-artifacts
+artifacts: which artifacts to delete
+```
+
+### Parameters
+
+- **artifacts**: Which artifacts to delete ("all" or specific filename)
+- **include logs** (optional): Whether to include log files
+
+### Current run only
+
+You can only delete artifacts that were generated during the current "Run" execution. If you run individual steps separately, you cannot delete artifacts from previous individual step runs. To delete artifacts from earlier steps, you must use "Run All" (or trigger call) to execute the entire workflow in one session.
+
+### Response Format
+
+Returns detailed results with success/failure counts and specific error messages for failed deletions.
+
+## Examples
+
+### Delete all
+
+```
+/delete-artifacts
+artifacts: all
+```
+
+### Delete by name
+
+```
+/delete-artifacts
+artifacts: report.pdf
+```
+
+### Delete all including logs
+
+```
+/delete-artifacts
+artifacts: all
+include logs: true
+```
+
+### Notes
+
+- Current run only: Can only delete files from current "Run" execution
+- Log files (stdout.txt) are protected by default unless explicitly requested
+- Deletion is permanent and cannot be undone
+- Delete URLs expire after 15 minutes
+- Individual step runs cannot delete artifacts from previous steps
