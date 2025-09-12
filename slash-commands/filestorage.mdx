@@ -6,6 +6,7 @@ description: "Learn how to use the filestorage slash command for file storage op
 ## How to use it?
 
 ### Basic Command Structure
+
 ```
 /selected-filestore [action] [filename] [content]
 ```
@@ -13,10 +14,12 @@ description: "Learn how to use the filestorage slash command for file storage op
 ### Parameters
 
 **Required:**
+
 - `action` - Operation to perform (upload, create, append, get, list, delete, update)
 - `filename` - Name of the file (required for most operations)
 
 **Optional:**
+
 - `content` - File content for upload/create/append operations
 - `metadata` - Additional information about the file
 - `file_links_expire_in_days` - Link expiry: 1-7 days or "never" for public files
@@ -24,6 +27,7 @@ description: "Learn how to use the filestorage slash command for file storage op
 - `get_file_contents` - Set to true to retrieve file content along with metadata
 - `format` - Set to "light" for minimal file listing
 - `replaceExisting` - Whether to replace existing files with same filename (defaults to "true"; if "false", adds timestamp to filename)
+- `triggerUrls` - Array of trigger objects that fire when the file changes (see [Triggers](#triggers) section)
 
 ### File Link Expiration
 
@@ -37,6 +41,7 @@ description: "Learn how to use the filestorage slash command for file storage op
 ### Response Format
 
 File creation/update:
+
 ```json
 {
   "message": "File created successfully",
@@ -45,6 +50,7 @@ File creation/update:
 ```
 
 File metadata (full details):
+
 ```json
 {
   "filename": "test999.json",
@@ -66,6 +72,7 @@ File metadata (full details):
 ```
 
 File listing (light format):
+
 ```json
 {
   "id": "XmWSUYJ3P3FJTmSz0gyz",
@@ -89,17 +96,21 @@ File listing (light format):
 ## Tools
 
 ### Upload File
+
 Upload a file from buffer or file input
 
 **Parameters:**
+
 - `action` (required) - Set to "upload"
 - `file` (required) - File or buffer to upload
 - `metadata` (optional) - File metadata
 - `file_links_expire_in_days` (optional) - Link expiry (1-7 days or "never")
 - `file_links_expire_in_minutes` (optional) - Minute-level precision
 - `replaceExisting` (optional) - Whether to replace existing files with same filename (defaults to "true")
+- `triggerUrls` (optional) - Array of trigger objects (see [Triggers](#triggers) section)
 
 **Example:**
+
 ```
 /selected-filestore upload file with:
 file: [file buffer or file input]
@@ -109,9 +120,11 @@ replaceExisting: "false"
 ```
 
 ### Create or Replace Document
+
 Create a new file or replace existing one with text content
 
 **Parameters:**
+
 - `action` (required) - Set to "create"
 - `filename` (required) - Name of the file
 - `content` (required) - File content
@@ -121,6 +134,7 @@ Create a new file or replace existing one with text content
 - `replaceExisting` (optional) - Whether to replace existing files with same filename (defaults to "true")
 
 **Example:**
+
 ```
 /selected-filestore create a new file with:
 filename: config.json
@@ -131,9 +145,11 @@ replaceExisting: "true"
 ```
 
 ### Append to Document
+
 Append content to an existing file
 
 **Parameters:**
+
 - `action` (required) - Set to "append"
 - `filename` (required) - Name of the file
 - `content` (required) - Content to append
@@ -142,6 +158,7 @@ Append content to an existing file
 - `file_links_expire_in_minutes` (optional) - Minute-level precision
 
 **Example:**
+
 ```
 /selected-filestore append to file:
 filename: system-logs.txt
@@ -151,9 +168,11 @@ file_links_expire_in_days: "1"
 ```
 
 ### Get Document
+
 Retrieve file metadata or content
 
 **Parameters:**
+
 - `action` (required) - Set to "get"
 - `filename` (required) - Name of the file
 - `get_file_contents` (optional) - Set to true to retrieve content
@@ -162,12 +181,14 @@ Retrieve file metadata or content
 **Examples:**
 
 Get metadata only:
+
 ```
 /selected-filestore get file metadata:
 filename: quarterly-report.txt
 ```
 
 Get metadata and content:
+
 ```
 /selected-filestore get file with content:
 filename: quarterly-report.txt
@@ -175,6 +196,7 @@ get_file_contents: true
 ```
 
 Get with custom link expiry:
+
 ```
 /selected-filestore get file:
 filename: quarterly-report.txt
@@ -182,48 +204,58 @@ file_links_expire_in_days: "7"
 ```
 
 ### List Files
+
 List all files with full or light details
 
 **Parameters:**
+
 - `action` (required) - Set to "list"
 - `format` (optional) - Set to "light" for minimal info
 - `file_links_expire_in_days` (optional) - Link expiry for returned signedUrls
 
 **Response includes:**
+
 - **Full details**: All metadata, signedUrl, and accessList
 - **Light format**: File ID, filename, filepath, type, mime_type, file_size, isPublic status, collectionId, timestamps, and metadata object
 
 **Examples:**
 
 List with full details:
+
 ```
 /selected-filestore list files with:
 file_links_expire_in_days: "7"
 ```
 
 List with minimal info:
+
 ```
 /selected-filestore list files:
 format: light
 ```
 
 ### Delete Document
+
 Delete a file from storage
 
 **Parameters:**
+
 - `action` (required) - Set to "delete"
 - `filename` (required) - Name of the file
 
 **Example:**
+
 ```
 /selected-filestore delete file:
 filename: old-report.txt
 ```
 
 ### Update File Link Expiry
+
 Update link expiration settings for existing files
 
 **Parameters:**
+
 - `action` (required) - Set to "update"
 - `filename` (required) - Name of the file
 - `file_links_expire_in_days` (required) - New link expiry (1-7 days or "never")
@@ -233,6 +265,7 @@ Update link expiration settings for existing files
 **Examples:**
 
 Make file public:
+
 ```
 /selected-filestore update file expiry:
 filename: public-document.pdf
@@ -240,6 +273,7 @@ file_links_expire_in_days: "never"
 ```
 
 Set custom expiry:
+
 ```
 /selected-filestore update file expiry:
 filename: temp-file.txt
@@ -275,16 +309,19 @@ For supported document types (PDF, DOCX, XLSX, PPTX, CSV), the system automatica
 ### File Type Handling
 
 **Text files** (JSON, TXT, HTML, CSV):
+
 - Use `get_file_contents: true` to retrieve content directly
 - Can be updated with POST method
 
 **Binary files** (PNG, JPG, PDF, MP3, etc.):
+
 - Use signedUrl from metadata to access file content
 - Use PATCH method to update metadata and link expiry without resending content
 
 ## Examples
 
 ### Configuration Management
+
 ```
 /selected-filestore create a new file with:
 filename: app-config.json
@@ -295,6 +332,7 @@ replaceExisting: "true"
 ```
 
 ### System Logging
+
 ```
 /selected-filestore create a new file with:
 filename: system-logs-2024-03.txt
@@ -304,6 +342,7 @@ file_links_expire_in_days: "never"
 ```
 
 ### Document Storage
+
 ```
 /selected-filestore create a new file with:
 filename: quarterly-report-q1-2024.txt
@@ -314,6 +353,7 @@ replaceExisting: "false"
 ```
 
 ### Log File Management
+
 ```
 /selected-filestore append to file:
 filename: system-logs-2024-03.txt
@@ -323,12 +363,168 @@ file_links_expire_in_days: "1"
 ```
 
 ### Making Files Public
+
 ```
 /selected-filestore update file expiry:
 filename: public-document.pdf
 file_links_expire_in_days: "never"
 metadata: "Document made public for external sharing"
 ```
+
+## Triggers
+
+Filestorage supports event-driven triggers that automatically start workflows when files change. Triggers can be set at two levels: **collection-wide** (affects all files) or **file-specific** (affects individual files).
+
+### Trigger Events
+
+- **onCreate**: Fires when new files are uploaded or created (collection-level only)
+- **onEdit**: Fires when existing files are modified or updated (collection or file level)
+- **onDelete**: Fires when files are deleted (collection or file level)
+
+### Trigger Levels
+
+**Collection-Level Triggers**: Set on the entire file collection to monitor all files
+
+- Automatically fire for every file in the collection
+- Perfect for system-wide file processing and monitoring
+- Set via file collection management interface
+
+**File-Level Triggers**: Set on individual files to monitor specific files
+
+- Only fire for that particular file
+- Ideal for monitoring important documents or configuration files
+- Set via the `triggerUrls` parameter when uploading/creating/updating files
+
+### Trigger Structure
+
+Triggers use an array format with multiple trigger objects:
+
+```json
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/d2nia2isg8tc7112frtg",
+    "apiKey": "your-api-key"
+  },
+  {
+    "event": "onDelete",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/a3bcd4efg9ud8223hsui",
+    "apiKey": "your-api-key-2"
+  }
+]
+```
+
+### Trigger Payload
+
+When triggers fire, they receive detailed information about the file event:
+
+**For onCreate and onDelete events:**
+
+```json
+{
+  "event": "onCreate",
+  "itemId": "file-abc123",
+  "providerId": "user-id",
+  "collectionId": "collection-id",
+  "collectionType": "filestorage",
+  "filename": "config.json",
+  "filepath": "file-storage/collection-id/config.json",
+  "fileSize": 1024,
+  "mimeType": "application/json",
+  "signedUrl": "https://storage.googleapis.com/signed-url",
+  "metadata": { "version": "1.0", "environment": "production" },
+  "isPublic": false,
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "triggerLevel": "file"
+}
+```
+
+**For onEdit events (same structure as above):**
+
+- File modifications (content updates, metadata changes, public status changes)
+- The `signedUrl` provides access to the updated file content
+- `updatedAt` timestamp reflects when the change occurred
+
+### Examples
+
+#### Upload File with Multiple Triggers
+
+```
+/selected-filestore upload file with:
+file: [your file buffer]
+metadata: {"type": "configuration", "environment": "production"}
+file_links_expire_in_days: "7"
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-monitor",
+    "apiKey": "your-api-key"
+  },
+  {
+    "event": "onDelete",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-deleted",
+    "apiKey": "your-api-key-2"
+  }
+]
+```
+
+#### Create File with Trigger
+
+```
+/selected-filestore create a new file with:
+filename: system-config.json
+content: {"database_url": "postgresql://...", "api_key": "secret"}
+metadata: {"type": "system_config", "critical": true}
+file_links_expire_in_days: "never"
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/system-config-changed",
+    "apiKey": "your-api-key"
+  }
+]
+```
+
+#### Update File (Will Fire onEdit Triggers)
+
+```
+/selected-filestore update file expiry:
+filename: system-config.json
+file_links_expire_in_days: "1"
+metadata: {"type": "system_config", "critical": true, "last_reviewed": "2024-01-15"}
+```
+
+#### File Processing Pipeline
+
+```
+/selected-filestore upload file with:
+file: [document buffer]
+metadata: {"stage": "raw", "needs_processing": true}
+triggerUrls: [
+  {
+    "event": "onCreate",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/document-processor",
+    "apiKey": "your-api-key"
+  }
+]
+```
+
+### Rate Limiting and Logs
+
+- **Rate Limiting**: onEdit triggers are limited to 2 executions per minute per file to prevent infinite loops
+- **Trigger Logs**: All trigger executions are logged with status, execution time, and error details
+- **Error Handling**: Failed triggers are logged but don't prevent the original file operation from completing
+- **File Access**: Triggers receive signed URLs that are valid for 7 days to access file content
+
+### Best Practices
+
+- **Use Collection-Level Triggers** for automated file processing pipelines (e.g., document conversion, backup systems)
+- **Use File-Level Triggers** for monitoring critical files (e.g., configuration files, important documents)
+- **Monitor file access** through signed URLs provided in trigger payloads
+- **Test triggers thoroughly** before production use to ensure reliable file processing
+- **Handle file types appropriately** - use signed URLs for binary files, content extraction for text files
+- **Consider file size limits** when processing large files in triggered workflows
 
 ## Notes
 

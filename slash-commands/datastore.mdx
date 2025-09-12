@@ -6,6 +6,7 @@ description: "Learn how to use the datastore slash command to interact with NoSQ
 ## How to use it?
 
 ### Basic Command Structure
+
 ```
 /selected-datastore [action] [key | key+sortField | itemId] [content]
 ```
@@ -13,21 +14,25 @@ description: "Learn how to use the datastore slash command to interact with NoSQ
 ### Parameters
 
 **Required:**
+
 - `action` - Operation to perform (create, read, update, delete, search, list)
 - `collection` - Collection ID for data isolation (automatically set when you select a collection from the slash command menu)
 
 **Required (one of):**
+
 - `key` - Primary identifier for your item
 - `itemId` - Unique document ID
 - `key` + `sortField` - Primary and secondary identifiers for specific item
 
 **Optional:**
+
 - `sortField` - Secondary identifier that makes the item unique when combined with key
 - `content` - The main content of your item
 - `metadata` - Custom attributes as a JSON object
-- `triggerUrls` - URLs to be called when the item changes
+- `triggerUrls` - Array of trigger objects that fire when the item changes (see [Triggers](#triggers) section)
 
 For tables:
+
 ```
 metadata: {
   "displayType": "csv",
@@ -38,6 +43,7 @@ metadata: {
 ### Response Format
 
 Single item:
+
 ```json
 {
   "id": "unique item ID",
@@ -51,6 +57,7 @@ Single item:
 ```
 
 List of items (light format):
+
 ```json
 [
   {
@@ -66,18 +73,21 @@ List of items (light format):
 ## Tools
 
 ### Create/Update Item
+
 Create a new item or update an existing one. If key and sortField already exist, this will update the existing item.
 
 **Parameters:**
+
 - `action` (required) - Set to "create" or "update"
 - `key` (required) - Primary identifier
 - `content` (optional) - Item content
 - `sortField` (optional) - Secondary identifier
 - `metadata` (optional) - Custom attributes
-- `triggerUrls` (optional) - Webhook URLs
+- `triggerUrls` (optional) - Array of trigger objects (see [Triggers](#triggers) section)
 - `triggerChanges` (optional) - Set to false to prevent firing triggers
 
 **Example:**
+
 ```
 /selected-datastore create a new item with:
 key: user123
@@ -85,12 +95,15 @@ content: {"name": "John Doe", "email": "john@example.com"}
 ```
 
 ### Read Items
+
 Retrieve items from the datastore
 
 **Parameters:**
+
 - `action` (required) - Set to "read" or "get"
 
 **Required (one of):**
+
 - `key` - Primary identifier (returns all items with that key)
 - `key` + `sortField` - Primary and secondary identifiers for specific item
 - `itemId` - Unique document ID
@@ -98,30 +111,36 @@ Retrieve items from the datastore
 **Examples:**
 
 By item ID:
+
 ```
 /selected-datastore get item with itemId: abc123def456
 ```
 
 By key and sort field:
+
 ```
 /selected-datastore get item with key: projects and sortField: mobile-app-redesign
 ```
 
 By key only (returns all items with that key):
+
 ```
 /selected-datastore get items with key: projects
 ```
 
 ### List All Items
+
 Retrieve all items with optional filtering and pagination
 
 **Parameters:**
+
 - `action` (required) - Set to "list"
 - `limit` (optional) - Maximum number of results (default: 50, max: 1000)
 - `orderedBy` (optional) - Sort field and direction (e.g., "createdAt:desc")
 - `format` (optional) - Set to "light" for minimal information
 
 **Example:**
+
 ```
 /selected-datastore list items with:
 limit: 50
@@ -130,9 +149,11 @@ format: light
 ```
 
 ### Update Item by ID
+
 Update an existing item using its unique ID
 
 **Parameters:**
+
 - `action` (required) - Set to "update"
 - `itemId` (required) - Unique document ID
 - `content` (optional) - Updated content
@@ -142,6 +163,7 @@ Update an existing item using its unique ID
 **Examples:**
 
 Update with triggers:
+
 ```
 /selected-datastore update item with:
 itemId: abc123def456
@@ -149,6 +171,7 @@ content: Updated project documentation
 ```
 
 Update without firing triggers:
+
 ```
 /selected-datastore update item with:
 itemId: abc123def456
@@ -157,12 +180,15 @@ triggerChanges: false
 ```
 
 ### Delete Item
+
 Remove an item from the datastore
 
 **Parameters:**
+
 - `action` (required) - Set to "delete"
 
 **Required (one of):**
+
 - `itemId` - Unique document ID (recommended)
 - `key` - Primary identifier (deletes all items with that key)
 - `key` + `sortField` - Primary and secondary identifiers for specific item
@@ -170,24 +196,29 @@ Remove an item from the datastore
 **Examples:**
 
 By item ID (recommended):
+
 ```
 /selected-datastore delete item with itemId: abc123def456
 ```
 
 By key and sort field:
+
 ```
 /selected-datastore delete item with key: projects and sortField: mobile-app-redesign
 ```
 
 By key only (deletes all items with that key):
+
 ```
 /selected-datastore delete items with key: projects
 ```
 
 ### Search Items
+
 Search for items in the datastore with advanced filtering
 
 **Parameters:**
+
 - `action` (required) - Set to "search"
 - `q` (required) - Search query string
 - `field` (optional) - Field to search: "all" (default), "content", "sortField", "key"
@@ -201,6 +232,7 @@ Search for items in the datastore with advanced filtering
 **Examples:**
 
 Basic search:
+
 ```
 /selected-datastore search
 q: customer feedback
@@ -209,6 +241,7 @@ type: fuzzy
 ```
 
 Advanced search with filters:
+
 ```
 /selected-datastore search
 q: genoa
@@ -219,6 +252,7 @@ compiled: false
 ```
 
 **Search Response (compiled=false):**
+
 ```json
 {
   "results": [
@@ -234,6 +268,7 @@ compiled: false
 ```
 
 **Search Response (compiled=true):**
+
 ```
 ID: 8CTVmqIIJDmDGN5HpYm5
 Content: Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes.
@@ -259,25 +294,31 @@ Store, retrieve, update, and search data in a NoSQL datastore. Perfect for manag
 ### Key and Sort Field Patterns
 
 1. **Single Key Only (Auto-generated Sort Field)**
+
    ```
    key: meeting-notes
    ```
+
    - Sort field will be auto-generated
    - Good for: Quick storage when uniqueness isn't a concern
 
 2. **Key + Date Sort Field**
+
    ```
    key: meeting-notes
    sortField: 2024-03-15
    ```
+
    - Creates unique daily entries
    - Good for: Time-series data, daily logs
 
 3. **Key + Email Sort Field**
+
    ```
    key: employee-reviews
    sortField: jane.smith@company.com
    ```
+
    - One record per employee
    - Good for: Per-user data
 
@@ -292,6 +333,7 @@ Store, retrieve, update, and search data in a NoSQL datastore. Perfect for manag
 ## Examples
 
 ### Project Documentation
+
 ```
 /selected-datastore create a new item with:
 key: projects
@@ -304,6 +346,7 @@ metadata: {
 ```
 
 ### Sales Reports by Region
+
 ```
 /selected-datastore create a new item with:
 key: sales-data
@@ -316,6 +359,7 @@ metadata: {
 ```
 
 ### Employee Training Records
+
 ```
 /selected-datastore create a new item with:
 key: training-completion
@@ -328,6 +372,7 @@ metadata: {
 ```
 
 ### Product Inventory by Category
+
 ```
 /selected-datastore create a new item with:
 key: inventory
@@ -341,36 +386,162 @@ metadata: {
 
 ## Triggers
 
-Datastore items can have triggers attached that fire when the item is updated. When you attach a trigger URL:
+Datastore supports event-driven triggers that automatically start workflows when data changes. Triggers can be set at two levels: **collection-wide** (affects all items) or **item-specific** (affects individual items).
 
-- The trigger will be called any time the item changes (content, metadata, or any other field)
-- Each URL in the triggerUrls object will be called with its corresponding API key
-- The trigger receives information about what changed in the item
-- You can prevent triggers from firing by setting `triggerChanges: false`
+### Trigger Events
 
-### Creating Item with Trigger
+- **onCreate**: Fires when new items are created (collection-level only)
+- **onEdit**: Fires when existing items are modified (collection or item level)
+- **onDelete**: Fires when items are deleted (collection or item level)
+
+### Trigger Levels
+
+**Collection-Level Triggers**: Set on the entire data collection to monitor all items
+
+- Automatically fire for every item in the collection
+- Perfect for system-wide monitoring and processing
+- Set via data collection management interface
+
+**Item-Level Triggers**: Set on individual items to monitor specific data
+
+- Only fire for that particular item
+- Ideal for monitoring critical or sensitive data points
+- Set via the `triggerUrls` parameter when creating/updating items
+
+### Trigger Structure
+
+Triggers use an array format with multiple trigger objects:
+
+```json
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/d2nia2isg8tc7112frtg",
+    "apiKey": "your-api-key"
+  },
+  {
+    "event": "onDelete",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/a3bcd4efg9ud8223hsui",
+    "apiKey": "your-api-key-2"
+  }
+]
+```
+
+### Trigger Payload
+
+When triggers fire, they receive detailed information about the event:
+
+**For onCreate and onDelete events:**
+
+```json
+{
+  "event": "onCreate",
+  "itemId": "abc123def456",
+  "providerId": "user-id",
+  "collectionId": "collection-id",
+  "collectionType": "datastore",
+  "key": "user-settings",
+  "sortField": "theme-preferences",
+  "content": { "theme": "dark", "language": "en" },
+  "metadata": { "version": "1.0" },
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "triggerLevel": "item"
+}
+```
+
+**For onEdit events (includes additional `changed` field):**
+
+```json
+{
+  "event": "onEdit",
+  "itemId": "abc123def456",
+  "providerId": "user-id",
+  "collectionId": "collection-id",
+  "collectionType": "datastore",
+  "key": "user-settings",
+  "sortField": "theme-preferences",
+  "content": { "theme": "light", "language": "en" },
+  "metadata": { "version": "1.1" },
+  "changed": {
+    "content": { "theme": "dark" },
+    "metadata": { "version": "1.0" }
+  },
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T11:45:00.000Z",
+  "triggerLevel": "item"
+}
+```
+
+### Examples
+
+#### Creating Item with Multiple Triggers
+
 ```
 /selected-datastore create a new item with:
-key: jobs
-sortField: job-2024-03-15-001
-content: Process monthly report
-metadata: {
-    "status": "not_started",
-    "type": "report_generation"
-}
-triggerUrls: {
-    "https://api.myservice.com/webhook": "my-api-key-123"
-}
+key: order-processing
+sortField: order-12345
+content: {"status": "pending", "amount": 299.99}
+metadata: {"priority": "high", "customer": "customer-456"}
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/order-status-monitor",
+    "apiKey": "your-api-key"
+  },
+  {
+    "event": "onDelete",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/order-cancelled-handler",
+    "apiKey": "your-api-key-2"
+  }
+]
 ```
 
-### Updating Without Triggering
+#### Updating Item Status (Will Fire onEdit Triggers)
+
 ```
 /selected-datastore update item with:
-key: jobs
-sortField: job-2024-03-15-001
-content: Updated content
+key: order-processing
+sortField: order-12345
+content: {"status": "shipped", "amount": 299.99, "tracking": "1Z999AA1234567890"}
+metadata: {"priority": "high", "customer": "customer-456", "shipped_date": "2024-01-15"}
+```
+
+#### Updating Without Triggering
+
+```
+/selected-datastore update item with:
+itemId: abc123def456
+content: {"status": "processing", "internal_notes": "Updated by system"}
 triggerChanges: false
 ```
+
+#### Testing Triggers
+
+Use the test-trigger endpoint to verify your trigger setup:
+
+```
+/selected-datastore test trigger with:
+event: onEdit
+url: https://triggers.app.pinkfish.ai/ext/triggers/d2nia2isg8tc7112frtg
+apiKey: your-api-key
+itemId: abc123def456
+testData: {"test": true, "timestamp": "2024-01-15T12:00:00.000Z"}
+```
+
+### Rate Limiting and Logs
+
+- **Rate Limiting**: onEdit triggers are limited to 2 executions per minute per item to prevent infinite loops
+- **Trigger Logs**: All trigger executions are logged with status, execution time, and error details
+- **Error Handling**: Failed triggers are logged but don't prevent the original data operation from completing
+
+### Best Practices
+
+- **Use Collection-Level Triggers** for system-wide monitoring (e.g., audit logs, analytics)
+- **Use Item-Level Triggers** for specific business logic (e.g., order processing, user notifications)
+- **Set triggerChanges: false** when updating items programmatically to avoid recursive triggers
+- **Test triggers thoroughly** using the test-trigger endpoint before production use
+- **Monitor trigger logs** to ensure reliable execution and debug issues
 
 ## Notes
 
