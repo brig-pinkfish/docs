@@ -1,6 +1,6 @@
 ---
-title: "Long-Term Memory Guide"
-description: "Learn how to use long-term memory to store and retrieve user-specific memories with agent context"
+title: "Agent Memory Guide"
+description: "Learn how to use agent memory to store and retrieve user-specific memories with agent context"
 ---
 
 ## How to use it?
@@ -8,7 +8,7 @@ description: "Learn how to use long-term memory to store and retrieve user-speci
 ### Basic Command Structure
 
 ```
-/long-term-memory [action] [userId | memoryId] [message] [options]
+/agent-memory [action] [userId | memoryId] [message] [options]
 ```
 
 ### Parameters
@@ -101,7 +101,7 @@ Store a new memory or update an existing one for a specific user. If a sortField
 **Example:**
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: User prefers dark mode and wants concise, technical responses
 agentId: ai-assistant-v1
 ```
@@ -109,7 +109,7 @@ agentId: ai-assistant-v1
 **With custom sortField:**
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Project deadline is March 15th, 2024
 sortField: project_deadline_reminder
 agentId: project-manager-bot
@@ -131,19 +131,19 @@ Retrieve all memories for a specific user with optional filtering by agent
 Get all memories for a user:
 
 ```
-/long-term-memory get memories for user123
+/agent-memory get memories for user123
 ```
 
 Get memories from specific agent:
 
 ```
-/long-term-memory get memories for user123 from agentId: ai-assistant-v1
+/agent-memory get memories for user123 from agentId: ai-assistant-v1
 ```
 
 Get compiled memory format:
 
 ```
-/long-term-memory get memories for user123 with compiled: true
+/agent-memory get memories for user123 with compiled: true
 ```
 
 ### Update Memory
@@ -159,7 +159,7 @@ Update an existing memory using its unique memory ID
 **Example:**
 
 ```
-/long-term-memory update memory abc123def456 with:
+/agent-memory update memory abc123def456 with:
 message: User now prefers light mode and detailed explanations with examples
 ```
 
@@ -178,7 +178,7 @@ Search through a user's memories with query matching
 **Example:**
 
 ```
-/long-term-memory search memories for user123:
+/agent-memory search memories for user123:
 query: dark mode preferences
 agentId: ai-assistant-v1
 limit: 10
@@ -244,7 +244,7 @@ Long-term memories use structured keys for organization:
 ### User Preference Memory
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: User prefers technical explanations with code examples, works in Python/JavaScript
 agentId: coding-assistant
 sortField: coding_preferences
@@ -253,7 +253,7 @@ sortField: coding_preferences
 ### Project Context Memory
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Working on mobile app redesign project, deadline March 15th, team of 5 designers
 agentId: project-manager-bot
 sortField: current_project_context
@@ -262,7 +262,7 @@ sortField: current_project_context
 ### Meeting Summary Memory
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Discussed API architecture changes, needs to review authentication flow by Friday
 agentId: meeting-assistant
 sortField: meeting_2024-03-10_api_review
@@ -271,7 +271,7 @@ sortField: meeting_2024-03-10_api_review
 ### Personal Assistant Memory
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Prefers morning meetings, works EST timezone, has team standup Mondays 9am
 agentId: calendar-assistant
 sortField: scheduling_preferences
@@ -280,7 +280,7 @@ sortField: scheduling_preferences
 ### Learning Progress Memory
 
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Completed TypeScript basics, currently learning React hooks, struggles with useEffect cleanup
 agentId: learning-tutor
 sortField: typescript_react_progress
@@ -318,7 +318,7 @@ Bad: "Building an API"
 
 **Update Rather Than Duplicate**: Use consistent sortFields to update existing memories
 ```
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Updated project status: API endpoints complete, working on authentication now
 sortField: current_project_status
 ```
@@ -327,17 +327,17 @@ sortField: current_project_status
 
 **Use Compiled Format** for quick context overview:
 ```
-/long-term-memory get memories for user123 with compiled: true
+/agent-memory get memories for user123 with compiled: true
 ```
 
 **Filter by Agent** for specific context:
 ```
-/long-term-memory get memories for user123 from agentId: coding-assistant
+/agent-memory get memories for user123 from agentId: coding-assistant
 ```
 
 **Search for Specific Topics**:
 ```
-/long-term-memory search memories for user123:
+/agent-memory search memories for user123:
 query: Python preferences coding style
 ```
 
@@ -363,12 +363,12 @@ Memories can evolve over time by updating existing sortFields:
 
 ```
 # Initial memory
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Learning React, beginner level
 sortField: react_skill_level
 
 # Update as user progresses
-/long-term-memory save a memory for user123:
+/agent-memory save a memory for user123:
 message: Proficient in React, now learning Next.js and server-side rendering
 sortField: react_skill_level
 ```
@@ -378,7 +378,7 @@ sortField: react_skill_level
 Use compiled format to get a quick overview for context injection:
 
 ```
-/long-term-memory get memories for user123 with compiled: true
+/agent-memory get memories for user123 with compiled: true
 
 # Returns format suitable for prompt context:
 # "project_status: Working on mobile app redesign, deadline March 15th
