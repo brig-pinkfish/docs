@@ -1,0 +1,399 @@
+---
+title: "Long-Term Memory Guide"
+description: "Learn how to use long-term memory to store and retrieve user-specific memories with agent context"
+---
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/long-term-memory [action] [userId | memoryId] [message] [options]
+```
+
+### Parameters
+
+**Required:**
+
+- `action` - Operation to perform (save, get, update, search)
+- `userId` - User identifier for memory storage and retrieval
+
+**Optional:**
+
+- `memoryId` - Unique memory document ID (for updates)
+- `message` - Memory content/message to store
+- `sortField` - Custom identifier for organizing memories
+- `agentId` - Agent identifier that created the memory
+- `compiled` - Output format (true for plain text, false for structured JSON)
+- `limit` - Maximum number of results for search operations
+
+### Response Format
+
+Single memory:
+
+```json
+{
+  "message": "Memory created successfully",
+  "userId": "user123",
+  "agentId": "ai-assistant-v1",
+  "content": "User prefers dark mode and concise responses",
+  "sortField": "memory_1705123456789",
+  "memoryId": "abc123def456"
+}
+```
+
+List of memories (structured format):
+
+```json
+{
+  "memories": [
+    {
+      "id": "abc123def456",
+      "key": "USER#user123#LTM",
+      "sortField": "memory_1705123456789",
+      "content": "User prefers dark mode and concise responses",
+      "metadata": {
+        "type": "long-term-memory",
+        "userId": "user123",
+        "agentId": "ai-assistant-v1",
+        "timestamp": "2025-01-09T10:30:00.000Z"
+      },
+      "createdAt": "2025-01-09T10:30:00.000Z",
+      "updatedAt": "2025-01-09T10:30:00.000Z",
+      "userId": "user123",
+      "agentId": "ai-assistant-v1"
+    }
+  ],
+  "userId": "user123",
+  "compiled": false,
+  "collectionId": "provider123_org456_agents_memories"
+}
+```
+
+List of memories (compiled format):
+
+```json
+{
+  "memories": [
+    "memory_1705123456789: User prefers dark mode and concise responses",
+    "memory_1705234567890: User is working on a mobile app redesign project"
+  ],
+  "userId": "user123",
+  "compiled": true,
+  "collectionId": "provider123_org456_agents_memories"
+}
+```
+
+## Tools
+
+### Save Memory
+
+Store a new memory or update an existing one for a specific user. If a sortField is provided and already exists, the memory will be updated.
+
+**Parameters:**
+
+- `action` (required) - Set to "save"
+- `userId` (required) - User identifier
+- `message` (required) - Memory content to store
+- `sortField` (optional) - Custom identifier for the memory
+- `agentId` (optional) - Agent that created this memory
+
+**Example:**
+
+```
+/long-term-memory save a memory for user123:
+message: User prefers dark mode and wants concise, technical responses
+agentId: ai-assistant-v1
+```
+
+**With custom sortField:**
+
+```
+/long-term-memory save a memory for user123:
+message: Project deadline is March 15th, 2024
+sortField: project_deadline_reminder
+agentId: project-manager-bot
+```
+
+### Get User Memories
+
+Retrieve all memories for a specific user with optional filtering by agent
+
+**Parameters:**
+
+- `action` (required) - Set to "get"
+- `userId` (required) - User identifier
+- `agentId` (optional) - Filter memories by specific agent
+- `compiled` (optional) - Set to true for plain text format, false for JSON
+
+**Examples:**
+
+Get all memories for a user:
+
+```
+/long-term-memory get memories for user123
+```
+
+Get memories from specific agent:
+
+```
+/long-term-memory get memories for user123 from agentId: ai-assistant-v1
+```
+
+Get compiled memory format:
+
+```
+/long-term-memory get memories for user123 with compiled: true
+```
+
+### Update Memory
+
+Update an existing memory using its unique memory ID
+
+**Parameters:**
+
+- `action` (required) - Set to "update"
+- `memoryId` (required) - Unique memory document ID
+- `message` (required) - Updated memory content
+
+**Example:**
+
+```
+/long-term-memory update memory abc123def456 with:
+message: User now prefers light mode and detailed explanations with examples
+```
+
+### Search Memories
+
+Search through a user's memories with query matching
+
+**Parameters:**
+
+- `action` (required) - Set to "search"
+- `userId` (required) - User identifier
+- `query` (required) - Search query string
+- `agentId` (optional) - Filter by specific agent
+- `limit` (optional) - Maximum results (default: 50)
+
+**Example:**
+
+```
+/long-term-memory search memories for user123:
+query: dark mode preferences
+agentId: ai-assistant-v1
+limit: 10
+```
+
+## What can you do with it?
+
+Store, retrieve, and search user-specific memories that persist across conversations and sessions. Perfect for maintaining context about user preferences, past interactions, project details, and personalized information. Enables AI agents to provide more contextual and personalized responses by remembering important details about each user.
+
+## Memory Storage Fundamentals
+
+### Important Rules
+
+- Memories are stored per user and isolated by organization context
+- Each memory is uniquely identified by `userId` + `sortField` combination
+- If you don't specify a `sortField`, one will be automatically generated with timestamp
+- Memories can be associated with specific agents for better organization
+- All memories are stored in non-quota collections, so they don't count toward billing limits
+
+### Memory Key Patterns
+
+Long-term memories use structured keys for organization:
+
+1. **User-Only Memory**
+   ```
+   key: USER#user123#LTM
+   ```
+   - General user memory not tied to specific agent
+   - Good for: User preferences, general context
+
+2. **Agent-Specific Memory**
+   ```
+   key: USER#user123#AGENT#ai-assistant-v1#LTM
+   ```
+   - Memory created by specific agent
+   - Good for: Agent-specific learnings, specialized context
+
+### Sort Field Patterns
+
+1. **Auto-Generated (Timestamp-Based)**
+   ```
+   sortField: memory_1705123456789
+   ```
+   - Automatically created when not specified
+   - Good for: General memory storage
+
+2. **Custom Descriptive**
+   ```
+   sortField: project_deadline_reminder
+   ```
+   - Human-readable identifier
+   - Good for: Specific, retrievable memories
+
+3. **Date-Based**
+   ```
+   sortField: 2024-03-15_meeting_notes
+   ```
+   - Time-organized memories
+   - Good for: Time-series user interactions
+
+## Examples
+
+### User Preference Memory
+
+```
+/long-term-memory save a memory for user123:
+message: User prefers technical explanations with code examples, works in Python/JavaScript
+agentId: coding-assistant
+sortField: coding_preferences
+```
+
+### Project Context Memory
+
+```
+/long-term-memory save a memory for user123:
+message: Working on mobile app redesign project, deadline March 15th, team of 5 designers
+agentId: project-manager-bot
+sortField: current_project_context
+```
+
+### Meeting Summary Memory
+
+```
+/long-term-memory save a memory for user123:
+message: Discussed API architecture changes, needs to review authentication flow by Friday
+agentId: meeting-assistant
+sortField: meeting_2024-03-10_api_review
+```
+
+### Personal Assistant Memory
+
+```
+/long-term-memory save a memory for user123:
+message: Prefers morning meetings, works EST timezone, has team standup Mondays 9am
+agentId: calendar-assistant
+sortField: scheduling_preferences
+```
+
+### Learning Progress Memory
+
+```
+/long-term-memory save a memory for user123:
+message: Completed TypeScript basics, currently learning React hooks, struggles with useEffect cleanup
+agentId: learning-tutor
+sortField: typescript_react_progress
+```
+
+## Memory Management Best Practices
+
+### Organization Strategies
+
+**Agent-Specific Memories**: Use different agents for different contexts
+- `coding-assistant` for development preferences
+- `project-manager-bot` for project context  
+- `meeting-assistant` for meeting summaries
+- `personal-assistant` for scheduling/preferences
+
+**Descriptive Sort Fields**: Use meaningful identifiers
+- `user_preferences` for general settings
+- `project_current_status` for active project info
+- `meeting_YYYY-MM-DD_topic` for meeting memories
+- `skill_assessment_topic` for learning progress
+
+### Memory Content Guidelines
+
+**Be Specific and Actionable**: Store memories that help provide better responses
+```
+Good: "User prefers concise code examples in Python with detailed comments"
+Bad: "User likes code"
+```
+
+**Include Context**: Add relevant details for future reference
+```
+Good: "Working on e-commerce API, using Node.js/Express, PostgreSQL database, deadline April 1st"
+Bad: "Building an API"
+```
+
+**Update Rather Than Duplicate**: Use consistent sortFields to update existing memories
+```
+/long-term-memory save a memory for user123:
+message: Updated project status: API endpoints complete, working on authentication now
+sortField: current_project_status
+```
+
+### Search and Retrieval
+
+**Use Compiled Format** for quick context overview:
+```
+/long-term-memory get memories for user123 with compiled: true
+```
+
+**Filter by Agent** for specific context:
+```
+/long-term-memory get memories for user123 from agentId: coding-assistant
+```
+
+**Search for Specific Topics**:
+```
+/long-term-memory search memories for user123:
+query: Python preferences coding style
+```
+
+## Advanced Features
+
+### Cross-Agent Memory Sharing
+
+Memories can be accessed by any agent within the same organization, enabling seamless handoffs:
+
+```
+# Coding assistant stores memory
+/long-term-memory save a memory for user123:
+message: Prefers functional programming style, uses TypeScript strict mode
+agentId: coding-assistant
+
+# Project manager can access the same memory
+/long-term-memory get memories for user123
+```
+
+### Memory Updates and Evolution
+
+Memories can evolve over time by updating existing sortFields:
+
+```
+# Initial memory
+/long-term-memory save a memory for user123:
+message: Learning React, beginner level
+sortField: react_skill_level
+
+# Update as user progresses
+/long-term-memory save a memory for user123:
+message: Proficient in React, now learning Next.js and server-side rendering
+sortField: react_skill_level
+```
+
+### Contextual Memory Compilation
+
+Use compiled format to get a quick overview for context injection:
+
+```
+/long-term-memory get memories for user123 with compiled: true
+
+# Returns format suitable for prompt context:
+# "project_status: Working on mobile app redesign, deadline March 15th
+# coding_preferences: Prefers TypeScript with strict mode, functional style
+# meeting_schedule: Available mornings EST, team standup Mondays 9am"
+```
+
+## Notes
+
+- Memories are automatically stored in non-quota collections (`agents_memories` type)
+- Each user's memories are isolated by organization context for security
+- Memories persist indefinitely until manually deleted or updated
+- The system automatically handles memory collection creation and management
+- Search functionality works across all memory content and metadata
+- Agent-specific filtering helps organize memories by context and purpose
+- Use meaningful sortField values for easier memory management and retrieval
+- Memory updates preserve the original creation timestamp while updating the modification time
+- All memory operations require valid organization authentication context
