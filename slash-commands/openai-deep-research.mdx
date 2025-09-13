@@ -1,0 +1,111 @@
+---
+title: "OpenAI Deep Research Guide"
+description: "Advanced deep research capabilities using OpenAI models with web search integration for comprehensive analysis and investigation"
+---
+
+## What can you do with it?
+
+The `/openai-deep-research` command provides advanced deep research capabilities using OpenAI's reasoning models with integrated web search. Perfect for comprehensive analysis, investigation, and research tasks that require extensive reasoning and web-based information gathering. This service processes requests asynchronously and can take 5-30 minutes to complete thorough research.
+
+## How to use it?
+
+### Basic Command Structure
+```
+/openai-deep-research [research topic or question] [model] [reasoning effort] [files]
+```
+
+### Parameters
+
+**Required:**
+
+- `research topic` - The topic, question, or prompt you want researched
+- `model` - Choose between o3-deep-research (advanced) or o4-mini-deep-research (faster)
+
+**Optional:**
+
+- `reasoning effort` - Control reasoning intensity: minimal, low, medium, high (default: medium)
+- `files` - Any files to include in the research analysis
+- `output filename` - Custom name for the research report
+- `trigger urls` - Webhook URLs to call when research completes
+
+### Response Format
+
+The command returns immediate confirmation with a response ID:
+```json
+{
+  "responseId": "resp_68a1f5019d70819fa2195a6850d4194800b2bfd0a695ae47",
+  "status": "queued",
+  "message": "Process started. Once completed, you can see the result in the \"Multimedia Artifact\" file storage collection",
+  "outputFileName": "openai-deep-research-result-{topic}.txt"
+}
+```
+
+## Examples
+
+### Basic Research
+```
+/openai-deep-research
+research topic: Impact of artificial intelligence on healthcare industry trends 2024-2025
+model: o3-deep-research
+reasoning effort: medium
+```
+Conducts comprehensive research on AI healthcare trends with medium reasoning effort.
+
+### Fast Research with Files
+```
+/openai-deep-research
+research topic: Analyze this market report and compare with current industry data
+model: o4-mini-deep-research
+reasoning effort: low
+files: market-report-q4.pdf
+```
+Quick analysis of provided files with current web data using faster model.
+
+### Advanced Research with Triggers
+```
+/openai-deep-research
+research topic: Comprehensive analysis of renewable energy investment opportunities in emerging markets
+model: o3-deep-research
+reasoning effort: high
+output filename: renewable-energy-investment-analysis
+trigger urls: https://yourapp.com/webhook
+```
+Deep research with maximum reasoning effort and webhook notification when complete.
+
+## Model Options
+
+### o3-deep-research
+- **Best for**: Advanced reasoning, comprehensive deep research tasks
+- **Processing time**: 10-30 minutes
+- **Quality**: Highest reasoning and analysis depth
+
+### o4-mini-deep-research
+- **Best for**: Fast, cost-effective deep research
+- **Processing time**: 5-15 minutes
+- **Quality**: Good reasoning with faster results
+
+## Key Features
+
+### Web Search Integration
+Automatically searches current web information to supplement research with up-to-date data and multiple sources.
+
+### File Analysis
+Upload documents, reports, or data files to be analyzed alongside web research for comprehensive insights.
+
+### Asynchronous Processing
+Research runs in the background, allowing you to continue other work while analysis completes.
+
+### Artifact Storage
+Results are automatically saved to your "Multimedia Artifact" file storage collection for easy access and sharing.
+
+### Reasoning Control
+Adjust the reasoning effort level to balance between thoroughness and speed based on your needs.
+
+## Notes
+
+- **Processing time**: Research typically takes 5-30 minutes depending on complexity and model choice
+- **Results location**: All research reports are saved to the "Multimedia Artifact" file storage collection
+- **Web search**: Always includes current web search data using web_search_preview tool
+- **Status checking**: Use the responseId to check research progress, though polling is not recommended
+- **Best practice**: Use trigger URLs for workflow automation when research completes
+- **File handling**: Files are analyzed directly - no need to extract content beforehand
