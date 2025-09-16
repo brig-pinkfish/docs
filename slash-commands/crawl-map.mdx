@@ -5,7 +5,7 @@ description: "With Crawl Map, retrieve a map of the URLs given a starting URL"
 
 ## What can you do with it?
 
-Crawl Map provides the easiest way to go from a single URL to a map of the entire website. This is extremely useful when you need to prompt the end-user to choose which links to scrape, need to quickly know the links on a website, need to scrape pages of a website that are related to a specific topic using the search parameter, or only need to scrape specific pages of a website.
+Crawl Map provides the easiest way to go from a single URL to a map of the entire website. This is extremely useful when you need to prompt the end-user to choose which links to scrape, need to quickly know the links on a website, need to find pages related to a specific topic using the search parameter, or only need to identify specific pages before scraping. The map endpoint is optimized for speed and returns URLs with titles and descriptions. Supports location settings for geo-specific site mapping.
 
 ## How to use it?
 
@@ -20,29 +20,52 @@ Crawl Map provides the easiest way to go from a single URL to a map of the entir
 
 - `urls` - Array of starting URLs (e.g., ["https://lights.com/"])
 
-**Optional:**
+**Optional Map Control:**
 
-- `includeSubdomains` - Boolean to include subdomains in the map (default: true)
+- `search` - Search term to filter URLs containing specific content
+- `limit` - Maximum number of URLs to return (default: 100)
+- `includeSubdomains` - Include subdomains in the map (default: false)
+- `ignoreSitemap` - Skip sitemap (legacy, converts to sitemap parameter)
+- `sitemap` - Sitemap usage: "include", "skip", or "only" (default: "include")
 
-- `ignoreSitemap` - Boolean to skip using the sitemap for discovery (default: false)
+**Location Settings:**
 
-- `search` - Search term to filter results for specific content (e.g., "Foscarini")
+- `location` - Object with:
+  - `country` - ISO country code (US, GB, DE, FR, etc.)
+  - `languages` - Language preferences (e.g., ["en", "es"])
+
+**File Storage:**
+
+- `file_links_expire_in_days` - Days until file links expire
+- `file_links_expire_in_minutes` - Alternative to days
 
 ### Response Format
 
-The command returns:
 ```json
 {
   "https://lights.com/": {
     "success": true,
     "links": [
-      "https://lights.com",
-      "https://lights.com/pages/contact",
-      "https://lights.com/pages/about-us",
-      "https://lights.com/pages/help",
-      "https://lights.com/pages/return-policy",
-      "https://lights.com/pages/warranty-policy"
-    ]
+      {
+        "url": "https://lights.com",
+        "title": "Lights - Modern Lighting Store",
+        "description": "Premium lighting solutions for your home"
+      },
+      {
+        "url": "https://lights.com/pages/contact",
+        "title": "Contact Us",
+        "description": "Get in touch with our lighting experts"
+      },
+      {
+        "url": "https://lights.com/products/foscarini-twiggy",
+        "title": "Foscarini Twiggy Floor Lamp",
+        "description": "Iconic Italian design floor lamp"
+      }
+    ],
+    "scrapeId": "abc-123-def",
+    "metadata": {
+      "statusCode": 200
+    }
   }
 }
 ```
@@ -51,33 +74,58 @@ The command returns:
 
 ### Basic Usage
 ```
-/crawl-map
-urls: ["https://lights.com/"]
+/crawl-map map https://lights.com/
 ```
 Maps the entire website starting from the homepage with default settings.
 
-### Advanced Usage
+### Search-Filtered Mapping
 ```
-/crawl-map
-urls: ["https://lights.com/"]
-includeSubdomains: true
-ignoreSitemap: false
-search: "Foscarini"
+/crawl-map find all pages about "Foscarini" on https://lights.com/
 ```
-Maps the website including subdomains, uses the sitemap, and filters results to pages containing "Foscarini".
+Maps the website and filters results to pages containing "Foscarini".
 
-### Specific Use Case
+### Include Subdomains
 ```
-/crawl-map
-urls: ["https://example.com/"]
-includeSubdomains: false
-search: "products"
+/crawl-map map https://example.com/ including all subdomains
 ```
-Maps only the main domain without subdomains and filters for pages containing "products".
+Maps the main domain and all subdomains like blog.example.com, shop.example.com.
 
-### Notes 
+### Sitemap Only
+```
+/crawl-map get sitemap urls only from https://example.com/
+```
+Returns only URLs found in the sitemap.xml file (sitemap: "only").
 
-The tool uses an internal endpoint SCRAPER_FC_URL + 'scraperfc/map' for processing requests. The response includes a success flag and an array of discovered links for each starting URL.
+### Skip Sitemap
+```
+/crawl-map map https://example.com/ without using sitemap
+```
+Discovers pages by following links only, ignoring sitemap.xml.
+
+### Limited Results
+```
+/crawl-map map https://large-site.com/ limit to 500 urls
+```
+Returns maximum 500 URLs even if more exist.
+
+### Location-Specific Mapping
+```
+/crawl-map map https://global-site.com/ from Germany
+```
+Maps the site as if accessing from Germany.
+
+### Product Search
+```
+/crawl-map find all product pages on https://store.com/ searching for "electronics"
+```
+Maps e-commerce site filtering for electronics products.
+
+### Notes
+
+- Legacy parameter ignoreSitemap converts to sitemap parameter
+- Links include URL, title, and description when available
+- Search parameter filters results after discovery
+- Map is optimized for speed over completeness
 
 ### URL Discovery
 - Map entire websites

@@ -1,100 +1,371 @@
 ---
 title: "Firecrawl Guide"
-description: "With Firecrawl, retrieve a map of the URLs given a starting URL"
+description: "Scrape, extract structured data, and search the web with Firecrawl"
 ---
 
 ## What can you do with it?
 
-Firecrawl allows you to scrape and extract content from websites by providing URLs. It can retrieve clean markdown content, HTML, links, screenshots, and structured data from web pages. The tool supports browser automation actions like scrolling and waiting, making it ideal for scraping dynamic content and creating comprehensive web maps starting from a given URL.
+Firecrawl provides three powerful capabilities:
+- **Scrape**: Extract content from websites in various formats (markdown, HTML, screenshots, etc.) with browser automation
+- **Extract**: Use AI to extract structured data from multiple URLs using prompts and schemas
+- **Search**: Search the web and optionally scrape the results
+
+The tool supports browser automation actions, caching for faster repeated operations, location/language settings for geo-specific content, and proxy options for challenging sites.
 
 ## How to use it?
 
-### Basic Command Structure
-```
-/firecrawl [urls] [formats] [actions]
-```
+Choose one of these commands:
 
-### Parameters
+### Scrape Command
+```
+/firecrawl scrape [urls]
+```
+Scrapes web pages and returns content in various formats with optional browser automation.
+
+### Extract Command  
+```
+/firecrawl extract [urls] [prompt]
+```
+Uses AI to extract structured data from web pages based on your prompt.
+
+### Search Command
+```
+/firecrawl search [query]
+```
+Searches the web and optionally scrapes the results.
+
+## SCRAPE Command
+
+### Parameters for Scrape
 
 **Required:**
 
 - `urls` - Array of URLs to scrape (e.g., ["https://example.com", "https://another-example.com"])
 
-**Optional:**
+**Optional Output Formats:**
 
-- `formats` - Output formats for the scraped content (default: ["markdown"])
+- `formats` - Array of output formats (default: ["markdown"])
+  - `"markdown"` - Clean markdown content
+  - `"html"` - Processed HTML
+  - `"rawHtml"` - Raw HTML source
+  - `"links"` - Extracted links array
+  - `"screenshot"` - Base64 screenshot data
+  - `"screenshot@fullPage"` - Full page screenshot
+  - `"summary"` - AI-generated summary
+  - For JSON extraction: `[{"type": "json", "schema": {...}, "prompt": "..."}]`
 
-- `actions` - Browser actions to perform before scraping
+**Browser Actions:**
 
-- `waitFor` - Time to wait in milliseconds before scraping (default: 1000)
+- `actions` - Array of browser actions to perform:
+  - `{"type": "wait", "milliseconds": 2000}` - Wait specified time
+  - `{"type": "click", "selector": "button"}` - Click element
+  - `{"type": "write", "text": "search text"}` - Type text
+  - `{"type": "press", "key": "Enter"}` - Press keyboard key
+  - `{"type": "scroll", "selector": "body", "direction": "down"}` - Scroll element
+  - `{"type": "screenshot", "fullPage": true}` - Take screenshot
 
-- `includeTags` - HTML tags to include in the output
+**Content Control:**
 
-- `excludeTags` - HTML tags to exclude from the output
+- `onlyMainContent` - Extract only main content (default: true)
+- `includeTags` - HTML tags to include (e.g., ["div", "p", "h1"])
+- `excludeTags` - HTML tags to exclude (e.g., ["script", "style"])
+- `removeBase64Images` - Remove base64 encoded images
+- `waitFor` - Wait milliseconds before scraping
 
-- `onlyMainContent` - Boolean to extract only the main content
+**Caching:**
 
-- `removeBase64Images` - Boolean to remove base64-encoded images
+- `maxAge` - Use cache if younger than this in ms (default: 172800000 - 2 days)
+- `storeInCache` - Store results in cache (default: true)
 
-- `file_links_expire_in_days` - Number of days until file links expire
+**Location/Language:**
 
-### Response Format
+- `location` - Object with:
+  - `country` - ISO country code (US, GB, DE, FR, etc.)
+  - `languages` - Language preferences (e.g., ["en", "es"])
 
-The command returns:
+**Proxy:**
+
+- `proxy` - Proxy type: "basic", "stealth", or "auto" (default)
+
+**File Storage:**
+
+- `file_links_expire_in_days` - Days until file links expire
+- `file_links_expire_in_minutes` - Alternative to days
+
+### Response Format for Scrape
+
 ```json
 {
   "https://www.google.com/": {
     "success": true,
+    "sessionId": "session-123-456",
     "data": {
       "markdown": "markdown content here...",
+      "html": "<html>...</html>",
+      "links": ["https://link1.com", "https://link2.com"],
       "metadata": {
         "language": "en",
         "title": "Google",
-        "referrer": "origin",
-        "scrapeId": "2c29af85-dc7e-4301-b80a-c4da8bf178cb",
+        "description": "Search the world's information",
+        "keywords": "search, google",
+        "robots": "index, follow",
+        "ogTitle": "Google",
+        "ogDescription": "Search engine",
+        "ogUrl": "https://www.google.com/",
+        "ogImage": "https://www.google.com/logo.png",
+        "ogSiteName": "Google",
         "sourceURL": "https://www.google.com/",
         "url": "https://www.google.com/",
         "statusCode": 200
       }
     },
-    "file_urls": []
+    "file_urls": ["https://storage.url/screenshot.png"]
   }
 }
 ```
 
-## Examples
+### Scrape Examples
 
-### Basic Usage
+##### Basic Usage
 ```
-/firecrawl
-urls: ["https://example.com"]
+/firecrawl scrape https://example.com
 ```
 Scrapes a single URL and returns the content in markdown format by default.
 
-### Advanced Usage
+#### Advanced Usage with Actions
 ```
-/firecrawl
-urls: ["https://example.com", "https://another-example.com"]
-formats: ["markdown", "screenshot", "links"]
-actions: [{"type": "scroll", "selector": "body", "direction": "down"}, {"type": "screenshot", "fullPage": true}]
-waitFor: 2000
+/firecrawl scrape https://example.com with screenshot after scrolling down and waiting 2 seconds
 ```
-Scrapes multiple URLs with screenshots and link extraction, performs scrolling action, and waits 2 seconds before scraping.
+Performs browser actions before scraping the content.
 
-### Specific Use Case
+#### Multiple Formats
 ```
-/firecrawl
-urls: ["https://news.site.com/article"]
-formats: ["markdown"]
-onlyMainContent: true
-excludeTags: ["script", "style", "noscript"]
-includeTags: ["div", "p", "h1", "h2"]
+/firecrawl scrape https://example.com get markdown, html, and links
 ```
-Extracts only the main article content from a news website, excluding scripts and styles while focusing on content tags.
+Retrieves content in multiple formats simultaneously.
 
-### Notes 
+#### Cached Scraping
+```
+/firecrawl scrape https://news.site.com using cache if less than 1 hour old
+```
+Uses cached content if available and fresh (maxAge: 3600000).
 
-Available formats include "markdown", "html", "rawHtml", "links", "screenshot", "screenshot@fullPage", "json", and "changeTracking". Browser actions support "wait", "click", "scroll", and "screenshot" types. When using screenshot action, remove "screenshot@fullPage" from formats if present. The tool uses an internal endpoint SCRAPER_FC_URL for processing requests.
+#### Location-Specific Scraping
+```
+/firecrawl scrape https://global-site.com from Germany in German language
+```
+Scrapes content as if accessing from Germany with German language preference.
+
+#### Stealth Mode for Protected Sites
+```
+/firecrawl scrape https://protected-site.com using stealth proxy
+```
+Uses stealth proxy for sites with anti-bot protection.
+
+#### Complex Browser Automation
+```
+/firecrawl scrape https://site.com login by typing "user@email.com" then pressing tab then typing "password" then clicking submit button
+```
+Automates login process with multiple browser actions.
+
+## EXTRACT Command
+
+### Parameters for Extract
+
+**Required:**
+
+- `urls` - Array of URLs to extract from (must be an array)
+- `prompt` - What to extract (e.g., "Extract product names and prices")
+
+**Optional:**
+
+- `schema` - JSON schema for structured extraction:
+  ```json
+  {
+    "type": "object",
+    "properties": {
+      "products": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "price": {"type": "number"}
+          }
+        }
+      }
+    }
+  }
+  ```
+
+**Scrape Options:**
+
+- `formats` - Formats to use for extraction (default: ["markdown"])
+- `onlyMainContent` - Extract only main content
+- `proxy` - Proxy type: "basic", "stealth", or "auto"
+- `file_links_expire_in_days` - Days until file links expire
+
+### Response Format for Extract
+
+```json
+{
+  "status": "completed",
+  "data": {
+    "products": [
+      {
+        "name": "Product 1",
+        "price": 29.99
+      },
+      {
+        "name": "Product 2", 
+        "price": 49.99
+      }
+    ]
+  },
+  "creditsUsed": 10,
+  "expiresAt": "2024-00-00T00:00:00.000Z"
+}
+```
+
+### Extract Examples
+
+#### Basic Extraction
+```
+/firecrawl extract product information from https://shop.com/products
+```
+Extracts data using AI based on the prompt.
+
+#### Multiple URLs
+```
+/firecrawl extract prices from https://shop1.com and https://shop2.com
+```
+Extracts data from multiple URLs simultaneously.
+
+#### With Schema
+```
+/firecrawl extract products with name and price schema from https://store.com
+```
+Uses structured schema for consistent extraction.
+
+#### Complex Extraction
+```
+/firecrawl extract company details, contact info, and services from https://company.com
+```
+Extracts multiple types of information.
+
+## SEARCH Command
+
+### Parameters for Search
+
+**Required:**
+
+- `query` - Search query (e.g., "web scraping tools")
+
+**Optional Search Filters:**
+
+- `limit` - Maximum results to return (default: 10)
+- `sources` - Result types: ["web", "news", "images"]
+- `tbs` - Time filter:
+  - `"qdr:h"` - Past hour
+  - `"qdr:d"` - Past day
+  - `"qdr:w"` - Past week
+  - `"qdr:m"` - Past month
+  - `"qdr:y"` - Past year
+  - Custom: `"cdr:1,cd_min:12/1/2024,cd_max:12/31/2024"`
+- `location` - Search from this location (e.g., "United States")
+
+**Scrape Options:**
+
+- `scrapeOptions` - Object to scrape search results:
+  - `formats` - Output formats for scraped results
+  - `onlyMainContent` - Extract only main content
+  - `maxAge` - Use cache if younger than this (ms)
+
+**Other:**
+
+- `timeout` - Timeout in milliseconds
+- `file_links_expire_in_days` - Days until file links expire
+
+### Response Format for Search
+
+```json
+{
+  "success": true,
+  "data": {
+    "web": [
+      {
+        "url": "https://example.com",
+        "title": "Example Title",
+        "description": "Example description of the page",
+        "position": 1
+      }
+    ],
+    "images": [
+      {
+        "title": "Image Title",
+        "imageUrl": "https://example.com/image.jpg",
+        "url": "https://source-page.com",
+        "position": 1
+      }
+    ],
+    "news": [
+      {
+        "title": "News Article",
+        "url": "https://news.com/article",
+        "snippet": "Article preview text...",
+        "date": "2 days ago",
+        "position": 1
+      }
+    ]
+  },
+  "file_urls": ["https://storage.url/screenshot.png"]
+}
+```
+
+### Search Examples
+
+#### Basic Search
+```
+/firecrawl search for "web scraping tools"
+```
+Searches the web for the specified query.
+
+#### News Search
+```
+/firecrawl search news about "AI developments" from past week
+```
+Searches news sources with time filtering.
+
+#### Image Search
+```
+/firecrawl search images of "modern architecture"
+```
+Searches for images matching the query.
+
+#### Search and Scrape
+```
+/firecrawl search "Python tutorials" and scrape top 5 results
+```
+Searches and automatically scrapes the results.
+
+#### Location-Based Search
+```
+/firecrawl search "restaurants" from Japan in Japanese
+```
+Searches from specific location with language preference.
+
+#### Time-Filtered Search
+```
+/firecrawl search "tech news" from past 24 hours
+```
+Searches with time constraints.
+
+### Notes
+
+- Screenshots are automatically uploaded to storage and returned as signed URLs in file_urls
+- Legacy parameters are auto-converted (maxDepth→maxDiscoveryDepth, allowBackwardLinks→allowExternalLinks, ignoreSitemap→sitemap)
+- Extract endpoint polls job to completion automatically
+- Search can optionally scrape results using scrapeOptions
 
 ### Content Extraction
 - Scrape multiple URLs
