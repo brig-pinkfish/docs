@@ -94,34 +94,54 @@ Searches the web and optionally scrapes the results.
 
 ### Response Format for Scrape
 
+For single URL (returns the data object directly):
 ```json
 {
-  "https://www.google.com/": {
-    "success": true,
-    "sessionId": "session-123-456",
-    "data": {
-      "markdown": "markdown content here...",
-      "html": "<html>...</html>",
-      "links": ["https://link1.com", "https://link2.com"],
-      "metadata": {
-        "language": "en",
-        "title": "Google",
-        "description": "Search the world's information",
-        "keywords": "search, google",
-        "robots": "index, follow",
-        "ogTitle": "Google",
-        "ogDescription": "Search engine",
-        "ogUrl": "https://www.google.com/",
-        "ogImage": "https://www.google.com/logo.png",
-        "ogSiteName": "Google",
-        "sourceURL": "https://www.google.com/",
-        "url": "https://www.google.com/",
-        "statusCode": 200
-      }
+  "success": true,
+  "sessionId": "session-123-456",
+  "data": {
+    "markdown": "markdown content here...",
+    "html": "<html>...</html>",
+    "links": ["https://link1.com", "https://link2.com"],
+    "screenshot": "https://storage.googleapis.com/...",  // If screenshot format requested
+    "actions": {
+      "screenshots": ["https://storage.googleapis.com/..."],  // If screenshot action used
+      "scrapes": [],
+      "javascriptReturns": [],
+      "pdfs": []
     },
-    "file_urls": ["https://storage.url/screenshot.png"]
-  }
+    "metadata": {
+      "title": "Page Title",
+      "description": "Page description",
+      "language": "en",
+      "sourceURL": "https://example.com",
+      "url": "https://example.com/",
+      "statusCode": 200,
+      "contentType": "text/html",
+      "proxyUsed": "basic",
+      "creditsUsed": 1
+    }
+  },
+  "file_urls": ["https://skills-stage.pinkfish.ai/files/..."]  // Our storage URLs for screenshots
 }
+```
+
+For multiple URLs (returns array of results):
+```json
+[
+  {
+    "url": "https://example.com",
+    "success": true,
+    "data": { ... },
+    "file_urls": [ ... ]
+  },
+  {
+    "url": "https://another.com",
+    "success": true,
+    "data": { ... },
+    "file_urls": [ ... ]
+  }
+]
 ```
 
 ### Scrape Examples
@@ -210,20 +230,24 @@ Automates login process with multiple browser actions.
 ```json
 {
   "status": "completed",
-  "data": {
-    "products": [
-      {
-        "name": "Product 1",
-        "price": 29.99
-      },
-      {
-        "name": "Product 2", 
-        "price": 49.99
+  "results": [
+    {
+      "url": "https://example.com",
+      "extracted": {
+        "products": [
+          {
+            "name": "Product 1",
+            "price": 29.99
+          },
+          {
+            "name": "Product 2", 
+            "price": 49.99
+          }
+        ]
       }
-    ]
-  },
-  "creditsUsed": 10,
-  "expiresAt": "2024-00-00T00:00:00.000Z"
+    }
+  ],
+  "creditsUsed": 10
 }
 ```
 
@@ -290,35 +314,22 @@ Extracts multiple types of information.
 
 ```json
 {
-  "success": true,
-  "data": {
-    "web": [
-      {
-        "url": "https://example.com",
-        "title": "Example Title",
-        "description": "Example description of the page",
-        "position": 1
+  "results": [
+    {
+      "title": "Example Title",
+      "url": "https://example.com",
+      "description": "Example description of the page",
+      "content": {
+        "markdown": "Scraped content if scrapeOptions used...",
+        "html": "<html>...</html>"
       }
-    ],
-    "images": [
-      {
-        "title": "Image Title",
-        "imageUrl": "https://example.com/image.jpg",
-        "url": "https://source-page.com",
-        "position": 1
-      }
-    ],
-    "news": [
-      {
-        "title": "News Article",
-        "url": "https://news.com/article",
-        "snippet": "Article preview text...",
-        "date": "2 days ago",
-        "position": 1
-      }
-    ]
-  },
-  "file_urls": ["https://storage.url/screenshot.png"]
+    },
+    {
+      "title": "Another Result",
+      "url": "https://another.com",
+      "description": "Another description"
+    }
+  ]
 }
 ```
 
