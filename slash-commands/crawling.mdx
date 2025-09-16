@@ -5,7 +5,7 @@ description: "Learn how to use the Crawling slash command to retrieve website co
 
 ## What can you do with it?
 
-With Crawling, crawl a website to retrieve the contents of pages. Systematically extract content from multiple pages by following links, perfect for comprehensive data collection, documentation scraping, or content migration with configurable depth and path controls.
+With Crawling, crawl a website to retrieve the contents of pages. Systematically extract content from multiple pages by following links, perfect for comprehensive data collection, documentation scraping, or content migration. Features configurable depth controls, path filtering, subdomain inclusion, and the ability to apply scraping options (formats, proxy, caching) to all crawled pages.
 
 ## How to use it?
 
@@ -18,43 +18,71 @@ With Crawling, crawl a website to retrieve the contents of pages. Systematically
 
 **Required:**
 
-- `urls` - Array of URLs to crawl
+- `urls` - Array of starting URLs to crawl
+
+**Optional Crawl Control:**
 
 - `limit` - Maximum number of pages to crawl (default: 10)
+- `maxDepth` - Max depth to crawl (legacy, converts to maxDiscoveryDepth)
+- `maxDiscoveryDepth` - How many link levels deep to discover
+- `allowBackwardLinks` - Allow external domains (legacy, converts to allowExternalLinks)
+- `allowExternalLinks` - Crawl external domains
+- `crawlEntireDomain` - Crawl entire domain, not just children of URL
+- `allowSubdomains` - Include subdomains in crawl
 
-**Optional:**
+**Path Filtering:**
 
-- `maxDepth` - Maximum depth of links to follow
+- `includePaths` - Only crawl URLs matching these patterns (e.g., ["/blog/*"])
+- `excludePaths` - Skip URLs matching these patterns (e.g., ["/admin/*"])
 
-- `excludePaths` - Paths to exclude from crawling (glob patterns)
+**Scrape Options (Applied to All Pages):**
 
-- `includePaths` - Only include these paths when crawling (glob patterns)
+- `scrapeOptions` - Object containing any scrape parameters:
+  - `formats` - Output formats (["markdown", "html", "links", etc.])
+  - `onlyMainContent` - Extract only main content
+  - `proxy` - Proxy type ("basic", "stealth", "auto")
+  - `maxAge` - Use cache if younger than this (milliseconds)
+  - `location` - Location settings for geo-specific content
+  - Any other scrape parameter
 
-- `allowBackwardLinks` - Allow crawling links that aren't direct children of the provided URL
+**File Storage:**
 
-- `scrapeOptions` - Configure output formats (markdown, html)
-
-- `webhook` - URL to receive webhook events for crawl updates
+- `file_links_expire_in_days` - Days until file links expire
+- `file_links_expire_in_minutes` - Alternative to days
 
 ### Response Format
 
-The command returns:
 ```json
 {
-  "url": {
-    "status": "completed",
-    "total": 4,
-    "completed": 4,
-    "creditsUsed": 4,
-    "data": [{
-      "markdown": "content in markdown",
-      "html": "content in HTML",
+  "status": "completed",
+  "total": 4,
+  "completed": 4,
+  "creditsUsed": 4,
+  "expiresAt": "2024-00-00T00:00:00.000Z",
+  "data": [
+    {
+      "markdown": "# Page Title\n\nContent in markdown...",
+      "html": "<html>...</html>",
+      "links": ["https://link1.com", "https://link2.com"],
       "metadata": {
-        "title": "page title",
-        "sourceURL": "original URL"
+        "title": "Page Title",
+        "description": "Page description",
+        "language": "en",
+        "sourceURL": "https://example.com/page1",
+        "statusCode": 200,
+        "error": null
       }
-    }]
-  }
+    },
+    {
+      "markdown": "# Another Page\n\nMore content...",
+      "metadata": {
+        "title": "Another Page",
+        "sourceURL": "https://example.com/page2",
+        "statusCode": 200
+      }
+    }
+  ],
+  "next": null
 }
 ```
 
@@ -62,32 +90,57 @@ The command returns:
 
 ### Basic Usage
 ```
-/crawling
-urls: ["https://docs.example.com"]
-limit: 20
+/crawling crawl https://docs.example.com up to 20 pages
 ```
 Crawl a documentation site up to 20 pages.
 
-### Advanced Usage
+### Path Filtering
 ```
-/crawling
-urls: ["https://example.com"]
-limit: 50
-includePaths: ["docs/*", "guides/*"]
-excludePaths: ["blog/*", "news/*"]
+/crawling crawl https://example.com including only docs and guides folders, excluding blog and news
 ```
 Crawl with path filtering to focus on specific sections.
 
-### Specific Use Case
+### Entire Domain Crawl
 ```
-/crawling
-urls: ["https://old-site.example.com"]
-limit: 100
-maxDepth: 5
-scrapeOptions: {formats: ["markdown", "html"]}
+/crawling crawl entire domain of https://example.com including subdomains
 ```
-Deep crawl for content migration with multiple output formats.
+Crawls the entire domain and all subdomains, not just children of the URL.
+
+### With Caching
+```
+/crawling crawl https://site.com with cached results if less than 1 hour old
+```
+Uses cached content when available (scrapeOptions with maxAge).
+
+### Stealth Mode Crawl
+```
+/crawling crawl https://protected-site.com using stealth proxy for all pages
+```
+Applies stealth proxy to all crawled pages.
+
+### Multi-Format Output
+```
+/crawling crawl https://docs.site.com getting markdown, html, and screenshots for each page
+```
+Retrieves multiple formats for each crawled page.
+
+### Location-Specific Crawl
+```
+/crawling crawl https://global-site.com from Japan in Japanese
+```
+Crawls as if accessing from Japan with Japanese language preference.
+
+### Deep Crawl with Limits
+```
+/crawling crawl https://site.com up to depth 5 maximum 100 pages
+```
+Controls crawl depth and total page limit.
 
 ### Notes
 
-Supports glob patterns for path filtering (e.g., "docs/*", "blog/*"). Output formats include markdown and HTML. Each page crawled uses one credit. Webhook integration available for progress monitoring. Maximum depth control prevents infinite crawling. 
+- Polls job to completion automatically
+- Legacy parameters are auto-converted (maxDepth→maxDiscoveryDepth, allowBackwardLinks→allowExternalLinks)
+- Screenshots are uploaded to storage and returned as file_urls
+- Supports glob patterns for path filtering (e.g., "/docs/*", "/blog/*")
+- All scrape parameters can be applied to crawled pages via scrapeOptions
+- Each page crawled uses one credit 
