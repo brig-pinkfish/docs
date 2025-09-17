@@ -1,0 +1,122 @@
+---
+title: "Email Triggers"
+description: "Turn your workflows into email-powered automation services"
+icon: "envelope"
+---
+
+## What are Email Triggers?
+
+Email triggers turn your workflows into email-based automation services. When you set up an email trigger, Pinkfish generates a unique email address for your workflow. Any email sent to that address will automatically start your workflow, with the email content, attachments, and sender information passed as inputs.
+
+This enables you to create email-driven automations like:
+- **Report Generation Services**: Email a request and get back formatted reports
+- **Document Processing**: Send files via email for automated analysis or conversion
+- **Customer Support Automation**: Route and process support requests automatically
+- **Data Collection**: Gather information through structured email submissions
+
+## Setting Up an Email Trigger
+
+### 1. Access the Trigger Menu
+
+From your workflow editor, navigate to the triggers section and select "New Email Trigger."
+
+### 2. Configure Your Email Trigger
+
+When creating an email trigger, you'll see several configuration options:
+
+
+**Name**: Give your trigger a descriptive name for easy identification (e.g., "Email 1", "Report Generator", etc.)
+
+**Access Control**: Choose who can trigger your workflow via email:
+- **Anyone can send an email to trigger this automation**: Open access - any email address can trigger your workflow
+- **Only approved senders send an email to trigger this automation**: Restricted access - only pre-approved email addresses can trigger your workflow
+
+**Approved Senders**: If you choose restricted access, you can specify:
+- **Individual Email Addresses**: Add specific email addresses that are allowed to trigger the workflow
+- **Approved Domains**: Allow entire domains (e.g., @yourcompany.com) to trigger the workflow
+
+**Release Version**: Choose which version of your workflow the trigger should run:
+- **Latest**: Always runs the most recent published version (recommended)
+- **Specific Version**: Lock the trigger to a particular workflow version
+
+### 3. Save and Get Your Email Address
+
+After clicking "Save," Pinkfish will generate a unique email address for your workflow. This address will look something like:
+
+```
+d35c7152at5c7123f18g@pinkfish.email
+```
+
+Copy this address and use it to trigger your workflow by sending emails to it.
+
+## How Email Triggers Work
+
+### Email Input Structure
+
+When an email triggers your workflow, the following data is automatically passed as inputs:
+
+- **`body`**: The plain text body of the email
+- **`htmlBody`**: The HTML body of the email (if available)
+- **`subject`**: The email subject line
+- **`from`**: The sender's email address
+- **`fromObj`**: Detailed sender information including name and email
+- **`to`**: The trigger email address that received the message
+- **`toList`**: List of all recipients (useful for CC/BCC scenarios)
+- **`attachments`**: Array of file attachments with metadata
+- **`threadingHeaders`**: Email threading information for conversation tracking
+- **`triggerEmail`**: The specific trigger email address used
+- **`triggerField`**: Additional trigger metadata
+
+### Attachment Handling
+
+Email attachments are automatically processed and made available to your workflow:
+- **File Content**: Attachments are stored and accessible via secure URLs
+- **Metadata**: Each attachment includes filename, content type, size, and other properties
+- **Multiple Formats**: Support for documents, images, PDFs, and other file types
+
+## Monitoring Email Triggers
+
+### Workflow Monitor
+
+Track all email-triggered workflow runs in the **Orchestration → Workflow Monitor**:
+
+1. Navigate to the Workflow Monitor from the main navigation
+2. Filter by your specific workflow to see email-triggered runs
+3. View run status, duration, and results
+4. Access detailed logs and execution information
+
+### Viewing Email Inputs
+
+To inspect the data sent via email trigger:
+
+1. **In the Workflow Editor**: Click the lightning bolt (⚡) icon on the right side of the interface
+2. **Select "Triggered Runs"**: This shows runs initiated by triggers (not manual runs)
+3. **Choose a Run**: Select the specific email-triggered run you want to examine
+4. **View Inputs**: Click "View Inputs" to see all the email data including:
+
+<img
+  src="/images/email-trigger/triggers-view-runs.png"
+  alt="Workflow editor showing triggered runs interface with email inputs displayed including attachments, body, subject, and sender information"
+/>
+   - Email body and subject
+   - Sender information
+   - Attachments and their metadata
+   - All other email-related fields
+
+<img
+  src="/images/email-trigger/email-inputs.png"
+  alt="Email trigger configuration modal showing name, access control, approved senders, and release version options"
+/>
+
+This input inspection is useful for:
+- **Debugging**: Understanding what data your workflow receives
+- **Development**: Testing different email formats and attachments
+- **Optimization**: Refining how your workflow processes email inputs
+
+## Best Practices
+
+### Security Considerations
+
+- **Use Approved Senders**: For sensitive workflows, always restrict access to approved senders or domains
+- **Validate Input**: Always validate and sanitize email content in your workflow
+- **Monitor Usage**: Regularly check your workflow monitor for unexpected activity
