@@ -5,11 +5,12 @@ description: "Replicate API for text to speech, image generation, image backgrou
 
 ## What can you do with it?
 
-The `/replicate` command enables you to run various AI models through the Replicate platform. You can generate images or speech from text, and so much more! 
+The `/replicate` command enables you to run various AI models through the Replicate platform. You can generate images, edit images, convert text to speech, remove backgrounds, and more!
 
 ## How to use it?
 
 ### Basic Command Structure
+
 ```
 /replicate [task description]
 ```
@@ -18,19 +19,20 @@ The `/replicate` command enables you to run various AI models through the Replic
 
 **Required:**
 
-- `authorId` - The author ID of the model (e.g., black-forest-labs, minimax, 851-labs)
-- `modelId` - The model ID (e.g., flux-schnell, speech-02-turbo, background-remover)
+- `authorId` - The author ID of the model (e.g., google, minimax, 851-labs)
+- `modelId` - The model ID (e.g., gemini-2.5-flash-image, nano-banana, speech-02-turbo, background-remover)
 - `input` - Input parameters specific to the model
 
 **Optional:**
 
 - `version` - Specific model version to use
-- `fileLinksExpireInDays` - How long generated files remain accessible (1-7 days, defaults to 7)
-- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
+- `file_links_expire_in_days` - How long generated files remain accessible (1-7 days, defaults to 7)
+- `file_links_expire_in_minutes` - How long generated files remain accessible in minutes (takes precedence over days)
 
 ### Response Format
 
 The command returns:
+
 ```json
 {
   "output": [
@@ -42,21 +44,24 @@ The command returns:
 }
 ```
 
-**Note:** All generated files are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `fileLinksExpireInDays` parameter.
+**Note:** All generated files are automatically saved to your "Multimedia Artifact" file store and will be accessible for the duration specified by the `file_links_expire_in_days` parameter.
 
 ## Examples
 
 ### Basic Image Generation
+
 ```
-/replicate generate an image 
-authorId: black-forest-labs
-modelId: flux-schnell
+/replicate generate an image
+authorId: google
+modelId: gemini-2.5-flash-image
 prompt: A modern office space with plants
-aspect_ratio: 16:9
+output_format: png
 ```
-Generates a quick image of an office space using the fast Flux model.
+
+Generates an image of an office space using Google's Gemini 2.5 Flash Image model.
 
 ### Text-to-Speech
+
 ```
 /replicate text to speech
 authorId: minimax
@@ -65,11 +70,13 @@ text: Welcome to our automated customer service. How can I help you today?
 voice_id: Friendly_Person
 speed: 1.0
 emotion: happy
-fileLinksExpireInDays: 7
+file_links_expire_in_days: 7
 ```
+
 Generates happy speech audio with a friendly voice that remains accessible for 7 days.
 
 ### Background Removal
+
 ```
 /replicate remove background
 authorId: 851-labs
@@ -77,23 +84,26 @@ modelId: background-remover
 image: https://example.com/product-photo.jpg  (or select from your files)
 format: png
 ```
+
 Removes the background from a product photo and returns a transparent PNG.
 
 ### Text-Based Image Editing
+
 ```
 /replicate edit image
-authorId: black-forest-labs
-modelId: flux-kontext-max
+authorId: google
+modelId: nano-banana
 prompt: Add a sunset sky background to this image
-input_image: https://example.com/portrait.jpg (or select from your files)
-aspect_ratio: match_input_image
+image_input: ["https://example.com/portrait.jpg"] (or select from your files)
 output_format: png
 ```
-Uses the premium flux-kontext-max model to edit an existing image with text instructions, providing high-quality results with improved typography generation.
+
+Uses the premium Google Nano Banana model to edit an existing image with text instructions, providing high-quality results with improved typography generation.
 
 ### Notes
 
 **Supported Content Types:**
+
 - Images: Generate, edit, and transform images
 - Audio: Generate speech and audio processing
 - Video: NOT SUPPORTED
@@ -101,6 +111,7 @@ Uses the premium flux-kontext-max model to edit an existing image with text inst
 ### Model Parameters
 
 #### Text-to-Speech (minimax/speech-02-turbo)
+
 - **text** (required): Text to convert to speech (max 5000 chars). Use `<#x#>` for pause control (0.01-99.99s)
 - **pitch**: Speech pitch (-12 to 12, default: 0)
 - **speed**: Speech speed (0.5 to 2, default: 1)
@@ -113,30 +124,21 @@ Uses the premium flux-kontext-max model to edit an existing image with text inst
 - **language_boost**: Language enhancement ("None", "Automatic", "Chinese", "Chinese,Yue", "English", "Arabic", "Russian", "Spanish", "French", "Portuguese", "German", "Turkish", "Dutch", "Ukrainian", "Vietnamese", "Indonesian", "Japanese", "Italian", "Korean", "Thai", "Polish", "Romanian", "Greek", "Czech", "Finnish", "Hindi", default: "None")
 - **english_normalization**: Enable English text normalization for better number reading (boolean, default: false, slightly increases latency)
 
-#### Image Generation (black-forest-labs/flux-schnell)
+#### Image Generation (google/gemini-2.5-flash-image)
+
 - **prompt** (required): Prompt for generated image
-- **aspect_ratio**: Aspect ratio ("1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21", default: "1:1")
-- **num_outputs**: Number of outputs to generate (1 to 4, default: 1)
-- **num_inference_steps**: Number of denoising steps (1 to 4, default: 4). Lower steps = faster but lower quality
-- **seed**: Random seed for reproducible generation (integer, optional)
-- **output_format**: Format of output images ("webp", "jpg", "png", default: "webp")
-- **output_quality**: Quality when saving images (0 to 100, default: 80). Not relevant for PNG outputs
-- **disable_safety_checker**: Disable safety checker for generated images (boolean, default: false)
-- **go_fast**: Run faster predictions with fp8 quantized model (boolean, default: true). Note: outputs not deterministic when enabled
-- **megapixels**: Approximate megapixels for generated image ("1", "0.25", default: "1")
+- **output_format**: Format of output images ("jpg", "png", default: "png")
 
 #### Background Removal (851-labs/background-remover)
+
 - **image** (required): Input image (URI format)
 - **threshold**: Threshold for hard segmentation (0.0-1.0, default: 0). If 0.0, uses soft alpha
 - **reverse**: If true, remove the foreground instead of the background (boolean, default: false)
 - **background_type**: Background type (default: "rgba"). Options: 'rgba', 'map', 'green', 'white', [R,G,B] array, 'blur', 'overlay', or path to an image
 - **format**: Output format (default: "png"). Examples: png, jpg
 
-#### Text-Based Image Editing (black-forest-labs/flux-kontext-max)
+#### Text-Based Image Editing (google/nano-banana)
+
 - **prompt** (required): Text description of what you want to generate, or instruction on how to edit the given image
-- **input_image**: Optional: Image to use as reference. Must be jpeg, png, gif, or webp (URI format, nullable)
-- **aspect_ratio**: Aspect ratio ("match_input_image", "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "4:5", "5:4", "21:9", "9:21", "2:1", "1:2", default: "match_input_image")
-- **prompt_upsampling**: Automatic prompt improvement (boolean, default: false)
-- **seed**: Random seed for reproducible generation (integer, nullable, optional)
+- **image_input**: Optional: Array of image URLs to use as reference
 - **output_format**: Output format ("jpg", "png", default: "png")
-- **safety_tolerance**: Safety tolerance (0-6, default: 2). 0 is most strict, 6 is most permissive. Max 2 when input images are used 
