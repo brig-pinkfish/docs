@@ -88,7 +88,8 @@ This architecture aligns well with modern cloud-native orchestration patterns, e
   - Self-healing automation that adapts to UI changes
   - Automatic Playwright code generation
   - **Persistent Browser Login Sessions**: Store authenticated sessions across remote VMs
-  - Complex authentication handling (2FA, captchas, multi-step logins)
+  - **Automatic Captcha Solving**: Built-in solving for Cloudflare, reCAPTCHA, and custom captchas
+  - Complex authentication handling (2FA, multi-step logins)
   - Session reuse across multiple workflow executions
   - File download handling and processing
 - **Competitive Advantage**: Unique persistent session management enables automation of services without APIs
