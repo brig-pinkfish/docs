@@ -118,6 +118,92 @@ This input inspection is useful for:
 - **Development**: Testing different email formats and attachments
 - **Optimization**: Refining how your workflow processes email inputs
 
+## Responding to Email Triggers
+
+### Inbound vs. Outbound Email Processing
+
+Email triggers handle **inbound** email processing—receiving and parsing emails to start workflows. **Outbound** email responses are a separate process that gives you flexibility in how you reply to trigger emails.
+
+### Outbound Email Options
+
+When your workflow needs to send email responses, you have several options:
+
+#### **1. Your Own Email Service**
+
+Connect your existing email infrastructure for branded responses:
+
+- **SendGrid, Mailgun, etc.**: Use API connections to send through your transactional email service
+- **[Gmail Connector](/slash-commands/gmail)**: Send through your Gmail account with full email management capabilities
+- **[Microsoft Outlook Connector](/slash-commands/microsoft-outlook)**: Send through your Outlook/Office 365 account with integrated calendar and task features
+- **Custom SMTP**: Connect any SMTP service through custom integrations
+
+**Benefits**: Full control over sender domain, branding, and deliverability reputation
+
+#### **2. Pinkfish Email Outbound Service**
+
+Use our built-in email service for quick prototyping and simple use cases:
+
+```
+/email-outbound
+to: sender@example.com
+subject: Re: Your Request
+body: Thank you for your email. We've processed your request.
+```
+
+**Benefits**:
+
+- No setup required—perfect for prototyping
+- Built-in rate limiting and delivery management
+- Automatic HTML/plain text formatting
+
+#### **3. Responding to Trigger Senders**
+
+Extract the sender information from the email trigger to respond directly:
+
+```
+Extract the sender email from the trigger: {{from}}
+Send response using /email-outbound:
+to: {{from}}
+subject: Re: {{subject}}
+body: Your automated response here
+```
+
+This creates a complete email automation loop where inbound emails automatically generate responses.
+
+### Branded Email Experience Setup
+
+#### **Professional Email Forwarding**
+
+Many organizations set up a professional forwarding system for a fully branded experience:
+
+1. **Create a branded email address** (e.g., `support@yourcompany.com`)
+2. **Set up email forwarding** from your branded address to the Pinkfish trigger email
+3. **Configure outbound responses** to send from your branded domain using your email service
+4. **Result**: Customers email `support@yourcompany.com` and receive responses from the same branded address
+
+**Example Setup**:
+
+- **Inbound**: `support@yourcompany.com` → forwards to → `d35c7152at5c7123f18g@pinkfish.email`
+- **Outbound**: Workflow uses Gmail/Outlook connector to respond from `support@yourcompany.com`
+- **Customer Experience**: Seamless interaction with your branded email address
+
+#### **Benefits of Forwarding Setup**:
+
+- **Professional appearance**: All communication appears to come from your domain
+- **Brand consistency**: Maintains your organization's email branding
+- **Deliverability**: Responses come from your established email reputation
+- **Flexibility**: Easy to change automation without updating external references
+
+### Email Threading and Conversations
+
+Maintain email conversation threads by:
+
+- Using the `threadingHeaders` from the trigger input
+- Including proper `In-Reply-To` and `References` headers in responses
+- Matching subject line patterns (e.g., "Re: Original Subject")
+
+This ensures email responses appear as part of the original conversation in email clients.
+
 ## Best Practices
 
 ### Security Considerations
@@ -125,3 +211,10 @@ This input inspection is useful for:
 - **Use Approved Senders**: For sensitive workflows, always restrict access to approved senders or domains
 - **Validate Input**: Always validate and sanitize email content in your workflow
 - **Monitor Usage**: Regularly check your workflow monitor for unexpected activity
+
+### Email Response Best Practices
+
+- **Use branded outbound**: Set up forwarding and branded responses for professional communications
+- **Prototype with Pinkfish outbound**: Use `/email-outbound` for testing and simple automations
+- **Maintain conversation threading**: Preserve email thread context for better user experience
+- **Handle attachments properly**: Process and reference attachments in your responses appropriately
