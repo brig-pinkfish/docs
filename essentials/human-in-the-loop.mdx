@@ -1,0 +1,298 @@
+---
+title: "Human-in-the-Loop Workflows"
+description: "Add human approval, decision points, and intervention capabilities to your automated workflows"
+icon: "user-check"
+---
+
+## What is Human-in-the-Loop?
+
+Human-in-the-Loop (HITL) workflows combine the efficiency of automation with human judgment and oversight. Pinkfish enables you to seamlessly integrate human decision points, approvals, and interventions into your automated processes through dynamic web applications, notifications, and data-driven workflow resumption.
+
+## How Human-in-the-Loop Works in Pinkfish
+
+### **The HITL Pattern**
+
+1. **Workflow Pause**: Automation reaches a decision point or encounters an exception
+2. **Human Notification**: System sends email, SMS, or other notification to relevant stakeholders
+3. **Dynamic Interface**: Workflow generates an ephemeral HTML application hosted at a secure file storage link
+4. **Human Input**: Stakeholder reviews context and provides input through the custom interface
+5. **Data Storage**: Human decision is saved to the datastore
+6. **Workflow Resumption**: Data change triggers workflow continuation with human input available
+
+### **Key Components**
+
+- **[Datastore](/essentials/datastore)**: Stores human decisions and approval data
+- **[File Storage](/essentials/filestore)**: Hosts ephemeral HTML applications
+- **[Data Collection Triggers](/essentials/triggers)**: Automatically resume workflows when human input is received
+- **[Email/SMS Notifications](/essentials/email-triggers)**: Alert humans when input is needed
+- **HTML Generation**: Create custom approval interfaces dynamically
+
+## Implementation Patterns
+
+### **1. Approval Checkpoints**
+
+Add approval gates at critical workflow stages:
+
+```
+Step 1: Process initial data
+Step 2: Generate approval request
+  - Create HTML approval form
+  - Save form to file storage with expiring link
+  - Store pending approval record in datastore
+  - Send email notification with approval link
+  - PAUSE workflow execution
+
+Trigger: On datastore change (approval record updated)
+Step 3: Resume with approval decision
+  - Check approval status from datastore
+  - Continue or halt based on human decision
+```
+
+### **2. Exception Handling**
+
+Handle workflow failures with human intervention:
+
+```
+Step 1: Attempt automated process
+Step 2: On failure, create intervention request
+  - Generate diagnostic HTML interface
+  - Include error details and suggested actions
+  - Store intervention record in datastore
+  - Notify operations team via email/SMS
+  - PAUSE for human resolution
+
+Trigger: On datastore change (intervention resolved)
+Step 3: Resume with human guidance
+  - Retrieve resolution instructions
+  - Apply human-provided fixes
+  - Continue automated process
+```
+
+### **3. Quality Review Gates**
+
+Add human quality checks for critical outputs:
+
+```
+Step 1: Generate automated report/output
+Step 2: Create review interface
+  - Display output in HTML review form
+  - Provide approval/rejection options
+  - Include feedback collection fields
+  - Store review record in datastore
+  - Send notification to reviewers
+
+Trigger: On datastore change (review completed)
+Step 3: Process review decision
+  - If approved: finalize and distribute
+  - If rejected: revise based on feedback
+```
+
+## Creating Dynamic HTML Applications
+
+### **Ephemeral Web Interfaces**
+
+Workflows can generate custom HTML applications for human interaction:
+
+```
+Generate HTML approval form:
+- Include workflow context and data
+- Create form fields for human input
+- Add styling for professional appearance
+- Include security tokens for validation
+- Save as HTML file to file storage
+- Generate secure, expiring access link
+```
+
+### **Example HTML Generation**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Workflow Approval Required</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+      }
+      .approval-form {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .btn {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .approve {
+        background: #28a745;
+        color: white;
+      }
+      .reject {
+        background: #dc3545;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="approval-form">
+      <h2>Purchase Order Approval</h2>
+      <p><strong>Vendor:</strong> {{vendor_name}}</p>
+      <p><strong>Amount:</strong> ${{amount}}</p>
+      <p><strong>Description:</strong> {{description}}</p>
+
+      <form action="javascript:submitApproval()">
+        <label>Comments:</label>
+        <textarea name="comments" rows="3" cols="50"></textarea><br />
+
+        <button type="button" class="btn approve" onclick="approve()">
+          Approve
+        </button>
+        <button type="button" class="btn reject" onclick="reject()">
+          Reject
+        </button>
+      </form>
+    </div>
+
+    <script>
+      function approve() {
+        submitDecision("approved");
+      }
+      function reject() {
+        submitDecision("rejected");
+      }
+
+      function submitDecision(decision) {
+        // Update datastore record via API call
+        // This triggers workflow resumption
+      }
+    </script>
+  </body>
+</html>
+```
+
+## Notification Strategies
+
+### **Multi-Channel Notifications**
+
+Alert stakeholders through multiple channels:
+
+- **[Email Notifications](/slash-commands/email-outbound)**: Detailed context with approval links
+- **[SMS Alerts](/how-to/sms-trigger)**: Urgent notifications for time-sensitive approvals
+- **[Slack Messages](/slash-commands/slack)**: Team notifications with workflow context
+- **[Microsoft Teams](/slash-commands/microsoft-teams)**: Enterprise collaboration notifications
+
+### **Escalation Patterns**
+
+Implement approval escalation workflows:
+
+```
+Initial Approval Request:
+- Send to primary approver
+- Set 24-hour timeout in datastore
+
+Escalation Trigger (if no response):
+- Check approval status after timeout
+- Send escalation notification to manager
+- Update approval record with escalation flag
+
+Final Escalation:
+- Auto-approve after extended timeout, or
+- Route to emergency approval process
+```
+
+## Advanced HITL Patterns
+
+### **Collaborative Decision Making**
+
+Enable multiple stakeholders to provide input:
+
+```
+Multi-Stakeholder Approval:
+- Generate approval requests for multiple people
+- Track individual responses in datastore
+- Resume workflow when all approvals received
+- Handle partial approvals and conflicts
+```
+
+### **Conditional Human Intervention**
+
+Add smart intervention triggers:
+
+```
+Risk-Based Approval:
+- Analyze transaction risk score
+- If high risk: require human approval
+- If low risk: auto-approve
+- If medium risk: require manager approval
+```
+
+### **Audit Trail Integration**
+
+Maintain complete audit trails:
+
+```
+Approval Audit Trail:
+- Log all human decisions with timestamps
+- Record approver identity and comments
+- Store approval artifacts (forms, emails)
+- Generate compliance reports
+```
+
+## Security and Compliance
+
+### **Secure Access**
+
+- **Expiring Links**: HTML applications use time-limited access URLs
+- **Authentication**: Integrate with organization's identity systems
+- **Audit Logging**: Complete trail of human interactions
+- **Data Encryption**: Sensitive approval data encrypted in datastore
+
+### **Compliance Features**
+
+- **Role-Based Approvals**: Route to appropriate stakeholders based on rules
+- **Approval Hierarchies**: Multi-level approval workflows
+- **Regulatory Compliance**: SOX, GDPR, and other regulatory requirement support
+- **Evidence Collection**: Maintain approval artifacts for auditing
+
+## Best Practices
+
+### **Design Principles**
+
+- **Clear Context**: Provide complete information for informed decisions
+- **Simple Interfaces**: Make approval forms easy to understand and use
+- **Mobile-Friendly**: Ensure HTML applications work on mobile devices
+- **Timeout Handling**: Always include escalation and timeout mechanisms
+
+### **User Experience**
+
+- **Professional Appearance**: Use consistent styling and branding
+- **Progress Indicators**: Show workflow status and next steps
+- **Help Documentation**: Include guidance for approvers
+- **Confirmation Messages**: Provide clear feedback after decisions
+
+### **Operational Excellence**
+
+- **Monitor Approval Times**: Track and optimize approval processes
+- **Handle Exceptions**: Plan for approver unavailability
+- **Test Regularly**: Validate approval workflows in staging environments
+- **Document Processes**: Maintain clear approval workflow documentation
+
+## Integration with Orchestration
+
+Human-in-the-Loop workflows integrate seamlessly with Pinkfish's orchestration capabilities:
+
+- **[Queue Management](/essentials/queue)**: Pause and resume workflows efficiently
+- **[Monitoring](/essentials/monitor)**: Track approval status and bottlenecks
+- **[Triggers](/essentials/triggers)**: Automatic workflow resumption on human input
+- **[State Management](/essentials/datastore)**: Persistent approval state across workflow executions
+
+---
+
+**Ready to add human oversight to your automations?** Start with our [Workflow Creation Guide](/essentials/automations) or explore [Trigger Configuration](/essentials/triggers).
+
+**Questions?** Join our community on [Discord](https://discord.com/invite/HaDg7R4VZG)
