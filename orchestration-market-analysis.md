@@ -95,14 +95,15 @@ This architecture aligns well with modern cloud-native orchestration patterns, e
 
 - **Market Standard**: Pre-built connectors with limited customization options, third-party integration dependencies
 - **Pinkfish Implementation**:
-  - 100+ built-in integrations via proprietary MCP server farm
+  - **MCP Server Farm**: Pinkfish-hosted Model Context Protocol servers exposing tools for AI agents
+  - **100+ Integrations**: Authentication system for third-party services used by workflows and MCP servers
+  - **Organizational Sharing**: Share authenticated connections across teams and organizations
+  - **Custom Integration Creation**: Build your own integrations beyond built-in options
   - All MCP servers created, verified, and hosted by Pinkfish (no third-party dependencies)
-  - Nightly functionality and security testing of all integrations
-  - Customer-configurable custom connections for unlimited extensibility
+  - Nightly functionality and security testing of all MCP servers
   - Code-based workflow creation (vs. node-based) enabling unlimited customization
-  - Natural language + code approach removes platform constraints
   - Built-in datastore and filestore for state management across workflows
-- **Competitive Advantage**: Enterprise-grade integration security and reliability through proprietary MCP server farm
+- **Competitive Advantage**: Separation of AI agent tools (MCP) from authentication (Connections) enables flexible, secure integration architecture
 
 #### **I. Agent Orchestration & Multi-Agent Systems**
 
@@ -156,8 +157,9 @@ Unlike traditional RPA platforms focused on UI automation, Pinkfish excels at do
 
 - **Natural Language + Code**: Unlike node-based builders, workflows use conversational design with code execution
 - **No Platform Constraints**: Create any automation logic without visual builder limitations
-- **Enterprise MCP Server Farm**: 100+ Pinkfish-hosted and verified integrations with nightly testing
-- **Custom Integrations**: Ability to create custom connections beyond built-in MCP servers
+- **Enterprise MCP Server Farm**: Pinkfish-hosted and verified MCP servers with nightly testing
+- **100+ Integrations**: Comprehensive authentication layer for third-party services
+- **Custom Integrations**: Ability to create custom connections beyond built-in options
 - **State Persistence**: Built-in datastore and filestore eliminate external database dependencies
 
 ---
