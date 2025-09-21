@@ -87,9 +87,11 @@ This architecture aligns well with modern cloud-native orchestration patterns, e
   - AI-powered Browser Operator with natural language control
   - Self-healing automation that adapts to UI changes
   - Automatic Playwright code generation
-  - Secure session management with browser connections
+  - **Persistent Browser Login Sessions**: Store authenticated sessions across remote VMs
+  - Complex authentication handling (2FA, captchas, multi-step logins)
+  - Session reuse across multiple workflow executions
   - File download handling and processing
-- **Competitive Advantage**: AI-driven browser automation that understands intent, not just DOM elements
+- **Competitive Advantage**: Unique persistent session management enables automation of services without APIs
 
 #### **H. Integration & Extensibility Architecture**
 
