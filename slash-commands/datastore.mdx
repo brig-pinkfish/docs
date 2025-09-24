@@ -94,6 +94,83 @@ key: user123
 content: {"name": "John Doe", "email": "john@example.com"}
 ```
 
+### Create Items in Batch
+
+Create multiple items in a single operation for improved performance and efficiency.
+
+**Parameters:**
+
+- `action` (required) - Set to "batch" or "create-batch"
+- `items` (required) - Array of item objects to create
+- `triggerChanges` (optional) - Set to false to prevent firing triggers
+
+**Limitations:**
+
+- Maximum batch size: 500 items per request
+- Recommended batch size: Up to 100 items for optimal performance
+- Each item in the batch follows the same structure as individual items
+- Respects collection quota limits
+
+**Example:**
+
+```
+/selected-datastore create batch with items:
+[
+  {
+    "key": "user001",
+    "content": {"name": "Alice Smith", "email": "alice@example.com"},
+    "sortField": "profile",
+    "metadata": {"department": "engineering"}
+  },
+  {
+    "key": "user002", 
+    "content": {"name": "Bob Johnson", "email": "bob@example.com"},
+    "sortField": "profile",
+    "metadata": {"department": "marketing"}
+  },
+  {
+    "key": "project001",
+    "content": {"title": "Website Redesign", "status": "active"},
+    "sortField": "main",
+    "metadata": {"priority": "high", "team": "design"}
+  }
+]
+```
+
+**Response Format:**
+
+```json
+{
+  "message": "Successfully processed 3 items",
+  "results": [
+    {
+      "docId": "abc123def456",
+      "key": "user001",
+      "isCreated": true,
+      "collectionId": "your-collection-id"
+    },
+    {
+      "docId": "def456ghi789", 
+      "key": "user002",
+      "isCreated": true,
+      "collectionId": "your-collection-id"
+    },
+    {
+      "docId": "ghi789jkl012",
+      "key": "project001", 
+      "isCreated": true,
+      "collectionId": "your-collection-id"
+    }
+  ]
+}
+```
+
+**Performance Notes:**
+
+- Items are processed in smaller internal batches of 50 for optimal performance
+- Large batches are automatically chunked to prevent timeouts
+- Each item can have different keys, sortFields, content, and metadata
+
 ### Read Items
 
 Retrieve items from the datastore
@@ -382,6 +459,46 @@ metadata: {
     "displayType": "csv",
     "csvData": "Model,Stock,Price\niPhone 15,50,999\nPixel 8,30,899"
 }
+```
+
+### Bulk Data Import
+
+Create multiple related items efficiently using batch operations:
+
+```
+/selected-datastore create batch with items:
+[
+  {
+    "key": "employees",
+    "sortField": "john.doe@company.com",
+    "content": "John Doe - Senior Developer",
+    "metadata": {
+      "department": "engineering",
+      "startDate": "2024-01-15",
+      "level": "senior"
+    }
+  },
+  {
+    "key": "employees", 
+    "sortField": "jane.smith@company.com",
+    "content": "Jane Smith - Product Manager",
+    "metadata": {
+      "department": "product",
+      "startDate": "2024-02-01", 
+      "level": "manager"
+    }
+  },
+  {
+    "key": "employees",
+    "sortField": "mike.wilson@company.com", 
+    "content": "Mike Wilson - UX Designer",
+    "metadata": {
+      "department": "design",
+      "startDate": "2024-01-20",
+      "level": "mid"
+    }
+  }
+]
 ```
 
 ## Triggers
