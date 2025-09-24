@@ -5,11 +5,12 @@ description: "Learn how to use the Gemini slash command to interact with Google'
 
 ## What can you do with it?
 
-Use Gemini for tasks involving text, images, audio, and video. Perfect for complex reasoning, multimodal analysis, content generation, and real-time interactions. The command provides access to Google's advanced AI models with support for multiple file types and formats.
+Use Gemini for tasks involving text, images, audio, and video. Perfect for complex reasoning, multimodal analysis, content generation, and real-time interactions. The command provides access to Google's advanced AI models with support for multiple file types and formats. Features intelligent auto-async processing that automatically switches to background processing for large files (especially audio >20MB) to prevent timeouts.
 
 ## How to use it?
 
 ### Basic Command Structure
+
 ```
 /gemini [prompt] [optional-parameters]
 ```
@@ -28,9 +29,12 @@ Use Gemini for tasks involving text, images, audio, and video. Perfect for compl
 
 - `files` - File URLs to include (supports audio, images, videos, and text)
 
+- `async` - Set to `true` to force asynchronous processing (optional - large files auto-switch to async)
+
 ### Response Format
 
-The command returns:
+**Synchronous Response (small files):**
+
 ```json
 {
   "response": "Gemini's generated response",
@@ -42,33 +46,90 @@ The command returns:
 }
 ```
 
+**Auto-Async Response (large files):**
+
+```json
+{
+  "responseId": "gemini-async-12345",
+  "status": "queued",
+  "message": "Large file detected - automatically switched to async processing...",
+  "statusUrl": "/llm/gemini/async/gemini-async-12345",
+  "placeholderFile": {
+    "fileId": "file-12345",
+    "signedUrl": "https://storage.googleapis.com/...",
+    "fileName": "transcription-result-12345.txt"
+  },
+  "autoAsync": true
+}
+```
+
 ## Examples
 
 ### Basic Usage
+
 ```
 /gemini
 prompt: Explain the concept of machine learning
 ```
+
 Gets a simple response from Gemini explaining machine learning concepts.
 
 ### Advanced Usage
+
 ```
 /gemini
 prompt: Describe what's happening in this video and transcribe any dialogue
 files: video_file.mp4
 model: gemini-2.5-pro
 ```
+
 Analyzes multimedia content using an advanced model for video understanding and transcription.
 
 ### Specific Use Case
+
 ```
 /gemini
 prompt: Convert this text to natural speech: "Welcome to our presentation"
 model: gemini-2.5-pro-tts
 ```
+
 Generates text-to-speech audio using the specialized TTS model.
 
-### Notes 
+### Auto-Async Processing
+
+```
+/gemini
+prompt: Transcribe this large audio file
+files: large_audio_file.mp3
+```
+
+Large audio files (>20MB) automatically switch to async processing with immediate placeholder file access.
+
+### Manual Async Processing
+
+```
+/gemini
+prompt: Generate a comprehensive analysis of this video content
+files: long_video.mp4
+async: true
+```
+
+Force async processing for complex tasks that might take several minutes.
+
+### Notes
+
+**Auto-Async Features:**
+
+- **Smart Detection**: Automatically detects large files (audio >20MB, any file >100MB)
+- **Immediate Access**: Creates placeholder files instantly for immediate feedback
+- **Seamless Experience**: No manual async/sync choice needed for most use cases
+- **File Type Awareness**: Creates appropriate file types (.txt for transcription, .json for media generation)
+
+**When Auto-Async Triggers:**
+
+- Audio files larger than 20MB (transcription, analysis)
+- Any file larger than 100MB (document processing, video analysis)
+- Complex multimodal tasks with multiple large files
 
 See [LLM File Type Support](/slash-commands/supported-filetypes-llms) for detailed information about file formats supported by Gemini and other models.
 

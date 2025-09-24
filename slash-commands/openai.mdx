@@ -5,11 +5,12 @@ description: "Learn how to use the OpenAI slash command to interact with OpenAI'
 
 ## What can you do with it?
 
-Use OpenAI models for general reasoning, chat, multimodal tasks, and advanced coding. Choose from various GPT models optimized for different performance and cost requirements.
+Use OpenAI models for general reasoning, chat, multimodal tasks, and advanced coding. Choose from various GPT models optimized for different performance and cost requirements. Supports both synchronous processing for immediate results and asynchronous processing for long-running tasks.
 
 ## How to use it?
 
 ### Basic Command Structure
+
 ```
 /openai [prompt] [optional-parameters]
 ```
@@ -32,9 +33,12 @@ Use OpenAI models for general reasoning, chat, multimodal tasks, and advanced co
 
 - `tool choices` - Control how the model uses tools
 
+- `async` - Set to `true` for long-running tasks that should process in the background
+
 ### Response Format
 
-The command returns:
+**Synchronous Response:**
+
 ```json
 {
   "response": "Model's generated response",
@@ -46,33 +50,77 @@ The command returns:
 }
 ```
 
+**Asynchronous Response:**
+
+```json
+{
+  "responseId": "resp_12345...",
+  "status": "queued",
+  "message": "Process started. Results will be saved to file storage when complete.",
+  "statusUrl": "/llm/gpt/async/resp_12345...",
+  "outputFileName": "openai-result-12345.txt"
+}
+```
+
 ## Examples
 
 ### Basic Usage
+
 ```
 /openai
 prompt: Create a marketing strategy for a new product launch
 ```
+
 Get a response from GPT for strategic planning and creative tasks.
 
 ### Advanced Usage
+
 ```
 /openai
 prompt: Analyze this code and suggest optimizations
 files: code_file.py
 model: gpt-4.1
 ```
+
 Use a specific model with file context for code analysis and optimization.
 
 ### Specific Use Case
+
 ```
 /openai
 prompt: Summarize these customer reviews
 model: gpt-4o-mini
 ```
+
 Fast, cost-effective analysis using the mini model for simple tasks.
 
+### Async Processing
+
+```
+/openai
+prompt: Analyze this large dataset and generate a comprehensive report
+files: large_dataset.csv
+model: gpt-4.1
+async: true
+```
+
+Long-running task that processes in the background and saves results to file storage.
+
 ### Notes
+
+**When to use Async:**
+
+- Large document processing (multiple files or very large files)
+- Complex coding projects that might take several minutes
+- Batch analysis tasks
+- Any task that might timeout with synchronous processing
+
+**Async Processing:**
+
+- Returns immediately with a `responseId` for tracking
+- Results are saved to the "Multimedia Artifact" file storage collection
+- Use the `statusUrl` to check processing status
+- Supports webhook notifications via `triggerUrls` parameter
 
 ## Supported Models
 
