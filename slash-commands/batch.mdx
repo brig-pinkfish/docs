@@ -25,6 +25,19 @@ value1,value2,value3
 value4,value5,value6
 ```
 
+**With Input Grouping:**
+
+```
+/batch
+queueId: d2j05n2rc75s713t0e5g
+triggerId: d2j06dirc75s713t0e6g
+inputGroupSize: 2
+csvData:
+header1,header2,header3
+value1,value2,value3
+value4,value5,value6
+```
+
 ### 2. Get Batch Status
 
 Check the status of an existing batch job.
@@ -44,6 +57,9 @@ batchId: d2j06dirc75s713t0e6g
 - **csvData** OR **csvUrl**: The data to process (required, choose one):
   - csvData: Inline CSV data with headers
   - csvUrl: URL pointing to a CSV file
+- **inputGroupSize** (optional): Controls how many CSV rows are sent to each workflow run (default: 1)
+  - Size = 1: Each row becomes a separate run
+  - Size > 1: Rows are grouped into arrays for batch processing
 - **onDoneTriggerId** (optional): Workflow to trigger when batch completes
 - **onDoneWebhookUrl** (optional): Webhook to call when batch completes
 
@@ -123,6 +139,19 @@ csvUrl: https://example.com/customers.csv
 onDoneTriggerId: d2k2vt5hc3ad821tpjsh
 ```
 
+### Batch Processing with Input Grouping
+
+Process multiple CSV rows together in each workflow run:
+
+```
+/batch
+queueId: d2k15m3sc86t824u1f6h
+triggerId: d2k16ejsc86t824u1f7i
+inputGroupSize: 5
+csvUrl: https://example.com/large-dataset.csv
+onDoneTriggerId: d2k2vt5hc3ad821tpjsh
+```
+
 ### Specific Use Case
 
 Processing product updates with webhook notification:
@@ -152,9 +181,11 @@ get csvData or csvUrl from: ADD REFERENCE
 
 ### Notes
 
-- Each CSV row becomes a separate queue item
+- Each CSV row becomes a separate queue item (when inputGroupSize = 1)
+- With inputGroupSize > 1, multiple rows are grouped together in each queue item
 - Headers are included with each item for context
 - Batch completion triggers fire after all items process
 - Monitor batch progress through queue dashboards
 - Failed items can be retried individually
 - Batches support thousands of items efficiently
+- Input grouping reduces the number of workflow runs for large datasets
