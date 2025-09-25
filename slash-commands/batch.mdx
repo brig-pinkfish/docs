@@ -179,6 +179,55 @@ triggerId: d2m22hlue0av046w3h9m
 get csvData or csvUrl from: ADD REFERENCE
 ```
 
+## Worker Input Format
+
+Understanding what data your workflow will receive based on the input group size:
+
+### Individual Processing (inputGroupSize = 1)
+
+Each workflow run receives a single CSV row as a JSON object:
+
+```json
+{
+  "name": "John",
+  "email": "john@example.com",
+  "status": "active",
+  "batchId": "batch-123"
+}
+```
+
+### Grouped Processing (inputGroupSize > 1)
+
+Each workflow run receives multiple CSV rows in a structured format:
+
+```json
+{
+  "batch": true,
+  "batchId": "batch-123",
+  "batchIndex": 0,
+  "totalRows": 4,
+  "rows": [
+    {
+      "name": "John",
+      "email": "john@example.com",
+      "status": "active"
+    },
+    {
+      "name": "Jane",
+      "email": "jane@example.com",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+**Key Fields for Grouped Processing:**
+- `batch`: Always `true` when using input grouping
+- `batchId`: Unique identifier for the entire batch
+- `batchIndex`: Index of this group within the batch (0, 1, 2, etc.)
+- `totalRows`: Total number of CSV rows in this group
+- `rows`: Array containing the actual CSV data as JSON objects
+
 ### Notes
 
 - Each CSV row becomes a separate queue item (when inputGroupSize = 1)
