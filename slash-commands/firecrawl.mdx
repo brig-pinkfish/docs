@@ -49,9 +49,8 @@ Searches the web and optionally scrapes the results.
   - `"html"` - Processed HTML
   - `"rawHtml"` - Raw HTML source
   - `"links"` - Extracted links array
-  - `"screenshot"` - Base64 screenshot data
-  - `"screenshot@fullPage"` - Full page screenshot
   - `"summary"` - AI-generated summary
+  - For screenshots: `[{"type": "screenshot", "fullPage": true, "quality": 80}]`
   - For JSON extraction: `[{"type": "json", "schema": {...}, "prompt": "..."}]`
 
 **Browser Actions:**
@@ -94,11 +93,10 @@ Searches the web and optionally scrapes the results.
 
 ### Response Format for Scrape
 
-For single URL (returns the data object directly):
+Our proxy returns URL-keyed results. For single URL, you get the data directly:
 ```json
 {
   "success": true,
-  "sessionId": "session-123-456",
   "data": {
     "markdown": "markdown content here...",
     "html": "<html>...</html>",
@@ -122,26 +120,24 @@ For single URL (returns the data object directly):
       "creditsUsed": 1
     }
   },
-  "file_urls": ["https://skills-stage.pinkfish.ai/files/..."]  // Our storage URLs for screenshots
+  "file_urls": ["https://storage.example.com/screenshot-123.png"]  // Our storage URLs for screenshots
 }
 ```
 
-For multiple URLs (returns array of results):
+For multiple URLs (returns URL-keyed object):
 ```json
-[
-  {
-    "url": "https://example.com",
+{
+  "https://example.com": {
     "success": true,
-    "data": { ... },
-    "file_urls": [ ... ]
+    "data": { "markdown": "...", "metadata": {...} },
+    "file_urls": ["https://storage.example.com/screenshot-456.png"]
   },
-  {
-    "url": "https://another.com",
+  "https://another.com": {
     "success": true,
-    "data": { ... },
-    "file_urls": [ ... ]
+    "data": { "markdown": "...", "metadata": {...} },
+    "file_urls": ["https://storage.example.com/screenshot-789.png"]
   }
-]
+}
 ```
 
 ### Scrape Examples
@@ -157,6 +153,12 @@ Scrapes a single URL and returns the content in markdown format by default.
 /firecrawl scrape https://example.com with screenshot after scrolling down and waiting 2 seconds
 ```
 Performs browser actions before scraping the content.
+
+#### Multiple URLs (Batch Processing)
+```
+/firecrawl scrape https://site1.com and https://site2.com and https://site3.com
+```
+Our proxy automatically uses batch processing for multiple URLs (3-5x faster).
 
 #### Multiple Formats
 ```
@@ -227,27 +229,25 @@ Automates login process with multiple browser actions.
 
 ### Response Format for Extract
 
+Extract returns structured data with job completion info:
 ```json
 {
+  "success": true,
   "status": "completed",
-  "results": [
-    {
-      "url": "https://example.com",
-      "extracted": {
-        "products": [
-          {
-            "name": "Product 1",
-            "price": 29.99
-          },
-          {
-            "name": "Product 2", 
-            "price": 49.99
-          }
-        ]
+  "data": {
+    "products": [
+      {
+        "name": "Product 1",
+        "price": 29.99
+      },
+      {
+        "name": "Product 2", 
+        "price": 49.99
       }
-    }
-  ],
-  "creditsUsed": 10
+    ]
+  },
+  "tokensUsed": 348,
+  "expiresAt": "2024-01-15T10:30:00Z"
 }
 ```
 
@@ -259,11 +259,11 @@ Automates login process with multiple browser actions.
 ```
 Extracts data using AI based on the prompt.
 
-#### Multiple URLs
+#### Multiple URLs (Efficient Processing)
 ```
 /firecrawl extract prices from https://shop1.com and https://shop2.com
 ```
-Extracts data from multiple URLs simultaneously.
+Extract endpoint processes multiple URLs in one call (more efficient than individual scrape calls).
 
 #### With Schema
 ```
@@ -312,24 +312,29 @@ Extracts multiple types of information.
 
 ### Response Format for Search
 
+Search returns web search results with scraped content:
 ```json
 {
-  "results": [
-    {
-      "title": "Example Title",
-      "url": "https://example.com",
-      "description": "Example description of the page",
-      "content": {
-        "markdown": "Scraped content if scrapeOptions used...",
-        "html": "<html>...</html>"
+  "success": true,
+  "data": {
+    "web": [
+      {
+        "url": "https://example.com",
+        "title": "Example Title",
+        "description": "Example description of the page",
+        "position": 1,
+        "markdown": "Scraped content if scrapeOptions used..."
+      },
+      {
+        "url": "https://another.com",
+        "title": "Another Result",
+        "description": "Another description",
+        "position": 2
       }
-    },
-    {
-      "title": "Another Result",
-      "url": "https://another.com",
-      "description": "Another description"
-    }
-  ]
+    ]
+  },
+  "creditsUsed": 5,
+  "file_urls": []
 }
 ```
 
@@ -371,9 +376,25 @@ Searches from specific location with language preference.
 ```
 Searches with time constraints.
 
-### Notes
+### Performance & Best Practices
 
-- Screenshots are automatically uploaded to storage and returned as signed URLs in file_urls
+**Automatic Optimizations:**
+- Our proxy automatically uses **batch processing** for multiple URLs (3-5x faster than sequential)
+- **Conditional screenshots**: Only processed when explicitly requested (30x performance improvement)
+- Extract endpoint can process multiple URLs in one call (~7-20 seconds for complex extractions)
+
+**E-commerce Extraction Strategy:**
+- **Homepage URLs** (like https://store.com/) show 4-10 featured products, promotional content
+- **Category URLs** (like https://store.com/products/) show full product catalogs
+- Use MAP endpoint first to discover the right URLs for comprehensive product extraction
+- For dynamic content: Add `waitFor: 3000` and scroll actions to load JavaScript content
+
+**Screenshot Guidelines:**
+- Screenshots add significant processing time - only request when needed
+- Use `[{"type": "screenshot", "fullPage": true}]` format for full page captures
+- Screenshots are automatically uploaded to our storage and returned as signed URLs in `file_urls`
+
+**Other Notes:**
 - Legacy parameters are auto-converted (maxDepth→maxDiscoveryDepth, allowBackwardLinks→allowExternalLinks, ignoreSitemap→sitemap)
 - Extract endpoint polls job to completion automatically
 - Search can optionally scrape results using scrapeOptions
