@@ -1,0 +1,409 @@
+---
+title: "Video Generate Command Guide"
+description: "Create AI-generated videos from text descriptions using Google's Veo model"
+---
+
+<Warning>
+**High Credit Cost:** Video generation costs **834 credits per video** due to the computational intensity of AI video generation. This charge applies when generation starts, regardless of outcome. Please use thoughtfully and monitor your credit usage.
+</Warning>
+
+## What can you do with it?
+
+The `/video-generate` command enables you to create unique videos from text descriptions using Google's cutting-edge Veo AI model. You can generate video content, animations, motion graphics, product demos, concept visualizations, and dynamic content by simply describing what you want to see. Perfect for marketing videos, social media content, prototyping, and creative projects.
+
+## How to use it?
+
+### Prompt Guide
+
+Writing effective prompts for video generation requires descriptive, clear language. A good prompt typically includes:
+
+**Core Elements:**
+- **Subject**: What you want in the video
+  - Examples: golden retriever, wireless headphones, businessman, waterfall, city skyline, sports car, coffee cup, flower blooming
+  
+- **Action**: What the subject is doing
+  - Examples: running, walking, rotating, spinning, melting, pouring, flowing, swirling, exploding, dancing, waving, jumping, flying, falling, opening, closing
+  
+- **Context**: Background or setting
+  - Examples: beach at sunset, busy city street, modern office, lush forest, mountain peak, underwater scene, outer space, desert landscape, cozy cafe, art gallery, parking lot, living room
+  
+- **Style**: Visual aesthetic or artistic approach
+  - Examples: cinematic, photorealistic, cartoon style, 3D render, anime, film noir, documentary style, horror film, vintage 1970s, futuristic sci-fi, minimalist, surreal, stop-motion animation, time-lapse
+
+**Optional Elements:**
+- **Camera motion**: How the camera moves
+  - Examples: static/still shot, slow pan left/right, tilt up/down, dolly in (moving closer), dolly out (moving away), tracking shot (following subject), aerial view, drone shot descending/ascending, POV shot (point of view), orbit around subject, smooth glide, handheld shaky, crane shot
+  
+- **Composition**: How the shot is framed
+  - Examples: extreme close-up, close-up, medium shot, wide shot, extreme wide shot, low-angle shot (looking up), high-angle shot (looking down), bird's eye view (directly overhead), eye-level, Dutch angle (tilted), over-the-shoulder, centered composition, rule of thirds
+  
+- **Ambiance**: Lighting, color, and mood
+  - Examples: warm tones, cool blue tones, golden hour lighting, sunset, sunrise, harsh midday sun, soft diffused light, dramatic shadows, neon lighting, candlelight, moonlight, studio lighting, natural light, moody atmosphere, bright and cheerful, dark and mysterious, misty, foggy, rainy, sunny
+
+**Tips for Better Results:**
+- Be descriptive and specific
+- Reference artistic styles or film techniques
+- For image-to-video: Describe what should happen to subjects in the image
+- Use negative prompts to avoid unwanted elements (describe what you don't want)
+
+**Example Prompts:**
+
+1. **Basic vs. Detailed:**
+   - ❌ Basic: "A dog running"
+   - ✅ Detailed: "A golden retriever running through a field of wildflowers in slow motion, sunset warm lighting, shallow depth of field, cinematic"
+
+2. **Product Showcase:**
+   - ✅ "Close-up tracking shot of wireless headphones rotating 360 degrees on a white marble surface, studio lighting, reflections on glossy surface, professional product photography style"
+
+3. **Atmospheric Scene:**
+   - ✅ "Wide shot of rain falling on a busy Tokyo street at night, neon signs reflecting in puddles, people with umbrellas walking, cinematic cyberpunk aesthetic, cool blue and pink tones"
+
+4. **Nature with Camera Motion:**
+   - ✅ "Aerial drone view slowly descending toward a misty mountain waterfall surrounded by lush green forest, morning golden hour lighting, smooth cinematic motion"
+
+5. **Image-to-Video (Animating a Photo):**
+   - ✅ Image: `https://example.com/portrait.jpg` + Prompt: "The person in the blue jacket turns their head toward the camera and smiles warmly, natural outdoor lighting, gentle breeze moving their hair"
+
+6. **Abstract with Style:**
+   - ✅ "Colorful liquid paint swirling and mixing in slow motion, macro photography, vibrant colors blending, 8K quality, mesmerizing fluid dynamics"
+
+### Basic Command Structure
+```
+/video-generate [description]
+```
+
+### Parameters
+
+**Required:**
+
+- `prompt` - Text description of the video you want to generate
+
+**Optional:**
+
+- `image` - Input image URL to use as starting frame for video generation (ideal resolution: 1280x720)
+- `seed` - Random seed for reproducible generations (integer). See details below.
+- `resolution` - Resolution of the generated video: "720p" (default), "1080p"
+- `aspect_ratio` - Video aspect ratio: "16:9" (default), "9:16", "1:1"
+- `negative_prompt` - Description of what to discourage in the generated video
+- `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
+- `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
+
+#### More Details About Seed
+
+AI video generation uses randomness to create variations. By default, each generation produces a different result even with the same prompt. A **seed** is like a "starting point" for that randomness - using the same seed with the same prompt will produce the same video every time.
+
+**When to use a seed:**
+- **Testing**: Generate the same video repeatedly while tweaking other parameters
+- **Consistency**: Create matching videos for a series or brand
+- **Collaboration**: Share a seed so teammates can reproduce your exact result
+- **A/B Testing**: Compare different prompts while keeping the randomness constant
+
+**When to skip the seed:**
+- Exploring creative variations
+- Want unique results each time
+- Don't need reproducibility
+
+Leave this blank for random/unique results. Set to any integer (e.g., 42, 12345) when you need reproducibility.
+
+### Response Format
+
+The `/video-generate` skill returns:
+```json
+{
+  "output": [
+    {
+      "url": "https://generated-video-url",
+      "mimeType": "video/mp4"
+    }
+  ]
+}
+```
+
+**Note:** Video generation is **asynchronous** and typically takes 1-2 minutes. The skill automatically handles polling and saves the video to your "Multimedia Artifact" file store once ready. See "Technical Details: Async Workflow" below for the complete polling sequence.
+
+## Examples
+
+### Basic Video Generation
+```
+/video-generate
+prompt: A golden retriever running through a field of flowers in slow motion
+```
+Generates a short video clip of a dog running through flowers.
+
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "A golden retriever running through a field of flowers in slow motion"
+  },
+  "async": true
+}
+```
+
+### Product Demo Video
+```
+/video-generate
+prompt: Professional product demonstration of wireless headphones rotating 360 degrees on a clean white background with studio lighting
+```
+Creates a product showcase video perfect for e-commerce or marketing.
+
+### Nature Scene
+```
+/video-generate
+prompt: Ocean waves crashing on a sandy beach at sunset with seagulls flying overhead
+```
+Generates a scenic nature video with dynamic motion.
+
+### Abstract Motion Graphics
+```
+/video-generate
+prompt: Abstract colorful particles flowing and swirling in space, creating mesmerizing patterns
+```
+Creates artistic motion graphics for backgrounds or creative projects.
+
+### Image-to-Video Generation
+```
+/video-generate
+prompt: Make the person wave hello and smile at the camera
+image: https://example.com/portrait.jpg
+```
+Animates a static image based on the prompt instructions.
+
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "Make the person wave hello and smile at the camera",
+    "image": "https://replicate.delivery/pbxt/example/portrait.jpg"
+  },
+  "async": true
+}
+```
+
+### Social Media Content (Vertical)
+```
+/video-generate
+prompt: Coffee being poured into a white cup in slow motion, steam rising, cozy cafe atmosphere
+aspect_ratio: 9:16
+fileLinksExpireInDays: 7
+```
+Creates vertical social media content optimized for Instagram/TikTok that stays accessible for a week.
+
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "Coffee being poured into a white cup in slow motion, steam rising, cozy cafe atmosphere",
+    "aspect_ratio": "9:16",
+    "resolution": "1080p"
+  },
+  "async": true
+}
+```
+
+### Architectural Flythrough
+```
+/video-generate
+prompt: Smooth camera flythrough of a modern sustainable house interior, showcasing open floor plan and natural lighting
+aspect_ratio: 16:9
+resolution: 720p
+```
+Generates a cinematic architectural visualization video.
+
+### Reproducible Generation with Seeds
+```
+/video-generate
+prompt: Abstract particles flowing through space with vibrant colors
+seed: 12345
+```
+Uses a fixed seed to generate the same video consistently for testing or iterations.
+
+**How Seeds Work:**
+
+1. **Without a seed** (default):
+   - Each generation is unique and unpredictable
+   - Same prompt = different results each time
+   - Best for exploring creative variations
+
+2. **With a seed** (e.g., seed: 12345):
+   - Same seed + same prompt = identical video
+   - Different seeds = different variations
+   - Best for reproducibility and consistency
+
+**Common Seed Workflows:**
+
+- **Iterate on prompts**: Use seed 42, try different prompts, see which works best
+- **Refine quality**: Use seed 100, adjust resolution/aspect ratio without changing the content
+- **Create a series**: Use seed 500 for all videos to maintain visual consistency
+- **Document results**: Share "prompt + seed" with your team to reproduce exact videos
+
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "Abstract particles flowing through space with vibrant colors",
+    "seed": 12345
+  },
+  "async": true
+}
+```
+
+### Negative Prompt Example
+```
+/video-generate
+prompt: A peaceful forest scene with sunlight filtering through trees
+negative_prompt: people, buildings, cars, urban elements
+```
+Generates nature content while explicitly avoiding unwanted elements.
+
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "A peaceful forest scene with sunlight filtering through trees",
+    "negative_prompt": "people, buildings, cars, urban elements, text, watermark"
+  },
+  "async": true
+}
+```
+
+### Complete Example with All Options
+**API Example:**
+```json
+{
+  "input": {
+    "prompt": "A majestic eagle soaring over mountain peaks at sunset",
+    "image": "https://replicate.delivery/pbxt/example/eagle-base.jpg",
+    "seed": 42,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9",
+    "negative_prompt": "blurry, low quality, distorted, text"
+  },
+  "async": true
+}
+```
+This example shows all available parameters working together for maximum control.
+
+### Notes
+
+**Model Capabilities:**
+- High-quality video generation (typically 1-2 minutes processing time)
+- Supports text-to-video and image-to-video generation
+- Creates smooth, coherent motion
+- Excellent for commercial and creative use cases
+- MP4 format output
+
+**Limitations:**
+- Generation takes 1-2 minutes (asynchronous process)
+- Limited to short-form video clips (typically 5-8 seconds)
+- Results may vary based on prompt complexity
+- Subject to Replicate's content policies
+
+**Processing Time:**
+Video generation is an asynchronous process that typically takes 1-2 minutes. The command will:
+1. Submit your video generation request
+2. Poll every 5-10 seconds for completion
+3. Automatically download and save the video when ready
+4. Show progress updates during generation
+
+### Model Parameters (google/veo-3-fast)
+
+#### Video Generation Parameters
+- **prompt** (required): Text description of the video you want to generate
+- **image** (optional): Input image URL to animate or use as starting frame (ideal resolution: 1280x720)
+- **seed** (optional): Random seed for reproducible generations (integer)
+- **resolution** (optional): Resolution of the generated video ("720p" default)
+- **aspect_ratio** (optional): Video aspect ratio ("16:9" default, "9:16", "1:1")
+- **negative_prompt** (optional): Description of what to discourage in the generated video
+- **fileLinksExpireInDays**: Duration files remain accessible (1-7 days, default: 7)
+- **fileLinksExpireInMinutes**: Duration files remain accessible in minutes (optional, overrides days)
+
+### Credits Usage
+
+Video generation costs **834 credits** per video due to the computational requirements of AI video generation. This is charged when the generation starts, regardless of the outcome.
+
+## Technical Details: Async Workflow
+
+Video generation is **asynchronous** and requires polling. The `/video-generate` skill automatically handles this for you, but if you're calling the API directly, here's the complete sequence:
+
+### Step 1: Initial Request (Your API Call)
+
+```bash
+POST /replicate/google/veo-3-fast
+```
+
+```json
+{
+  "input": {
+    "prompt": "A golden retriever running through a field"
+  },
+  "async": true
+}
+```
+
+### Step 2: Immediate Response (202 Accepted)
+
+You receive a prediction object immediately:
+
+```json
+{
+  "id": "pred_abc123xyz",
+  "status": "starting",
+  "urls": {
+    "get": "https://api.replicate.com/v1/predictions/pred_abc123xyz",
+    "cancel": "https://api.replicate.com/v1/predictions/pred_abc123xyz/cancel"
+  },
+  "created_at": "2025-01-01T12:00:00.000000Z",
+  "model": "google/veo-3-fast"
+}
+```
+
+**Important:** Credits (834) are charged at this point, when generation starts.
+
+### Step 3: Poll for Completion (Required if Not Using Skill)
+
+Poll the `urls.get` endpoint every 5-10 seconds:
+
+```bash
+GET https://api.replicate.com/v1/predictions/pred_abc123xyz
+Authorization: Bearer <REPLICATE_API_TOKEN>
+```
+
+**While processing**, you'll receive:
+```json
+{
+  "id": "pred_abc123xyz",
+  "status": "processing",
+  "output": null
+}
+```
+
+**When complete** (typically 1-2 minutes), you'll receive:
+```json
+{
+  "id": "pred_abc123xyz",
+  "status": "succeeded",
+  "output": "https://replicate.delivery/.../output.mp4",
+  "metrics": {
+    "predict_time": 85.4
+  }
+}
+```
+
+**If failed**, you'll receive:
+```json
+{
+  "id": "pred_abc123xyz",
+  "status": "failed",
+  "error": "Error message here"
+}
+```
+
+### Step 4: Download the Video
+
+Use the URL from the `output` field to download your video.
+
+---
+
+**If using the `/video-generate` skill:** All of steps 3-4 are handled automatically. The skill polls Replicate, downloads the video, saves it to your file store, and returns the final result.
+
