@@ -1,0 +1,114 @@
+---
+title: "Video Transcription Guide"
+description: "Learn how to transcribe video files with timestamps, speaker identification, and summaries"
+---
+
+## What can you do with it?
+
+Transcribe video files to text with timestamps, speaker identification, and meeting summaries. Perfect for converting meetings, presentations, interviews, and other video content into searchable, readable transcripts. Automatically pre-processes video by extracting audio for optimal transcription quality.
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/video-transcription [prompt] [video-file]
+```
+
+### Parameters
+
+**Required:**
+
+- `prompt` - Instructions for transcription (timestamps, speakers, summary, etc.)
+- `files` - Video file to transcribe (supports MP4, MOV, AVI, and other common formats)
+
+**Optional:**
+
+- `model` - Gemini model to use (defaults to gemini-2.5-flash)
+- `output filename` - Custom name for transcript file
+
+### Response Format
+
+**Asynchronous Response (all video transcription is async):**
+
+```json
+{
+  "message": "Process started. Results will be in Multimedia Artifact collection",
+  "statusUrl": "https://skills.pinkfish.ai/llm/gemini/async/job-12345",
+  "placeholderFile": {
+    "fileId": "abc123",
+    "signedUrl": "https://skills.pinkfish.ai/files/collection/transcript.txt",
+    "fileName": "transcript_20251007.txt"
+  },
+  "responseId": "job-12345",
+  "status": "queued"
+}
+```
+
+## Examples
+
+### Basic Transcription
+
+```
+/video-transcription
+prompt: Transcribe this video with timestamps and speakers
+files: meeting_recording.mp4
+```
+
+Creates a basic transcript with timestamps and speaker identification.
+
+### Meeting Summary
+
+```
+/video-transcription
+prompt: Transcribe this video with timestamps and speakers. Also provide a summary of key topics discussed and any action items mentioned.
+files: team_meeting.mp4
+```
+
+Generates transcript plus meeting summary with action items.
+
+### Detailed Analysis
+
+```
+/video-transcription
+prompt: Transcribe this video with timestamps and speakers. Include a summary of key decisions made, technical terms discussed, and next steps identified.
+files: project_review.mp4
+output filename: project_review_transcript.txt
+```
+
+Comprehensive transcription with detailed analysis and custom filename.
+
+### Notes
+
+**Processing Details:**
+
+- **Always Async**: Video transcription uses background processing due to file size and complexity
+- **Audio Extraction**: Automatically extracts audio from video for optimal transcription
+- **Output Format**: Plain text transcript with timestamps and speaker labels
+- **File Storage**: Results saved to Multimedia Artifact collection
+- **Processing Time**: Varies based on video length (typically 2-5 minutes for 30-minute videos)
+
+**Common Instructions:**
+
+- "Include timestamps for each speaker turn"
+- "Identify speakers by name if mentioned"
+- "Provide a summary of key topics discussed"
+- "Extract any action items or decisions made"
+- "Note technical terms or tools mentioned"
+- "Highlight concerns or issues raised"
+
+**Output Format:**
+
+The transcript file contains:
+- Timestamped dialogue with speaker identification
+- Meeting summary (if requested)
+- Action items and decisions (if requested)
+- Technical terms and references (if requested)
+
+## Supported Models
+
+- **`gemini-2.5-flash`** (default) - Optimal balance of speed and accuracy for transcription
+- **`gemini-2.5-pro`** - Enhanced accuracy for complex audio or multiple speakers
+- **`gemini-2.5-flash-lite`** - Faster processing for simple, clear audio
+
+All models support video transcription with timestamp and speaker identification.

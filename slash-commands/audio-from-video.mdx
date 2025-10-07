@@ -1,0 +1,128 @@
+---
+title: "Audio from Video Guide"
+description: "Learn how to extract audio files from video content for further processing"
+---
+
+## What can you do with it?
+
+Extract audio tracks from video files and save them as standalone audio files. Perfect for creating podcasts from video content, preparing audio for transcription services, or isolating audio for analysis. Supports both synchronous processing for small videos and asynchronous processing for large files.
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/audio-from-video [video-file] [optional-parameters]
+```
+
+### Parameters
+
+**Required:**
+
+- `files` - Video file to extract audio from (supports MP4, MOV, AVI, and other common formats)
+
+**Optional:**
+
+- `output filename` - Custom name for extracted audio file (defaults to extracted_audio.mp3)
+- `collection id` - Specific collection to save audio to (defaults to Multimedia Artifact)
+- `expiry days` - Number of days until download links expire (default: 7)
+
+### Response Format
+
+**Synchronous Response (small video files):**
+
+```json
+{
+  "message": "Audio extracted successfully",
+  "fileUrl": "https://skills.pinkfish.ai/files/collection/extracted_audio.mp3",
+  "fileName": "extracted_audio.mp3",
+  "contentType": "audio/mpeg",
+  "collectionId": "collection-456",
+  "metadata": {
+    "originalVideoUrl": "original video URL",
+    "extractedAt": "2025-10-07T21:49:40.264Z",
+    "audioFormat": "mp3"
+  }
+}
+```
+
+**Asynchronous Response (large video files):**
+
+```json
+{
+  "message": "Audio extraction started. Processing asynchronously.",
+  "jobId": "audio-extraction-queue-12345",
+  "status": "queued",
+  "responseId": "audio-extraction-queue-12345",
+  "fileUrl": "original video file URL"
+}
+```
+
+## Examples
+
+### Basic Audio Extraction
+
+```
+/audio-from-video
+files: presentation.mp4
+```
+
+Extracts audio from video and saves as MP3 file to default collection.
+
+### Custom Filename and Collection
+
+```
+/audio-from-video
+files: webinar_recording.mp4
+output filename: webinar_audio.mp3
+collection id: project-audio-files
+```
+
+Extracts audio with custom filename and saves to specific collection.
+
+### Large File Processing
+
+```
+/audio-from-video
+files: long_conference_video.mp4
+output filename: conference_audio.mp3
+expiry days: 30
+```
+
+Large videos automatically use async processing with extended link expiry.
+
+### Notes
+
+**Processing Options:**
+
+- **Sync**: Small video files (typically under 100MB) process immediately
+- **Async**: Large video files use background processing with job tracking
+- **Audio Format**: Extracted audio saved as MP3 format
+- **File Storage**: Audio files saved to specified collection or Multimedia Artifact collection
+
+**Collection Management:**
+
+- **Default Collection**: "Multimedia Artifact" if no collection ID specified
+- **Custom Collections**: Specify collection ID to organize audio files by project/category
+- **Link Expiry**: Control how long download links remain valid (1-30 days)
+
+**Use Cases:**
+
+- Converting video presentations to audio podcasts
+- Extracting audio for transcription services
+- Creating audio-only versions of video content
+- Isolating audio tracks for analysis or editing
+- Preparing content for audio-focused workflows
+
+## Supported File Types
+
+**Input Video Formats:**
+- MP4, MOV, AVI, WMV, FLV, MKV
+- Most common video formats supported
+
+**Output Audio Format:**
+- MP3 (high-quality audio extraction)
+
+**File Size Limits:**
+- Sync processing: Up to ~100MB video files
+- Async processing: Larger files automatically use background processing
