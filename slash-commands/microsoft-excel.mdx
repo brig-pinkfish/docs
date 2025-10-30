@@ -5,7 +5,7 @@ description: "Manage spreadsheets, worksheets, tables, and data through Excel on
 
 ## What can you do with it?
 
-Microsoft Excel integration allows you to programmatically manage spreadsheets and data through the Microsoft Graph API. You can search for Excel files, create and manage worksheets, update cell values, work with tables including adding, updating and deleting rows, and perform data operations like filtering and sorting. This integration is perfect for automated reporting, data processing workflows, spreadsheet management, and building data-driven applications that interact with Excel files stored in OneDrive for Business or SharePoint.
+Microsoft Excel integration allows you to programmatically manage spreadsheets and data through the Microsoft Graph API. You can create workbooks, search for Excel files, manage worksheets, read and write cell data, insert formulas, apply formatting, work with tables including adding, updating and deleting rows, and perform data operations like filtering and sorting. This integration is perfect for automated reporting, data processing workflows, spreadsheet management, converting CSV/JSON to Excel, and building data-driven applications that interact with Excel files stored in OneDrive for Business or SharePoint.
 
 ## How to use it?
 
@@ -20,10 +20,34 @@ Microsoft Excel integration allows you to programmatically manage spreadsheets a
 
 - `action` - The operation to perform with Excel
 
-## Tools
+## Workbook Operations
+
+### Create Workbook
+Create a new Excel workbook in OneDrive/SharePoint
+
+**Parameters:**
+- `filename` (required) - Name for the new workbook (e.g., "Sales Report.xlsx")
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: create-workbook
+filename: Sales Report 2024.xlsx
+```
+
+**Response:**
+```json
+{
+  "id": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
+  "name": "Sales Report 2024.xlsx",
+  "webUrl": "https://onedrive.live.com/...",
+  "size": 8192,
+  "createdDateTime": "2025-02-05T00:43:08Z"
+}
+```
 
 ### Search Excel Files
-Find Excel files by name in your OneDrive
+Find Excel files by name to obtain workbook ID
 
 **Parameters:**
 - `filename` (required) - Name or partial name of the Excel file
@@ -43,12 +67,84 @@ filename: Sales Report
       "name": "Sales Report 2024.xlsx",
       "id": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
       "lastModified": "2025-02-05T00:43:08Z",
-      "webUrl": "https://onedrive.live.com/...",
-      "workbookId": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR"
+      "webUrl": "https://onedrive.live.com/..."
     }
   ]
 }
 ```
+
+### List Workbooks
+Get all Excel workbooks from root or specific folder
+
+**Parameters:**
+- `folder-id` (optional) - Folder ID to search within (searches root if omitted)
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: list-workbooks
+```
+
+**Response:**
+```json
+{
+  "value": [
+    {
+      "id": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
+      "name": "Sales Report 2024.xlsx",
+      "size": 45678,
+      "createdDateTime": "2025-01-15T10:30:00Z",
+      "lastModifiedDateTime": "2025-02-05T00:43:08Z"
+    }
+  ]
+}
+```
+
+### Get Workbook Metadata
+Get detailed information about a workbook
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: get-workbook-metadata
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+```
+
+**Response:**
+```json
+{
+  "id": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
+  "name": "Sales Report 2024.xlsx",
+  "createdDateTime": "2025-01-15T10:30:00Z",
+  "lastModifiedDateTime": "2025-02-05T00:43:08Z",
+  "size": 45678
+}
+```
+
+### Delete Workbook
+Permanently delete an Excel workbook
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: delete-workbook
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
+```
+
+## Worksheet Operations
 
 ### List Worksheets
 Get all worksheets in a workbook
@@ -76,7 +172,8 @@ workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
     {
       "id": "{00000000-0002-0000-0000-000000000000}",
       "name": "Summary",
-      "position": 1
+      "position": 1,
+      "visibility": "Visible"
     }
   ]
 }
@@ -107,36 +204,386 @@ sheet-name: Q1 Data
 }
 ```
 
-### Update Cell Value
-Update the value of a specific cell or range
+### Get Specific Worksheet
+Get worksheet details by name or ID
 
 **Parameters:**
 - `workbook-id` (required) - The ID of the Excel workbook
 - `worksheet-id` (required) - The ID or name of the worksheet
-- `cell-range` (required) - Cell address (e.g., A1) or range (e.g., A1:B2)
-- `value` (required) - Value(s) to insert
 
 **Example:**
 ```
 /your-Microsoft-Excel-connection
-action: update-cell
+action: get-worksheet
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+```
+
+**Response:**
+```json
+{
+  "id": "{00000000-0001-0000-0000-000000000000}",
+  "name": "Sheet1",
+  "position": 0,
+  "visibility": "Visible"
+}
+```
+
+### Rename Worksheet
+Change worksheet name or position
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The current ID or name of the worksheet
+- `new-name` (optional) - New name for the worksheet
+- `position` (optional) - New position index
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: rename-worksheet
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+new-name: Sales Data
+position: 0
+```
+
+**Response:**
+```json
+{
+  "id": "{00000000-0001-0000-0000-000000000000}",
+  "name": "Sales Data",
+  "position": 0,
+  "visibility": "Visible"
+}
+```
+
+### Delete Worksheet
+Remove a worksheet from a workbook
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet to delete
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: delete-worksheet
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Old Data
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
+```
+
+## Data Operations
+
+### Read Data from Range
+Read cell values from a worksheet
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (optional) - Cell range (e.g., A1:D10, A1). Omit to read entire used range
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: read-range
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D10
+```
+
+**Response:**
+```json
+{
+  "address": "Sheet1!A1:D10",
+  "values": [
+    ["Product", "Quantity", "Price", "Total"],
+    ["Product A", 100, 25.99, 2599.00],
+    ["Product B", 50, 35.99, 1799.50]
+  ]
+}
+```
+
+### Write Data to Range
+Write values to cells in a worksheet
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Starting cell address (e.g., A1)
+- `values` (required) - 2D array of values to write
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: write-range
 workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
 worksheet-id: Sheet1
 cell-range: A1
-value: Total Sales
+values: [["Product", "Quantity"], ["Product A", 100], ["Product B", 50]]
 ```
 
 **Response:**
 ```json
 {
   "status": "success",
-  "range": "A1",
-  "values": [["Total Sales"]]
+  "address": "Sheet1!A1:B3"
 }
 ```
 
+### Write Formulas
+Insert Excel formulas into cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Cell address for the formula
+- `formula` (required) - Formula string starting with "="
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: write-formula
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: D2
+formula: =B2*C2
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "address": "Sheet1!D2",
+  "formula": "=B2*C2"
+}
+```
+
+### Convert CSV/JSON to Excel
+Create Excel files from CSV or JSON data
+
+**Parameters:**
+- `filename` (required) - Name for the new Excel file
+- `data` (required) - CSV string or JSON array to convert
+- `data-type` (required) - Either "csv" or "json"
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: convert-to-excel
+filename: Data Export.xlsx
+data-type: json
+data: [{"Product": "A", "Quantity": 100}, {"Product": "B", "Quantity": 50}]
+```
+
+**Response:**
+```json
+{
+  "workbookId": "01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR",
+  "name": "Data Export.xlsx",
+  "webUrl": "https://onedrive.live.com/..."
+}
+```
+
+## Formatting Operations
+
+### Format Range - Font Styling
+Apply font properties to cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format (e.g., A1:D1)
+- `bold` (optional) - true/false
+- `italic` (optional) - true/false
+- `size` (optional) - Font size (e.g., 12)
+- `color` (optional) - Hex color code (e.g., "#FF0000")
+- `font-name` (optional) - Font name (e.g., "Calibri")
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-font
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D1
+bold: true
+size: 14
+color: "#000000"
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1:D1"
+}
+```
+
+### Format Range - Fill Color
+Apply background color to cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format
+- `color` (required) - Hex color code (e.g., "#4472C4")
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-fill
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D1
+color: "#4472C4"
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1:D1"
+}
+```
+
+### Format Range - Borders
+Add borders to cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format
+- `color` (optional) - Hex color code (default: "#000000")
+- `style` (optional) - Border style: "Continuous", "Dash", "DashDot", "DashDotDot", "Dot", "Double", "None"
+- `weight` (optional) - Border weight: "Thin", "Medium", "Thick"
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-borders
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D10
+color: "#000000"
+style: Continuous
+weight: Thin
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1:D10"
+}
+```
+
+### Format Range - Number Format
+Apply number formatting to cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format
+- `number-format` (required) - Format string (e.g., "$#,##0.00" for currency, "0.00%" for percentage)
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-number
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: C2:C10
+number-format: "$#,##0.00"
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "C2:C10"
+}
+```
+
+**Common Number Formats:**
+- Currency: `$#,##0.00`
+- Percentage: `0.00%`
+- Date: `mm/dd/yyyy`
+- Time: `h:mm:ss AM/PM`
+- Accounting: `_($* #,##0.00_);_($* (#,##0.00);_($* "-"??_);_(@_)`
+- Custom: `0.000`, `#,##0`, `yyyy-mm-dd`
+
+### Format Range - Alignment
+Set text alignment in cells
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format
+- `horizontal-alignment` (optional) - "Left", "Center", "Right", "Justify", "Distributed"
+- `vertical-alignment` (optional) - "Top", "Middle", "Bottom", "Justify", "Distributed"
+- `wrap-text` (optional) - true/false
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-alignment
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D1
+horizontal-alignment: Center
+vertical-alignment: Middle
+wrap-text: true
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1:D1"
+}
+```
+
+### Combined Format Update
+Apply multiple format properties at once (more efficient than separate calls)
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `worksheet-id` (required) - The ID or name of the worksheet
+- `cell-range` (required) - Range to format
+- Multiple formatting parameters from font, fill, number format, and alignment
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: format-combined
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+worksheet-id: Sheet1
+cell-range: A1:D1
+bold: true
+fill-color: "#4472C4"
+horizontal-alignment: Center
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "range": "A1:D1"
+}
+```
+
+## Table Operations
+
 ### Create Table
-Create a new table in a worksheet
+Convert a range to an Excel Table with headers
 
 **Parameters:**
 - `workbook-id` (required) - The ID of the Excel workbook
@@ -166,7 +613,7 @@ has-headers: true
 ```
 
 ### Add Table Row
-Add a new row to an existing table
+Insert a new row into an Excel Table
 
 **Parameters:**
 - `workbook-id` (required) - The ID of the Excel workbook
@@ -190,8 +637,59 @@ row-data: ["Product A", 100, 25.99, 2599.00]
 }
 ```
 
+### Update Table Row
+Modify an existing table row
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `table-id` (required) - The ID of the table
+- `row-index` (required) - 0-based index within table (excluding header)
+- `row-data` (required) - Array of new values
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: update-table-row
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+table-id: Table1
+row-index: 0
+row-data: ["Product A Updated", 150, 29.99, 4498.50]
+```
+
+**Response:**
+```json
+{
+  "index": 0,
+  "values": [["Product A Updated", 150, 29.99, 4498.50]]
+}
+```
+
+### Delete Table Row
+Remove a row from a table
+
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `table-id` (required) - The ID of the table
+- `row-index` (required) - 0-based index of row to delete
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: delete-table-row
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+table-id: Table1
+row-index: 5
+```
+
+**Response:**
+```json
+{
+  "status": "deleted"
+}
+```
+
 ### Get Table Data
-Retrieve all data from a table
+Read all rows from a table
 
 **Parameters:**
 - `workbook-id` (required) - The ID of the Excel workbook
@@ -221,29 +719,105 @@ table-id: Table1
 }
 ```
 
-### Delete Worksheet
-Remove a worksheet from a workbook
+### Filter Table Data
+Apply filter criteria to table columns
 
 **Parameters:**
 - `workbook-id` (required) - The ID of the Excel workbook
-- `worksheet-id` (required) - The ID or name of the worksheet to delete
+- `table-id` (required) - The ID of the table
+- `column-id` (required) - Column index or name to filter
+- `filter-criteria` (required) - Filter specification (varies by filter type)
 
 **Example:**
 ```
 /your-Microsoft-Excel-connection
-action: delete-worksheet
+action: filter-table
 workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
-worksheet-id: Old Data
+table-id: Table1
+column-id: 1
+filter-criteria: {"values": ["Product A", "Product C"]}
 ```
 
 **Response:**
 ```json
 {
-  "status": "deleted",
-  "message": "Worksheet 'Old Data' successfully deleted"
+  "status": "success"
 }
 ```
 
-## Notes 
+### Sort Table Data
+Sort table by one or more columns
 
-Only .xlsx files (Office Open XML format) are supported - .xls files cannot be used. Works with OneDrive for Business and SharePoint, but not OneDrive Consumer accounts. Both PinkConnect and Paragon proxies are supported with different endpoint structures. Worksheet IDs containing special characters must be URL encoded. When working with tables, always fetch the workbook ID first using the search function. 
+**Parameters:**
+- `workbook-id` (required) - The ID of the Excel workbook
+- `table-id` (required) - The ID of the table
+- `sort-fields` (required) - Array of sort specifications with key (column index) and ascending (true/false)
+
+**Example:**
+```
+/your-Microsoft-Excel-connection
+action: sort-table
+workbook-id: 01HRDJMGPNAGXLOFE4URDYNKMBXOIES4BR
+table-id: Table1
+sort-fields: [{"key": 2, "ascending": false}]
+```
+
+**Response:**
+```json
+{
+  "status": "success"
+}
+```
+
+## Best Practices
+
+- **Authorization**: Requires Files.Read for read operations, Files.ReadWrite for write operations
+- **Workbook ID**: Always obtain workbook-id first using search or list operations
+- **URL Encoding**: Encode special characters in sheet names and worksheet IDs
+- **Data Format**: Ensure all rows in 2D arrays have same column count (pad with null if needed)
+- **Formulas**: Write formulas as strings starting with "=", they auto-calculate when written
+- **Formatting**: Apply formatting after writing data for better performance
+- **Error Handling**: Check for ItemNotFound (404) and AccessDenied (403) errors
+
+## Storage and File Support
+
+**Storage Support:**
+- OneDrive for Business: ✓ Supported
+- SharePoint: ✓ Supported
+- OneDrive Consumer: ✗ Not supported
+
+**File Format Support:**
+- .xlsx (Office Open XML): ✓ Supported
+- .xls: ✗ Not supported
+
+## Error Responses
+
+**Session Expired (404):**
+```json
+{
+  "error": {
+    "code": "ItemNotFound",
+    "message": "Session not found."
+  }
+}
+```
+
+**Invalid Permissions (403):**
+```json
+{
+  "error": {
+    "code": "AccessDenied",
+    "message": "Insufficient permissions"
+  }
+}
+```
+
+**Invalid Range (400):**
+```json
+{
+  "error": {
+    "code": "InvalidArgument",
+    "message": "The argument is invalid or missing or has an incorrect format."
+  }
+}
+``` 
