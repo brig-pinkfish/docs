@@ -1,58 +1,630 @@
 ---
 title: "Wrap Playwright Guide"
-description: "Learn how to use the wrap-playwright slash command to execute browser automation code"
+description: "Run custom Playwright code in remote browsers with live session viewing"
 ---
 
 ## What can you do with it?
 
-Execute Playwright browser automation code as part of automated workflows. Wrap code for execution or retrieve and run scripts from file storage with session tracking and data binding support.
+The `/wrap-playwright` command enables you to run custom Playwright code in a remote browser with immediate feedback. You can scrape data, interact with pages, take screenshots, download files, upload files to forms, and automate complex web workflows - all while viewing the browser session live in real-time.
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
 /wrap-playwright
-code: your Playwright automation code
+code: [your Playwright code]
 ```
 
-### Parameters
-- **code**: Playwright code to execute (or filename to retrieve)
-- **binding data** (optional): Step data to pass to the code
-- **context service** (optional): Session ID for persistent browser state
-- **file name** (optional): Retrieve code from stored file
+### Key Features
 
-### Response Format
-Returns execution results with success status, any console output, and a session ID for tracking browser sessions.
+**Immediate Feedback:**
+- Returns sessionId within ~200ms
+- View live browser session in real-time
+- See exactly what the browser is doing
+- Automatic replay after completion
+
+**File Handling:**
+- Save scraped data to your file collection
+- Automatic screenshot and binary file support
+- Upload files to browser for form submissions
+- Download files automatically captured and saved
+
+**Predictable Output:**
+- Use buildId for organized file naming
+- All files prefixed with your buildId
+- Easy to find results in your file collection
 
 ## Examples
 
-### Basic Usage
-Execute simple automation:
+### Basic Web Scraping
+
 ```
 /wrap-playwright
-code: await page.goto('https://example.com'); await page.screenshot({path: 'home.png'});
+code: await page.goto('https://example.com/products');
+      const products = await page.evaluate(() => {
+          return Array.from(document.querySelectorAll('.product')).map(p => ({
+              name: p.querySelector('.name').textContent,
+              price: p.querySelector('.price').textContent
+          }));
+      });
+      return {
+          writeToCollection: true,
+          fileName: 'products.json',
+          fileContent: JSON.stringify(products, null, 2)
+      };
 ```
+Navigates to a products page, scrapes product data, and saves it as a JSON file.
 
-### Advanced Usage
-Run code from file with context:
+### Multiple File Output with Screenshots
+
 ```
 /wrap-playwright
-file name: automation_script.js
-context service: user_session_123
-binding data: {"userId": "12345", "action": "login"}
+code: await page.goto('https://www.google.com');
+      await page.waitForSelector('textarea[name="q"]');
+      await page.fill('textarea[name="q"]', 'blueberries nutrition');
+      await page.press('textarea[name="q"]', 'Enter');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+      
+      const screenshotBuffer = await page.screenshot({ fullPage: true });
+      const pageContent = await page.content();
+      
+      const searchResults = await page.evaluate(() => {
+          const results = [];
+          document.querySelectorAll('div.g').forEach((element, index) => {
+              const titleElement = element.querySelector('h3');
+              const linkElement = element.querySelector('a');
+              if (titleElement && linkElement) {
+                  results.push({
+                      position: index + 1,
+                      title: titleElement.textContent,
+                      url: linkElement.href
+                  });
+              }
+          });
+          return results;
+      });
+      
+      return {
+          writeToCollection: true,
+          files: [
+              {
+                  fileName: 'search-results.json',
+                  fileContent: JSON.stringify({
+                      query: 'blueberries nutrition',
+                      results: searchResults
+                  }, null, 2)
+              },
+              {
+                  fileName: 'page-content.html',
+                  fileContent: pageContent
+              },
+              {
+                  fileName: 'screenshot.png',
+                  fileContent: screenshotBuffer,
+                  contentType: 'image/png'
+              }
+          ]
+      };
 ```
+Searches Google, waits for results, then saves search data, full HTML, and a screenshot.
 
-### Specific Use Case
-Multi-step form automation:
+**Output files:**
+- `playwright-{timestamp}-1-search-results.json`
+- `playwright-{timestamp}-2-page-content.html`
+- `playwright-{timestamp}-3-screenshot.png`
+
+### File Upload to Forms
+
 ```
 /wrap-playwright
-code: await page.fill('#email', 'user@example.com'); await page.fill('#password', 'secure123'); await page.click('#submit');
-context service: form_session_456
+files: document.pdf from my files
+code: await page.goto('https://example.com/upload-form');
+      await page.waitForSelector('#fileUpload');
+      await page.setInputFiles('#fileUpload', '/tmp/.uploads/document.pdf');
+      await page.click('#submit');
+      await page.waitForTimeout(2000);
+```
+Uploads a file from your storage to a web form. Files are automatically uploaded to the browser session before your code runs.
+
+### Download Files from Websites
+
+```
+/wrap-playwright
+code: await page.goto('https://example.com/download-page');
+      await page.click('a[href="/document.pdf"]');
+      await page.waitForTimeout(3000);
+```
+Downloads are automatically captured by the browser and saved to your file collection with predictable names.
+
+**Output:**
+- `playwright-{timestamp}-download-1-document-{browserbase-timestamp}.pdf`
+
+### Form Automation with Authentication
+
+```
+/get-secret myLoginCredentials
+/wrap-playwright
+code: await page.goto('https://portal.example.com/login');
+      await page.fill('#username', 'myuser');
+      await page.fill('#password', 'mypass');
+      await page.click('button[type="submit"]');
+      await page.waitForLoadState('networkidle');
+      
+      const dashboardData = await page.evaluate(() => {
+          return {
+              userName: document.querySelector('.user-name').textContent,
+              accountBalance: document.querySelector('.balance').textContent,
+              recentTransactions: Array.from(document.querySelectorAll('.transaction')).map(t => ({
+                  date: t.querySelector('.date').textContent,
+                  amount: t.querySelector('.amount').textContent
+              }))
+          };
+      });
+      
+      return {
+          writeToCollection: true,
+          fileName: 'dashboard-data.json',
+          fileContent: JSON.stringify(dashboardData, null, 2)
+      };
+```
+Logs into a portal and extracts dashboard data.
+
+### Running Saved Playwright Scripts
+
+```
+/wrap-playwright for my-automation-script.js
+```
+Runs Playwright code that you've previously saved to your file storage. This avoids escaping issues with complex scripts.
+
+## Return Formats
+
+### Single File Output
+
+Return an object with:
+- `writeToCollection: true` - Tells backend to save the file
+- `fileName` - Desired filename (e.g., 'data.json', 'screenshot.png')
+- `fileContent` - The data (string or Buffer for binary files)
+- `contentType` - (optional) MIME type, auto-detected from extension if not provided
+
+**Example:**
+```javascript
+return {
+    writeToCollection: true,
+    fileName: 'products.json',
+    fileContent: JSON.stringify(products, null, 2)
+};
 ```
 
-### Notes
-- Code is executed exactly as provided without modifications
-- Session IDs enable state persistence across multiple steps
-- File-based execution retrieves scripts from file storage
-- Supports all standard Playwright operations
-- Returns sessionId for tracking and debugging 
+### Multiple Files Output
+
+Return an object with:
+- `writeToCollection: true`
+- `files` - Array of file objects with fileName and fileContent
+
+**Example:**
+```javascript
+return {
+    writeToCollection: true,
+    files: [
+        {
+            fileName: 'data.json',
+            fileContent: JSON.stringify(data, null, 2)
+        },
+        {
+            fileName: 'screenshot.png',
+            fileContent: screenshotBuffer,
+            contentType: 'image/png'
+        }
+    ]
+};
+```
+
+## File Naming with BuildId
+
+When you provide a buildId, all output files are prefixed for easy organization:
+
+**Without buildId:**
+- `products.json`
+- `screenshot.png`
+
+**With buildId `scrape-123`:**
+- `scrape-123-1-products.json`
+- `scrape-123-2-screenshot.png`
+
+BuildIds are automatically generated as `playwright-{timestamp}` but you can customize them in advanced usage.
+
+## Supported File Types
+
+**Text Formats:**
+- JSON (`.json`) - `application/json`
+- CSV (`.csv`) - `text/csv`
+- Text (`.txt`) - `text/plain`
+- HTML (`.html`) - `text/html`
+- XML (`.xml`) - `application/xml`
+
+**Binary Formats:**
+- Images: `.png`, `.jpg`, `.jpeg`, `.gif`
+- PDF: `.pdf`
+
+MIME types are automatically detected from file extensions.
+
+## File Uploads
+
+To upload files from your storage to the browser (for form submissions):
+
+1. **Save your file** to Pinkfish file storage first
+2. **Reference it** in your command:
+   ```
+   /wrap-playwright
+   files: document.pdf, form-data.csv
+   code: await page.goto('https://example.com/upload');
+         await page.setInputFiles('#fileUpload', '/tmp/.uploads/document.pdf');
+         await page.click('#submit');
+   ```
+
+Files are automatically:
+- Fetched from your storage
+- Uploaded to the browser session
+- Available at `/tmp/.uploads/{fileName}`
+
+## File Downloads
+
+Files downloaded by the browser are automatically captured and saved:
+
+**How it works:**
+1. Your Playwright code clicks download links or opens PDFs
+2. Browserbase captures files to cloud storage
+3. Backend retrieves and saves them to your collection
+4. Files appear with buildId prefix
+
+**Example:**
+```
+/wrap-playwright
+code: await page.goto('https://example.com/reports');
+      await page.click('a[download]');
+      await page.waitForTimeout(3000);
+```
+
+**Output:**
+- `playwright-{timestamp}-download-1-report-{browserbase-timestamp}.pdf`
+
+## Live Session Viewing
+
+Every Wrap Playwright execution creates a live browser session:
+
+1. **Immediate Session** - Get sessionId within ~200ms
+2. **Live View** - Watch browser in real-time in "Browser Operator" tab
+3. **Automatic Replay** - After completion, view switches to session replay
+4. **Session Recording** - All actions are recorded for review
+
+## Page Interaction Methods
+
+### Navigation
+```javascript
+await page.goto('https://example.com');
+await page.waitForLoadState('networkidle');
+await page.waitForSelector('.content');
+await page.waitForTimeout(2000);
+```
+
+### Clicking Elements
+```javascript
+// By text
+await page.click('text=Login');
+
+// By selector
+await page.click('#submit-button');
+await page.click('.primary-btn');
+
+// By role
+await page.getByRole('button', { name: 'Submit' }).click();
+```
+
+### Filling Forms
+```javascript
+await page.fill('#username', 'myuser');
+await page.fill('input[name="email"]', 'user@example.com');
+await page.type('#search', 'query text');
+await page.press('#search', 'Enter');
+```
+
+### Selecting Dropdowns
+```javascript
+await page.selectOption('select#country', 'USA');
+await page.selectOption('#size', { label: 'Medium' });
+```
+
+### Extracting Data
+```javascript
+// Get text content
+const title = await page.textContent('h1');
+
+// Get attribute
+const href = await page.getAttribute('a', 'href');
+
+// Evaluate JavaScript
+const data = await page.evaluate(() => {
+    return {
+        title: document.title,
+        items: Array.from(document.querySelectorAll('.item')).map(i => i.textContent)
+    };
+});
+```
+
+### Taking Screenshots
+```javascript
+// Full page
+const screenshot = await page.screenshot({ fullPage: true });
+
+// Specific element
+const elementScreenshot = await page.locator('.chart').screenshot();
+
+// With options
+const screenshot = await page.screenshot({
+    fullPage: false,
+    type: 'jpeg',
+    quality: 80
+});
+```
+
+## Advanced Usage
+
+### Using Binding Data
+
+Pass variables to your Playwright code:
+
+```
+/wrap-playwright
+bindingData: { searchTerm: "laptops", maxPrice: 1000 }
+code: await page.goto('https://shop.example.com');
+      await page.fill('#search', searchTerm);
+      await page.fill('#max-price', maxPrice.toString());
+      await page.click('#search-btn');
+```
+
+The variables from `bindingData` are automatically available in your code.
+
+### Custom Browser Settings
+
+Configure viewport, locale, and other browser settings:
+
+```
+/wrap-playwright
+browserSettings: { viewport: { width: 1920, height: 1080 } }
+code: await page.goto('https://example.com');
+```
+
+### Using Saved Browser Contexts
+
+Reuse browser contexts with saved cookies and state:
+
+```
+/browser-connection "mySavedLogin"
+/wrap-playwright
+useContext: mySavedLogin
+code: await page.goto('https://portal.example.com/dashboard');
+```
+
+## Tips & Best Practices
+
+**Waiting for Content:**
+```javascript
+// Wait for specific element
+await page.waitForSelector('.content', { state: 'visible' });
+
+// Wait for network to be idle
+await page.waitForLoadState('networkidle');
+
+// Wait for specific time
+await page.waitForTimeout(2000);
+```
+
+**Error Handling:**
+```javascript
+try {
+    await page.click('#optional-button', { timeout: 5000 });
+} catch (error) {
+    // Button not found, continue anyway
+}
+```
+
+**Extracting Lists:**
+```javascript
+const items = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('.item')).map(item => ({
+        title: item.querySelector('.title')?.textContent || '',
+        price: item.querySelector('.price')?.textContent || ''
+    }));
+});
+```
+
+**Handling Dynamic Content:**
+```javascript
+// Wait for element to appear
+await page.waitForSelector('.dynamic-content');
+
+// Wait for specific text
+await page.waitForFunction(() => {
+    return document.body.textContent.includes('Loaded');
+});
+```
+
+## File Location
+
+All output files are saved to your **MultimediaArtifact** collection and appear in your Files page in Pinkfish.
+
+**File naming:**
+- Scraped data: `{buildId}-{index}-{fileName}`
+- Downloads: `{buildId}-download-{index}-{fileName}`
+
+## Synchronous vs Asynchronous
+
+**Asynchronous (Default - Recommended):**
+- Returns sessionId immediately (~200ms)
+- Shows live browser session
+- Code runs in background
+- Better user experience
+
+**Synchronous (When explicitly requested):**
+- Waits for completion before returning
+- Returns full results immediately
+- No live session viewing
+- Use only when you need immediate results
+
+## Limitations
+
+- Maximum execution time: 10 minutes per session
+- Browser sessions auto-close after 30 minutes of inactivity
+- Files expire based on your storage settings (default: 7 days)
+
+## Common Use Cases
+
+### E-commerce Product Scraping
+Extract product listings with prices, images, and descriptions.
+
+### Form Automation
+Fill out and submit complex multi-page forms.
+
+### Data Extraction from Dashboards
+Login and extract data from authenticated portals.
+
+### Document Download Automation
+Navigate through sites to find and download specific documents.
+
+### Screenshot Capture
+Capture visual evidence of page states or content.
+
+### Table/List Extraction
+Scrape structured data from tables and lists.
+
+### PDF Generation
+Navigate to pages and save as PDFs.
+
+### Testing & Validation
+Verify website functionality and content.
+
+## Example: Complete Workflow
+
+```
+/wrap-playwright
+code: // Navigate and search
+      await page.goto('https://www.google.com');
+      await page.waitForSelector('textarea[name="q"]');
+      await page.fill('textarea[name="q"]', 'blueberries nutrition');
+      await page.press('textarea[name="q"]', 'Enter');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000);
+      
+      // Capture screenshot
+      const screenshotBuffer = await page.screenshot({ fullPage: true });
+      
+      // Get page content
+      const pageContent = await page.content();
+      const pageTitle = await page.title();
+      const pageUrl = page.url();
+      
+      // Extract search results
+      const searchResults = await page.evaluate(() => {
+          const results = [];
+          document.querySelectorAll('div.g').forEach((element, index) => {
+              const titleElement = element.querySelector('h3');
+              const linkElement = element.querySelector('a');
+              const snippetElement = element.querySelector('.VwiC3b');
+              if (titleElement && linkElement) {
+                  results.push({
+                      position: index + 1,
+                      title: titleElement.textContent,
+                      url: linkElement.href,
+                      snippet: snippetElement ? snippetElement.textContent : ''
+                  });
+              }
+          });
+          return results;
+      });
+      
+      // Get related questions
+      const relatedQuestions = await page.evaluate(() => {
+          const questions = [];
+          document.querySelectorAll('[data-q]').forEach((element) => {
+              const questionText = element.textContent;
+              if (questionText) {
+                  questions.push(questionText.trim());
+              }
+          });
+          return questions;
+      });
+      
+      // Return multiple files
+      return {
+          writeToCollection: true,
+          files: [
+              {
+                  fileName: 'search-results.json',
+                  fileContent: JSON.stringify({
+                      searchQuery: 'blueberries nutrition',
+                      pageTitle: pageTitle,
+                      pageUrl: pageUrl,
+                      scrapedAt: new Date().toISOString(),
+                      resultsCount: searchResults.length,
+                      results: searchResults,
+                      relatedQuestions: relatedQuestions
+                  }, null, 2)
+              },
+              {
+                  fileName: 'page-content.html',
+                  fileContent: pageContent
+              },
+              {
+                  fileName: 'screenshot.png',
+                  fileContent: screenshotBuffer,
+                  contentType: 'image/png'
+              }
+          ]
+      };
+```
+
+**This example demonstrates:**
+- Navigation and search
+- Waiting for dynamic content
+- Screenshot capture
+- HTML content extraction
+- Data scraping with `page.evaluate()`
+- Multiple file output (JSON, HTML, PNG)
+- Structured data extraction
+
+**Output files in your collection:**
+- `playwright-{timestamp}-1-search-results.json` - Structured search data
+- `playwright-{timestamp}-2-page-content.html` - Full page HTML
+- `playwright-{timestamp}-3-screenshot.png` - Visual screenshot
+
+## Viewing Results
+
+1. **Live Session** - Watch in "Browser Operator" tab while executing
+2. **Files** - Check your Files page for all saved outputs
+3. **Replay** - Review session recording after completion
+
+## Technical Details
+
+**Execution Environment:**
+- Runs on Browserbase infrastructure
+- Chromium browser via Playwright
+- Full Playwright API available
+- Access to `page` object in your code
+
+**File Storage:**
+- Saved to MultimediaArtifact collection
+- Signed URLs with configurable expiration
+- Automatic MIME type detection
+- Support for text and binary formats
+
+**Session Management:**
+- Sessions created on-demand
+- Automatic cleanup after completion
+- 30-minute auto-close for inactive sessions
+- Full session recordings available
+
+## Need Help?
+
+For more complex automation scenarios or troubleshooting, consult:
+- [Playwright Documentation](https://playwright.dev)
