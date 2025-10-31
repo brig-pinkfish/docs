@@ -147,6 +147,87 @@ task: Navigate through multiple pages of search results, extract all items
 ```
 Increase maxSteps for complex multi-step tasks (default: 30).
 
+### Browser Configuration & Performance
+
+Control browser behavior and anti-detection features:
+
+```
+/browser-operator
+region: us-west-2
+proxies: true
+browserSettings:
+  viewport: { width: 1920, height: 1080 }
+  advancedStealth: true
+  blockAds: true
+  solveCaptchas: true
+  recordSession: true
+task: Navigate to protected site and extract data
+```
+
+**Configuration options:**
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `region` | `us-west-2` | Server region for browser sessions |
+| `proxies` | `true` | Use residential proxies (better anti-detection) |
+| `browserSettings.viewport` | `1920x1080` | Browser window size |
+| `browserSettings.advancedStealth` | `true` | Advanced anti-detection features |
+| `browserSettings.blockAds` | `true` | Block ads for faster page loads |
+| `browserSettings.solveCaptchas` | `true` | Automatically solve CAPTCHAs |
+| `browserSettings.recordSession` | `true` | Enable session replay |
+| `disableCache` | `false` | Disable caching (for testing) |
+
+**When to adjust settings:**
+
+**For maximum speed (testing):**
+```
+/browser-operator
+proxies: false
+browserSettings:
+  advancedStealth: false
+  recordSession: false
+task: Quick test automation
+```
+
+**For protected sites (production):**
+```
+/browser-operator
+proxies: true
+browserSettings:
+  advancedStealth: true
+  solveCaptchas: true
+task: Automate protected website
+```
+
+**For custom viewport:**
+```
+/browser-operator
+browserSettings:
+  viewport: { width: 2560, height: 1440 }
+task: Test on larger screen resolution
+```
+
+### Caching for Faster Execution
+
+Browser Operator automatically caches browser actions for repeated tasks:
+
+```
+/browser-operator
+task: Navigate to form and fill all fields with sample data
+```
+
+- **First run:** ~30-60s (learns how to do task, saves actions)
+- **Subsequent runs:** ~10-20s (replays cached actions)
+- **Cache scope:** Per organization, per automation, per task
+- **Auto-invalidation:** Cache updates when task changes
+
+**Disable caching for testing:**
+```
+/browser-operator
+disableCache: true
+task: Test new form filling logic
+```
+
 ## File Uploads
 
 To upload files from your storage to the browser (for form submissions):
@@ -424,8 +505,8 @@ Every execution creates a detailed log file with:
 ## Technical Details
 
 **Execution Environment:**
-- Runs on Browserbase infrastructure
-- Chromium browser via Stagehand v3
+- Cloud-managed browser infrastructure
+- Chromium browser with AI automation
 - Natural language → browser actions
 - AI models: Gemini, GPT-4o, GPT-4o-mini
 
