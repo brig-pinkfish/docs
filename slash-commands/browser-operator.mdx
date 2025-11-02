@@ -70,9 +70,29 @@ Browser Operator returns immediately with session details while the automation r
 
 When the command executes, you receive this response within ~200ms. Simultaneously, a live browser session launches in the Browser Operator tab where you can watch the AI agent work in real-time and view the execution log as it streams.
 
-## Self-Healing with Browser Operator
+## Key Capabilities
 
-Browser Operator uses self-healing automation that automatically adapts when websites change their structure or layout. Unlike traditional automation that breaks when a CSS class changes, Browser Operator understands the intent of your task and can find new ways to accomplish it.
+### Automatic iFrame and Shadow DOM Support
+
+Browser Operator automatically handles iFrame traversal and Shadow DOM elements without requiring any special configuration. Elements inside iFrames and Shadow DOMs can be targeted using the same natural language instructions as regular page elements.
+
+**What's supported:**
+- Payment forms inside iFrames
+- Embedded widgets and third-party content
+- Nested iFrames (multiple levels deep)
+- Shadow DOM components (custom web components)
+- No frame switching or special selectors required
+
+**Example:**
+```
+/browser-operator
+task: Fill in the credit card number in the Stripe payment form, then click Submit
+```
+Stripe payment forms are typically embedded in iFrames. Browser Operator automatically traverses into the iFrame to interact with the form elements.
+
+## Self-Healing Automation
+
+Browser Operator uses a self-healing technique that automatically adapts when websites change their structure or layout. Unlike traditional automation that breaks when a CSS class changes, Browser Operator understands the intent of your task and can find new ways to accomplish it.
 
 ### How It Works
 
@@ -195,7 +215,7 @@ This means faster execution, lower costs (fewer AI inference calls), and more re
 
 ### Limitations
 
-While self-healing is powerful, it has limits:
+Self-healing has limitations:
 
 - Major functional changes may require task updates
 - Completely new workflows need new task descriptions
@@ -377,7 +397,7 @@ Automatic CAPTCHA solving uses specialized services to detect and solve CAPTCHA 
 - Detects CAPTCHA challenges during automation
 - Submits challenges to solving service
 - Waits for solution and applies it automatically
-- Continues automation flow seamlessly
+- Continues automation after solving challenge
 
 **Supported challenge types:**
 
@@ -429,7 +449,7 @@ Viewport dimensions determine the visible browser window size, which affects res
 - AI computer-use models analyze pixel coordinates
 - Form layouts may change with screen size
 
-**Best practice:** Use 16:9 aspect ratios (like 1920x1080) for best compatibility.
+Recommended: Use 16:9 aspect ratios (like 1920x1080) for compatibility across most sites.
 
 ### Caching
 
@@ -486,7 +506,7 @@ Geographic region determines where the cloud browser session physically runs. Th
 - Content geo-restrictions or geo-targeted content
 - Legal/regulatory considerations
 
-**Best practice:** Select the region geographically closest to your target websites for optimal performance.
+Select the region geographically closest to your target websites for lower latency.
 
 ### Max Steps
 
@@ -508,3 +528,103 @@ Maximum steps limit how many individual browser actions the AI agent can perform
 - Scroll action
 
 **Important:** If automation fails due to reaching max steps, increase the limit and re-run. However, if steps are consistently maxed out, the task may need to be simplified or broken into smaller operations.
+
+### Model Selection
+
+Different AI models have varying capabilities, speeds, and costs. Choosing the right model depends on your task complexity and performance requirements.
+
+**Model characteristics:**
+- **Gemini 2.5 Flash** - Fastest execution, lowest cost, good for straightforward tasks
+- **Gemini 2.5 Pro** - More capable for complex reasoning and extraction
+- **GPT-4o** - Strong general-purpose model for diverse tasks
+- **GPT-4o Mini** - Balanced speed and capability
+- **Claude Sonnet 4** - Excellent for complex form interactions and nuanced understanding
+
+**Choosing a model:**
+- Start with the default (Gemini 2.5 Flash) for most tasks
+- Switch to more capable models if you encounter failures
+- Consider cost vs. capability tradeoffs for production use
+- Test different models to find optimal performance for your specific use case
+
+### System Prompt
+
+System prompts provide specialized instructions or context to guide the AI agent's behavior throughout the automation. This is useful for domain-specific tasks or when you need the agent to follow particular patterns.
+
+**When to use system prompts:**
+- Domain expertise needed (medical, legal, financial portals)
+- Specific behavioral requirements (cautious, thorough, fast)
+- Context about the website structure
+- Special handling instructions
+
+**Examples:**
+```
+systemPrompt: You are an expert at navigating medical portals. Be careful with form submissions and verify all data before clicking submit buttons.
+```
+
+```
+systemPrompt: You are filling out forms for a software company. Use realistic but fake data for testing purposes.
+```
+
+Keep system prompts concise and focused on the specific behavior or context needed for your automation.
+
+### File Upload Details
+
+When you provide files to Browser Operator, they are automatically uploaded to the browser's `~/Downloads` directory before your task executes. This makes them available for selection in any file picker dialogs.
+
+**How it works:**
+1. Files are uploaded to browser session before task starts
+2. Files appear in `~/Downloads` directory
+3. AI agent can select them from file pickers
+4. Task instruction simply references the filename
+
+**Example:**
+```
+files: resume.pdf, cover-letter.pdf from my files
+task: Navigate to job application form, upload resume.pdf to the Resume field, upload cover-letter.pdf to Cover Letter field, then click Submit
+```
+
+The agent locates and selects the specified files from the browser's file system.
+
+### File Download Details
+
+Files downloaded during browser automation are automatically captured and saved to your collection. Browser Operator monitors download activity and retrieves all downloaded files after the session completes.
+
+**Download process:**
+1. Your task instructs the agent to trigger downloads (click download link, submit form that returns file, etc.)
+2. Browser infrastructure captures the downloaded files
+3. After task completion, files are retrieved and saved to your collection
+4. Files are named with your buildId prefix for easy organization
+
+**Automatic capture:**
+- PDFs, spreadsheets, images, archives
+- Form submission responses (CSV exports, reports)
+- Dynamically generated files
+- Multiple downloads in a single session
+
+**File naming:**
+- Pattern: `{buildId}-download-{index}-{originalFileName}`
+- Example: `reports-1730000000-download-1-quarterly-report.pdf`
+
+### DOM Settling
+
+DOM settling refers to how long Browser Operator waits for web pages to stabilize before taking actions. This ensures that animations complete, lazy-loaded content appears, and JavaScript updates finish before the agent interacts with elements.
+
+**Why it matters:**
+- Dynamic pages with animations need time to complete transitions
+- Lazy-loading content needs to appear before extraction
+- JavaScript frameworks (React, Vue, Angular) need time to render
+- Single-page applications update content asynchronously
+
+**How Browser Operator handles it:**
+- Automatically waits for DOM to stabilize before each action
+- Adapts waiting based on page complexity
+- Ensures elements are ready for interaction
+- Prevents errors from interacting with elements that aren't ready
+
+**When pages need more time:**
+- Heavy animations or transitions
+- Infinite scroll or lazy-loading
+- Complex single-page applications
+- Dynamic content that loads after page navigation
+
+For pages with slow-loading content, include wait instructions in your task: "wait for the page to fully load" or "wait 3 seconds for content to appear".
