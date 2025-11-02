@@ -77,6 +77,7 @@ When the command executes, you receive this response within ~200ms. Simultaneous
 Browser Operator automatically handles iFrame traversal and Shadow DOM elements without requiring any special configuration. Elements inside iFrames and Shadow DOMs can be targeted using the same natural language instructions as regular page elements.
 
 **What's supported:**
+
 - Payment forms inside iFrames
 - Embedded widgets and third-party content
 - Nested iFrames (multiple levels deep)
@@ -84,10 +85,12 @@ Browser Operator automatically handles iFrame traversal and Shadow DOM elements 
 - No frame switching or special selectors required
 
 **Example:**
+
 ```
 /browser-operator
 task: Fill in the credit card number in the Stripe payment form, then click Submit
 ```
+
 Stripe payment forms are typically embedded in iFrames. Browser Operator automatically traverses into the iFrame to interact with the form elements.
 
 ## Self-Healing Automation
@@ -430,6 +433,12 @@ Session recording captures a complete visual and technical record of the browser
 
 **Performance impact:** Minimal overhead on automation speed, but increases session storage requirements.
 
+**Session replay notes:**
+
+- Replays are reconstructed from recorded DOM changes and may not be perfectly one-to-one with the live session due to the nature of the RRWeb replay technology
+- To ensure the full automation is captured in the replay, add a few seconds of wait time at the end of your task (e.g., "then wait 3 seconds")
+- The live session view during execution is always accurate - replay limitations only affect post-execution review
+
 ### Viewport
 
 Viewport dimensions determine the visible browser window size, which affects responsive layouts and how AI models perceive page content. Different sizes can reveal different UI variations or trigger responsive breakpoints.
@@ -534,6 +543,7 @@ Maximum steps limit how many individual browser actions the AI agent can perform
 Different AI models have varying capabilities, speeds, and costs. Choosing the right model depends on your task complexity and performance requirements.
 
 **Model characteristics:**
+
 - **Gemini 2.5 Flash** - Fastest execution, lowest cost, good for straightforward tasks
 - **Gemini 2.5 Pro** - More capable for complex reasoning and extraction
 - **GPT-4o** - Strong general-purpose model for diverse tasks
@@ -541,6 +551,7 @@ Different AI models have varying capabilities, speeds, and costs. Choosing the r
 - **Claude Sonnet 4** - Excellent for complex form interactions and nuanced understanding
 
 **Choosing a model:**
+
 - Start with the default (Gemini 2.5 Flash) for most tasks
 - Switch to more capable models if you encounter failures
 - Consider cost vs. capability tradeoffs for production use
@@ -551,12 +562,14 @@ Different AI models have varying capabilities, speeds, and costs. Choosing the r
 System prompts provide specialized instructions or context to guide the AI agent's behavior throughout the automation. This is useful for domain-specific tasks or when you need the agent to follow particular patterns.
 
 **When to use system prompts:**
+
 - Domain expertise needed (medical, legal, financial portals)
 - Specific behavioral requirements (cautious, thorough, fast)
 - Context about the website structure
 - Special handling instructions
 
 **Examples:**
+
 ```
 systemPrompt: You are an expert at navigating medical portals. Be careful with form submissions and verify all data before clicking submit buttons.
 ```
@@ -572,12 +585,14 @@ Keep system prompts concise and focused on the specific behavior or context need
 When you provide files to Browser Operator, they are automatically uploaded to the browser's `~/Downloads` directory before your task executes. This makes them available for selection in any file picker dialogs.
 
 **How it works:**
+
 1. Files are uploaded to browser session before task starts
 2. Files appear in `~/Downloads` directory
 3. AI agent can select them from file pickers
 4. Task instruction simply references the filename
 
 **Example:**
+
 ```
 files: resume.pdf, cover-letter.pdf from my files
 task: Navigate to job application form, upload resume.pdf to the Resume field, upload cover-letter.pdf to Cover Letter field, then click Submit
@@ -590,18 +605,21 @@ The agent locates and selects the specified files from the browser's file system
 Files downloaded during browser automation are automatically captured and saved to your collection. Browser Operator monitors download activity and retrieves all downloaded files after the session completes.
 
 **Download process:**
+
 1. Your task instructs the agent to trigger downloads (click download link, submit form that returns file, etc.)
 2. Browser infrastructure captures the downloaded files
 3. After task completion, files are retrieved and saved to your collection
 4. Files are named with your buildId prefix for easy organization
 
 **Automatic capture:**
+
 - PDFs, spreadsheets, images, archives
 - Form submission responses (CSV exports, reports)
 - Dynamically generated files
 - Multiple downloads in a single session
 
 **File naming:**
+
 - Pattern: `{buildId}-download-{index}-{originalFileName}`
 - Example: `reports-1730000000-download-1-quarterly-report.pdf`
 
@@ -610,18 +628,21 @@ Files downloaded during browser automation are automatically captured and saved 
 DOM settling refers to how long Browser Operator waits for web pages to stabilize before taking actions. This ensures that animations complete, lazy-loaded content appears, and JavaScript updates finish before the agent interacts with elements.
 
 **Why it matters:**
+
 - Dynamic pages with animations need time to complete transitions
 - Lazy-loading content needs to appear before extraction
 - JavaScript frameworks (React, Vue, Angular) need time to render
 - Single-page applications update content asynchronously
 
 **How Browser Operator handles it:**
+
 - Automatically waits for DOM to stabilize before each action
 - Adapts waiting based on page complexity
 - Ensures elements are ready for interaction
 - Prevents errors from interacting with elements that aren't ready
 
 **When pages need more time:**
+
 - Heavy animations or transitions
 - Infinite scroll or lazy-loading
 - Complex single-page applications
