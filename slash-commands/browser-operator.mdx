@@ -51,7 +51,7 @@ task: [Natural language description of what to do]
   - `recordSession` - Record the session for replay and debugging (default: true)
 - `collectionId` - Specify which file storage resource to store output files in (defaults to Multimedia Artifact Collection if not specified)
 - `filesToUpload` - Files to make available in the browser for upload operations, provided as an array of objects with `url` and `fileName` properties
-- `useContextService` - ID of a saved browser login connection to use for authentication
+- `useContextService` - ID of a saved browser login connection to use for authentication (automatically added when you select a browser login from the slash command menu)
 
 ### Response Format
 
@@ -479,12 +479,49 @@ Action caching stores the AI agent's decisions so identical tasks can replay wit
 - Deterministic behavior across runs
 - Consistent timing and results
 
+**Cache key implementation:**
+
+Browser Operator uses your task description as the primary cache key. This means:
+
+- **Exact task match = cache hit:** If you run the same task description again, cached actions are reused
+- **Task change = cache miss:** Any modification to the task description creates a new cache entry
+- **Automatic invalidation:** Changing even a single word in your task invalidates the cache and triggers fresh exploration
+
+**Example:**
+
+```
+First run:
+task: Navigate to example.com, click login, fill username and password
+
+Cache created with key: hash of entire task description
+```
+
+```
+Second run (cache hit):
+task: Navigate to example.com, click login, fill username and password
+
+Same task = cache reused, executes in ~10-20 seconds
+```
+
+```
+Modified run (cache miss):
+task: Navigate to example.com, click login, fill username and password, then submit
+
+Different task = new cache created, full exploration needed
+```
+
+**Practical implications:**
+
+- Keep task descriptions consistent to benefit from caching
+- Minor wording changes invalidate cache (e.g., "click Submit" vs "click the Submit button")
+- Variables in tasks are part of the cache key
+- This ensures cache accuracy but means precise wording matters for cache hits
+
 **Cache scope:**
 
 - Organized per organization and automation
-- Task description used as cache key
-- URL and page structure considered
-- Automatic invalidation on significant changes
+- Task description hashed to generate unique cache identifier
+- Separate caches for different automations
 
 **Cache duration:**
 
