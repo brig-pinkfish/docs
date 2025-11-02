@@ -30,27 +30,26 @@ task: [Natural language description of what to do]
   - openai/gpt-4o
   - openai/gpt-4o-mini
   - anthropic/claude-sonnet-4
-- `systemPrompt` - Custom system prompt for role/context for the agent
-- `maxSteps` - Maximum number of actions agent can take (default: 30)
-- `buildId` - Prefix for predictable file naming
-- `disableCache` - Disable caching to bypass cache (default: false, caching ON)
-- `cacheDurationDays` - Cache expiration in days (default: 7, use 30 for stable sites, 1 for frequently changing sites)
-- `region` - Server region for browser sessions (default: us-west-2)
-- `proxies` - Enable residential proxies for anti-detection (default: false)
-- `browserSettings` - Browser configuration object:
-  - `viewport` - Browser window size (default: 1920x1080)
-  - `advancedStealth` - Advanced anti-detection features (default: false)
-  - `blockAds` - Block ads for faster page loads (default: true)
-  - `solveCaptchas` - Auto-solve CAPTCHAs (default: true)
-  - `recordSession` - Enable session replay (default: true)
-- `collectionId` - Collection ID for storing output files (if not specified, logs, downloads, and scraped results are stored in the Multimedia Artifact Collection by default)
-- `filesToUpload` - Array of file objects to upload to browser before execution
-  - Each object has `url` and `fileName`
-- `useContextService` - Saved login context ID (note: cookie injection not yet implemented)
+- `systemPrompt` - Custom instructions to give the AI agent specialized behavior or context
+- `maxSteps` - Maximum number of browser actions the agent can perform (default: 30)
+- `buildId` - Prefix used to name all output files including logs, downloads, and scraped data
+- `disableCache` - Set to true to disable action caching (default: false, caching is enabled)
+- `cacheDurationDays` - How long cached actions remain valid in days (default: 7 days, recommended: 30 for stable sites, 1 for frequently changing sites)
+- `region` - Geographic region where the browser session runs (default: us-west-2)
+- `proxies` - Enable residential proxies to improve anti-detection capabilities (default: false)
+- `browserSettings` - Browser configuration options:
+  - `viewport` - Browser window dimensions in pixels (default: 1920x1080)
+  - `advancedStealth` - Enable advanced anti-detection features (default: false)
+  - `blockAds` - Block advertisements for faster page loading (default: true)
+  - `solveCaptchas` - Automatically solve CAPTCHA challenges (default: true)
+  - `recordSession` - Record the session for replay and debugging (default: true)
+- `collectionId` - Specify which collection to store output files in (defaults to Multimedia Artifact Collection if not specified)
+- `filesToUpload` - Files to make available in the browser for upload operations, provided as an array of objects with `url` and `fileName` properties
+- `useContextService` - ID of a saved browser login connection to use for authentication
 
 ### Response Format
 
-Browser Operator returns immediate feedback with session details:
+Browser Operator returns immediately with session details while the automation runs in the background:
 
 ```json
 {
@@ -63,12 +62,7 @@ Browser Operator returns immediate feedback with session details:
 }
 ```
 
-**Key Features:**
-
-- Returns `sessionId` within ~200ms
-- Live browser session viewable in real-time
-- Automatic file capture (scrapes, downloads, logs)
-- Session replay after completion
+When the command executes, you receive this response within ~200ms. Simultaneously, a live browser session launches in the Browser Operator tab where you can watch the AI agent work in real-time and view the execution log as it streams.
 
 ## Authentication
 
