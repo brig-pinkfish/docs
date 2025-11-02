@@ -1,17 +1,11 @@
 ---
 title: "Browser Operator Guide"
-description: "Automate web interactions using plain English, no code needed"
+description: "AI agent that automates web browsers using natural language"
 ---
 
 ## What can you do with it?
 
 The `/browser-operator` command is an AI agent that autonomously performs browser automation based on natural language instructions. You describe what you want accomplished, and the AI agent makes independent decisions on how to navigate, click, fill forms, extract data, and download files - no code required.
-
-<Note>
-  **Code-free automation:** This skill uses natural language instructions
-  instead of code. If you need programmatic control, loops, or complex data
-  processing, use the `/wrap-playwright` skill instead.
-</Note>
 
 ## How to use it?
 
@@ -26,64 +20,14 @@ task: [Natural language description of what to do]
 
 **Required:**
 
-- `task` - Natural language description of what to do (e.g., "Navigate to https://example.com, extract product names and prices, save as products.json")
+- `task` - Natural language description of what to do
 
-**Optional Configuration:**
+**Optional:**
 
-- `buildId` - Prefix for organized file naming (all output files use this prefix)
-- `model` - AI model to use (default: `google/gemini-2.5-flash`)
-  - `google/gemini-2.5-flash` (default)
-  - `google/gemini-2.5-pro`
-  - `openai/gpt-4o`
-  - `openai/gpt-4o-mini`
-  - `anthropic/claude-sonnet-4`
-- `systemPrompt` - Custom system prompt for specialized behavior
-- `maxSteps` - Maximum browser actions to perform (default: 30)
-- `disableCache` - Disable action caching for testing (default: false)
-- `cacheDurationDays` - Cache expiration in days (default: 7)
-
-**File Upload:**
-
-- `files` - Files from your collection to make available in browser file picker
-- `filesToUpload` - Array of file objects with `url` and `fileName`
-
-**Browser Configuration:**
-
-- `region` - Server region for browser sessions (default: "us-west-2")
-- `proxies` - Use residential proxies for anti-detection (default: false)
-- `browserSettings` - Object with:
-  - `viewport` - Browser window size (default: { width: 1920, height: 1080 })
-  - `advancedStealth` - Advanced anti-detection features (default: false)
-  - `blockAds` - Block ads for faster page loads (default: true)
-  - `solveCaptchas` - Automatically solve CAPTCHAs (default: true)
-  - `recordSession` - Enable session replay (default: true)
-
-**File Storage:**
-
-- `file_links_expire_in_days` - Days until file links expire
-- `file_links_expire_in_minutes` - Alternative to days
-
-### Response Format
-
-Browser Operator returns immediate feedback with session details:
-
-```json
-{
-  "sessionId": "bo-1730000000-abc123",
-  "status": "queued",
-  "createdAt": "2025-10-30T12:00:00Z",
-  "logFileName": "browser-operator-abc-123.log",
-  "collectionId": "collection-xyz-789",
-  "buildId": "agent-1730000000"
-}
-```
-
-**Key Features:**
-
-- Returns `sessionId` within ~200ms
-- Live browser session viewable in real-time
-- Automatic file capture (scrapes, downloads, logs)
-- Session replay after completion
+- `buildId` - Prefix for organized file naming
+- `model` - AI model to use (default: google/gemini-2.5-flash)
+- `maxSteps` - Maximum browser actions (default: 30)
+- `disableCache` - Disable action caching (default: false)
 
 ## Examples
 
@@ -109,161 +53,43 @@ files: data.csv from my files
 task: Navigate to https://example.com/upload, upload data.csv to the file input, click Submit
 ```
 
-### Download Files
-
-```
-/browser-operator
-task: Navigate to https://example.com/reports, click 'Download Latest Report', wait for the PDF to download
-```
-
-### Multi-Step Workflow
-
-```
-/browser-operator
-task: Navigate to https://google.com, search for 'blueberries nutrition', press enter, wait for results, click the first non-ad result, extract the main content headings and text, save as scraped-content.json
-```
-
-### Complex Form
-
-```
-/browser-operator
-task: Navigate to https://vaccn.com/registration, click the 'Register Now!' button under 'I'm a VA CCN doctor, hospital, lab, pharmacy, billing agency, etc.', fill all required fields with realistic sample medical provider data, do not submit the form
-```
-
-### Using BuildId
-
-```
-/browser-operator
-buildId: `product-scrape-${Date.now()}`
-task: Extract all products from example.com/catalog, save as products.json
-```
-
-### Custom Model
-
-```
-/browser-operator
-model: anthropic/claude-sonnet-4
-task: Navigate to example.com and extract all structured data
-```
-
-### Protected Sites
-
-```
-/browser-operator
-proxies: true
-browserSettings:
-  advancedStealth: true
-  solveCaptchas: true
-task: Automate protected website
-```
-
 ## Writing Good Tasks
 
 Be specific and clear. Include:
 
-1. Starting URL (if not already navigated)
-2. What action to take (click, fill, extract, download)
-3. Which elements (button text, field labels)
-4. Sample data to use (for form filling)
-5. What to save and as what filename
+1. Starting URL
+2. What action to take
+3. Which elements
+4. Sample data to use
+5. What to save and filename
 
 **Good tasks:**
 
-- ✅ "Navigate to https://example.com/products, extract product names and prices from all visible items, save as products.json"
-- ✅ "Go to https://example.com/contact, fill name=John Doe, email=john@example.com, message=Test, then submit"
-- ✅ "Navigate to https://portal.com/reports, click 'Download Q4 Report' button, wait for PDF download to complete"
+- "Navigate to https://example.com/products, extract product names and prices, save as products.json"
+- "Go to https://example.com/contact, fill name=John Doe, email=john@example.com, then submit"
 
-**Bad tasks (too vague):**
+**Bad tasks:**
 
-- ❌ "Get the data" (what data? from where?)
-- ❌ "Fill the form" (which form? with what data?)
-- ❌ "Download stuff" (what? from where?)
+- "Get the data" (what data? from where?)
+- "Fill the form" (which form? with what data?)
 
 ## What the Agent Can Do
 
-- ✅ Navigate to URLs
-- ✅ Click buttons, links, elements
-- ✅ Fill form fields
-- ✅ Extract/scrape data from pages
-- ✅ Take screenshots
-- ✅ Scroll pages
-- ✅ Wait for elements/timeouts
-- ✅ Navigate back
-- ✅ Select from file picker (for uploaded files)
+- Navigate to URLs
+- Click buttons, links, elements
+- Fill form fields
+- Extract and scrape data
+- Take screenshots
+- Scroll pages
+- Wait for elements
+- Select from file picker
 
-## What the Agent CANNOT Do
+## What the Agent Cannot Do
 
-- ❌ Execute JavaScript code
-- ❌ Read CSV/JSON files from disk
-- ❌ Loop through datasets programmatically
-- ❌ Parse file contents
-- ❌ Use variables or bindingData
-- ❌ Process arrays of data
+- Execute JavaScript code
+- Read CSV/JSON files from disk
+- Loop through datasets programmatically
+- Parse file contents
+- Use variables or bindingData
 
-**For these use cases, use `/wrap-playwright` instead.**
-
-## File Handling
-
-**Data Extraction:**
-Include keywords in task: "extract and save as...", "scrape and save as...", or "save as..."
-
-**Downloads:**
-Downloaded files are automatically captured and saved to your collection with predictable names.
-
-**Uploads:**
-Reference files in the `files` parameter or provide `filesToUpload` array with publicly accessible URLs.
-
-**File naming:**
-
-- Scraped data: `{buildId}-scraped-content.json` or filename from task
-- Downloads: `{buildId}-download-{index}-{fileName}`
-- Logs: `browser-operator-{sessionId}.log`
-
-## Caching
-
-Browser Operator automatically caches browser actions for repeated tasks:
-
-- **First run:** ~30-60s (learns how to do task, saves actions)
-- **Subsequent runs:** ~10-20s (replays cached actions)
-- **Cache scope:** Per organization, per automation, per task
-- **Auto-invalidation:** Cache updates when task changes
-
-Disable caching with `disableCache: true` for testing.
-
-## Browser Operator vs Wrap Playwright
-
-| Feature             | Browser Operator        | Wrap Playwright               |
-| ------------------- | ----------------------- | ----------------------------- |
-| **Input**           | Natural language        | Playwright code               |
-| **Learning Curve**  | None - just describe it | Requires Playwright knowledge |
-| **Data Processing** | Extract from UI only    | Full programmatic control     |
-| **Looping**         | Not supported           | Full loop support             |
-| **Self-Healing**    | Yes - adapts to changes | No - breaks if UI changes     |
-| **Best For**        | One-off tasks, scraping | Bulk operations, datasets     |
-
-## Limitations
-
-- Maximum execution time: 10 minutes per session
-- Maximum concurrent sessions: 10 per user/org
-- Not designed for bulk operations with datasets
-- Cannot execute custom JavaScript
-- Cookie injection not yet implemented (include login in task for now)
-
-## Troubleshooting
-
-**"Task failed" or "No results":**
-
-- Make task more specific with exact button/link text
-- Add explicit wait instructions
-- Check live session to see what went wrong
-
-**"File not found in picker":**
-
-- Ensure file is uploaded via `files:` or `filesToUpload`
-- Check filename matches exactly
-
-**"Extraction returned empty data":**
-
-- Be specific about what to extract
-- Include "save as filename.json" in task
-- Check if page requires login/navigation first
+For these use cases, use `/wrap-playwright` instead.
