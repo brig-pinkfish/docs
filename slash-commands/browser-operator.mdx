@@ -174,3 +174,206 @@ browserSettings:
   solveCaptchas: true
 task: Automate protected website
 ```
+
+## Parameter Notes
+
+This section provides detailed information about Browser Operator's configuration parameters and how they affect automation performance and capabilities.
+
+### Proxies
+
+Residential proxies route your browser traffic through real residential IP addresses instead of datacenter IPs. This significantly improves success rates when automating websites that employ anti-bot detection.
+
+**Benefits:**
+
+- Appear as genuine residential user traffic
+- Reduce likelihood of being flagged as automated
+- Enable IP rotation for distributed requests
+- Support geo-location testing from different regions
+
+**When to use:**
+
+- Scraping sites with anti-bot protection
+- Production automation workflows
+- E-commerce or booking platforms
+- Sites that block datacenter IPs
+
+**When to skip:**
+
+- Local development and testing
+- Internal tools with no restrictions
+- Speed-critical applications where latency matters
+
+### Advanced Stealth
+
+Advanced stealth mode implements sophisticated browser fingerprinting countermeasures that make automated browsers indistinguishable from human-driven browsers. This goes beyond basic anti-detection to defeat even advanced bot-detection systems.
+
+**What it does:**
+
+- Masks automation signatures in the browser environment
+- Modifies browser fingerprinting characteristics
+- Prevents detection through WebDriver properties
+- Mimics genuine user behavior patterns
+
+**Use cases:**
+
+- Websites with Cloudflare or similar protections
+- Platforms with sophisticated bot detection
+- Production scrapers requiring maximum stealth
+- Compliance-sensitive automation
+
+**Note:** Advanced stealth requires specific plan levels and may impact performance slightly due to additional countermeasures.
+
+### Block Ads
+
+Ad blocking improves automation speed and reliability by preventing ad networks from loading. This reduces page weight, eliminates ad-related JavaScript, and prevents popups or overlays that can interfere with automation.
+
+**Benefits:**
+
+- Faster page load times (20-50% improvement typical)
+- Reduced bandwidth and data transfer
+- Fewer elements to process during automation
+- Elimination of modal ads and interruptions
+- More consistent page structure
+
+**Recommended:** Enable for almost all use cases unless you specifically need to interact with advertising content.
+
+### Solve CAPTCHAs
+
+Automatic CAPTCHA solving uses specialized services to detect and solve CAPTCHA challenges without manual intervention. This enables fully autonomous workflows even on CAPTCHA-protected sites.
+
+**How it works:**
+
+- Detects CAPTCHA challenges during automation
+- Submits challenges to solving service
+- Waits for solution and applies it automatically
+- Continues automation flow seamlessly
+
+**Supported challenge types:**
+
+- reCAPTCHA v2 and v3
+- hCaptcha
+- Image-based challenges
+- Audio challenges
+
+**Important:** CAPTCHA solving adds latency (typically 10-30 seconds per solve) and may not succeed on all CAPTCHA types. Consider this in your automation timing.
+
+### Record Session
+
+Session recording captures a complete visual and technical record of the browser automation for replay and debugging. Every action, network request, and console log is preserved.
+
+**What's captured:**
+
+- Frame-by-frame video of browser activity
+- All network requests with timing data
+- JavaScript console logs and errors
+- Browser resource usage metrics
+- Action timeline with timestamps
+
+**Benefits for debugging:**
+
+- Visual verification of what the agent did
+- Identify where automations fail
+- Review network issues or errors
+- Share session replays with team members
+- Audit automation behavior
+
+**Performance impact:** Minimal overhead on automation speed, but increases session storage requirements.
+
+### Viewport
+
+Viewport dimensions determine the visible browser window size, which affects responsive layouts and how AI models perceive page content. Different sizes can reveal different UI variations or trigger responsive breakpoints.
+
+**Common configurations:**
+
+- `1920x1080` - Standard desktop (default)
+- `1280x720` - Smaller desktop display
+- `2560x1440` - Large desktop/4K displays
+- `1024x768` - Tablet landscape
+- `375x667` - Mobile phone simulation
+
+**Why it matters:**
+
+- Responsive sites show different content per viewport
+- Some elements only appear at certain sizes
+- AI computer-use models analyze pixel coordinates
+- Form layouts may change with screen size
+
+**Best practice:** Use 16:9 aspect ratios (like 1920x1080) for best compatibility.
+
+### Caching
+
+Action caching stores the AI agent's decisions so identical tasks can replay without requiring new LLM inference. This dramatically reduces both execution time and cost for repeated operations.
+
+**How caching works:**
+
+1. First execution: AI determines actions, which are saved
+2. Subsequent executions: Saved actions replay instantly
+3. Cache invalidation: Changes to task or page structure trigger re-learning
+
+**Performance improvements:**
+
+- 10-100x faster execution on cached operations
+- Zero LLM API costs after initial run
+- Deterministic behavior across runs
+- Consistent timing and results
+
+**Cache scope:**
+
+- Organized per organization and automation
+- Task description used as cache key
+- URL and page structure considered
+- Automatic invalidation on significant changes
+
+**Cache duration:**
+
+- `cacheDurationDays: 7` - Cached actions expire after 7 days (default)
+- `cacheDurationDays: 30` - Longer duration for stable, unchanging sites
+- `cacheDurationDays: 1` - Short duration for frequently updated sites
+
+**Best for:**
+
+- Repetitive data extraction tasks
+- Form submission workflows run multiple times
+- Stable website structures
+- Production automations with consistent requirements
+
+### Region
+
+Geographic region determines where the cloud browser session physically runs. This affects latency, data residency, and in some cases, content availability.
+
+**Available regions:**
+
+- `us-west-2` - US West Coast (default)
+- `us-east-1` - US East Coast
+- `eu-west-1` - Europe (Ireland)
+- Other regions available based on infrastructure
+
+**Why region matters:**
+
+- Latency to target websites (choose closest region)
+- Data residency compliance requirements
+- Content geo-restrictions or geo-targeted content
+- Legal/regulatory considerations
+
+**Best practice:** Select the region geographically closest to your target websites for optimal performance.
+
+### Max Steps
+
+Maximum steps limit how many individual browser actions the AI agent can perform before terminating. This prevents infinite loops and controls execution time.
+
+**Setting appropriate limits:**
+
+- Simple tasks (click, extract): 5-10 steps
+- Multi-step workflows: 20-40 steps
+- Complex multi-page processes: 50-100 steps
+
+**What counts as a step:**
+
+- Navigate to URL
+- Click element
+- Fill form field
+- Extract data
+- Wait for condition
+- Scroll action
+
+**Important:** If automation fails due to reaching max steps, increase the limit and re-run. However, if steps are consistently maxed out, the task may need to be simplified or broken into smaller operations.
