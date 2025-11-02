@@ -28,6 +28,9 @@ task: [Natural language description of what to do]
 - `model` - AI model to use (default: google/gemini-2.5-flash)
 - `maxSteps` - Maximum browser actions (default: 30)
 - `disableCache` - Disable action caching (default: false)
+- `files` - Files from your collection to make available in browser
+- `proxies` - Use residential proxies (default: false)
+- `region` - Server region (default: us-west-2)
 
 ## Examples
 
@@ -53,43 +56,16 @@ files: data.csv from my files
 task: Navigate to https://example.com/upload, upload data.csv to the file input, click Submit
 ```
 
-## Writing Good Tasks
+### Download Files
 
-Be specific and clear. Include:
+```
+/browser-operator
+task: Navigate to https://example.com/reports, click Download Latest Report, wait for the PDF to download
+```
 
-1. Starting URL
-2. What action to take
-3. Which elements
-4. Sample data to use
-5. What to save and filename
+### Multi-Step Workflow
 
-**Good tasks:**
-
-- "Navigate to https://example.com/products, extract product names and prices, save as products.json"
-- "Go to https://example.com/contact, fill name=John Doe, email=john@example.com, then submit"
-
-**Bad tasks:**
-
-- "Get the data" (what data? from where?)
-- "Fill the form" (which form? with what data?)
-
-## What the Agent Can Do
-
-- Navigate to URLs
-- Click buttons, links, elements
-- Fill form fields
-- Extract and scrape data
-- Take screenshots
-- Scroll pages
-- Wait for elements
-- Select from file picker
-
-## What the Agent Cannot Do
-
-- Execute JavaScript code
-- Read CSV/JSON files from disk
-- Loop through datasets programmatically
-- Parse file contents
-- Use variables or bindingData
-
-For these use cases, use `/wrap-playwright` instead.
+```
+/browser-operator
+task: Navigate to https://google.com, search for blueberries nutrition, press enter, wait for results, click the first non-ad result, extract the main content, save as results.json
+```
