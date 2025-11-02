@@ -147,13 +147,59 @@ Self-healing is particularly valuable for:
 - Third-party websites you don't control
 - Automations that need to work across multiple similar sites
 
+### Self-Healing with Caching
+
+Self-healing and caching work together to create fast, resilient automations. Here's how they interact:
+
+**How it works:**
+
+1. **First execution (no cache):**
+
+   - AI agent explores and learns how to complete the task
+   - Actions are saved to cache for future runs
+   - Takes full time (e.g., 30-60 seconds)
+
+2. **Subsequent executions (cache hit):**
+
+   - Cached actions replay instantly (10-100x faster)
+   - No AI inference needed
+   - Works perfectly if website hasn't changed
+
+3. **When website changes slightly (cache + self-healing):**
+
+   - Cached actions attempt to execute
+   - Minor changes detected (e.g., button moved, class name changed)
+   - **Self-healing adapts** the cached actions to the new structure
+   - Continues working without full re-exploration
+
+4. **When website changes significantly (cache invalidation):**
+   - Cached actions fail and self-healing cannot adapt
+   - Cache is cleared automatically
+   - Fresh exploration happens to re-learn the task
+
+**The benefit:**
+
+Without self-healing, any website change would invalidate your cache and require slow re-exploration. With self-healing enabled, minor changes are handled automatically, so your cache stays useful much longer.
+
+**Example scenario:**
+
+```
+Website change: Login button's CSS class changed from "btn-login" to "login-button"
+```
+
+- **Traditional automation:** Breaks immediately, needs code update
+- **With cache only:** Cache becomes invalid, requires full re-exploration (slow)
+- **With cache + self-healing:** Adapts automatically, continues using cache (fast)
+
+This means faster execution, lower costs (fewer AI inference calls), and more reliable automations.
+
 ### Limitations
 
 While self-healing is powerful, it has limits:
 
 - Major functional changes may require task updates
 - Completely new workflows need new task descriptions
-- Some changes may require cache invalidation to re-learn
+- Significant structural changes may require cache invalidation to re-learn
 
 ## Authentication
 
