@@ -1,257 +1,549 @@
 ---
-title: "Browser Operator"
-description: "Automate web interactions using plain English, no APIs needed."
+title: "Browser Operator Guide"
+description: "Automate web interactions using plain English, no code needed"
 ---
 
-## Demo Videos
+## What can you do with it?
 
-<CardGroup>
-  <Card
-    title="Browser Operator Demo"
-    href="https://youtu.be/6udGLo3YEiM?feature=shared"
-    icon="play"
-  >
-    Watch the Browser Operator in action
-  </Card>
-  <Card
-    title="Download & Unzip using Browser Operator"
-    href="https://youtu.be/rAIQcDVsUBk?feature=shared"
-    icon="play"
-  >
-    Learn how to download and unzip files automatically
-  </Card>
-</CardGroup>
-
-## What is the Browser Operator?
-
-Many critical business processes involve interacting with websites that don't have APIs. This often leads to tedious, manual work like copying data from a spreadsheet and pasting it into a web form, one entry at a time. This process is not only slow but also prone to human error.
-
-The **Browser Operator** is an AI-powered tool designed to solve this exact problem. It acts like a human assistant, programmatically navigating and interacting with any website based on simple, plain-English instructions. It can fill out forms, click buttons, extract data, and loop through thousands of records, all without a single line of code.
-
-## Key Capabilities
-
-<CardGroup>
-  <Card title="Natural Language Control">
-    Instruct the Browser Operator like you would a human intern. Simply tell it
-    what to do (e.g., "Fill in the Email Address field with...") and it
-    understands and executes the task.
-  </Card>
-  <Card title="Intelligent Looping">
-    Combine the Browser Operator with data from any source. You can teach it the
-    process for one row of data, and it will automatically repeat the steps for
-    every other row.
-  </Card>
-  <Card title="Self-Healing Automation">
-    Unlike traditional RPA which breaks with minor UI changes, the Browser
-    Operator understands your *intent*. If a button moves or a field's ID
-    changes, it can intelligently re-locate the element, making your automations
-    incredibly robust.
-  </Card>
-  <Card title="Securely Handles Logins">
-    Automate tasks on internal portals and sites behind a login wall. Using
-    **Browser Operator Logins** in Connections, you can record a login session
-    once, and the Operator will securely reuse it for all future runs.
-  </Card>
-</CardGroup>
-
-## How It Works
-
-The Browser Operator creates a special workflow step that combines AI with live browser automation.
-
-### Getting Started
-
-When you select Browser Operator from the slash menu (`/browser operator`), it spins up a browser inside your workflow step. The interface transforms to show:
-
-- **Right Pane**: A live browser window that the operator controls
-- **Center Panel**: A table showing your instructions in structured format (Action, Target, Value)
-- **Chat Interface**: Where you communicate with the Browser Operator using natural language
-
-<Note>The slash menu is disabled in a browser operator step.</Note>
-
-### Basic Operations
-
-Chat with the Browser Operator to tell it what to do. It can:
-
-- **Navigate** to your desired webpages
-- **Click** on buttons, links, and interactive elements
-- **Type and fill out** forms with data
-- **Select** from dropdown boxes and menus
-- **Extract content** (scrape) from pages
-- **Loop through tasks** with different variables each time
-
-The Browser Operator can reference:
-
-- Information from previous steps in your workflow
-- Files attached to your workflow
-- Variables and data from any source in your automation
-
-### Managing Instructions
-
-As you give instructions, they get organized into a simple table format:
-
-- **Action**: What to do (Navigate, Click, Fill in, etc.)
-- **Target**: Where to do it (URL, button name, form field, etc.)
-- **Value**: What data to use (text to type, option to select, etc.)
-
-You can use the menu controls to:
-
-- Reorder instructions by moving them up or down
-- Delete instructions you no longer need
-- Modify the sequence before execution
-
-### Built-in Guidance
-
-Prompt bubbles above the chat interface guide you through the process and suggest common actions.
-
-### Finishing Up
-
-Once you've defined all the steps you want the Browser Operator to perform:
-
-1. **Click "Finish Task"** - The Browser Operator consolidates all your instructions in the table order and presents you with the final automation code
-2. **Run & Verify** - Click "Run" to spin up a fresh browser that executes all instructions sequentially, allowing you to verify the automation works as expected
-3. **Review Replays** - After the browser completes its tasks, you can see the browser operator replays to understand exactly what happened during execution
-
-**Restart Option**: If you need to start over, click the **Restart** button (located beside "Finish Task") to reset the Browser Operator step and clear out the entire instruction table, giving you a clean slate to rebuild your automation.
+The `/browser-operator` command enables you to automate web browsers using natural language - no code required. Tell it what to do in plain English, and an AI agent will navigate, click, fill forms, extract data, and download files. Perfect for one-off tasks, data scraping, form submissions, and web workflows without writing Playwright code.
 
 <Note>
-  **Note on Replays**: If the browser operator session is too short, you may not
-  see the replay functionality.
+**Code-free automation:** This skill uses natural language instructions instead of code. If you need programmatic control, loops, or complex data processing, use the `/wrap-playwright` skill instead.
 </Note>
 
-<Note>
-**Looping Capabilities**: The Browser Operator excels at repetitive tasks. You can ask it to loop through data with different variables each time, such as: `"Fill in first name from the name column, city, and state in the address column. Loop through all the items in the csv from previous step <step_reference>."`
-</Note>
+## How to use it?
+
+### Basic Command Structure
+```
+/browser-operator
+task: [Natural language description of what to do]
+```
+
+### Key Features
+
+**Natural Language:**
+- Describe what you want in plain English
+- No selectors or code needed
+- AI figures out how to do it
+- Self-healing - adapts if UI changes
+
+**Immediate Feedback:**
+- Returns sessionId within ~200ms
+- View live browser session in real-time
+- See exactly what the AI agent is doing
+- Automatic replay after completion
+
+**Automatic File Handling:**
+- Scraped data auto-saved as JSON files
+- Browser downloads captured automatically
+- Upload files via file picker
+- Execution logs saved as .log files
+
+**Predictable Output:**
+- Use buildId for organized file naming
+- All files prefixed with your buildId
+- Easy to find results in your file collection
+
+## Examples
+
+### Basic Data Extraction
+
+```
+/browser-operator
+task: Go to https://example.com/products, extract all product names and prices, save as products.json
+```
+The agent will navigate, scrape the data, and save it as a JSON file in your collection.
+
+**Output files:**
+- `scraped-content-{sessionId}.json` - Extracted product data
+- `browser-operator-{sessionId}.log` - Execution log
+
+### Form Submission
+
+```
+/browser-operator
+task: Navigate to https://example.com/contact, fill the form with name=John Doe, email=john@example.com, message=Test inquiry, then submit the form
+```
+Fills and submits a contact form with the specified data.
+
+### File Upload via Browser
+
+```
+/browser-operator
+files: data.csv from my files
+task: Navigate to https://example.com/upload, click the CSV file input, select data.csv from the file picker, then click Submit
+```
+Uploads a file from your storage to a web form. The file is made available in the browser's file picker.
+
+### Download Files
+
+```
+/browser-operator
+task: Navigate to https://example.com/reports, click 'Download Latest Report', wait for the PDF to download
+```
+Downloads are automatically captured and saved to your collection.
+
+**Output:**
+- `{buildId}-download-1-report.pdf` (if buildId provided)
+- `browser-operator-{sessionId}.log` - Execution log
+
+### Multi-Step Workflow
+
+```
+/browser-operator
+task: Navigate to https://google.com, search for 'blueberries nutrition' in the search box, press enter, wait for results, click the first non-ad result, extract the main content headings and text, save as scraped-content.json
+```
+Complex multi-step task with navigation, search, clicking, and extraction.
+
+### Complex Form with Validation
+
+```
+/browser-operator
+task: Navigate to https://vaccn.com/registration, click the 'Register Now!' button under 'I'm a VA CCN doctor, hospital, lab, pharmacy, billing agency, etc.', fill all required fields with realistic sample medical provider data, do not submit the form
+```
+Handles complex navigation and form filling with specific instructions.
+
+## Advanced Usage
+
+### Custom Model Selection
+
+```
+/browser-operator
+model: openai/gpt-4o
+task: Navigate to complex-site.com and extract all structured data
+```
+
+**Available models:**
+- `google/gemini-2.5-flash` (default - fast, cheap)
+- `openai/gpt-4o` (more capable, slower)
+- `openai/gpt-4o-mini` (balanced)
+
+### Using BuildId for Organized Files
+
+```
+/browser-operator
+buildId: `product-scrape-${Date.now()}`
+task: Extract all products from example.com/catalog, save as products.json
+```
+
+**Output files:**
+- `product-scrape-1730000000-scraped-content.json` - Extracted data
+- `browser-operator-{sessionId}.log` - Execution log
+
+### Custom System Prompt
+
+```
+/browser-operator
+systemPrompt: You are an expert at navigating medical portals. Be careful with form submissions.
+task: Navigate the patient portal and extract appointment data
+```
+
+### Controlling Execution Steps
+
+```
+/browser-operator
+maxSteps: 50
+task: Navigate through multiple pages of search results, extract all items
+```
+Increase maxSteps for complex multi-step tasks (default: 30).
+
+### Browser Configuration & Performance
+
+Control browser behavior and anti-detection features:
+
+```
+/browser-operator
+region: us-west-2
+proxies: true
+browserSettings:
+  viewport: { width: 1920, height: 1080 }
+  advancedStealth: true
+  blockAds: true
+  solveCaptchas: true
+  recordSession: true
+task: Navigate to protected site and extract data
+```
+
+**Configuration options:**
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `region` | `us-west-2` | Server region for browser sessions |
+| `proxies` | `true` | Use residential proxies (better anti-detection) |
+| `browserSettings.viewport` | `1920x1080` | Browser window size |
+| `browserSettings.advancedStealth` | `true` | Advanced anti-detection features |
+| `browserSettings.blockAds` | `true` | Block ads for faster page loads |
+| `browserSettings.solveCaptchas` | `true` | Automatically solve CAPTCHAs |
+| `browserSettings.recordSession` | `true` | Enable session replay |
+| `disableCache` | `false` | Disable caching (for testing) |
+
+**When to adjust settings:**
+
+**For maximum speed (testing):**
+```
+/browser-operator
+proxies: false
+browserSettings:
+  advancedStealth: false
+  recordSession: false
+task: Quick test automation
+```
+
+**For protected sites (production):**
+```
+/browser-operator
+proxies: true
+browserSettings:
+  advancedStealth: true
+  solveCaptchas: true
+task: Automate protected website
+```
+
+**For custom viewport:**
+```
+/browser-operator
+browserSettings:
+  viewport: { width: 2560, height: 1440 }
+task: Test on larger screen resolution
+```
+
+### Caching for Faster Execution
+
+Browser Operator automatically caches browser actions for repeated tasks:
+
+```
+/browser-operator
+task: Navigate to form and fill all fields with sample data
+```
+
+- **First run:** ~30-60s (learns how to do task, saves actions)
+- **Subsequent runs:** ~10-20s (replays cached actions)
+- **Cache scope:** Per organization, per automation, per task
+- **Auto-invalidation:** Cache updates when task changes
+
+**Disable caching for testing:**
+```
+/browser-operator
+disableCache: true
+task: Test new form filling logic
+```
+
+## File Uploads
+
+To upload files from your storage to the browser (for form submissions):
+
+**Method 1: Reference files in command (recommended)**
+```
+/browser-operator
+files: document.pdf, data.csv from my files
+task: Navigate to https://example.com/upload, select document.pdf in the file picker, click Upload
+```
+
+**Method 2: Explicit filesToUpload (advanced)**
+```javascript
+// In API call or advanced mode
+{
+  "task": "Upload the CSV file to the form",
+  "filesToUpload": [
+    { "url": "https://storage.../data.csv", "fileName": "data.csv" }
+  ]
+}
+```
+
+Files are automatically:
+- Uploaded to browser's ~/Downloads directory
+- Available in file picker dialogs
+- Ready for the agent to select
 
 ## File Downloads
 
-Web automation usually struggles with file downloads because they trigger "Save As" dialogs that stop the process.
+Files downloaded by the browser are automatically captured and saved:
 
-The Browser Operator handles this differently - it captures downloads directly into your workflow memory so you can use them in the next steps.
+**How it works:**
+1. Your task instructs agent to click download links
+2. Browserbase captures downloaded files
+3. Backend retrieves and saves them to your collection
+4. Files appear with predictable names
 
-### Example: Downloading and Unzipping a File
+**Example:**
+```
+/browser-operator
+buildId: `reports-${Date.now()}`
+task: Go to https://example.com/reports, download the quarterly report PDF
+```
 
-Let's say you need to download a ZIP archive from a website and process its contents.
+**Output:**
+- `reports-1730000000-download-1-quarterly-report.pdf`
+- `browser-operator-{sessionId}.log`
 
-<Steps>
-    <Step title="Click the Download Link">
-        In the Browser Operator, navigate to the page and simply instruct it to click the download link.
-        ```
-        Click on "Download" button
-        ```
-        The Operator will click the link and capture the resulting file download.
-    </Step>
-    <Step title="Access the Downloaded File">
-        The downloaded file is now available in the step's output under the `downloads` key in the Results tab. You can see its name, size, and other metadata.
-        <CodeBlock language="json">
-        ```json
-        {
-          "downloads": [
-            {
-              "fileName": "confidential_files.zip",
-              "url": "https://skills.pinkfish.ai/files/...",
-              "mime": "application/zip",
-              "size": 999
-            }
-          ]
-        }
-        ```
-        </CodeBlock>
-    </Step>
-    <Step title="Unzip the Archive">
-        In a new step, you can now work with this file. Since Pinkfish understands file types, you can ask it to unzip the archive from the previous step.
-        ```
-        can you unzip all the files from the output files of step 1
-        ```
-    </Step>
-    <Step title="Process the Contents">
-        Pinkfish will execute the command and the unzipped files will become available as outputs of this new step. You can then use additional steps to process these files - for example, summarizing text files using Claude, analyzing data files, or extracting specific information.
-    </Step>
-</Steps>
+## Data Extraction
 
-This lets you build workflows that download files from the web, unzip them, and process the contents - all in one automation.
+Browser Operator automatically saves extracted data when you use keywords:
 
-## Self-Healing Automation
+**Trigger words:**
+- "extract and save as..."
+- "scrape and save as..."
+- "save as..."
 
-Traditional browser automation breaks when websites change. If a developer changes a button from "Submit" to "Register", most tools would fail.
+**Examples:**
 
-The Browser Operator works differently. It understands what you're trying to do, not just the exact words. If it can't find "Submit", it'll look for similar buttons like "Register". This means your automations keep working even when websites change.
+```
+/browser-operator
+task: Extract all article titles and authors from blog.example.com, save as articles.json
+```
 
-## Advanced Features
+```
+/browser-operator
+buildId: `product-data-${Date.now()}`
+task: Navigate to https://shop.com/products, scroll through all items, extract name, price, rating for each, save as products.json
+```
 
-### Login Management
+**Output:**
+- `{buildId}-scraped-content.json` or parsed filename from task
+- Complete agent result stored as JSON
+- Only file reference stored in Firestore (not full data)
 
-For websites that need login, you don't have to log in every time. Set up a Browser Operator Login connection once and reuse it across all your automations.
+## Live Session Viewing
 
-#### Setting Up Logins
+Every Browser Operator execution creates a live browser session:
 
-<Steps>
-  <Step title="Navigate to Integrations">
-    Go to the **Integrations** tab in your Pinkfish workspace.
-  </Step>
-  <Step title="Access Browser Operator Logins">
-    Select **Browser Operator Logins** from the available integrations.
-  </Step>
-  <Step title="Add New Connection">
-    Click **Add connection** to create a new browser login connection.
-  </Step>
-  <Step title="Fill Connection Details">
-    Complete the required fields in the modal: - **Application Name**: The name
-    of the service you're integrating with (e.g., "Google", "Airtable", "SAP") -
-    **Connection Name**: A descriptive name to distinguish multiple connections
-    for the same app (e.g., "Production Browser Connection", "Staging Browser
-    Connection", "Personal Login") - **Login URL**: The URL where the login page
-    is located (e.g., "https://www.google.com/")
-  </Step>
-  <Step title="Perform the Login">
-    Pinkfish will open a browser window where you can log in as you normally
-    would. This includes: - Entering your username and password - Completing
-    two-factor authentication (2FA) if required - Solving any captchas that
-    appear - Going through any additional security steps your organization
-    requires
-  </Step>
-  <Step title="Confirm Login Success">
-    Once you've successfully logged in, click **"I've Logged in"** to save the
-    authenticated session.
-  </Step>
-</Steps>
+1. **Immediate Session** - Get sessionId within ~200ms
+2. **Live View** - Watch AI agent work in real-time in "Browser Operator" tab
+3. **Automatic Replay** - After completion, view switches to session replay
+4. **Session Recording** - All actions are recorded for review
 
-#### Using Saved Logins
+## What the Agent Can Do
 
-After setting up the connection, it will appear in the Browser Operator sub-menu when you:
+The AI agent has these browser automation tools:
+- ✅ Navigate to URLs
+- ✅ Click buttons, links, elements
+- ✅ Fill form fields
+- ✅ Extract/scrape data from pages
+- ✅ Take screenshots
+- ✅ Scroll pages
+- ✅ Wait for elements/timeouts
+- ✅ Navigate back
+- ✅ Select from file picker (for uploaded files)
 
-1. Type `/browser operator` in any automation step
-2. Select from the available options, including your saved login connections
-3. Choose your saved connection to start with an authenticated session
+## What the Agent CANNOT Do
 
-This saves you from logging in manually every time.
+Browser Operator is UI automation only. It cannot:
+- ❌ Execute JavaScript code
+- ❌ Read CSV/JSON files from disk
+- ❌ Loop through datasets programmatically
+- ❌ Parse file contents
+- ❌ Use variables or bindingData
+- ❌ Process arrays of data
 
-### CAPTCHA Handling
+**For these use cases, use `/wrap-playwright` instead.**
 
-The Browser Operator can handle modern CAPTCHAs like Cloudflare and reCAPTCHA letting you automate more websites.
+## Writing Good Tasks
 
-### Advanced Browser Operator Settings
+Be specific and clear. Include:
+1. Starting URL (if not already navigated)
+2. What action to take (click, fill, extract, download)
+3. Which elements (button text, field labels)
+4. Sample data to use (for form filling)
+5. What to save and as what filename
 
-Power users can access advanced browser operator settings through the gear icon (⚙️) in the Browser Operator interface.
+**Good tasks:**
+✅ "Navigate to https://example.com/products, extract product names and prices from all visible items, save as products.json"
 
-**Note:** This is a advanced feature that only appears when you have an active browser operator login.
+✅ "Go to https://example.com/contact, fill name=John Doe, email=john@example.com, message=Test, then submit"
 
-#### Browser Behavior
+✅ "Navigate to https://portal.com/reports, click 'Download Q4 Report' button, wait for PDF download to complete"
 
-- **Block Ads**: Blocks advertisements to improve page load times and reduce distractions.
-- **Solve Captchas**: Automatically solves standard captchas.
-- **Enable Native Select Polyfill**: Uses native select elements for better website compatibility.
+**Bad tasks (too vague):**
+❌ "Get the data" (what data? from where?)
+❌ "Fill the form" (which form? with what data?)
+❌ "Download stuff" (what? from where?)
 
-#### Captcha Settings
+## Browser Operator vs Wrap Playwright
 
-Some websites use custom captchas. You can tell the Browser Operator where to find these elements:
+| Feature | Browser Operator | Wrap Playwright |
+|---------|-----------------|-----------------|
+| **Input** | Natural language | Playwright code |
+| **Learning Curve** | None - just describe it | Requires Playwright knowledge |
+| **Speed** | Fast for simple tasks | Faster for complex tasks |
+| **Data Processing** | Extract from UI only | Full programmatic control |
+| **Looping** | Not supported | Full loop support |
+| **File Reading** | Cannot read files | Can read/parse any file |
+| **Self-Healing** | Yes - adapts to changes | No - breaks if UI changes |
+| **Best For** | One-off tasks, scraping | Bulk operations, datasets |
 
-- **Captcha Image Selector**: Specify the CSS selector or element ID where the captcha image is located (e.g., `#captcha-image`)
-- **Captcha Input Selector**: Specify the CSS selector or element ID where the captcha solution should be entered (e.g., `#captcha-input`)
+**Rule of thumb:**
+- Describe what you want → Browser Operator
+- Know exactly how to code it → Wrap Playwright
+- Need to process datasets → Wrap Playwright
+- Want it to adapt to UI changes → Browser Operator
 
-This is useful for websites with custom captcha systems.
+## File Location
 
-#### Proxy Settings
+All output files are saved to your collection and appear in your Files page.
 
-- **Enable Proxies**: Use proxy servers for privacy or to bypass geographical restrictions.
+**File naming:**
+- Scraped data: `{buildId}-scraped-content.json` or filename from task
+- Downloads: `{buildId}-download-{index}-{fileName}`
+- Logs: `browser-operator-{sessionId}.log`
 
-These settings help you handle complex websites that don't follow standard patterns.
+## Execution Logs
+
+Every execution creates a detailed log file with:
+- Session initialization
+- File upload progress
+- Agent actions (from Stagehand)
+- Download/extraction status
+- Completion summary
+
+**Log format:**
+```
+🤖 Browser Operator Session: bo-1730000000-abc123
+📝 Task: Extract product data...
+🎯 Model: google/gemini-2.5-flash
+📊 Max Steps: 30
+
+✅ Session status updated to processing
+🚀 Starting Stagehand agent execution
+🔧 Initializing Stagehand v3 agent
+✅ Stagehand initialized
+🔗 Browserbase Session: fa13cb5b-da0e-4547-84a3
+📺 Live URL: https://browserbase.com/sessions/fa13cb5b...
+
+[agent] Agent calling tool: goto
+[action] url: https://example.com
+[agent] Agent calling tool: extract
+[extraction] Extraction completed successfully
+
+─────────────────────────────────────────────────────────────
+✅ Agent execution completed
+
+💾 Saving extracted data to products.json...
+✅ Saved: products.json
+
+📥 Checking for downloads...
+   No browser downloads found
+
+💾 Saving results to Firestore...
+✅ Results saved
+
+🏁 Task completed successfully!
+```
+
+## Limitations
+
+- Maximum execution time: 10 minutes per session
+- Maximum concurrent sessions: 10 per user/org
+- Not designed for bulk operations with datasets
+- Cannot execute custom JavaScript
+- Files expire based on your storage settings (default: 7 days)
+- Cookie injection not yet implemented (include login in task for now)
+
+## Tips & Best Practices
+
+**Be Explicit:**
+```
+✅ "Click the blue 'Submit' button in the bottom right"
+❌ "Submit the form"
+```
+
+**Wait for Content:**
+```
+✅ "Wait for the page to fully load, then extract data"
+✅ "Click download, wait 5 seconds for PDF to download"
+```
+
+**Specify Output Format:**
+```
+✅ "Extract data and save as products.json"
+✅ "Save results as report.csv"
+```
+
+**Handle Multi-Step Tasks:**
+```
+✅ "First navigate to example.com, then click Login, fill username=test, password=test123, click Submit, wait for dashboard, then click Reports"
+```
+
+**Avoid Ambiguity:**
+```
+❌ "Get the first result" (first what? where?)
+✅ "Click the first search result link (not an ad)"
+```
+
+## Use Cases
+
+**Web Scraping:**
+- Extract product catalogs
+- Scrape review data
+- Collect pricing information
+- Archive web content
+
+**Form Automation:**
+- Submit contact forms
+- Fill registration forms
+- Complete surveys
+- Upload documents via web forms
+
+**Data Collection:**
+- Download reports
+- Capture screenshots
+- Extract table data
+- Save page content
+
+**Testing & Monitoring:**
+- Test user flows
+- Verify page content
+- Check form validation
+- Monitor website changes
+
+## Viewing Results
+
+1. **Live Session** - Watch AI agent work in "Browser Operator" tab
+2. **Files** - Check Files page for all saved outputs (JSON, downloads, logs)
+3. **Replay** - Review session recording after completion
+4. **Logs** - Read execution log for detailed step-by-step progress
+
+## Technical Details
+
+**Execution Environment:**
+- Cloud-managed browser infrastructure
+- Chromium browser with AI automation
+- Natural language → browser actions
+- AI models: Gemini, GPT-4o, GPT-4o-mini
+
+**File Storage:**
+- Saved to your data collection
+- Signed URLs with configurable expiration
+- Automatic MIME type detection
+- Text and binary formats supported
+
+**Session Management:**
+- Sessions created on-demand
+- Automatic cleanup after completion
+- 30-minute auto-close for inactive sessions
+- Full session recordings available
+
+## Troubleshooting
+
+**"Task failed" or "No results":**
+- Make task more specific
+- Include exact button/link text
+- Add wait instructions
+- Check live session for what went wrong
+
+**"File not found in picker":**
+- Ensure file is uploaded via `files:` or `filesToUpload`
+- Check filename matches exactly
+- Files are placed in browser's ~/Downloads
+
+**"Extraction returned empty data":**
+- Be specific about what to extract
+- Include "save as filename.json" in task
+- Check if page requires login/navigation first
+
+## Need Help?
+
+For complex scenarios:
+- Use `/wrap-playwright` for programmatic control
+- Check execution logs for detailed steps
+- Watch live session to see what agent is doing
+- For datasets (5+ items), use Playwright with loops
