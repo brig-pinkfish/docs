@@ -20,42 +20,33 @@ task: [Natural language description of what to do]
 
 **Required:**
 
-- `task` - Natural language description of what to do (e.g., "Navigate to https://example.com, extract product names and prices, save as products.json")
+- `task` - Natural language description of what to do
 
-**Optional Configuration:**
+**Optional:**
 
-- `buildId` - Prefix for organized file naming (all output files use this prefix)
-- `model` - AI model to use (default: `google/gemini-2.5-flash`)
-  - `google/gemini-2.5-flash` (default)
-  - `google/gemini-2.5-pro`
-  - `openai/gpt-4o`
-  - `openai/gpt-4o-mini`
-  - `anthropic/claude-sonnet-4`
-- `systemPrompt` - Custom system prompt for specialized behavior
-- `maxSteps` - Maximum browser actions to perform (default: 30)
-- `disableCache` - Disable action caching for testing (default: false)
-- `cacheDurationDays` - Cache expiration in days (default: 7)
-
-**File Upload:**
-
-- `files` - Files from your collection to make available in browser file picker
-- `filesToUpload` - Array of file objects with `url` and `fileName`
-
-**Browser Configuration:**
-
+- `model` - AI model to use (default: google/gemini-2.5-flash)
+  - google/gemini-2.5-flash
+  - google/gemini-2.5-pro
+  - openai/gpt-4o
+  - openai/gpt-4o-mini
+  - anthropic/claude-sonnet-4
+- `systemPrompt` - Custom system prompt for role/context for the agent
+- `maxSteps` - Maximum number of actions agent can take (default: 30)
+- `buildId` - Prefix for predictable file naming
+- `disableCache` - Disable caching to bypass cache (default: false, caching ON)
+- `cacheDurationDays` - Cache expiration in days (default: 7, use 30 for stable sites, 1 for frequently changing sites)
 - `region` - Server region for browser sessions (default: us-west-2)
-- `proxies` - Use residential proxies for anti-detection (default: false)
-- `browserSettings` - Object with:
+- `proxies` - Enable residential proxies for anti-detection (default: false)
+- `browserSettings` - Browser configuration object:
   - `viewport` - Browser window size (default: 1920x1080)
   - `advancedStealth` - Advanced anti-detection features (default: false)
   - `blockAds` - Block ads for faster page loads (default: true)
-  - `solveCaptchas` - Automatically solve CAPTCHAs (default: true)
+  - `solveCaptchas` - Auto-solve CAPTCHAs (default: true)
   - `recordSession` - Enable session replay (default: true)
-
-**File Storage:**
-
-- `file_links_expire_in_days` - Days until file links expire
-- `file_links_expire_in_minutes` - Alternative to days
+- `collectionId` - Collection ID (only add if user explicitly specifies)
+- `filesToUpload` - Array of file objects to upload to browser before execution
+  - Each object has `url` and `fileName`
+- `useContextService` - Saved login context ID (note: cookie injection not yet implemented)
 
 ### Response Format
 
