@@ -20,17 +20,64 @@ task: [Natural language description of what to do]
 
 **Required:**
 
-- `task` - Natural language description of what to do
+- `task` - Natural language description of what to do (e.g., "Navigate to https://example.com, extract product names and prices, save as products.json")
 
-**Optional:**
+**Optional Configuration:**
 
-- `buildId` - Prefix for organized file naming
-- `model` - AI model to use (default: google/gemini-2.5-flash)
-- `maxSteps` - Maximum browser actions (default: 30)
-- `disableCache` - Disable action caching (default: false)
-- `files` - Files from your collection to make available in browser
-- `proxies` - Use residential proxies (default: false)
-- `region` - Server region (default: us-west-2)
+- `buildId` - Prefix for organized file naming (all output files use this prefix)
+- `model` - AI model to use (default: `google/gemini-2.5-flash`)
+  - `google/gemini-2.5-flash` (default)
+  - `google/gemini-2.5-pro`
+  - `openai/gpt-4o`
+  - `openai/gpt-4o-mini`
+  - `anthropic/claude-sonnet-4`
+- `systemPrompt` - Custom system prompt for specialized behavior
+- `maxSteps` - Maximum browser actions to perform (default: 30)
+- `disableCache` - Disable action caching for testing (default: false)
+- `cacheDurationDays` - Cache expiration in days (default: 7)
+
+**File Upload:**
+
+- `files` - Files from your collection to make available in browser file picker
+- `filesToUpload` - Array of file objects with `url` and `fileName`
+
+**Browser Configuration:**
+
+- `region` - Server region for browser sessions (default: "us-west-2")
+- `proxies` - Use residential proxies for anti-detection (default: false)
+- `browserSettings` - Object with:
+  - `viewport` - Browser window size (default: { width: 1920, height: 1080 })
+  - `advancedStealth` - Advanced anti-detection features (default: false)
+  - `blockAds` - Block ads for faster page loads (default: true)
+  - `solveCaptchas` - Automatically solve CAPTCHAs (default: true)
+  - `recordSession` - Enable session replay (default: true)
+
+**File Storage:**
+
+- `file_links_expire_in_days` - Days until file links expire
+- `file_links_expire_in_minutes` - Alternative to days
+
+### Response Format
+
+Browser Operator returns immediate feedback with session details:
+
+```json
+{
+  "sessionId": "bo-1730000000-abc123",
+  "status": "queued",
+  "createdAt": "2025-10-30T12:00:00Z",
+  "logFileName": "browser-operator-abc-123.log",
+  "collectionId": "collection-xyz-789",
+  "buildId": "agent-1730000000"
+}
+```
+
+**Key Features:**
+
+- Returns `sessionId` within ~200ms
+- Live browser session viewable in real-time
+- Automatic file capture (scrapes, downloads, logs)
+- Session replay after completion
 
 ## Examples
 
@@ -68,4 +115,31 @@ task: Navigate to https://example.com/reports, click Download Latest Report, wai
 ```
 /browser-operator
 task: Navigate to https://google.com, search for blueberries nutrition, press enter, wait for results, click the first non-ad result, extract the main content, save as results.json
+```
+
+### Using BuildId
+
+```
+/browser-operator
+buildId: `product-scrape-${Date.now()}`
+task: Extract all products from example.com/catalog, save as products.json
+```
+
+### Custom Model
+
+```
+/browser-operator
+model: anthropic/claude-sonnet-4
+task: Navigate to example.com and extract all structured data
+```
+
+### Protected Sites
+
+```
+/browser-operator
+proxies: true
+browserSettings:
+  advancedStealth: true
+  solveCaptchas: true
+task: Automate protected website
 ```
