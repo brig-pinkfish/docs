@@ -1,11 +1,11 @@
 ---
 title: "Image Generate Command Guide"
-description: "Create AI-generated images from text descriptions using black-forest-labs/flux-schnell"
+description: "Create AI-generated images from text descriptions using google/gemini-2.5-flash-image"
 ---
 
 ## What can you do with it?
 
-The `/image-generate` command enables you to create unique images from text descriptions using the high-performance Flux Schnell model. You can generate artwork, product mockups, marketing visuals, concept designs, illustrations, and professional graphics by simply describing what you want to see, with precise control over style, composition, and quality.
+The `/image-generate` command enables you to create unique images from text descriptions using Google's Gemini 2.5 Flash Image model. You can generate artwork, product mockups, marketing visuals, concept designs, illustrations, and professional graphics by simply describing what you want to see.
 
 ## How to use it?
 
@@ -22,15 +22,7 @@ The `/image-generate` command enables you to create unique images from text desc
 
 **Optional:**
 
-- `aspect_ratio` - Image dimensions: "1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21" (defaults to "1:1")
-- `num_outputs` - Number of variations to generate: 1-4 (defaults to 1)
-- `num_inference_steps` - Number of denoising steps: 1-4 (defaults to 4). Lower steps = faster but lower quality
-- `seed` - Random seed for reproducible generation (integer, optional)
-- `output_format` - Format of output images: "webp", "jpg", "png" (defaults to "webp")
-- `output_quality` - Quality when saving images: 0-100 (defaults to 80). Not relevant for PNG outputs
-- `disable_safety_checker` - Disable safety checker for generated images (boolean, defaults to false)
-- `go_fast` - Run faster predictions with fp8 quantized model (boolean, defaults to true). Note: outputs not deterministic when enabled
-- `megapixels` - Approximate megapixels for generated image: "1", "0.25" (defaults to "1")
+- `output_format` - Format of output images: "jpg", "png" (defaults to "png")
 - `fileLinksExpireInDays` - How long generated files remain accessible: 1-7 days (defaults to 7)
 - `fileLinksExpireInMinutes` - How long generated files remain accessible in minutes (takes precedence over days)
 
@@ -42,7 +34,7 @@ The command returns:
   "output": [
     {
       "url": "https://generated-file-url",
-      "mimeType": "image/webp"
+      "mimeType": "image/png"
     }
   ]
 }
@@ -57,16 +49,13 @@ The command returns:
 /image-generate
 prompt: A modern office space with plants and natural lighting
 ```
-Generates a single square image of an office space with default settings.
+Generates an image of an office space with default PNG format.
 
 ### Marketing Visual Creation
 ```
 /image-generate
 prompt: Professional product photography of a sleek wireless headphones on a marble surface with soft studio lighting
-aspect_ratio: 16:9
 output_format: png
-output_quality: 95
-num_inference_steps: 4
 ```
 Creates a high-quality product photo perfect for e-commerce or marketing materials.
 
@@ -74,80 +63,62 @@ Creates a high-quality product photo perfect for e-commerce or marketing materia
 ```
 /image-generate
 prompt: Watercolor painting of a serene mountain landscape with a crystal clear lake reflecting autumn colors
-aspect_ratio: 4:3
-num_outputs: 3
-seed: 12345
+output_format: jpg
 ```
-Generates three variations of an artistic landscape using a fixed seed for consistency.
+Generates an artistic landscape in JPG format.
 
 ### Logo and Branding
 ```
 /image-generate
 prompt: Minimalist logo design for a tech startup, clean geometric shapes, blue and white color scheme, modern typography
-aspect_ratio: 1:1
 output_format: png
-disable_safety_checker: false
 ```
-Creates a logo concept with transparent background support.
+Creates a logo concept with PNG format for transparency support.
 
 ### Social Media Content
 ```
 /image-generate
 prompt: Instagram-style flat lay of a cozy reading nook with books, coffee cup, and warm lighting, aesthetic composition
-aspect_ratio: 9:16
-output_format: webp
-go_fast: true
-megapixels: 1
+fileLinksExpireInDays: 3
 ```
-Generates vertical content optimized for Instagram stories with fast processing.
+Generates content that expires in 3 days instead of the default 7.
 
 ### Character Design
 ```
 /image-generate
 prompt: Character design of a friendly robot mascot for a children's app, colorful, approachable, cartoon style
-aspect_ratio: 1:1
-num_outputs: 4
-num_inference_steps: 4
-output_quality: 90
+output_format: png
 ```
-Creates multiple character variations for design iteration.
+Creates a character design with PNG format.
 
 ### Architectural Visualization
 ```
 /image-generate
 prompt: Architectural rendering of a sustainable eco-friendly house with solar panels, green roof, large windows, modern design
-aspect_ratio: 21:9
 output_format: jpg
-output_quality: 85
 fileLinksExpireInDays: 7
 ```
-Generates a wide-format architectural visualization that stays accessible for a week.
+Generates an architectural visualization that stays accessible for a week.
 
 ### Notes
 
 **Model Capabilities:**
-- Fast generation (typically 10-30 seconds)
-- High-quality outputs with professional results
-- Excellent for commercial and creative use cases
-- Supports various artistic styles and photorealistic imagery
+- Fast generation using Google's Gemini 2.5 Flash Image model
+- High-quality outputs suitable for various creative applications
+- Excellent for artwork, product mockups, marketing visuals, and illustrations
+- Supports both photorealistic and artistic styles
 
 **Limitations:**
 - Cannot generate images of specific real people
 - Avoids creating harmful or inappropriate content
 - Results may vary based on prompt complexity
-- Video generation is not supported
+- Limited to basic parameters (prompt and output format)
 
-### Model Parameters (black-forest-labs/flux-schnell)
+### Model Parameters (google/gemini-2.5-flash-image)
 
 #### Image Generation Parameters
-- **prompt** (required): Prompt for generated image
-- **aspect_ratio**: Aspect ratio ("1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21", default: "1:1")
-- **num_outputs**: Number of outputs to generate (1 to 4, default: 1)
-- **num_inference_steps**: Number of denoising steps (1 to 4, default: 4). Lower steps = faster but lower quality
-- **seed**: Random seed for reproducible generation (integer, optional)
-- **output_format**: Format of output images ("webp", "jpg", "png", default: "webp")
-- **output_quality**: Quality when saving images (0 to 100, default: 80). Not relevant for PNG outputs
-- **disable_safety_checker**: Disable safety checker for generated images (boolean, default: false)
-- **go_fast**: Run faster predictions with fp8 quantized model (boolean, default: true). Note: outputs not deterministic when enabled
-- **megapixels**: Approximate megapixels for generated image ("1", "0.25", default: "1")
+- **prompt** (required): Text description of the image to generate
+- **output_format**: Format of output images ("jpg", "png", default: "png")
+- **fileLinksExpireInDays**: How long generated files remain accessible (1-7 days, default: 7)
+- **fileLinksExpireInMinutes**: How long generated files remain accessible in minutes (takes precedence over days)
 

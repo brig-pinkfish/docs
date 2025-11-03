@@ -1,257 +1,688 @@
 ---
-title: "Browser Operator"
-description: "Automate web interactions using plain English, no APIs needed."
+title: "Browser Operator Guide"
+description: "AI agent that automates web browsers using natural language"
 ---
 
-## Demo Videos
+## What can you do with it?
 
-<CardGroup>
-  <Card
-    title="Browser Operator Demo"
-    href="https://youtu.be/6udGLo3YEiM?feature=shared"
-    icon="play"
-  >
-    Watch the Browser Operator in action
-  </Card>
-  <Card
-    title="Download & Unzip using Browser Operator"
-    href="https://youtu.be/rAIQcDVsUBk?feature=shared"
-    icon="play"
-  >
-    Learn how to download and unzip files automatically
-  </Card>
-</CardGroup>
+The `/browser-operator` command is an AI agent that autonomously performs browser automation based on natural language instructions. You describe what you want accomplished, and the AI agent makes independent decisions on how to navigate, click, fill forms, extract data, and download files - no code required.
 
-## What is the Browser Operator?
+<Tip>
+  **Video Tutorials:** Check out our [Browser Operator video
+  playlist](https://www.youtube.com/playlist?list=PL1NAOwNOuiukLcic-BU5zkMZO6AReB80_)
+  for step-by-step guides and examples.
+</Tip>
 
-Many critical business processes involve interacting with websites that don't have APIs. This often leads to tedious, manual work like copying data from a spreadsheet and pasting it into a web form, one entry at a time. This process is not only slow but also prone to human error.
+## How to use it?
 
-The **Browser Operator** is an AI-powered tool designed to solve this exact problem. It acts like a human assistant, programmatically navigating and interacting with any website based on simple, plain-English instructions. It can fill out forms, click buttons, extract data, and loop through thousands of records, all without a single line of code.
+### Basic Command Structure
 
-## Key Capabilities
+```
+/browser-operator
+task: [Natural language description of what to do]
+```
 
-<CardGroup>
-  <Card title="Natural Language Control">
-    Instruct the Browser Operator like you would a human intern. Simply tell it
-    what to do (e.g., "Fill in the Email Address field with...") and it
-    understands and executes the task.
-  </Card>
-  <Card title="Intelligent Looping">
-    Combine the Browser Operator with data from any source. You can teach it the
-    process for one row of data, and it will automatically repeat the steps for
-    every other row.
-  </Card>
-  <Card title="Self-Healing Automation">
-    Unlike traditional RPA which breaks with minor UI changes, the Browser
-    Operator understands your *intent*. If a button moves or a field's ID
-    changes, it can intelligently re-locate the element, making your automations
-    incredibly robust.
-  </Card>
-  <Card title="Securely Handles Logins">
-    Automate tasks on internal portals and sites behind a login wall. Using
-    **Browser Operator Logins** in Connections, you can record a login session
-    once, and the Operator will securely reuse it for all future runs.
-  </Card>
-</CardGroup>
+### Parameters
 
-## How It Works
+**Required:**
 
-The Browser Operator creates a special workflow step that combines AI with live browser automation.
+- `task` - Natural language description of what to do
 
-### Getting Started
+**Optional:**
 
-When you select Browser Operator from the slash menu (`/browser operator`), it spins up a browser inside your workflow step. The interface transforms to show:
+- `model` - AI model to use (default: google/gemini-2.5-flash)
+  - google/gemini-2.5-flash
+  - google/gemini-2.5-pro
+  - openai/gpt-4o
+  - openai/gpt-4o-mini
+  - anthropic/claude-sonnet-4
+- `systemPrompt` - Custom instructions to give the AI agent specialized behavior or context
+- `maxSteps` - Maximum number of browser actions the agent can perform (default: 30)
+- `buildId` - Prefix used to name all output files including logs, downloads, and scraped data
+- `disableCache` - Set to true to disable action caching (default: false, caching is enabled)
+- `cacheDurationDays` - How long cached actions remain valid in days (default: 7 days, recommended: 30 for stable sites, 1 for frequently changing sites)
+- `region` - Geographic region where the browser session runs (default: us-west-2)
+- `proxies` - Enable residential proxies to improve anti-detection capabilities (default: false)
+- `browserSettings` - Browser configuration options:
+  - `viewport` - Browser window dimensions in pixels (default: 1920x1080)
+  - `advancedStealth` - Enable advanced anti-detection features (default: false)
+  - `blockAds` - Block advertisements for faster page loading (default: true)
+  - `solveCaptchas` - Automatically solve CAPTCHA challenges (default: true)
+  - `recordSession` - Record the session for replay and debugging (default: true)
+- `collectionId` - Specify which file storage resource to store output files in (defaults to Multimedia Artifact Collection if not specified)
+- `filesToUpload` - Files to make available in the browser for upload operations, provided as an array of objects with `url` and `fileName` properties
+- `useContextService` - ID of a saved browser login connection to use for authentication (automatically added when you select a browser login from the slash command menu)
 
-- **Right Pane**: A live browser window that the operator controls
-- **Center Panel**: A table showing your instructions in structured format (Action, Target, Value)
-- **Chat Interface**: Where you communicate with the Browser Operator using natural language
+### Response Format
 
-<Note>The slash menu is disabled in a browser operator step.</Note>
+Browser Operator returns immediately with session details while the automation runs in the background:
 
-### Basic Operations
+```json
+{
+  "sessionId": "bo-1730000000-abc123",
+  "status": "queued",
+  "createdAt": "2025-10-30T12:00:00Z",
+  "logFileName": "browser-operator-abc-123.log",
+  "collectionId": "collection-xyz-789",
+  "buildId": "agent-1730000000"
+}
+```
 
-Chat with the Browser Operator to tell it what to do. It can:
-
-- **Navigate** to your desired webpages
-- **Click** on buttons, links, and interactive elements
-- **Type and fill out** forms with data
-- **Select** from dropdown boxes and menus
-- **Extract content** (scrape) from pages
-- **Loop through tasks** with different variables each time
-
-The Browser Operator can reference:
-
-- Information from previous steps in your workflow
-- Files attached to your workflow
-- Variables and data from any source in your automation
-
-### Managing Instructions
-
-As you give instructions, they get organized into a simple table format:
-
-- **Action**: What to do (Navigate, Click, Fill in, etc.)
-- **Target**: Where to do it (URL, button name, form field, etc.)
-- **Value**: What data to use (text to type, option to select, etc.)
-
-You can use the menu controls to:
-
-- Reorder instructions by moving them up or down
-- Delete instructions you no longer need
-- Modify the sequence before execution
-
-### Built-in Guidance
-
-Prompt bubbles above the chat interface guide you through the process and suggest common actions.
-
-### Finishing Up
-
-Once you've defined all the steps you want the Browser Operator to perform:
-
-1. **Click "Finish Task"** - The Browser Operator consolidates all your instructions in the table order and presents you with the final automation code
-2. **Run & Verify** - Click "Run" to spin up a fresh browser that executes all instructions sequentially, allowing you to verify the automation works as expected
-3. **Review Replays** - After the browser completes its tasks, you can see the browser operator replays to understand exactly what happened during execution
-
-**Restart Option**: If you need to start over, click the **Restart** button (located beside "Finish Task") to reset the Browser Operator step and clear out the entire instruction table, giving you a clean slate to rebuild your automation.
-
-<Note>
-  **Note on Replays**: If the browser operator session is too short, you may not
-  see the replay functionality.
-</Note>
-
-<Note>
-**Looping Capabilities**: The Browser Operator excels at repetitive tasks. You can ask it to loop through data with different variables each time, such as: `"Fill in first name from the name column, city, and state in the address column. Loop through all the items in the csv from previous step <step_reference>."`
-</Note>
-
-## File Downloads
-
-Web automation usually struggles with file downloads because they trigger "Save As" dialogs that stop the process.
-
-The Browser Operator handles this differently - it captures downloads directly into your workflow memory so you can use them in the next steps.
-
-### Example: Downloading and Unzipping a File
-
-Let's say you need to download a ZIP archive from a website and process its contents.
-
-<Steps>
-    <Step title="Click the Download Link">
-        In the Browser Operator, navigate to the page and simply instruct it to click the download link.
-        ```
-        Click on "Download" button
-        ```
-        The Operator will click the link and capture the resulting file download.
-    </Step>
-    <Step title="Access the Downloaded File">
-        The downloaded file is now available in the step's output under the `downloads` key in the Results tab. You can see its name, size, and other metadata.
-        <CodeBlock language="json">
-        ```json
-        {
-          "downloads": [
-            {
-              "fileName": "confidential_files.zip",
-              "url": "https://skills.pinkfish.ai/files/...",
-              "mime": "application/zip",
-              "size": 999
-            }
-          ]
-        }
-        ```
-        </CodeBlock>
-    </Step>
-    <Step title="Unzip the Archive">
-        In a new step, you can now work with this file. Since Pinkfish understands file types, you can ask it to unzip the archive from the previous step.
-        ```
-        can you unzip all the files from the output files of step 1
-        ```
-    </Step>
-    <Step title="Process the Contents">
-        Pinkfish will execute the command and the unzipped files will become available as outputs of this new step. You can then use additional steps to process these files - for example, summarizing text files using Claude, analyzing data files, or extracting specific information.
-    </Step>
-</Steps>
-
-This lets you build workflows that download files from the web, unzip them, and process the contents - all in one automation.
+When the command executes, you receive this response within ~200ms. Simultaneously, a live browser session launches in the Browser Operator tab where you can watch the AI agent work in real-time and view the execution log as it streams.
 
 ## Self-Healing Automation
 
-Traditional browser automation breaks when websites change. If a developer changes a button from "Submit" to "Register", most tools would fail.
+Browser Operator uses a self-healing technique that automatically adapts when websites change their structure or layout. Unlike traditional automation that breaks when a CSS class changes, Browser Operator understands the intent of your task and can find new ways to accomplish it.
 
-The Browser Operator works differently. It understands what you're trying to do, not just the exact words. If it can't find "Submit", it'll look for similar buttons like "Register". This means your automations keep working even when websites change.
+### How It Works
 
-## Advanced Features
+Instead of relying on brittle selectors that break with every UI update, Browser Operator uses AI to understand what you want to accomplish:
 
-### Login Management
+**Traditional automation (brittle):**
 
-For websites that need login, you don't have to log in every time. Set up a Browser Operator Login connection once and reuse it across all your automations.
+```
+// Breaks when class name changes
+click('#login-btn-v2')
+```
 
-#### Setting Up Logins
+**Browser Operator (self-healing):**
 
-<Steps>
-  <Step title="Navigate to Integrations">
-    Go to the **Integrations** tab in your Pinkfish workspace.
-  </Step>
-  <Step title="Access Browser Operator Logins">
-    Select **Browser Operator Logins** from the available integrations.
-  </Step>
-  <Step title="Add New Connection">
-    Click **Add connection** to create a new browser login connection.
-  </Step>
-  <Step title="Fill Connection Details">
-    Complete the required fields in the modal: - **Application Name**: The name
-    of the service you're integrating with (e.g., "Google", "Airtable", "SAP") -
-    **Connection Name**: A descriptive name to distinguish multiple connections
-    for the same app (e.g., "Production Browser Connection", "Staging Browser
-    Connection", "Personal Login") - **Login URL**: The URL where the login page
-    is located (e.g., "https://www.google.com/")
-  </Step>
-  <Step title="Perform the Login">
-    Pinkfish will open a browser window where you can log in as you normally
-    would. This includes: - Entering your username and password - Completing
-    two-factor authentication (2FA) if required - Solving any captchas that
-    appear - Going through any additional security steps your organization
-    requires
-  </Step>
-  <Step title="Confirm Login Success">
-    Once you've successfully logged in, click **"I've Logged in"** to save the
-    authenticated session.
-  </Step>
-</Steps>
+```
+/browser-operator
+task: Click the login button
+```
 
-#### Using Saved Logins
+The AI agent identifies elements based on your natural language description, making automations resilient to:
 
-After setting up the connection, it will appear in the Browser Operator sub-menu when you:
+- CSS class or ID changes
+- HTML structure modifications
+- Element position changes
+- Layout redesigns
 
-1. Type `/browser operator` in any automation step
-2. Select from the available options, including your saved login connections
-3. Choose your saved connection to start with an authenticated session
+### Adapting to Website Changes
 
-This saves you from logging in manually every time.
+When websites evolve, Browser Operator automatically adapts:
 
-### CAPTCHA Handling
+**Example scenario:**
 
-The Browser Operator can handle modern CAPTCHAs like Cloudflare and reCAPTCHA letting you automate more websites.
+**Before:** Login button was directly in the header
 
-### Advanced Browser Operator Settings
+```
+/browser-operator
+task: Click the login button
+```
 
-Power users can access advanced browser operator settings through the gear icon (⚙️) in the Browser Operator interface.
+**After:** Login button moved inside a dropdown menu
 
-**Note:** This is a advanced feature that only appears when you have an active browser operator login.
+- Browser Operator recognizes the button is now nested
+- Automatically performs: Open account menu → Click login button
+- No code changes needed
 
-#### Browser Behavior
+### Benefits
 
-- **Block Ads**: Blocks advertisements to improve page load times and reduce distractions.
-- **Solve Captchas**: Automatically solves standard captchas.
-- **Enable Native Select Polyfill**: Uses native select elements for better website compatibility.
+**Maintenance reduction:**
 
-#### Captcha Settings
+- Automations continue working through website redesigns
+- No need to update selectors when HTML changes
+- Fewer broken workflows after site updates
 
-Some websites use custom captchas. You can tell the Browser Operator where to find these elements:
+**Reliability:**
 
-- **Captcha Image Selector**: Specify the CSS selector or element ID where the captcha image is located (e.g., `#captcha-image`)
-- **Captcha Input Selector**: Specify the CSS selector or element ID where the captcha solution should be entered (e.g., `#captcha-input`)
+- Understands intent rather than just following instructions
+- Finds alternative paths when primary methods fail
+- Recovers gracefully from minor structural changes
 
-This is useful for websites with custom captcha systems.
+**Natural language resilience:**
 
-#### Proxy Settings
+- "Click the submit button" works regardless of button implementation
+- "Fill in the email field" adapts to different form structures
+- "Extract product prices" handles various page layouts
 
-- **Enable Proxies**: Use proxy servers for privacy or to bypass geographical restrictions.
+### When Self-Healing Helps Most
 
-These settings help you handle complex websites that don't follow standard patterns.
+Self-healing is particularly valuable for:
+
+- Long-running production automations
+- Sites that frequently update their UI
+- Third-party websites you don't control
+- Automations that need to work across multiple similar sites
+
+### Self-Healing with Caching
+
+Self-healing and caching work together to create fast, resilient automations. Here's how they interact:
+
+**How it works:**
+
+1. **First execution (no cache):**
+
+   - AI agent explores and learns how to complete the task
+   - Actions are saved to cache for future runs
+   - Takes full time (e.g., 30-60 seconds)
+
+2. **Subsequent executions (cache hit):**
+
+   - Cached actions replay instantly (10-100x faster)
+   - No AI inference needed
+   - Works perfectly if website hasn't changed
+
+3. **When website changes slightly (cache + self-healing):**
+
+   - Cached actions attempt to execute
+   - Minor changes detected (e.g., button moved, class name changed)
+   - **Self-healing adapts** the cached actions to the new structure
+   - Continues working without full re-exploration
+
+4. **When website changes significantly (cache invalidation):**
+   - Cached actions fail and self-healing cannot adapt
+   - Cache is cleared automatically
+   - Fresh exploration happens to re-learn the task
+
+**The benefit:**
+
+Without self-healing, any website change would invalidate your cache and require slow re-exploration. With self-healing enabled, minor changes are handled automatically, so your cache stays useful much longer.
+
+**Example scenario:**
+
+```
+Website change: Login button's CSS class changed from "btn-login" to "login-button"
+```
+
+- **Traditional automation:** Breaks immediately, needs code update
+- **With cache only:** Cache becomes invalid, requires full re-exploration (slow)
+- **With cache + self-healing:** Adapts automatically, continues using cache (fast)
+
+This means faster execution, lower costs (fewer AI inference calls), and more reliable automations.
+
+### Limitations
+
+Self-healing has limitations:
+
+- Major functional changes may require task updates
+- Completely new workflows need new task descriptions
+- Significant structural changes may require cache invalidation to re-learn
+
+## Authentication
+
+Browser Operator supports two methods for handling authentication:
+
+### Using Stored Secrets from Vault
+
+Select a stored secret from the slash command menu to retrieve login credentials from your vault:
+
+```
+/vault - select vault secret
+/browser-operator
+task: Navigate to https://example.com/login, fill username with {username} and password with {password}, click login, then navigate to dashboard and extract data
+```
+
+The secret values are automatically available in your task description.
+
+### Using Browser Login Connections
+
+Browser Login Connections store authenticated session details (not credentials) that you create by logging in through a live browser session. Once created, these saved sessions can be used with Browser Operator.
+
+**To create a Browser Login Connection:**
+
+1. Create a new browser connection in your Connections page
+2. Authenticate through the live browser session
+3. Complete any 2FA or CAPTCHA challenges
+4. Save the connection
+
+**To use with Browser Operator:**
+
+Select your saved browser connection from the slash command menu, then specify your task. The browser session will automatically include your saved authentication state.
+
+```
+/select - browser operator login
+/browser-operator
+task: Navigate to https://example.com/dashboard, download the latest report
+```
+
+**Session Expiry:**
+Browser login sessions expire based on the service's timeout settings (hours to months). If a "remember me" option exists, use it during initial authentication to extend session life. Re-authenticate through the connection when the session expires.
+
+## Automatic iFrame and Shadow DOM Support
+
+Browser Operator automatically handles iFrame traversal and Shadow DOM elements without requiring any special configuration. Elements inside iFrames and Shadow DOMs can be targeted using the same natural language instructions as regular page elements.
+
+**What's supported:**
+
+- Payment forms inside iFrames
+- Embedded widgets and third-party content
+- Nested iFrames (multiple levels deep)
+- Shadow DOM components (custom web components)
+- No frame switching or special selectors required
+
+**Example:**
+
+```
+/browser-operator
+task: Fill in the credit card number in the Stripe payment form, then click Submit
+```
+
+Stripe payment forms are typically embedded in iFrames. Browser Operator automatically traverses into the iFrame to interact with the form elements.
+
+## Parameter Notes
+
+This section provides detailed information about Browser Operator's configuration parameters and how they affect automation performance and capabilities.
+
+### Proxies
+
+Residential proxies route your browser traffic through real residential IP addresses instead of datacenter IPs. This significantly improves success rates when automating websites that employ anti-bot detection.
+
+**Benefits:**
+
+- Appear as genuine residential user traffic
+- Reduce likelihood of being flagged as automated
+- Enable IP rotation for distributed requests
+- Support geo-location testing from different regions
+
+**When to use:**
+
+- Scraping sites with anti-bot protection
+- Production automation workflows
+- E-commerce or booking platforms
+- Sites that block datacenter IPs
+
+**When to skip:**
+
+- Local development and testing
+- Internal tools with no restrictions
+- Speed-critical applications where latency matters
+
+### Advanced Stealth
+
+Advanced stealth mode implements sophisticated browser fingerprinting countermeasures that make automated browsers indistinguishable from human-driven browsers. This goes beyond basic anti-detection to defeat even advanced bot-detection systems.
+
+**What it does:**
+
+- Masks automation signatures in the browser environment
+- Modifies browser fingerprinting characteristics
+- Prevents detection through WebDriver properties
+- Mimics genuine user behavior patterns
+
+**Use cases:**
+
+- Websites with Cloudflare or similar protections
+- Platforms with sophisticated bot detection
+- Production scrapers requiring maximum stealth
+- Compliance-sensitive automation
+
+**Note:** Advanced stealth requires specific plan levels and may impact performance slightly due to additional countermeasures.
+
+### Block Ads
+
+Ad blocking improves automation speed and reliability by preventing ad networks from loading. This reduces page weight, eliminates ad-related JavaScript, and prevents popups or overlays that can interfere with automation.
+
+**Benefits:**
+
+- Faster page load times (20-50% improvement typical)
+- Reduced bandwidth and data transfer
+- Fewer elements to process during automation
+- Elimination of modal ads and interruptions
+- More consistent page structure
+
+**Recommended:** Enable for almost all use cases unless you specifically need to interact with advertising content.
+
+### Solve CAPTCHAs
+
+Automatic CAPTCHA solving uses specialized services to detect and solve CAPTCHA challenges without manual intervention. This enables fully autonomous workflows even on CAPTCHA-protected sites.
+
+**How it works:**
+
+- Detects CAPTCHA challenges during automation
+- Submits challenges to solving service
+- Waits for solution and applies it automatically
+- Continues automation after solving challenge
+
+**Supported challenge types:**
+
+- reCAPTCHA v2 and v3
+- hCaptcha
+- Image-based challenges
+- Audio challenges
+
+**Important:** CAPTCHA solving adds latency (typically 10-30 seconds per solve) and may not succeed on all CAPTCHA types. Consider this in your automation timing.
+
+### Record Session
+
+Session recording captures a complete visual and technical record of the browser automation for replay and debugging. Every action, network request, and console log is preserved.
+
+**What's captured:**
+
+- Frame-by-frame video of browser activity
+- All network requests with timing data
+- JavaScript console logs and errors
+- Browser resource usage metrics
+- Action timeline with timestamps
+
+**Benefits for debugging:**
+
+- Visual verification of what the agent did
+- Identify where automations fail
+- Review network issues or errors
+- Share session replays with team members
+- Audit automation behavior
+
+**Performance impact:** Minimal overhead on automation speed, but increases session storage requirements.
+
+**Session replay notes:**
+
+- Replays are reconstructed from recorded DOM changes and may not be perfectly one-to-one with the live session due to the nature of the RRWeb replay technology
+- To ensure the full automation is captured in the replay, add a few seconds of wait time at the end of your task (e.g., "then wait 3 seconds")
+- The live session view during execution is always accurate - replay limitations only affect post-execution review
+
+### Viewport
+
+Viewport dimensions determine the visible browser window size, which affects responsive layouts and how AI models perceive page content. Different sizes can reveal different UI variations or trigger responsive breakpoints.
+
+**Common configurations:**
+
+- `1920x1080` - Standard desktop (default)
+- `1280x720` - Smaller desktop display
+- `2560x1440` - Large desktop/4K displays
+- `1024x768` - Tablet landscape
+- `375x667` - Mobile phone simulation
+
+**Why it matters:**
+
+- Responsive sites show different content per viewport
+- Some elements only appear at certain sizes
+- AI computer-use models analyze pixel coordinates
+- Form layouts may change with screen size
+
+Recommended: Use 16:9 aspect ratios (like 1920x1080) for compatibility across most sites.
+
+### Caching
+
+Action caching stores the AI agent's decisions so identical tasks can replay without requiring new LLM inference. This dramatically reduces both execution time and cost for repeated operations.
+
+**How caching works:**
+
+1. First execution: AI determines actions, which are saved
+2. Subsequent executions: Saved actions replay instantly
+3. Cache invalidation: Changes to task or page structure trigger re-learning
+
+**Performance improvements:**
+
+- 10-100x faster execution on cached operations
+- Zero LLM API costs after initial run
+- Deterministic behavior across runs
+- Consistent timing and results
+
+**Cache key implementation:**
+
+Browser Operator uses your task description as the primary cache key. This means:
+
+- **Exact task match = cache hit:** If you run the same task description again, cached actions are reused
+- **Task change = cache miss:** Any modification to the task description creates a new cache entry
+- **Automatic invalidation:** Changing even a single word in your task invalidates the cache and triggers fresh exploration
+
+**Example:**
+
+```
+First run:
+task: Navigate to example.com, click login, fill username and password
+
+Cache created with key: hash of entire task description
+```
+
+```
+Second run (cache hit):
+task: Navigate to example.com, click login, fill username and password
+
+Same task = cache reused, executes in ~10-20 seconds
+```
+
+```
+Modified run (cache miss):
+task: Navigate to example.com, click login, fill username and password, then submit
+
+Different task = new cache created, full exploration needed
+```
+
+**Practical implications:**
+
+- Keep task descriptions consistent to benefit from caching
+- Minor wording changes invalidate cache (e.g., "click Submit" vs "click the Submit button")
+- Variables in tasks are part of the cache key
+- This ensures cache accuracy but means precise wording matters for cache hits
+
+**Cache scope:**
+
+- Organized per organization and automation
+- Task description hashed to generate unique cache identifier
+- Separate caches for different automations
+
+**Cache duration:**
+
+- `cacheDurationDays: 7` - Cached actions expire after 7 days (default)
+- `cacheDurationDays: 30` - Longer duration for stable, unchanging sites
+- `cacheDurationDays: 1` - Short duration for frequently updated sites
+
+**Best for:**
+
+- Repetitive data extraction tasks
+- Form submission workflows run multiple times
+- Stable website structures
+- Production automations with consistent requirements
+
+### Region
+
+Geographic region determines where the cloud browser session physically runs. This affects latency, data residency, and in some cases, content availability.
+
+**Available regions:**
+
+- `us-west-2` - US West Coast (default)
+- `us-east-1` - US East Coast
+- `eu-west-1` - Europe (Ireland)
+- Other regions available based on infrastructure
+
+**Why region matters:**
+
+- Latency to target websites (choose closest region)
+- Data residency compliance requirements
+- Content geo-restrictions or geo-targeted content
+- Legal/regulatory considerations
+
+Select the region geographically closest to your target websites for lower latency.
+
+### Max Steps
+
+Maximum steps limit how many individual browser actions the AI agent can perform before terminating. This prevents infinite loops and controls execution time.
+
+**Setting appropriate limits:**
+
+- Simple tasks (click, extract): 5-10 steps
+- Multi-step workflows: 20-40 steps
+- Complex multi-page processes: 50-100 steps
+
+**What counts as a step:**
+
+- Navigate to URL
+- Click element
+- Fill form field
+- Extract data
+- Wait for condition
+- Scroll action
+
+**Important:** If automation fails due to reaching max steps, increase the limit and re-run. However, if steps are consistently maxed out, the task may need to be simplified or broken into smaller operations.
+
+### Model Selection
+
+Different AI models have varying capabilities, speeds, and costs. Choosing the right model depends on your task complexity and performance requirements.
+
+**Model characteristics:**
+
+- **Gemini 2.5 Flash** - Fastest execution, lowest cost, good for straightforward tasks
+- **Gemini 2.5 Pro** - More capable for complex reasoning and extraction
+- **GPT-4o** - Strong general-purpose model for diverse tasks
+- **GPT-4o Mini** - Balanced speed and capability
+- **Claude Sonnet 4** - Excellent for complex form interactions and nuanced understanding
+
+**Choosing a model:**
+
+- Start with the default (Gemini 2.5 Flash) for most tasks
+- Switch to more capable models if you encounter failures
+- Consider cost vs. capability tradeoffs for production use
+- Test different models to find optimal performance for your specific use case
+
+### System Prompt
+
+System prompts provide specialized instructions or context to guide the AI agent's behavior throughout the automation. This is useful for domain-specific tasks or when you need the agent to follow particular patterns.
+
+**When to use system prompts:**
+
+- Domain expertise needed (medical, legal, financial portals)
+- Specific behavioral requirements (cautious, thorough, fast)
+- Context about the website structure
+- Special handling instructions
+
+**Examples:**
+
+```
+systemPrompt: You are an expert at navigating medical portals. Be careful with form submissions and verify all data before clicking submit buttons.
+```
+
+```
+systemPrompt: You are filling out forms for a software company. Use realistic but fake data for testing purposes.
+```
+
+Keep system prompts concise and focused on the specific behavior or context needed for your automation.
+
+### File Upload Details
+
+When you provide files to Browser Operator, they are automatically uploaded to the browser's `~/Downloads` directory before your task executes. This makes them available for selection in any file picker dialogs.
+
+**How it works:**
+
+1. Files are uploaded to browser session before task starts
+2. Files appear in `~/Downloads` directory
+3. AI agent can select them from file pickers
+4. Task instruction simply references the filename
+
+**Example:**
+
+```
+files: resume.pdf, cover-letter.pdf from my files
+task: Navigate to job application form, upload resume.pdf to the Resume field, upload cover-letter.pdf to Cover Letter field, then click Submit
+```
+
+The agent locates and selects the specified files from the browser's file system.
+
+### File Download Details
+
+Files downloaded during browser automation are automatically captured and saved to your file storage. Browser Operator monitors download activity and retrieves all downloaded files after the session completes.
+
+**Download process:**
+
+1. Your task instructs the agent to trigger downloads (click download link, submit form that returns file, etc.)
+2. Browser infrastructure captures the downloaded files
+3. After task completion, files are retrieved and saved to your file storage
+4. Files are named with your buildId prefix for easy organization
+
+**Automatic capture:**
+
+- PDFs, spreadsheets, images, archives
+- Form submission responses (CSV exports, reports)
+- Dynamically generated files
+- Multiple downloads in a single session
+
+**File naming:**
+
+- Pattern: `{buildId}-download-{index}-{originalFileName}`
+- Example: `reports-1730000000-download-1-quarterly-report.pdf`
+
+### DOM Settling
+
+DOM settling refers to how long Browser Operator waits for web pages to stabilize before taking actions. This ensures that animations complete, lazy-loaded content appears, and JavaScript updates finish before the agent interacts with elements.
+
+**Why it matters:**
+
+- Dynamic pages with animations need time to complete transitions
+- Lazy-loading content needs to appear before extraction
+- JavaScript frameworks (React, Vue, Angular) need time to render
+- Single-page applications update content asynchronously
+
+**How Browser Operator handles it:**
+
+- Automatically waits for DOM to stabilize before each action
+- Adapts waiting based on page complexity
+- Ensures elements are ready for interaction
+- Prevents errors from interacting with elements that aren't ready
+
+**When pages need more time:**
+
+- Heavy animations or transitions
+- Infinite scroll or lazy-loading
+- Complex single-page applications
+- Dynamic content that loads after page navigation
+
+For pages with slow-loading content, include wait instructions in your task: "wait for the page to fully load" or "wait 3 seconds for content to appear".
+
+## Examples
+
+### Basic Data Extraction
+
+```
+/browser-operator
+task: Go to https://example.com/products, extract all product names and prices, save as products.json
+```
+
+### Form Submission
+
+```
+/browser-operator
+task: Navigate to https://example.com/contact, fill the form with name=John Doe, email=john@example.com, message=Test inquiry, then submit the form
+```
+
+**Tip for forms:** Take a screenshot of the form you're trying to fill and attach it to your prompt. This helps the AI agent understand the form structure and field layout, improving accuracy for multi-field or complex forms.
+
+### File Upload
+
+```
+/browser-operator
+files: data.csv from my files
+task: Navigate to https://example.com/upload, upload data.csv to the file input, click Submit
+```
+
+### Download Files
+
+```
+/browser-operator
+task: Navigate to https://example.com/reports, click Download Latest Report, wait for the PDF to download
+```
+
+### Multi-Step Workflow
+
+```
+/browser-operator
+task: Navigate to https://google.com, search for blueberries nutrition, press enter, wait for results, click the first non-ad result, extract the main content, save as results.json
+```
+
+### Using BuildId
+
+```
+/browser-operator
+buildId: `product-scrape-${Date.now()}`
+task: Extract all products from example.com/catalog, save as products.json
+```
+
+### Custom Model
+
+```
+/browser-operator
+model: anthropic/claude-sonnet-4
+task: Navigate to example.com and extract all structured data
+```
+
+### Protected Sites
+
+```
+/browser-operator
+proxies: true
+browserSettings:
+  advancedStealth: true
+  solveCaptchas: true
+task: Automate protected website
+```
