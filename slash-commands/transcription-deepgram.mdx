@@ -1,0 +1,224 @@
+---
+title: "Transcription Deepgram Guide"
+description: "Learn how to transcribe audio and video files with advanced features using Deepgram AI"
+---
+
+## What can you do with it?
+
+The `/transcription-deepgram` command enables you to transcribe audio and video files using Deepgram's advanced AI transcription service. Perfect for converting meetings, interviews, podcasts, and video content into text with features like speaker identification, sentiment analysis, topic extraction, and automatic formatting.
+
+## How to use it?
+
+### Basic Command Structure
+
+```
+/transcription-deepgram [audio-file or video-file] [options]
+```
+
+### Parameters
+
+**Required:**
+
+- `fileUrls` - The audio or video file to transcribe (URL or uploaded file). Supports both audio and video formats.
+
+**Optional:**
+
+- `model` - Deepgram model to use: `nova-3` (default, recommended), `nova-2`, `enhanced`, or `base`
+- `languageCode` - Language code (e.g., "en", "es", "fr"). Default: auto-detect
+- `enableAutomaticPunctuation` - Add punctuation automatically (default: true)
+- `enableDiarization` - Identify different speakers (default: false)
+- `diarizationSpeakerCount` - Number of expected speakers (required if diarization is enabled)
+- `enableUtterances` - Segment transcription by speaker turns (default: false)
+- `enableParagraphs` - Format output into paragraphs (default: false)
+- `enableSummary` - Generate AI summary of content (default: false)
+- `enableTopics` - Extract key topics discussed (default: false)
+- `enableIntents` - Identify user intents (default: false)
+- `enableSentiment` - Analyze sentiment (positive/negative/neutral) (default: false)
+- `customTopics` - Custom topics to detect (array of strings)
+- `customIntents` - Custom intents to detect (array of strings)
+- `collectionId` - Custom collection ID for storing results (default: multimedia artifact collection)
+- `triggerUrls` - Webhook URLs to notify when processing completes
+- `outputFileNames` - Output file names for async mode (can be .json or .txt format)
+
+### Response Format
+
+**Async Response (for large files or when background processing is needed):**
+
+```json
+{
+  "success": true,
+  "capability": "transcription",
+  "provider": "deepgram",
+  "async": true,
+  "collectionId": "collection-id",
+  "responseId": "transcription-processing-queue-[TIMESTAMP]-[RANDOM]",
+  "status": "queued",
+  "createdAt": "ISO timestamp",
+  "results": [
+    {
+      "inputFileName": "original-file-name",
+      "outputFileName": "transcribe-with-speech-model-[RANDOM].json",
+      "fileId": "file-id",
+      "signedUrl": "https://skills-stage.pinkfish.ai/files/[COLLECTION_ID]/[OUTPUT_FILE]?signed-key=..."
+    }
+  ],
+  "message": "Deepgram transcription processing started in background. Results will be saved to file storage when complete."
+}
+```
+
+**Sync Response (for immediate results):**
+
+```json
+{
+  "success": true,
+  "async": false,
+  "collectionId": "collection-id",
+  "capability": "transcription",
+  "provider": "deepgram",
+  "model": "nova-3",
+  "languageCode": "auto-detect",
+  "totalFiles": 1,
+  "successfulFiles": 1,
+  "failedFiles": 0,
+  "totalAudioDuration": 2.5,
+  "results": [
+    {
+      "fileName": "sample.wav",
+      "inputFileName": "sample.wav",
+      "inputMimeType": "application/octet-stream",
+      "transcription": "Full transcription text here...",
+      "wordCount": 100,
+      "audioDuration": 2.5,
+      "fileId": "file-id"
+    }
+  ]
+}
+```
+
+## Examples
+
+### Basic Transcription
+
+```
+/transcription-deepgram
+fileUrls: meeting-recording.mp3
+```
+
+Transcribes an audio file with default settings (auto punctuation, nova-3 model).
+
+### Meeting Transcription with Speaker Identification
+
+```
+/transcription-deepgram
+fileUrls: team-meeting.mp3
+enableDiarization: true
+diarizationSpeakerCount: 3
+enableUtterances: true
+enableParagraphs: true
+```
+
+Creates a transcript with speaker identification, formatted by speaker turns and paragraphs.
+
+### Video Transcription with Analysis
+
+```
+/transcription-deepgram
+fileUrls: presentation-video.mp4
+enableSummary: true
+enableTopics: true
+enableSentiment: true
+enableParagraphs: true
+```
+
+Transcribes a video file and provides a summary, key topics, sentiment analysis, and formatted paragraphs.
+
+### Customer Service Analysis
+
+```
+/transcription-deepgram
+fileUrls: customer-call.mp3
+enableDiarization: true
+enableIntents: true
+enableSentiment: true
+customIntents: ["complaint", "question", "request"]
+```
+
+Transcribes a customer service call with speaker identification, intent detection, sentiment analysis, and custom intent categories.
+
+### Async Processing for Large Files
+
+```
+/transcription-deepgram
+fileUrls: long-podcast.mp3
+outputFileNames: ["transcript.json", "transcript.txt"]
+```
+
+Starts background processing for a large file and saves results to specified output files when complete.
+
+### Quick Sync Transcription
+
+```
+/transcription-deepgram
+fileUrls: short-clip.wav
+```
+
+Quickly transcribes a short audio clip and returns immediate results.
+
+## When to Use Async vs Sync
+
+- **Use ASYNC for:**
+  - Large files (>5 minutes)
+  - Multiple files
+  - When you need to continue working while transcription processes
+  - When you want to specify custom output file names
+
+- **Use SYNC for:**
+  - Quick transcriptions
+  - Short audio clips (<5 minutes)
+  - When immediate results are needed
+  - Simple, single-file transcriptions
+
+## Usage Recommendations
+
+### For Meeting Transcriptions
+Enable `enableDiarization=true`, `enableUtterances=true`, and `enableParagraphs=true` to get speaker-labeled, well-formatted transcripts.
+
+### For Content Analysis
+Enable `enableSummary=true`, `enableTopics=true`, and `enableSentiment=true` to extract insights from audio/video content.
+
+### For Customer Service
+Enable `enableIntents=true`, `enableSentiment=true`, and `enableDiarization=true` to analyze customer interactions.
+
+### For Quick Transcripts
+Use default settings with `enableAutomaticPunctuation=true` for fast, accurate transcription without additional features.
+
+## Supported Models
+
+- **`nova-3`** (default, recommended) - Latest and most accurate model
+- **`nova-2`** - Previous generation, high accuracy
+- **`enhanced`** - High accuracy for challenging audio conditions
+- **`base`** - Faster, cost-effective option for clear audio
+
+## Common Use Cases
+
+- **"Transcribe this meeting with speaker identification"** → Use `enableDiarization=true` and `enableUtterances=true`
+- **"Get a summary of this audio"** → Use `enableSummary=true`
+- **"What topics are discussed?"** → Use `enableTopics=true`
+- **"Analyze the sentiment"** → Use `enableSentiment=true`
+- **"Format it nicely with paragraphs"** → Use `enableParagraphs=true`
+
+## Notes
+
+**Supported Formats:**
+- Audio: MP3, WAV, M4A, FLAC, OGG, AAC, AIFF
+- Video: MP4, MOV, AVI, and other common video formats
+
+**Language Support:**
+- Automatic language detection
+- Over 50 languages supported
+- Specify language code for better accuracy
+
+**Processing:**
+- Async mode creates a placeholder file that updates when processing completes
+- Use the `signedUrl` from the response to monitor processing status
+- Results are saved to the specified collection (default: multimedia artifact collection)
