@@ -39,14 +39,134 @@ Publishing releases is crucial for several reasons:
 
 4. **Collaboration**: Published releases provide clear reference points for team members or other systems interacting with your Workflow.
 
-5. **Rollback Capability** (coming soon): If issues arise, you can easily revert to a previous published release.
+5. **Rollback Capability**: If issues arise, you can easily revert to a previous published release.
 
 ## How to Publish a Release
 
 1. **Complete your workflow development** and test thoroughly
 2. **Click the "Publish" button** in your workflow editor
-3. **Review the changes** since your last release
+3. **Review the changes** since your last release (using the View Changes feature)
 4. **Confirm the release** to create a new versioned snapshot
 5. **Set up triggers** that reference your newly published release
 
+## New Publishing Features
+
+### Automatic Release Notes
+
+Every time you publish a release, the platform automatically generates AI-powered release notes that describe what changed in that version. These release notes:
+
+- Summarize code changes across all steps in your workflow
+- Highlight new features, modifications, and bug fixes
+- Are automatically attached to each release version
+- Can be viewed by hovering over the information icon next to any release version in the publish dropdown
+
+Release notes help you and your team quickly understand what changed between versions without manually reviewing code diffs.
+
+### Viewing Changes Between Releases
+
+Before publishing a new release, you can preview exactly what has changed since your last published version. The "View Changes" feature provides:
+
+**Three different viewing modes:**
+
+1. **Summary View**: A high-level overview showing which steps were added, modified, or removed with color-coded badges
+2. **Unified Diff View**: A GitHub-style diff showing line-by-line changes with additions highlighted in green and deletions in red
+3. **Full Code View**: A side-by-side comparison using Monaco editor showing the complete code from the previous release alongside your current unpublished changes
+
+**Access View Changes by:**
+
+- Clicking the "View Changes" button in the publish dropdown (appears when you have unpublished changes)
+- The diff compares your current working version against the latest published release
+
+This feature helps you review your changes before publishing, ensuring you understand exactly what will be included in the next release.
+
+### Restoring Previous Versions
+
+If you need to roll back to a previous release version, you can restore your workflow to any past release. The restore feature works by creating new versions of your steps using the code from the selected release.
+
+**How restore works:**
+
+When you restore to a previous release, the system:
+
+- Takes the code from each step as it existed in that release
+- Creates a new version of each step with that code
+- Your workflow is now at the latest step versions, but with the code from the old release
+- This preserves the complete version history - nothing is deleted or overwritten
+
+For example, if you're at step version 5 and restore to Release V-2 (which had step version 3), the system creates step version 6 with the code from version 3. You can still access versions 4 and 5 in your version history.
+
+**The restore feature:**
+
+- Shows a preview of what will change before you confirm the restore
+- Details which steps will be added, removed, or updated
+- Warns you if you have unpublished changes that will be lost
+- Creates new step versions matching the selected release
+
+**To restore a previous version:**
+
+1. Click the "Publish" button to open the publish dropdown
+2. Find the release version you want to restore to
+3. Click the restore icon next to that version
+4. Review the preview of changes
+5. Confirm the restore operation
+
+After restoring, your workflow will match the state it was in when that release was published, but as new versions. You can then make additional changes and publish a new release if needed. All your previous versions remain accessible in the version history.
+
+### Workflow App Page & Metadata
+
+Every workflow has a app page that serves as its documentation and preview. This app page is essential for sharing workflows, whether privately with your team or publicly as a template.
+
+**The app page includes:**
+
+- Workflow name and description
+- AI-generated visual workflow diagram
+- Demo video (optional)
+- Step-by-step descriptions
+- Required connections and collections
+- Searchable tags
+- Author information and support contact
+
+**Creating and editing app page content:**
+
+Access the app page editor by clicking the eye icon in the workflow editor toolbar. You can:
+
+1. **Manually edit** any field including description, tags, support info, and more
+2. **AI-generate** content using the "Regenerate" button which analyzes your workflow to create:
+
+   - A comprehensive description
+   - An automatically generated workflow diagram showing the flow of your automation
+   - Structured metadata about inputs, outputs, and requirements
+
+3. **Upload media** including hero images and demo videos to make your workflow more engaging
+
+The app page editor automatically saves your changes without creating new workflow versions, so you can update documentation freely.
+
+### Publishing as a Public Template
+
+You can make your workflow available as a public template that others can discover and clone. When you publish a workflow as a template:
+
+- Toggle "Make Available as Public Template" in the publish dropdown
+- A public URL is automatically generated for your workflow
+- Other users can view your workflow's app page with all the metadata you've created
+- Users can clone your workflow to their own workspace with one click
+- You can copy and share the public URL to promote your workflow
+
+**Before making a workflow public, we recommend:**
+
+1. Create a complete app page with description and diagram using the eye icon editor
+2. Add relevant tags for discoverability
+3. Include a demo video if possible
+4. Test the workflow thoroughly and publish a stable release
+
+To stop sharing your workflow publicly, simply toggle off the "Make Available as Public Template" switch in the publish dropdown.
+
+## Best Practices
+
 Understanding the release process is key to effectively managing and deploying your Workflows. It allows you to create stable, versioned workflows that can be reliably used in production environments while still allowing for ongoing development and improvement.
+
+**Recommended workflow:**
+
+1. Make changes to your workflow and test thoroughly
+2. Review changes using the "View Changes" feature before publishing
+3. Publish a new release (automatic release notes will be generated)
+4. If you discover issues, use the restore feature to roll back to a previous working version
+5. Share successful workflows as public templates to help others
