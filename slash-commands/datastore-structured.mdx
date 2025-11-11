@@ -1,0 +1,224 @@
+---
+title: "Structured Datastore"
+description: "Work with spreadsheet-like databases with schemas and natural language queries"
+---
+
+## Overview
+
+Structured Datastores are spreadsheet-like databases with defined columns, schema validation, and powerful natural language querying capabilities. Think of them as SQL tables that you can query and modify using plain English.
+
+## Key Features
+
+- **Schema-based structure** with defined columns (string, number, boolean, date, select)
+- **Natural language queries** - search and analyze data using plain English
+- **Inline editing** - click cells to edit data directly
+- **AI-powered analysis** - ask questions, get aggregations, generate charts
+- **Column management** - add, rename, delete columns via UI
+- **Custom sorting** - configure multi-field sort priority
+- **CSV import/export** - bulk import data with schema detection
+
+## Natural Language Queries
+
+The preferred way to work with structured datastores. The AI automatically translates your natural language into proper queries.
+
+### Search for Data
+
+Find specific rows using natural language:
+
+```
+/selected-datastore-structured search for high priority cases from last week
+```
+
+Returns filtered rows matching your criteria.
+
+### Ask Questions
+
+Get AI-generated answers with optional charts and reports:
+
+```
+/selected-datastore-structured what is the average age of active users?
+```
+
+**Analysis capabilities:**
+- Aggregations (sum, average, count, min, max)
+- Trend analysis and comparisons
+- Generate charts (PNG, SVG)
+- Export results (CSV, JSON)
+- Create reports (PDF)
+
+**How it works:**
+1. AI first filters relevant rows
+2. For ≤25 rows: quick analysis
+3. For >25 rows: code execution with chart generation
+4. Generated files available for 15 minutes
+
+## Traditional CRUD Operations
+
+When you need precise control over data operations.
+
+### Create Item
+
+```
+/selected-datastore-structured create item with:
+content: {
+  "Name": "John Doe",
+  "Email": "john@example.com", 
+  "Age": 30,
+  "Status": "Active"
+}
+```
+
+**Key points:**
+- Use column names (Name, Email) not field IDs (f_1, f_2)
+- Backend automatically converts names to field IDs
+- sortField auto-generated from schema's sortConfig
+
+### Batch Create
+
+Create up to 500 items at once:
+
+```
+/selected-datastore-structured create batch with:
+[
+  {"content": {"Name": "Alice", "Email": "alice@test.com", "Department": "Engineering"}},
+  {"content": {"Name": "Bob", "Email": "bob@test.com", "Department": "Marketing"}},
+  {"content": {"Name": "Carol", "Email": "carol@test.com", "Department": "Sales"}}
+]
+```
+
+### Query with Filters
+
+Use SQL-like operators for precise queries:
+
+```
+/selected-datastore-structured query where:
+Status: Active
+Age_gt: 25
+Department_in: Engineering,Marketing
+orderBy: createdAt:desc
+limit: 50
+```
+
+**Available operators:**
+- Exact: `Status=Active`
+- Greater than: `Age_gt=25`, `Age_gte=25`
+- Less than: `Age_lt=30`, `Age_lte=30`
+- Not equal: `Status_ne=Inactive`
+- IN (OR): `Status_in=Active,Pending` (max 10 values)
+- Range: `Score_gt=75&Score_lt=90`
+
+### Update Item
+
+Partial updates - only specified fields are changed:
+
+```
+/selected-datastore-structured update item:
+itemId: abc123
+content: {"Status": "Inactive", "ExitDate": "2024-01-15"}
+```
+
+sortField is automatically recalculated based on sortConfig.
+
+### Delete Item
+
+```
+/selected-datastore-structured delete item with itemId: abc123
+```
+
+## Schema Management
+
+### View Schema
+
+```
+/selected-datastore-structured get schema
+```
+
+Shows columns, types, and sort configuration.
+
+### Add Column
+
+Done via UI - click "+ New Column" button, or update schema programmatically.
+
+### Configure Sort Priority
+
+Set which columns control the default sort order:
+
+```
+/selected-datastore-structured migrate sort config:
+sortConfig: {
+  "fields": ["Status", "Priority", "Name"],
+  "direction": "asc"
+}
+```
+
+This regenerates sortField for ALL items (may take 30-60s for large collections).
+
+## CSV Import
+
+### Analyze CSV
+
+Preview schema before importing:
+
+```
+/selected-datastore-structured analyze CSV file: [upload file]
+```
+
+Returns detected schema, sample data, and warnings.
+
+### Import CSV
+
+Create new collection from CSV:
+
+```
+/selected-datastore-structured import CSV as new collection:
+name: "Customer Database"
+file: [upload file]
+schema: [schema from analyze]
+```
+
+Or add to existing collection:
+
+```
+/selected-datastore-structured import CSV to this collection: [upload file]
+```
+
+## Best Practices
+
+**Use Natural Language:**
+- Start with natural language for finding and analyzing data
+- Fall back to CRUD for precise control or batch operations
+
+**Column Names vs Field IDs:**
+- Always use column names (Name, Email, Status) in your requests
+- Backend handles field ID conversion automatically
+- Field IDs (f_1, f_2) are internal implementation details
+
+**Performance:**
+- Max 10K items per query
+- Batch operations support up to 500 items
+- Natural answer processes up to 10K rows
+- Use limit parameter to reduce response size
+
+**Sorting:**
+- Configure sortConfig for custom multi-field sorting
+- sortField auto-generated on create/update
+- Only sort by: createdAt, updatedAt, or sortField
+
+## Common Use Cases
+
+- Customer and contact databases with searchable fields
+- Product catalogs with filterable attributes
+- Employee directories with department filtering
+- Sales pipelines with status tracking
+- Inventory management with stock levels
+- Survey responses with demographic analysis
+- Task lists with priority and status filters
+
+## Notes
+
+- Structured collections require a schema before adding data
+- Use CSV import to quickly bootstrap from existing data
+- Schema can be modified after creation (add/remove columns)
+- Natural language queries handle complex filters automatically
+- Generated charts and reports expire after 15 minutes
+

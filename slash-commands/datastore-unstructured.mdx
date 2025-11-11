@@ -1,0 +1,325 @@
+---
+title: "Unstructured Datastore"
+description: "Flexible JSON storage for dynamic data without schema requirements"
+---
+
+## Overview
+
+Unstructured Datastores provide flexible NoSQL storage for any data type without schema requirements. Store strings, numbers, objects, or arrays - perfect for dynamic content, logs, and API responses.
+
+## Key Features
+
+- **No schema required** - store any JSON structure
+- **Flexible content** - strings, numbers, objects, arrays
+- **Fast search** - fuzzy, exact, and prefix matching
+- **Event triggers** - automate workflows on data changes
+- **Batch operations** - create up to 500 items at once
+- **Multiple access methods** - by key, key+sortField, or itemId
+
+## Basic Command Structure
+
+```
+/selected-datastore [action] [parameters]
+```
+
+## CRUD Operations
+
+### Create Item
+
+```
+/selected-datastore create item with:
+key: user-settings
+sortField: theme-preferences
+content: {"theme": "dark", "language": "en", "notifications": true}
+metadata: {"version": "1.0", "lastSync": "2024-01-15"}
+```
+
+**Parameters:**
+- `key` (required) - Primary identifier
+- `content` (required) - Any JSON structure
+- `sortField` (optional) - Auto-generated if not provided
+- `metadata` (optional) - Custom tracking attributes
+- `triggerUrls` (optional) - Event-driven webhooks
+
+### Batch Create
+
+Create up to 500 items efficiently:
+
+```
+/selected-datastore create batch with items:
+[
+  {
+    "key": "logs",
+    "sortField": "2024-01-15-10:30",
+    "content": {"level": "info", "message": "Server started"},
+    "metadata": {"service": "api"}
+  },
+  {
+    "key": "logs",
+    "sortField": "2024-01-15-10:31",
+    "content": {"level": "warn", "message": "High memory usage"},
+    "metadata": {"service": "api"}
+  }
+]
+```
+
+**Best practices:**
+- Keep batches under 100 items for best performance
+- Larger batches (up to 500) may cause gateway timeouts
+- Each item can have different structure
+
+### Read Items
+
+**By item ID (recommended):**
+```
+/selected-datastore get item with itemId: abc123def456
+```
+
+**By key (returns all items with that key):**
+```
+/selected-datastore get items with key: user-settings
+```
+
+**By key + sortField (returns specific item):**
+```
+/selected-datastore get item with:
+key: user-settings
+sortField: theme-preferences
+```
+
+### List Items
+
+```
+/selected-datastore list items with:
+limit: 50
+orderedBy: createdAt:desc
+format: light
+```
+
+**Parameters:**
+- `limit` - Max results (default: 50, max: 1000)
+- `orderedBy` - Sort by createdAt or updatedAt (e.g., "createdAt:desc")
+- `format` - Set to "light" for minimal data (excludes content)
+
+### Update Item
+
+Updates are partial - only specified fields change:
+
+```
+/selected-datastore update item with:
+itemId: abc123def456
+content: {"theme": "light", "notifications": false}
+metadata: {"version": "1.1"}
+```
+
+### Delete Item
+
+**By itemId (recommended):**
+```
+/selected-datastore delete item with itemId: abc123def456
+```
+
+**By key + sortField:**
+```
+/selected-datastore delete item with:
+key: user-settings
+sortField: theme-preferences
+```
+
+**By key (deletes all items with that key):**
+```
+/selected-datastore delete items with key: user-settings
+```
+
+## Search
+
+Advanced search with fuzzy matching:
+
+```
+/selected-datastore search with:
+q: customer feedback
+field: content
+type: fuzzy
+threshold: 0.3
+limit: 50
+```
+
+**Parameters:**
+- `q` (required) - Search query
+- `field` - Where to search: "all" (default), "content", "key", "sortField"
+- `type` - Match type: "fuzzy" (default), "exact", "prefix"
+- `threshold` - Fuzzy sensitivity (0.0 strict to 1.0 lenient, default 0.3)
+- `limit` - Max results (default: 50, max: 1000)
+- `compiled` - Output as plain text (true) or JSON with snippets (false)
+
+**Response with snippets:**
+```json
+{
+  "results": [
+    {
+      "docId": "abc123",
+      "fieldMatched": "content",
+      "matchedSnippet": "...customer **feedback** on the new...",
+      "score": 0.84,
+      "relevance": "high"
+    }
+  ]
+}
+```
+
+## Key and Sort Field Patterns
+
+The combination of `key` + `sortField` must be unique within a collection.
+
+### Pattern 1: Single Key (Auto-generated Sort)
+
+```
+key: meeting-notes
+```
+
+Good for: Quick storage when uniqueness isn't critical
+
+### Pattern 2: Key + Date Sort
+
+```
+key: meeting-notes
+sortField: 2024-03-15
+```
+
+Good for: Time-series data, daily logs
+
+### Pattern 3: Key + Email Sort
+
+```
+key: employee-reviews
+sortField: jane.smith@company.com
+```
+
+Good for: Per-user data
+
+### Pattern 4: Key + Category Sort
+
+```
+key: inventory
+sortField: electronics-001
+```
+
+Good for: Categorized items with unique IDs
+
+## Event Triggers
+
+Automatically start workflows when data changes.
+
+### Trigger Levels
+
+**Collection-Level**: Monitor all items in the collection
+- Set via collection management UI
+- Perfect for system-wide monitoring
+- Events: onCreate, onEdit, onDelete
+
+**Item-Level**: Monitor specific items only
+- Set via `triggerUrls` parameter
+- Perfect for business-critical data
+- Events: onEdit, onDelete (onCreate not available at item level)
+
+### Trigger Structure
+
+```json
+triggerUrls: [
+  {
+    "event": "onEdit",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+    "apiKey": "your-api-key"
+  },
+  {
+    "event": "onDelete",
+    "url": "https://triggers.app.pinkfish.ai/ext/triggers/def456",
+    "apiKey": "your-api-key-2"
+  }
+]
+```
+
+### Trigger Payload
+
+**onCreate/onDelete:**
+```json
+{
+  "event": "onCreate",
+  "itemId": "abc123",
+  "key": "user-settings",
+  "sortField": "theme-preferences",
+  "content": {"theme": "dark"},
+  "metadata": {"version": "1.0"},
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "triggerLevel": "item"
+}
+```
+
+**onEdit (includes changed field):**
+```json
+{
+  "event": "onEdit",
+  "itemId": "abc123",
+  "content": {"theme": "light"},
+  "changed": {"content": {"theme": "dark"}},
+  "triggerLevel": "item"
+}
+```
+
+### Rate Limiting
+
+- onEdit triggers: 2 executions per minute per item (prevents infinite loops)
+- All executions logged with status and timing
+- Failed triggers logged but don't block data operations
+
+### Test Triggers
+
+```
+/selected-datastore test trigger with:
+event: onEdit
+url: https://triggers.app.pinkfish.ai/ext/triggers/abc123
+apiKey: your-api-key
+testData: {"test": true}
+```
+
+## Common Use Cases
+
+- Application logs and event tracking
+- API response caching
+- Configuration and settings storage
+- Dynamic content management
+- Queue systems and task processing
+- Session data storage
+- Temporary data and cache
+- Flexible data structures that change over time
+
+## Best Practices
+
+**Key & Sort Field:**
+- Use descriptive keys that group related items
+- Use sortField for uniqueness within a group
+- itemId is most efficient for direct access
+
+**Content Structure:**
+- Keep content structure consistent within a collection for easier querying
+- Use metadata for cross-cutting concerns (tags, timestamps, status)
+
+**Triggers:**
+- Use collection-level for system monitoring
+- Use item-level for specific business logic
+- Set `triggerChanges: false` to avoid recursive triggers
+
+**Performance:**
+- Use batch operations for multiple creates
+- Use format: "light" when you only need metadata
+- Set appropriate limits to reduce payload size
+
+## Notes
+
+- No schema validation - you can store any JSON structure
+- Items uniquely identified by key + sortField combination
+- Auto-generated sortField if not specified
+- Search supports fuzzy matching for flexible queries
+- Updates are partial - only sent fields are modified
+- Collections can hold different content structures per item
+
