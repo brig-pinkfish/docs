@@ -80,18 +80,32 @@ Create a new item or update an existing one. If key and sortField already exist,
 
 - `action` (required) - Set to "create" or "update"
 - `key` (required) - Primary identifier
-- `content` (optional) - Item content
+- `content` (required) - Item content
 - `sortField` (optional) - Secondary identifier
 - `metadata` (optional) - Custom attributes
 - `triggerUrls` (optional) - Array of trigger objects (see [Triggers](#triggers) section)
 - `triggerChanges` (optional) - Set to false to prevent firing triggers
 
-**Example:**
+**For Structured Collections:**
+Content must be an object with field IDs (e.g., `{"f_1": "John Doe", "f_2": "john@example.com"}`). To discover field IDs, list one existing item or fetch the collection schema.
 
+**For Unstructured Collections:**
+Content can be any type: string, number, object, or array.
+
+**Examples:**
+
+Unstructured:
 ```
 /selected-datastore create a new item with:
 key: user123
 content: {"name": "John Doe", "email": "john@example.com"}
+```
+
+Structured (using field IDs):
+```
+/selected-datastore create a new item with:
+key: customer-456
+content: {"f_1": "Jane Smith", "f_2": "jane@company.com", "f_3": "(415) 555-0100"}
 ```
 
 ### Create Items in Batch
@@ -356,7 +370,11 @@ Content: Well, Prince, so Genoa and Lucca are now just family estates of the Buo
 
 ## What can you do with it?
 
-Store, retrieve, update, and search data in a NoSQL datastore. Perfect for managing structured data with key-value pairs, metadata, and optional sorting capabilities. Ideal for user preferences, application state, dynamic content, and any data that needs persistent storage with search functionality.
+Store, retrieve, update, and search data in two modes:
+
+**Structured Database Tables**: Spreadsheet-like databases with defined columns, schema validation, and inline editing. Perfect for customer lists, inventory, contacts, and any structured records.
+
+**Unstructured Databases**: Flexible JSON storage for any data type. Perfect for logs, API responses, configuration, and dynamic content that doesn't fit a fixed schema.
 
 ## Key and Sort Field Fundamentals
 
@@ -660,12 +678,34 @@ testData: {"test": true, "timestamp": "2024-01-15T12:00:00.000Z"}
 - **Test triggers thoroughly** using the test-trigger endpoint before production use
 - **Monitor trigger logs** to ensure reliable execution and debug issues
 
+## Working with Structured Collections
+
+**Field IDs:**
+- Structured collections use short field IDs (f_1, f_2, f_3) instead of column names
+- Field IDs are stable - column labels can change but IDs never change
+- To discover field IDs: list one item and examine the content structure
+
+**Learning Field Structure:**
+```
+/selected-datastore list items with limit: 1
+```
+Response shows: `{"content": {"f_1": "Alice", "f_2": "alice@email.com", "f_3": "(415) 555-0101"}}`
+
+Now you know f_1, f_2, f_3 are the field IDs to use for new items.
+
+**Schema Management:**
+- Add columns via UI (+ New Column button)
+- Rename columns by double-clicking header
+- Delete columns via column menu
+- Schema changes don't require updating existing rows
+
 ## Notes
 
 - Items are uniquely identified by key + sortField combination within a collection
-- Use itemId for direct access to specific items (most efficient method)
+- Use itemId for direct access to specific items (most efficient method)  
 - Search supports fuzzy, exact, and prefix matching with configurable thresholds
 - Triggers can notify external URLs on data changes
 - When updating, only sent values are replaced; others remain unchanged
 - GET operations by key/sortField return an array of items, but GET operations by specific itemId return a single object
 - When you select a collection from the slash command menu, the collection ID is automatically preset for you
+- For structured collections, learn field IDs from existing data to avoid extra API calls
