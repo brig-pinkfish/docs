@@ -7,6 +7,46 @@ description: "Flexible JSON storage for dynamic data without schema requirements
 
 Unstructured Datastores provide flexible NoSQL storage for any data type without schema requirements. Store strings, numbers, objects, or arrays - perfect for dynamic content, logs, and API responses.
 
+## Creating a Datastore
+
+### API Endpoint
+
+```
+POST /datacollection/
+```
+
+### Request Body
+
+```json
+{
+  "name": "My Datastore",
+  "description": "Optional description",
+  "type": "datastore",
+  "createdBy": "your-provider-id",
+  "createdByName": "Your Name",
+  "triggerUrls": []
+}
+```
+
+**Parameters:**
+- `name` (required) - Display name for your datastore
+- `description` (optional) - Description of what this datastore contains
+- `type` (required) - Must be "datastore" for unstructured datastores
+- `createdBy` (required) - Your provider ID
+- `createdByName` (required) - Your display name
+- `triggerUrls` (optional) - Collection-level event triggers
+- `isStructured` (optional) - Must be `false` or omitted for unstructured datastores
+
+**Response:**
+```json
+{
+  "id": "abc123-collection-id",
+  "message": "Data collection created successfully"
+}
+```
+
+**Note:** By default, collections are created as unstructured unless `isStructured: true` is explicitly set.
+
 ## Key Features
 
 - **No schema required** - store any JSON structure
@@ -103,14 +143,46 @@ format: light
 
 ### Update Item
 
-Updates are partial - only specified fields change:
+**Full Replace (PUT) - Recommended for unstructured datastores**
+
+Replaces the entire content field:
 
 ```
-/selected-datastore update item with:
-itemId: abc123def456
-content: {"theme": "light", "notifications": false}
-metadata: {"version": "1.1"}
+PUT /memory/items/{itemId}?collectionId=xxx
 ```
+
+```json
+{
+  "content": "new string value"
+}
+```
+
+Or with object content:
+
+```json
+{
+  "content": {"theme": "light", "notifications": false},
+  "metadata": {"version": "1.1"}
+}
+```
+
+Content is completely replaced. Works with any data type (string, number, object, array).
+
+**Partial Update (PATCH)**
+
+Only for object content - merges with existing:
+
+```
+PATCH /memory/items/{itemId}?collectionId=xxx
+```
+
+```json
+{
+  "content": {"theme": "light"}
+}
+```
+
+Existing fields in content object are preserved. Only works with object content (not strings, numbers, or arrays).
 
 ### Delete Item
 
@@ -320,6 +392,7 @@ testData: {"test": true}
 - Items uniquely identified by key + sortField combination
 - Auto-generated sortField if not specified
 - Search supports fuzzy matching for flexible queries
-- Updates are partial - only sent fields are modified
+- PUT replaces entire content (use for strings, numbers, arrays, or full object replacement)
+- PATCH merges content (only for object content, preserves unspecified fields)
 - Collections can hold different content structures per item
 

@@ -7,6 +7,126 @@ description: "Work with spreadsheet-like databases with schemas and natural lang
 
 Structured Datastores are spreadsheet-like databases with defined columns, schema validation, and powerful natural language querying capabilities. Think of them as SQL tables that you can query and modify using plain English.
 
+## Creating a Structured Datastore
+
+### API Endpoint
+
+```
+POST /datacollection/
+```
+
+### Using a Template
+
+Create from predefined templates (contacts, customer-orders, user-directory, etc.):
+
+```json
+{
+  "name": "My Customer Database",
+  "description": "Customer contact information",
+  "type": "datastore",
+  "createdBy": "your-provider-id",
+  "createdByName": "Your Name",
+  "isStructured": true,
+  "templateId": "contacts",
+  "triggerUrls": []
+}
+```
+
+### Available Templates
+
+Get list of templates:
+```
+GET /datacollection/templates
+```
+
+Common templates:
+- `contacts` - Contact management (Name, Email, Phone, Company)
+- `customer-orders` - Order tracking (Order ID, Customer, Date, Amount, Status)
+- `user-directory` - User management (Name, Email, Department, Role)
+- `task-list` - Task tracking (Title, Description, Status, Priority, Due Date)
+
+### From CSV Import
+
+Automatically detect schema from your CSV file:
+
+```
+POST /datacollection/import-csv
+```
+
+**Multipart form data:**
+- `file` - CSV file to import
+- `name` - Collection name
+- `schema` - Generated schema from analyze-csv
+- `createdByName` - Your display name
+
+**Response:**
+```json
+{
+  "collectionId": "abc123-collection-id",
+  "message": "Collection created successfully",
+  "imported": 150,
+  "total": 150,
+  "schema": {...}
+}
+```
+
+### With Custom Schema
+
+Create with your own schema definition:
+
+```json
+{
+  "name": "Product Catalog",
+  "type": "datastore",
+  "createdBy": "your-provider-id",
+  "createdByName": "Your Name",
+  "isStructured": true,
+  "schema": {
+    "fields": [
+      {
+        "id": "f_1",
+        "label": "Product Name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "id": "f_2",
+        "label": "Price",
+        "type": "number",
+        "required": true
+      },
+      {
+        "id": "f_3",
+        "label": "Category",
+        "type": "select",
+        "required": false,
+        "options": ["Electronics", "Clothing", "Books"]
+      },
+      {
+        "id": "f_4",
+        "label": "In Stock",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "nextFieldId": 5,
+    "sortConfig": {
+      "fields": ["Category", "Product Name"],
+      "direction": "asc"
+    }
+  }
+}
+```
+
+**Schema field types:**
+- `string` - Text data
+- `number` - Numeric values
+- `boolean` - True/false
+- `date` - ISO date strings
+- `select` - Dropdown options (requires `options` array)
+
+**Note:** When creating with a schema, the `isStructured` flag is automatically set to `true`.
+
 ## Key Features
 
 - **Schema-based structure** with defined columns (string, number, boolean, date, select)
@@ -109,15 +229,45 @@ limit: 50
 
 ### Update Item
 
-Partial updates - only specified fields are changed:
+**Partial Update (PATCH) - Recommended for structured datastores**
+
+Only updates specified fields, preserves others:
 
 ```
-/selected-datastore-structured update item:
-itemId: abc123
-content: {"Status": "Inactive", "ExitDate": "2024-01-15"}
+PATCH /memory/items/{itemId}?collectionId=xxx
 ```
 
-sortField is automatically recalculated based on sortConfig.
+```json
+{
+  "content": {
+    "Status": "Inactive",
+    "ExitDate": "2024-01-15"
+  }
+}
+```
+
+All other fields (Name, Email, etc.) remain unchanged. sortField is automatically recalculated based on sortConfig.
+
+**Full Replace (PUT)**
+
+Replaces entire content object:
+
+```
+PUT /memory/items/{itemId}?collectionId=xxx
+```
+
+```json
+{
+  "content": {
+    "Name": "John Doe",
+    "Email": "john@example.com",
+    "Status": "Inactive",
+    "ExitDate": "2024-01-15"
+  }
+}
+```
+
+All fields must be provided or they will be lost. Use PATCH for typical updates.
 
 ### Delete Item
 
