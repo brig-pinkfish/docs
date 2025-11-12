@@ -280,79 +280,16 @@ Good for: Categorized items with unique IDs
 
 ## Event Triggers
 
-Automatically start workflows when data changes.
+Automatically start workflows when data changes in your unstructured datastore. Triggers are **collection-level only** for unstructured datastores.
 
-### Trigger Levels
+**Supported events:**
+- **onCreate** - New items added
+- **onEdit** - Existing items modified
+- **onDelete** - Items removed
 
-**Collection-Level**: Monitor all items in the collection
-- Set via collection management UI
-- Perfect for system-wide monitoring
-- Events: onCreate, onEdit, onDelete
+**Note:** Item-level triggers are not available for unstructured datastores. Use collection-level triggers via the collection management UI.
 
-**Item-Level**: Monitor specific items only
-- Set via `triggerUrls` parameter
-- Perfect for business-critical data
-- Events: onEdit, onDelete (onCreate not available at item level)
-
-### Trigger Structure
-
-```json
-triggerUrls: [
-  {
-    "event": "onEdit",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
-    "apiKey": "your-api-key"
-  },
-  {
-    "event": "onDelete",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/def456",
-    "apiKey": "your-api-key-2"
-  }
-]
-```
-
-### Trigger Payload
-
-**onCreate/onDelete:**
-```json
-{
-  "event": "onCreate",
-  "itemId": "abc123",
-  "key": "user-settings",
-  "sortField": "theme-preferences",
-  "content": {"theme": "dark"},
-  "metadata": {"version": "1.0"},
-  "createdAt": "2024-01-15T10:30:00.000Z",
-  "triggerLevel": "item"
-}
-```
-
-**onEdit (includes changed field):**
-```json
-{
-  "event": "onEdit",
-  "itemId": "abc123",
-  "content": {"theme": "light"},
-  "changed": {"content": {"theme": "dark"}},
-  "triggerLevel": "item"
-}
-```
-
-### Rate Limiting
-
-- onEdit triggers: 2 executions per minute per item (prevents infinite loops)
-- All executions logged with status and timing
-- Failed triggers logged but don't block data operations
-
-### Test Triggers
-
-```
-/selected-datastore test trigger with:
-event: onEdit
-url: https://triggers.app.pinkfish.ai/ext/triggers/abc123
-apiKey: your-api-key
-testData: {"test": true}
-```
+For complete documentation on setting up triggers, payload formats, rate limiting, and best practices, see the [Event Triggers guide](/essentials/event-triggers).
 
 ## Common Use Cases
 

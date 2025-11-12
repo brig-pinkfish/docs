@@ -371,160 +371,37 @@ file_links_expire_in_days: "never"
 metadata: "Document made public for external sharing"
 ```
 
-## Triggers
+## Event Triggers
 
-Filestorage supports event-driven triggers that automatically start workflows when files change. Triggers can be set at two levels: **collection-wide** (affects all files) or **file-specific** (affects individual files).
+Automatically start workflows when files change in your filestorage collection. Triggers can be set at collection-level (all files) or file-level (specific files).
 
-### Trigger Events
+**Supported events:**
+- **onCreate** - New files uploaded (collection-level only)
+- **onEdit** - Files modified or updated (collection or file-level)
+- **onDelete** - Files removed (collection or file-level)
 
-- **onCreate**: Fires when new files are uploaded or created (collection-level only)
-- **onEdit**: Fires when existing files are modified or updated (collection or file level)
-- **onDelete**: Fires when files are deleted (collection or file level)
+For complete documentation on setting up triggers, payload formats, rate limiting, and best practices, see the [Event Triggers guide](/essentials/event-triggers).
 
-### Trigger Levels
-
-**Collection-Level Triggers**: Set on the entire file collection to monitor all files
-
-- Automatically fire for every file in the collection
-- Perfect for system-wide file processing and monitoring
-- Set via file collection management interface
-
-**File-Level Triggers**: Set on individual files to monitor specific files
-
-- Only fire for that particular file
-- Ideal for monitoring important documents or configuration files
-- Set via the `triggerUrls` parameter when uploading/creating/updating files
-
-### Trigger Structure
-
-Triggers use an array format with multiple trigger objects:
-
-```json
-triggerUrls: [
-  {
-    "event": "onEdit",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/d2nia2isg8tc7112frtg",
-    "apiKey": "your-api-key"
-  },
-  {
-    "event": "onDelete",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/a3bcd4efg9ud8223hsui",
-    "apiKey": "your-api-key-2"
-  }
-]
-```
-
-### Trigger Payload
-
-When triggers fire, they receive detailed information about the file event:
-
-**For onCreate and onDelete events:**
+**Quick example:**
 
 ```json
 {
-  "event": "onCreate",
-  "itemId": "file-abc123",
-  "providerId": "user-id",
-  "collectionId": "collection-id",
-  "collectionType": "filestorage",
-  "filename": "config.json",
-  "filepath": "file-storage/collection-id/config.json",
-  "fileSize": 1024,
-  "mimeType": "application/json",
-  "signedUrl": "https://storage.googleapis.com/signed-url",
-  "metadata": { "version": "1.0", "environment": "production" },
-  "isPublic": false,
-  "createdAt": "2024-01-15T10:30:00.000Z",
-  "updatedAt": "2024-01-15T10:30:00.000Z",
-  "triggerLevel": "file"
+  "file": [file buffer],
+  "metadata": {"type": "configuration"},
+  "triggerUrls": [
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+      "apiKey": "your-api-key"
+    }
+  ]
 }
 ```
 
-**For onEdit events (same structure as above):**
-
-- File modifications (content updates, metadata changes, public status changes)
-- The `signedUrl` provides access to the updated file content
-- `updatedAt` timestamp reflects when the change occurred
-
-### Examples
-
-#### Upload File with Multiple Triggers
-
-```
-/selected-filestore upload file with:
-file: [your file buffer]
-metadata: {"type": "configuration", "environment": "production"}
-file_links_expire_in_days: "7"
-triggerUrls: [
-  {
-    "event": "onEdit",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-monitor",
-    "apiKey": "your-api-key"
-  },
-  {
-    "event": "onDelete",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-deleted",
-    "apiKey": "your-api-key-2"
-  }
-]
-```
-
-#### Create File with Trigger
-
-```
-/selected-filestore create a new file with:
-filename: system-config.json
-content: {"database_url": "postgresql://...", "api_key": "secret"}
-metadata: {"type": "system_config", "critical": true}
-file_links_expire_in_days: "never"
-triggerUrls: [
-  {
-    "event": "onEdit",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/system-config-changed",
-    "apiKey": "your-api-key"
-  }
-]
-```
-
-#### Update File (Will Fire onEdit Triggers)
-
-```
-/selected-filestore update file expiry:
-filename: system-config.json
-file_links_expire_in_days: "1"
-metadata: {"type": "system_config", "critical": true, "last_reviewed": "2024-01-15"}
-```
-
-#### File Processing Pipeline
-
-```
-/selected-filestore upload file with:
-file: [document buffer]
-metadata: {"stage": "raw", "needs_processing": true}
-triggerUrls: [
-  {
-    "event": "onCreate",
-    "url": "https://triggers.app.pinkfish.ai/ext/triggers/document-processor",
-    "apiKey": "your-api-key"
-  }
-]
-```
-
-### Rate Limiting and Logs
-
-- **Rate Limiting**: onEdit triggers are limited to 2 executions per minute per file to prevent infinite loops
-- **Trigger Logs**: All trigger executions are logged with status, execution time, and error details
-- **Error Handling**: Failed triggers are logged but don't prevent the original file operation from completing
-- **File Access**: Triggers receive signed URLs that are valid for 7 days to access file content
-
-### Best Practices
-
-- **Use Collection-Level Triggers** for automated file processing pipelines (e.g., document conversion, backup systems)
-- **Use File-Level Triggers** for monitoring critical files (e.g., configuration files, important documents)
-- **Monitor file access** through signed URLs provided in trigger payloads
-- **Test triggers thoroughly** before production use to ensure reliable file processing
-- **Handle file types appropriately** - use signed URLs for binary files, content extraction for text files
-- **Consider file size limits** when processing large files in triggered workflows
+**File-specific trigger payload includes:**
+- Signed URL for file access (valid 7 days)
+- File metadata (filename, size, mime type)
+- Collection and event information
 
 ## Notes
 

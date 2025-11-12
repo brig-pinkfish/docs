@@ -1,0 +1,572 @@
+---
+title: "Event Triggers"
+description: "Automatically start workflows when your data and files change"
+icon: "bolt"
+---
+
+## Overview
+
+Resource Event Triggers automatically start workflows when data changes in your Datastores, Filestores, Knowledge Bases, or Vaults. Build reactive systems that respond instantly to creates, updates, and deletes without polling or manual intervention.
+
+## Supported Resources
+
+Event triggers work with these resource collections:
+
+- **Structured Datastores** - Collection-level and item-level triggers
+- **Unstructured Datastores** - Collection-level triggers only
+- **Filestores** - Collection-level and file-level triggers
+- **Knowledge Bases** - Collection-level and file-level triggers
+- **Vaults** - Collection-level triggers only
+
+## Trigger Events
+
+### onCreate
+Fires when a new item or file is added to a collection.
+
+**Available at:**
+- ✅ Collection level (monitors all creates)
+- ❌ Item/file level (not supported - items don't exist before creation)
+
+**Use cases:**
+- Welcome emails when new users are added
+- File processing pipelines for new uploads
+- Notification systems for new records
+- Data validation and enrichment
+
+### onEdit
+Fires when an existing item or file is modified.
+
+**Available at:**
+- ✅ Collection level (monitors all edits)
+- ✅ Item/file level (monitors specific items)
+
+**Use cases:**
+- Sync changes to external systems
+- Audit logging for critical data
+- Real-time notifications for status changes
+- Data transformation pipelines
+
+### onDelete
+Fires when an item or file is removed.
+
+**Available at:**
+- ✅ Collection level (monitors all deletions)
+- ✅ Item/file level (monitors specific items)
+
+**Use cases:**
+- Cleanup external references
+- Archive data before deletion
+- Send notifications about removed records
+- Cascade deletions to related systems
+
+## Trigger Levels
+
+### Collection-Level Triggers
+
+Monitor **all items** in a collection automatically.
+
+**Configuration:**
+- Set via collection management UI in the Resources section
+- Applies to every item/file in the collection
+- Perfect for system-wide monitoring and processing
+
+**Example use cases:**
+- Process all uploaded files (image compression, document conversion)
+- Log all data changes for compliance
+- Sync all updates to external databases
+- Monitor all deletions for audit trails
+
+### Item/File-Level Triggers
+
+Monitor **specific items or files** individually.
+
+**Available for:**
+- ✅ Structured Datastores (individual rows)
+- ✅ Filestores (individual files)
+- ✅ Knowledge Bases (individual files)
+- ❌ Unstructured Datastores (collection-level only)
+- ❌ Vaults (collection-level only)
+
+**Configuration:**
+- Set via `triggerUrls` parameter when creating or updating items/files
+- Only fires for that particular item/file
+- Perfect for business-critical data
+
+**Example use cases:**
+- Monitor configuration files for changes
+- Track edits to important customer records in structured datastores
+- Alert on changes to sensitive documents
+- Trigger workflows for high-value transactions
+
+## Trigger Structure
+
+Triggers use a consistent format across all resource types:
+
+```json
+{
+  "triggerUrls": [
+    {
+      "event": "onCreate",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+      "apiKey": "your-api-key",
+      "triggerLevel": "collection"
+    },
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/def456",
+      "apiKey": "your-api-key-2",
+      "triggerLevel": "item"
+    },
+    {
+      "event": "onDelete",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/ghi789",
+      "apiKey": "your-api-key-3",
+      "triggerLevel": "item"
+    }
+  ]
+}
+```
+
+**Fields:**
+- `event` (required) - onCreate, onEdit, or onDelete
+- `url` (required) - Webhook endpoint to call (typically a Pinkfish workflow API trigger)
+- `apiKey` (required) - API key for authenticating with the endpoint
+- `triggerLevel` (optional) - "collection" or "item" (auto-detected if not specified)
+
+## Trigger Payloads
+
+### Datastore Triggers (Structured & Unstructured)
+
+**onCreate/onDelete events:**
+```json
+{
+  "event": "onCreate",
+  "itemId": "abc123def456",
+  "providerId": "user-provider-id",
+  "collectionId": "collection-id",
+  "collectionType": "datastore",
+  "key": "user-settings",
+  "sortField": "theme-preferences",
+  "content": {
+    "theme": "dark",
+    "notifications": true
+  },
+  "metadata": {
+    "version": "1.0"
+  },
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "triggerLevel": "item"
+}
+```
+
+**onEdit events (includes changed data):**
+```json
+{
+  "event": "onEdit",
+  "itemId": "abc123def456",
+  "providerId": "user-provider-id",
+  "collectionId": "collection-id",
+  "collectionType": "datastore",
+  "key": "user-settings",
+  "sortField": "theme-preferences",
+  "content": {
+    "theme": "light",
+    "notifications": true
+  },
+  "metadata": {
+    "version": "1.1"
+  },
+  "changed": {
+    "content": {
+      "theme": "dark"
+    },
+    "metadata": {
+      "version": "1.0"
+    }
+  },
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T15:45:00.000Z",
+  "triggerLevel": "item"
+}
+```
+
+### Filestorage Triggers
+
+**onCreate/onEdit/onDelete events:**
+```json
+{
+  "event": "onCreate",
+  "itemId": "file-abc123",
+  "providerId": "user-provider-id",
+  "collectionId": "collection-id",
+  "collectionType": "filestorage",
+  "filename": "config.json",
+  "filepath": "file-storage/collection-id/config.json",
+  "fileSize": 1024,
+  "mimeType": "application/json",
+  "signedUrl": "https://storage.googleapis.com/...",
+  "metadata": {
+    "version": "1.0",
+    "environment": "production"
+  },
+  "isPublic": false,
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2024-01-15T10:30:00.000Z",
+  "triggerLevel": "file"
+}
+```
+
+**Note:** The `signedUrl` provides access to file content and is valid for 7 days.
+
+### Vault Triggers
+
+Same structure as datastore triggers, with `collectionType: "vault"` and `isSecret: true`. 
+
+**Note:** Vault triggers are **collection-level only** - individual secret items cannot have triggers.
+
+## Setting Up Triggers
+
+### Collection-Level (via UI)
+
+1. Navigate to Resources → [Your Collection]
+2. Click "Settings" or "Edit Collection"
+3. Add trigger URLs in the "Event Triggers" section
+4. Select events (onCreate, onEdit, onDelete)
+5. Provide webhook URL and API key
+6. Save changes
+
+### Item/File-Level (via API)
+
+**When creating items:**
+
+```json
+POST /memory/items?collectionId=xxx
+{
+  "key": "user-settings",
+  "content": {"theme": "dark"},
+  "triggerUrls": [
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+**When uploading files:**
+
+```json
+POST /filestorage/items/upload?collectionId=xxx
+{
+  "file": [file data],
+  "triggerUrls": [
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/def456",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+**When updating items (PATCH/PUT):**
+
+```json
+PATCH /memory/items/{id}?collectionId=xxx
+{
+  "content": {"theme": "light"},
+  "triggerUrls": [
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+## Rate Limiting
+
+### onEdit Event Rate Limiting
+
+To prevent infinite loops and excessive executions:
+
+- **Limit**: Maximum 2 trigger executions per minute per item/file
+- **Window**: 60-second rolling window
+- **Applies to**: onEdit events only
+- **Behavior**: Excess triggers are dropped (not queued)
+
+**Why rate limiting?**
+
+Without rate limiting, you could create infinite loops:
+1. Workflow A edits item → triggers Workflow B
+2. Workflow B edits same item → triggers Workflow A
+3. Loop continues indefinitely
+
+**Best practice:** Set `triggerChanges: false` in update operations within triggered workflows to prevent recursive triggers.
+
+### No Rate Limiting
+
+onCreate and onDelete events have **no rate limiting** since they can't create loops.
+
+## Testing Triggers
+
+Test your triggers before production deployment:
+
+### Test Collection Triggers
+
+```
+POST /datacollection/{collectionId}/triggers/test
+{
+  "event": "onEdit",
+  "testData": {
+    "key": "test-item",
+    "content": {"test": true}
+  }
+}
+```
+
+### Test Item Triggers
+
+```
+POST /memory/test-trigger?collectionId=xxx
+{
+  "url": "https://triggers.app.pinkfish.ai/ext/triggers/abc123",
+  "apiKey": "your-api-key",
+  "dataStoreId": "item-id",
+  "data": {
+    "key": "test-item",
+    "content": {"test": true}
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Triggered successfully",
+  "log": {
+    "runId": "trigger-run-123",
+    "status": "success",
+    "executionTime": 1523,
+    "event": "onTest"
+  }
+}
+```
+
+## Trigger Logs
+
+All trigger executions are automatically logged:
+
+**Log fields:**
+- `runId` - Unique execution identifier
+- `triggerUrl` - Endpoint that was called
+- `runAt` - Timestamp of execution
+- `event` - Event type (onCreate, onEdit, onDelete)
+- `status` - "success" or "failed"
+- `error` - Error message if failed
+- `executionTime` - Duration in milliseconds
+- `triggerLevel` - "collection" or "item"
+
+**Accessing logs:**
+- View in the collection's trigger logs section
+- Query via API for programmatic access
+- Filter by status, event type, or date range
+
+## Use Cases
+
+### Data Sync Pipeline
+
+Monitor customer database changes and sync to external CRM:
+
+```json
+{
+  "triggerUrls": [
+    {
+      "event": "onCreate",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/crm-sync-create",
+      "apiKey": "your-api-key"
+    },
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/crm-sync-update",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+### File Processing Pipeline
+
+Process uploaded documents automatically:
+
+```json
+{
+  "triggerUrls": [
+    {
+      "event": "onCreate",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/doc-processor",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+### Configuration Monitoring
+
+Alert when critical config files change:
+
+```json
+{
+  "triggerUrls": [
+    {
+      "event": "onEdit",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-alert",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+### Audit Trail
+
+Log all deletions for compliance:
+
+```json
+{
+  "triggerUrls": [
+    {
+      "event": "onDelete",
+      "url": "https://triggers.app.pinkfish.ai/ext/triggers/audit-log",
+      "apiKey": "your-api-key"
+    }
+  ]
+}
+```
+
+## Best Practices
+
+### Trigger Level Selection
+
+- **Use collection-level** for system-wide monitoring (all file uploads, all data changes)
+- **Use item-level** for business-critical data (important documents, key customer records)
+
+### Preventing Infinite Loops
+
+1. **Set triggerChanges: false** in update operations within triggered workflows
+2. **Use different collections** for input and output data
+3. **Monitor trigger logs** for unusual patterns
+4. **Rely on rate limiting** as a safety net (2 executions per minute for onEdit)
+
+### Error Handling
+
+- Failed triggers are logged but don't block the original operation
+- Check trigger logs regularly to catch failures
+- Implement retry logic in your triggered workflows
+- Use test endpoints before production deployment
+
+### Performance
+
+- Triggers execute asynchronously (don't delay the original operation)
+- Keep triggered workflows lightweight for faster execution
+- Use batch operations if processing multiple items
+- Consider collection-level triggers for efficiency over many item-level triggers
+
+### Security
+
+- Protect your API keys (use environment variables in workflows)
+- Use HTTPS endpoints only
+- Validate payload data in triggered workflows
+- Rotate API keys periodically
+
+## API Reference
+
+### Create Item with Triggers
+
+```
+POST /memory/items?collectionId=xxx
+```
+
+```json
+{
+  "key": "item-key",
+  "content": {...},
+  "triggerUrls": [...]
+}
+```
+
+### Create File with Triggers
+
+```
+POST /filestorage/items/upload?collectionId=xxx
+```
+
+Multipart form data with `triggerUrls` field.
+
+### Update Triggers on Existing Item
+
+```
+PUT /memory/items/{id}?collectionId=xxx
+```
+
+```json
+{
+  "content": {...},
+  "triggerUrls": [...]
+}
+```
+
+### Set Collection-Level Triggers
+
+```
+PATCH /datacollection/{collectionId}
+```
+
+```json
+{
+  "triggerUrls": [...]
+}
+```
+
+### Test Triggers
+
+**Collection-level:**
+```
+POST /datacollection/{collectionId}/triggers/test
+```
+
+**Item-level:**
+```
+POST /memory/test-trigger?collectionId=xxx
+```
+
+## Limitations
+
+### onCreate Restrictions
+
+- **Cannot be set at item/file level** (only collection level)
+- Items must exist before triggers can be attached to them
+- Use collection-level onCreate for new item monitoring
+
+### Rate Limiting
+
+- **onEdit events**: 2 executions per minute per item/file
+- **onCreate/onDelete**: No rate limits
+
+### Execution
+
+- Triggers execute **asynchronously** (non-blocking)
+- Failed triggers don't retry automatically (implement retry in your workflow)
+- Trigger logs retained for debugging and monitoring
+
+## Related Documentation
+
+- [Structured Datastore](/slash-commands/datastore-structured)
+- [Unstructured Datastore](/slash-commands/datastore-unstructured)
+- [Filestorage](/slash-commands/filestorage)
+- [Vault](/essentials/vault)
+- [Knowledge Base](/essentials/knowledgebase)
+- [Workflow Triggers](/essentials/triggers) - Overview of all trigger types
+
