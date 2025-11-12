@@ -27,12 +27,6 @@ Fires when a new item or file is added to a collection.
 - ✅ Collection level (monitors all creates)
 - ❌ Item/file level (not supported - items don't exist before creation)
 
-**Use cases:**
-- Welcome emails when new users are added
-- File processing pipelines for new uploads
-- Notification systems for new records
-- Data validation and enrichment
-
 ### onEdit
 Fires when an existing item or file is modified.
 
@@ -40,24 +34,12 @@ Fires when an existing item or file is modified.
 - ✅ Collection level (monitors all edits)
 - ✅ Item/file level (monitors specific items)
 
-**Use cases:**
-- Sync changes to external systems
-- Audit logging for critical data
-- Real-time notifications for status changes
-- Data transformation pipelines
-
 ### onDelete
 Fires when an item or file is removed.
 
 **Available at:**
 - ✅ Collection level (monitors all deletions)
 - ✅ Item/file level (monitors specific items)
-
-**Use cases:**
-- Cleanup external references
-- Archive data before deletion
-- Send notifications about removed records
-- Cascade deletions to related systems
 
 ## Trigger Levels
 
@@ -68,35 +50,22 @@ Monitor **all items** in a collection automatically.
 **Configuration:**
 - Set via collection management UI in the Resources section
 - Applies to every item/file in the collection
-- Perfect for system-wide monitoring and processing
-
-**Example use cases:**
-- Process all uploaded files (image compression, document conversion)
-- Log all data changes for compliance
-- Sync all updates to external databases
-- Monitor all deletions for audit trails
 
 ### Item/File-Level Triggers
 
 Monitor **specific items or files** individually.
 
 **Available for:**
-- ✅ Structured Datastores (individual rows)
+- 🚧 Structured Datastores (individual rows) - *Coming soon*
 - ✅ Filestores (individual files)
 - ✅ Knowledge Bases (individual files)
 - ❌ Unstructured Datastores (collection-level only)
 - ❌ Vaults (collection-level only)
 
 **Configuration:**
-- Set via `triggerUrls` parameter when creating or updating items/files
+- Set via UI when viewing/editing items or files
+- Set via `triggerUrls` parameter when creating or updating items/files via API
 - Only fires for that particular item/file
-- Perfect for business-critical data
-
-**Example use cases:**
-- Monitor configuration files for changes
-- Track edits to important customer records in structured datastores
-- Alert on changes to sensitive documents
-- Trigger workflows for high-value transactions
 
 ## Trigger Structure
 
@@ -374,112 +343,6 @@ All trigger executions are automatically logged:
 - View in the collection's trigger logs section
 - Query via API for programmatic access
 - Filter by status, event type, or date range
-
-## Use Cases
-
-### Data Sync Pipeline
-
-Monitor customer database changes and sync to external CRM:
-
-```json
-{
-  "triggerUrls": [
-    {
-      "event": "onCreate",
-      "url": "https://triggers.app.pinkfish.ai/ext/triggers/crm-sync-create",
-      "apiKey": "your-api-key"
-    },
-    {
-      "event": "onEdit",
-      "url": "https://triggers.app.pinkfish.ai/ext/triggers/crm-sync-update",
-      "apiKey": "your-api-key"
-    }
-  ]
-}
-```
-
-### File Processing Pipeline
-
-Process uploaded documents automatically:
-
-```json
-{
-  "triggerUrls": [
-    {
-      "event": "onCreate",
-      "url": "https://triggers.app.pinkfish.ai/ext/triggers/doc-processor",
-      "apiKey": "your-api-key"
-    }
-  ]
-}
-```
-
-### Configuration Monitoring
-
-Alert when critical config files change:
-
-```json
-{
-  "triggerUrls": [
-    {
-      "event": "onEdit",
-      "url": "https://triggers.app.pinkfish.ai/ext/triggers/config-alert",
-      "apiKey": "your-api-key"
-    }
-  ]
-}
-```
-
-### Audit Trail
-
-Log all deletions for compliance:
-
-```json
-{
-  "triggerUrls": [
-    {
-      "event": "onDelete",
-      "url": "https://triggers.app.pinkfish.ai/ext/triggers/audit-log",
-      "apiKey": "your-api-key"
-    }
-  ]
-}
-```
-
-## Best Practices
-
-### Trigger Level Selection
-
-- **Use collection-level** for system-wide monitoring (all file uploads, all data changes)
-- **Use item-level** for business-critical data (important documents, key customer records)
-
-### Preventing Infinite Loops
-
-1. **Set triggerChanges: false** in update operations within triggered workflows
-2. **Use different collections** for input and output data
-3. **Monitor trigger logs** for unusual patterns
-4. **Rely on rate limiting** as a safety net (2 executions per minute for onEdit)
-
-### Error Handling
-
-- Failed triggers are logged but don't block the original operation
-- Check trigger logs regularly to catch failures
-- Implement retry logic in your triggered workflows
-- Use test endpoints before production deployment
-
-### Performance
-
-- Triggers execute asynchronously (don't delay the original operation)
-- Keep triggered workflows lightweight for faster execution
-- Use batch operations if processing multiple items
-- Consider collection-level triggers for efficiency over many item-level triggers
-
-### Security
-
-- Protect your API keys (use environment variables in workflows)
-- Use HTTPS endpoints only
-- Validate payload data in triggered workflows
-- Rotate API keys periodically
 
 ## API Reference
 
