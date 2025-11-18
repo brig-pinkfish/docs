@@ -1,0 +1,170 @@
+---
+title: "Office Template Fill Guide"
+description: "Fill Word, PowerPoint, and Excel templates with dynamic data"
+---
+
+## What can you do with it?
+
+The `/office-template-fill` command enables you to fill Microsoft Office templates (Word .docx, PowerPoint .pptx, Excel .xlsx) with dynamic data while preserving all formatting. You can generate contracts, reports, invoices, presentations, and spreadsheets by replacing placeholders in templates with actual data.
+
+<Info>
+This skill preserves all formatting from your original template including fonts, colors, styles, headers, footers, and images. Only the placeholder variables are replaced with your data.
+</Info>
+
+## How to use it?
+
+### Basic Command Structure
+```
+/office-template-fill [template_source] [data]
+```
+
+### Parameters
+
+**Required:**
+
+- `template_source` - How to load the template file (one of three methods):
+  - `uploaded_file` - Template uploaded to the automation
+  - `artifact` - Template from a previous step's output
+  - `url` - Template from a URL
+- `data` - JavaScript object containing the data to fill into the template
+
+**Optional:**
+
+- `filename` - Custom name for the output file (defaults to template name with prefix)
+- `file_type` - Output format: `docx`, `pptx`, or `xlsx` (auto-detected from template)
+
+### Template Syntax
+
+Templates use a simple placeholder syntax with curly braces:
+
+| Syntax | Description | Example |
+|--------|-------------|---------|
+| `{variable}` | Simple variable replacement | `{firstName}` |
+| `{object.property}` | Nested object access | `{user.email}` |
+| `{#condition}...{/condition}` | Conditional sections | `{#isPremium}Premium content{/isPremium}` |
+| `{^condition}...{/condition}` | Inverted conditionals | `{^isPremium}Upgrade now{/isPremium}` |
+| `{#array}...{/array}` | Loops/iterations | `{#items}{name}{/items}` |
+
+### Response Format
+
+The command returns:
+```javascript
+{
+  success: true,
+  output_file: "filled-template.docx",
+  size: 45678,
+  placeholders_replaced: 42
+}
+```
+
+## Examples
+
+### Basic Usage - Contract from Uploaded Template
+```javascript
+/office-template-fill
+template_source: "uploaded_file:contract-template.docx"
+data: {
+  employeeName: "John Doe",
+  position: "Senior Developer",
+  startDate: "January 15, 2024",
+  salary: 95000,
+  companyName: "Acme Corporation"
+}
+```
+Fills a contract template with employee information.
+
+### Advanced Usage - Invoice with Line Items
+```javascript
+/office-template-fill
+template_source: "uploaded_file:invoice-template.docx"
+data: {
+  invoiceNumber: "INV-2024-001",
+  customerName: "Tech Solutions Inc",
+  date: "November 18, 2024",
+  items: [
+    { description: "Consulting", quantity: 10, unitPrice: 150, total: 1500 },
+    { description: "Development", quantity: 40, unitPrice: 200, total: 8000 },
+    { description: "Support", quantity: 5, unitPrice: 100, total: 500 }
+  ],
+  subtotal: 10000,
+  tax: 1000,
+  total: 11000
+}
+```
+Creates an invoice with dynamic line items in a table.
+
+### Complex Usage - Department Report with Nested Data
+```javascript
+/office-template-fill
+template_source: "artifact:report-template.docx:step-1"
+filename: "q4-department-report.docx"
+data: {
+  reportTitle: "Q4 2024 Department Report",
+  departments: [
+    {
+      name: "Engineering",
+      manager: "Alice Johnson",
+      budget: 500000,
+      employees: [
+        { name: "Bob Wilson", title: "Developer", isRemote: true },
+        { name: "Carol Davis", title: "Designer", isRemote: false }
+      ],
+      goals: [
+        { description: "Launch platform", targetDate: "Q1 2025" }
+      ]
+    },
+    {
+      name: "Sales",
+      manager: "David Brown",
+      budget: 300000,
+      employees: [
+        { name: "Eve Martinez", title: "Sales Director", isRemote: false }
+      ],
+      goals: [
+        { description: "Increase revenue 25%", targetDate: "Q4 2024" }
+      ]
+    }
+  ]
+}
+```
+Generates a comprehensive report with nested departments, employees, and goals.
+
+### Loading Templates from Different Sources
+
+**From Uploaded File:**
+```javascript
+template_source: "uploaded_file:template.docx"
+```
+
+**From Previous Step's Output:**
+```javascript
+template_source: "artifact:generated-template.docx:step-2"
+```
+
+**From URL:**
+```javascript
+template_source: "url:https://example.com/templates/report.docx"
+```
+
+## Test Template
+
+Download our comprehensive test template to see all features in action:
+
+[📄 Download Test Template](/files/template-test.docx)
+
+This template demonstrates:
+- Simple variable replacement
+- Conditional sections (premium/standard)
+- Product tables with loops
+- Nested department structures
+- Multi-level organizational hierarchies
+- Financial calculations
+- Signature blocks
+
+### Notes
+
+- Templates must be .docx, .pptx, or .xlsx format (not older .doc/.ppt/.xls)
+- All formatting from the original template is preserved
+- Missing data fields are replaced with empty strings
+- Cannot dynamically insert images (place them in the template)
+- Cannot render HTML content (use plain text only)
