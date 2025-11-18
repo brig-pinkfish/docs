@@ -1,0 +1,334 @@
+---
+title: "Customizing Email Branding"
+description: "Create fully branded email automation experiences with custom inbound and outbound email configurations"
+---
+
+## Why Use This?
+
+Many businesses want their email automation to feel seamless and professional, appearing to come directly from their own branded email addresses rather than third-party services. This guide shows you how to set up a complete branded email experience where customers interact exclusively with your company's email address, while Pinkfish handles all the automation behind the scenes.
+
+## Understanding Inbound vs Outbound Email
+
+Before setting up your branded email system, it's important to understand how inbound and outbound emails work in Pinkfish—they are **separate systems** with different purposes and capabilities.
+
+### Inbound Email (Receiving)
+
+**Inbound emails** trigger your workflows. They are always connected to a workflow trigger and use Pinkfish's email infrastructure to receive messages.
+
+- **Purpose**: Receive emails that start workflow automations
+- **How it works**: Pinkfish provides a unique trigger email address (e.g., `d35c7152at5c7123f18g@pinkfish.email`)
+- **Key feature**: Email forwarding allows you to hide the Pinkfish address and use your own branded address
+- **Data captured**: Subject, body, attachments, sender info, threading headers, etc.
+- **Access control**: Can be restricted to approved senders or domains
+
+### Outbound Email (Sending)
+
+**Outbound emails** are sent from your workflows as responses or notifications. You have complete flexibility in choosing which email service to use.
+
+- **Purpose**: Send emails as part of workflow automation
+- **How it works**: Your workflow steps call email services via API or connectors
+- **Service options**:
+  - **Pinkfish Email Outbound Service** - Built-in service for quick setup
+  - **Your Gmail Account** - Send through your own Gmail via API
+  - **Your Outlook/Office 365 Account** - Send through Microsoft's service
+  - **Custom Email Services** - SendGrid, Mailgun, AWS SES, or any other service
+- **Branding**: Can be fully customized depending on the service you choose
+
+## Email Service Options
+
+### Option 1: Pinkfish Email Outbound Service
+
+**Best for**: Quick setup, prototyping, internal tools
+
+The Pinkfish Email Outbound Service is our built-in email service that requires no setup or external accounts and is limited to a small number of emails per day (intended for prototyping)
+
+**Characteristics**:
+- **From Address**: `Pinkfish Email <mail@pinkfish-email.com>` (cannot be changed)
+- **Reply-To**: Can be customized to your own email address
+- **Branding**: Includes "Sent via Pinkfish Email Service" footer
+- **Setup**: Zero configuration required
+- **Rate Limits**: 50 emails per day, 10 per minute
+- **Best Use**: Internal notifications, prototyping, simple automations
+
+**How to Use**:
+
+```
+/email-outbound
+to: customer@example.com
+subject: Your Request Has Been Processed
+body: Thank you for contacting us. We've processed your request.
+reply to: support@yourcompany.com
+```
+
+**What Recipients See**:
+- **From**: Pinkfish Email (mail@pinkfish-email.com)
+- **Reply-To**: support@yourcompany.com
+- **Footer**: "Sent via Pinkfish Email Service"
+
+When customers hit "Reply," their response goes to your `reply to` address, not to Pinkfish.
+
+### Option 2: Your Own Email Service (Gmail or Outlook)
+
+**Best for**: Fully branded professional communications
+
+Send emails directly from your own Gmail or Outlook account, giving you complete control over branding and appearance.
+
+#### Gmail Integration
+
+Connect your Gmail account to send emails that appear to come directly from you:
+
+**Setup**:
+1. Create a Gmail connection in Pinkfish
+2. Authorize your Gmail account
+3. Use the Gmail slash command in your workflows
+
+**How to Use**:
+
+```
+/your-Gmail-connection
+action: send-email
+to: customer@example.com
+subject: Your Request Has Been Processed
+body: Thank you for contacting us. We've processed your request.
+from: support@yourcompany.com
+```
+
+**Characteristics**:
+- **From Address**: Your actual Gmail address
+- **Branding**: No Pinkfish branding or footers
+- **Rate Limits**: Subject to Gmail's sending limits
+- **Threading**: Maintains proper email conversation threads
+- **Professional**: Customers see your real email address
+
+[See the complete Gmail Guide →](/slash-commands/gmail)
+
+#### Microsoft Outlook Integration
+
+Send through your Outlook or Office 365 account with full Microsoft Graph API access:
+
+**How to Use**:
+
+```
+/your-Microsoft-Outlook-connection
+action: send-email
+to: customer@example.com
+subject: Your Request Has Been Processed
+body: Thank you for contacting us. We've processed your request.
+cc: manager@yourcompany.com
+importance: high
+```
+
+**Characteristics**:
+- **From Address**: Your Outlook/Office 365 address
+- **Branding**: No Pinkfish branding or footers
+- **Additional Features**: Calendar integration, tasks, contacts
+- **Professional**: Customers see your business email address
+
+[See the complete Microsoft Outlook Guide →](/slash-commands/microsoft-outlook)
+
+### Option 3: Third-Party Email APIs
+
+**Best for**: High-volume sending, custom email infrastructure
+
+You can also integrate with any email service that provides an API:
+
+- **SendGrid**: Transactional email service with advanced analytics
+- **Mailgun**: Developer-focused email API
+- **AWS SES**: Amazon's scalable email service
+- **Postmark**: Email service specializing in deliverability
+- **Custom SMTP**: Any SMTP server
+
+These require API key configuration and custom integration setup in your workflows.
+
+## Creating Professional HTML Email Templates
+
+For any outbound email service (Pinkfish, Gmail, or Outlook), you can create beautiful, professional HTML email templates using the `/formatted-email` slash command.
+
+### What is Formatted Email?
+
+The formatted email skill generates email-compatible HTML snippets that work across all email clients. It creates clean, inline-styled HTML using tables for layout to ensure maximum compatibility.
+
+**Key Features**:
+- Email client compatible (Gmail, Outlook, Apple Mail, etc.)
+- Inline CSS styles for reliable rendering
+- Table-based layout for consistency
+- No unsupported features (JavaScript, external CSS, etc.)
+- Optimized for standard 600px email width
+
+### How to Use Formatted Email
+
+**Basic Example**:
+
+```
+/formatted-email
+content: Thank you for contacting support. Your ticket #12345 has been created.
+style: professional blue header with company branding
+```
+
+**Advanced Example with Multiple Sections**:
+
+```
+/formatted-email
+content: Order confirmation with product details and shipping information
+sections: header with logo, order summary table, shipping details, footer with contact info
+call-to-action: "Track Your Order" button
+branding: use brand colors #209cee
+```
+
+### Using Formatted Email with Outbound Services
+
+Once you've generated your HTML template, use it in the `htmlBody` parameter of your email service:
+
+**With Pinkfish Email Outbound**:
+
+```
+First, generate your template:
+/formatted-email
+content: Your request has been processed
+style: clean, modern design with success message
+
+Then use the generated HTML:
+/email-outbound
+to: {{from}}
+subject: Re: {{subject}}
+body: [paste the generated HTML here]
+```
+
+**With Gmail or Outlook**:
+
+```
+Generate template with /formatted-email, then:
+
+/your-Gmail-connection
+action: send-email
+to: customer@example.com
+subject: Order Confirmation
+body: [paste your formatted HTML template]
+```
+
+[See the complete Formatted Email Guide →](/slash-commands/formatted-email)
+
+## Creating a Fully Branded Email Experience
+
+The most professional setup involves using email forwarding for inbound messages and your own email service for outbound responses. This creates a seamless experience where customers never see Pinkfish infrastructure.
+
+### Complete Branded Setup Example
+
+Let's say you want customers to email `support@yourcompany.com` and receive responses from the same address.
+
+#### Step 1: Set Up Inbound Email Trigger
+
+1. Create an email trigger in your workflow
+2. Pinkfish generates: `d35c7152at5c7123f18g@pinkfish.email`
+3. Configure approved senders if needed for security
+
+#### Step 2: Configure Email Forwarding
+
+Set up your email server to forward messages from your branded address to the Pinkfish trigger address:
+
+**Email Server Configuration**:
+- **Create**: `support@yourcompany.com`
+- **Forward to**: `d35c7152at5c7123f18g@pinkfish.email`
+- **Keep copy**: Optional (for your records)
+
+**Popular Email Providers**:
+- **Google Workspace**: Admin Console → Gmail → Routing → Add Rule
+- **Microsoft 365**: Exchange Admin Center → Mail Flow → Rules
+- **cPanel/WHM**: Email Forwarders section
+- **Other providers**: Search for "email forwarding" in your provider's documentation
+
+#### Step 3: Configure Outbound Responses
+
+Set up your workflow to respond using your branded email address:
+
+**Option A: Using Gmail**:
+
+```
+Extract sender from trigger input: {{from}}
+
+/your-Gmail-connection
+action: send-email
+to: {{from}}
+subject: Re: {{subject}}
+body: Thank you for contacting us. We've received your message and will respond shortly.
+from: support@yourcompany.com
+```
+
+**Option B: Using Outlook**:
+
+```
+Extract sender from trigger input: {{from}}
+
+/your-Microsoft-Outlook-connection
+action: send-email
+to: {{from}}
+subject: Re: {{subject}}
+body: Thank you for contacting us. We've received your message and will respond shortly.
+```
+
+#### Step 4: Test the Complete Flow
+
+1. Send a test email to: `support@yourcompany.com`
+2. Verify your workflow triggers (check Workflow Monitor)
+3. Confirm response comes from: `support@yourcompany.com`
+4. Check that reply threading works correctly
+
+### What Customers Experience
+
+With this setup complete:
+
+1. **Customer sends email to**: `support@yourcompany.com`
+2. **Email is forwarded to**: Pinkfish trigger (invisible to customer)
+3. **Workflow triggers**: Processes the request
+4. **Response comes from**: `support@yourcompany.com` (via Gmail/Outlook)
+5. **Customer replies to**: `support@yourcompany.com` (triggering the workflow again)
+
+**Result**: Customers see only your branded email address throughout the entire interaction. They have no idea Pinkfish is handling the automation in the background.
+
+## Email Threading and Conversations
+
+To maintain proper email conversations (where replies appear in the same thread), your workflows should preserve threading information:
+
+### Capturing Thread Information
+
+Email triggers automatically provide threading data:
+- `threadingHeaders`: Email threading metadata
+- `subject`: Original subject line
+- `from`: Original sender
+
+### Maintaining Threads in Responses
+
+When responding, include:
+- **Subject line**: Prefix with `Re:` and keep the original subject
+- **Thread ID**: Use the `threadId` parameter if your email service supports it
+- **Headers**: Some services allow custom `In-Reply-To` and `References` headers
+
+**Example with Threading**:
+
+```
+/your-Gmail-connection
+action: send-email
+to: {{from}}
+subject: Re: {{subject}}
+body: Your response here
+```
+
+Gmail and Outlook automatically handle threading when you prefix the subject with "Re:" and send to the same email address.
+
+## Security Considerations
+
+### Inbound Email Security
+
+When setting up email triggers, especially with forwarding:
+
+- **Use Approved Senders**: Restrict triggers to specific email addresses or domains
+- **Validate Input**: Always sanitize and validate email content in workflows
+- **Monitor Activity**: Regularly check the Workflow Monitor for unexpected triggers
+- **Test Forwarding**: Ensure only intended addresses forward to your trigger
+
+**Example: Restricting to Your Domain**:
+
+When creating your email trigger:
+1. Choose "Only approved senders"
+2. Add your domain: `@yourcompany.com`
+3. Individual addresses can still be added for external partners
