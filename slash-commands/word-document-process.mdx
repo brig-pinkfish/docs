@@ -5,7 +5,7 @@ description: "Translate, grammar correct, or modify Word documents while preserv
 
 ## What can you do with it?
 
-The `/word-document-process` command enables you to process Word documents (.docx) with AI while preserving all formatting, styles, tables, and structure. You can translate documents to any language, correct grammar and spelling, rewrite content, or simplify language - all while maintaining the original document's visual appearance.
+The `/word-document-process` command enables you to process Word documents (.docx) with AI while preserving all formatting, styles, tables, and structure. You can translate documents to any language, correct grammar and spelling, rewrite content, simplify language, or add new content to existing sections - all while maintaining the original document's visual appearance.
 
 <Info>
 This skill preserves all formatting including bold, italic, underline, fonts, colors, highlights, tables, lists, headers, footers, and page structure. Only the text content is modified by AI.
@@ -131,6 +131,12 @@ Rewrites document content with a specific tone or style.
 - Adapt for different markets
 - Adjust for cultural context
 
+### Content Enhancement
+- Add examples to existing lists
+- Expand sections with more details
+- Insert additional items matching existing format
+- Enhance documents while preserving style
+
 ## Processing Time
 
 Document processing time depends on:
@@ -162,13 +168,40 @@ Example: A 10-page document typically processes in 30-60 seconds.
 - Use `simplify` to reduce reading complexity
 - Use `rewrite` for tone/style changes with custom instructions
 
+## Advanced Features
+
+### Adding Content to Documents
+
+When explicitly requested, you can add new content to existing documents while preserving formatting:
+
+```javascript
+/word-document-process
+task: "translate and add content"
+target_language: "Spanish"
+custom_instruction: "Translate to Spanish and add 15 new entertainment command examples to the entertainment section"
+document_source: "uploaded_file:commands.docx"
+```
+
+<Info>
+When adding content, the skill intelligently clones the formatting from existing paragraphs to maintain consistency. Use a two-pass approach: first transform existing text, then add new content with replicated formatting.
+</Info>
+
+**Best for:**
+- Adding items to existing lists
+- Expanding sections with more examples
+- Inserting additional paragraphs with matching style
+
+**Not suitable for:**
+- Complex restructuring
+- Changing document layout
+- Adding entirely new major sections with different formatting
+
 ## Limitations
 
 <Warning>
 This skill works best for segment-by-segment transformations. It's not suitable for:
 - Summarizing content (reduces length)
 - Reorganizing document structure
-- Adding new sections or content
 - Extracting specific information
 </Warning>
 
