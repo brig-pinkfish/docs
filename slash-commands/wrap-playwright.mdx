@@ -30,7 +30,7 @@ code: [your Playwright code]
 **File Handling:**
 - Save scraped data to your file collection
 - Automatic screenshot and binary file support
-- Upload files to browser for form submissions
+- Upload files to forms using buffer payloads
 - Download files automatically captured and saved
 
 **Predictable Output:**
@@ -122,14 +122,25 @@ Searches Google, waits for results, then saves search data, full HTML, and a scr
 
 ```
 /wrap-playwright
-files: document.pdf from my files
-code: await page.goto('https://example.com/upload-form');
-      await page.waitForSelector('#fileUpload');
-      await page.setInputFiles('#fileUpload', '/tmp/.uploads/document.pdf');
-      await page.click('#submit');
+files: image.png from my files
+code: const uploadFile = config.findUploadedFile('image.png', { exactMatch: true });
+      
+      await page.goto('https://the-internet.herokuapp.com/upload');
+      
+      const response = await fetch(uploadFile.url);
+      const buffer = Buffer.from(await response.arrayBuffer());
+      
+      const fileInput = page.locator('#file-upload');
+      await fileInput.setInputFiles({
+          name: 'image.png',
+          mimeType: 'image/png',
+          buffer: buffer
+      });
+      
+      await page.click('#file-submit');
       await page.waitForTimeout(2000);
 ```
-Uploads a file from your storage to a web form. Files are automatically uploaded to the browser session before your code runs.
+Downloads your file and uploads it to a form using a buffer payload.
 
 ### Download Files from Websites
 
@@ -255,22 +266,14 @@ MIME types are automatically detected from file extensions.
 
 ## File Uploads
 
-To upload files from your storage to the browser (for form submissions):
+To upload files to web forms:
 
-1. **Save your file** to Pinkfish file storage first
-2. **Reference it** in your command:
-   ```
-   /wrap-playwright
-   files: document.pdf, form-data.csv
-   code: await page.goto('https://example.com/upload');
-         await page.setInputFiles('#fileUpload', '/tmp/.uploads/document.pdf');
-         await page.click('#submit');
-   ```
+1. Find your file using `config.findUploadedFile('filename.pdf', { exactMatch: true })`
+2. In your Playwright code, fetch the file from its URL and create a buffer
+3. Create a file payload object: `{ name: 'filename.pdf', mimeType: 'application/pdf', buffer: buffer }`
+4. Use `page.locator('#file-input').setInputFiles(filePayload)` to attach to the input
 
-Files are automatically:
-- Fetched from your storage
-- Uploaded to the browser session
-- Available at `/tmp/.uploads/{fileName}`
+The file is downloaded directly in the browser context and passed as a buffer to Playwright's setInputFiles method.
 
 ## File Downloads
 
