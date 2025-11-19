@@ -1,0 +1,190 @@
+---
+title: "Word Document Process Guide"
+description: "Translate, grammar correct, or modify Word documents while preserving all formatting"
+---
+
+## What can you do with it?
+
+The `/word-document-process` command enables you to process Word documents (.docx) with AI while preserving all formatting, styles, tables, and structure. You can translate documents to any language, correct grammar and spelling, rewrite content, or simplify language - all while maintaining the original document's visual appearance.
+
+<Info>
+This skill preserves all formatting including bold, italic, underline, fonts, colors, highlights, tables, lists, headers, footers, and page structure. Only the text content is modified by AI.
+</Info>
+
+## How to use it?
+
+### Basic Command Structure
+```
+/word-document-process [task] [document_source] [options]
+```
+
+### Parameters
+
+**Required:**
+
+- `task` - The processing task to perform:
+  - `translate` - Translate document to another language
+  - `grammar-correct` - Fix grammar and spelling errors
+  - `simplify` - Make text more readable (e.g., 8th grade level)
+  - `rewrite` - Rewrite for different tone or style
+- `document_source` - How to load the document (one of three methods):
+  - `uploaded_file` - Document uploaded to the automation
+  - `artifact` - Document from a previous step's output
+  - `url` - Document from a URL
+
+**Optional:**
+
+- `target_language` - For translation tasks (e.g., "Spanish", "French", "German")
+- `model` - AI model to use: `claude-sonnet-4-5` (default), `gpt-4.1`, or `gemini-2.5-flash`
+- `filename` - Custom name for the output file
+- `batch_size` - Number of text segments to process at once (default: 50)
+
+### Response Format
+
+The command returns:
+```javascript
+{
+  success: true,
+  output_file: "translated-document.docx",
+  size: 52341,
+  segments_processed: 247,
+  model_used: "claude-sonnet-4-5"
+}
+```
+
+## Examples
+
+### Basic Usage - Translate Document to Spanish
+```javascript
+/word-document-process
+task: "translate"
+target_language: "Spanish"
+document_source: "uploaded_file:report.docx"
+```
+Translates a Word document to Spanish while preserving all formatting.
+
+### Advanced Usage - Grammar Correction
+```javascript
+/word-document-process
+task: "grammar-correct"
+document_source: "artifact:draft.docx:step-2"
+filename: "corrected-draft.docx"
+model: "gpt-4.1"
+```
+Fixes grammar and spelling errors in a document from a previous step.
+
+### Complex Usage - Simplify Technical Document
+```javascript
+/word-document-process
+task: "simplify"
+document_source: "uploaded_file:technical-manual.docx"
+filename: "simplified-manual.docx"
+batch_size: 100
+```
+Rewrites a technical document to be more readable for a general audience.
+
+### Rewrite for Different Tone
+```javascript
+/word-document-process
+task: "rewrite"
+custom_instruction: "Make this document more formal and professional"
+document_source: "uploaded_file:casual-proposal.docx"
+```
+Rewrites document content with a specific tone or style.
+
+## What Gets Preserved
+
+✅ **All formatting is maintained:**
+- Bold, italic, underline, strikethrough
+- Font families, sizes, and colors
+- Text highlighting and backgrounds
+- Paragraph alignment and spacing
+- Bulleted and numbered lists
+- Tables with all formatting
+- Headers and footers
+- Page breaks and sections
+- Images and charts (untouched)
+
+## Use Cases
+
+### Translation
+- Translate contracts, reports, manuals
+- Maintain legal document formatting
+- Preserve tables and structured content
+- Keep brand styling intact
+
+### Grammar Correction
+- Clean up drafts before publication
+- Fix spelling and grammar errors
+- Maintain author's voice and style
+- Preserve document structure
+
+### Content Simplification
+- Make technical docs accessible
+- Create reader-friendly versions
+- Simplify legal or medical documents
+- Adapt content for different audiences
+
+### Tone Adjustment
+- Make formal documents casual
+- Professionalize informal writing
+- Adapt for different markets
+- Adjust for cultural context
+
+## Processing Time
+
+Document processing time depends on:
+- **Document length**: ~2-5 seconds per page
+- **AI model**: Claude is balanced, GPT-4 is fastest, Gemini is most cost-effective
+- **Batch size**: Larger batches = fewer API calls but longer per batch
+- **Task complexity**: Translation is faster than rewriting
+
+Example: A 10-page document typically processes in 30-60 seconds.
+
+## Best Practices
+
+### Choosing the Right Model
+
+- **Claude Sonnet 4.5** (default) - Best for translation and complex reasoning
+- **GPT-4.1** - Fastest processing, good for grammar correction
+- **Gemini 2.5 Flash** - Most cost-effective, good for simple tasks
+
+### Batch Size Optimization
+
+- **Small documents (<5 pages)**: Use default (50)
+- **Medium documents (5-20 pages)**: Increase to 75-100
+- **Large documents (>20 pages)**: Consider splitting into sections
+
+### Task Selection
+
+- Use `translate` for language conversion
+- Use `grammar-correct` for error fixing only
+- Use `simplify` to reduce reading complexity
+- Use `rewrite` for tone/style changes with custom instructions
+
+## Limitations
+
+<Warning>
+This skill works best for segment-by-segment transformations. It's not suitable for:
+- Summarizing content (reduces length)
+- Reorganizing document structure
+- Adding new sections or content
+- Extracting specific information
+</Warning>
+
+### What This Cannot Do
+
+❌ Translate text within images (requires OCR first)  
+❌ Process embedded objects (Excel charts, etc.)  
+❌ Handle password-protected documents  
+❌ Process older .doc format (only .docx)  
+❌ Modify document layout or styles  
+
+### Notes
+
+- Documents must be .docx format (not .doc)
+- Very large documents (>100 pages) may take several minutes
+- All AI processing uses secure, private processing
+- Original document is never modified
+- Images and charts are preserved but not processed
+

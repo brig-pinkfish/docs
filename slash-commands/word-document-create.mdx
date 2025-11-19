@@ -1,0 +1,306 @@
+---
+title: "Word Document Create Guide"
+description: "Generate Word documents programmatically from data"
+---
+
+## What can you do with it?
+
+The `/word-document-create` command enables you to create Word documents (.docx) programmatically from data. Generate professional reports, invoices, letters, contracts, and more without needing a template. Build documents with dynamic tables, formatted text, headers, footers, and custom styling - all from scratch using your data.
+
+<Info>
+This skill creates documents from pure data, making it perfect for dynamic layouts where the content structure changes based on your data. No template required!
+</Info>
+
+## How to use it?
+
+### Basic Command Structure
+```
+/word-document-create [content_data] [options]
+```
+
+### Parameters
+
+**Required:**
+
+- `content_data` - JavaScript object containing the content and structure for your document
+  - Can include paragraphs, tables, headings, formatted text
+  - Supports nested data structures for complex documents
+
+**Optional:**
+
+- `filename` - Custom name for the output file (default: "document.docx")
+- `page_setup` - Page configuration:
+  - `size` - "letter" or "a4" (default: "letter")
+  - `orientation` - "portrait" or "landscape" (default: "portrait")
+  - `margins` - Object with top, bottom, left, right in inches
+- `header_content` - Text or data for document header
+- `footer_content` - Text or data for document footer
+
+### Response Format
+
+The command returns:
+```javascript
+{
+  success: true,
+  output_file: "report.docx",
+  size: 34567,
+  pages_generated: 5,
+  elements_created: {
+    paragraphs: 42,
+    tables: 3,
+    images: 0
+  }
+}
+```
+
+## Examples
+
+### Basic Usage - Simple Report
+```javascript
+/word-document-create
+content_data: {
+  title: "Sales Report Q4 2024",
+  subtitle: "Generated on November 18, 2024",
+  sections: [
+    {
+      heading: "Executive Summary",
+      content: "Total sales increased by 25% compared to previous quarter..."
+    },
+    {
+      heading: "Key Metrics",
+      content: "Revenue: $1.2M\nProfit Margin: 23%\nCustomer Growth: 15%"
+    }
+  ]
+}
+filename: "q4-sales-report.docx"
+```
+Creates a simple report with title, subtitle, and multiple sections.
+
+### Advanced Usage - Invoice with Table
+```javascript
+/word-document-create
+content_data: {
+  company_name: "Acme Corporation",
+  invoice_number: "INV-2024-001",
+  customer: "Tech Solutions Inc",
+  date: "November 18, 2024",
+  items: [
+    { description: "Consulting Services", quantity: 10, rate: 150, amount: 1500 },
+    { description: "Software Development", quantity: 40, rate: 200, amount: 8000 },
+    { description: "Technical Support", quantity: 5, rate: 100, amount: 500 }
+  ],
+  subtotal: 10000,
+  tax: 1000,
+  total: 11000
+}
+header_content: "Acme Corporation - Invoice"
+footer_content: "Page {page} of {total_pages}"
+filename: "invoice-2024-001.docx"
+```
+Generates an invoice with a formatted table of line items.
+
+### Complex Usage - Multi-Department Report
+```javascript
+/word-document-create
+content_data: {
+  report_title: "Annual Department Review 2024",
+  date: "December 1, 2024",
+  departments: [
+    {
+      name: "Engineering",
+      manager: "Alice Johnson",
+      headcount: 25,
+      budget: 500000,
+      highlights: [
+        "Launched new platform",
+        "Reduced bug count by 40%",
+        "Hired 8 new developers"
+      ],
+      team_members: [
+        { name: "Bob Wilson", title: "Senior Developer", tenure: "3 years" },
+        { name: "Carol Davis", title: "UX Designer", tenure: "2 years" }
+      ]
+    },
+    {
+      name: "Sales",
+      manager: "David Brown",
+      headcount: 15,
+      budget: 300000,
+      highlights: [
+        "Revenue up 35%",
+        "30 new customers",
+        "Expanded to EU market"
+      ],
+      team_members: [
+        { name: "Eve Martinez", title: "Sales Director", tenure: "5 years" }
+      ]
+    }
+  ]
+}
+page_setup: {
+  size: "a4",
+  orientation: "portrait"
+}
+filename: "annual-review-2024.docx"
+```
+Creates a comprehensive report with nested data structures.
+
+## Content Structure Guide
+
+### Basic Elements
+
+**Paragraphs:**
+```javascript
+{
+  type: "paragraph",
+  text: "Your content here",
+  alignment: "left|center|right|justify",
+  spacing: { before: 12, after: 12 }
+}
+```
+
+**Headings:**
+```javascript
+{
+  type: "heading",
+  text: "Heading Text",
+  level: 1  // 1-6, where 1 is largest
+}
+```
+
+**Formatted Text:**
+```javascript
+{
+  type: "paragraph",
+  runs: [
+    { text: "Bold text", bold: true },
+    { text: " normal text " },
+    { text: "red text", color: "FF0000" }
+  ]
+}
+```
+
+### Tables
+
+```javascript
+{
+  type: "table",
+  headers: ["Product", "Quantity", "Price"],
+  rows: [
+    ["Widget A", "10", "$100"],
+    ["Widget B", "5", "$50"]
+  ]
+}
+```
+
+### Lists
+
+```javascript
+{
+  type: "list",
+  items: ["First item", "Second item", "Third item"],
+  style: "bullet|numbered"
+}
+```
+
+## Use Cases
+
+### Reports & Analytics
+- Sales reports with charts and tables
+- Performance dashboards
+- Executive summaries
+- Monthly/quarterly reviews
+
+### Business Documents
+- Invoices and receipts
+- Contracts and agreements
+- Proposals and quotes
+- Purchase orders
+
+### Letters & Communications
+- Form letters with personalization
+- Offer letters
+- Notification letters
+- Certificates
+
+### Dynamic Content
+- Variable-length sections based on data
+- Conditional content inclusion
+- Repeated structures (teams, products, locations)
+- Data-driven tables
+
+## Formatting Options
+
+### Text Styling
+- **Bold, Italic, Underline**: Apply emphasis
+- **Font**: Arial, Times New Roman, Calibri, etc.
+- **Size**: 8pt to 72pt
+- **Color**: Any hex color (#FF0000)
+- **Highlighting**: Background colors
+
+### Paragraph Formatting
+- **Alignment**: Left, Center, Right, Justified
+- **Spacing**: Before/after paragraph
+- **Indentation**: First line, hanging, or both
+- **Line spacing**: Single, 1.5, Double
+
+### Page Layout
+- **Margins**: Custom top, bottom, left, right
+- **Size**: Letter (8.5x11"), A4 (210x297mm)
+- **Orientation**: Portrait or Landscape
+- **Headers/Footers**: Custom text, page numbers
+
+## Best Practices
+
+### Data Organization
+
+1. **Structure your data hierarchically** - Use nested objects for related content
+2. **Use arrays for repeated elements** - Tables, lists, sections
+3. **Separate content from formatting** - Define structure first, then apply styles
+4. **Include all necessary data** - The skill builds from data alone
+
+### Document Design
+
+1. **Use headings for structure** - H1 for titles, H2 for sections
+2. **Apply consistent spacing** - Standard spacing between elements
+3. **Use tables for tabular data** - Don't try to align text manually
+4. **Include page numbers** - In footer for multi-page documents
+
+### Performance Tips
+
+- **Small documents (<10 pages)**: Process instantly
+- **Medium documents (10-50 pages)**: ~5-10 seconds
+- **Large documents (>50 pages)**: Consider batching or splitting
+
+## When to Use This vs. Template Fill
+
+| Use Word Document Create | Use Office Template Fill |
+|-------------------------|-------------------------|
+| Dynamic structure (variable sections) | Fixed structure (fill blanks) |
+| Data-driven layouts | Pre-designed templates |
+| Programmatic generation | Template-based |
+| No template available | Have designed template |
+| Content varies significantly | Same layout each time |
+
+<Tip>
+**Quick Guide**: If your layout changes based on data (more rows, extra sections, conditional content), use Word Document Create. If you're filling the same template with different data, use Office Template Fill.
+</Tip>
+
+## Limitations
+
+### What This Cannot Do
+
+❌ Cannot use pre-designed templates (use `/office-template-fill` instead)  
+❌ Cannot insert complex images or charts (can include simple images)  
+❌ Cannot apply advanced Word features (macros, ActiveX)  
+❌ Cannot create forms with input fields  
+❌ Cannot apply master page styles  
+
+### Notes
+
+- Documents are created in .docx format (Word 2007+)
+- All styling is applied programmatically
+- Complex layouts may require custom formatting code
+- Generated documents open in any modern Word viewer
+- No Word installation required to generate
+
