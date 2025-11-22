@@ -36,6 +36,13 @@ This skill uses an advanced Word Document Processor service that preserves all f
 **Optional:**
 
 - `collection_id` - Specify a specific collection to save the output files (both the processed document and log file). If not provided, uses your default collection.
+- `model` - Choose which LLM model to use for processing:
+  - **Claude Models** (default): `claude-sonnet-4-5-20250929`, `claude-sonnet-4-20250514`, `claude-3-7-sonnet-20250219`
+  - **OpenAI Models**: `gpt-4.1`, `gpt-4o`, `gpt-4o-mini`, `gpt-4.1-mini`
+  - **Gemini Models**: `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-2.5-flash-lite`
+- `strategy` - Processing strategy (auto-detected if not specified):
+  - `SPARSE_CHANGES` - For targeted corrections (grammar, spelling)
+  - `DENSE_CHANGES` - For wholesale transformations (translation, rewriting)
 
 ### Response Format
 
@@ -66,21 +73,24 @@ document: uploaded_file.docx
 ```
 Translates a Word document to Spanish while preserving all formatting.
 
-### Advanced Usage - Grammar Correction
+### Advanced Usage - Grammar Correction with Model Selection
 ```javascript
 /word-document-process
 task: "Fix all grammar and spelling errors"
 document: previous_step_output.docx
+model: "gpt-4.1"
 ```
-Fixes grammar and spelling errors in a document from a previous step.
+Fixes grammar and spelling errors using GPT-4.1 for enhanced accuracy.
 
-### Complex Usage - Simplify Technical Document
+### Complex Usage - Simplify with Fast Model
 ```javascript
 /word-document-process
 task: "Rewrite this technical manual in simple language for 8th grade reading level"
 document: technical_manual.docx
+model: "gemini-2.5-flash"
+strategy: "DENSE_CHANGES"
 ```
-Rewrites a technical document to be more readable for a general audience.
+Uses Gemini Flash for fast processing with explicit strategy selection.
 
 ### Rewrite for Different Tone
 ```javascript
