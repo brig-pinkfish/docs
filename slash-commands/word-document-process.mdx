@@ -5,50 +5,54 @@ description: "Translate, grammar correct, or modify Word documents while preserv
 
 ## What can you do with it?
 
-The `/word-document-process` command enables you to process Word documents (.docx) with AI while preserving all formatting, styles, tables, and structure. You can translate documents to any language, correct grammar and spelling, rewrite content, simplify language, or add new content to existing sections - all while maintaining the original document's visual appearance.
+The `/word-document-process` command enables you to process Word documents (.docx) with AI while preserving all formatting, styles, tables, and structure. You can translate documents to any language, correct grammar and spelling, rewrite content, or simplify language - all while maintaining the original document's visual appearance.
 
 <Info>
-This skill preserves all formatting including bold, italic, underline, fonts, colors, highlights, tables, lists, headers, footers, and page structure. Only the text content is modified by AI.
+This skill uses an advanced Word Document Processor service that preserves all formatting including bold, italic, underline, fonts, colors, highlights, tables, lists, headers, footers, and page structure. Only the text content is modified by AI. The service automatically handles documents of any size efficiently.
 </Info>
 
 ## How to use it?
 
 ### Basic Command Structure
 ```
-/word-document-process [task] [document_source] [options]
+/word-document-process [task_description] [document_source]
 ```
 
 ### Parameters
 
 **Required:**
 
-- `task` - The processing task to perform:
-  - `translate` - Translate document to another language
-  - `grammar-correct` - Fix grammar and spelling errors
-  - `simplify` - Make text more readable (e.g., 8th grade level)
-  - `rewrite` - Rewrite for different tone or style
-- `document_source` - How to load the document (one of three methods):
-  - `uploaded_file` - Document uploaded to the automation
-  - `artifact` - Document from a previous step's output
-  - `url` - Document from a URL
+- `task_description` - A natural language description of what you want to do. Examples:
+  - "Translate to Spanish"
+  - "Fix all grammar and spelling errors"
+  - "Simplify this document for 8th grade reading level"
+  - "Make this more formal and professional"
+  - "Translate to French and make it more concise"
+- `document_source` - The document to process:
+  - Upload a .docx file directly
+  - Reference a document from a previous step
+  - Provide a URL to the document
 
 **Optional:**
 
-- `target_language` - For translation tasks (e.g., "Spanish", "French", "German")
-- `model` - AI model to use: `claude-sonnet-4-5` (default), `gpt-4.1`, or `gemini-2.5-flash`
-- `filename` - Custom name for the output file
-- `batch_size` - Number of text segments to process at once (default: 50)
+- `collection_id` - Specify a specific collection to save the output files (both the processed document and log file). If not provided, uses your default collection.
 
 ### Response Format
 
 The command returns:
 ```javascript
 {
-  success: true,
-  output_file: "translated-document.docx",
-  size: 52341,
-  segments_processed: 247,
-  model_used: "claude-sonnet-4-5"
+  responseId: "doc-1763835687036-98kjfezin",
+  status: "completed",
+  resultUrl: "https://...",  // Download link for processed document
+  logUrl: "https://...",     // Processing log file
+  stats: {
+    pages: 10,
+    segments: 247,
+    changes: 189,
+    duration: 45.2,
+    strategy: "DENSE_CHANGES"  // or "SPARSE_CHANGES" 
+  }
 }
 ```
 
@@ -57,40 +61,43 @@ The command returns:
 ### Basic Usage - Translate Document to Spanish
 ```javascript
 /word-document-process
-task: "translate"
-target_language: "Spanish"
-document_source: "uploaded_file:report.docx"
+task: "Translate this document to Spanish"
+document: uploaded_file.docx
 ```
 Translates a Word document to Spanish while preserving all formatting.
 
 ### Advanced Usage - Grammar Correction
 ```javascript
 /word-document-process
-task: "grammar-correct"
-document_source: "artifact:draft.docx:step-2"
-filename: "corrected-draft.docx"
-model: "gpt-4.1"
+task: "Fix all grammar and spelling errors"
+document: previous_step_output.docx
 ```
 Fixes grammar and spelling errors in a document from a previous step.
 
 ### Complex Usage - Simplify Technical Document
 ```javascript
 /word-document-process
-task: "simplify"
-document_source: "uploaded_file:technical-manual.docx"
-filename: "simplified-manual.docx"
-batch_size: 100
+task: "Rewrite this technical manual in simple language for 8th grade reading level"
+document: technical_manual.docx
 ```
 Rewrites a technical document to be more readable for a general audience.
 
 ### Rewrite for Different Tone
 ```javascript
 /word-document-process
-task: "rewrite"
-custom_instruction: "Make this document more formal and professional"
-document_source: "uploaded_file:casual-proposal.docx"
+task: "Make this document more formal and professional in tone"
+document: casual_proposal.docx
 ```
 Rewrites document content with a specific tone or style.
+
+### Specify Output Collection
+```javascript
+/word-document-process
+task: "Translate to German"
+document: contract.docx
+collection_id: "client_translations_2024"
+```
+Processes the document and saves both the result and log file to a specific collection.
 
 ## What Gets Preserved
 
