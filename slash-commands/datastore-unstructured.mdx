@@ -137,7 +137,7 @@ format: light
 ```
 
 **Parameters:**
-- `limit` - Max results (default: 50, max: 1000)
+- `limit` - Max results (max: 1000, returns all if not specified)
 - `orderedBy` - Sort by createdAt or updatedAt (e.g., "createdAt:desc")
 - `format` - Set to "light" for minimal data (excludes content)
 
@@ -218,7 +218,7 @@ limit: 50
 
 **Parameters:**
 - `q` (required) - Search query
-- `field` - Where to search: "all" (default), "content", "key", "sortField"
+- `field` - Where to search: "all" (default), "content", "key", "sortField". Note: "all" also searches metadata content.
 - `type` - Match type: "fuzzy" (default), "exact", "prefix"
 - `threshold` - Fuzzy sensitivity (0.0 strict to 1.0 lenient, default 0.3)
 - `limit` - Max results (default: 50, max: 1000)
@@ -587,18 +587,29 @@ content: {"url": "https://docs.pinkfish.ai", "title": "Pinkfish Docs"}
    - Counts: COUNT#5 (counts change!)
 ```
 
-**Put mutable data in content instead:**
+**Put mutable data in content or metadata:**
+
+Both `content` and `metadata` fields are fully mutable and can be updated at any time.
 
 ```
 key: TASK#task-001
 sortField: DETAILS
 content: {
   "title": "Design homepage",
-  "status": "in-progress",    ← can be updated
-  "priority": "high",         ← can be updated
-  "assignee": "alice"         ← can be updated
+  "description": "Create the main landing page"
+}
+metadata: {
+  "status": "in-progress",    ← can be updated, filterable
+  "priority": "high",         ← can be updated, filterable
+  "assignee": "alice"         ← can be updated, filterable
 }
 ```
+
+**When to use metadata vs content:**
+- **metadata** - Filterable attributes you'll query by (status, priority, tags, category)
+- **content** - The main data payload (documents, configurations, records)
+
+Metadata fields can be filtered using `metadata.fieldName=value` in queries, making them ideal for attributes you need to search or filter by.
 
 **If you need to change a key or sortField:**
 
@@ -627,14 +638,16 @@ Every item has an auto-generated `itemId` that never changes. Use this when you 
 
 ## Event Triggers
 
-Automatically start workflows when data changes in your unstructured datastore. Triggers are **collection-level only** for unstructured datastores.
+Automatically start workflows when data changes in your unstructured datastore. Triggers can be set at both collection-level (all items) and item-level (specific items).
 
 **Supported events:**
 - **onCreate** - New items added
 - **onEdit** - Existing items modified
 - **onDelete** - Items removed
 
-**Note:** Item-level triggers are not available for unstructured datastores. Use collection-level triggers via the collection management UI.
+**Trigger levels:**
+- **Collection-level** - Set via the collection management UI, fires for all items in the collection
+- **Item-level** - Set via `triggerUrls` parameter when creating/updating items, fires only for that specific item
 
 For complete documentation on setting up triggers, payload formats, rate limiting, and best practices, see the [Event Triggers guide](/essentials/event-triggers).
 
@@ -661,9 +674,9 @@ For complete documentation on setting up triggers, payload formats, rate limitin
 - Use metadata for cross-cutting concerns (tags, timestamps, status)
 
 **Triggers:**
-- Use collection-level for system monitoring
-- Use item-level for specific business logic
-- Set `triggerChanges: false` to avoid recursive triggers
+- Use collection-level triggers for system-wide monitoring
+- Use item-level triggers (via `triggerUrls`) for specific items that need special handling
+- Set `triggerChanges: false` on API calls to prevent recursive triggers
 
 **Performance:**
 - Use batch operations for multiple creates
