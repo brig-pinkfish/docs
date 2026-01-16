@@ -506,6 +506,74 @@ content: {"url": "https://docs.pinkfish.ai", "title": "Pinkfish Docs"}
 - Unpredictable or random-only keys when you need to query by group
 - Storing unrelated items under the same key
 
+---
+
+### Key Immutability
+
+**Keys and sort fields cannot be updated after creation.** This is a fundamental characteristic of NoSQL databases like DynamoDB and applies to Pinkfish datastores as well.
+
+**Why keys are immutable:**
+
+1. **Referential integrity** - Other systems may reference items by their key + sortField. Changing keys would break those references silently.
+
+2. **Query consistency** - Items are indexed and organized by their keys. Allowing key changes would require re-indexing and could cause items to "disappear" from expected query results.
+
+3. **Atomicity** - A key change is really a delete + create operation. Making this explicit prevents accidental data loss and ensures you consciously handle the transition.
+
+4. **Performance** - Immutable keys enable efficient indexing and caching strategies that would be impossible with mutable keys.
+
+**What this means for your design:**
+
+```
+✅ Use immutable values in keys:
+   - IDs: USER#user-789, ORDER#ord-12345
+   - Timestamps: 2024-01-15T10:30:00Z
+   - Email addresses (if stable): jane@company.com
+
+❌ Don't put mutable data in keys:
+   - Status: STATUS#pending (status changes!)
+   - Priority: PRIORITY#high (priority changes!)
+   - Counts: COUNT#5 (counts change!)
+```
+
+**Put mutable data in content instead:**
+
+```
+key: TASK#task-001
+sortField: DETAILS
+content: {
+  "title": "Design homepage",
+  "status": "in-progress",    ← can be updated
+  "priority": "high",         ← can be updated
+  "assignee": "alice"         ← can be updated
+}
+```
+
+**If you need to change a key or sortField:**
+
+The standard pattern is delete + create:
+
+```
+1. Read the existing item (by itemId or key+sortField)
+2. Create a new item with the desired key/sortField
+3. Delete the original item
+```
+
+This makes the operation explicit and allows you to handle any side effects (updating references, triggering notifications, etc.).
+
+**The itemId is always stable:**
+
+Every item has an auto-generated `itemId` that never changes. Use this when you need a permanent reference to an item regardless of its key or sortField:
+
+```json
+{
+  "itemId": "abc123def456",  ← permanent, never changes
+  "key": "USER#user-789",
+  "sortField": "PROFILE",
+  "content": {...}
+}
+```
+
 ## Event Triggers
 
 Automatically start workflows when data changes in your unstructured datastore. Triggers are **collection-level only** for unstructured datastores.
