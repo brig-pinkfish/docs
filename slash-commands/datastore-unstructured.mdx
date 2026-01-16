@@ -241,42 +241,270 @@ limit: 50
 
 ## Key and Sort Field Patterns
 
-The combination of `key` + `sortField` must be unique within a collection.
+The `key` and `sortField` combination in Pinkfish datastores works similarly to partition keys (PK) and sort keys (SK) in AWS DynamoDB. Understanding these patterns unlocks powerful data organization and query capabilities.
 
-### Pattern 1: Single Key (Auto-generated Sort)
+### How It Works
+
+| Concept | Pinkfish | DynamoDB Equivalent |
+|---------|----------|---------------------|
+| Primary grouping | `key` | Partition Key (PK) |
+| Secondary sorting/uniqueness | `sortField` | Sort Key (SK) |
+| Unique identifier | `key` + `sortField` | Primary Key |
+
+**Key rules:**
+- The `key` + `sortField` combination must be unique within a collection
+- Items with the same `key` are grouped together and can be queried as a set
+- `sortField` determines ordering within a key group
+- If `sortField` is omitted, one is auto-generated (timestamp-based)
+
+### Access Patterns
+
+You can retrieve items in three ways:
+
+1. **By itemId** (direct lookup, fastest)
+   ```
+   /selected-datastore get item with itemId: abc123def456
+   ```
+
+2. **By key** (returns ALL items with that key)
+   ```
+   /selected-datastore get items with key: USER#12345
+   ```
+
+3. **By key + sortField** (returns specific item)
+   ```
+   /selected-datastore get item with:
+   key: USER#12345
+   sortField: ORDER#2024-01-15
+   ```
+
+---
+
+### Pattern 1: Hierarchical Entity Keys
+
+Use compound keys with delimiters (`#` is common) to represent entity relationships:
 
 ```
-key: meeting-notes
+key: ORG#acme-corp
+sortField: USER#john.doe@acme.com
 ```
 
-Good for: Quick storage when uniqueness isn't critical
-
-### Pattern 2: Key + Date Sort
-
 ```
-key: meeting-notes
-sortField: 2024-03-15
+key: ORG#acme-corp
+sortField: USER#jane.smith@acme.com
 ```
 
-Good for: Time-series data, daily logs
-
-### Pattern 3: Key + Email Sort
-
 ```
-key: employee-reviews
-sortField: jane.smith@company.com
+key: ORG#acme-corp
+sortField: DEPT#engineering
 ```
 
-Good for: Per-user data
-
-### Pattern 4: Key + Category Sort
-
+**Query all items for an organization:**
 ```
-key: inventory
-sortField: electronics-001
+/selected-datastore get items with key: ORG#acme-corp
 ```
 
-Good for: Categorized items with unique IDs
+This returns all users, departments, and other entities under that organization.
+
+**Use cases:** Multi-tenant applications, organizational hierarchies, project structures
+
+---
+
+### Pattern 2: One-to-Many Relationships
+
+Store parent and child entities together by sharing a key:
+
+```
+key: CUSTOMER#cust-789
+sortField: PROFILE
+content: {"name": "Alice Johnson", "email": "alice@example.com"}
+```
+
+```
+key: CUSTOMER#cust-789
+sortField: ORDER#2024-001
+content: {"total": 150.00, "status": "shipped"}
+```
+
+```
+key: CUSTOMER#cust-789
+sortField: ORDER#2024-002
+content: {"total": 89.99, "status": "pending"}
+```
+
+```
+key: CUSTOMER#cust-789
+sortField: ADDRESS#shipping
+content: {"street": "123 Main St", "city": "Seattle"}
+```
+
+**Query all customer data:**
+```
+/selected-datastore get items with key: CUSTOMER#cust-789
+```
+
+Returns profile, all orders, addresses - everything related to that customer.
+
+**Use cases:** Customer records with orders, users with preferences, products with reviews
+
+---
+
+### Pattern 3: Time-Series Data
+
+Use timestamps or date prefixes in sortField for chronological ordering:
+
+```
+key: LOGS#api-server
+sortField: 2024-01-15T10:30:00Z
+content: {"level": "info", "message": "Server started"}
+```
+
+```
+key: LOGS#api-server
+sortField: 2024-01-15T10:31:15Z
+content: {"level": "warn", "message": "High memory usage"}
+```
+
+```
+key: LOGS#api-server
+sortField: 2024-01-15T10:32:00Z
+content: {"level": "error", "message": "Connection timeout"}
+```
+
+**Query all logs for a service:**
+```
+/selected-datastore get items with key: LOGS#api-server
+```
+
+Items return sorted by timestamp (sortField ordering).
+
+**Use cases:** Event logs, audit trails, activity feeds, metrics history
+
+---
+
+### Pattern 4: Type Prefixes for Mixed Entities
+
+Prefix sortField with entity type to organize different record types under one key:
+
+```
+key: PROJECT#proj-123
+sortField: META#info
+content: {"name": "Website Redesign", "status": "active"}
+```
+
+```
+key: PROJECT#proj-123
+sortField: TASK#task-001
+content: {"title": "Create wireframes", "assignee": "alice"}
+```
+
+```
+key: PROJECT#proj-123
+sortField: TASK#task-002
+content: {"title": "Design mockups", "assignee": "bob"}
+```
+
+```
+key: PROJECT#proj-123
+sortField: COMMENT#2024-01-15T10:00:00Z
+content: {"author": "alice", "text": "Looking good!"}
+```
+
+**Query entire project:**
+```
+/selected-datastore get items with key: PROJECT#proj-123
+```
+
+**Use cases:** Project management, document systems, content with metadata
+
+---
+
+### Pattern 5: Composite Sort Keys
+
+Combine multiple attributes in sortField for rich querying:
+
+```
+key: INVENTORY
+sortField: CATEGORY#electronics#SKU#12345
+content: {"name": "Wireless Mouse", "price": 29.99, "stock": 150}
+```
+
+```
+key: INVENTORY
+sortField: CATEGORY#electronics#SKU#12346
+content: {"name": "USB Keyboard", "price": 49.99, "stock": 75}
+```
+
+```
+key: INVENTORY
+sortField: CATEGORY#clothing#SKU#20001
+content: {"name": "T-Shirt", "price": 19.99, "stock": 200}
+```
+
+This enables future filtering by category while keeping all inventory queryable together.
+
+**Use cases:** Product catalogs, file systems, categorized content
+
+---
+
+### Pattern 6: User-Scoped Data
+
+Isolate data per user while maintaining consistent structure:
+
+```
+key: USER#user-456#SETTINGS
+sortField: preferences
+content: {"theme": "dark", "language": "en", "notifications": true}
+```
+
+```
+key: USER#user-456#BOOKMARKS
+sortField: 2024-01-15T09:00:00Z
+content: {"url": "https://example.com", "title": "Example Site"}
+```
+
+```
+key: USER#user-456#BOOKMARKS
+sortField: 2024-01-16T14:30:00Z
+content: {"url": "https://docs.pinkfish.ai", "title": "Pinkfish Docs"}
+```
+
+**Query user settings:**
+```
+/selected-datastore get items with key: USER#user-456#SETTINGS
+```
+
+**Query user bookmarks:**
+```
+/selected-datastore get items with key: USER#user-456#BOOKMARKS
+```
+
+**Use cases:** User preferences, personal data, per-user collections
+
+---
+
+### Design Best Practices
+
+**Choosing your key:**
+- Group items you'll query together under the same key
+- Include entity type prefixes for clarity (`USER#`, `ORDER#`, `ORG#`)
+- Consider your most common access pattern
+
+**Choosing your sortField:**
+- Use for uniqueness within a key group
+- Include timestamps for chronological ordering
+- Use type prefixes to organize mixed entity types
+- Make it meaningful - you'll see it when debugging
+
+**Common delimiters:**
+- `#` - Most common (e.g., `USER#123#ORDER#456`)
+- `_` - Alternative (e.g., `user_123_order_456`)
+- `/` - Path-like (e.g., `users/123/orders/456`)
+
+**Avoid:**
+- Overly long keys (keep under 256 characters)
+- Unpredictable or random-only keys when you need to query by group
+- Storing unrelated items under the same key
 
 ## Event Triggers
 
