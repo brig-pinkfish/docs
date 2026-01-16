@@ -239,6 +239,57 @@ limit: 50
 }
 ```
 
+### Filtering by Metadata
+
+You can filter search results (and list queries) by metadata fields using dot notation in query parameters. This is useful for narrowing results by tags, categories, status, or any custom tracking attributes you've stored in metadata.
+
+**Filter by metadata field:**
+```
+/selected-datastore search with:
+q: customer feedback
+metadata.status: active
+metadata.category: support
+```
+
+**API equivalent:**
+```
+GET /memory/items?collectionId=xxx&metadata.status=active&metadata.category=support
+```
+
+**How it works:**
+- Metadata filters use exact matching (not fuzzy)
+- Multiple metadata filters are combined with AND logic
+- Filters are applied before text search, reducing the search space
+- Works with both search and list operations
+
+**Example use cases:**
+
+Filter logs by service:
+```
+/selected-datastore search with:
+q: connection error
+metadata.service: api-gateway
+metadata.environment: production
+```
+
+Filter by custom tags:
+```
+/selected-datastore list items with:
+metadata.priority: high
+metadata.assignee: alice
+limit: 100
+```
+
+**Best practice:** Use metadata for filterable attributes that you'll query by, such as:
+- `status` - active, archived, pending
+- `category` - support, sales, engineering
+- `priority` - high, medium, low
+- `tags` - comma-separated or individual fields
+- `environment` - production, staging, development
+- `version` - 1.0, 2.0
+
+This keeps your keys clean for primary access patterns while enabling flexible filtering through metadata.
+
 ## Key and Sort Field Patterns
 
 The `key` and `sortField` combination in Pinkfish datastores works similarly to partition keys (PK) and sort keys (SK) in AWS DynamoDB. Understanding these patterns unlocks powerful data organization and query capabilities.
