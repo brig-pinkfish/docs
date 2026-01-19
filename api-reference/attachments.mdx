@@ -1,0 +1,166 @@
+---
+title: "File Attachments"
+description: "How to send file attachments with API triggers"
+---
+
+## File Attachments
+
+API triggers support file attachments using `multipart/form-data`. Attachments are stored in S3 and made available to your workflow via signed URLs in the inputs.
+
+## Supported Content Types
+
+API triggers support the following content types:
+
+- **application/json**: JSON payload with structured data
+- **application/x-www-form-urlencoded**: Form-encoded data (key-value pairs)
+- **multipart/form-data**: Form data with file attachments (API triggers only)
+
+**Note**: Webhook triggers support JSON and form-encoded data only. File attachments are not supported for webhook triggers.
+
+## Limits
+
+- Maximum 25MB per file
+- Maximum 100MB total across all attachments
+- Maximum 20 files per request
+- Executable files and scripts are blocked for security
+
+## Example Requests
+
+### Single File Attachment
+
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--form 'description="Process this document"' \
+--form 'file=@"/path/to/document.pdf"'
+```
+
+### Multiple File Attachments
+
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--form 'action="process"' \
+--form 'files=@"/path/to/file1.pdf"' \
+--form 'files=@"/path/to/file2.jpg"' \
+--form 'metadata="{\"priority\": \"high\"}"'
+```
+
+### Using JavaScript/Node.js
+
+```javascript
+const FormData = require('form-data');
+const fs = require('fs');
+
+const form = new FormData();
+form.append('description', 'Process this document');
+form.append('file', fs.createReadStream('/path/to/document.pdf'));
+
+const response = await fetch('https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID', {
+  method: 'POST',
+  headers: {
+    'X-API-KEY': 'YOUR_API_KEY',
+    ...form.getHeaders()
+  },
+  body: form
+});
+```
+
+### Using Python
+
+```python
+import requests
+
+url = 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID'
+headers = {'X-API-KEY': 'YOUR_API_KEY'}
+
+files = [
+    ('file', ('document.pdf', open('/path/to/document.pdf', 'rb'), 'application/pdf'))
+]
+data = {'description': 'Process this document'}
+
+response = requests.post(url, headers=headers, files=files, data=data)
+```
+
+## Accessing Attachments in Your Workflow
+
+Attachments are available in your workflow inputs as an array. Each attachment includes:
+
+- `filename`: The sanitized filename (path components removed, special characters sanitized)
+- `contentType`: The MIME type of the file
+- `size`: File size in bytes
+- `url`: A signed URL to download the file from S3 (valid for 24 hours)
+
+### Example Inputs Structure
+
+```json
+{
+  "description": "Process this document",
+  "attachments": [
+    {
+      "filename": "document.pdf",
+      "contentType": "application/pdf",
+      "size": 245678,
+      "url": "https://s3.amazonaws.com/..."
+    }
+  ]
+}
+```
+
+### Using Attachments in Code Steps
+
+You can access attachments in your workflow code:
+
+```javascript
+// Get the first attachment URL
+const attachmentUrl = @workflow.inputs.attachments[0].url;
+
+// Download the file
+const response = await fetch(attachmentUrl);
+const fileData = await response.arrayBuffer();
+
+// Process the file
+// ...
+```
+
+### Using Attachments with Slash Commands
+
+You can pass attachment URLs directly to slash commands that accept file URLs:
+
+```javascript
+// Pass attachment URL to PDF processing
+const pdfUrl = @workflow.inputs.attachments[0].url;
+// Use /pdf-to-text with the URL
+```
+
+## Security Considerations
+
+- Executable files (`.exe`, `.sh`, `.bat`, etc.) are automatically blocked
+- Filenames are sanitized to prevent path traversal attacks
+- Files are stored in isolated S3 buckets per run
+- Signed URLs expire after 24 hours
+- File size limits prevent abuse
+
+## Troubleshooting
+
+### "Too many attachments" Error
+
+You've exceeded the 20 file limit. Split your request into multiple API calls.
+
+### "File too large" Error
+
+Individual files cannot exceed 25MB. Compress or split large files before uploading.
+
+### "Total attachment size exceeds limit" Error
+
+The combined size of all attachments exceeds 100MB. Reduce the number or size of files.
+
+### "Blocked file type" Error
+
+The file type you're trying to upload is blocked for security reasons. Executable files and scripts are not allowed.
+
+### Attachments Not Appearing in Workflow
+
+- Ensure you're using `multipart/form-data` content type
+- Check that you're using an API trigger (not a webhook trigger)
+- Verify the files were uploaded successfully (check the run inputs in the Runs Monitor)
