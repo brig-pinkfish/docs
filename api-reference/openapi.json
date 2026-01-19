@@ -41,6 +41,15 @@
         ],
         "requestBody": {
           "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "example": {
+                "user_request": "what is the capital of France"
+              }
+            },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
@@ -51,6 +60,23 @@
               "example": {
                 "TESTKEY": "TESTVAR"
               }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "Optional form field"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "File attachment (up to 25MB per file, 100MB total, max 20 files)"
+                  }
+                }
+              },
+              "description": "Multipart form data with file attachments. Supports multiple files. Files are stored in S3 and made available to workflows via signed URLs in the inputs. Note: File attachments are only supported for API triggers, not webhook triggers."
             }
           }
         },

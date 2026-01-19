@@ -77,7 +77,17 @@ You can generate API keys in two ways:
 
 ## Triggering Workflows
 
-Workflows are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests), as form-encoded data, or as a json payload. Set up your trigger(s) in the Workflow editor (requires first publishing a version of your workflow)
+Workflows are executed by calling their associated triggers. Each trigger has a unique endpoint and may accept parameters either as query parameters (for GET requests), as form-encoded data, as a json payload, or as multipart/form-data (with file attachments). Set up your trigger(s) in the Workflow editor (requires first publishing a version of your workflow)
+
+### Supported Content Types
+
+API triggers support the following content types:
+
+- **application/json**: JSON payload with structured data
+- **application/x-www-form-urlencoded**: Form-encoded data (key-value pairs)
+- **multipart/form-data**: Form data with file attachments (API triggers only)
+
+**Note**: Webhook triggers support JSON and form-encoded data only. File attachments are not supported for webhook triggers.
 
 ## Example Requests
 
@@ -102,6 +112,63 @@ curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID'
     "user_request": "what is the capital of France"
 }'
 ```
+
+### Request with File Attachments (Multipart)
+
+API triggers support file attachments using `multipart/form-data`. Attachments are stored in S3 and made available to your workflow via signed URLs in the inputs.
+
+**Limits:**
+- Maximum 25MB per file
+- Maximum 100MB total across all attachments
+- Maximum 20 files per request
+- Executable files and scripts are blocked for security
+
+**Example with single file:**
+
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--form 'description="Process this document"' \
+--form 'file=@"/path/to/document.pdf"'
+```
+
+**Example with multiple files:**
+
+```
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+--header 'X-API-KEY: YOUR_API_KEY' \
+--form 'action="process"' \
+--form 'files=@"/path/to/file1.pdf"' \
+--form 'files=@"/path/to/file2.jpg"' \
+--form 'metadata="{\"priority\": \"high\"}"'
+```
+
+**Accessing attachments in your workflow:**
+
+Attachments are available in your workflow inputs as an array. Each attachment includes:
+
+- `filename`: The sanitized filename (path components removed, special characters sanitized)
+- `contentType`: The MIME type of the file
+- `size`: File size in bytes
+- `url`: A signed URL to download the file from S3 (valid for 24 hours)
+
+Example inputs structure:
+
+```json
+{
+  "description": "Process this document",
+  "attachments": [
+    {
+      "filename": "document.pdf",
+      "contentType": "application/pdf",
+      "size": 245678,
+      "url": "https://s3.amazonaws.com/..."
+    }
+  ]
+}
+```
+
+**Note**: File attachments are only supported for API triggers (not webhook triggers). Webhook triggers continue to support JSON and form-encoded data only.
 
 ## Example Responses
 
@@ -192,6 +259,8 @@ Response Body
 
 Webhook triggers provide an alternative way to execute workflows when working with third-party services that cannot set custom headers (like Slack, Discord, Linear, Zoom, etc.).
 
+**Note**: Webhook triggers support JSON and form-encoded data only. File attachments (multipart/form-data) are not supported for webhook triggers. Use API triggers if you need to send file attachments.
+
 ### Webhook URL Format
 
 ```
@@ -204,6 +273,8 @@ https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/triggers/{triggerId}
 | -------------- | ----------------------------- | -------------------------------------------- |
 | Authentication | API key in `X-API-KEY` header | API key embedded in URL path                 |
 | URL Format     | `/ext/triggers/{triggerId}`   | `/ext/webhook/{apiKey}/triggers/{triggerId}` |
+| Content Types  | JSON, form-encoded, multipart | JSON, form-encoded only                      |
+| File Attachments | ✅ Supported (multipart)      | ❌ Not supported                             |
 | Use Case       | Server-to-server integrations | Third-party services with webhook support    |
 | Security       | More secure (key in headers)  | Less secure (key visible in URL)             |
 
