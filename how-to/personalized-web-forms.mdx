@@ -29,7 +29,6 @@ When you host an HTML form in Pinkfish file storage, you can generate personaliz
 
 - A **file storage collection** to host the HTML form
 - A **datastore collection** to store customer responses
-- An **agent** (Chat Mode or Workflow) to generate signed links
 
 ## Step 1: Create the HTML Form
 
@@ -64,9 +63,37 @@ Phone, Address, Notes]
 Replace `[YOUR_DATASTORE_COLLECTION_ID]` and `[YOUR_FILESTORAGE_COLLECTION_ID]` with your actual collection IDs. You can find these in your Pinkfish dashboard under Data Collections.
 </Tip>
 
-## Step 2: Set Up Your Agent to Generate Signed Links
+## Step 2: Generate Signed Links with Customer IDs
 
-Add these instructions to your agent's system prompt so it knows how to generate personalized links:
+You can generate personalized signed links from either an **agent in Chat Mode** or a **workflow step**. Both approaches use the same filestorage skill.
+
+### Option A: Generate from Chat Mode
+
+Enter a prompt like this in Chat Mode:
+
+```
+Get me a signed link for the file "customer-form.html" in my file storage
+collection [YOUR_FILESTORAGE_COLLECTION_ID].
+
+Set the link to expire in 7 days, and include a query parameter called
+"customerId" with the value "JohnSmith-90210".
+```
+
+The agent will return a signed URL with the customer ID embedded in it.
+
+### Option B: Generate from a Workflow
+
+In a workflow step, use the filestorage skill to get a signed URL:
+
+```
+Get a signed URL for "customer-form.html" in collection [YOUR_FILESTORAGE_COLLECTION_ID]
+with file_links_expire_in_days set to 7 and query_params set to
+{"customerId": "JohnSmith-90210"}
+```
+
+### Option C: Add to Your Agent's System Prompt
+
+If you want your agent to generate links on demand without repeating the full instructions each time, add this to your agent's system prompt:
 
 ```
 When I ask you to generate a form link for a customer:
@@ -82,16 +109,16 @@ When I ask you to generate a form link for a customer:
 3. Return the signed URL so I can email it to the customer
 ```
 
-## Step 3: Generate and Share Links
-
-Once your agent is configured, you can say something like:
+Then you can simply say:
 
 > "Generate a form link for John Smith, zip 90210"
 
-The agent will return a signed URL like:
+### The Result
+
+The agent or workflow will return a signed URL like:
 
 ```
-https://.../files/{collectionId}/customer-form.html?signed-key=xxx&customerId=JohnSmith-90210
+.../files/{collectionId}/customer-form.html?signed-key=xxx&customerId=JohnSmith-90210
 ```
 
 Email this link to your customer. They can open it, fill out the form, and come back later to continue where they left off.
@@ -109,5 +136,4 @@ Email this link to your customer. They can open it, fill out the form, and come 
 |-----------|---------|
 | HTML form page | Hosted in **file storage** — reads customer ID from URL, loads/saves data |
 | Customer responses | Stored in a **datastore** collection, keyed by customer ID |
-| Signed link with query params | Generated via filestorage skill with `query_params` containing the customer ID |
-| Agent system prompt | Teaches the agent how to generate personalized signed links on request |
+| Signed link with query params | Generated via filestorage skill (from Chat Mode or a Workflow) with `query_params` containing the customer ID |
