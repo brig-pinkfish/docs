@@ -27,6 +27,7 @@ description: "Learn how to use the filestorage slash command for file storage op
 - `get_file_contents` - Set to true to retrieve file content along with metadata
 - `format` - Set to "light" for minimal file listing
 - `replaceExisting` - Whether to replace existing files with same filename (defaults to "true"; if "false", adds timestamp to filename)
+- `query_params` - JSON-encoded key-value pairs to include as query parameters in the signed URL (see [Query Parameters in Signed URLs](#query-parameters-in-signed-urls))
 - `triggerUrls` - Array of trigger objects that fire when the file changes (see [Triggers](#triggers) section)
 
 ### File Link Expiration
@@ -37,6 +38,28 @@ description: "Learn how to use the filestorage slash command for file storage op
 - **Default**: 1 day if not specified
 - **Maximum**: 7 days total
 - **Public files**: Use days="never" (minutes ignored)
+
+### Query Parameters in Signed URLs
+
+You can include custom query parameters in signed URLs so that HTML files can read contextual data at load time. This is useful when serving HTML dashboards or web apps from file storage that need to know which data to fetch.
+
+**Parameter:** `query_params` — a JSON-encoded object of key-value string pairs
+
+**Example:** `query_params={"id":"123","mode":"preview"}`
+
+The parameters are appended to the signed URL:
+```
+https://skills.pinkfish.ai/files/{collectionId}/app.html?signed-key=xxx&id=123&mode=preview
+```
+
+JavaScript in the HTML file can read them:
+```javascript
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id'); // "123"
+const mode = params.get('mode'); // "preview"
+```
+
+Supported on: **create**, **get**, and **list** operations.
 
 ### Response Format
 
@@ -177,6 +200,7 @@ Retrieve file metadata or content
 - `filename` (required) - Name of the file
 - `get_file_contents` (optional) - Set to true to retrieve content
 - `file_links_expire_in_days` (optional) - Link expiry for returned signedUrl
+- `query_params` (optional) - JSON key-value pairs to include in the signedUrl (see [Query Parameters in Signed URLs](#query-parameters-in-signed-urls))
 
 **Examples:**
 
@@ -212,6 +236,7 @@ List all files with full or light details
 - `action` (required) - Set to "list"
 - `format` (optional) - Set to "light" for minimal info
 - `file_links_expire_in_days` (optional) - Link expiry for returned signedUrls
+- `query_params` (optional) - JSON key-value pairs to include in the signedUrls (see [Query Parameters in Signed URLs](#query-parameters-in-signed-urls))
 
 **Response includes:**
 
