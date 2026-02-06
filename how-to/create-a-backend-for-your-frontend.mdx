@@ -1,0 +1,126 @@
+---
+title: "Create a Backend for Your Frontend"
+description: "How to build an HTML web page with a backend API using two Pinkfish workflows"
+---
+
+## Why use this?
+
+Pinkfish can generate interactive HTML pages — but a single workflow can only produce output, it can't also listen for incoming requests. To build a web page that submits data (like a form), you need two workflows: one that creates the frontend and one that acts as the backend.
+
+## The Key Concept
+
+In Pinkfish, a workflow produces a result. It can't also be a server that receives requests. So you split the work:
+
+| Workflow | Role | What it does |
+|----------|------|-------------|
+| **Workflow 1** | Frontend | Generates HTML and saves it to file storage |
+| **Workflow 2** | Backend | Receives form submissions via an API trigger and saves data to the datastore |
+
+The frontend HTML submits data to the backend workflow's API endpoint. The backend processes it and returns a response.
+
+## Step-by-Step
+
+### Step 1: Create the Frontend Workflow
+
+Build a workflow that generates your HTML page and saves it to file storage.
+
+Your workflow might have steps that gather data, format content, or do other preparation — but the final step creates the HTML and saves it to a file storage collection. Once saved, you get a URL where anyone can visit the page.
+
+**Example prompt for the HTML step:**
+
+```
+Create an HTML page with a contact form that has fields for:
+Name, Email, Phone, and Message.
+
+Style it with a clean, modern design.
+
+Save it to file storage collection [YOUR_FILESTORAGE_COLLECTION_ID]
+with the filename "contact-form.html"
+```
+
+At this point you have a working web page, but the form doesn't submit anywhere yet.
+
+### Step 2: Create the Backend Workflow
+
+Create a second workflow that will receive and process form submissions.
+
+A good technique: paste your HTML into the prompt and ask Pinkfish to build a backend for it.
+
+**Example prompt:**
+
+```
+Here is my HTML form page:
+
+[paste your HTML here]
+
+Create a backend that will:
+1. Accept all of these form fields as input
+2. Save them to the datastore collection [YOUR_DATASTORE_COLLECTION_ID]
+3. Return a success message
+```
+
+Pinkfish will generate a script that receives the form data and writes it to your datastore.
+
+### Step 3: Publish the Backend and Create an API Trigger
+
+1. **Publish** your backend workflow
+2. **Create an API trigger** on the published workflow — this gives you an endpoint URL that your HTML page can submit data to
+3. **Copy the API trigger URL**
+
+<Tip>
+The API trigger URL includes an embedded API key, so your frontend can call it directly without additional authentication.
+</Tip>
+
+### Step 4: Connect the Frontend to the Backend
+
+Go back to your frontend workflow and update the HTML to submit to your backend endpoint.
+
+**Example prompt:**
+
+```
+Update my HTML form to submit the form data to this endpoint:
+[paste your API trigger URL here]
+
+On success, display a "Thank you! Your submission has been received." message.
+On error, display a friendly error message.
+```
+
+Run the frontend workflow again to regenerate the HTML with the backend connection.
+
+### Step 5: Test It
+
+1. Visit your file storage URL to see the page
+2. Fill out the form and submit
+3. Check your datastore collection to verify the data was saved
+
+## The Complete Picture
+
+```
+┌─────────────────────┐
+│  Workflow 1          │
+│  (Frontend)          │
+│                      │
+│  Generates HTML ──────────► File Storage ──► Web Page URL
+│                      │
+└─────────────────────┘
+
+┌─────────────────────┐
+│  Workflow 2          │
+│  (Backend)           │
+│                      │
+│  API Trigger ◄────────────── HTML Form Submit
+│       │              │
+│       ▼              │
+│  Process Data ───────────► Datastore
+│       │              │
+│       ▼              │
+│  Return Response     │
+└─────────────────────┘
+```
+
+## Tips
+
+- **Build the frontend first**, then use the generated HTML to inform the backend workflow
+- **The backend can do more than save data** — it can look up existing records, send emails, trigger other workflows, or return data for the page to display
+- **Multiple endpoints**: If your page needs to both read and write data, create separate backend workflows for each (e.g. one to fetch existing data, one to save new data)
+- **Signed links with query params**: If you need to pass context to the page (like a customer ID), see [Personalized Web Forms with Signed Links](/how-to/personalized-web-forms) for how to embed parameters in the URL
