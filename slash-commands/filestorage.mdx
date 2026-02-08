@@ -47,9 +47,10 @@ You can include custom query parameters in signed URLs so that HTML files can re
 
 **Example:** `query_params={"id":"123","mode":"preview"}`
 
-The parameters are appended to the signed URL:
+The parameters are appended to both the signed URL and the short URL:
 ```
-https://skills.pinkfish.ai/files/{collectionId}/app.html?signed-key=xxx&id=123&mode=preview
+file_url:  https://skills.pinkfish.ai/files/{collectionId}/app.html?signed-key=xxx&id=123&mode=preview
+short_url: https://skills.pinkfish.ai/files/s/aBcD1234xY?id=123&mode=preview
 ```
 
 JavaScript in the HTML file can read them:
@@ -68,9 +69,12 @@ File creation/update:
 ```json
 {
   "message": "File created successfully",
-  "file_url": "URL HERE"
+  "file_url": "https://skills.pinkfish.ai/files/{collectionId}/file.txt?signed-key=...",
+  "short_url": "https://skills.pinkfish.ai/files/s/aBcD1234xY"
 }
 ```
+
+The `short_url` is a compact alias that serves the same file as `file_url`. It is easier to share and more reliable for LLMs to reproduce. Short URLs have the same expiration as the signed URL they were created alongside. Public files (expiry set to "never") do not include a short URL since they already have clean URLs.
 
 File metadata (full details):
 
@@ -82,8 +86,9 @@ File metadata (full details):
   "createdAt": "2024-11-17T18:04:22.197Z",
   "updatedAt": "2024-11-17T18:09:46.455Z",
   "metadata": "file metadata",
-  "isPublic": true,
+  "isPublic": false,
   "signedUrl": "https://...",
+  "shortUrl": "https://skills.pinkfish.ai/files/s/aBcD1234xY",
   "accessList": [
     {
       "action": "create",
@@ -240,7 +245,7 @@ List all files with full or light details
 
 **Response includes:**
 
-- **Full details**: All metadata, signedUrl, and accessList
+- **Full details**: All metadata, signedUrl, shortUrl, and accessList
 - **Light format**: File ID, filename, filepath, type, mime_type, file_size, isPublic status, collectionId, timestamps, and metadata object
 
 **Examples:**
@@ -441,3 +446,4 @@ For complete documentation on setting up triggers, payload formats, rate limitin
 - **Race conditions**: There is no race condition prevention in place. If you have multiple automations writing to the same file, you will experience unexpected results
 - **File overwriting**: By default, creating a file with an existing filename will overwrite the existing file completely. Use `replaceExisting: "false"` to add a timestamp to the filename instead
 - **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting. Access history is maintained in the `accessList` with entries including action performed, provider ID, and timestamp
+- **Short URLs**: Non-public files also return a `short_url` — a compact alias (e.g., `https://skills.pinkfish.ai/files/s/aBcD1234xY`) that serves the same content as the signed URL. Short URLs share the same expiration as the signed URL and are easier to share and reproduce
