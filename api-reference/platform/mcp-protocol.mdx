@@ -11,10 +11,10 @@ Requires a runtime token. See [Authentication](/api-reference/platform/authentic
 
 ## Request Flow
 
-| You know... | Use |
-|-------------|-----|
-| Tool and server | `tools/call` on the server path (e.g., `/web-search`, `/gmail`) |
-| Task, not tool | [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → call recommended tool |
+| You know...     | Use                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Tool and server | `tools/call` on the server path (e.g., `/web-search`, `/gmail`)                                                        |
+| Task, not tool  | [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → call recommended tool |
 
 ## Request Format
 
@@ -38,20 +38,20 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
 
 **Required headers:**
 
-| Header | Value |
-|--------|-------|
+| Header          | Value                    |
+| --------------- | ------------------------ |
 | `Authorization` | `Bearer <runtime_token>` |
-| `Content-Type` | `application/json` |
-| `Accept` | `application/json` |
+| `Content-Type`  | `application/json`       |
+| `Accept`        | `application/json`       |
 
 **JSON-RPC fields:**
 
-| Field | Description |
-|-------|-------------|
-| `jsonrpc` | Always `"2.0"` |
-| `method` | The JSON-RPC method — typically `"tools/call"` or `"tools/list"` |
-| `params` | Method parameters — for `tools/call`, includes `name` (tool name) and `arguments` (tool inputs) |
-| `id` | Request identifier (any integer) |
+| Field     | Description                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------- |
+| `jsonrpc` | Always `"2.0"`                                                                                  |
+| `method`  | The JSON-RPC method — typically `"tools/call"` or `"tools/list"`                                |
+| `params`  | Method parameters — for `tools/call`, includes `name` (tool name) and `arguments` (tool inputs) |
+| `id`      | Request identifier (any integer)                                                                |
 
 ## List Servers
 
@@ -77,13 +77,13 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/mcp" \
 
 Each server entry includes:
 
-| Field | Description |
-|-------|-------------|
-| `name` | Server identifier (e.g., `gmail`, `slack`, `datastore-structured`) |
-| `path` | URL path to call this server (e.g., `/gmail`) |
-| `description` | What the server does |
-| `embedded` | `true` = built-in platform service, `false` = external application requiring a connection |
-| `tools` | Array of tools provided by this server |
+| Field         | Description                                                                               |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `name`        | Server identifier (e.g., `gmail`, `slack`, `datastore-structured`)                        |
+| `path`        | URL path to call this server (e.g., `/gmail`)                                             |
+| `description` | What the server does                                                                      |
+| `embedded`    | `true` = built-in platform service, `false` = external application requiring a connection |
+| `tools`       | Array of tools provided by this server                                                    |
 
 ## List Tools
 
@@ -115,7 +115,10 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
         "inputSchema": {
           "type": "object",
           "properties": {
-            "PCID": { "type": "string", "description": "PinkConnect connection ID" },
+            "PCID": {
+              "type": "string",
+              "description": "PinkConnect connection ID"
+            },
             "query": { "type": "string", "description": "Gmail search query" }
           },
           "required": ["PCID", "query"]
@@ -199,24 +202,25 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 
 ### Success
 
-| Format | Field | Use |
-|--------|-------|-----|
-| **Structured** (preferred) | `result.structuredContent` | Type-safe object. No parsing. |
-| **Legacy** | `result.content[0].text` | JSON string. Parse with `JSON.parse()`. |
+| Format                     | Field                      | Use                                     |
+| -------------------------- | -------------------------- | --------------------------------------- |
+| **Structured** (preferred) | `result.structuredContent` | Type-safe object. No parsing.           |
+| **Legacy**                 | `result.content[0].text`   | JSON string. Parse with `JSON.parse()`. |
 
 Prefer `structuredContent` when present; fall back to `content[0].text` for compatibility.
 
 ```javascript
-const data = result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
+const data =
+  result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
 ```
 
 **Optional `X-MCP-Mode` header:** `optimized` (structured only) or `legacy` (legacy only). Omit for both.
 
 ### Errors
 
-| Code | Meaning |
-|------|---------|
+| Code     | Meaning                                                    |
+| -------- | ---------------------------------------------------------- |
 | `-32000` | Server error — validation, timeout, unsupported media type |
-| `-32603` | Internal error |
+| `-32603` | Internal error                                             |
 
 The `message` field contains a human-readable description. Common `-32000` causes: missing `Accept: application/json`, missing `Content-Type: application/json`, or request body too large.

@@ -33,25 +33,25 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
 
 Code runs in a **Node.js VM sandbox** with the following built-in helpers:
 
-| Helper | Description |
-|--------|-------------|
-| `callTool(serverPath, toolName, args)` | Call any MCP tool via JSON-RPC. This is the primary way to chain tool calls. |
-| `readArtifact(identifier)` | Read artifacts by ID, filename, or URL |
-| `createArtifact(filename, content, fileType)` | Create and store artifacts (files) |
+| Helper                                        | Description                                                                  |
+| --------------------------------------------- | ---------------------------------------------------------------------------- |
+| `callTool(serverPath, toolName, args)`        | Call any MCP tool via JSON-RPC. This is the primary way to chain tool calls. |
+| `readArtifact(identifier)`                    | Read artifacts by ID, filename, or URL                                       |
+| `createArtifact(filename, content, fileType)` | Create and store artifacts (files)                                           |
 
 ## Example: Chaining Multiple Tools
 
 ```javascript
 // Discover capabilities, then call the tool
 const caps = await callTool("/pinkfish-sidekick", "capabilities_discover", {
-  request: "search gmail"
+  request: "search gmail",
 });
 
-const gmailPCID = caps.connections.find(c => c.application === "gmail")?.id;
+const gmailPCID = caps.connections.find((c) => c.application === "gmail")?.id;
 
 const emails = await callTool("/gmail", "gmail_search_emails", {
   PCID: gmailPCID,
-  query: "is:unread"
+  query: "is:unread",
 });
 
 return emails;
@@ -62,13 +62,13 @@ return emails;
 ```javascript
 // Step 1: Search the web
 const searchResults = await callTool("/web-search", "search_googlesearch", {
-  query: "latest AI developments 2026"
+  query: "latest AI developments 2026",
 });
 
 // Step 2: Summarize with an LLM
 const summary = await callTool("/embedded-groq", "embedded-groq_generate", {
   prompt: JSON.stringify(searchResults),
-  systemPrompt: "Summarize these search results into 5 bullet points."
+  systemPrompt: "Summarize these search results into 5 bullet points.",
 });
 
 return summary;
@@ -80,28 +80,32 @@ return summary;
 const data = { report: "Monthly summary", items: [1, 2, 3] };
 
 // Create an artifact that can be retrieved later
-await createArtifact("report.json", JSON.stringify(data, null, 2), "application/json");
+await createArtifact(
+  "report.json",
+  JSON.stringify(data, null, 2),
+  "application/json",
+);
 
 return { status: "Report saved", filename: "report.json" };
 ```
 
 ## Limits
 
-| Constraint | Value |
-|------------|-------|
-| **Timeout** | 10 minutes (max 15 minutes) |
-| **Network** | No direct network access — must use `callTool()` to reach external services |
+| Constraint      | Value                                                                       |
+| --------------- | --------------------------------------------------------------------------- |
+| **Timeout**     | 10 minutes (max 15 minutes)                                                 |
+| **Network**     | No direct network access — must use `callTool()` to reach external services |
 | **File system** | No file system access — use `createArtifact()` / `readArtifact()` for files |
 
 ## When to Use Code Execution
 
-| Use Case | Recommended Approach |
-|----------|---------------------|
-| Single tool call | Call the tool directly via `tools/call` |
-| Chaining multiple tools with logic | **Code execution** |
-| Transforming data between tool calls | **Code execution** |
-| Retry logic or error handling across tools | **Code execution** |
-| Persistent, versioned automation | [Workflows](/api-reference/platform/workflows) |
-| Scheduled or triggered automation | [Workflows](/api-reference/platform/workflows) |
+| Use Case                                   | Recommended Approach                           |
+| ------------------------------------------ | ---------------------------------------------- |
+| Single tool call                           | Call the tool directly via `tools/call`        |
+| Chaining multiple tools with logic         | **Code execution**                             |
+| Transforming data between tool calls       | **Code execution**                             |
+| Retry logic or error handling across tools | **Code execution**                             |
+| Persistent, versioned automation           | [Workflows](/api-reference/platform/workflows) |
+| Scheduled or triggered automation          | [Workflows](/api-reference/platform/workflows) |
 
 For simple, single tool calls, call the tool directly. For persistent automations with triggers, scheduling, and visual editing, use [Workflows](/api-reference/platform/workflows).

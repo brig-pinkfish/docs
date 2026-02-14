@@ -1,0 +1,97 @@
+---
+title: "Discover, Install, and Invoke"
+description: "Find tools at runtime, add them to your agent, and call them"
+---
+
+When you have thousands of tools, you cannot load them all into context. Instead, discover what you need on demand: find tools for a task, fetch their schemas, then call them. This page shows the full flow from discovery to execution.
+
+## The Flow
+
+1. **Discover** — `capabilities_discover` with a task description. Returns matching tools and connections.
+2. **Install** — `capability_details` with tool names. Returns full schemas. For custom agents, map these into your model's function-calling format.
+3. **Invoke** — `tools/call` on the server path with the tool name and arguments.
+
+Both discovery tools live on `/pinkfish-sidekick`.
+
+## Example: Discovery to Execution
+
+```javascript
+const MCP_URL = "https://mcp.app.pinkfish.ai";
+const TOKEN = "<YOUR_PLATFORM_JWT>";
+
+const headers = {
+  Authorization: `Bearer ${TOKEN}`,
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
+
+async function callTool(serverPath, toolName, args) {
+  const resp = await fetch(`${MCP_URL}${serverPath}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "tools/call",
+      params: { name: toolName, arguments: args },
+      id: 1,
+    }),
+  });
+  const result = await resp.json();
+  if (result.error) throw new Error(result.error.message);
+  return result.result;
+}
+
+function parseResult(r) {
+  if (r?.structuredContent) return r.structuredContent;
+  return JSON.parse(r?.content?.[0]?.text ?? "{}");
+}
+
+async function discover(task) {
+  const r = await callTool("/pinkfish-sidekick", "capabilities_discover", {
+    request: task,
+  });
+  return parseResult(r);
+}
+
+async function getDetails(items) {
+  const r = await callTool("/pinkfish-sidekick", "capability_details", {
+    items,
+  });
+  return parseResult(r);
+}
+
+// 1. Discover
+const capabilities = await discover("search the web for AI news");
+const topTool = capabilities.tools?.[0];
+if (!topTool) throw new Error("No tools found");
+
+// 2. Install (optional - get schema when you need parameter details)
+const details = await getDetails([topTool.name]);
+
+// 3. Invoke
+const result = await callTool(`/${topTool.serverName}`, topTool.name, {
+  query: "latest AI news 2026",
+});
+console.log(parseResult(result));
+```
+
+<Note>
+  Runs in Node.js 18+ (native fetch) or browser. For Python, use
+  `requests.post()` with the same JSON-RPC payload structure.
+</Note>
+
+## Key Points
+
+- Embedded tools (web-search, filestorage, AI models) do not require a PCID.
+- Application tools (Gmail, Slack, etc.) require a PCID from discovery or [Connections](/api-reference/platform/connections).
+- Pass tool.name to capability_details, not serverName.
+
+## Custom Agents: Dynamic Tool Installation
+
+For custom AI agents (Claude, OpenAI, etc.) that call the MCP Farm over HTTP: bootstrap with only the two discovery tools. When the user describes a task, discover tools, fetch schemas via capability_details, map to your model's function-calling format, and add them to the agent's tool set. Route the model's tool calls to tools/call on the server path. You install only what the user needs, typically 1 to 5 tools per task, instead of loading hundreds.
+
+## Code Execution as a Shortcut
+
+[Code Execution](/api-reference/platform/code-execution) can run multiple tools at once without installing them. The agent discovers tools, then passes tool calls into a single `code-execution_execute` invocation. The sandbox runs the code and chains tool calls internally. No installation step.
+
+An ideal setup for full agent scope: discover, install, invoke, and code execution, plus a prompt that guides the agent on when to install tools (simple, one-off calls) versus when to use code execution (more complex, multi-step cases).

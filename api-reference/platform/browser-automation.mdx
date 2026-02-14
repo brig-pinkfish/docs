@@ -9,28 +9,28 @@ The `browser-automation` MCP server provides AI-powered browser automation using
 
 ## Why This Replaces RPA
 
-| | Traditional RPA | Pinkfish Browser Automation |
-|---|---|---|
-| **Task definition** | Fragile selectors and recorded click paths | Natural language instructions |
-| **Resilience** | Breaks when UI changes | AI adapts to layout changes — finds elements by intent, not selectors |
-| **Maintenance** | Requires script updates per UI change | Describe what you want, not how to find it |
-| **CAPTCHA / Anti-bot** | Requires separate tooling | Built-in CAPTCHA solving and stealth mode |
-| **Visibility** | Logs and screenshots after the fact | Live visualization via URL |
-| **File output** | Custom export scripting | Automatic capture — extracted data, downloads, and screenshots returned as files |
-| **Infrastructure** | Desktop agents, VM farms | Cloud-hosted browsers — no agents to install |
-| **Coding** | Proprietary scripting languages | Optional Playwright (JavaScript) for precise control |
+|                        | Traditional RPA                            | Pinkfish Browser Automation                                                      |
+| ---------------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
+| **Task definition**    | Fragile selectors and recorded click paths | Natural language instructions                                                    |
+| **Resilience**         | Breaks when UI changes                     | AI adapts to layout changes — finds elements by intent, not selectors            |
+| **Maintenance**        | Requires script updates per UI change      | Describe what you want, not how to find it                                       |
+| **CAPTCHA / Anti-bot** | Requires separate tooling                  | Built-in CAPTCHA solving and stealth mode                                        |
+| **Visibility**         | Logs and screenshots after the fact        | Live visualization via URL                                                       |
+| **File output**        | Custom export scripting                    | Automatic capture — extracted data, downloads, and screenshots returned as files |
+| **Infrastructure**     | Desktop agents, VM farms                   | Cloud-hosted browsers — no agents to install                                     |
+| **Coding**             | Proprietary scripting languages            | Optional Playwright (JavaScript) for precise control                             |
 
 ## Tools
 
 All browser automation tools are on the `/browser-automation` server path.
 
-| Tool | Description |
-|------|-------------|
-| `browser-automation_operator_run` | Start a browser task using **natural language** |
-| `browser-automation_operator_run_continue` | Poll for completion (call every 3-5 seconds) |
-| `browser-automation_playwright_run` | Run **Playwright JavaScript code** in a cloud browser |
-| `browser-automation_playwright_run_continue` | Poll for Playwright completion |
-| `browser-automation_logins_list` | List saved browser login contexts |
+| Tool                                         | Description                                           |
+| -------------------------------------------- | ----------------------------------------------------- |
+| `browser-automation_operator_run`            | Start a browser task using **natural language**       |
+| `browser-automation_operator_run_continue`   | Poll for completion (call every 3-5 seconds)          |
+| `browser-automation_playwright_run`          | Run **Playwright JavaScript code** in a cloud browser |
+| `browser-automation_playwright_run_continue` | Poll for Playwright completion                        |
+| `browser-automation_logins_list`             | List saved browser login contexts                     |
 
 **Default approach:** Use Browser Operator (natural language) for everything. Only use Playwright when you need exact programmatic control.
 
@@ -135,11 +135,11 @@ curl -o stories.json "https://s3-signed-url/stories.json"
 
 Browser automation automatically captures three categories of files:
 
-| Source | Description | Example |
-|--------|-------------|---------|
-| `extract` | Data the AI extracted from the page (JSON, CSV, text) | `stories.json`, `product_data.csv` |
-| `download` | Files the browser downloaded by clicking links | `report.pdf`, `export.xlsx` |
-| `script` | Files explicitly saved by Playwright code | `screenshot.png`, `results.json` |
+| Source     | Description                                           | Example                            |
+| ---------- | ----------------------------------------------------- | ---------------------------------- |
+| `extract`  | Data the AI extracted from the page (JSON, CSV, text) | `stories.json`, `product_data.csv` |
+| `download` | Files the browser downloaded by clicking links        | `report.pdf`, `export.xlsx`        |
+| `script`   | Files explicitly saved by Playwright code             | `screenshot.png`, `results.json`   |
 
 All files are returned in a unified `files` array on completion. Each file includes:
 
@@ -153,25 +153,25 @@ All files are returned in a unified `files` array on completion. Each file inclu
 
 ### Browser Operator (`operator_run`)
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `task` | string | *(required)* | Natural language task description (single line, be specific) |
-| `cacheKey` | string | *(required)* | Unique 8-character alphanumeric ID (generate a new one each time you change the task) |
-| `model` | enum | `google/gemini-3-flash-preview` | AI model: `google/gemini-2.5-flash`, `google/gemini-2.5-pro`, `openai/gpt-4o`, `openai/gpt-4o-mini`, `anthropic/claude-sonnet-4` |
-| `agentMode` | enum | `hybrid` | `dom` (CSS selectors), `hybrid` (visual + DOM), `cua` (Computer Use Agent) |
-| `maxSteps` | number | `30` | Max actions (1-100). Increase for complex multi-page tasks |
-| `systemPrompt` | string | — | Role/context (e.g., "You are filling out insurance forms") |
-| `region` | enum | `us-west-2` | `us-west-2`, `us-east-1`, `eu-central-1`, `ap-southeast-1` |
-| `proxies` | boolean | `false` | Enable residential proxies (useful for geo-restricted sites) |
-| `advancedStealth` | boolean | `false` | Advanced anti-detection measures |
-| `blockAds` | boolean | `true` | Block advertisements |
-| `solveCaptchas` | boolean | `true` | Automatically solve CAPTCHAs |
-| `recordSession` | boolean | `true` | Enable session recording for replay |
-| `viewportWidth` | number | `1288` | Browser viewport width |
-| `viewportHeight` | number | `711` | Browser viewport height |
-| `filesToUpload` | array | — | Files to make available for upload: `[{ url: "https://...", fileName: "doc.pdf" }]` |
-| `collectionId` | string | — | Filestorage collection ID for output files |
-| `useContextService` | string | — | Saved login context ID (see [Reusing Saved Logins](#reusing-saved-logins)) |
+| Parameter           | Type    | Default                         | Description                                                                                                                      |
+| ------------------- | ------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `task`              | string  | _(required)_                    | Natural language task description (single line, be specific)                                                                     |
+| `cacheKey`          | string  | _(required)_                    | Unique 8-character alphanumeric ID (generate a new one each time you change the task)                                            |
+| `model`             | enum    | `google/gemini-3-flash-preview` | AI model: `google/gemini-2.5-flash`, `google/gemini-2.5-pro`, `openai/gpt-4o`, `openai/gpt-4o-mini`, `anthropic/claude-sonnet-4` |
+| `agentMode`         | enum    | `hybrid`                        | `dom` (CSS selectors), `hybrid` (visual + DOM), `cua` (Computer Use Agent)                                                       |
+| `maxSteps`          | number  | `30`                            | Max actions (1-100). Increase for complex multi-page tasks                                                                       |
+| `systemPrompt`      | string  | —                               | Role/context (e.g., "You are filling out insurance forms")                                                                       |
+| `region`            | enum    | `us-west-2`                     | `us-west-2`, `us-east-1`, `eu-central-1`, `ap-southeast-1`                                                                       |
+| `proxies`           | boolean | `false`                         | Enable residential proxies (useful for geo-restricted sites)                                                                     |
+| `advancedStealth`   | boolean | `false`                         | Advanced anti-detection measures                                                                                                 |
+| `blockAds`          | boolean | `true`                          | Block advertisements                                                                                                             |
+| `solveCaptchas`     | boolean | `true`                          | Automatically solve CAPTCHAs                                                                                                     |
+| `recordSession`     | boolean | `true`                          | Enable session recording for replay                                                                                              |
+| `viewportWidth`     | number  | `1288`                          | Browser viewport width                                                                                                           |
+| `viewportHeight`    | number  | `711`                           | Browser viewport height                                                                                                          |
+| `filesToUpload`     | array   | —                               | Files to make available for upload: `[{ url: "https://...", fileName: "doc.pdf" }]`                                              |
+| `collectionId`      | string  | —                               | Filestorage collection ID for output files                                                                                       |
+| `useContextService` | string  | —                               | Saved login context ID (see [Reusing Saved Logins](#reusing-saved-logins))                                                       |
 
 ## Writing Good Tasks
 
@@ -234,7 +234,7 @@ Return this structure from your code to save files:
 return {
   writeToCollection: true,
   fileName: "results.json",
-  fileContent: JSON.stringify(data, null, 2)
+  fileContent: JSON.stringify(data, null, 2),
 };
 ```
 
@@ -321,7 +321,8 @@ Browser Operator supports intelligent caching to avoid redundant executions:
 - **`cacheDurationDays`** — How long cached results remain valid (1-30 days, default: 7).
 
 <Note>
-Caching is automatically disabled if the task contains the word "screenshot" (cached screenshots wouldn't reflect current page state).
+  Caching is automatically disabled if the task contains the word "screenshot"
+  (cached screenshots wouldn't reflect current page state).
 </Note>
 
 ## Complete Python Example
@@ -403,9 +404,7 @@ if result.get("logContent"):
     print(f"\nSession log:\n{result['logContent']}")
 ```
 
-<Note>
-Requires: `pip install requests`
-</Note>
+<Note>Requires: `pip install requests`</Note>
 
 ## Using Browser Automation in Workflows
 
@@ -414,32 +413,40 @@ Browser automation works inside Pinkfish workflows (see [Workflows](/api-referen
 ```javascript
 async function node_scrape_data(params) {
   // Start the browser task
-  let result = await pf.mcp.callTool('browser-automation', 'browser-automation_operator_run', {
-    task: params.task,
-    cacheKey: 'a1b2c3d4',
-    model: 'google/gemini-3-flash-preview',
-    agentMode: 'hybrid',
-    maxSteps: 30,
-    blockAds: true,
-    solveCaptchas: true,
-    recordSession: true
-  });
+  let result = await pf.mcp.callTool(
+    "browser-automation",
+    "browser-automation_operator_run",
+    {
+      task: params.task,
+      cacheKey: "a1b2c3d4",
+      model: "google/gemini-3-flash-preview",
+      agentMode: "hybrid",
+      maxSteps: 30,
+      blockAds: true,
+      solveCaptchas: true,
+      recordSession: true,
+    },
+  );
 
   // Enable live preview in the Pinkfish UI
   await pf.run.updateMetadata({
     browserSessionId: result.sessionId,
     collectionId: result.collectionId,
-    logFileName: result.logFileName
+    logFileName: result.logFileName,
   });
 
   // Poll until complete (same function — do NOT split into separate nodes)
-  while (result.status !== 'completed' && result.status !== 'failed') {
-    await new Promise(r => setTimeout(r, 5000));
-    result = await pf.mcp.callTool('browser-automation', 'browser-automation_operator_run_continue', {
-      sessionId: result.sessionId,
-      collectionId: result.collectionId,
-      logFileName: result.logFileName
-    });
+  while (result.status !== "completed" && result.status !== "failed") {
+    await new Promise((r) => setTimeout(r, 5000));
+    result = await pf.mcp.callTool(
+      "browser-automation",
+      "browser-automation_operator_run_continue",
+      {
+        sessionId: result.sessionId,
+        collectionId: result.collectionId,
+        logFileName: result.logFileName,
+      },
+    );
   }
 
   // Save all output files
@@ -447,10 +454,10 @@ async function node_scrape_data(params) {
     await pf.files.writeFileFromUrl(file.fileName, file.url);
   }
   if (result.logContent) {
-    await pf.files.writeFile('browser_session.log', result.logContent);
+    await pf.files.writeFile("browser_session.log", result.logContent);
   }
 
-  await pf.files.writeFile('node_scrape_data_output.json', result);
+  await pf.files.writeFile("node_scrape_data_output.json", result);
   return result;
 }
 ```

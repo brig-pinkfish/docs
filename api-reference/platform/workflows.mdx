@@ -7,49 +7,49 @@ description: "Persistent automations with triggers, scheduling, and resource bin
 
 Workflows are persistent, versioned automations that can be triggered on a schedule, via API webhook, by email, by application events, or through web forms. Unlike [code execution](/api-reference/platform/code-execution) (ephemeral, one-off scripts), workflows are saved, re-runnable, and editable in the Pinkfish web app. For agents that build workflows programmatically, see the [Workflow Builder Prompt](/api-reference/platform/workflow-builder-prompt).
 
-| | Code Execution | Workflows |
-|---|---|---|
-| **Purpose** | One-off scripts, data transformation | Persistent, reusable automations |
-| **Lifetime** | Ephemeral — runs once and discards | Permanent — saved, versioned, re-runnable |
-| **Triggers** | None — you call it when you need it | Schedule, API webhook, email, app events, web forms |
-| **Visual UI** | None | Full node graph in the Pinkfish web app |
-| **Multi-step** | Single script with `callTool()` | Named nodes connected by edges |
-| **State** | No persistence between runs | Inputs, outputs, pinned results persist |
-| **File I/O** | None | `pf.files.readFile()`, `pf.files.writeFile()` |
-| **Resource bindings** | None | Connections, triggers, agents, collections |
+|                       | Code Execution                       | Workflows                                           |
+| --------------------- | ------------------------------------ | --------------------------------------------------- |
+| **Purpose**           | One-off scripts, data transformation | Persistent, reusable automations                    |
+| **Lifetime**          | Ephemeral — runs once and discards   | Permanent — saved, versioned, re-runnable           |
+| **Triggers**          | None — you call it when you need it  | Schedule, API webhook, email, app events, web forms |
+| **Visual UI**         | None                                 | Full node graph in the Pinkfish web app             |
+| **Multi-step**        | Single script with `callTool()`      | Named nodes connected by edges                      |
+| **State**             | No persistence between runs          | Inputs, outputs, pinned results persist             |
+| **File I/O**          | None                                 | `pf.files.readFile()`, `pf.files.writeFile()`       |
+| **Resource bindings** | None                                 | Connections, triggers, agents, collections          |
 
 ## Workflow Tools Reference
 
 All workflow tools are on the `/pinkfish-sidekick` server path.
 
-| Tool | Description |
-|------|-------------|
-| **Discovery** | |
-| `capabilities_discover` | AI-powered discovery — describe a task in natural language, get matching tools, connections, resources, and skills |
-| `capability_details` | Get full parameter schemas, connection metadata, and usage instructions for specific tools/connections |
-| `mcp_discover` | Find MCP servers and tools for a task. Returns tool specifications with schemas |
-| **Workflow Lifecycle** | |
-| `workflow_create` | Create a new workflow. Returns `automationId` and starter code |
-| `workflow_update` | Update workflow code and/or bind resources (connections, collections) |
-| `workflow_read` | Read workflow structure — nodes, edges, resources, and optionally full code |
-| `workflow_run` | Execute the workflow and return results |
-| `workflow_run_status` | Check status of a running workflow |
-| `workflow_set_inputs` | Set default input values or define an input schema |
-| `workflow_pin` | Pin node outputs to reuse across runs |
-| `workflow_results` | Deep inspection of workflow run outputs — search, read data, get signed URLs |
-| `workflow_edit` | Surgical edits to workflow structure — add/remove nodes, edges, and resources |
-| `workflow_list` | List all workflows accessible to the user |
-| **Triggers** | |
-| `workflow_trigger_schedule` | Create/manage cron-based schedule triggers |
-| `workflow_trigger_api` | Create/manage API webhook triggers |
-| `workflow_trigger_email` | Create/manage email triggers |
-| `workflow_trigger_application` | Create/manage app event triggers |
-| `workflow_trigger_interface` | Create/manage web form triggers |
-| `workflow_trigger_list_all` | List all triggers for a workflow |
-| `workflow_trigger_cleanup` | Remove orphaned or broken triggers |
-| **Agents & Sub-Workflows** | |
-| `workflow_agents` | Create, read, update, list, and invoke AI agents |
-| `workflow_invoke` | Invoke another workflow (sub-workflow) via its webhook trigger URL |
+| Tool                           | Description                                                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| **Discovery**                  |                                                                                                                    |
+| `capabilities_discover`        | AI-powered discovery — describe a task in natural language, get matching tools, connections, resources, and skills |
+| `capability_details`           | Get full parameter schemas, connection metadata, and usage instructions for specific tools/connections             |
+| `mcp_discover`                 | Find MCP servers and tools for a task. Returns tool specifications with schemas                                    |
+| **Workflow Lifecycle**         |                                                                                                                    |
+| `workflow_create`              | Create a new workflow. Returns `automationId` and starter code                                                     |
+| `workflow_update`              | Update workflow code and/or bind resources (connections, collections)                                              |
+| `workflow_read`                | Read workflow structure — nodes, edges, resources, and optionally full code                                        |
+| `workflow_run`                 | Execute the workflow and return results                                                                            |
+| `workflow_run_status`          | Check status of a running workflow                                                                                 |
+| `workflow_set_inputs`          | Set default input values or define an input schema                                                                 |
+| `workflow_pin`                 | Pin node outputs to reuse across runs                                                                              |
+| `workflow_results`             | Deep inspection of workflow run outputs — search, read data, get signed URLs                                       |
+| `workflow_edit`                | Surgical edits to workflow structure — add/remove nodes, edges, and resources                                      |
+| `workflow_list`                | List all workflows accessible to the user                                                                          |
+| **Triggers**                   |                                                                                                                    |
+| `workflow_trigger_schedule`    | Create/manage cron-based schedule triggers                                                                         |
+| `workflow_trigger_api`         | Create/manage API webhook triggers                                                                                 |
+| `workflow_trigger_email`       | Create/manage email triggers                                                                                       |
+| `workflow_trigger_application` | Create/manage app event triggers                                                                                   |
+| `workflow_trigger_interface`   | Create/manage web form triggers                                                                                    |
+| `workflow_trigger_list_all`    | List all triggers for a workflow                                                                                   |
+| `workflow_trigger_cleanup`     | Remove orphaned or broken triggers                                                                                 |
+| **Agents & Sub-Workflows**     |                                                                                                                    |
+| `workflow_agents`              | Create, read, update, list, and invoke AI agents                                                                   |
+| `workflow_invoke`              | Invoke another workflow (sub-workflow) via its webhook trigger URL                                                 |
 
 ## How Workflows Work
 
@@ -57,31 +57,32 @@ A workflow is a directed graph of **nodes** connected by **edges**, written as J
 
 ### Node Types
 
-| Type | Purpose | MCP Calls? |
-|------|---------|------------|
-| `trigger` | Entry point (manual, schedule, API webhook, email, app event, form) | No |
-| `mcp-tool` | Calls exactly **one** MCP tool (can call it multiple times in a loop) | Yes — one tool |
-| `code-block` | Custom JavaScript for data transformation (no MCP calls) | No |
-| `if-else` | Binary branching based on a condition | No |
-| `router` | Multi-way branching (like switch/case) | No |
-| `for-each` | Iterate over an array, execute body nodes per item | No |
-| `merge` | Reconverge after branching | No |
-| `loop`, `while`, `parallel`, `delay`, `sub-workflow` | Advanced control flow | No |
+| Type                                                 | Purpose                                                               | MCP Calls?     |
+| ---------------------------------------------------- | --------------------------------------------------------------------- | -------------- |
+| `trigger`                                            | Entry point (manual, schedule, API webhook, email, app event, form)   | No             |
+| `mcp-tool`                                           | Calls exactly **one** MCP tool (can call it multiple times in a loop) | Yes — one tool |
+| `code-block`                                         | Custom JavaScript for data transformation (no MCP calls)              | No             |
+| `if-else`                                            | Binary branching based on a condition                                 | No             |
+| `router`                                             | Multi-way branching (like switch/case)                                | No             |
+| `for-each`                                           | Iterate over an array, execute body nodes per item                    | No             |
+| `merge`                                              | Reconverge after branching                                            | No             |
+| `loop`, `while`, `parallel`, `delay`, `sub-workflow` | Advanced control flow                                                 | No             |
 
 <Note>
-Each `mcp-tool` node calls exactly **one** MCP tool. If you need to call two different tools, use two separate nodes connected by an edge.
+  Each `mcp-tool` node calls exactly **one** MCP tool. If you need to call two
+  different tools, use two separate nodes connected by an edge.
 </Note>
 
 ### inputSchema Sources
 
 Each field in a node's `inputSchema` must declare a `source`:
 
-| Source | Pattern | Example | Description |
-|--------|---------|---------|-------------|
-| `"literal"` | `"value"`, `5`, `true` | `"Daily Report"` | Hardcoded constant |
-| `"node"` | `@node_<name>.field` | `@node_fetch_emails.emails` | Output from another node |
-| `"input"` | `@input.field` | `@input.userEmail` | Value from trigger/POST body |
-| `"resource"` | `{{resource.X}}` | `{{resource.emailConn}}` | Bound connection, trigger, or agent |
+| Source       | Pattern                | Example                     | Description                         |
+| ------------ | ---------------------- | --------------------------- | ----------------------------------- |
+| `"literal"`  | `"value"`, `5`, `true` | `"Daily Report"`            | Hardcoded constant                  |
+| `"node"`     | `@node_<name>.field`   | `@node_fetch_emails.emails` | Output from another node            |
+| `"input"`    | `@input.field`         | `@input.userEmail`          | Value from trigger/POST body        |
+| `"resource"` | `{{resource.X}}`       | `{{resource.emailConn}}`    | Bound connection, trigger, or agent |
 
 ### Resource Bindings
 
@@ -90,19 +91,19 @@ Resources declare what external connections, triggers, and agents a workflow use
 ```javascript
 const WORKFLOW_RESOURCES = {
   gmailConn: {
-    type: 'connection',
-    application: 'gmail',
-    description: 'Gmail account for sending emails'
+    type: "connection",
+    application: "gmail",
+    description: "Gmail account for sending emails",
   },
   apiEndpoint: {
-    type: 'trigger',
-    triggerType: 'api',
-    description: 'API webhook endpoint'
+    type: "trigger",
+    triggerType: "api",
+    description: "API webhook endpoint",
   },
   analyst: {
-    type: 'agent',
-    description: 'AI agent for analysis'
-  }
+    type: "agent",
+    description: "AI agent for analysis",
+  },
 };
 ```
 
@@ -122,16 +123,16 @@ When you call `workflow_update` with `bindings`, you map each resource key to a 
 
 The `pf` SDK is available inside all node functions:
 
-| Function | Returns | Description |
-|----------|---------|-------------|
-| `await pf.files.writeFile(filename, data)` | `{ fileId, filename, mimeType, size }` | Write output — every node must call this |
-| `await pf.files.readFile(fileId)` | parsed content | Read a file from a previous node |
-| `await pf.files.getFileUrl(fileId)` | signed URL | Get a downloadable URL (~1 hour expiry) |
-| `await pf.mcp.callTool(serverName, toolName, args)` | tool result | Call an MCP tool (only in `mcp-tool` nodes) |
-| `pf.log.info(msg)` | void | Log info message |
-| `pf.log.success(msg)` | void | Log success message |
-| `pf.log.error(msg)` | void | Log error message |
-| `pf.log.warn(msg)` | void | Log warning message |
+| Function                                            | Returns                                | Description                                 |
+| --------------------------------------------------- | -------------------------------------- | ------------------------------------------- |
+| `await pf.files.writeFile(filename, data)`          | `{ fileId, filename, mimeType, size }` | Write output — every node must call this    |
+| `await pf.files.readFile(fileId)`                   | parsed content                         | Read a file from a previous node            |
+| `await pf.files.getFileUrl(fileId)`                 | signed URL                             | Get a downloadable URL (~1 hour expiry)     |
+| `await pf.mcp.callTool(serverName, toolName, args)` | tool result                            | Call an MCP tool (only in `mcp-tool` nodes) |
+| `pf.log.info(msg)`                                  | void                                   | Log info message                            |
+| `pf.log.success(msg)`                               | void                                   | Log success message                         |
+| `pf.log.error(msg)`                                 | void                                   | Log error message                           |
+| `pf.log.warn(msg)`                                  | void                                   | Log warning message                         |
 
 ## Workflow Code Structure
 
@@ -139,7 +140,7 @@ Every workflow follows this structure:
 
 ```javascript
 //---REQUIRED HEADER - DO NOT MODIFY---
-import { pf } from './pf-bootstrap.mjs';
+import { pf } from "./pf-bootstrap.mjs";
 //---END REQUIRED HEADER---
 
 // 1. Declare resources (connections, triggers, agents)
@@ -162,7 +163,7 @@ const WORKFLOW_EDGES = [
 // 4. Write node functions
 async function node_step_one(params) {
   // Your logic here...
-  await pf.files.writeFile('node_step_one_output.json', result);
+  await pf.files.writeFile("node_step_one_output.json", result);
   return result;
 }
 
@@ -311,11 +312,97 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
   }'
 ```
 
+## Example Script: Full Workflow Lifecycle
+
+A complete runnable script that creates a workflow, updates it with code, runs it, and inspects the output:
+
+```bash
+#!/bin/bash
+API_KEY="<YOUR_API_KEY>"
+ORG_ID="<YOUR_ORG_ID>"
+API_URL="https://app-api.app.pinkfish.ai"
+MCP_URL="https://mcp.app.pinkfish.ai"
+
+# 1. Get token
+PINKFISH_TOKEN=$(curl -s -X POST "${API_URL}/auth/token" \
+  -H "X-Api-Key: ${API_KEY}" \
+  -H "X-Selected-Org: ${ORG_ID}" \
+  -H "Content-Type: application/json" | jq -r '.token')
+if [ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ]; then
+  echo "Error: Failed to get token"; exit 1
+fi
+
+H="Authorization: Bearer ${PINKFISH_TOKEN}"
+HCT="Content-Type: application/json"
+HA="Accept: application/json"
+
+# 2. Create workflow
+R=$(curl -s -X POST "${MCP_URL}/pinkfish-sidekick" -H "$H" -H "$HCT" -H "$HA" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"workflow_create","arguments":{"name":"Daily News Summary","description":"Search and summarize AI news"}},"id":1}')
+AUTO_ID=$(echo "$R" | jq -r '.result.content[0].text' | jq -r '.id // empty')
+[ -z "$AUTO_ID" ] && AUTO_ID=$(echo "$R" | jq -r '.result.structuredContent.id // empty')
+[ -z "$AUTO_ID" ] && { echo "Error: workflow_create failed"; echo "$R" | jq .; exit 1; }
+echo "Created workflow: $AUTO_ID"
+
+# 3. Update with code (search + summarize workflow)
+WORKFLOW_CODE='//---REQUIRED HEADER - DO NOT MODIFY---
+import { pf } from "./pf-bootstrap.mjs";
+//---END REQUIRED HEADER---
+
+const WORKFLOW_RESOURCES = {};
+const WORKFLOW_NODES = [
+  { id: "trigger_1", name: "Start", type: "trigger", triggerType: "manual" },
+  { id: "node_search_news", name: "Search News", type: "mcp-tool", serverName: "web-search", toolName: "search_googlesearch", parameters: { query: "latest AI news 2026" }, inputSchema: { query: { type: "string", source: "literal", value: "latest AI news 2026" } } },
+  { id: "node_summarize", name: "Summarize", type: "mcp-tool", serverName: "embedded-groq", toolName: "embedded-groq_generate", parameters: { prompt: "@node_search_news", systemPrompt: "Summarize into 5 bullet points." }, inputSchema: { prompt: { type: "string", source: "node", value: "@node_search_news" }, systemPrompt: { type: "string", source: "literal", value: "Summarize into 5 bullet points." } } }
+];
+const WORKFLOW_EDGES = [
+  { source: "trigger_1", target: "node_search_news" },
+  { source: "node_search_news", target: "node_summarize" }
+];
+
+async function node_search_news(params) {
+  const result = await pf.mcp.callTool("web-search", "search_googlesearch", { query: params.query });
+  await pf.files.writeFile("node_search_news_output.json", result);
+  return result;
+}
+async function node_summarize(params) {
+  const result = await pf.mcp.callTool("embedded-groq", "embedded-groq_generate", { prompt: JSON.stringify(params.prompt), systemPrompt: params.systemPrompt });
+  await pf.files.writeFile("node_summarize_output.json", result);
+  return result;
+}
+global.node_search_news = node_search_news;
+global.node_summarize = node_summarize;
+
+//---REQUIRED FOOTER - DO NOT MODIFY---
+await pf.run(WORKFLOW_NODES, WORKFLOW_EDGES);
+//---END REQUIRED FOOTER---'
+
+R=$(curl -s -X POST "${MCP_URL}/pinkfish-sidekick" -H "$H" -H "$HCT" -H "$HA" \
+  -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"workflow_update\",\"arguments\":{\"automationId\":\"$AUTO_ID\",\"name\":\"Daily News Summary\",\"changeDescription\":\"Add nodes\",\"code\":$(echo "$WORKFLOW_CODE" | jq -Rs .)}},\"id\":1}")
+[ -n "$(echo "$R" | jq -r '.error // empty')" ] && { echo "Error: workflow_update failed"; echo "$R" | jq .; exit 1; }
+echo "Updated workflow"
+
+# 4. Run workflow
+R=$(curl -s -X POST "${MCP_URL}/pinkfish-sidekick" -H "$H" -H "$HCT" -H "$HA" \
+  -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"workflow_run\",\"arguments\":{\"automationId\":\"$AUTO_ID\"}},\"id\":1}")
+[ -n "$(echo "$R" | jq -r '.error // empty')" ] && { echo "Error: workflow_run failed"; echo "$R" | jq .; exit 1; }
+echo "Started workflow run"
+
+# 5. Wait for completion, then read results
+sleep 15
+R=$(curl -s -X POST "${MCP_URL}/pinkfish-sidekick" -H "$H" -H "$HCT" -H "$HA" \
+  -d "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"workflow_results\",\"arguments\":{\"automationId\":\"$AUTO_ID\",\"operation\":\"read\",\"filename\":\"node_summarize_output.json\"}},\"id\":1}")
+echo "Summary output:"
+echo "$R" | jq '.result.structuredContent // .result.content[0].text'
+```
+
+<Note>Requires `curl` and `jq`.</Note>
+
 ## Complete Code Example: Web Search + Summarize
 
 ```javascript
 //---REQUIRED HEADER - DO NOT MODIFY---
-import { pf } from './pf-bootstrap.mjs';
+import { pf } from "./pf-bootstrap.mjs";
 //---END REQUIRED HEADER---
 
 const WORKFLOW_RESOURCES = {};
@@ -325,7 +412,7 @@ const WORKFLOW_NODES = [
     id: "trigger_1",
     name: "Start",
     type: "trigger",
-    triggerType: "manual"
+    triggerType: "manual",
   },
   {
     id: "node_search_news",
@@ -334,11 +421,15 @@ const WORKFLOW_NODES = [
     serverName: "web-search",
     toolName: "search_googlesearch",
     parameters: {
-      query: "latest AI news 2026"
+      query: "latest AI news 2026",
     },
     inputSchema: {
-      query: { type: "string", source: "literal", value: "latest AI news 2026" }
-    }
+      query: {
+        type: "string",
+        source: "literal",
+        value: "latest AI news 2026",
+      },
+    },
   },
   {
     id: "node_summarize",
@@ -348,38 +439,46 @@ const WORKFLOW_NODES = [
     toolName: "embedded-groq_generate",
     parameters: {
       prompt: "@node_search_news",
-      systemPrompt: "Summarize these search results into 5 bullet points."
+      systemPrompt: "Summarize these search results into 5 bullet points.",
     },
     inputSchema: {
       prompt: { type: "string", source: "node", value: "@node_search_news" },
-      systemPrompt: { type: "string", source: "literal", value: "Summarize these search results into 5 bullet points." }
-    }
-  }
+      systemPrompt: {
+        type: "string",
+        source: "literal",
+        value: "Summarize these search results into 5 bullet points.",
+      },
+    },
+  },
 ];
 
 const WORKFLOW_EDGES = [
   { source: "trigger_1", target: "node_search_news" },
-  { source: "node_search_news", target: "node_summarize" }
+  { source: "node_search_news", target: "node_summarize" },
 ];
 
 async function node_search_news(params) {
-  pf.log.info('Searching for AI news...');
-  const result = await pf.mcp.callTool('web-search', 'search_googlesearch', {
-    query: params.query
+  pf.log.info("Searching for AI news...");
+  const result = await pf.mcp.callTool("web-search", "search_googlesearch", {
+    query: params.query,
   });
-  await pf.files.writeFile('node_search_news_output.json', result);
-  pf.log.success('Search complete');
+  await pf.files.writeFile("node_search_news_output.json", result);
+  pf.log.success("Search complete");
   return result;
 }
 
 async function node_summarize(params) {
-  pf.log.info('Summarizing results...');
-  const result = await pf.mcp.callTool('embedded-groq', 'embedded-groq_generate', {
-    prompt: JSON.stringify(params.prompt),
-    systemPrompt: params.systemPrompt
-  });
-  await pf.files.writeFile('node_summarize_output.json', result);
-  pf.log.success('Summary generated');
+  pf.log.info("Summarizing results...");
+  const result = await pf.mcp.callTool(
+    "embedded-groq",
+    "embedded-groq_generate",
+    {
+      prompt: JSON.stringify(params.prompt),
+      systemPrompt: params.systemPrompt,
+    },
+  );
+  await pf.files.writeFile("node_summarize_output.json", result);
+  pf.log.success("Summary generated");
   return result;
 }
 
@@ -397,24 +496,25 @@ This example shows a workflow with a connection binding (Zendesk), an API trigge
 
 ```javascript
 //---REQUIRED HEADER - DO NOT MODIFY---
-import { pf } from './pf-bootstrap.mjs';
+import { pf } from "./pf-bootstrap.mjs";
 //---END REQUIRED HEADER---
 
 const WORKFLOW_RESOURCES = {
   zendesk: {
-    type: 'connection',
-    application: 'zendesk',
-    description: 'Zendesk support account'
+    type: "connection",
+    application: "zendesk",
+    description: "Zendesk support account",
   },
   apiEndpoint: {
-    type: 'trigger',
-    triggerType: 'api',
-    description: 'API endpoint — bind via workflow_trigger_api tool'
+    type: "trigger",
+    triggerType: "api",
+    description: "API endpoint — bind via workflow_trigger_api tool",
   },
   ticketAnalyst: {
-    type: 'agent',
-    description: 'Agent that analyzes support tickets for patterns and insights'
-  }
+    type: "agent",
+    description:
+      "Agent that analyzes support tickets for patterns and insights",
+  },
 };
 
 const WORKFLOW_NODES = [
@@ -424,8 +524,11 @@ const WORKFLOW_NODES = [
     type: "trigger",
     triggerType: "api",
     inputSchema: {
-      ticketLimit: { type: "number", description: "Number of tickets to fetch" }
-    }
+      ticketLimit: {
+        type: "number",
+        description: "Number of tickets to fetch",
+      },
+    },
   },
   {
     id: "node_fetch_tickets",
@@ -435,23 +538,23 @@ const WORKFLOW_NODES = [
     toolName: "zendesk_list_tickets",
     parameters: {
       PCID: "{{resource.zendesk}}",
-      per_page: "@trigger_1.ticketLimit"
+      per_page: "@trigger_1.ticketLimit",
     },
     inputSchema: {
       PCID: { type: "string", source: "resource" },
-      per_page: { type: "number", source: "input" }
-    }
+      per_page: { type: "number", source: "input" },
+    },
   },
   {
     id: "node_format_tickets",
     name: "Format Tickets",
     type: "code-block",
     parameters: {
-      tickets: "@node_fetch_tickets.tickets"
+      tickets: "@node_fetch_tickets.tickets",
     },
     inputSchema: {
-      tickets: { type: "array", source: "node" }
-    }
+      tickets: { type: "array", source: "node" },
+    },
   },
   {
     id: "node_analyze_tickets",
@@ -459,56 +562,61 @@ const WORKFLOW_NODES = [
     type: "code-block",
     parameters: {
       agentId: "{{resource.ticketAnalyst}}",
-      message: "Analyze these support tickets and identify top issues, urgent count, and trends.",
-      formattedTickets: "@node_format_tickets.formattedTickets"
+      message:
+        "Analyze these support tickets and identify top issues, urgent count, and trends.",
+      formattedTickets: "@node_format_tickets.formattedTickets",
     },
     inputSchema: {
       agentId: { type: "string", source: "resource" },
       message: { type: "string", source: "literal" },
-      formattedTickets: { type: "string", source: "node" }
-    }
-  }
+      formattedTickets: { type: "string", source: "node" },
+    },
+  },
 ];
 
 const WORKFLOW_EDGES = [
   { source: "trigger_1", target: "node_fetch_tickets" },
   { source: "node_fetch_tickets", target: "node_format_tickets" },
-  { source: "node_format_tickets", target: "node_analyze_tickets" }
+  { source: "node_format_tickets", target: "node_analyze_tickets" },
 ];
 
 async function node_fetch_tickets(params) {
-  pf.log.info('Fetching Zendesk tickets...');
-  const result = await pf.mcp.callTool('zendesk', 'zendesk_list_tickets', {
-    ...params, version: '1'
+  pf.log.info("Fetching Zendesk tickets...");
+  const result = await pf.mcp.callTool("zendesk", "zendesk_list_tickets", {
+    ...params,
+    version: "1",
   });
-  await pf.files.writeFile('node_fetch_tickets_output.json', result);
-  pf.log.success('Fetched ' + (result.tickets?.length || 0) + ' tickets');
+  await pf.files.writeFile("node_fetch_tickets_output.json", result);
+  pf.log.success("Fetched " + (result.tickets?.length || 0) + " tickets");
   return result;
 }
 
 async function node_format_tickets(params) {
   const { tickets } = params;
-  pf.log.info('Formatting ' + tickets.length + ' tickets...');
+  pf.log.info("Formatting " + tickets.length + " tickets...");
   const formattedTickets = tickets
-    .map(t => `[${t.id}] ${t.subject} - Status: ${t.status}, Priority: ${t.priority}`)
-    .join('\n');
+    .map(
+      (t) =>
+        `[${t.id}] ${t.subject} - Status: ${t.status}, Priority: ${t.priority}`,
+    )
+    .join("\n");
   const output = { formattedTickets, ticketCount: tickets.length };
-  await pf.files.writeFile('node_format_tickets_output.json', output);
-  pf.log.success('Formatted ' + tickets.length + ' tickets');
+  await pf.files.writeFile("node_format_tickets_output.json", output);
+  pf.log.success("Formatted " + tickets.length + " tickets");
   return output;
 }
 
 async function node_analyze_tickets(params) {
   const { agentId, message, formattedTickets } = params;
-  pf.log.info('Analyzing tickets with AI agent...');
-  const result = await pf.mcp.callTool('pinkfish-sidekick', 'workflow_agents', {
-    action: 'invoke',
+  pf.log.info("Analyzing tickets with AI agent...");
+  const result = await pf.mcp.callTool("pinkfish-sidekick", "workflow_agents", {
+    action: "invoke",
     agentId,
-    message: `${message}\n${formattedTickets}`
+    message: `${message}\n${formattedTickets}`,
   });
   const parsed = JSON.parse(result.response);
-  await pf.files.writeFile('node_analyze_tickets_output.json', parsed);
-  pf.log.success('Analysis complete');
+  await pf.files.writeFile("node_analyze_tickets_output.json", parsed);
+  pf.log.success("Analysis complete");
   return parsed;
 }
 
