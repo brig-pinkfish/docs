@@ -49,7 +49,13 @@ You can include custom query parameters in signed URLs so that HTML files can re
 
 The parameters are appended to the signed URL:
 ```
-https://skills.pinkfish.ai/files/{collectionId}/app.html?signed-key=xxx&id=123&mode=preview
+file_url:  https://skills.pinkfish.ai/files/{collectionId}/app.html?signed-key=xxx&id=123&mode=preview
+```
+
+For share links, query parameters are stored in the database and appended via a 302 redirect when the short URL is accessed. The short URL itself remains clean:
+```
+short_url: https://skills.pinkfish.ai/files/s/aBcD1234xY
+→ redirects to: https://skills.pinkfish.ai/files/s/aBcD1234xY?id=123&mode=preview
 ```
 
 JavaScript in the HTML file can read them:
@@ -59,7 +65,7 @@ const id = params.get('id'); // "123"
 const mode = params.get('mode'); // "preview"
 ```
 
-Supported on: **create**, **get**, and **list** operations.
+Supported on: **create**, **get**, **list**, and **sharelink** operations.
 
 ### Response Format
 
@@ -68,7 +74,7 @@ File creation/update:
 ```json
 {
   "message": "File created successfully",
-  "file_url": "URL HERE"
+  "file_url": "https://skills.pinkfish.ai/files/{collectionId}/file.txt?signed-key=..."
 }
 ```
 
@@ -82,7 +88,7 @@ File metadata (full details):
   "createdAt": "2024-11-17T18:04:22.197Z",
   "updatedAt": "2024-11-17T18:09:46.455Z",
   "metadata": "file metadata",
-  "isPublic": true,
+  "isPublic": false,
   "signedUrl": "https://...",
   "accessList": [
     {
@@ -91,6 +97,17 @@ File metadata (full details):
       "date": "2024-11-17T18:04:22.197Z"
     }
   ]
+}
+```
+
+Share link response:
+
+```json
+{
+  "message": "Share link created successfully",
+  "short_url": "https://skills.pinkfish.ai/files/s/aBcD1234xY",
+  "expiresAt": "2026-02-08T12:00:00.000Z",
+  "queryParams": {"id": "123", "mode": "preview"}
 }
 ```
 
@@ -258,6 +275,39 @@ List with minimal info:
 /selected-filestore list files:
 format: light
 ```
+
+### Create Share Link
+
+Create a short, shareable URL for a file with a specified expiration. Each call generates a unique short URL. Optionally store query parameters that are appended to the URL via redirect when accessed.
+
+**Parameters:**
+
+- `action` (required) - Set to "sharelink"
+- `filename` (required) - Name of the file
+- `file_links_expire_in_days` (optional) - Expiry: 1-7 days. At least one of days or minutes is required
+- `file_links_expire_in_minutes` (optional) - Minute-level precision
+- `query_params` (optional) - JSON key-value pairs stored with the link and appended via redirect on access
+
+**Examples:**
+
+Create a share link with 1-day expiry:
+
+```
+/selected-filestore create share link:
+filename: report.pdf
+file_links_expire_in_days: "1"
+```
+
+Create a share link with stored query params:
+
+```
+/selected-filestore create share link:
+filename: dashboard.html
+file_links_expire_in_days: "7"
+query_params: {"id": "customer-123", "mode": "readonly"}
+```
+
+Multiple share links for the same file are supported — each has its own unique short code and independent expiry.
 
 ### Delete Document
 
@@ -441,3 +491,4 @@ For complete documentation on setting up triggers, payload formats, rate limitin
 - **Race conditions**: There is no race condition prevention in place. If you have multiple automations writing to the same file, you will experience unexpected results
 - **File overwriting**: By default, creating a file with an existing filename will overwrite the existing file completely. Use `replaceExisting: "false"` to add a timestamp to the filename instead
 - **Signed URLs**: Files are accessible via signed URLs that expire based on the `file_links_expire_in_days` setting. Access history is maintained in the `accessList` with entries including action performed, provider ID, and timestamp
+- **Share Links**: Use the `sharelink` action to explicitly create short, shareable URLs for files. Each share link has its own unique short code and independent expiry. Query parameters can be stored with the link and are appended via 302 redirect when the short URL is accessed. Share links are not automatically generated — they must be explicitly created

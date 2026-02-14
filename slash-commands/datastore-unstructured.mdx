@@ -51,10 +51,14 @@ POST /datacollection/
 
 - **No schema required** - store any JSON structure
 - **Flexible content** - strings, numbers, objects, arrays
+- **Natural language search** - search and ask questions about your data in plain English
+- **Pagination** - offset-based pagination for large datasets (500 items per page)
+- **Server-side sorting** - sort by key, sortField, createdAt, or updatedAt
 - **Fast search** - fuzzy, exact, and prefix matching
 - **Event triggers** - automate workflows on data changes
 - **Batch operations** - create up to 500 items at once
 - **Multiple access methods** - by key, key+sortField, or itemId
+- **High capacity** - new datastores support up to 100,000 items
 
 ## Basic Command Structure
 
@@ -132,14 +136,30 @@ sortField: theme-preferences
 ```
 /selected-datastore list items with:
 limit: 50
+offset: 0
 orderedBy: createdAt:desc
 format: light
 ```
 
 **Parameters:**
-- `limit` - Max results (max: 1000, returns all if not specified)
-- `orderedBy` - Sort by createdAt or updatedAt (e.g., "createdAt:desc")
+- `limit` - Max results per page (default: 500)
+- `offset` - Number of items to skip for pagination (default: 0)
+- `orderedBy` - Sort by key, sortField, createdAt, or updatedAt (e.g., "createdAt:desc", "key:asc")
 - `format` - Set to "light" for minimal data (excludes content)
+
+**Response includes pagination metadata:**
+```json
+{
+  "items": [...],
+  "pagination": {
+    "totalCount": 1500,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+
+To page through results, increment offset by limit (e.g., offset=0, offset=500, offset=1000).
 
 ### Update Item
 
