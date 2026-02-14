@@ -211,9 +211,9 @@ The pattern:
    `capability_details`.
 2. **Agent discovers what it needs** — `capabilities_discover` returns tool names, server
    paths, and PCIDs.
-3. **Agent gets the schema** — `capability_details` returns `parameters` (required/optional
-   with name, type, description) and `serverName` for each tool.
-4. **Your code converts and registers** — Convert the returned schema to your model's
+3. **Agent gets the schema** — `capability_details` returns the full `inputSchema`
+   (standard JSON Schema) and `serverName` for each tool.
+4. **Your code converts and registers** — Map the returned schema to your model's
    function-calling format and add it to the agent's tool set.
 5. **Re-run the agent loop** — The model now sees the new tool as a native callable function.
 
@@ -226,16 +226,25 @@ The pattern:
     "name": "gmail_search_emails",
     "description": "Search emails in Gmail",
     "serverName": "gmail",
-    "parameters": {
-      "required": [
-        { "name": "PCID", "type": "string", "description": "Connection ID" },
-        { "name": "query", "type": "string", "description": "Gmail search query" }
-      ],
-      "optional": [
-        { "name": "maxResults", "type": "number", "description": "Max emails to return", "default": 10 }
-      ]
-    },
-    "outputSchema": { ... }
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "PCID": {
+          "type": "string",
+          "description": "Pink Connect ID for authentication"
+        },
+        "query": {
+          "type": "string",
+          "description": "Gmail search query (e.g. 'is:unread', 'from:alice')"
+        },
+        "maxResults": {
+          "type": "number",
+          "description": "Maximum number of emails to return",
+          "default": 10
+        }
+      },
+      "required": ["PCID", "query"]
+    }
   }
 }
 ```
@@ -251,22 +260,10 @@ const headers = {
 
 // Convert capability_details response to Claude function-calling format
 function detailsToClaude(toolName, detail) {
-  const properties = {};
-  const required = [];
-
-  for (const param of detail.parameters?.required ?? []) {
-    properties[param.name] = { type: param.type, description: param.description };
-    required.push(param.name);
-  }
-  for (const param of detail.parameters?.optional ?? []) {
-    properties[param.name] = { type: param.type, description: param.description };
-    if (param.default !== undefined) properties[param.name].default = param.default;
-  }
-
   return {
     name: toolName,
     description: detail.description || "",
-    input_schema: { type: "object", properties, required },
+    input_schema: detail.inputSchema,
     // Store serverName so you know where to route the call
     _serverName: detail.serverName,
   };
@@ -274,24 +271,12 @@ function detailsToClaude(toolName, detail) {
 
 // Convert capability_details response to OpenAI function-calling format
 function detailsToOpenAI(toolName, detail) {
-  const properties = {};
-  const required = [];
-
-  for (const param of detail.parameters?.required ?? []) {
-    properties[param.name] = { type: param.type, description: param.description };
-    required.push(param.name);
-  }
-  for (const param of detail.parameters?.optional ?? []) {
-    properties[param.name] = { type: param.type, description: param.description };
-    if (param.default !== undefined) properties[param.name].default = param.default;
-  }
-
   return {
     type: "function",
     function: {
       name: toolName,
       description: detail.description || "",
-      parameters: { type: "object", properties, required },
+      parameters: detail.inputSchema,
     },
     _serverName: detail.serverName,
   };
@@ -376,7 +361,8 @@ const installedTools = await installToolsForTask("search my Gmail for unread ema
 
 <Note>
 **Only install what you need.** Unlike fetching an entire server's tool list,
-this approach uses `capability_details` to get schemas for only the specific tools
-the agent discovered — typically 1–5 tools instead of hundreds. For external
-integrations, include the `PCID` from the discovery response in the tool call arguments.
+this approach uses `capability_details` to get full `inputSchema` definitions for only
+the specific tools the agent discovered — typically 1–5 tools instead of hundreds.
+For external integrations, include the `PCID` from the discovery response in the tool
+call arguments.
 </Note>
