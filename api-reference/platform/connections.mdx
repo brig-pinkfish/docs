@@ -1,13 +1,11 @@
 ---
-title: "Connections & Server Types"
-description: "Embedded vs application MCPs, PCIDs, and PinkConnect"
+title: "Connections"
+description: "PCIDs and external integrations"
 ---
 
-## Overview
+The MCP Farm has two server types: **embedded** (built-in, no connection) and **application** (Gmail, Slack, etc., require a PCID per call).
 
-The MCP Farm hosts two categories of servers: **embedded MCPs** (built-in platform services) and **application MCPs** (third-party integrations). Understanding the difference is essential because application MCPs require a connection ID (PCID) with every tool call.
-
-**Setting up connections:** Users connect external services (Gmail, Slack, etc.) through the Pinkfish application — **Integrations** in the web app. Once connected, the PCID is available from `capabilities_discover` or the Connections API.
+**Connections:** Set up in the Pinkfish app under **Integrations**. PCIDs come from `capabilities_discover` or the [PinkConnect API](#listing-connections).
 
 ## Embedded MCPs
 
@@ -85,13 +83,11 @@ A **PCID** (PinkConnect Connection ID) is a unique identifier for a specific OAu
 
 You need to include the PCID in tool arguments so the MCP Farm knows which connection to use. For example, if you have two Gmail accounts connected, the PCID tells it which one to search.
 
-## Listing Your Connections
+## Listing Connections
 
-You can get PCIDs in two ways:
+### PinkConnect API
 
-### Option 1: Via PinkConnect API
-
-Call PinkConnect directly to list all your connections:
+**Base URL:** `https://proxy.pinkfish.ai`
 
 ```bash
 curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
@@ -99,43 +95,22 @@ curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
   -H "Content-Type: application/json"
 ```
 
-**Optional query parameter:** `statuses` — comma-separated filter for connection status. Defaults to `connected,error,disconnected`.
+| Query param | Description |
+|-------------|-------------|
+| `statuses` | Comma-separated: `connected`, `error`, `disconnected`. Default: all. |
 
-```bash
-# Only show active connections
-curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections?statuses=connected" \
-  -H "Authorization: Bearer $PINKFISH_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-**Response (abbreviated):**
+**Response:** Array of connections. Each `id` is the PCID.
 
 ```json
 [
-  {
-    "id": "abc123-def456",
-    "name": "My Gmail",
-    "service_key": "gmail",
-    "status": "connected",
-    "service_type": "core",
-    "author_name": "My Organization"
-  },
-  {
-    "id": "ghi789-jkl012",
-    "name": "My Slack",
-    "service_key": "slack",
-    "status": "connected",
-    "service_type": "core",
-    "author_name": "My Organization"
-  }
+  { "id": "abc123-def456", "name": "My Gmail", "service_key": "gmail", "status": "connected" },
+  { "id": "ghi789-jkl012", "name": "My Slack", "service_key": "slack", "status": "connected" }
 ]
 ```
 
-Each entry's `id` field is the **PCID**.
+### Discovery
 
-### Option 2: Via Discovery
-
-Use `capabilities_discover` to find connections relevant to a specific task. The response includes PCIDs in the `connections` array:
+Use `capabilities_discover` for task-relevant connections. PCIDs are in `connections[].id`:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
@@ -155,9 +130,8 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
   }'
 ```
 
-The `connections[].id` in the response is the PCID.
+## Using a PCID
 
-## Using a PCID in a Tool Call
 
 Pass the PCID as an argument when calling an application MCP tool:
 

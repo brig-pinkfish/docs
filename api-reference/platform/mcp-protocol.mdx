@@ -1,28 +1,20 @@
 ---
 title: "MCP Protocol"
-description: "JSON-RPC 2.0 format, listing servers, and calling tools"
+description: "JSON-RPC 2.0 format, servers, and tools"
 ---
 
-## Overview
-
-The MCP Farm implements the **Model Context Protocol (MCP)** over HTTP. It uses the official `@modelcontextprotocol/sdk`, JSON-RPC 2.0 message format, and standard MCP methods (`tools/list`, `tools/call`). Every call is an HTTP POST to a server path with a JSON-RPC payload in the body.
+The MCP Farm implements the Model Context Protocol (MCP) over HTTP. All requests are HTTP POST with JSON-RPC 2.0 payloads.
 
 **Base URL:** `https://mcp.app.pinkfish.ai`
 
-All requests require a runtime token. See [Authentication](/api-reference/platform/authentication) for how to obtain one.
+Requires a runtime token. See [Authentication](/api-reference/platform/authentication).
 
-## Getting Started
-
-1. **Get a token** — Exchange your API key for a runtime token via `/auth/token`
-2. **List servers** — Call `listServers` on `/mcp` to see available servers and their tools
-3. **Call a tool** — POST `tools/call` to the server path with the tool name and arguments
-
-## When to Use What
+## Request Flow
 
 | You know... | Use |
 |-------------|-----|
-| The tool and server | Call `tools/call` directly on the server path (e.g. `/web-search`, `/gmail`) |
-| The task, not the tool | Use [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → then call the recommended tool |
+| Tool and server | `tools/call` on the server path (e.g., `/web-search`, `/gmail`) |
+| Task, not tool | [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → call recommended tool |
 
 ## Request Format
 
@@ -81,20 +73,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/mcp" \
   }'
 ```
 
-**Response (abbreviated):**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "content": [{
-      "type": "text",
-      "text": "{\"servers\": [{\"name\": \"gmail\", \"path\": \"/gmail\", \"description\": \"Gmail API\", \"embedded\": false, \"tools\": [...]}, ...]}"
-    }]
-  }
-}
-```
+**Response:** Returns `result.structuredContent` (preferred) or `result.content[0].text` (JSON string). See [Response Format](#response-format) below.
 
 Each server entry includes:
 
@@ -191,20 +170,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
   }'
 ```
 
-**Response:**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "content": [{
-      "type": "text",
-      "text": "{ ... search results ... }"
-    }]
-  }
-}
-```
+**Response:** `result.structuredContent` or `result.content[0].text`. See [Response Format](#response-format).
 
 ### Example: External Service (Gmail)
 
@@ -231,38 +197,26 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 
 ## Response Format
 
-### Success: Structured Content vs Legacy
+### Success
 
-Tool responses support two formats. **Structured content** is the new standard; both are supported for compatibility.
+| Format | Field | Use |
+|--------|-------|-----|
+| **Structured** (preferred) | `result.structuredContent` | Type-safe object. No parsing. |
+| **Legacy** | `result.content[0].text` | JSON string. Parse with `JSON.parse()`. |
 
-| Format | Field | Description |
-|--------|-------|-------------|
-| **Structured content** (preferred) | `result.structuredContent` | Type-safe object matching the tool's `outputSchema`. No parsing needed. |
-| **Legacy** | `result.content[0].text` | JSON string. Parse with `JSON.parse()` for structured data. |
-
-**Default (no header):** Responses include both fields. Prefer `structuredContent` when present; fall back to `content[0].text` for older integrations.
-
-**`X-MCP-Mode` header (optional):**
-
-| Header | Response |
-|--------|----------|
-| `X-MCP-Mode: optimized` | `structuredContent` only — for agents and agentic workflows |
-| `X-MCP-Mode: legacy` | Legacy format only — for guided workflows |
-| No header | Both `content` and `structuredContent` |
-
-**Example — prefer structured, fall back to legacy:**
+Prefer `structuredContent` when present; fall back to `content[0].text` for compatibility.
 
 ```javascript
 const data = result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
 ```
 
-### Error
+**Optional `X-MCP-Mode` header:** `optimized` (structured only) or `legacy` (legacy only). Omit for both.
 
-Responses include `error.code` and `error.message`:
+### Errors
 
 | Code | Meaning |
 |------|---------|
-| `-32000` | Server error — validation failure, timeout, unsupported media type, or other server-side issue |
-| `-32603` | Internal error — unexpected failure during request processing |
+| `-32000` | Server error — validation, timeout, unsupported media type |
+| `-32603` | Internal error |
 
-The `message` field contains a human-readable description. Common causes for `-32000`: missing or invalid `Accept: application/json` header, missing `Content-Type: application/json`, request body too large, or request timed out.
+The `message` field contains a human-readable description. Common `-32000` causes: missing `Accept: application/json`, missing `Content-Type: application/json`, or request body too large.

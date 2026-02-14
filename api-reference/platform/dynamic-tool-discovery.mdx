@@ -1,16 +1,9 @@
 ---
 title: "Dynamic Tool Discovery"
-description: "Discover tools at runtime and call them programmatically"
+description: "Discover and call tools programmatically"
 ---
 
-## Overview
-
-When you don't know which tool to use, use the discovery flow on `/pinkfish-sidekick`:
-
-1. **`capabilities_discover`** — Describe your task in natural language; returns recommended tools, connections, and resources
-2. **`capability_details`** — Pass tool names; returns full `inputSchema` and `serverName` for routing
-
-Then call the recommended tool via `tools/call` on the server path.
+When you don't know which tool to use: call `capabilities_discover` with a task description, then `capability_details` for schemas, then `tools/call` on the recommended server path. Both discovery tools are on `/pinkfish-sidekick`.
 
 ## Example: Discovery and Execution
 
@@ -78,23 +71,9 @@ Runs in Node.js 18+ (native fetch) or browser. For Python, use `requests.post()`
 ## Key Points
 
 - **Embedded tools** (web-search, filestorage, AI models) — No PCID required
-- **Application tools** (Gmail, Slack, Salesforce) — Include `PCID` from discovery or [Connections](/api-reference/platform/connections)
-- **Tool names** — Pass `tool.name` to `capability_details`, not `serverName`
+- **Application tools** (Gmail, Slack, etc.) — Include `PCID` from discovery or [Connections](/api-reference/platform/connections)
+- **`capability_details`** — Pass `tool.name`, not `serverName`
 
-## Advanced: Dynamic Tool Installation for Custom Agents
+## Custom Agents
 
-If you're building a custom AI agent (Claude, OpenAI, etc.) that calls the MCP Farm over HTTP, you can **dynamically install discovered tools** into the agent's tool set so the model calls them natively. This is a pattern for integrators building their own agents — not a platform-provided feature.
-
-**Pattern:**
-
-1. Bootstrap your agent with only `capabilities_discover` and `capability_details`
-2. Agent discovers tools for the user's task
-3. Your code fetches schemas via `capability_details`, converts to your model's format (Claude `input_schema`, OpenAI `parameters`), and adds them to the agent's tool set
-4. Re-run the agent loop — the model now sees the new tools
-5. When the model calls one, route it to the MCP Farm via `tools/call` on the server path
-
-**`capability_details` returns** `inputSchema` (standard JSON Schema), `serverName`, and `description` per tool. Map these directly to your model's function-calling format.
-
-<Note>
-Install only what you need. `capability_details` returns schemas for the specific tools discovered — typically 1–5 tools instead of fetching an entire server's list.
-</Note>
+For custom AI agents (Claude, OpenAI, etc.) that call the MCP Farm over HTTP: bootstrap with `capabilities_discover` and `capability_details`, fetch schemas for the user's task, map to your model's function-calling format, and route tool calls to `tools/call` on the server path. `capability_details` returns `inputSchema`, `serverName`, and `description` per tool.

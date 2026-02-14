@@ -1,18 +1,12 @@
 ---
-title: "Intelligent Discovery"
-description: "AI-powered tool and connection discovery"
+title: "Discovery"
+description: "Find tools by natural language"
 ---
 
-## Overview
+Find tools, connections, and resources by describing your task. Both discovery tools are on `/pinkfish-sidekick`:
 
-The Pinkfish MCP Farm includes an intelligent discovery system that helps you find the right tools, connections, and resources for any task. Instead of browsing through 1500+ tools manually, describe what you need in natural language and get actionable results.
-
-Discovery is a two-phase flow:
-
-1. **`capabilities_discover`** — Ask "what tools and connections are available for this task?"
-2. **`capability_details`** — Get full parameter schemas for the tools you want to use
-
-Both tools are on the `/pinkfish-sidekick` server path.
+1. **`capabilities_discover`** — Describe the task; get recommended tools and connections
+2. **`capability_details`** — Pass tool names; get full parameter schemas
 
 ## Phase 1: Discover Capabilities
 
@@ -125,35 +119,11 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
    → Actual email results
 ```
 
-## MCP-Specific Discovery
+## Reference
 
-For finding MCP servers and tools specifically (useful when building workflows), use `mcp_discover`:
-
-```bash
-curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
-  -H "Authorization: Bearer $PINKFISH_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "params": {
-      "name": "mcp_discover",
-      "arguments": {
-        "request": "send an email via gmail"
-      }
-    },
-    "id": 1
-  }'
-```
-
-`mcp_discover` returns MCP servers and tool specifications with full schemas — optimized for when you need the exact API shape to write workflow code.
-
-## When to Use Each Discovery Tool
-
-| Tool | Best For |
-|------|----------|
-| `capabilities_discover` | Finding tools, connections, and resources for a task — broadest search |
-| `capability_details` | Getting full schemas after you know which tools you need |
-| `mcp_discover` | Finding MCP servers and tool specs when writing workflow code |
-| `tools/list` on a server path | Listing all tools for a specific server you already know about |
+| Tool | Use |
+|------|-----|
+| `capabilities_discover` | Find tools and connections for a task |
+| `capability_details` | Get full schemas for specific tools |
+| `mcp_discover` | Get MCP server and tool specs (for workflow builders) |
+| `tools/list` on server path | List all tools for a server you already know |
