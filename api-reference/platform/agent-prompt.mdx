@@ -128,7 +128,18 @@ Every workflow follows this template:
 - **One MCP tool per mcp-tool node.** If you need two tools, use two nodes. Wire them with
   edges. For loops, for-each, parallel, or other control flow, call
   `capability_details(items: ["control-flow"])` to get wiring instructions.
+
+<Note>
+**Optional: Ignore the one-MCP-per-node rule.** This rule exists so the workflow diagram
+is understandable — users can edit each tool's parameters in the UI. If you're building a
+custom agent that generates workflows programmatically and doesn't need an editable
+diagram, you can ignore it. Use `code-block` nodes that call multiple MCP tools via
+`pf.mcp.callTool()`; this is often faster to implement. Add to your agent's prompt:
+"Use code-block nodes that call multiple MCP tools; ignore the one-MCP-per-node rule."
+</Note>
+
 - **code-block nodes cannot call MCP tools.** Use them for data transformation only.
+  (Exception: custom agents can use code-blocks with multiple MCP calls — see note above.)
 - **Every node function must call pf.files.writeFile()** before returning.
 - **Use pf.mcp.callTool(serverName, toolName, args)** for MCP calls in mcp-tool nodes. Use
   `tool.serverName` and `tool.name` from capabilities_discover exactly — do not construct
