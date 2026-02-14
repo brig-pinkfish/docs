@@ -5,7 +5,7 @@ description: "JSON-RPC 2.0 format, listing servers, and calling tools"
 
 ## Overview
 
-The MCP Farm uses **JSON-RPC 2.0 over HTTPS**. Every call is an HTTP POST to a server path, with a JSON-RPC payload in the body.
+The MCP Farm implements the **Model Context Protocol (MCP)** over HTTP. It uses the official `@modelcontextprotocol/sdk`, JSON-RPC 2.0 message format, and standard MCP methods (`tools/list`, `tools/call`). Every call is an HTTP POST to a server path with a JSON-RPC payload in the body.
 
 **Base URL:** `https://mcp.app.pinkfish.ai`
 
@@ -233,4 +233,11 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 
 **Success:** `result.content[0].text` contains the tool output as a JSON string. Parse it for structured data.
 
-**Error:** `error.code` and `error.message` describe the failure.
+**Error:** Responses include `error.code` and `error.message`:
+
+| Code | Meaning |
+|------|---------|
+| `-32000` | Server error — validation failure, timeout, unsupported media type, or other server-side issue |
+| `-32603` | Internal error — unexpected failure during request processing |
+
+The `message` field contains a human-readable description. Common causes for `-32000`: missing or invalid `Accept: application/json` header, missing `Content-Type: application/json`, request body too large, or request timed out.

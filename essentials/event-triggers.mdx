@@ -21,23 +21,29 @@ Event triggers work with these resource collections:
 ## Trigger Events
 
 ### onCreate
+
 Fires when a new item or file is added to a collection.
 
 **Available at:**
+
 - ✅ Collection level (monitors all creates)
 - ❌ Item/file level (not supported - items don't exist before creation)
 
 ### onEdit
+
 Fires when an existing item or file is modified.
 
 **Available at:**
+
 - ✅ Collection level (monitors all edits)
 - ✅ Item/file level (monitors specific items)
 
 ### onDelete
+
 Fires when an item or file is removed.
 
 **Available at:**
+
 - ✅ Collection level (monitors all deletions)
 - ✅ Item/file level (monitors specific items)
 
@@ -48,6 +54,7 @@ Fires when an item or file is removed.
 Monitor **all items** in a collection automatically.
 
 **Configuration:**
+
 - Set via collection management UI in the Resources section
 - Applies to every item/file in the collection
 
@@ -56,13 +63,15 @@ Monitor **all items** in a collection automatically.
 Monitor **specific items or files** individually.
 
 **Available for:**
-- ✅ Structured Datastores (individual rows)
+
+- 🚧 Structured Datastores (individual rows) - _Coming soon_
 - ✅ Filestores (individual files)
 - ✅ Knowledge Bases (individual files)
 - ❌ Unstructured Datastores (collection-level only)
 - ❌ Vaults (collection-level only)
 
 **Configuration:**
+
 - Set via UI when viewing/editing items or files
 - Set via `triggerUrls` parameter when creating or updating items/files via API
 - Only fires for that particular item/file
@@ -97,6 +106,7 @@ Triggers use a consistent format across all resource types:
 ```
 
 **Fields:**
+
 - `event` (required) - onCreate, onEdit, or onDelete
 - `url` (required) - Webhook endpoint to call (typically a Pinkfish workflow API trigger)
 - `apiKey` (required) - API key for authenticating with the endpoint
@@ -107,6 +117,7 @@ Triggers use a consistent format across all resource types:
 ### Datastore Triggers (Structured & Unstructured)
 
 **onCreate/onDelete events:**
+
 ```json
 {
   "event": "onCreate",
@@ -130,6 +141,7 @@ Triggers use a consistent format across all resource types:
 ```
 
 **onEdit events (includes changed data):**
+
 ```json
 {
   "event": "onEdit",
@@ -163,6 +175,7 @@ Triggers use a consistent format across all resource types:
 ### Filestorage Triggers
 
 **onCreate/onEdit/onDelete events:**
+
 ```json
 {
   "event": "onCreate",
@@ -190,7 +203,7 @@ Triggers use a consistent format across all resource types:
 
 ### Vault Triggers
 
-Same structure as datastore triggers, with `collectionType: "vault"` and `isSecret: true`. 
+Same structure as datastore triggers, with `collectionType: "vault"` and `isSecret: true`.
 
 **Note:** Vault triggers are **collection-level only** - individual secret items cannot have triggers.
 
@@ -270,6 +283,7 @@ To prevent infinite loops and excessive executions:
 **Why rate limiting?**
 
 Without rate limiting, you could create infinite loops:
+
 1. Workflow A edits item → triggers Workflow B
 2. Workflow B edits same item → triggers Workflow A
 3. Loop continues indefinitely
@@ -313,6 +327,7 @@ POST /memory/test-trigger?collectionId=xxx
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Triggered successfully",
@@ -379,11 +394,13 @@ PATCH /datacollection/{collectionId}
 ### Test Triggers
 
 **Collection-level:**
+
 ```
 POST /datacollection/{collectionId}/triggers/test
 ```
 
 **Item-level:**
+
 ```
 POST /memory/test-trigger?collectionId=xxx
 ```
@@ -415,4 +432,3 @@ POST /memory/test-trigger?collectionId=xxx
 - [Vault](/essentials/vault)
 - [Knowledge Base](/essentials/knowledgebase)
 - [Workflow Triggers](/essentials/triggers) - Overview of all trigger types
-
