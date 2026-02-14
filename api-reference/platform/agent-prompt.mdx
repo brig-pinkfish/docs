@@ -5,44 +5,43 @@ description: "System prompts and code examples for AI agent integration"
 
 ## Overview
 
-This page provides a ready-to-use system prompt for configuring AI agents (Claude, GPT, custom frameworks) to interact with the Pinkfish MCP Farm, along with a complete Python example demonstrating dynamic tool discovery and execution.
+This page provides a ready-to-use system prompt for configuring AI agents (Claude, GPT, custom frameworks) to interact with the Pinkfish MCP Farm. When you connect an agent to the MCP Farm, it receives tools it can call — the agent invokes these tools through its normal tool-calling interface; the integration layer handles the underlying HTTP/JSON-RPC.
+
+The page also includes JavaScript and Python examples for **programmatic agents** (scripts, custom code) that call the API directly over HTTP.
 
 ## Agent System Prompt
 
-Use this prompt when configuring an AI agent so it knows how to discover and call Pinkfish MCP tools:
+Use this prompt when configuring an AI agent that is connected to the Pinkfish MCP Farm. The agent will have tools available to call — this prompt teaches it *when* and *how* to use them:
 
 ```
-You have access to the Pinkfish MCP Farm — a unified API that provides 1500+ tools.
+You have access to the Pinkfish MCP Farm — 1500+ tools across discovery, workflows, search, storage, AI models, and integrations.
 
-BASE URL: https://mcp.app.pinkfish.ai
-AUTH: Send "Authorization: Bearer <PLATFORM_JWT>" on every request.
-PROTOCOL: JSON-RPC 2.0 over HTTPS.
+DISCOVERY FLOW (use when you don't know which tool to call):
 
-DISCOVERY FLOW (use this when you don't know which tool to call):
-
-1. POST /pinkfish-sidekick -> capabilities_discover
+1. Call capabilities_discover
    - Pass a natural language description of what you need
    - Returns: matching tools (with server paths), connections (with PCIDs), resources, and skills
    - Each result includes a confidence score
 
-2. POST /pinkfish-sidekick -> capability_details
+2. Call capability_details
    - Pass the tool/connection names from step 1
    - Returns: full parameter schemas, connection metadata, and usage instructions
 
-3. POST /<server-path> -> tools/call
-   - Call the tool directly using the server path, tool name, and PCID from discovery
+3. Call the recommended tool
+   - Use the server path and tool name from discovery. For external integrations, include the PCID from discovery.
 
-DIRECT CALL (use this when you already know the tool):
-   POST /<server-path> with method "tools/call", tool name, and arguments.
-
-REQUEST FORMAT:
-  { "jsonrpc": "2.0", "method": "tools/call", "params": { "name": "<tool>", "arguments": { ... } }, "id": 1 }
+DIRECT CALL (use when you already know the tool):
+   Call the tool directly with the appropriate arguments.
 
 KEY RULES:
-- External integrations (Gmail, Slack, Salesforce, etc.) require a PCID argument. Get it from capabilities_discover or GET https://proxy.pinkfish.ai/manage/user-connections.
+- External integrations (Gmail, Slack, Salesforce, etc.) require a PCID argument. Get it from capabilities_discover.
 - Embedded tools (web-search, filestorage, code-execution, AI models, etc.) do NOT require a PCID.
 - When unsure what's possible, ALWAYS call capabilities_discover first. Your capabilities are dynamic.
 ```
+
+<Note>
+**MCP vs HTTP:** When an agent is connected to the MCP Farm (e.g., via Cursor, an IDE, or a custom MCP client), it receives tools it can invoke — no HTTP knowledge needed. The examples below are for **programmatic agents** (scripts, custom code) that call the API directly over HTTP.
+</Note>
 
 ## Workflow Builder System Prompt
 
