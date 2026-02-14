@@ -52,13 +52,29 @@ For agents that need to build workflows programmatically, use this extended prom
 You are a workflow builder agent for the Pinkfish platform. You build permanent,
 reusable automations by calling tools on the /pinkfish-sidekick MCP server.
 
+## Nodes and Edges
+
+Workflows are directed graphs of **nodes** connected by **edges**:
+
+- **Nodes** — Each node has an `id`, `type`, and optional `name`. Types: `trigger` (entry),
+  `mcp-tool` (one MCP tool per node), `code-block` (data transformation only), and control
+  flow types (`if-else`, `router`, `for-each`, `merge`, `loop`, `while`, `parallel`, `delay`).
+- **Edges** — Define execution order: `{ source: "node_a", target: "node_b" }`. Each edge
+  connects one node's output to the next node's input. Chain nodes by adding edges between them.
+
+**When you need more than one MCP tool:** Use one mcp-tool node per tool, then wire them
+with edges. Call `capability_details(items: ["control-flow"])` for instructions on wiring
+multiple nodes, synthetic edges for loops/for-each, and advanced control flow patterns.
+
 ## Build Sequence
 
 1. **capabilities_discover** — Describe the task in natural language. Returns recommended
-   tools, connections, resources, and skills.
+   tools, connections, resources, and skills. Pass `context: "workflow-creation"` for
+   workflow-relevant results.
 2. **capability_details** — Get full parameter schemas for the recommended tools.
    ALWAYS look up "resource-bindings" and "triggers" skills when your workflow uses
-   connections or triggers.
+   connections or triggers. When using multiple nodes (e.g., multiple MCP tools), look up
+   "control-flow" for wiring instructions.
 3. **workflow_create** — Create a new workflow. Returns an automationId and starter code.
 4. **workflow_update** — Upload your workflow code. Include bindings when adding new
    resources to WORKFLOW_RESOURCES.
@@ -101,7 +117,9 @@ Every workflow follows this template:
 
 ## Key Rules
 
-- **One MCP tool per mcp-tool node.** If you need two tools, use two nodes.
+- **One MCP tool per mcp-tool node.** If you need two tools, use two nodes. Wire them with
+  edges. For loops, for-each, parallel, or other control flow, call
+  `capability_details(items: ["control-flow"])` to get wiring instructions.
 - **code-block nodes cannot call MCP tools.** Use them for data transformation only.
 - **Every node function must call pf.files.writeFile()** before returning.
 - **Use pf.mcp.callTool(serverName, toolName, args)** for MCP calls in mcp-tool nodes.
@@ -141,15 +159,127 @@ For triggers: workflow_trigger_schedule, workflow_trigger_api, workflow_trigger_
 For agents: workflow_agents, workflow_invoke
 ```
 
-## Python: Dynamic Tool Discovery and Execution
+## JavaScript: Dynamic Tool Discovery and Execution
 
 This script demonstrates how an agent would dynamically discover the right tools for a task and call them — no hardcoded tool names required.
+
+```javascript
+const MCP_URL = "https://mcp.app.pinkfish.ai";
+const PINKCONNECT_URL = "https://proxy.pinkfish.ai";
+const TOKEN = "<YOUR_PLATFORM_JWT>";
+
+const headers = {
+  Authorization: `Bearer ${TOKEN}`,
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
+
+async function mcpCall(serverPath, method, params = null) {
+  const payload = {
+    jsonrpc: "2.0",
+    method,
+    id: 1,
+  };
+  if (params) payload.params = params;
+
+  const resp = await fetch(`${MCP_URL}${serverPath}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  const result = await resp.json();
+
+  if (result.error) throw new Error(`MCP error: ${result.error.message}`);
+  return result.result || {};
+}
+
+async function callTool(serverPath, toolName, arguments_) {
+  return mcpCall(serverPath, "tools/call", {
+    name: toolName,
+    arguments: arguments_,
+  });
+}
+
+async function discover(taskDescription) {
+  const result = await callTool("/pinkfish-sidekick", "capabilities_discover", {
+    request: taskDescription,
+  });
+  const content = result?.content?.[0]?.text ?? "{}";
+  return JSON.parse(content);
+}
+
+async function getDetails(items) {
+  const result = await callTool("/pinkfish-sidekick", "capability_details", {
+    items,
+  });
+  const content = result?.content?.[0]?.text ?? "{}";
+  return JSON.parse(content);
+}
+
+async function listConnections() {
+  const resp = await fetch(
+    `${PINKCONNECT_URL}/manage/user-connections?statuses=connected`,
+    { headers }
+  );
+  return resp.json();
+}
+
+// Example: Dynamic discovery and execution
+async function main() {
+  // Step 1: Discover what tools are available for a task
+  console.log("Discovering tools for: 'search the web for AI news'...");
+  const capabilities = await discover("search the web for AI news");
+
+  console.log("\nRecommended tools:");
+  for (const tool of capabilities.tools ?? []) {
+    console.log(`  - ${tool.name} (server: ${tool.serverName}, confidence: ${tool.confidence})`);
+  }
+
+  console.log("\nAvailable connections:");
+  for (const conn of capabilities.connections ?? []) {
+    console.log(`  - ${conn.name} (PCID: ${conn.id}, app: ${conn.application})`);
+  }
+
+  // Step 2: Get full details for the top tool
+  if (capabilities.tools?.length) {
+    const topTool = capabilities.tools[0];
+    console.log(`\nGetting details for: ${topTool.serverName}...`);
+    const details = await getDetails([topTool.serverName]);
+    console.log(JSON.stringify(details, null, 2).slice(0, 500));
+  }
+
+  // Step 3: Call the tool directly (embedded tools — no PCID needed)
+  console.log("\nCalling search_googlesearch...");
+  const result = await callTool("/web-search", "search_googlesearch", {
+    query: "latest AI news 2026",
+  });
+  const content = result?.content?.[0]?.text ?? "";
+  console.log(`Result preview: ${content.slice(0, 300)}...`);
+
+  // For application tools (PCID required), get it from discovery:
+  // const connections = await listConnections();
+  // const gmailPcid = connections.find((c) => c.service_key === "gmail")?.id;
+  // await callTool("/gmail", "gmail_search_emails", {
+  //   PCID: gmailPcid,
+  //   query: "is:unread",
+  // });
+}
+
+main();
+```
+
+<Note>
+Runs in Node.js 18+ (native fetch) or in a browser.
+</Note>
+
+## Python: Dynamic Tool Discovery and Execution
+
+Same pattern in Python for teams that prefer it:
 
 ```python
 import requests
 import json
 
-# Configuration
 MCP_URL = "https://mcp.app.pinkfish.ai"
 PINKCONNECT_URL = "https://proxy.pinkfish.ai"
 TOKEN = "<YOUR_PLATFORM_JWT>"
@@ -162,102 +292,46 @@ HEADERS = {
 
 
 def mcp_call(server_path, method, params=None):
-    """Make a JSON-RPC 2.0 call to the MCP Farm."""
-    payload = {
-        "jsonrpc": "2.0",
-        "method": method,
-        "id": 1,
-    }
+    payload = {"jsonrpc": "2.0", "method": method, "id": 1}
     if params:
         payload["params"] = params
 
     resp = requests.post(f"{MCP_URL}{server_path}", headers=HEADERS, json=payload)
-    resp.raise_for_status()
     result = resp.json()
-
     if "error" in result:
         raise Exception(f"MCP error: {result['error']}")
-
     return result.get("result", {})
 
 
 def call_tool(server_path, tool_name, arguments):
-    """Call a specific MCP tool."""
-    return mcp_call(server_path, "tools/call", {
-        "name": tool_name,
-        "arguments": arguments,
-    })
+    return mcp_call(server_path, "tools/call", {"name": tool_name, "arguments": arguments})
 
 
 def discover(task_description):
-    """Ask the MCP Farm what tools and connections are available for a task."""
-    result = call_tool("/pinkfish-sidekick", "capabilities_discover", {
-        "request": task_description,
-    })
-    # Result is wrapped in content[].text
+    result = call_tool("/pinkfish-sidekick", "capabilities_discover", {"request": task_description})
     content = result.get("content", [{}])[0].get("text", "{}")
     return json.loads(content)
 
 
 def get_details(items):
-    """Get full schemas and metadata for specific tools/connections."""
-    result = call_tool("/pinkfish-sidekick", "capability_details", {
-        "items": items,
-    })
+    result = call_tool("/pinkfish-sidekick", "capability_details", {"items": items})
     content = result.get("content", [{}])[0].get("text", "{}")
     return json.loads(content)
 
 
 def list_connections():
-    """List all active PinkConnect connections (PCIDs)."""
-    resp = requests.get(
-        f"{PINKCONNECT_URL}/manage/user-connections?statuses=connected",
-        headers=HEADERS,
-    )
-    resp.raise_for_status()
+    resp = requests.get(f"{PINKCONNECT_URL}/manage/user-connections?statuses=connected", headers=HEADERS)
     return resp.json()
 
 
-# ─────────────────────────────────────────────────
-# Example: Dynamic discovery and execution
-# ─────────────────────────────────────────────────
-
+# Example usage
 if __name__ == "__main__":
-    # Step 1: Discover what tools are available for a task
-    print("Discovering tools for: 'search the web for AI news'...")
     capabilities = discover("search the web for AI news")
-
-    print(f"\nRecommended tools:")
     for tool in capabilities.get("tools", []):
-        print(f"  - {tool['name']} (server: {tool['serverName']}, confidence: {tool['confidence']})")
+        print(f"  - {tool['name']} (server: {tool['serverName']})")
 
-    print(f"\nAvailable connections:")
-    for conn in capabilities.get("connections", []):
-        print(f"  - {conn['name']} (PCID: {conn['id']}, app: {conn['application']})")
-
-    # Step 2: Get full details for the top tool
-    if capabilities.get("tools"):
-        top_tool = capabilities["tools"][0]
-        print(f"\nGetting details for: {top_tool['serverName']}...")
-        details = get_details([top_tool["serverName"]])
-        print(json.dumps(details, indent=2)[:500])  # Print first 500 chars
-
-    # Step 3: Call the tool directly
-    #   For embedded tools (no PCID needed):
-    print("\nCalling search_googlesearch...")
-    result = call_tool("/web-search", "search_googlesearch", {
-        "query": "latest AI news 2026",
-    })
-    content = result.get("content", [{}])[0].get("text", "")
-    print(f"Result preview: {content[:300]}...")
-
-    # For application tools (PCID required), get it from discovery:
-    # connections = list_connections()
-    # gmail_pcid = next(c["id"] for c in connections if c["service_key"] == "gmail")
-    # result = call_tool("/gmail", "gmail_search_emails", {
-    #     "PCID": gmail_pcid,
-    #     "query": "is:unread",
-    # })
+    result = call_tool("/web-search", "search_googlesearch", {"query": "latest AI news 2026"})
+    print(result.get("content", [{}])[0].get("text", "")[:300])
 ```
 
 <Note>
