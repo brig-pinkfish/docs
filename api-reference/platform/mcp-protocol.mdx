@@ -231,9 +231,34 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 
 ## Response Format
 
-**Success:** `result.content[0].text` contains the tool output as a JSON string. Parse it for structured data.
+### Success: Structured Content vs Legacy
 
-**Error:** Responses include `error.code` and `error.message`:
+Tool responses support two formats. **Structured content** is the new standard; both are supported for compatibility.
+
+| Format | Field | Description |
+|--------|-------|-------------|
+| **Structured content** (preferred) | `result.structuredContent` | Type-safe object matching the tool's `outputSchema`. No parsing needed. |
+| **Legacy** | `result.content[0].text` | JSON string. Parse with `JSON.parse()` for structured data. |
+
+**Default (no header):** Responses include both fields. Prefer `structuredContent` when present; fall back to `content[0].text` for older integrations.
+
+**`X-MCP-Mode` header (optional):**
+
+| Header | Response |
+|--------|----------|
+| `X-MCP-Mode: optimized` | `structuredContent` only — for agents and agentic workflows |
+| `X-MCP-Mode: legacy` | Legacy format only — for guided workflows |
+| No header | Both `content` and `structuredContent` |
+
+**Example — prefer structured, fall back to legacy:**
+
+```javascript
+const data = result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
+```
+
+### Error
+
+Responses include `error.code` and `error.message`:
 
 | Code | Meaning |
 |------|---------|

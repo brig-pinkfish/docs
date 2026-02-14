@@ -40,14 +40,20 @@ async function callTool(serverPath, toolName, args) {
   return result.result;
 }
 
+// Prefer structuredContent (new standard); fall back to legacy content[0].text
+function parseResult(r) {
+  if (r?.structuredContent) return r.structuredContent;
+  return JSON.parse(r?.content?.[0]?.text ?? "{}");
+}
+
 async function discover(task) {
   const r = await callTool("/pinkfish-sidekick", "capabilities_discover", { request: task });
-  return JSON.parse(r?.content?.[0]?.text ?? "{}");
+  return parseResult(r);
 }
 
 async function getDetails(items) {
   const r = await callTool("/pinkfish-sidekick", "capability_details", { items });
-  return JSON.parse(r?.content?.[0]?.text ?? "{}");
+  return parseResult(r);
 }
 
 // 1. Discover tools for a task
@@ -62,7 +68,7 @@ const details = await getDetails([topTool.name]);
 const result = await callTool(`/${topTool.serverName}`, topTool.name, {
   query: "latest AI news 2026",
 });
-console.log(result?.content?.[0]?.text);
+console.log(parseResult(result));
 ```
 
 <Note>
