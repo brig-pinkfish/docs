@@ -70,17 +70,24 @@ multiple nodes, synthetic edges for loops/for-each, and advanced control flow pa
 1. **capabilities_discover** — Describe the task in natural language. Returns recommended
    tools, connections, resources, and skills. Pass `context: "workflow-creation"` for
    workflow-relevant results.
-2. **capability_details** — Get full parameter schemas for the recommended tools.
-   ALWAYS look up "resource-bindings" and "triggers" skills when your workflow uses
-   connections or triggers. When using multiple nodes (e.g., multiple MCP tools), look up
-   "control-flow" for wiring instructions.
+2. **capability_details** — Get full parameter schemas for the recommended tools. Look up
+   skills BEFORE implementing. Bindings will fail without "resource-bindings"; triggers need
+   "triggers"; multi-node wiring needs "control-flow". Also: "agent-communication",
+   "sub-workflows", "file-operations", "html-creation", "chart-creation" when relevant.
 3. **workflow_create** — Create a new workflow. Returns an automationId and starter code.
-4. **workflow_update** — Upload your workflow code. Include bindings when adding new
-   resources to WORKFLOW_RESOURCES. For existing workflows, use the targeted edit format
-   (see below) so edits merge correctly; full replacement wipes headers, footers, and
-   other nodes.
-5. **workflow_run** — Execute and verify. Use workflow_results to inspect output.
-6. **Fix & iterate** — Review errors, update code, run again until success.
+4. **workflow_update** — Upload your workflow code. For existing workflows, use the targeted
+   edit format (see below) so edits merge correctly; full replacement wipes headers,
+   footers, and other nodes. Call workflow_read before editing to see current state.
+   **Bindings:** Only include the `bindings` parameter when adding NEW resources to
+   WORKFLOW_RESOURCES or when the user explicitly requests a rebind. When updating code
+   without adding resources, omit bindings — this preserves the user's manual connection
+   selections in the UI.
+5. **workflow_run** — Execute and verify. Use workflow_results to inspect output when you need
+   to search, read, or get URLs from run artifacts.
+6. **workflow_pin** — IMMEDIATELY pin all mcp-tool nodes after successful run. Pinned nodes
+   skip execution and reuse stored output; unpinned nodes re-run every time.
+7. **Fix & iterate** — Review errors, update code, run again until success. Call workflow_read
+   before editing existing workflows to see current state.
 
 ## Code Structure
 
@@ -123,11 +130,21 @@ Every workflow follows this template:
   `capability_details(items: ["control-flow"])` to get wiring instructions.
 - **code-block nodes cannot call MCP tools.** Use them for data transformation only.
 - **Every node function must call pf.files.writeFile()** before returning.
-- **Use pf.mcp.callTool(serverName, toolName, args)** for MCP calls in mcp-tool nodes.
+- **Use pf.mcp.callTool(serverName, toolName, args)** for MCP calls in mcp-tool nodes. Use
+  `tool.serverName` and `tool.name` from capabilities_discover exactly — do not construct
+  tool names. Always include a `version` parameter (get from capability_details; use `"1"`
+  if not available).
 - **Use {{resource.X}} pattern** for connections, triggers, and agent IDs.
 - **Register all functions in global scope:** global.node_name = node_name;
 - **Do not remove** the REQUIRED HEADER or REQUIRED FOOTER.
 - **Use pf.log.info/success/error/warn** for logging (not console.log).
+- **All code must be within node functions** — no helper functions or variables outside
+  nodes; this is functional programming.
+- **Connection errors** (expired token, disconnected service): The agent cannot fix these —
+  the user must reconnect manually.
+- **Why discovery matters:** Tools and skills contain critical patterns and examples NOT in
+  this prompt. Skipping capabilities_discover or capability_details WILL result in
+  incorrect implementations.
 
 ## workflow_update: Targeted Edit Format (Fast Apply)
 
