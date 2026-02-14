@@ -1,0 +1,179 @@
+---
+title: "Connections & Server Types"
+description: "Embedded vs application MCPs, PCIDs, and PinkConnect"
+---
+
+## Overview
+
+The MCP Farm hosts two categories of servers: **embedded MCPs** (built-in platform services) and **application MCPs** (third-party integrations). Understanding the difference is essential because application MCPs require a connection ID (PCID) with every tool call.
+
+## Embedded MCPs
+
+**Built-in platform services** that do not require external user connections. These work out of the box with just a runtime token.
+
+| Server | Description |
+|--------|-------------|
+| `datastore-structured` | Tables with schemas — structured data storage |
+| `datastore-unstructured` | Flexible key-value JSON storage |
+| `filestorage` | File upload, download, and management |
+| `knowledge-base` | RAG search and semantic Q&A over documents |
+| `vault` | Encrypted secrets storage |
+| `web-search` | Google search, news, YouTube, shopping, and more |
+| `web-scraping` | Extract content from URLs, crawl websites |
+| `image-processing` | AI image generation and editing |
+| `video-processing` | AI video generation |
+| `audio-processing` | Text-to-speech and transcription |
+| `browser-automation` | AI-powered browser automation |
+| `code-execution` | Sandboxed JavaScript execution |
+| `embedded-anthropic` | Claude models |
+| `embedded-openai` | OpenAI GPT models |
+| `embedded-gemini` | Google Gemini models |
+| `embedded-groq` | Groq models |
+| `embedded-perplexity` | Perplexity web research |
+| `docprocess` | PDF, Word, and document conversion |
+| `email` | Send emails |
+| `charting` | Chart.js visualizations |
+| `http-utils` | Make HTTP requests to public APIs |
+| `weather` | Current conditions and forecasts |
+| `ocr` | Optical character recognition |
+| `web-application` | Deploy HTML dashboards to shareable URLs |
+| `pinkfish-sidekick` | Discovery, workflow building, and orchestration |
+
+**Key characteristic:** No `PCID` required. Embedded tools use org-scoped identifiers like `collectionId` where needed.
+
+## Application MCPs
+
+**Third-party integrations** that connect to external services via OAuth or API keys. These require the user to set up a connection through PinkConnect, and each tool call requires a `PCID` (PinkConnect connection ID) that identifies which connection to use.
+
+| Server | Description |
+|--------|-------------|
+| `gmail` | Gmail API |
+| `slack` | Slack API |
+| `salesforce` | Salesforce API |
+| `google-drive` | Google Drive file storage |
+| `google-sheets` | Google Sheets API |
+| `google-calendar` | Google Calendar API |
+| `onedrive` | OneDrive API |
+| `microsoft-outlook` | Outlook email and calendar |
+| `microsoft-teams` | Microsoft Teams API |
+| `sharepoint` | SharePoint API |
+| `hubspot` | HubSpot CRM |
+| `jira` | Jira API |
+| `linear` | Linear API |
+| `github` | GitHub API |
+| `snowflake` | Snowflake data warehouse |
+| `notion` | Notion API |
+| ... | 100+ more integrations |
+
+**Key characteristic:** Every tool call must include a `PCID` argument.
+
+## Quick Reference
+
+| | Embedded MCPs | Application MCPs |
+|---|---|---|
+| **Provider** | Pinkfish platform | Third-party services |
+| **Connection required** | No | Yes (OAuth or API key via PinkConnect) |
+| **PCID in arguments** | No | Yes (required) |
+| **Examples** | Web search, file storage, AI models, code execution | Gmail, Slack, Salesforce, Jira |
+| **Discovery** | Available immediately | Appear in `capabilities_discover` once connected |
+
+## What is a PCID?
+
+A **PCID** (PinkConnect Connection ID) is a unique identifier for a specific OAuth connection to an external service. When you connect your Gmail account, Salesforce instance, or any other external service through PinkConnect, each connection gets a PCID.
+
+You need to include the PCID in tool arguments so the MCP Farm knows which connection to use. For example, if you have two Gmail accounts connected, the PCID tells it which one to search.
+
+## Listing Your Connections
+
+You can get PCIDs in two ways:
+
+### Option 1: Via PinkConnect API
+
+Call PinkConnect directly to list all your connections:
+
+```bash
+curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+**Optional query parameter:** `statuses` — comma-separated filter for connection status. Defaults to `connected,error,disconnected`.
+
+```bash
+# Only show active connections
+curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections?statuses=connected" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+**Response (abbreviated):**
+
+```json
+[
+  {
+    "id": "abc123-def456",
+    "name": "My Gmail",
+    "service_key": "gmail",
+    "status": "connected",
+    "service_type": "core",
+    "author_name": "My Organization"
+  },
+  {
+    "id": "ghi789-jkl012",
+    "name": "My Slack",
+    "service_key": "slack",
+    "status": "connected",
+    "service_type": "core",
+    "author_name": "My Organization"
+  }
+]
+```
+
+Each entry's `id` field is the **PCID**.
+
+### Option 2: Via Discovery
+
+Use `capabilities_discover` to find connections relevant to a specific task. The response includes PCIDs in the `connections` array:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "capabilities_discover",
+      "arguments": {
+        "request": "search my gmail"
+      }
+    },
+    "id": 1
+  }'
+```
+
+The `connections[].id` in the response is the PCID.
+
+## Using a PCID in a Tool Call
+
+Pass the PCID as an argument when calling an application MCP tool:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "gmail_search_emails",
+      "arguments": {
+        "PCID": "abc123-def456",
+        "query": "is:unread"
+      }
+    },
+    "id": 1
+  }'
+```

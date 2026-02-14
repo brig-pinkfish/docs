@@ -1,0 +1,253 @@
+---
+title: "MCP Protocol"
+description: "JSON-RPC 2.0 format, listing servers, and calling tools"
+---
+
+## Overview
+
+The MCP Farm uses **JSON-RPC 2.0 over HTTPS**. Every call is an HTTP POST to a server path on the MCP Farm, with a JSON-RPC payload in the body.
+
+**Base URL:** `https://mcp.app.pinkfish.ai`
+
+All requests require a runtime token in the `Authorization` header. See [Authentication](/api-reference/platform/authentication) for how to obtain one.
+
+## Request Format
+
+Every MCP request follows this structure:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "<method>",
+    "params": {
+      "name": "<tool_name>",
+      "arguments": { ... }
+    },
+    "id": 1
+  }'
+```
+
+**Required headers:**
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | `Bearer <runtime_token>` |
+| `Content-Type` | `application/json` |
+| `Accept` | `application/json` |
+
+**JSON-RPC fields:**
+
+| Field | Description |
+|-------|-------------|
+| `jsonrpc` | Always `"2.0"` |
+| `method` | The JSON-RPC method — typically `"tools/call"` or `"tools/list"` |
+| `params` | Method parameters — for `tools/call`, includes `name` (tool name) and `arguments` (tool inputs) |
+| `id` | Request identifier (any integer) |
+
+## List Available Servers
+
+Query the MCP Farm to see all available servers and their tools:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/mcp" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "listServers",
+      "arguments": {}
+    },
+    "id": 1
+  }'
+```
+
+**Response (abbreviated):**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [{
+      "type": "text",
+      "text": "{\"servers\": [{\"name\": \"gmail\", \"path\": \"/gmail\", \"description\": \"Gmail API\", \"embedded\": false, \"tools\": [...]}, ...]}"
+    }]
+  }
+}
+```
+
+Each server entry includes:
+
+| Field | Description |
+|-------|-------------|
+| `name` | Server identifier (e.g., `gmail`, `slack`, `datastore-structured`) |
+| `path` | URL path to call this server (e.g., `/gmail`) |
+| `description` | What the server does |
+| `embedded` | `true` = built-in platform service, `false` = external application requiring a connection |
+| `tools` | Array of tools provided by this server |
+
+## List Tools for a Server
+
+To see the tools available on a specific server, call `tools/list` on that server's path:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/list",
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {
+        "name": "gmail_search_emails",
+        "description": "Search emails in Gmail",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "PCID": { "type": "string", "description": "PinkConnect connection ID" },
+            "query": { "type": "string", "description": "Gmail search query" }
+          },
+          "required": ["PCID", "query"]
+        }
+      }
+    ]
+  }
+}
+```
+
+Each tool entry includes the full `inputSchema` — a JSON Schema describing the parameters the tool accepts.
+
+## Call a Tool
+
+Send a `tools/call` request to the server path with the tool name and arguments:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "<tool_name>",
+      "arguments": {
+        "key": "value"
+      }
+    },
+    "id": 1
+  }'
+```
+
+### Example: Search the Web
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "search_googlesearch",
+      "arguments": {
+        "query": "latest AI news"
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [{
+      "type": "text",
+      "text": "{ ... search results ... }"
+    }]
+  }
+}
+```
+
+### Example: Call an External Service (Gmail)
+
+External application tools require a `PCID` (PinkConnect connection ID) to identify which connected account to use. See [Connections](/api-reference/platform/connections) for how to get your PCIDs.
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "gmail_search_emails",
+      "arguments": {
+        "PCID": "abc123-def456",
+        "query": "is:unread"
+      }
+    },
+    "id": 1
+  }'
+```
+
+## Response Structure
+
+All tool responses follow the same JSON-RPC 2.0 structure:
+
+**Success:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{ ... tool output as JSON string ... }"
+      }
+    ]
+  }
+}
+```
+
+**Error:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32000,
+    "message": "Error description"
+  }
+}
+```
+
+The `result.content` array typically contains a single entry with `type: "text"` and the tool's output as a JSON string in the `text` field. Parse this string to get the structured result.

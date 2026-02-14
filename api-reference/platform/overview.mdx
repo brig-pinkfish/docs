@@ -1,0 +1,83 @@
+---
+title: "Platform API"
+description: "Programmatic access to 1500+ AI tools across 130+ integrations"
+---
+
+## Overview
+
+The Pinkfish Platform API gives you programmatic access to the full power of the Pinkfish MCP Farm — a unified gateway to **1500+ tools** across **130+ integrations**. With a single authentication flow and a consistent protocol, you can:
+
+- **Search the web**, generate AI content, process documents, and more — using built-in platform tools
+- **Connect to external services** like Gmail, Slack, Salesforce, Jira, and 100+ others via OAuth-based connections
+- **Discover tools dynamically** using natural language — ask "what tools can send an email?" and get actionable results
+- **Execute code** in a sandboxed environment that can chain multiple tool calls together
+- **Build workflows** — persistent, versioned automations with triggers, scheduling, and resource bindings
+- **Automate browsers** using natural language — describe what you want and watch AI navigate, click, and extract data
+
+## Key Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **API Key** | An account-level key created in the Pinkfish web app. Used to obtain a runtime token. |
+| **Runtime Token** | A JWT returned by the `/auth/token` endpoint. Authorizes all MCP Farm calls. |
+| **MCP Farm** | The unified API gateway that hosts all tool servers. Uses JSON-RPC 2.0 over HTTPS. |
+| **MCP Server** | A named collection of related tools (e.g., `gmail`, `web-search`, `browser-automation`). |
+| **Tool** | A single callable action on a server (e.g., `gmail_search_emails`, `search_googlesearch`). |
+| **PCID** | PinkConnect Connection ID — identifies a specific OAuth connection for external services. |
+
+## Base URLs
+
+| Service | URL |
+|---------|-----|
+| **Platform API** | `https://app-api.app.pinkfish.ai` |
+| **MCP Farm** | `https://mcp.app.pinkfish.ai` |
+| **PinkConnect** | `https://proxy.pinkfish.ai` |
+
+## Prerequisites
+
+1. A Pinkfish account
+2. An API key — create one in **Settings → API Keys → Create**
+
+<Warning>
+Copy the API key value immediately — it is shown only once. It can take up to 60 seconds for a new API key to activate.
+</Warning>
+
+## Quick Start
+
+The full flow from authentication to calling a tool:
+
+```bash
+# 1. Exchange your API key for a runtime token
+export PINKFISH_TOKEN=$(curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
+  -H "X-Api-Key: YOUR_API_KEY" \
+  -H "X-Selected-Org: YOUR_ORG_ID" \
+  -H "Content-Type: application/json" | jq -r '.token')
+
+# 2. Call a tool (example: web search)
+curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "search_googlesearch",
+      "arguments": { "query": "latest AI news" }
+    },
+    "id": 1
+  }'
+```
+
+## What's in This Guide
+
+| Page | Description |
+|------|-------------|
+| [Authentication](/api-reference/platform/authentication) | Create API keys and exchange them for runtime tokens |
+| [MCP Protocol](/api-reference/platform/mcp-protocol) | JSON-RPC 2.0 format, listing servers, and calling tools |
+| [Discovery](/api-reference/platform/discovery) | AI-powered tool and connection discovery |
+| [Connections](/api-reference/platform/connections) | Embedded vs application MCPs, PCIDs, and PinkConnect |
+| [Code Execution](/api-reference/platform/code-execution) | Sandboxed JavaScript environment for chaining tools |
+| [Workflows](/api-reference/platform/workflows) | Persistent automations with triggers, scheduling, and resource bindings |
+| [Browser Automation](/api-reference/platform/browser-automation) | Natural language and Playwright-based browser automation |
+| [Agent Integration](/api-reference/platform/agent-prompt) | System prompts and code examples for AI agent integration |

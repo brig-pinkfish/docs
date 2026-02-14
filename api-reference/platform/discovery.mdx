@@ -1,0 +1,159 @@
+---
+title: "Intelligent Discovery"
+description: "AI-powered tool and connection discovery"
+---
+
+## Overview
+
+The Pinkfish MCP Farm includes an intelligent discovery system that helps you find the right tools, connections, and resources for any task. Instead of browsing through 1500+ tools manually, describe what you need in natural language and get actionable results.
+
+Discovery is a two-phase flow:
+
+1. **`capabilities_discover`** — Ask "what tools and connections are available for this task?"
+2. **`capability_details`** — Get full parameter schemas for the tools you want to use
+
+Both tools are on the `/pinkfish-sidekick` server path.
+
+## Phase 1: Discover Capabilities
+
+Use `capabilities_discover` to find tools, connections, and resources by describing your task in natural language.
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "capabilities_discover",
+      "arguments": {
+        "request": "search my gmail for unread emails"
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Parameters:**
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `request` | Yes | Natural language description of the task |
+| `types` | No | Filter results: `["tool"]`, `["connection"]`, `["resource"]`, `["agentSkill"]`, or combinations |
+| `context` | No | `"workflow-creation"` or `"agent-execution"` — filters available skills |
+
+**Response:**
+
+```json
+{
+  "tools": [
+    {
+      "name": "gmail_search_emails",
+      "serverName": "gmail",
+      "hasSkill": false,
+      "confidence": 0.95
+    }
+  ],
+  "connections": [
+    {
+      "name": "My Gmail",
+      "id": "abc123-pcid",
+      "application": "gmail",
+      "confidence": 0.95
+    }
+  ],
+  "resources": [],
+  "skills": []
+}
+```
+
+Key fields in the response:
+
+- **`tools[].name`** — Tool name to use in `tools/call`
+- **`tools[].serverName`** — Server path to call (e.g., `gmail` → `/gmail`)
+- **`connections[].id`** — The PCID to pass as an argument when calling external application tools
+- **`confidence`** — How well the result matches your request (0-1)
+
+## Phase 2: Get Full Details
+
+Once you know which tools you need, get full parameter schemas with `capability_details`.
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "capability_details",
+      "arguments": {
+        "items": ["gmail"]
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Parameters:**
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `items` | Yes | Array of names/IDs from `capabilities_discover` results (e.g., `["gmail", "My Gmail Connection"]`) |
+| `types` | No | Filter to specific capability types: `["tool"]`, `["connection"]`, `["resource"]`, `["agentSkill"]` |
+
+**Response includes:**
+
+- Full tool parameter schemas (`inputSchema`)
+- Connection metadata and PCID values
+- Collection/resource details
+- Agent skill instructions (if applicable)
+
+## Typical Discovery Flow
+
+```
+1. capabilities_discover("search my gmail for unread emails")
+   → tools: [gmail_search_emails], connections: [My Gmail (PCID: abc123)]
+
+2. capability_details(items: ["gmail"])
+   → Full inputSchema for gmail_search_emails
+
+3. tools/call gmail_search_emails with PCID from step 1
+   → Actual email results
+```
+
+## MCP-Specific Discovery
+
+For finding MCP servers and tools specifically (useful when building workflows), use `mcp_discover`:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "mcp_discover",
+      "arguments": {
+        "request": "send an email via gmail"
+      }
+    },
+    "id": 1
+  }'
+```
+
+`mcp_discover` returns MCP servers and tool specifications with full schemas — optimized for when you need the exact API shape to write workflow code.
+
+## When to Use Each Discovery Tool
+
+| Tool | Best For |
+|------|----------|
+| `capabilities_discover` | Finding tools, connections, and resources for a task — broadest search |
+| `capability_details` | Getting full schemas after you know which tools you need |
+| `mcp_discover` | Finding MCP servers and tool specs when writing workflow code |
+| `tools/list` on a server path | Listing all tools for a specific server you already know about |

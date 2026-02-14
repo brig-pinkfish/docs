@@ -1,0 +1,122 @@
+---
+title: "Authentication"
+description: "Create API keys and exchange them for runtime tokens"
+---
+
+## Overview
+
+The Platform API uses a two-step authentication flow:
+
+1. **Create an API key** in the Pinkfish web app
+2. **Exchange the API key** for a short-lived runtime token (JWT) via the `/auth/token` endpoint
+
+The runtime token is then used as a Bearer token for all MCP Farm calls.
+
+## Step 1: Create an API Key
+
+1. Log in to the Pinkfish web app
+2. Navigate to **Settings → API Keys**
+3. Click **Create**
+4. Copy the key value immediately — it is shown only once
+
+<Warning>
+It can take up to 60 seconds for a new API key to activate after creation.
+</Warning>
+
+You will also need your **Organization ID** (Org ID). This is available in your organization settings.
+
+## Step 2: Exchange API Key for a Runtime Token
+
+Pass your API key and Org ID to the Platform API to receive a runtime JWT.
+
+**Request:**
+
+```bash
+curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
+  -H "X-Api-Key: YOUR_API_KEY" \
+  -H "X-Selected-Org: YOUR_ORG_ID" \
+  -H "Content-Type: application/json"
+```
+
+**Headers:**
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `X-Api-Key` | Yes | Your account-level API key |
+| `X-Selected-Org` | Yes | Your organization ID |
+| `Content-Type` | Yes | Must be `application/json` |
+
+**Response:**
+
+```json
+{
+  "token": "eyJhbGciOi...<platform JWT>"
+}
+```
+
+The `token` value is your **runtime token**. Use it as a Bearer token for all subsequent API calls.
+
+<Tip>
+Store the token in an environment variable for convenience:
+
+```bash
+export PINKFISH_TOKEN="eyJhbGciOi..."
+```
+</Tip>
+
+## Using the Runtime Token
+
+Include the runtime token as a Bearer token in the `Authorization` header of all MCP Farm requests:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{ ... }'
+```
+
+## Full Authentication Script
+
+A complete bash script that exchanges your API key for a runtime token:
+
+```bash
+#!/bin/bash
+
+# Configuration — replace with your values
+API_KEY="<YOUR_API_KEY>"
+ORG_ID="<YOUR_ORG_ID>"
+BASE_URL="${BASE_URL:-https://app-api.app.pinkfish.ai}"
+MCP_URL="${MCP_URL:-https://mcp.app.pinkfish.ai}"
+
+# Exchange API key for platform runtime token
+echo "Getting runtime token..."
+TOKEN_RESPONSE=$(curl -s -X POST "${BASE_URL}/auth/token" \
+  -H "X-Api-Key: ${API_KEY}" \
+  -H "X-Selected-Org: ${ORG_ID}" \
+  -H "Content-Type: application/json")
+
+PINKFISH_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.token')
+
+if [ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ]; then
+  echo "Error: Failed to get runtime token"
+  echo "$TOKEN_RESPONSE" | jq .
+  exit 1
+fi
+
+echo "Runtime token obtained."
+echo ""
+echo "Export it for use:"
+echo "  export PINKFISH_TOKEN=\"${PINKFISH_TOKEN}\""
+echo ""
+echo "Test it:"
+echo "  curl -s -X POST '${MCP_URL}/mcp' \\"
+echo "    -H 'Authorization: Bearer ${PINKFISH_TOKEN}' \\"
+echo "    -H 'Content-Type: application/json' \\"
+echo "    -H 'Accept: application/json' \\"
+echo "    -d '{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"listServers\",\"arguments\":{}},\"id\":1}'"
+```
+
+<Note>
+Requires `curl` and `jq` installed.
+</Note>

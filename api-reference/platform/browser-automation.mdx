@@ -1,0 +1,456 @@
+---
+title: "Browser Automation"
+description: "Natural language and Playwright-based browser automation"
+---
+
+## Overview
+
+The `browser-automation` MCP server provides AI-powered browser automation using natural language or Playwright code. Describe what you want in plain English and watch the AI navigate, click, fill forms, and extract data — with automatic file capture for extracted data, downloads, and screenshots.
+
+## Why This Replaces RPA
+
+| | Traditional RPA | Pinkfish Browser Automation |
+|---|---|---|
+| **Task definition** | Fragile selectors and recorded click paths | Natural language instructions |
+| **Resilience** | Breaks when UI changes | AI adapts to layout changes — finds elements by intent, not selectors |
+| **Maintenance** | Requires script updates per UI change | Describe what you want, not how to find it |
+| **CAPTCHA / Anti-bot** | Requires separate tooling | Built-in CAPTCHA solving and stealth mode |
+| **Visibility** | Logs and screenshots after the fact | Live visualization via URL |
+| **File output** | Custom export scripting | Automatic capture — extracted data, downloads, and screenshots returned as files |
+| **Infrastructure** | Desktop agents, VM farms | Cloud-hosted browsers — no agents to install |
+| **Coding** | Proprietary scripting languages | Optional Playwright (JavaScript) for precise control |
+
+## Tools
+
+All browser automation tools are on the `/browser-automation` server path.
+
+| Tool | Description |
+|------|-------------|
+| `browser-automation_operator_run` | Start a browser task using **natural language** |
+| `browser-automation_operator_run_continue` | Poll for completion (call every 3-5 seconds) |
+| `browser-automation_playwright_run` | Run **Playwright JavaScript code** in a cloud browser |
+| `browser-automation_playwright_run_continue` | Poll for Playwright completion |
+| `browser-automation_logins_list` | List saved browser login contexts |
+
+**Default approach:** Use Browser Operator (natural language) for everything. Only use Playwright when you need exact programmatic control.
+
+## Browser Operator: Natural Language Automation
+
+### Step 1: Start the task
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_operator_run",
+      "arguments": {
+        "task": "Navigate to https://news.ycombinator.com, extract the top 10 story titles with their URLs and point counts, save as stories.json",
+        "cacheKey": "hn8x2k4m",
+        "model": "google/gemini-3-flash-preview",
+        "agentMode": "hybrid",
+        "maxSteps": 30,
+        "blockAds": true,
+        "solveCaptchas": true,
+        "recordSession": true
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "status": "RUNNING",
+  "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "collectionId": "coll_xyz789",
+  "buildId": "agent-1234567890",
+  "logFileName": "agent-1234567890.log",
+  "message": "Browser Operator task started. Use operator_run_continue in a loop to poll for completion."
+}
+```
+
+### Step 2: Poll for completion
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_operator_run_continue",
+      "arguments": {
+        "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "collectionId": "coll_xyz789",
+        "logFileName": "agent-1234567890.log"
+      }
+    },
+    "id": 1
+  }'
+```
+
+Call this every 3-5 seconds. While running, you'll get `"status": "RUNNING"`. When finished:
+
+**Completed response:**
+
+```json
+{
+  "status": "completed",
+  "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "result": "Successfully extracted top 10 stories from Hacker News",
+  "files": [
+    {
+      "url": "https://s3-signed-url/stories.json",
+      "fileName": "stories.json",
+      "mimeType": "application/json",
+      "size": 2456,
+      "source": "extract"
+    }
+  ],
+  "collectionId": "coll_xyz789",
+  "logFileName": "agent-1234567890.log",
+  "logContent": "Step 1: Navigating to https://news.ycombinator.com...\nStep 2: Extracting story titles...\n...",
+  "message": "Browser Operator task completed! Use result.files to iterate over ALL output files."
+}
+```
+
+### Step 3: Download the files
+
+Every file in the `files` array has a signed S3 URL:
+
+```bash
+curl -o stories.json "https://s3-signed-url/stories.json"
+```
+
+## File Output
+
+Browser automation automatically captures three categories of files:
+
+| Source | Description | Example |
+|--------|-------------|---------|
+| `extract` | Data the AI extracted from the page (JSON, CSV, text) | `stories.json`, `product_data.csv` |
+| `download` | Files the browser downloaded by clicking links | `report.pdf`, `export.xlsx` |
+| `script` | Files explicitly saved by Playwright code | `screenshot.png`, `results.json` |
+
+All files are returned in a unified `files` array on completion. Each file includes:
+
+- `url` — Signed S3 URL (valid for ~1 hour)
+- `fileName` — Original filename
+- `mimeType` — File type
+- `size` — File size in bytes
+- `source` — How the file was generated
+
+## Parameters Reference
+
+### Browser Operator (`operator_run`)
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `task` | string | *(required)* | Natural language task description (single line, be specific) |
+| `cacheKey` | string | *(required)* | Unique 8-character alphanumeric ID (generate a new one each time you change the task) |
+| `model` | enum | `google/gemini-3-flash-preview` | AI model: `google/gemini-2.5-flash`, `google/gemini-2.5-pro`, `openai/gpt-4o`, `openai/gpt-4o-mini`, `anthropic/claude-sonnet-4` |
+| `agentMode` | enum | `hybrid` | `dom` (CSS selectors), `hybrid` (visual + DOM), `cua` (Computer Use Agent) |
+| `maxSteps` | number | `30` | Max actions (1-100). Increase for complex multi-page tasks |
+| `systemPrompt` | string | — | Role/context (e.g., "You are filling out insurance forms") |
+| `region` | enum | `us-west-2` | `us-west-2`, `us-east-1`, `eu-central-1`, `ap-southeast-1` |
+| `proxies` | boolean | `false` | Enable residential proxies (useful for geo-restricted sites) |
+| `advancedStealth` | boolean | `false` | Advanced anti-detection measures |
+| `blockAds` | boolean | `true` | Block advertisements |
+| `solveCaptchas` | boolean | `true` | Automatically solve CAPTCHAs |
+| `recordSession` | boolean | `true` | Enable session recording for replay |
+| `viewportWidth` | number | `1288` | Browser viewport width |
+| `viewportHeight` | number | `711` | Browser viewport height |
+| `filesToUpload` | array | — | Files to make available for upload: `[{ url: "https://...", fileName: "doc.pdf" }]` |
+| `collectionId` | string | — | Filestorage collection ID for output files |
+| `useContextService` | string | — | Saved login context ID (see [Reusing Saved Logins](#reusing-saved-logins)) |
+
+## Writing Good Tasks
+
+The `task` parameter is the most important input. Write it as a **single line** with specific instructions:
+
+**Good examples:**
+
+```
+Navigate to https://example.com/contact, fill out the contact form with name=John Doe, email=john@example.com, message=Test inquiry, then submit the form
+```
+
+```
+Go to https://example.com/products, scroll through all pages, extract product name, price, and description for each product, save as products.json
+```
+
+```
+Go to https://amazon.com, search for "wireless headphones", extract the first 5 results with title, price, rating, and review count
+```
+
+**Bad examples (too vague):**
+
+```
+Register on the site          -> Which site? What registration data?
+Get the data                  -> What data? From where?
+Fill out the form             -> Which form? What values?
+```
+
+## Playwright: Code-Based Automation
+
+For precise programmatic control, use Playwright. A `page` variable is pre-configured — you don't need to launch a browser.
+
+### Start a Playwright task
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_playwright_run",
+      "arguments": {
+        "code": "await page.goto(\"https://news.ycombinator.com\");\nconst stories = await page.$$eval(\".titleline > a\", links => links.slice(0, 10).map((a, i) => ({ rank: i + 1, title: a.textContent, url: a.href })));\nreturn { writeToCollection: true, fileName: \"stories.json\", fileContent: JSON.stringify(stories, null, 2) };",
+        "buildId": "hn-scrape-001"
+      }
+    },
+    "id": 1
+  }'
+```
+
+Then poll with `browser-automation_playwright_run_continue` using the `sessionId`, exactly like the Browser Operator flow.
+
+### Saving files from Playwright
+
+Return this structure from your code to save files:
+
+```javascript
+return {
+  writeToCollection: true,
+  fileName: "results.json",
+  fileContent: JSON.stringify(data, null, 2)
+};
+```
+
+Browser downloads (clicking download links) are automatically captured — no special code needed.
+
+## Reusing Saved Logins
+
+For sites that require authentication, you can reuse saved login contexts instead of re-authenticating each time.
+
+### List available logins
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_logins_list",
+      "arguments": {}
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "count": 2,
+  "contexts": [
+    {
+      "id": "ctx_abc123",
+      "label": "My LinkedIn",
+      "service": "linkedin",
+      "loginUrl": "https://www.linkedin.com/login",
+      "status": "active",
+      "createdAt": "2026-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Use a saved login
+
+Pass the `id` as the `useContextService` parameter:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_operator_run",
+      "arguments": {
+        "task": "Go to https://www.linkedin.com/feed, extract the latest 10 posts from my feed",
+        "cacheKey": "li9f3k2p",
+        "useContextService": "ctx_abc123",
+        "model": "google/gemini-3-flash-preview",
+        "agentMode": "hybrid",
+        "maxSteps": 30,
+        "recordSession": true,
+        "blockAds": true,
+        "solveCaptchas": true
+      }
+    },
+    "id": 1
+  }'
+```
+
+The browser session starts already logged in — no credentials in your task description.
+
+## Caching
+
+Browser Operator supports intelligent caching to avoid redundant executions:
+
+- **`cacheKey`** (required) — A unique 8-character alphanumeric string that identifies this task variant. Generate a **new** cacheKey whenever you change the task text.
+- **`disableCache`** — Set to `true` to bypass the cache and force a fresh execution.
+- **`cacheDurationDays`** — How long cached results remain valid (1-30 days, default: 7).
+
+<Note>
+Caching is automatically disabled if the task contains the word "screenshot" (cached screenshots wouldn't reflect current page state).
+</Note>
+
+## Complete Python Example
+
+```python
+import requests
+import json
+import time
+
+MCP_URL = "https://mcp.app.pinkfish.ai"
+TOKEN = "<YOUR_PLATFORM_JWT>"
+
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+}
+
+
+def mcp_call(tool_name, arguments):
+    """Call a browser automation tool."""
+    resp = requests.post(
+        f"{MCP_URL}/browser-automation",
+        headers=HEADERS,
+        json={
+            "jsonrpc": "2.0",
+            "method": "tools/call",
+            "params": {"name": tool_name, "arguments": arguments},
+            "id": 1,
+        },
+    )
+    resp.raise_for_status()
+    result = resp.json().get("result", {})
+    content = result.get("content", [{}])[0].get("text", "{}")
+    return json.loads(content)
+
+
+# Step 1: Start the browser task
+print("Starting browser automation...")
+run_result = mcp_call("browser-automation_operator_run", {
+    "task": "Navigate to https://news.ycombinator.com, extract the top 10 stories with title, URL, and points, save as stories.json",
+    "cacheKey": "hn8x2k4m",
+    "model": "google/gemini-3-flash-preview",
+    "agentMode": "hybrid",
+    "maxSteps": 30,
+    "blockAds": True,
+    "solveCaptchas": True,
+    "recordSession": True,
+})
+
+session_id = run_result["sessionId"]
+collection_id = run_result.get("collectionId")
+log_file = run_result.get("logFileName")
+print(f"Session started: {session_id}")
+
+# Step 2: Poll until complete
+result = run_result
+while result.get("status") not in ("completed", "failed"):
+    time.sleep(5)
+    result = mcp_call("browser-automation_operator_run_continue", {
+        "sessionId": session_id,
+        "collectionId": collection_id,
+        "logFileName": log_file,
+    })
+    print(f"  Status: {result.get('status')}")
+
+# Step 3: Process results
+if result["status"] == "completed":
+    print(f"\nTask completed: {result.get('result')}")
+    print(f"\nFiles generated:")
+    for f in result.get("files", []):
+        print(f"  - {f['fileName']} ({f['mimeType']}, {f['size']} bytes, source: {f['source']})")
+        print(f"    Download: {f['url'][:80]}...")
+else:
+    print(f"\nTask failed: {result.get('result')}")
+
+# Step 4: Print the session log
+if result.get("logContent"):
+    print(f"\nSession log:\n{result['logContent']}")
+```
+
+<Note>
+Requires: `pip install requests`
+</Note>
+
+## Using Browser Automation in Workflows
+
+Browser automation works inside Pinkfish workflows (see [Workflows](/api-reference/platform/workflows)). The key pattern: put the **entire run + poll + file saving loop in a single node function**.
+
+```javascript
+async function node_scrape_data(params) {
+  // Start the browser task
+  let result = await pf.mcp.callTool('browser-automation', 'browser-automation_operator_run', {
+    task: params.task,
+    cacheKey: 'a1b2c3d4',
+    model: 'google/gemini-3-flash-preview',
+    agentMode: 'hybrid',
+    maxSteps: 30,
+    blockAds: true,
+    solveCaptchas: true,
+    recordSession: true
+  });
+
+  // Enable live preview in the Pinkfish UI
+  await pf.run.updateMetadata({
+    browserSessionId: result.sessionId,
+    collectionId: result.collectionId,
+    logFileName: result.logFileName
+  });
+
+  // Poll until complete (same function — do NOT split into separate nodes)
+  while (result.status !== 'completed' && result.status !== 'failed') {
+    await new Promise(r => setTimeout(r, 5000));
+    result = await pf.mcp.callTool('browser-automation', 'browser-automation_operator_run_continue', {
+      sessionId: result.sessionId,
+      collectionId: result.collectionId,
+      logFileName: result.logFileName
+    });
+  }
+
+  // Save all output files
+  for (const file of result.files || []) {
+    await pf.files.writeFileFromUrl(file.fileName, file.url);
+  }
+  if (result.logContent) {
+    await pf.files.writeFile('browser_session.log', result.logContent);
+  }
+
+  await pf.files.writeFile('node_scrape_data_output.json', result);
+  return result;
+}
+```
