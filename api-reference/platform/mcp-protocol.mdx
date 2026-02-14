@@ -5,15 +5,28 @@ description: "JSON-RPC 2.0 format, listing servers, and calling tools"
 
 ## Overview
 
-The MCP Farm uses **JSON-RPC 2.0 over HTTPS**. Every call is an HTTP POST to a server path on the MCP Farm, with a JSON-RPC payload in the body.
+The MCP Farm uses **JSON-RPC 2.0 over HTTPS**. Every call is an HTTP POST to a server path, with a JSON-RPC payload in the body.
 
 **Base URL:** `https://mcp.app.pinkfish.ai`
 
-All requests require a runtime token in the `Authorization` header. See [Authentication](/api-reference/platform/authentication) for how to obtain one.
+All requests require a runtime token. See [Authentication](/api-reference/platform/authentication) for how to obtain one.
+
+## Getting Started
+
+1. **Get a token** — Exchange your API key for a runtime token via `/auth/token`
+2. **List servers** — Call `listServers` on `/mcp` to see available servers and their tools
+3. **Call a tool** — POST `tools/call` to the server path with the tool name and arguments
+
+## When to Use What
+
+| You know... | Use |
+|-------------|-----|
+| The tool and server | Call `tools/call` directly on the server path (e.g. `/web-search`, `/gmail`) |
+| The task, not the tool | Use [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → then call the recommended tool |
 
 ## Request Format
 
-Every MCP request follows this structure:
+All requests use this structure:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
@@ -48,9 +61,9 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
 | `params` | Method parameters — for `tools/call`, includes `name` (tool name) and `arguments` (tool inputs) |
 | `id` | Request identifier (any integer) |
 
-## List Available Servers
+## List Servers
 
-Query the MCP Farm to see all available servers and their tools:
+Query available servers and their tools:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/mcp" \
@@ -93,9 +106,9 @@ Each server entry includes:
 | `embedded` | `true` = built-in platform service, `false` = external application requiring a connection |
 | `tools` | Array of tools provided by this server |
 
-## List Tools for a Server
+## List Tools
 
-To see the tools available on a specific server, call `tools/list` on that server's path:
+Call `tools/list` on a server path to see its tools:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
@@ -134,11 +147,11 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 }
 ```
 
-Each tool entry includes the full `inputSchema` — a JSON Schema describing the parameters the tool accepts.
+Each tool includes an `inputSchema` (JSON Schema) for its parameters.
 
 ## Call a Tool
 
-Send a `tools/call` request to the server path with the tool name and arguments:
+POST `tools/call` to the server path with the tool name and arguments:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
@@ -193,9 +206,9 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
 }
 ```
 
-### Example: Call an External Service (Gmail)
+### Example: External Service (Gmail)
 
-External application tools require a `PCID` (PinkConnect connection ID) to identify which connected account to use. See [Connections](/api-reference/platform/connections) for how to get your PCIDs.
+Application tools (Gmail, Slack, etc.) require a `PCID`. See [Connections](/api-reference/platform/connections).
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
@@ -216,38 +229,8 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
   }'
 ```
 
-## Response Structure
+## Response Format
 
-All tool responses follow the same JSON-RPC 2.0 structure:
+**Success:** `result.content[0].text` contains the tool output as a JSON string. Parse it for structured data.
 
-**Success:**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "{ ... tool output as JSON string ... }"
-      }
-    ]
-  }
-}
-```
-
-**Error:**
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "error": {
-    "code": -32000,
-    "message": "Error description"
-  }
-}
-```
-
-The `result.content` array typically contains a single entry with `type: "text"` and the tool's output as a JSON string in the `text` field. Parse this string to get the structured result.
+**Error:** `error.code` and `error.message` describe the failure.

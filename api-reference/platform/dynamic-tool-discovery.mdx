@@ -1,24 +1,21 @@
 ---
-title: "Dynamic Tool Discovery and Installation"
-description: "Discover tools at runtime and optionally install them into AI agents"
+title: "Dynamic Tool Discovery"
+description: "Discover tools at runtime and call them programmatically"
 ---
 
 ## Overview
 
-This page covers how to discover MCP tools dynamically (without hardcoding tool names) and how to install discovered tools into AI agents (Claude, GPT, custom frameworks) so the model can call them natively.
+When you don't know which tool to use, use the discovery flow on `/pinkfish-sidekick`:
 
-The flow uses two tools on the `/pinkfish-sidekick` server:
+1. **`capabilities_discover`** — Describe your task in natural language; returns recommended tools, connections, and resources
+2. **`capability_details`** — Pass tool names; returns full `inputSchema` and `serverName` for routing
 
-1. **`capabilities_discover`** — Describe your task in natural language; returns recommended tools, connections, resources, and skills
-2. **`capability_details`** — Pass tool names from discovery; returns full parameter schemas and `serverName` for routing
+Then call the recommended tool via `tools/call` on the server path.
 
-## JavaScript: Dynamic Tool Discovery and Execution
-
-This script demonstrates how to discover the right tools for a task and call them — no hardcoded tool names required.
+## Example: Discovery and Execution
 
 ```javascript
 const MCP_URL = "https://mcp.app.pinkfish.ai";
-const PINKCONNECT_URL = "https://proxy.pinkfish.ai";
 const TOKEN = "<YOUR_PLATFORM_JWT>";
 
 const headers = {
@@ -27,264 +24,8 @@ const headers = {
   Accept: "application/json",
 };
 
-async function mcpCall(serverPath, method, params = null) {
-  const payload = {
-    jsonrpc: "2.0",
-    method,
-    id: 1,
-  };
-  if (params) payload.params = params;
-
+async function callTool(serverPath, toolName, args) {
   const resp = await fetch(`${MCP_URL}${serverPath}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(payload),
-  });
-  const result = await resp.json();
-
-  if (result.error) throw new Error(`MCP error: ${result.error.message}`);
-  return result.result || {};
-}
-
-async function callTool(serverPath, toolName, arguments_) {
-  return mcpCall(serverPath, "tools/call", {
-    name: toolName,
-    arguments: arguments_,
-  });
-}
-
-async function discover(taskDescription) {
-  const result = await callTool("/pinkfish-sidekick", "capabilities_discover", {
-    request: taskDescription,
-  });
-  const content = result?.content?.[0]?.text ?? "{}";
-  return JSON.parse(content);
-}
-
-async function getDetails(items) {
-  const result = await callTool("/pinkfish-sidekick", "capability_details", {
-    items,
-  });
-  const content = result?.content?.[0]?.text ?? "{}";
-  return JSON.parse(content);
-}
-
-async function listConnections() {
-  const resp = await fetch(
-    `${PINKCONNECT_URL}/manage/user-connections?statuses=connected`,
-    { headers }
-  );
-  return resp.json();
-}
-
-// Example: Dynamic discovery and execution
-async function main() {
-  // Step 1: Discover what tools are available for a task
-  console.log("Discovering tools for: 'search the web for AI news'...");
-  const capabilities = await discover("search the web for AI news");
-
-  console.log("\nRecommended tools:");
-  for (const tool of capabilities.tools ?? []) {
-    console.log(`  - ${tool.name} (server: ${tool.serverName}, confidence: ${tool.confidence})`);
-  }
-
-  console.log("\nAvailable connections:");
-  for (const conn of capabilities.connections ?? []) {
-    console.log(`  - ${conn.name} (PCID: ${conn.id}, app: ${conn.application})`);
-  }
-
-  // Step 2: Get full details for the top tool (pass tool names, not server names)
-  if (capabilities.tools?.length) {
-    const topTool = capabilities.tools[0];
-    console.log(`\nGetting details for: ${topTool.name}...`);
-    const details = await getDetails([topTool.name]);
-    console.log(JSON.stringify(details, null, 2).slice(0, 500));
-  }
-
-  // Step 3: Call the tool directly (embedded tools — no PCID needed)
-  console.log("\nCalling search_googlesearch...");
-  const result = await callTool("/web-search", "search_googlesearch", {
-    query: "latest AI news 2026",
-  });
-  const content = result?.content?.[0]?.text ?? "";
-  console.log(`Result preview: ${content.slice(0, 300)}...`);
-
-  // For application tools (PCID required), get it from discovery:
-  // const connections = await listConnections();
-  // const gmailPcid = connections.find((c) => c.service_key === "gmail")?.id;
-  // await callTool("/gmail", "gmail_search_emails", {
-  //   PCID: gmailPcid,
-  //   query: "is:unread",
-  // });
-}
-
-main();
-```
-
-<Note>
-Runs in Node.js 18+ (native fetch) or in a browser.
-</Note>
-
-## Python: Dynamic Tool Discovery and Execution
-
-Same pattern in Python for teams that prefer it:
-
-```python
-import requests
-import json
-
-MCP_URL = "https://mcp.app.pinkfish.ai"
-PINKCONNECT_URL = "https://proxy.pinkfish.ai"
-TOKEN = "<YOUR_PLATFORM_JWT>"
-
-HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-}
-
-
-def mcp_call(server_path, method, params=None):
-    payload = {"jsonrpc": "2.0", "method": method, "id": 1}
-    if params:
-        payload["params"] = params
-
-    resp = requests.post(f"{MCP_URL}{server_path}", headers=HEADERS, json=payload)
-    result = resp.json()
-    if "error" in result:
-        raise Exception(f"MCP error: {result['error']}")
-    return result.get("result", {})
-
-
-def call_tool(server_path, tool_name, arguments):
-    return mcp_call(server_path, "tools/call", {"name": tool_name, "arguments": arguments})
-
-
-def discover(task_description):
-    result = call_tool("/pinkfish-sidekick", "capabilities_discover", {"request": task_description})
-    content = result.get("content", [{}])[0].get("text", "{}")
-    return json.loads(content)
-
-
-def get_details(items):
-    result = call_tool("/pinkfish-sidekick", "capability_details", {"items": items})
-    content = result.get("content", [{}])[0].get("text", "{}")
-    return json.loads(content)
-
-
-def list_connections():
-    resp = requests.get(f"{PINKCONNECT_URL}/manage/user-connections?statuses=connected", headers=HEADERS)
-    return resp.json()
-
-
-# Example usage
-if __name__ == "__main__":
-    capabilities = discover("search the web for AI news")
-    for tool in capabilities.get("tools", []):
-        print(f"  - {tool['name']} (server: {tool['serverName']})")
-
-    result = call_tool("/web-search", "search_googlesearch", {"query": "latest AI news 2026"})
-    print(result.get("content", [{}])[0].get("text", "")[:300])
-```
-
-<Note>
-Requires: `pip install requests`
-</Note>
-
-## What This Demonstrates
-
-1. **No hardcoded tools** — The agent asks `capabilities_discover` what's available, then dynamically selects the right tool
-2. **Schema introspection** — `capability_details` returns the full `inputSchema` so the agent knows exactly what parameters to pass
-3. **PCID resolution** — For external integrations, the agent gets the connection ID from discovery or from `list_connections()`
-4. **Simple integration** — The entire MCP Farm is accessible through a single HTTP client with JSON-RPC payloads
-
-## Dynamic Tool Installation for AI Agents
-
-The examples above show wrapper functions that call MCP tools over HTTP. But if you're
-building an AI agent (e.g., with Claude or OpenAI function calling), you can **dynamically
-install tools into the agent's tool set** so the model calls them natively — no wrapper
-code needed at inference time.
-
-The pattern:
-
-1. **Bootstrap with 2 tools** — Start your agent with only `capabilities_discover` and
-   `capability_details`.
-2. **Agent discovers what it needs** — `capabilities_discover` returns tool names, server
-   paths, and PCIDs.
-3. **Agent gets the schema** — `capability_details` returns the full `inputSchema`
-   (standard JSON Schema) and `serverName` for each tool.
-4. **Your code converts and registers** — Map the returned schema to your model's
-   function-calling format and add it to the agent's tool set.
-5. **Re-run the agent loop** — The model now sees the new tool as a native callable function.
-
-**What `capability_details` returns for a tool:**
-
-```json
-{
-  "gmail_search_emails": {
-    "type": "tool",
-    "name": "gmail_search_emails",
-    "description": "Search emails in Gmail",
-    "serverName": "gmail",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "PCID": {
-          "type": "string",
-          "description": "Pink Connect ID for authentication"
-        },
-        "query": {
-          "type": "string",
-          "description": "Gmail search query (e.g. 'is:unread', 'from:alice')"
-        },
-        "maxResults": {
-          "type": "number",
-          "description": "Maximum number of emails to return",
-          "default": 10
-        }
-      },
-      "required": ["PCID", "query"]
-    }
-  }
-}
-```
-
-```javascript
-const MCP_URL = "https://mcp.app.pinkfish.ai";
-const TOKEN = "<YOUR_PLATFORM_JWT>";
-const headers = {
-  Authorization: `Bearer ${TOKEN}`,
-  "Content-Type": "application/json",
-  Accept: "application/json",
-};
-
-// Convert capability_details response to Claude function-calling format
-function detailsToClaude(toolName, detail) {
-  return {
-    name: toolName,
-    description: detail.description || "",
-    input_schema: detail.inputSchema,
-    // Store serverName so you know where to route the call
-    _serverName: detail.serverName,
-  };
-}
-
-// Convert capability_details response to OpenAI function-calling format
-function detailsToOpenAI(toolName, detail) {
-  return {
-    type: "function",
-    function: {
-      name: toolName,
-      description: detail.description || "",
-      parameters: detail.inputSchema,
-    },
-    _serverName: detail.serverName,
-  };
-}
-
-// When the model calls an installed tool, route it to the MCP Farm
-async function executeInstalledTool(serverName, toolName, args) {
-  const resp = await fetch(`${MCP_URL}/${serverName}`, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -295,74 +36,59 @@ async function executeInstalledTool(serverName, toolName, args) {
     }),
   });
   const result = await resp.json();
-  if (result.error) throw new Error(`MCP error: ${result.error.message}`);
+  if (result.error) throw new Error(result.error.message);
   return result.result;
 }
 
-// Full flow: discover → get details → install → agent can call natively
-async function installToolsForTask(taskDescription, format = "claude") {
-  // 1. Discover relevant tools
-  const discoverResult = await fetch(`${MCP_URL}/pinkfish-sidekick`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      method: "tools/call",
-      params: {
-        name: "capabilities_discover",
-        arguments: { request: taskDescription },
-      },
-      id: 1,
-    }),
-  });
-  const discovery = JSON.parse(
-    (await discoverResult.json())?.result?.content?.[0]?.text ?? "{}"
-  );
-
-  // 2. Get full schemas for the discovered tools (use tool names, not server names)
-  const toolNames = (discovery.tools ?? []).map((t) => t.name);
-  if (toolNames.length === 0) return [];
-
-  const detailsResult = await fetch(`${MCP_URL}/pinkfish-sidekick`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      method: "tools/call",
-      params: {
-        name: "capability_details",
-        arguments: { items: toolNames, types: ["tool"] },
-      },
-      id: 1,
-    }),
-  });
-  const details = JSON.parse(
-    (await detailsResult.json())?.result?.content?.[0]?.text ?? "{}"
-  );
-
-  // 3. Convert each tool to the model's format
-  const convert = format === "claude" ? detailsToClaude : detailsToOpenAI;
-  return Object.entries(details)
-    .filter(([, detail]) => detail.type === "tool")
-    .map(([name, detail]) => convert(name, detail));
+async function discover(task) {
+  const r = await callTool("/pinkfish-sidekick", "capabilities_discover", { request: task });
+  return JSON.parse(r?.content?.[0]?.text ?? "{}");
 }
-```
 
-**Usage in your agent loop:**
+async function getDetails(items) {
+  const r = await callTool("/pinkfish-sidekick", "capability_details", { items });
+  return JSON.parse(r?.content?.[0]?.text ?? "{}");
+}
 
-```javascript
-// Bootstrap: install tools for a task
-const installedTools = await installToolsForTask("search my Gmail for unread emails");
-// installedTools now contains model-ready tool definitions with full schemas
+// 1. Discover tools for a task
+const capabilities = await discover("search the web for AI news");
+const topTool = capabilities.tools?.[0];
+if (!topTool) throw new Error("No tools found");
 
-// Add to your agent's tool set alongside the base discovery tools
-// When the model calls one, route it via executeInstalledTool(serverName, toolName, args)
+// 2. Get full schema (optional — use when you need parameter details)
+const details = await getDetails([topTool.name]);
+
+// 3. Call the tool
+const result = await callTool(`/${topTool.serverName}`, topTool.name, {
+  query: "latest AI news 2026",
+});
+console.log(result?.content?.[0]?.text);
 ```
 
 <Note>
-**Only install what you need.** Unlike fetching an entire server's tool list,
-this approach uses `capability_details` to get full `inputSchema` definitions for only
-the specific tools the agent discovered — typically 1–5 tools instead of hundreds.
-For external integrations, include the `PCID` from the discovery response in the tool
-call arguments.
+Runs in Node.js 18+ (native fetch) or browser. For Python, use `requests.post()` with the same JSON-RPC payload structure.
+</Note>
+
+## Key Points
+
+- **Embedded tools** (web-search, filestorage, AI models) — No PCID required
+- **Application tools** (Gmail, Slack, Salesforce) — Include `PCID` from discovery or [Connections](/api-reference/platform/connections)
+- **Tool names** — Pass `tool.name` to `capability_details`, not `serverName`
+
+## Advanced: Dynamic Tool Installation for Custom Agents
+
+If you're building a custom AI agent (Claude, OpenAI, etc.) that calls the MCP Farm over HTTP, you can **dynamically install discovered tools** into the agent's tool set so the model calls them natively. This is a pattern for integrators building their own agents — not a platform-provided feature.
+
+**Pattern:**
+
+1. Bootstrap your agent with only `capabilities_discover` and `capability_details`
+2. Agent discovers tools for the user's task
+3. Your code fetches schemas via `capability_details`, converts to your model's format (Claude `input_schema`, OpenAI `parameters`), and adds them to the agent's tool set
+4. Re-run the agent loop — the model now sees the new tools
+5. When the model calls one, route it to the MCP Farm via `tools/call` on the server path
+
+**`capability_details` returns** `inputSchema` (standard JSON Schema), `serverName`, and `description` per tool. Map these directly to your model's function-calling format.
+
+<Note>
+Install only what you need. `capability_details` returns schemas for the specific tools discovered — typically 1–5 tools instead of fetching an entire server's list.
 </Note>
