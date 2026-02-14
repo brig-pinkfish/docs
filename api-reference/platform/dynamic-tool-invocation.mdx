@@ -84,3 +84,9 @@ Runs in Node.js 18+ (native fetch) or browser. For Python, use `requests.post()`
 ## Custom Agents: Dynamic Tool Installation
 
 For custom AI agents (Claude, OpenAI, etc.) that call the MCP Farm over HTTP: bootstrap with only the two discovery tools. When the user describes a task, discover tools, fetch schemas via capability_details, map to your model's function-calling format, and add them to the agent's tool set. Route the model's tool calls to tools/call on the server path. You install only what the user needs, typically 1 to 5 tools per task, instead of loading hundreds.
+
+## Code Execution as a Shortcut
+
+[Code Execution](/api-reference/platform/code-execution) can run multiple tools at once without installing them. The agent discovers tools, then passes tool calls into a single `code-execution_execute` invocation. The sandbox runs the code and chains tool calls internally. No installation step.
+
+An ideal setup for full agent scope: discover, install, invoke, and code execution, plus a prompt that guides the agent on when to install tools (simple, one-off calls) versus when to use code execution (more complex, multi-step cases).
