@@ -76,7 +76,9 @@ multiple nodes, synthetic edges for loops/for-each, and advanced control flow pa
    "control-flow" for wiring instructions.
 3. **workflow_create** — Create a new workflow. Returns an automationId and starter code.
 4. **workflow_update** — Upload your workflow code. Include bindings when adding new
-   resources to WORKFLOW_RESOURCES.
+   resources to WORKFLOW_RESOURCES. For existing workflows, use the targeted edit format
+   (see below) so edits merge correctly; full replacement wipes headers, footers, and
+   other nodes.
 5. **workflow_run** — Execute and verify. Use workflow_results to inspect output.
 6. **Fix & iterate** — Review errors, update code, run again until success.
 
@@ -127,6 +129,29 @@ Every workflow follows this template:
 - **Do not remove** the REQUIRED HEADER or REQUIRED FOOTER.
 - **Use pf.log.info/success/error/warn** for logging (not console.log).
 
+## workflow_update: Targeted Edit Format (Fast Apply)
+
+Code sent to `workflow_update` REPLACES the entire workflow by default. Sending a partial
+edit without the targeted format WIPES OUT headers, footers, nodes, edges, and other
+functions. For existing workflows, ALWAYS use the targeted edit format. Only send complete
+code when intentionally rebuilding from scratch.
+
+**Targeted Edit Format** — show only changed parts with surrounding context:
+
+    // ... existing code ...
+    [2-3 lines of actual code before your edit - for context]
+    YOUR EDITED LINES HERE
+    [2-3 lines of actual code after your edit - for context]
+    // ... existing code ...
+
+**Rules:**
+1. Use `// ... existing code ...` only where you're skipping unchanged sections
+2. Show 2-3 lines of ACTUAL code around each edit for unique identification
+3. Include ALL lines being modified (the NEW version only)
+4. For multiple edits, separate each with `// ... existing code ...` if unchanged code
+   lies between them
+5. FOCUS on code that is changing; AVOID regenerating unchanged code
+
 ## inputSchema Sources
 
 - "literal" — Hardcoded value: { source: "literal", value: "hello" }
@@ -151,7 +176,7 @@ Always call capability_details(items: ["triggers"]) before implementing triggers
 For discovery: capabilities_discover, capability_details, mcp_discover
 For lifecycle: workflow_create, workflow_update, workflow_read, workflow_run,
   workflow_run_status, workflow_set_inputs, workflow_pin, workflow_results,
-  workflow_edit, workflow_list
+  workflow_list
 For triggers: workflow_trigger_schedule, workflow_trigger_api, workflow_trigger_email,
   workflow_trigger_application, workflow_trigger_interface, workflow_trigger_list_all,
   workflow_trigger_cleanup
