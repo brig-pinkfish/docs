@@ -3,14 +3,12 @@ title: "Discovery"
 description: "Find tools using natural language"
 ---
 
-Find tools, connections, and resources by describing your task. Both discovery tools are on `/pinkfish-sidekick`:
+Both tools live on `/pinkfish-sidekick`:
 
-1. **`capabilities_discover`** — Describe the task; get recommended tools and connections
+1. **`capabilities_discover`** — Describe the task; get tools and connections
 2. **`capability_details`** — Pass tool names; get full parameter schemas
 
-## Phase 1: Discover Capabilities
-
-Use `capabilities_discover` to find tools, connections, and resources by describing your task in natural language.
+## Discover Capabilities
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
@@ -63,16 +61,13 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
 }
 ```
 
-Key fields in the response:
+| Field | Use |
+| ----- | --- |
+| `tools[].name` | Tool name for `tools/call` |
+| `tools[].serverName` | Server path (e.g. `gmail` → `/gmail`) |
+| `connections[].id` | PCID for application tools |
 
-- **`tools[].name`** — Tool name to use in `tools/call`
-- **`tools[].serverName`** — Server path to call (e.g., `gmail` → `/gmail`)
-- **`connections[].id`** — The PCID to pass as an argument when calling external application tools
-- **`confidence`** — How well the result matches your request (0-1)
-
-## Phase 2: Get Full Details
-
-Once you know which tools you need, get full parameter schemas with `capability_details`.
+## Get Full Details
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
@@ -96,34 +91,17 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
 
 | Parameter | Required | Description                                                                                                                       |
 | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `items`   | Yes      | Array of tool names from `capabilities_discover` results (e.g., `["gmail_search_emails"]`). Use `tools[].name`, not `serverName`. |
-| `types`   | No       | Filter to specific capability types: `["tool"]`, `["connection"]`, `["resource"]`, `["agentSkill"]`                               |
+| `items`   | Yes      | Tool names from discovery (use `tools[].name`, not `serverName`) |
+| `types`   | No       | Filter: `["tool"]`, `["connection"]`, `["resource"]`, `["agentSkill"]` |
 
-**Response includes:**
-
-- Full tool parameter schemas (`inputSchema`)
-- Connection metadata and PCID values
-- Collection/resource details
-- Agent skill instructions (if applicable)
-
-## Typical Discovery Flow
+## Flow
 
 ```
 1. capabilities_discover("search my gmail for unread emails")
    → tools: [gmail_search_emails], connections: [My Gmail (PCID: abc123)]
 
 2. capability_details(items: ["gmail_search_emails"])
-   → Full inputSchema for gmail_search_emails
+   → Full inputSchema
 
-3. tools/call gmail_search_emails with PCID from step 1
-   → Actual email results
+3. tools/call with PCID from step 1
 ```
-
-## Reference
-
-| Tool                        | Use                                                   |
-| --------------------------- | ----------------------------------------------------- |
-| `capabilities_discover`     | Find tools and connections for a task                 |
-| `capability_details`        | Get full schemas for specific tools                   |
-| `mcp_discover`              | Get MCP server and tool specs (for workflow builders) |
-| `tools/list` on server path | List all tools for a server you already know          |

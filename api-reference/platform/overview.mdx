@@ -3,7 +3,7 @@ title: "Platform API"
 description: "Programmatic access to the Pinkfish MCP Farm"
 ---
 
-The Platform API provides HTTP access to the Pinkfish MCP Farm. Over 1500 tools are available behind a single authentication flow and consistent JSON-RPC 2.0 protocol.
+HTTP access to 1500+ tools via a single auth flow and JSON-RPC 2.0.
 
 ## Base URLs
 
@@ -30,9 +30,9 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
   -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"search_googlesearch","arguments":{"query":"latest AI news"}},"id":1}'
 ```
 
-## Example Script: Auth + Web Search
+## Example Script
 
-A complete runnable script that exchanges your API key for a token, calls web search, and prints the result:
+Runnable script: authenticate, call web search, print result. Requires `curl` and `jq`.
 
 ```bash
 #!/bin/bash
@@ -41,28 +41,16 @@ ORG_ID="<YOUR_ORG_ID>"
 API_URL="https://app-api.app.pinkfish.ai"
 MCP_URL="https://mcp.app.pinkfish.ai"
 
-# 1. Get token
 TOKEN_RESPONSE=$(curl -s -X POST "${API_URL}/auth/token" \
-  -H "X-Api-Key: ${API_KEY}" \
-  -H "X-Selected-Org: ${ORG_ID}" \
-  -H "Content-Type: application/json")
+  -H "X-Api-Key: ${API_KEY}" -H "X-Selected-Org: ${ORG_ID}" -H "Content-Type: application/json")
 PINKFISH_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.token')
-if [ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ]; then
-  echo "Error: Failed to get token"; echo "$TOKEN_RESPONSE" | jq .; exit 1
-fi
+[ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ] && { echo "Auth failed"; echo "$TOKEN_RESPONSE" | jq .; exit 1; }
 
-# 2. Call web search
 RESULT=$(curl -s -X POST "${MCP_URL}/web-search" \
-  -H "Authorization: Bearer ${PINKFISH_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+  -H "Authorization: Bearer ${PINKFISH_TOKEN}" -H "Content-Type: application/json" -H "Accept: application/json" \
   -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"search_googlesearch","arguments":{"query":"latest AI news"}},"id":1}')
-
-# 3. Print result (structuredContent or content[0].text)
 echo "$RESULT" | jq '.result.structuredContent // .result.content[0].text'
 ```
-
-<Note>Requires `curl` and `jq`.</Note>
 
 ## Documentation
 
@@ -80,18 +68,19 @@ echo "$RESULT" | jq '.result.structuredContent // .result.content[0].text'
 
 ## Key Concepts
 
-| Concept       | Description                                                                      |
-| ------------- | -------------------------------------------------------------------------------- |
-| API Key       | Account-level credential from Settings. Exchanged for a runtime token.           |
-| Runtime Token | JWT from /auth/token. Bearer token for all MCP Farm requests.                    |
-| MCP Farm      | Unified gateway. JSON-RPC 2.0 over HTTPS.                                        |
-| Server        | Named collection of tools such as gmail or web-search.                           |
-| Tool          | Callable action such as gmail_search_emails or search_googlesearch.              |
-| PCID          | PinkConnect Connection ID. Required for OAuth integrations like Gmail and Slack. |
+| Concept       | Description                                                       |
+| ------------- | ----------------------------------------------------------------- |
+| API Key       | Account credential. Exchange for runtime token.                   |
+| Runtime Token | JWT from `/auth/token`. Bearer token for MCP requests.             |
+| MCP Farm      | JSON-RPC 2.0 gateway over HTTPS.                                  |
+| Server        | Tool collection (e.g. `gmail`, `web-search`).                     |
+| Tool          | Callable action (e.g. `search_googlesearch`, `gmail_search_emails`). |
+| PCID          | Connection ID. Required for OAuth integrations (Gmail, Slack).     |
 
 ## Prerequisites
 
 - Pinkfish account
-- API key from Settings, API Keys, Create
+- API key from **Settings → API Keys → Create** (shown once; copy immediately)
+- Organization ID from organization settings
 
-The API key is shown only once. Copy it immediately. New API keys can take up to 60 seconds to activate.
+<Note>New API keys may take up to 60 seconds to activate.</Note>

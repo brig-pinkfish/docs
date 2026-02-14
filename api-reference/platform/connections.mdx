@@ -3,13 +3,11 @@ title: "Connections"
 description: "PCIDs and external integrations"
 ---
 
-The MCP Farm has two server types: embedded (built-in, no connection) and application (Gmail, Slack, etc., require a PCID per call).
-
-**Connections:** Set up in the Pinkfish app under **Integrations**. PCIDs come from `capabilities_discover` or the [PinkConnect API](#listing-connections).
+Two server types: **embedded** (no connection) and **application** (Gmail, Slack, etc. — require PCID per call). Set up connections in **Integrations**. Get PCIDs from `capabilities_discover` or the [PinkConnect API](#listing-connections).
 
 ## Embedded MCPs
 
-**Built-in platform services** that do not require external user connections. These work out of the box with just a runtime token.
+Built-in services. No PCID required.
 
 | Server                   | Description                                      |
 | ------------------------ | ------------------------------------------------ |
@@ -37,13 +35,11 @@ The MCP Farm has two server types: embedded (built-in, no connection) and applic
 | `weather`                | Current conditions and forecasts                 |
 | `ocr`                    | Optical character recognition                    |
 | `web-application`        | Deploy HTML dashboards to shareable URLs         |
-| `pinkfish-sidekick`      | Discovery, workflow building, and orchestration  |
-
-**Key characteristic:** No `PCID` required. Embedded tools use org-scoped identifiers like `collectionId` where needed.
+| `pinkfish-sidekick`      | Discovery, workflow building, orchestration  |
 
 ## Application MCPs
 
-**Third-party integrations** that connect to external services via OAuth or API keys. These require the user to set up a connection through PinkConnect, and each tool call requires a `PCID` (PinkConnect connection ID) that identifies which connection to use.
+OAuth/API key integrations. Require a connection in PinkConnect and a PCID per tool call.
 
 | Server              | Description                |
 | ------------------- | -------------------------- |
@@ -65,23 +61,9 @@ The MCP Farm has two server types: embedded (built-in, no connection) and applic
 | `notion`            | Notion API                 |
 | ...                 | 100+ more integrations     |
 
-**Key characteristic:** Every tool call must include a `PCID` argument.
+## PCID
 
-## Quick Reference
-
-|                         | Embedded MCPs                                       | Application MCPs                                 |
-| ----------------------- | --------------------------------------------------- | ------------------------------------------------ |
-| **Provider**            | Pinkfish platform                                   | Third-party services                             |
-| **Connection required** | No                                                  | Yes (OAuth or API key via PinkConnect)           |
-| **PCID in arguments**   | No                                                  | Yes (required)                                   |
-| **Examples**            | Web search, file storage, AI models, code execution | Gmail, Slack, Salesforce, Jira                   |
-| **Discovery**           | Available immediately                               | Appear in `capabilities_discover` once connected |
-
-## What is a PCID?
-
-A **PCID** (PinkConnect Connection ID) is a unique identifier for a specific OAuth connection to an external service. When you connect your Gmail account, Salesforce instance, or any other external service through PinkConnect, each connection gets a PCID.
-
-You need to include the PCID in tool arguments so the MCP Farm knows which connection to use. For example, if you have two Gmail accounts connected, the PCID tells it which one to search.
+A **PCID** (PinkConnect Connection ID) identifies a specific OAuth connection. Include it in tool arguments so the MCP Farm knows which connection to use (e.g. which Gmail account).
 
 ## Listing Connections
 

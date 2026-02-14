@@ -3,19 +3,15 @@ title: "Authentication"
 description: "API keys and runtime tokens"
 ---
 
-The Platform API uses API keys for authentication. Exchange your API key for a short-lived runtime token (JWT), then use that token as a Bearer token for all MCP Farm requests.
-
-**Token lifetime:** 60 minutes. For long-running agents, call `/auth/token` again before it expires.
+Exchange your API key for a runtime token (JWT). Use the token as `Authorization: Bearer <token>` for all MCP requests. Token lifetime: 60 minutes.
 
 ## Create an API Key
 
-1. Log in to the Pinkfish web app
-2. Go to **Settings → API Keys → Create**
-3. Copy the key immediately — it is shown only once
+1. **Settings → API Keys → Create**
+2. Copy the key immediately (shown once)
+3. Get your **Organization ID** from organization settings
 
-You also need your **Organization ID** from organization settings.
-
-<Warning>New API keys can take up to 60 seconds to activate.</Warning>
+<Note>New API keys may take up to 60 seconds to activate.</Note>
 
 ## Exchange for Runtime Token
 
@@ -26,21 +22,13 @@ curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
   -H "Content-Type: application/json"
 ```
 
-| Header           | Required | Description           |
-| ---------------- | -------- | --------------------- |
-| `X-Api-Key`      | Yes      | Account-level API key |
-| `X-Selected-Org` | Yes      | Organization ID       |
-| `Content-Type`   | Yes      | `application/json`    |
+| Header           | Required | Description     |
+| ---------------- | -------- | --------------- |
+| `X-Api-Key`      | Yes      | API key         |
+| `X-Selected-Org` | Yes      | Organization ID |
+| `Content-Type`   | Yes      | `application/json` |
 
-**Response:**
-
-```json
-{
-  "token": "eyJhbGciOi..."
-}
-```
-
-Use the `token` value as a Bearer token for all MCP Farm requests.
+**Response:** `{ "token": "eyJhbGciOi..." }`
 
 ## Using the Token
 
@@ -52,23 +40,17 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
   -d '{ ... }'
 ```
 
-## Example Script
+## Bootstrap Script
+
+Get token and export it. Requires `curl` and `jq`.
 
 ```bash
 #!/bin/bash
 API_KEY="<YOUR_API_KEY>"
 ORG_ID="<YOUR_ORG_ID>"
 
-TOKEN_RESPONSE=$(curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
-  -H "X-Api-Key: ${API_KEY}" \
-  -H "X-Selected-Org: ${ORG_ID}" \
-  -H "Content-Type: application/json")
-
-export PINKFISH_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.token')
-if [ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ]; then
-  echo "Error: Failed to get token"; echo "$TOKEN_RESPONSE" | jq .; exit 1
-fi
-echo "Token ready. Use: export PINKFISH_TOKEN"
+R=$(curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
+  -H "X-Api-Key: ${API_KEY}" -H "X-Selected-Org: ${ORG_ID}" -H "Content-Type: application/json")
+export PINKFISH_TOKEN=$(echo "$R" | jq -r '.token')
+[ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ] && { echo "Auth failed"; echo "$R" | jq .; exit 1; }
 ```
-
-<Note>Requires `curl` and `jq`.</Note>

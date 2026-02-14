@@ -3,18 +3,14 @@ title: "MCP Protocol"
 description: "JSON-RPC 2.0 format, servers, and tools"
 ---
 
-The MCP Farm implements the Model Context Protocol (MCP) over HTTP. All requests are HTTP POST with JSON-RPC 2.0 payloads.
-
-**Base URL:** `https://mcp.app.pinkfish.ai`
-
-Requires a runtime token. See [Authentication](/api-reference/platform/authentication).
+HTTP POST with JSON-RPC 2.0. Base URL: `https://mcp.app.pinkfish.ai`. Requires a [runtime token](/api-reference/platform/authentication).
 
 ## Request Flow
 
-| You know...     | Use                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Tool and server | `tools/call` on the server path (e.g., `/web-search`, `/gmail`)                                                        |
-| Task, not tool  | [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → call recommended tool |
+| You know...     | Use                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------- |
+| Tool and server | `tools/call` on server path (e.g. `/web-search`, `/gmail`)                             |
+| Task, not tool  | [Discovery](/api-reference/platform/discovery): `capabilities_discover` → `capability_details` → call tool |
 
 ## Request Format
 
@@ -73,17 +69,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/mcp" \
   }'
 ```
 
-**Response:** Returns `result.structuredContent` (preferred) or `result.content[0].text` (JSON string). See [Response Format](#response-format) below.
-
-Each server entry includes:
-
-| Field         | Description                                                                               |
-| ------------- | ----------------------------------------------------------------------------------------- |
-| `name`        | Server identifier (e.g., `gmail`, `slack`, `datastore-structured`)                        |
-| `path`        | URL path to call this server (e.g., `/gmail`)                                             |
-| `description` | What the server does                                                                      |
-| `embedded`    | `true` = built-in platform service, `false` = external application requiring a connection |
-| `tools`       | Array of tools provided by this server                                                    |
+**Response:** `result.structuredContent` or `result.content[0].text`. Each server has `name`, `path`, `description`, `embedded`, `tools`.
 
 ## List Tools
 
@@ -129,8 +115,6 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 }
 ```
 
-Each tool includes an `inputSchema` (JSON Schema) for its parameters.
-
 ## Call a Tool
 
 POST `tools/call` to the server path with the tool name and arguments:
@@ -173,11 +157,9 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
   }'
 ```
 
-**Response:** `result.structuredContent` or `result.content[0].text`. See [Response Format](#response-format).
-
 ### Example: External Service (Gmail)
 
-Application tools (Gmail, Slack, etc.) require a `PCID`. See [Connections](/api-reference/platform/connections).
+Requires a PCID. See [Connections](/api-reference/platform/connections).
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
@@ -200,27 +182,10 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
 
 ## Response Format
 
-### Success
-
-| Format                     | Field                      | Use                                     |
-| -------------------------- | -------------------------- | --------------------------------------- |
-| **Structured** (preferred) | `result.structuredContent` | Type-safe object. No parsing.           |
-| **Legacy**                 | `result.content[0].text`   | JSON string. Parse with `JSON.parse()`. |
-
-Prefer `structuredContent` when present; fall back to `content[0].text` for compatibility.
+**Success:** `result.structuredContent` (preferred) or `result.content[0].text` (JSON string).
 
 ```javascript
-const data =
-  result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
+const data = result.structuredContent ?? JSON.parse(result?.content?.[0]?.text ?? "{}");
 ```
 
-**Optional `X-MCP-Mode` header:** `optimized` (structured only) or `legacy` (legacy only). Omit for both.
-
-### Errors
-
-| Code     | Meaning                                                    |
-| -------- | ---------------------------------------------------------- |
-| `-32000` | Server error — validation, timeout, unsupported media type |
-| `-32603` | Internal error                                             |
-
-The `message` field contains a human-readable description. Common `-32000` causes: missing `Accept: application/json`, missing `Content-Type: application/json`, or request body too large.
+**Errors:** `-32000` (validation, timeout, unsupported media) or `-32603` (internal). Ensure `Accept: application/json` and `Content-Type: application/json` are set.
