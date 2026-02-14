@@ -396,3 +396,153 @@ Requires: `pip install requests`
 2. **Schema introspection** — `capability_details` returns the full `inputSchema` so the agent knows exactly what parameters to pass
 3. **PCID resolution** — For external integrations, the agent gets the connection ID from discovery or from `list_connections()`
 4. **Simple integration** — The entire MCP Farm is accessible through a single HTTP client with JSON-RPC payloads
+
+## Advanced: Dynamic Tool Installation for AI Agents
+
+The examples above show a human-readable discovery flow. But if you're building an AI agent
+(e.g., with Claude or OpenAI function calling), you can **dynamically fetch tool schemas and
+register them as callable functions** — so the model can call MCP tools natively through its
+tool-use interface rather than through wrapper code.
+
+The pattern:
+
+1. **Bootstrap with 3 tools** — Start your agent with only `capabilities_discover`,
+   `capability_details`, and a helper tool that installs new tools at runtime.
+2. **Agent discovers what it needs** — When the agent calls `capabilities_discover`, it gets
+   back tool names and server paths.
+3. **Fetch full schemas** — Call `tools/list` on the relevant MCP server to get the complete
+   `inputSchema` for each tool.
+4. **Register as native tools** — Convert the MCP schema to your model's function-calling
+   format and inject it into the agent's tool set.
+5. **Agent calls the tool directly** — The model now sees it as a native tool and can call it
+   with proper parameter validation.
+
+```javascript
+const MCP_URL = "https://mcp.app.pinkfish.ai";
+const TOKEN = "<YOUR_PLATFORM_JWT>";
+const headers = {
+  Authorization: `Bearer ${TOKEN}`,
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
+
+// Step 1: Fetch all tool schemas from an MCP server via tools/list
+async function fetchToolSchemas(serverPath) {
+  const resp = await fetch(`${MCP_URL}${serverPath}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "tools/list",
+      params: {},
+      id: 1,
+    }),
+  });
+  const result = await resp.json();
+  return result?.result?.tools ?? [];
+}
+
+// Step 2: Convert MCP tool schema to Claude function-calling format
+function mcpToolToClaude(tool) {
+  return {
+    name: tool.name,
+    description: tool.description || "",
+    input_schema: tool.inputSchema || { type: "object", properties: {} },
+  };
+}
+
+// Step 3: Convert MCP tool schema to OpenAI function-calling format
+function mcpToolToOpenAI(tool) {
+  return {
+    type: "function",
+    function: {
+      name: tool.name,
+      description: tool.description || "",
+      parameters: tool.inputSchema || { type: "object", properties: {} },
+    },
+  };
+}
+
+// Step 4: Dynamically install tools from discovered servers
+async function installToolsFromDiscovery(discoveryResult, format = "claude") {
+  const tools = [];
+  const serverPaths = new Set();
+
+  // Collect unique server paths from discovery results
+  for (const tool of discoveryResult.tools ?? []) {
+    serverPaths.add(`/${tool.serverName}`);
+  }
+
+  // Fetch schemas from each server
+  for (const serverPath of serverPaths) {
+    const schemas = await fetchToolSchemas(serverPath);
+    for (const schema of schemas) {
+      // Filter to only the tools recommended by discovery
+      const isRecommended = discoveryResult.tools?.some(
+        (t) => t.name === schema.name
+      );
+      if (isRecommended) {
+        tools.push(
+          format === "claude"
+            ? mcpToolToClaude(schema)
+            : mcpToolToOpenAI(schema)
+        );
+      }
+    }
+  }
+
+  return tools;
+}
+
+// Example: Bootstrap an agent with dynamic tool installation
+async function bootstrapAgent() {
+  // Start with just discovery tools
+  const baseTools = [
+    {
+      name: "capabilities_discover",
+      description: "Discover available MCP tools for a task",
+      input_schema: {
+        type: "object",
+        properties: {
+          request: { type: "string", description: "What you want to do" },
+        },
+        required: ["request"],
+      },
+    },
+    {
+      name: "capability_details",
+      description: "Get full parameter schemas for tools",
+      input_schema: {
+        type: "object",
+        properties: {
+          items: {
+            type: "array",
+            items: { type: "string" },
+            description: "Tool or skill names to look up",
+          },
+        },
+        required: ["items"],
+      },
+    },
+  ];
+
+  // When the agent calls capabilities_discover and finds tools it needs,
+  // fetch their schemas and add them to the tool set:
+  //
+  //   const discovery = await discover("search the web for AI news");
+  //   const newTools = await installToolsFromDiscovery(discovery, "claude");
+  //   agentTools = [...baseTools, ...newTools];
+  //   // Now re-run the agent loop with the expanded tool set
+
+  return baseTools;
+}
+```
+
+<Note>
+**How this works internally:** This is the same pattern Pinkfish uses in production. The
+platform's `DynamicToolBuilder` calls `tools/list` on each MCP server, converts the
+returned `inputSchema` to the model's format, and injects them into the agent's tool set.
+The key fields from `tools/list` are `name`, `description`, and `inputSchema` (JSON Schema).
+For external integrations, you'll also need to inject the `PCID` argument — get it from
+`capabilities_discover` or `GET /manage/user-connections`.
+</Note>
