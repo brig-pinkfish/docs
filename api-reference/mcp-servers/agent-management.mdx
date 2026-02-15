@@ -7,19 +7,21 @@ description: "Create, manage, and interact with AI agents and their conversation
 
 Create agents, start conversations, and retrieve artifacts.
 
-## Overview
+For a guided walkthrough, see the [Agent Management guide](/api-reference/platform/agent-management).
+
+## Tools
 
 | Tool | Description |
 | --- | --- |
-| `agent_create` | Create a new agent with instructions and tool access |
-| `agent_list` | List all accessible agents |
-| `agent_read` | Get full agent configuration and metadata |
-| `agent_update` | Update agent fields (partial update) |
-| `agent_invoke` | Send a message to an agent and get a response |
-| `chat_create` | Create a chat session for an agent |
-| `chat_list` | List chat sessions, optionally filtered by agent |
-| `chat_reset_conversation` | Clear conversation history in a chat |
-| `chat_list_artifacts` | List artifacts (files) in a chat |
+| [`agent_create`](#agent_create) | Create a new agent with instructions and tool access |
+| [`agent_list`](#agent_list) | List all accessible agents |
+| [`agent_read`](#agent_read) | Get full agent configuration and metadata |
+| [`agent_update`](#agent_update) | Update agent fields (partial update) |
+| [`agent_invoke`](#agent_invoke) | Send a message to an agent and get a response |
+| [`chat_create`](#chat_create) | Create a chat session for an agent |
+| [`chat_list`](#chat_list) | List chat sessions, optionally filtered by agent |
+| [`chat_reset_conversation`](#chat_reset_conversation) | Clear conversation history in a chat |
+| [`chat_list_artifacts`](#chat_list_artifacts) | List artifacts (files) in a chat |
 
 ---
 
@@ -42,6 +44,92 @@ Create a new agent with instructions, tool access, and optional workflow binding
 <Note>
   The `datastores`, `filestores`, and `knowledgeBases` parameters exist but are **not yet supported**. Do not use them.
 </Note>
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Agent ID |
+| `name` | string | Agent name |
+| `description` | string | Agent description |
+| `instructions` | string | Agent system prompt |
+| `createdDate` | string | Creation timestamp |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "minLength": 1, "description": "Display name for the agent" },
+    "description": { "type": "string", "description": "Description of what the agent does" },
+    "instructions": { "type": "string", "description": "System instructions/prompt for the agent" },
+    "outputSchema": { "type": "string", "description": "Optional JSON schema for agent output structure" },
+    "servers": {
+      "type": "array",
+      "description": "MCP servers and tools to grant the agent access to",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Server name" },
+          "tools": { "type": "object", "description": "Map of tool names to config objects" }
+        }
+      },
+      "default": []
+    },
+    "workflows": {
+      "type": "array",
+      "description": "Workflows the agent can trigger",
+      "items": {
+        "type": "object",
+        "properties": {
+          "triggerName": { "type": "string" },
+          "workflowName": { "type": "string" },
+          "triggerUrl": { "type": "string" },
+          "triggerApiKey": { "type": "string" },
+          "toolName": { "type": "string" }
+        }
+      },
+      "default": []
+    },
+    "bindToWorkflow": {
+      "type": "object",
+      "description": "Bind this agent to a workflow after creation",
+      "properties": {
+        "automationId": { "type": "string" },
+        "resourceName": { "type": "string" }
+      }
+    }
+  },
+  "required": ["name", "description", "instructions"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "description": "Agent ID" },
+    "name": { "type": "string", "description": "Agent name" },
+    "description": { "type": "string", "description": "Agent description" },
+    "instructions": { "type": "string", "description": "Agent instructions/prompt" },
+    "outputSchema": { "type": "string", "description": "JSON schema for agent output" },
+    "servers": { "type": "array", "description": "MCP servers configuration" },
+    "workflows": { "type": "array", "description": "Workflows configuration" },
+    "createdBy": { "type": "string", "description": "Creator user ID" },
+    "createdDate": { "type": "string", "description": "Creation timestamp" },
+    "lastModified": { "type": "string", "description": "Last modification timestamp" },
+    "responsibleOrg": { "type": "string", "description": "Responsible organization ID" },
+    "version": { "type": "number", "description": "Version number" }
+  }
+}
+```
+
+</Expandable>
 
 **Example:**
 
@@ -87,6 +175,39 @@ List all agents accessible to the current user.
 
 **Parameters:** None
 
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `agents` | object[] | Array of agent summaries |
+| `agents[].id` | string | Agent ID |
+| `agents[].name` | string | Agent name |
+| `agents[].description` | string | Agent description |
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agents": {
+      "type": "array",
+      "description": "List of agents",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Agent ID" },
+          "name": { "type": "string", "description": "Agent name" },
+          "description": { "type": "string", "description": "Agent description" }
+        }
+      }
+    }
+  }
+}
+```
+
+</Expandable>
+
 **Example:**
 
 ```bash
@@ -129,6 +250,34 @@ Get the full configuration of a specific agent, including its instructions, serv
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `agentId` | string | Yes | ID of the agent to retrieve (e.g. `ua_abc123`) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Agent ID |
+| `name` | string | Agent name |
+| `description` | string | Agent description |
+| `instructions` | string | Agent system prompt |
+| `servers` | object[] | MCP servers configuration |
+| `workflows` | object[] | Workflows configuration |
+| `createdDate` | string | Creation timestamp |
+| `lastModified` | string | Last modification timestamp |
+| `version` | number | Version number |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agentId": { "type": "string", "description": "ID of the agent to retrieve" }
+  },
+  "required": ["agentId"]
+}
+```
+
+</Expandable>
 
 **Example:**
 
@@ -184,6 +333,48 @@ Update an existing agent. Only the fields you provide are changed — omitted fi
 | `servers` | object[] | No | Updated MCP server access. **Replaces** existing servers entirely. |
 | `workflows` | object[] | No | Updated workflows configuration |
 
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agentId": { "type": "string", "description": "ID of the agent to update" },
+    "name": { "type": "string", "description": "Updated display name" },
+    "description": { "type": "string", "description": "Updated description" },
+    "instructions": { "type": "string", "description": "Updated system instructions/prompt" },
+    "outputSchema": { "type": "string", "description": "Updated JSON schema for agent output" },
+    "servers": {
+      "type": "array",
+      "description": "Updated MCP servers configuration (replaces existing)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Server name" },
+          "tools": { "type": "object", "description": "Map of tool names to config objects" }
+        }
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "description": "Updated workflows configuration",
+      "items": {
+        "type": "object",
+        "properties": {
+          "triggerName": { "type": "string" },
+          "workflowName": { "type": "string" },
+          "triggerUrl": { "type": "string" },
+          "triggerApiKey": { "type": "string" }
+        }
+      }
+    }
+  },
+  "required": ["agentId"]
+}
+```
+
+</Expandable>
+
 **Example:**
 
 ```bash
@@ -225,6 +416,55 @@ Send a message to an agent and get a response. This is the primary way to intera
 | `chatId` | string | No | Chat ID to continue an existing conversation. If omitted, a new conversation is started. |
 | `mode` | string | No | Agent mode: `"action_agent"` (GPT-based, default) or `"claude_agent"` (Claude-based) |
 | `messagesInResponse` | boolean | No | If `true`, includes the full message history in the response |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the invocation was successful |
+| `response` | string | The agent's response message |
+| `chatId` | string | Chat ID for continuing the conversation |
+| `agentId` | string | ID of the invoked agent |
+| `messages` | object[] | Full message history (only if `messagesInResponse` was `true`) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agentId": { "type": "string", "description": "ID of the agent to invoke" },
+    "message": { "type": "string", "description": "The message or task to send to the agent" },
+    "chatId": { "type": "string", "description": "Optional chat ID to continue a previous conversation" },
+    "mode": {
+      "type": "string",
+      "enum": ["action_agent", "claude_agent"],
+      "description": "Agent mode: action_agent (GPT-based, default) or claude_agent (Claude-based)"
+    },
+    "messagesInResponse": { "type": "boolean", "description": "If true, includes full message history in response" }
+  },
+  "required": ["agentId", "message"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean", "description": "Whether the agent invocation was successful" },
+    "response": { "type": "string", "description": "The agent's response message" },
+    "chatId": { "type": "string", "description": "Chat ID for continuing the conversation" },
+    "agentId": { "type": "string", "description": "ID of the invoked agent" },
+    "messages": { "type": "array", "description": "Full message history if messagesInResponse was true" }
+  }
+}
+```
+
+</Expandable>
 
 **Example — start a new conversation:**
 
@@ -299,6 +539,46 @@ Create a new chat session for an agent without sending a message. Useful when yo
 | `agentId` | string | Yes | ID of the agent to create a chat for |
 | `name` | string | No | Display name for the chat. Defaults to `"Chat with agent <agentId>"`. |
 
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Chat ID (use as `chatId` in `agent_invoke`) |
+| `agentId` | string | Agent ID this chat is associated with |
+| `name` | string | Chat display name |
+| `createdDate` | string | Creation timestamp |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agentId": { "type": "string", "description": "ID of the agent to create a chat for" },
+    "name": { "type": "string", "description": "Optional display name for the chat" }
+  },
+  "required": ["agentId"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "description": "Chat ID" },
+    "agentId": { "type": "string", "description": "Associated agent ID" },
+    "name": { "type": "string", "description": "Chat display name" },
+    "createdDate": { "type": "string", "description": "Creation timestamp" }
+  }
+}
+```
+
+</Expandable>
+
 **Example:**
 
 ```bash
@@ -344,6 +624,56 @@ List all chat sessions, optionally filtered to a specific agent.
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `agentId` | string | No | Filter to chats for this agent only. If omitted, returns all chats. |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `chats` | object[] | Array of chat summaries |
+| `chats[].id` | string | Chat ID |
+| `chats[].agentId` | string | Associated agent ID |
+| `chats[].name` | string | Chat display name |
+| `chats[].createdDate` | string | Creation timestamp |
+| `chats[].lastModified` | string | Last modification timestamp |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "agentId": { "type": "string", "description": "Optional agent ID to filter chats" }
+  }
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "chats": {
+      "type": "array",
+      "description": "List of chats",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Chat ID" },
+          "agentId": { "type": "string", "description": "Associated agent ID" },
+          "name": { "type": "string", "description": "Chat display name" },
+          "createdDate": { "type": "string", "description": "Creation timestamp" },
+          "lastModified": { "type": "string", "description": "Last modification timestamp" }
+        }
+      }
+    }
+  }
+}
+```
+
+</Expandable>
 
 **Example:**
 
@@ -393,6 +723,41 @@ Clear all messages in a chat. The chat itself is preserved and can be reused —
 | --- | --- | --- | --- |
 | `chatId` | string | Yes | ID of the chat to reset |
 
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the conversation was successfully reset |
+| `chatId` | string | ID of the chat that was reset |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "chatId": { "type": "string", "description": "ID of the chat whose conversation history should be reset" }
+  },
+  "required": ["chatId"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean", "description": "Whether the conversation was successfully reset" },
+    "chatId": { "type": "string", "description": "ID of the chat that was reset" }
+  }
+}
+```
+
+</Expandable>
+
 **Example:**
 
 ```bash
@@ -434,6 +799,63 @@ List all artifacts (files) associated with a chat. Artifacts are created by agen
 | --- | --- | --- | --- |
 | `chatId` | string | Yes | ID of the chat to list artifacts for |
 
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `artifacts` | object[] | Array of artifact metadata |
+| `artifacts[].id` | string | Artifact ID |
+| `artifacts[].sourceFileName` | string | Original file name |
+| `artifacts[].mimeType` | string | MIME type (e.g. `application/pdf`) |
+| `artifacts[].sourceSizeBytes` | number | File size in bytes |
+| `artifacts[].url` | string | Signed download URL |
+| `artifacts[].fileType` | string | Artifact type classification |
+| `artifacts[].version` | number | Version number |
+| `artifacts[].versionDate` | string | Last update timestamp |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "chatId": { "type": "string", "description": "ID of the chat to list artifacts for" }
+  },
+  "required": ["chatId"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "artifacts": {
+      "type": "array",
+      "description": "List of artifacts associated with the chat",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Artifact ID" },
+          "sourceFileName": { "type": "string", "description": "Original file name" },
+          "mimeType": { "type": "string", "description": "MIME type of the artifact" },
+          "sourceSizeBytes": { "type": "number", "description": "Artifact size in bytes" },
+          "url": { "type": "string", "description": "Signed URL to download the artifact" },
+          "fileType": { "type": "string", "description": "Artifact type classification" },
+          "version": { "type": "number", "description": "Artifact version number" },
+          "versionDate": { "type": "string", "description": "Last update timestamp" }
+        }
+      }
+    }
+  }
+}
+```
+
+</Expandable>
+
 **Example:**
 
 ```bash
@@ -472,16 +894,3 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }
 }
 ```
-
-**Artifact fields:**
-
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | string | Artifact ID |
-| `sourceFileName` | string | Original file name |
-| `mimeType` | string | MIME type (e.g. `application/pdf`, `application/json`) |
-| `sourceSizeBytes` | number | File size in bytes |
-| `url` | string | Signed download URL |
-| `fileType` | string | Artifact type classification |
-| `version` | number | Version number |
-| `versionDate` | string | Last update timestamp |
