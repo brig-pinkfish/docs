@@ -1,0 +1,390 @@
+---
+title: "datastore-unstructured"
+description: "Flexible key-value JSON storage with search and natural language queries"
+---
+
+**Server path:** `/datastore-unstructured` | **Type:** Embedded | **PCID required:** No
+
+Flexible key-value storage with no schema. Store any content type — strings, numbers, objects, arrays. Search, query with natural language, and run analytics.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`datastore-unstructured_list_collections`](#datastore-unstructured_list_collections) | List all unstructured datastore collections |
+| [`datastore-unstructured_create_collection`](#datastore-unstructured_create_collection) | Create a new collection |
+| [`datastore-unstructured_get_collection`](#datastore-unstructured_get_collection) | Get collection details |
+| [`datastore-unstructured_delete_collection`](#datastore-unstructured_delete_collection) | Delete a collection and all data |
+| [`datastore-unstructured_list_items`](#datastore-unstructured_list_items) | List items with pagination and sorting |
+| [`datastore-unstructured_create_item`](#datastore-unstructured_create_item) | Create or upsert an item |
+| [`datastore-unstructured_batch_create_items`](#datastore-unstructured_batch_create_items) | Create multiple items at once (max 500) |
+| [`datastore-unstructured_get_item`](#datastore-unstructured_get_item) | Get an item by ID |
+| [`datastore-unstructured_get_item_by_key`](#datastore-unstructured_get_item_by_key) | Get item(s) by key |
+| [`datastore-unstructured_update_item`](#datastore-unstructured_update_item) | Update an existing item |
+| [`datastore-unstructured_delete_item`](#datastore-unstructured_delete_item) | Delete an item |
+| [`datastore-unstructured_search`](#datastore-unstructured_search) | Search items by text |
+| [`datastore-unstructured_natural_query`](#datastore-unstructured_natural_query) | Query data using natural language |
+| [`datastore-unstructured_analytics_query`](#datastore-unstructured_analytics_query) | Run analytics with natural language |
+
+---
+
+## datastore-unstructured_list_collections
+
+List all unstructured datastore collections in the current workspace.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collections` | object[] | Array of collection objects |
+| `collections[].id` | string | Collection ID |
+| `collections[].name` | string | Collection name |
+| `collections[].description` | string | Collection description |
+| `collections[].type` | string | Collection type |
+| `collections[].isStructured` | boolean | Always `false` for unstructured collections |
+| `collections[].maxItems` | number | Maximum number of items allowed |
+| `collections[].numItems` | number | Current number of items |
+| `collections[].isShared` | boolean | Whether the collection is shared |
+| `collections[].status` | string | Collection status |
+| `collections[].createdBy` | string | User ID of the creator |
+| `collections[].createdByName` | string | Display name of the creator |
+| `collections[].createdAt` | string | Creation timestamp |
+| `collections[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-unstructured_create_collection
+
+Create a new unstructured datastore collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | ID of the newly created collection |
+| `isStructured` | boolean | Always `false` for unstructured collections |
+| `name` | string | Collection name |
+| `description` | string | Collection description |
+| `type` | string | Collection type |
+
+---
+
+## datastore-unstructured_get_collection
+
+Get details for a specific unstructured collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Collection ID |
+| `name` | string | Collection name |
+| `description` | string | Collection description |
+| `type` | string | Collection type |
+| `isStructured` | boolean | Always `false` for unstructured collections |
+| `maxItems` | number | Maximum number of items allowed |
+| `numItems` | number | Current number of items |
+| `isShared` | boolean | Whether the collection is shared |
+| `status` | string | Collection status |
+| `createdBy` | string | User ID of the creator |
+| `createdByName` | string | Display name of the creator |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-unstructured_delete_collection
+
+Delete a collection and all its data. This action is irreversible.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## datastore-unstructured_list_items
+
+List items in a collection with pagination and sorting options.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `limit` | number | No | `50` | Maximum number of items to return |
+| `offset` | number | No | — | Number of items to skip for pagination |
+| `orderedBy` | string | No | `"createdAt:desc"` | Sort order for results |
+| `format` | string | No | `"light"` | Response format: `"light"` or `"full"` |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of item objects |
+| `pagination` | object | Pagination metadata |
+| `pagination.totalCount` | number | Total number of items in the collection |
+| `pagination.hasNextPage` | boolean | Whether more items exist after this page |
+| `pagination.hasPrevPage` | boolean | Whether items exist before this page |
+
+---
+
+## datastore-unstructured_create_item
+
+Create a new item or upsert an existing item in a collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `key` | string | Yes | Unique key for the item |
+| `content` | string, number, boolean, object, or array | Yes | Item content — any JSON-compatible value |
+| `sortField` | string | No | Custom sort field value |
+| `metadata` | object | No | Additional metadata for the item |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | ID of the created item |
+| `key` | string | Key of the created item |
+| `message` | string | Success message |
+| `collectionId` | string | Parent collection ID |
+
+---
+
+## datastore-unstructured_batch_create_items
+
+Create multiple items at once. Maximum 500 items per batch.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `items` | object[] | Yes | Array of items, each with `key`, `content`, and optional `metadata` and `sortField` |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `created` | number | Number of items successfully created |
+| `failed` | number | Number of items that failed to create |
+| `message` | string | Summary message |
+
+---
+
+## datastore-unstructured_get_item
+
+Get a single item by its item ID.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `itemId` | string | Yes | Item ID |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Item ID |
+| `key` | string | Item key |
+| `content` | any | Item content (string, number, boolean, object, or array) |
+| `metadata` | object | Item metadata |
+| `sortField` | string | Sort field value |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-unstructured_get_item_by_key
+
+Get one or more items by their key value.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `key` | string | Yes | Item key to look up |
+| `sortField` | string | No | Sort field value to narrow results |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of matching items |
+| `items[].id` | string | Item ID |
+| `items[].key` | string | Item key |
+| `items[].content` | any | Item content (string, number, boolean, object, or array) |
+| `items[].metadata` | object | Item metadata |
+| `items[].sortField` | string | Sort field value |
+| `items[].createdAt` | string | Creation timestamp |
+| `items[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-unstructured_update_item
+
+Update an existing item in a collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `itemId` | string | Yes | Item ID of the item to update |
+| `content` | any | Yes | New content value (string, number, boolean, object, or array) |
+| `metadata` | object | No | Metadata fields to update |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Item ID of the updated item |
+| `key` | string | Item key |
+| `message` | string | Success message |
+
+---
+
+## datastore-unstructured_delete_item
+
+Delete an item from a collection. Specify the item by `itemId` or by `key` (and optionally `sortField`).
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `itemId` | string | No | Item ID of the item to delete |
+| `key` | string | No | Key of the item to delete (alternative to `itemId`) |
+| `sortField` | string | No | Sort field value to narrow deletion when using `key` |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## datastore-unstructured_search
+
+Search items by text with configurable matching strategy. Supports fuzzy, exact, and prefix matching across all fields or a specific field.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `q` | string | Yes | — | Search query text |
+| `field` | string | No | `"all"` | Field to search: `"all"`, `"content"`, `"sortField"`, or `"key"` |
+| `type` | string | No | `"fuzzy"` | Match type: `"fuzzy"`, `"exact"`, or `"prefix"` |
+| `threshold` | number | No | `0.3` | Fuzzy match threshold (0–1). Lower values are more permissive. |
+| `limit` | number | No | `50` | Maximum number of results |
+| `compiled` | boolean | No | `false` | Whether the query is a pre-compiled search expression |
+| `queryParams` | object | No | — | Additional query parameters for compiled searches |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of matching items |
+| `items[].id` | string | Item ID |
+| `items[].key` | string | Item key |
+| `items[].content` | any | Item content |
+| `items[].score` | number | Match relevance score |
+| `items[].snippet` | string | Text snippet highlighting the match |
+
+---
+
+## datastore-unstructured_natural_query
+
+Query collection data using natural language. Supports two modes: `natural-search` returns matching items, `natural-answer` returns an AI-generated answer.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `query` | string | Yes | Natural language query |
+| `mode` | string | Yes | `"natural-search"` to return matching items, or `"natural-answer"` for an AI-generated answer. Defaults to `"natural-search"`. |
+| `limit` | number | No | Maximum number of results |
+| `offset` | number | No | Number of results to skip for pagination |
+| `returnAll` | boolean | No | Whether to return all matching results |
+| `translation` | object | No | Translation configuration for the query |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mode` | string | The query mode used |
+| `items` | object[] | Array of matching items (in `natural-search` mode) |
+| `explanation` | string | Explanation of how the query was interpreted |
+| `naturalAnswer` | string | AI-generated answer (in `natural-answer` mode) |
+| `pagination` | object | Pagination metadata |
+| `translation` | object | Translation details if translation was requested |
+
+---
+
+## datastore-unstructured_analytics_query
+
+Run analytics on collection data using natural language. Returns tabular results with column definitions.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `query` | string | Yes | — | Natural language analytics query (e.g. "count items by category") |
+| `limit` | number | No | `10000` | Maximum number of result rows |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `columns` | object[] | Column definitions for the result table |
+| `rows` | object[] | Result rows |
+| `totalRows` | number | Total number of result rows |
+| `explanation` | string | Natural language explanation of the analytics query |
