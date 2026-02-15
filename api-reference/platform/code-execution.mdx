@@ -5,8 +5,6 @@ description: "Sandboxed JavaScript environment for chaining tools"
 
 Run JavaScript in a sandboxed Node.js VM. Chain tool calls, transform data, and create files — all in a single request.
 
-The typical pattern: your AI agent writes code, sends it to code execution, inspects the result, and revises if needed — iterating until the output is correct. This gives agents a way to perform multi-step logic, data transformations, and tool orchestration that would be difficult to express in a single tool call.
-
 ## Quick Start
 
 Send code, get a result. All you need is a [runtime token](/api-reference/platform/authentication).
@@ -29,7 +27,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
   }'
 ```
 
-The response contains your return value, any console output, and execution time:
+**Response:**
 
 ```json
 {
@@ -46,6 +44,8 @@ The response contains your return value, any console output, and execution time:
   }
 }
 ```
+
+That's it. Your code runs, you get the return value back. No chat ID, no setup — just send code and get a result.
 
 <Note>Your code is wrapped in an async function, so you can use `await` and `return` directly.</Note>
 
@@ -77,6 +77,8 @@ Code runs in a **Node.js VM sandbox**. You get standard JavaScript built-ins (`J
 ## Examples
 
 ### Chain Multiple Tools
+
+Search the web and summarize the results — two tool calls composed in a single execution:
 
 ```javascript
 const searchResults = await callTool("/web-search", "search_googlesearch", {
@@ -110,29 +112,90 @@ const emails = await callTool("/gmail", "gmail_search_emails", {
 return emails;
 ```
 
-## Working with Files (Artifacts)
+### Transform Data
 
-Artifacts let you create and read files across executions. They require a **chat context** — pass the `X-Chat-Id` header on your request.
+Process and reshape data between tool calls:
 
-### Setup
+```javascript
+const raw = await callTool("/datastore-structured", "datastore-structured_query", {
+  collection: "orders",
+  filter: { status: "pending" }
+});
 
-Create an automation to get a chat ID, then include it in subsequent requests:
+const summary = raw.items.map(order => ({
+  id: order.id,
+  total: order.items.reduce((sum, item) => sum + item.price, 0),
+  itemCount: order.items.length
+}));
+
+return { orderCount: summary.length, orders: summary };
+```
+
+## Working with Artifacts
+
+Artifacts let you create and read files that persist across executions. This is useful for generating reports, storing intermediate results, or building files that your application retrieves later.
+
+### When You Need a Chat ID
+
+The Quick Start above works for stateless code execution — send code, get a result. But **artifacts require a chat context** (the `X-Chat-Id` header) so the platform knows where to store files.
+
+There are two ways to get a chat ID:
+
+**Option 1: Use `chat_create`** (recommended)
+
+Use the [Agent Management](/api-reference/platform/agent-management) `chat_create` tool:
 
 ```bash
-# Create an automation (returns an ID you'll use as chat ID)
+# Create a chat session
+CHAT_ID=$(curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "agent-management_chat_create",
+      "arguments": {
+        "agentId": "YOUR_AGENT_ID",
+        "name": "Code execution session"
+      }
+    },
+    "id": 1
+  }' | jq -r '.result.structuredContent.id')
+```
+
+**Option 2: Create an automation directly**
+
+```bash
 CHAT_ID=$(curl -s -X POST "https://app-api.app.pinkfish.ai/service/automations" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
   -H "X-Selected-Org: $ORG_ID" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-code-session"}' | jq -r '.id')
+```
 
-# Now include X-Chat-Id in code execution requests
+### Using Your Chat ID
+
+Once you have a chat ID, include the `X-Chat-Id` header in your code execution requests:
+
+```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
   -H "X-Chat-Id: $CHAT_ID" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
-  -d '{ ... }'
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "code-execution_execute",
+      "arguments": {
+        "code": "const data = { report: \"Monthly summary\", items: [1, 2, 3] };\nconst file = await createArtifact(\"report.json\", JSON.stringify(data, null, 2), \"json\");\nreturn file;"
+      }
+    },
+    "id": 1
+  }'
 ```
 
 ### Create a File
@@ -147,7 +210,7 @@ const file = await createArtifact(
 );
 
 return file;
-// → { success: true, filename: "report.json", id: "file-abc123", mimeType: "application/json", size: 56 }
+// { success: true, filename: "report.json", id: "file-abc123", mimeType: "application/json", size: 56 }
 ```
 
 The file appears in `createdArtifacts` in the response and is stored in the platform.
@@ -172,9 +235,29 @@ return { error: data.error };
 
 You can also read by file ID or platform URL instead of filename.
 
-### Retrieve Files via REST API
+### Retrieve Artifacts via API
 
-Outside of code execution, list and download files with the app API:
+Outside of code execution, list and download artifacts using the [Agent Management](/api-reference/platform/agent-management) tools or the REST API:
+
+**Using `chat_list_artifacts`:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "agent-management_chat_list_artifacts",
+      "arguments": { "chatId": "'$CHAT_ID'" }
+    },
+    "id": 1
+  }'
+```
+
+**Using the REST API directly:**
 
 ```bash
 # List files for a chat
