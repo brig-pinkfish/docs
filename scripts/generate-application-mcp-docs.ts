@@ -345,8 +345,12 @@ function extractParams(paramsSchema: Record<string, any>): ParamInfo[] {
 // ============================================================================
 
 function escapeMarkdown(str: string): string {
-  // Escape pipe characters in table cells
-  return str.replace(/\|/g, '\\|')
+  // Escape pipe characters in table cells and curly braces for MDX
+  // MDX treats { } as JSX expressions, so we must escape them outside code fences
+  return str
+    .replace(/\|/g, '\\|')
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;')
 }
 
 function generateToolSection(tool: any): string {
@@ -366,7 +370,7 @@ function generateToolSection(tool: any): string {
   }
 
   let md = `## ${tool.name}\n\n`
-  md += `${tool.description}\n\n`
+  md += `${escapeMarkdown(tool.description)}\n\n`
 
   // Parameters table
   if (params.length > 0) {
@@ -380,10 +384,10 @@ function generateToolSection(tool: any): string {
   }
 
   // Expandable inputSchema
-  md += `<Expandable title="inputSchema">\n`
+  md += `<Expandable title="inputSchema">\n\n`
   md += '```json\n'
   md += JSON.stringify(inputSchemaObj, null, 2) + '\n'
-  md += '```\n'
+  md += '```\n\n'
   md += `</Expandable>\n`
 
   return md

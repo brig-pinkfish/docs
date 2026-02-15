@@ -64,6 +64,7 @@ Execute SOQL queries to search, filter, and retrieve records from any Salesforce
 | `nextRecordsUrl` | string | No | — | URL from previous query result (required for query_more action) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -95,6 +96,7 @@ Execute SOQL queries to search, filter, and retrieve records from any Salesforce
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -111,6 +113,7 @@ Execute SOSL queries for global search across multiple objects. More efficient t
 | `objects` | string[] | No | — | Optional list of specific objects to search. Example: ["Account", "Contact", "Lead"]. If omitted, searches all searchable objects. |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -137,6 +140,7 @@ Execute SOSL queries for global search across multiple objects. More efficient t
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -152,11 +156,12 @@ Perform CRUD operations on any Salesforce object. Generic interface for all stan
 | `action` | string | Yes | — | (required) CRUD operation: "create" = insert new record; "update" = modify existing record; "delete" = remove record; "get" = retrieve single record by ID (returns basic fields only); "clone" = duplicate existing record; "upsert" = insert or update based on external ID field |
 | `sobject` | string | Yes | — | Salesforce object API name. Examples: "Account", "Contact", "CustomObject__c" |
 | `recordId` | string | No | — | Record ID (required for update, delete, get, clone actions). Example: "001xx000003DGb2AAG" |
-| `record` | object | No | — | Record data fields (required for create, update actions). Example: {"Name": "Acme Corp", "Industry": "Technology"} |
+| `record` | object | No | — | Record data fields (required for create, update actions). Example: &#123;"Name": "Acme Corp", "Industry": "Technology"&#125; |
 | `externalIdField` | string | No | — | External ID field name (required for upsert action). MUST be a field marked as "External ID" in Salesforce. Standard fields like Name, Email are NOT external IDs unless explicitly configured. Use custom fields like "External_ID__c" that have the External ID checkbox enabled. Example: "External_ID__c", "Legacy_System_ID__c" |
 | `externalIdValue` | string | No | — | External ID value to match (required for upsert action). This value will be used to find existing records. Example: "EXT-12345" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -206,6 +211,7 @@ Perform CRUD operations on any Salesforce object. Generic interface for all stan
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -222,6 +228,7 @@ Get metadata about Salesforce objects and the org. Includes available fields, fi
 | `sobject` | string | No | — | Object API name (required for describe_object). Example: "Account", "Opportunity" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -250,6 +257,7 @@ Get metadata about Salesforce objects and the org. Includes available fields, fi
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -265,6 +273,7 @@ Retrieve Salesforce org metadata including API limits, org details, and current 
 | `action` | string | Yes | — | (required) Metadata type: "get_limits" = API limits and usage; "get_org_info" = organization details; "get_user_info" = current authenticated user info |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -289,6 +298,7 @@ Retrieve Salesforce org metadata including API limits, org details, and current 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -303,11 +313,12 @@ Manage Account records with simplified interface. List accounts with common filt
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Account action: "list" = query accounts with filters; "create" = insert new account; "update" = modify account; "get" = retrieve single account by ID |
 | `accountId` | string | No | — | Account ID (required for get, update actions). Example: "001xx000003DGb2AAG" |
-| `fields` | object | No | — | Account fields for create/update. Example: {"Name": "Acme Corp", "Industry": "Technology", "Phone": "555-1234"} |
-| `filters` | object | No | — | Query filters for list action. Example: {"Industry": "Technology", "AnnualRevenue": {">": 1000000}} |
+| `fields` | object | No | — | Account fields for create/update. Example: &#123;"Name": "Acme Corp", "Industry": "Technology", "Phone": "555-1234"&#125; |
+| `filters` | object | No | — | Query filters for list action. Example: &#123;"Industry": "Technology", "AnnualRevenue": &#123;">": 1000000&#125;&#125; |
 | `limit` | number | No | — | Maximum records to return for list action (default: 100) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -351,6 +362,7 @@ Manage Account records with simplified interface. List accounts with common filt
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -365,11 +377,12 @@ Manage Contact records. List contacts with filters, create new contacts with acc
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Contact action: "list" = query contacts with filters; "create" = insert new contact; "update" = modify contact; "get" = retrieve contact by ID |
 | `contactId` | string | No | — | Contact ID (required for get, update actions). Example: "003xx000004TmiUAAS" |
-| `fields` | object | No | — | Contact fields for create/update. Example: {"FirstName": "John", "LastName": "Smith", "Email": "john@example.com", "AccountId": "001xx..."} |
-| `filters` | object | No | — | Query filters for list action. Example: {"AccountId": "001xx...", "Email": {"LIKE": "%@acme.com"}} |
+| `fields` | object | No | — | Contact fields for create/update. Example: &#123;"FirstName": "John", "LastName": "Smith", "Email": "john@example.com", "AccountId": "001xx..."&#125; |
+| `filters` | object | No | — | Query filters for list action. Example: &#123;"AccountId": "001xx...", "Email": &#123;"LIKE": "%@acme.com"&#125;&#125; |
 | `limit` | number | No | — | Maximum records to return for list action (default: 100) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -413,6 +426,7 @@ Manage Contact records. List contacts with filters, create new contacts with acc
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -427,12 +441,13 @@ Manage Lead records. List leads, create new leads, update lead info, or convert 
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Lead action: "list" = query leads with filters; "create" = insert new lead; "update" = modify lead; "get" = retrieve lead by ID; "convert" = convert qualified lead into Account/Contact/Opportunity |
 | `leadId` | string | No | — | Lead ID (required for get, update, convert actions). Example: "00Qxx000001gDwDEAU" |
-| `fields` | object | No | — | Lead fields for create/update. Example: {"FirstName": "Jane", "LastName": "Doe", "Company": "Acme", "Email": "jane@acme.com"} |
-| `filters` | object | No | — | Query filters for list action. Example: {"Status": "Open - Not Contacted", "Rating": "Hot"} |
+| `fields` | object | No | — | Lead fields for create/update. Example: &#123;"FirstName": "Jane", "LastName": "Doe", "Company": "Acme", "Email": "jane@acme.com"&#125; |
+| `filters` | object | No | — | Query filters for list action. Example: &#123;"Status": "Open - Not Contacted", "Rating": "Hot"&#125; |
 | `limit` | number | No | — | Maximum records to return for list action (default: 100) |
 | `doNotCreateOpportunity` | boolean | No | — | For convert action: set true to skip opportunity creation (default: false) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -481,6 +496,7 @@ Manage Lead records. List leads, create new leads, update lead info, or convert 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -495,11 +511,12 @@ Manage Opportunity records. List opportunities, create new deals, update opportu
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Opportunity action: "list" = query opportunities with filters; "create" = insert new opportunity; "update" = modify opportunity; "get" = retrieve opportunity by ID; "close_won" = mark opportunity as won; "close_lost" = mark opportunity as lost |
 | `opportunityId` | string | No | — | Opportunity ID (required for get, update, close_won, close_lost). Example: "006xx000003DH5TAAW" |
-| `fields` | object | No | — | Opportunity fields for create/update. Example: {"Name": "Acme Deal", "StageName": "Prospecting", "CloseDate": "2024-12-31", "Amount": 50000} |
-| `filters` | object | No | — | Query filters for list action. Example: {"StageName": "Closed Won", "Amount": {">": 10000}} |
+| `fields` | object | No | — | Opportunity fields for create/update. Example: &#123;"Name": "Acme Deal", "StageName": "Prospecting", "CloseDate": "2024-12-31", "Amount": 50000&#125; |
+| `filters` | object | No | — | Query filters for list action. Example: &#123;"StageName": "Closed Won", "Amount": &#123;">": 10000&#125;&#125; |
 | `limit` | number | No | — | Maximum records to return for list action (default: 100) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -545,6 +562,7 @@ Manage Opportunity records. List opportunities, create new deals, update opportu
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -559,11 +577,12 @@ Manage Case records for customer support. List cases, create new cases, update c
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Case action: "list" = query cases with filters; "create" = insert new case; "update" = modify case; "get" = retrieve case by ID; "close" = mark case as closed |
 | `caseId` | string | No | — | Case ID (required for get, update, close actions). Example: "500xx000001gABCAAM" |
-| `fields` | object | No | — | Case fields for create/update. Example: {"Subject": "Cannot login", "Description": "User forgot password", "Priority": "High", "Status": "New"} |
-| `filters` | object | No | — | Query filters for list action. Example: {"Status": "Open", "Priority": "High"} |
+| `fields` | object | No | — | Case fields for create/update. Example: &#123;"Subject": "Cannot login", "Description": "User forgot password", "Priority": "High", "Status": "New"&#125; |
+| `filters` | object | No | — | Query filters for list action. Example: &#123;"Status": "Open", "Priority": "High"&#125; |
 | `limit` | number | No | — | Maximum records to return for list action (default: 100) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -608,6 +627,7 @@ Manage Case records for customer support. List cases, create new cases, update c
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -622,10 +642,11 @@ Perform bulk operations using Salesforce Bulk API 2.0 for processing large data 
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Bulk action: "bulk_create" = insert many records asynchronously; "bulk_update" = update many records asynchronously; "bulk_delete" = delete many records asynchronously; "get_job_status" = check job progress |
 | `sobject` | string | No | — | Object type (required for bulk_create, bulk_update, bulk_delete). Example: "Account" |
-| `records` | object[] | No | — | Array of records to process (required for bulk_create, bulk_update, bulk_delete). Example: [{"Name": "Acme"}, {"Name": "TechCo"}] |
+| `records` | object[] | No | — | Array of records to process (required for bulk_create, bulk_update, bulk_delete). Example: [&#123;"Name": "Acme"&#125;, &#123;"Name": "TechCo"&#125;] |
 | `jobId` | string | No | — | Bulk job ID (required for get_job_status). Returned from bulk operation initiation. |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -667,6 +688,7 @@ Perform bulk operations using Salesforce Bulk API 2.0 for processing large data 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -681,9 +703,10 @@ Perform batch operations on multiple records (up to 2,000) in a single API call.
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Batch action: "batch_create" = insert multiple records synchronously; "batch_update" = update multiple records synchronously; "batch_delete" = delete multiple records synchronously |
 | `sobject` | string | Yes | — | Object type for batch operation. Example: "Contact", "Lead" |
-| `records` | object[] | Yes | — | Array of records to process (max 2000). Example: [{"Name": "John"}, {"Name": "Jane"}] |
+| `records` | object[] | Yes | — | Array of records to process (max 2000). Example: [&#123;"Name": "John"&#125;, &#123;"Name": "Jane"&#125;] |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -722,6 +745,7 @@ Perform batch operations on multiple records (up to 2,000) in a single API call.
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -737,9 +761,10 @@ Merge duplicate Account, Contact, or Lead records into a master record. Automati
 | `sobject` | string | Yes | — | Object type to merge (must be Account, Contact, or Lead). Example: "Account" |
 | `masterRecordId` | string | Yes | — | ID of the master record to keep. All data will be consolidated into this record. Example: "001xx000003DGb2AAG" |
 | `duplicateRecordIds` | string[] | Yes | — | Array of duplicate record IDs to merge into master (max 2 duplicates). Example: ["001xx000003DGb3AAG", "001xx000003DGb4AAG"] |
-| `masterFieldValues` | object | No | — | Optional field values to set on master record after merge. Example: {"Name": "Acme Corp"} |
+| `masterFieldValues` | object | No | — | Optional field values to set on master record after merge. Example: &#123;"Name": "Acme Corp"&#125; |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -777,6 +802,7 @@ Merge duplicate Account, Contact, or Lead records into a master record. Automati
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -791,10 +817,11 @@ Manage Salesforce Flows. List available auto-launched flows, trigger/run flows w
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Flow action: "list" = get available flows; "trigger" = execute flow with input variables; "get_status" = check execution status; "cancel" = stop running flow |
 | `flowApiName` | string | No | — | Flow API name (required for trigger action). Example: "Create_Order_Flow" |
-| `inputVariables` | object | No | — | Input variables for flow (required for trigger). Example: {"AccountId": "001xx...", "Amount": 5000} |
+| `inputVariables` | object | No | — | Input variables for flow (required for trigger). Example: &#123;"AccountId": "001xx...", "Amount": 5000&#125; |
 | `interviewId` | string | No | — | Flow interview ID (required for get_status, cancel). Returned from trigger action. |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -833,6 +860,7 @@ Manage Salesforce Flows. List available auto-launched flows, trigger/run flows w
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -851,6 +879,7 @@ Manage approval processes. List approval processes, submit records for approval,
 | `comments` | string | No | — | Comments for approval/rejection. Example: "Approved based on Q4 budget" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -890,6 +919,7 @@ Manage approval processes. List approval processes, submit records for approval,
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -907,6 +937,7 @@ Query and manage record types. Get available record types for an object, retriev
 | `sobject` | string | No | — | Object name (required for get_by_object action). Example: "Opportunity", "Case" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -939,6 +970,7 @@ Query and manage record types. Get available record types for an object, retriev
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -960,6 +992,7 @@ Send emails through Salesforce. Send individual or mass emails, list available e
 | `targetObjectIds` | string[] | No | — | Contact or Lead IDs for mass email (required for send_mass). Example: ["003xx...", "003yy..."] |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1015,6 +1048,7 @@ Send emails through Salesforce. Send individual or mass emails, list available e
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1033,6 +1067,7 @@ Manage Chatter posts and feeds. Post to a record's Chatter feed, retrieve feed i
 | `feedElementId` | string | No | — | Feed item/post ID (required for comment, like, delete_post). Example: "0D5xx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1071,6 +1106,7 @@ Manage Chatter posts and feeds. Post to a record's Chatter feed, retrieve feed i
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1095,6 +1131,7 @@ Manage activities and calendar. Log phone calls, create tasks with due dates, cr
 | `status` | string | No | — | Task status (for update_task). Example: "In Progress", "Waiting on someone else" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1158,6 +1195,7 @@ Manage activities and calendar. Log phone calls, create tasks with due dates, cr
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1178,6 +1216,7 @@ Manage files and attachments using ContentVersion/ContentDocument. List files on
 | `contentDocumentId` | string | No | — | ContentDocument ID (for share action). Example: "069xx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1224,6 +1263,7 @@ Manage files and attachments using ContentVersion/ContentDocument. List files on
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1243,6 +1283,7 @@ Manage legacy Attachments. For compatibility with older implementations or speci
 | `attachmentId` | string | No | — | Attachment ID (required for download, delete). Example: "00Pxx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1284,6 +1325,7 @@ Manage legacy Attachments. For compatibility with older implementations or speci
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1303,6 +1345,7 @@ Manage notes on records using ContentNote. Create notes attached to any record, 
 | `contentNoteId` | string | No | — | ContentNote ID (required for update, delete). Example: "069xx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1344,6 +1387,7 @@ Manage notes on records using ContentNote. Create notes attached to any record, 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1358,10 +1402,11 @@ Manage Salesforce Reports. List available reports, run reports to retrieve resul
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Report action: "list" = list available reports; "run" = execute report and retrieve results; "get_metadata" = get report structure; "export" = download report data |
 | `reportId` | string | No | — | Report ID (required for run, get_metadata, export). Example: "00Oxx..." |
-| `filters` | object | No | — | Report filters to apply when running. Example: {"CloseDate": "THIS_QUARTER"} |
+| `filters` | object | No | — | Report filters to apply when running. Example: &#123;"CloseDate": "THIS_QUARTER"&#125; |
 | `format` | string | No | — | Export format (for export action). Options: "csv", "excel", "pdf". Default: "csv" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1400,6 +1445,7 @@ Manage Salesforce Reports. List available reports, run reports to retrieve resul
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1417,6 +1463,7 @@ Manage Salesforce Dashboards. List available dashboards, retrieve dashboard meta
 | `componentId` | string | No | — | Dashboard component ID (required for get_component_data). Example: "01axx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1450,6 +1497,7 @@ Manage Salesforce Dashboards. List available dashboards, retrieve dashboard meta
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1464,12 +1512,13 @@ Manage Campaigns and campaign membership. List available campaigns, create new c
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Campaign action: "list" = list available campaigns; "create" = create new campaign; "update" = update campaign details; "add_member" = add contact/lead to campaign; "remove_member" = remove member from campaign; "update_member_status" = update member status (e.g., Sent, Responded) |
 | `campaignId` | string | No | — | Campaign ID (required for update, add_member, remove_member, update_member_status). Example: "701xx..." |
-| `fields` | object | No | — | Campaign fields (required for create, update). Example: {"Name": "Q4 Email Campaign", "Type": "Email", "Status": "In Progress"} |
+| `fields` | object | No | — | Campaign fields (required for create, update). Example: &#123;"Name": "Q4 Email Campaign", "Type": "Email", "Status": "In Progress"&#125; |
 | `memberId` | string | No | — | Contact or Lead ID to add/remove (required for add_member, remove_member). Example: "003xx..." |
 | `memberStatus` | string | No | — | Campaign member status (for add_member, update_member_status). Example: "Sent", "Responded", "Interested" |
 | `campaignMemberId` | string | No | — | CampaignMember ID (required for update_member_status). Example: "00vxx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1518,6 +1567,7 @@ Manage Campaigns and campaign membership. List available campaigns, create new c
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1532,12 +1582,13 @@ Manage Products, Pricebooks, and PricebookEntries. List products, create new pro
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) Product action: "list" = list products; "create" = create new product; "update" = update product details; "get_pricebook_entries" = get pricing in different pricebooks; "add_to_pricebook" = add product to pricebook with specific pricing |
 | `productId` | string | No | — | Product2 ID (required for update, get_pricebook_entries, add_to_pricebook). Example: "01txx..." |
-| `fields` | object | No | — | Product fields (required for create, update). Example: {"Name": "Premium Subscription", "ProductCode": "PREM-001", "IsActive": true} |
+| `fields` | object | No | — | Product fields (required for create, update). Example: &#123;"Name": "Premium Subscription", "ProductCode": "PREM-001", "IsActive": true&#125; |
 | `pricebookId` | string | No | — | Pricebook2 ID (required for add_to_pricebook). Example: "01sxx..." |
 | `unitPrice` | number | No | — | Product unit price (required for add_to_pricebook). Example: 99.99 |
 | `isActive` | boolean | No | — | Whether pricebook entry is active (for add_to_pricebook). Default: true |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1585,6 +1636,7 @@ Manage Products, Pricebooks, and PricebookEntries. List products, create new pro
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1599,12 +1651,13 @@ Manage Salesforce users and record ownership. List users with filters, get user 
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | (required) User action: "list" = list users with filters; "get" = get user details; "assign_owner" = transfer record ownership to another user; "deactivate" = deactivate user; "update" = update user information |
 | `userId` | string | No | — | User ID (required for get, deactivate, update). Example: "005xx..." |
-| `filters` | object | No | — | User query filters (for list action). Example: {"IsActive": true, "UserRole.Name": "Sales Rep"} |
+| `filters` | object | No | — | User query filters (for list action). Example: &#123;"IsActive": true, "UserRole.Name": "Sales Rep"&#125; |
 | `recordId` | string | No | — | Record ID to reassign (required for assign_owner). Example: "001xx..." |
 | `newOwnerId` | string | No | — | New owner User ID (required for assign_owner). Example: "005yy..." |
-| `fields` | object | No | — | User fields to update (for update action). Example: {"Email": "newemail@example.com", "Title": "Senior Sales Rep"} |
+| `fields` | object | No | — | User fields to update (for update action). Example: &#123;"Email": "newemail@example.com", "Title": "Senior Sales Rep"&#125; |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1653,6 +1706,7 @@ Manage Salesforce users and record ownership. List users with filters, get user 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1671,6 +1725,7 @@ Manage Salesforce queues. List available queues, get queue details, assign recor
 | `sobject` | string | No | — | Object type being assigned/removed (required for assign, remove). Example: "Lead", "Case" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1708,6 +1763,7 @@ Manage Salesforce queues. List available queues, get queue details, assign recor
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1726,6 +1782,7 @@ Check permissions and access levels. Verify object and field-level permissions f
 | `userId` | string | No | — | User ID (optional for get_profile, get_permission_sets). Defaults to current user. |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1763,6 +1820,7 @@ Check permissions and access levels. Verify object and field-level permissions f
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1778,10 +1836,11 @@ Manage Knowledge articles. Search knowledge base, retrieve articles, create new 
 | `action` | string | Yes | — | (required) Knowledge action: "search" = search knowledge base for articles; "get_article" = retrieve specific article details; "list_articles" = list articles with filters; "create_article" = create new draft article; "publish" = publish draft article to make visible; "archive" = archive outdated article |
 | `searchText` | string | No | — | Search query text (required for search action). Example: "password reset" |
 | `articleId` | string | No | — | Knowledge article ID (required for get_article, publish, archive). Example: "kA0xx..." |
-| `fields` | object | No | — | Article fields (required for create_article). Example: {"Title": "How to Reset Password", "UrlName": "reset-password", "Summary": "..."} |
-| `filters` | object | No | — | Query filters (for list_articles). Example: {"PublishStatus": "Online", "Language": "en_US"} |
+| `fields` | object | No | — | Article fields (required for create_article). Example: &#123;"Title": "How to Reset Password", "UrlName": "reset-password", "Summary": "..."&#125; |
+| `filters` | object | No | — | Query filters (for list_articles). Example: &#123;"PublishStatus": "Online", "Language": "en_US"&#125; |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1827,6 +1886,7 @@ Manage Knowledge articles. Search knowledge base, retrieve articles, create new 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1842,6 +1902,7 @@ Retrieve recently viewed or recently updated items for current user. Useful for 
 | `limit` | number | No | — | Maximum number of recent items to return (default: 50, max: 200) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1860,6 +1921,7 @@ Retrieve recently viewed or recently updated items for current user. Useful for 
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1876,6 +1938,7 @@ Manage user favorites. List favorited records, add records to favorites, or remo
 | `recordId` | string | No | — | Record ID to add/remove from favorites (required for add, remove actions). Example: "001xx..." |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1904,6 +1967,7 @@ Manage user favorites. List favorited records, add records to favorites, or remo
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1919,9 +1983,10 @@ List validation rules for an object, get rule details, or evaluate if a record w
 | `action` | string | Yes | — | (required) Validation action: "list" = get all validation rules for object; "get" = retrieve specific rule details; "evaluate" = test if record would pass validation without saving (dry run) |
 | `sobject` | string | No | — | Object API name (required for list, evaluate). Example: "Opportunity", "Account" |
 | `validationRuleId` | string | No | — | Validation rule ID (required for get action). Example: "03dxx..." |
-| `recordData` | object | No | — | Record field values to test (required for evaluate). Example: {"Amount": -1000, "StageName": "Closed Won"} |
+| `recordData` | object | No | — | Record field values to test (required for evaluate). Example: &#123;"Amount": -1000, "StageName": "Closed Won"&#125; |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1959,6 +2024,7 @@ List validation rules for an object, get rule details, or evaluate if a record w
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1982,14 +2048,15 @@ Manage Salesforce custom field schema using the Metadata API. Create, read, upda
 | `precision` | number | No | — | Total number of digits (required for Number, Currency, Percent). Example: 18 |
 | `scale` | number | No | — | Number of decimal places (required for Number, Currency, Percent). Example: 2 |
 | `defaultValue` | string | No | — | Default value (required for Checkbox: "true" or "false") |
-| `picklistValues` | object[] | No | — | Picklist values (required for Picklist/MultiselectPicklist). Example: [{"label": "Hot", "value": "Hot", "isDefault": true}] |
+| `picklistValues` | object[] | No | — | Picklist values (required for Picklist/MultiselectPicklist). Example: [&#123;"label": "Hot", "value": "Hot", "isDefault": true&#125;] |
 | `referenceTo` | string | No | — | Target object for Lookup/MasterDetail relationships. Example: "Contact" |
 | `relationshipName` | string | No | — | Relationship name for Lookup/MasterDetail. Example: "PrimaryContact" |
 | `visibleLines` | number | No | — | Number of visible lines (required for LongTextArea, Html, MultiselectPicklist). Example: 5 |
-| `displayFormat` | string | No | — | Display format for AutoNumber fields (required for AutoNumber). Example: "A-{0000}" generates A-0001, A-0002, etc. |
+| `displayFormat` | string | No | — | Display format for AutoNumber fields (required for AutoNumber). Example: "A-&#123;0000&#125;" generates A-0001, A-0002, etc. |
 | `relationshipLabel` | string | No | — | Plural label for the relationship (required for Lookup/MasterDetail). Shown in related lists. Example: "Contacts" |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -2118,4 +2185,5 @@ Manage Salesforce custom field schema using the Metadata API. Create, read, upda
   ]
 }
 ```
+
 </Expandable>

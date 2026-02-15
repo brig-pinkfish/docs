@@ -46,19 +46,20 @@ Send an email via SendGrid. Supports HTML/plain text, CC/BCC, attachments via UR
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `to` | object[] | Yes | — | Recipients array. Example: [{"email": "john@example.com", "name": "John Smith"}] |
+| `to` | object[] | Yes | — | Recipients array. Example: [&#123;"email": "john@example.com", "name": "John Smith"&#125;] |
 | `from` | object | Yes | — | Sender info. Email must be verified domain/address in SendGrid |
 | `subject` | string | Yes | — | Email subject line. Example: "Your Order Confirmation" |
-| `content` | object[] | Yes | — | Email body content. Provide both text/plain and text/html for best compatibility. Example: [{"type": "text/plain", "value": "Hello"}, {"type": "text/html", "value": "<p>Hello</p>"}] |
+| `content` | object[] | Yes | — | Email body content. Provide both text/plain and text/html for best compatibility. Example: [&#123;"type": "text/plain", "value": "Hello"&#125;, &#123;"type": "text/html", "value": "<p>Hello</p>"&#125;] |
 | `reply_to` | object | No | — | Reply-to address (where replies go if different from sender) |
-| `cc` | object[] | No | — | CC recipients (visible to all). Example: [{"email": "cc@example.com"}] |
-| `bcc` | object[] | No | — | BCC recipients (hidden from others). Example: [{"email": "archive@example.com"}] |
+| `cc` | object[] | No | — | CC recipients (visible to all). Example: [&#123;"email": "cc@example.com"&#125;] |
+| `bcc` | object[] | No | — | BCC recipients (hidden from others). Example: [&#123;"email": "archive@example.com"&#125;] |
 | `attachments` | object[] | No | — | Pre-encoded attachments (base64). Use attachmentUrls for URL-based attachments |
 | `attachmentUrls` | string[] | No | — | URLs of files to attach. Files will be fetched and attached automatically. Example: ["https://example.com/report.pdf"] |
 | `template_id` | string | No | — | SendGrid dynamic template ID. Get from sendgrid_list_templates. When used, subject and content may be optional |
-| `dynamic_template_data` | object | No | — | Template variable substitutions. Example: {"firstName": "John", "orderNumber": "12345"} |
+| `dynamic_template_data` | object | No | — | Template variable substitutions. Example: &#123;"firstName": "John", "orderNumber": "12345"&#125; |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -227,6 +228,7 @@ Send an email via SendGrid. Supports HTML/plain text, CC/BCC, attachments via UR
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -240,9 +242,10 @@ Create a new email template container in SendGrid. After creating, use sendgrid_
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `name` | string | Yes | — | Template name for identification. Example: "Order Confirmation", "Welcome Email" |
-| `generation` | string | No | `"dynamic"` | "dynamic" for templates with {{handlebar}} variables (recommended). "legacy" for older format |
+| `generation` | string | No | `"dynamic"` | "dynamic" for templates with &#123;&#123;handlebar&#125;&#125; variables (recommended). "legacy" for older format |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -271,6 +274,7 @@ Create a new email template container in SendGrid. After creating, use sendgrid_
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -286,6 +290,7 @@ Retrieve an email template including all versions. Returns template metadata and
 | `template_id` | string | Yes | — | Template ID to retrieve. Get from sendgrid_list_templates or sendgrid_create_template response |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -305,6 +310,7 @@ Retrieve an email template including all versions. Returns template metadata and
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -321,6 +327,7 @@ List all email templates in SendGrid. Returns template IDs needed for sendgrid_s
 | `page_size` | number | No | `50` | Number of templates per page. Default: 50. Max: 200 |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -348,6 +355,7 @@ List all email templates in SendGrid. Returns template IDs needed for sendgrid_s
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -369,6 +377,7 @@ Create a new version of an email template
 | `test_data` | object | No | — | Test data for template variables |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -416,6 +425,7 @@ Create a new version of an email template
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -437,6 +447,7 @@ Update an existing template version
 | `active` | boolean | No | — | Whether this version is active |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -481,6 +492,7 @@ Update an existing template version
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -500,6 +512,7 @@ Add a contact to SendGrid
 | `list_ids` | string[] | No | — | List IDs to add the contact to |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -539,6 +552,7 @@ Add a contact to SendGrid
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -555,6 +569,7 @@ Retrieve a contact by ID or email
 | `email` | string | No | — | Contact email address |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -577,6 +592,7 @@ Retrieve a contact by ID or email
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -596,6 +612,7 @@ Update an existing contact
 | `custom_fields` | object | No | — | Updated custom field values |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -632,6 +649,7 @@ Update an existing contact
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -647,6 +665,7 @@ Delete a contact from SendGrid
 | `contact_id` | string | Yes | — | Contact ID to delete |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -666,6 +685,7 @@ Delete a contact from SendGrid
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -681,6 +701,7 @@ Create a new contact list
 | `name` | string | Yes | — | List name |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -700,6 +721,7 @@ Create a new contact list
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -715,6 +737,7 @@ Retrieve a contact list by ID
 | `list_id` | string | Yes | — | List ID to retrieve |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -734,6 +757,7 @@ Retrieve a contact list by ID
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -750,6 +774,7 @@ List all contacts with optional filtering
 | `page_token` | string | No | — | Page token for pagination |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -773,6 +798,7 @@ List all contacts with optional filtering
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -788,6 +814,7 @@ Search contacts using SendGrid query language
 | `query` | string | Yes | — | Search query using SendGrid query language (e.g., "email LIKE '%@example.com'") |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -807,6 +834,7 @@ Search contacts using SendGrid query language
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -823,6 +851,7 @@ Add contacts to a specific list
 | `contact_ids` | string[] | Yes | — | Array of contact IDs to add to the list |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -850,6 +879,7 @@ Add contacts to a specific list
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -866,6 +896,7 @@ Remove contacts from a specific list
 | `contact_ids` | string[] | Yes | — | Array of contact IDs to remove from the list |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -893,6 +924,7 @@ Remove contacts from a specific list
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -912,6 +944,7 @@ Get email statistics for a date range
 | `categories` | string[] | No | — | Filter by specific categories |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -960,6 +993,7 @@ Get email statistics for a date range
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -977,6 +1011,7 @@ Get bounce statistics
 | `type` | string | No | — | Type of bounces to retrieve |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1009,6 +1044,7 @@ Get bounce statistics
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1018,6 +1054,7 @@ Get bounce statistics
 List all suppression groups (unsubscribe groups)
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1032,6 +1069,7 @@ List all suppression groups (unsubscribe groups)
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1049,6 +1087,7 @@ Create a new suppression group
 | `is_default` | boolean | No | `false` | Whether this is the default suppression group |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1078,6 +1117,7 @@ Create a new suppression group
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1094,6 +1134,7 @@ Validate an email address using SendGrid validation
 | `source` | string | No | — | Source identifier for tracking validation requests |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1117,4 +1158,5 @@ Validate an email address using SendGrid validation
   ]
 }
 ```
+
 </Expandable>

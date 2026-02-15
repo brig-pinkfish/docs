@@ -27,7 +27,7 @@ Meetings, recordings, and participants
 | [`zoom_download_recording`](#zoom_download_recording) | Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats. |
 | [`zoom_list_call_recordings`](#zoom_list_call_recordings) | List recordings for a user. Returns metadata only. Do NOT use for transcripts - use zoom_get_recording_transcript with the meeting UUID instead.
 
-IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token={download_access_token}` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file. |
+IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file. |
 | [`zoom_send_chat_message`](#zoom_send_chat_message) | Send a chat message to a Zoom contact or channel |
 | [`zoom_list_past_meeting_participants`](#zoom_list_past_meeting_participants) | Get participants list for a past Zoom meeting |
 | [`zoom_list_user_call_logs`](#zoom_list_user_call_logs) | Get call logs for a specific user |
@@ -46,6 +46,7 @@ List all scheduled meetings for the current user in Zoom
 | `pageSize` | number | No | `30` | Number of meetings to return |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -65,6 +66,7 @@ List all scheduled meetings for the current user in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -80,6 +82,7 @@ Get details about a specific Zoom user
 | `userId` | string | No | `"me"` | User ID to get details for, defaults to the current user |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -99,6 +102,7 @@ Get details about a specific Zoom user
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -120,6 +124,7 @@ Create a new scheduled meeting in Zoom
 | `settings` | object | No | — | Optional meeting configuration settings |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -203,6 +208,7 @@ Create a new scheduled meeting in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -218,6 +224,7 @@ Get details about a specific Zoom meeting
 | `meetingId` | string | Yes | — | Zoom Meeting ID or Personal Meeting ID |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -237,6 +244,7 @@ Get details about a specific Zoom meeting
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -256,6 +264,7 @@ Update an existing scheduled meeting in Zoom
 | `settings` | object | No | — | Optional settings for the meeting |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -301,6 +310,7 @@ Update an existing scheduled meeting in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -316,6 +326,7 @@ Permanently delete a scheduled meeting in Zoom
 | `meetingId` | string | Yes | — | Zoom Meeting ID to delete |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -335,6 +346,7 @@ Permanently delete a scheduled meeting in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -351,6 +363,7 @@ List all webinars for the current user in Zoom
 | `type` | string | No | `"scheduled"` | The type of webinar: scheduled (all valid previous, live, and upcoming webinars) or upcoming (only upcoming and live webinars) |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -379,6 +392,7 @@ List all webinars for the current user in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -406,6 +420,7 @@ Create a new webinar in Zoom
 | `tracking_fields` | object[] | No | — | Custom tracking fields for the webinar |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -707,6 +722,7 @@ Create a new webinar in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -722,6 +738,7 @@ Get participants for a specific webinar in Zoom
 | `webinarId` | string | Yes | — | Zoom Webinar ID to get participants for |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -741,6 +758,7 @@ Get participants for a specific webinar in Zoom
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -759,6 +777,7 @@ Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings firs
 | `timezone` | string | No | — | IANA timezone string (e.g., "America/Los_Angeles"). Use the "timezone" field from zoom_list_call_recordings response. Defaults to UTC if not specified. |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -790,6 +809,7 @@ Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings firs
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -810,6 +830,7 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
 | `filename` | string | No | — | Custom filename for the downloaded recording |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -857,6 +878,7 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -865,7 +887,7 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
 
 List recordings for a user. Returns metadata only. Do NOT use for transcripts - use zoom_get_recording_transcript with the meeting UUID instead.
 
-IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token={download_access_token}` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file.
+IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file.
 
 **Parameters:**
 
@@ -882,6 +904,7 @@ IMPORTANT: The `download_url` in `recording_files` requires authentication. To d
 | `meetingId` | number | No | — | The meeting ID to filter recordings |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -941,6 +964,7 @@ IMPORTANT: The `download_url` in `recording_files` requires authentication. To d
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -958,6 +982,7 @@ Send a chat message to a Zoom contact or channel
 | `toChannel` | string | No | — | Channel ID to send message to |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -985,6 +1010,7 @@ Send a chat message to a Zoom contact or channel
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1001,6 +1027,7 @@ Get participants list for a past Zoom meeting
 | `pageSize` | number | No | `30` | Number of participants to return per page |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1025,6 +1052,7 @@ Get participants list for a past Zoom meeting
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1043,6 +1071,7 @@ Get call logs for a specific user
 | `pageSize` | number | No | `30` | Number of call logs to return |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1074,6 +1103,7 @@ Get call logs for a specific user
   ]
 }
 ```
+
 </Expandable>
 
 ---
@@ -1090,6 +1120,7 @@ List available Zoom chat channels
 | `nextPageToken` | string | No | — | Next page token for pagination |
 
 <Expandable title="inputSchema">
+
 ```json
 {
   "type": "object",
@@ -1113,4 +1144,5 @@ List available Zoom chat channels
   ]
 }
 ```
+
 </Expandable>
