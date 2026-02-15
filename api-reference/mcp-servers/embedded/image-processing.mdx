@@ -1,0 +1,83 @@
+---
+title: "image-processing"
+description: "AI image generation, editing, and background removal"
+---
+
+**Server path:** `/image-processing` | **Type:** Embedded | **PCID required:** No
+
+Generate images from text prompts, edit images with AI instructions, and remove or replace backgrounds.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`image-processing_ai_generate`](#image-processing_ai_generate) | Generate images from text prompts |
+| [`image-processing_nano_banana`](#image-processing_nano_banana) | AI image editing with text instructions |
+| [`image-processing_ai_background_removal`](#image-processing_ai_background_removal) | Remove or replace image backgrounds |
+
+---
+
+## image-processing_ai_generate
+
+Generate images from text prompts using AI.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `prompt` | string | Yes | — | Text description of the image to generate |
+| `output_format` | enum | No | `"png"` | Output format: `"png"`, `"jpg"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | object[] | Array of generated image objects |
+| `output[].url` | string | URL of the generated image |
+| `output[].mimeType` | string | MIME type of the generated image |
+
+---
+
+## image-processing_nano_banana
+
+Edit images using AI with text instructions. Supports multiple input images and configurable aspect ratios.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `prompt` | string | Yes | — | Text instruction describing the desired edit |
+| `image_urls` | string[] | Yes | — | URLs of the images to edit |
+| `aspect_ratio` | enum | No | `"match_input_image"` | Output aspect ratio: `"match_input_image"`, `"1:1"`, `"16:9"`, `"9:16"`, `"4:3"`, `"3:4"`, `"3:2"`, `"2:3"`, `"4:5"`, `"5:4"`, `"21:9"`, `"9:21"`, `"2:1"`, `"1:2"` |
+| `output_format` | enum | No | `"jpg"` | Output format: `"jpg"`, `"png"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | object[] | Array of edited image objects |
+| `output[].url` | string | URL of the edited image |
+| `output[].mimeType` | string | MIME type of the edited image |
+
+---
+
+## image-processing_ai_background_removal
+
+Remove or replace image backgrounds. Can also remove the foreground instead when reverse mode is enabled.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `image_url` | string | Yes | — | URL of the image to process |
+| `background_type` | enum | No | `"rgba"` | Background replacement type: `"rgba"` (transparent), `"white"`, `"green"`, `"blur"` |
+| `output_format` | enum | No | `"png"` | Output format: `"png"`, `"jpg"` |
+| `reverse` | boolean | No | `false` | When `true`, removes the foreground instead of the background |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | object[] | Array of processed image objects |
+| `output[].url` | string | URL of the processed image |
+| `output[].mimeType` | string | MIME type of the processed image |

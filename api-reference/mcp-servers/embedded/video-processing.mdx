@@ -1,0 +1,97 @@
+---
+title: "video-processing"
+description: "AI video generation with VEO and audio extraction"
+---
+
+**Server path:** `/video-processing` | **Type:** Embedded | **PCID required:** No
+
+Generate AI videos from text prompts using Google VEO models and extract audio from video files.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`video-processing_veo_generate`](#video-processing_veo_generate) | Generate AI video from text |
+| [`video-processing_veo_poll`](#video-processing_veo_poll) | Poll video generation status |
+| [`video-processing_audio_extract`](#video-processing_audio_extract) | Extract audio from video files |
+
+---
+
+## video-processing_veo_generate
+
+Generate an AI video from a text prompt using Google VEO models. Returns a prediction ID that can be polled for completion.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `prompt` | string | Yes | — | Text description of the video to generate |
+| `model` | enum | No | `"veo-3.1-fast"` | VEO model to use: `"veo-3.1"`, `"veo-3.1-fast"` |
+| `duration` | number | No | `8` | Video duration in seconds (1–16) |
+| `aspect_ratio` | enum | No | `"16:9"` | Video aspect ratio: `"16:9"`, `"9:16"` |
+| `resolution` | enum | No | `"1080p"` | Video resolution: `"1080p"`, `"720p"` |
+| `image` | string | No | — | URL of an image to use as the starting frame |
+| `last_frame` | string | No | — | URL of an image to use as the ending frame |
+| `reference_images` | string[] | No | — | URLs of reference images (max 3, `veo-3.1` only) |
+| `generate_audio` | boolean | No | `true` | Whether to generate audio for the video |
+| `negative_prompt` | string | No | — | Text describing what to avoid in the generated video |
+| `seed` | number | No | — | Random seed for reproducible generation |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | Current status of the generation request |
+| `predictionId` | string | Prediction ID used to poll for completion |
+| `model` | string | The model used for generation |
+| `prompt` | string | The prompt used for generation |
+| `message` | string | Status message |
+
+---
+
+## video-processing_veo_poll
+
+Poll the status of a VEO video generation request. Use this to check whether a video has finished generating.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `predictionId` | string | Yes | Prediction ID returned by `veo_generate` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | Generation status: `"succeeded"`, `"failed"`, `"canceled"`, `"starting"`, `"processing"` |
+| `predictionId` | string | The prediction ID that was polled |
+| `videoUrl` | string | URL of the generated video (when status is `"succeeded"`) |
+| `error` | string | Error message (when status is `"failed"`) |
+| `message` | string | Status message |
+
+---
+
+## video-processing_audio_extract
+
+Extract the audio track from a video file.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fileUrl` | string | Yes | — | URL of the video file to extract audio from |
+| `collectionId` | string | No | — | Collection ID to store the extracted audio file |
+| `outputFileName` | string | No | — | Custom filename for the extracted audio |
+| `async` | boolean | No | `false` | Whether to process asynchronously |
+| `file_links_expire_in_days` | number | No | `7` | Number of days until file links expire |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `file_url` | string | URL of the extracted audio file |
+| `filename` | string | Name of the extracted audio file |
+| `size` | number | File size in bytes |
+| `status` | string | Processing status |
+| `jobId` | string | Job ID (when processing asynchronously) |
+| `message` | string | Status message |

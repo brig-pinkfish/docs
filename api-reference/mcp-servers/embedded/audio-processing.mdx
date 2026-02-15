@@ -1,0 +1,78 @@
+---
+title: "audio-processing"
+description: "Text-to-speech and audio/video transcription"
+---
+
+**Server path:** `/audio-processing` | **Type:** Embedded | **PCID required:** No
+
+Convert text to speech with configurable voices and emotions. Transcribe audio and video files with speaker diarization, summaries, and sentiment analysis.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`audio-processing_text_to_speech`](#audio-processing_text_to_speech) | Convert text to speech |
+| [`audio-processing_transcribe_audio_or_video`](#audio-processing_transcribe_audio_or_video) | Transcribe audio or video to text |
+
+---
+
+## audio-processing_text_to_speech
+
+Convert text to speech with configurable voice, pitch, speed, volume, and emotion settings.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `text` | string | Yes | — | Text to convert to speech (max 5000 characters) |
+| `voice_id` | enum | No | `"Wise_Woman"` | Voice to use: `"Wise_Woman"`, `"Friendly_Person"`, `"Inspirational_girl"`, `"Deep_Voice_Man"`, `"Calm_Woman"`, `"Casual_Guy"`, `"Lively_Girl"`, `"Patient_Man"`, `"Young_Knight"`, `"Determined_Man"`, `"Lovely_Girl"`, `"Decent_Boy"`, `"Imposing_Manner"`, `"Elegant_Man"`, `"Abbess"`, `"Sweet_Girl_2"`, `"Exuberant_Girl"` |
+| `pitch` | number | No | `0` | Voice pitch adjustment (-12 to 12) |
+| `speed` | number | No | `1` | Speech speed multiplier (0.5 to 2) |
+| `volume` | number | No | `1` | Volume level (0 to 10) |
+| `emotion` | enum | No | `"auto"` | Emotional tone: `"auto"`, `"neutral"`, `"happy"`, `"sad"`, `"angry"`, `"fearful"`, `"disgusted"`, `"surprised"` |
+| `sample_rate` | number | No | `32000` | Audio sample rate in Hz |
+| `language_boost` | enum | No | `"None"` | Language to boost for pronunciation accuracy. Supports many languages including English, Spanish, French, German, Chinese, Japanese, Korean, and more. |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | object[] | Array of audio output objects |
+| `output[].url` | string | URL of the generated audio file |
+| `output[].mimeType` | string | MIME type of the generated audio |
+
+---
+
+## audio-processing_transcribe_audio_or_video
+
+Transcribe audio or video files to text. Supports speaker diarization, paragraph formatting, summaries, topic detection, sentiment analysis, and content redaction.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fileUrl` | string | Yes | — | URL of the audio or video file to transcribe |
+| `model` | enum | No | `"nova-3"` | Transcription model: `"nova-3"`, `"nova-2"`, `"enhanced"`, `"base"` |
+| `languageCode` | string | No | — | Language code (auto-detected if not specified) |
+| `enableDiarization` | boolean | No | `false` | Enable speaker diarization to identify different speakers |
+| `diarizationSpeakerCount` | number | No | — | Expected number of speakers (1–10, improves diarization accuracy) |
+| `enableParagraphs` | boolean | No | `false` | Format transcription into paragraphs |
+| `enableSummary` | boolean | No | `false` | Generate a summary of the transcription |
+| `enableTopics` | boolean | No | `false` | Detect topics discussed in the audio |
+| `enableSentiment` | boolean | No | `false` | Analyze sentiment of the transcription |
+| `redact` | enum[] | No | — | Content types to redact: `"pci"`, `"pii"`, `"phi"`, `"numbers"`, `"ssn"`, and others |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `transcription` | string | The transcribed text |
+| `metadata` | object | Transcription metadata (duration, model, language, etc.) |
+| `summary` | string | Summary of the transcription (when `enableSummary` is `true`) |
+| `topics` | object | Detected topics (when `enableTopics` is `true`) |
+| `sentiment` | object | Sentiment analysis results (when `enableSentiment` is `true`) |
+| `utterances` | object[] | Speaker-attributed segments (when `enableDiarization` is `true`) |
+| `utterances[].speaker` | string | Speaker identifier |
+| `utterances[].start` | number | Start time in seconds |
+| `utterances[].end` | number | End time in seconds |
+| `utterances[].text` | string | Text spoken by the speaker |
