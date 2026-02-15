@@ -1,0 +1,65 @@
+---
+title: "embedded-perplexity"
+description: "Web research with Perplexity Sonar models"
+---
+
+**Server path:** `/embedded-perplexity` | **Type:** Embedded | **PCID required:** No
+
+Perform web research using Perplexity Sonar models with real-time search capabilities, citations, and domain filtering.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`embedded-perplexity_research`](#embedded-perplexity_research) | Perform web research |
+
+---
+
+## embedded-perplexity_research
+
+Perform web research using Perplexity Sonar models. Returns results with citations, images, and related questions. Supports domain filtering, recency filtering, and structured output.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | enum | No | Model to use: `sonar`, `sonar-pro`, `sonar-reasoning`, `sonar-reasoning-pro`. Default `sonar` |
+| `systemPrompt` | string | No | System prompt to guide model behavior. Default `Follow the user's instructions.` |
+| `userPrompt` | string | Yes | User prompt or research question |
+| `fileUrls` | string[] | No | URLs of files to analyze. Supported formats: `.pdf`, `.docx`, `.xlsx`, `.pptx`, `.csv`. Images are not supported |
+| `max_tokens` | number | No | Maximum number of tokens in the response. Default `1000` |
+| `temperature` | number | No | Sampling temperature between `0` and `1`. Default `0.7` |
+| `top_p` | number | No | Nucleus sampling parameter between `0` and `1`. Default `0.9` |
+| `search_domain_filter` | string[] | No | Up to 10 domains to restrict search. Prefix with `-` to exclude a domain |
+| `return_images` | boolean | No | Include images in the response. Default `false` |
+| `return_related_questions` | boolean | No | Include related questions in the response. Default `false` |
+| `search_recency_filter` | enum | No | Filter results by recency: `hour`, `day`, `week`, `month`, `year` |
+| `top_k` | number | No | Number of search results to consider. Default `3` |
+| `presence_penalty` | number | No | Presence penalty between `0` and `1`. Default `0` |
+| `frequency_penalty` | number | No | Frequency penalty between `0` and `1`. Default `0` |
+| `web_search_options` | object | No | Web search configuration. Contains `search_context_size` (`low`, `medium`, `high`) |
+| `response_format` | object | No | Structured output format. Contains `type` (`json_schema` or `regex`) and optional `json_schema` with `schema` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | string or object | Research results or structured output |
+| `citations` | string[] | URLs of sources cited in the response |
+| `images` | array | Images related to the research. Each contains `url` and `description` |
+| `related_questions` | string[] | Suggested follow-up questions |
+| `metadata` | object | Response metadata |
+| `metadata.model` | string | Model used for research |
+| `metadata.usage` | object | Token usage statistics |
+| `metadata.usage.promptTokens` | number | Number of input tokens |
+| `metadata.usage.completionTokens` | number | Number of output tokens |
+| `metadata.usage.totalTokens` | number | Total tokens used |
+
+**Available models:**
+
+| Model | Description |
+| --- | --- |
+| `sonar` | Standard web research model (default) |
+| `sonar-pro` | Enhanced web research with deeper analysis |
+| `sonar-reasoning` | Research with step-by-step reasoning |
+| `sonar-reasoning-pro` | Advanced research with deep reasoning |

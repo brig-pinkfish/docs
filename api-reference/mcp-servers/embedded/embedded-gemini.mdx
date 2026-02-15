@@ -1,0 +1,51 @@
+---
+title: "embedded-gemini"
+description: "Generate text with Google Gemini models"
+---
+
+**Server path:** `/embedded-gemini` | **Type:** Embedded | **PCID required:** No
+
+Generate text using Google Gemini models. Supports multimodal analysis including images, video, audio, and documents.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`embedded-gemini_generate`](#embedded-gemini_generate) | Generate text using Gemini |
+
+---
+
+## embedded-gemini_generate
+
+Generate text using a Google Gemini model. Supports multimodal analysis including images, video, audio, and documents.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | enum | No | Model to use: `gemini-3-pro-preview`, `gemini-3-flash-preview`, `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`. Default `gemini-2.5-flash` |
+| `systemPrompt` | string | No | System prompt to guide model behavior |
+| `userPrompt` | string | Yes | User prompt or question |
+| `fileUrls` | string[] | No | URLs of files to analyze. Supported formats: images (`.jpg`, `.jpeg`, `.png`, `.webp`), videos (`.mp4`, `.webm`, `.mkv`, `.mov`), documents (`.pdf`, `.txt`), audio (`.mp3`, `.wav`, `.webm`, `.m4a`, `.opus`, `.aac`, `.flac`) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | string or object | Generated text or structured output |
+| `metadata` | object | Response metadata |
+| `metadata.model` | string | Model used for generation |
+| `metadata.usage` | object | Token usage statistics |
+| `metadata.usage.promptTokens` | number | Number of input tokens |
+| `metadata.usage.completionTokens` | number | Number of output tokens |
+| `metadata.usage.totalTokens` | number | Total tokens used |
+
+**Available models:**
+
+| Model | Description |
+| --- | --- |
+| `gemini-3-pro-preview` | Multimodal support, large context, advanced reasoning |
+| `gemini-3-flash-preview` | Fast and cost-efficient with multimodal support |
+| `gemini-2.5-pro` | Enhanced thinking and reasoning, advanced coding |
+| `gemini-2.5-flash` | Cost-efficient, supports higher token limits (default) |
+| `gemini-2.0-flash` | Next generation speed, thinking, realtime streaming |

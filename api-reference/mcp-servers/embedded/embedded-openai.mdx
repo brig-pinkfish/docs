@@ -1,0 +1,54 @@
+---
+title: "embedded-openai"
+description: "Generate text with OpenAI GPT models"
+---
+
+**Server path:** `/embedded-openai` | **Type:** Embedded | **PCID required:** No
+
+Generate text using OpenAI GPT models. Supports system prompts, image analysis, and structured output.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`embedded-openai_generate`](#embedded-openai_generate) | Generate text using GPT |
+
+---
+
+## embedded-openai_generate
+
+Generate text using an OpenAI GPT model. Supports system prompts, image analysis, and structured output via JSON schema.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | enum | No | Model to use: `GPT-5.2`, `GPT-5.1`, `GPT-5`, `GPT-5-Mini`, `GPT-5-Nano`, `GPT-4.1`, `GPT-4.1-Mini`, `GPT-4.1-Nano`. Default `GPT-5-Mini` |
+| `systemPrompt` | string | No | System prompt to guide model behavior |
+| `userPrompt` | string | Yes | User prompt or question |
+| `fileUrls` | string[] | No | URLs of files to analyze. Supported formats: `.jpg`, `.jpeg`, `.png` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | string or object | Generated text or structured output |
+| `metadata` | object | Response metadata |
+| `metadata.model` | string | Model used for generation |
+| `metadata.usage` | object | Token usage statistics |
+| `metadata.usage.promptTokens` | number | Number of input tokens |
+| `metadata.usage.completionTokens` | number | Number of output tokens |
+| `metadata.usage.totalTokens` | number | Total tokens used |
+
+**Available models:**
+
+| Model | Description |
+| --- | --- |
+| `GPT-5.2` | Smartest frontier model with configurable reasoning |
+| `GPT-5.1` | High-performance reasoning and coding |
+| `GPT-5` | Best model for coding and agentic tasks |
+| `GPT-5-Mini` | Faster, cost-efficient version of GPT-5 (default) |
+| `GPT-5-Nano` | Fastest, most cost-efficient |
+| `GPT-4.1` | Advanced coding, long context |
+| `GPT-4.1-Mini` | Fast coding, scalable tasks |
+| `GPT-4.1-Nano` | Ultra-fast, simple tasks |

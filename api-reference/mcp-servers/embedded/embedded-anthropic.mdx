@@ -1,0 +1,49 @@
+---
+title: "embedded-anthropic"
+description: "Generate text with Anthropic Claude models"
+---
+
+**Server path:** `/embedded-anthropic` | **Type:** Embedded | **PCID required:** No
+
+Generate text using Anthropic Claude models. Supports system prompts, file analysis (images and PDFs), and structured output.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`embedded-anthropic_generate`](#embedded-anthropic_generate) | Generate text using Claude |
+
+---
+
+## embedded-anthropic_generate
+
+Generate text using an Anthropic Claude model. Supports system prompts, file analysis (images and PDFs), and structured output via JSON schema.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | enum | No | Model to use: `Haiku-4.5`, `Sonnet-4.5`, `Opus-4.6`. Default `Sonnet-4.5` |
+| `systemPrompt` | string | No | System prompt to guide model behavior |
+| `userPrompt` | string | Yes | User prompt or question |
+| `fileUrls` | string[] | No | URLs of files to analyze. Supported formats: `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.pdf` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `output` | string or object | Generated text or structured output |
+| `metadata` | object | Response metadata |
+| `metadata.model` | string | Model used for generation |
+| `metadata.usage` | object | Token usage statistics |
+| `metadata.usage.promptTokens` | number | Number of input tokens |
+| `metadata.usage.completionTokens` | number | Number of output tokens |
+| `metadata.usage.totalTokens` | number | Total tokens used |
+
+**Available models:**
+
+| Model | Description |
+| --- | --- |
+| `Haiku-4.5` | Fastest model with near-frontier intelligence |
+| `Sonnet-4.5` | Best balance of speed and intelligence (default) |
+| `Opus-4.6` | Most intelligent model for agents and complex coding |
