@@ -1,0 +1,538 @@
+---
+title: "datastore-structured"
+description: "Structured tables with schemas — create, query, update, and manage tabular data"
+---
+
+**Server path:** `/datastore-structured` | **Type:** Embedded | **PCID required:** No
+
+Tables with defined column schemas. Create collections, import CSV data, run analytics and natural language queries, and manage rows.
+
+For a guided walkthrough, see the [Datastore documentation](/essentials/datastore).
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`datastore-structured_list_collections`](#datastore-structured_list_collections) | List all structured datastore collections |
+| [`datastore-structured_create_collection`](#datastore-structured_create_collection) | Create a new collection with a defined schema |
+| [`datastore-structured_create_collection_from_csv`](#datastore-structured_create_collection_from_csv) | Create a collection from a CSV file |
+| [`datastore-structured_create_collection_with_template`](#datastore-structured_create_collection_with_template) | Create a collection from a pre-built template |
+| [`datastore-structured_get_collection`](#datastore-structured_get_collection) | Get collection details and schema |
+| [`datastore-structured_delete_collection`](#datastore-structured_delete_collection) | Delete a collection and all its data |
+| [`datastore-structured_update_schema`](#datastore-structured_update_schema) | Add, remove, or rename columns |
+| [`datastore-structured_list_templates`](#datastore-structured_list_templates) | List available collection templates |
+| [`datastore-structured_list_items`](#datastore-structured_list_items) | List rows with pagination and sorting |
+| [`datastore-structured_create_item`](#datastore-structured_create_item) | Create a new row |
+| [`datastore-structured_batch_create_items`](#datastore-structured_batch_create_items) | Create multiple rows at once (max 500) |
+| [`datastore-structured_get_item`](#datastore-structured_get_item) | Get a row by item ID |
+| [`datastore-structured_get_item_by_key`](#datastore-structured_get_item_by_key) | Get row(s) by key |
+| [`datastore-structured_update_item`](#datastore-structured_update_item) | Update a row (partial update) |
+| [`datastore-structured_delete_item`](#datastore-structured_delete_item) | Delete a row |
+| [`datastore-structured_import_data`](#datastore-structured_import_data) | Import CSV data into existing collection |
+| [`datastore-structured_search`](#datastore-structured_search) | Search rows by text with fuzzy/exact/prefix matching |
+| [`datastore-structured_natural_query`](#datastore-structured_natural_query) | Query data using natural language |
+| [`datastore-structured_analytics_query`](#datastore-structured_analytics_query) | Run analytics with natural language |
+| [`datastore-structured_migrate_sortfield`](#datastore-structured_migrate_sortfield) | Change default sort order |
+
+---
+
+## datastore-structured_list_collections
+
+List all structured datastore collections in the current workspace.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collections` | object[] | Array of collection objects |
+| `collections[].id` | string | Collection ID |
+| `collections[].name` | string | Collection name |
+| `collections[].description` | string | Collection description |
+| `collections[].type` | string | Collection type |
+| `collections[].maxItems` | number | Maximum number of items allowed |
+| `collections[].numItems` | number | Current number of items |
+| `collections[].isShared` | boolean | Whether the collection is shared |
+| `collections[].status` | string | Collection status |
+| `collections[].createdBy` | string | User ID of the creator |
+| `collections[].createdByName` | string | Display name of the creator |
+| `collections[].isStructured` | boolean | Whether the collection uses a structured schema |
+| `collections[].schema` | object | Schema definition with `fields` array |
+| `collections[].permissions` | object | Permission settings |
+| `collections[].createdAt` | string | Creation timestamp |
+| `collections[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-structured_create_collection
+
+Create a new structured datastore collection with a defined column schema.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `type` | string | Yes | Must be `"datastore"` |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+| `templateId` | string | No | Template ID to base the collection on. Defaults to `"none"`. |
+| `schema` | object | Yes | Schema definition with `fields` array and `nextFieldId` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | ID of the newly created collection |
+| `isStructured` | boolean | Whether the collection is structured |
+| `schema` | object | The applied schema definition |
+
+---
+
+## datastore-structured_create_collection_from_csv
+
+Create a new structured collection by importing a CSV file. The schema is auto-generated from CSV headers if not provided.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `fileUrl` | string | Yes | URL of the CSV file to import |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+| `schema` | object | No | Schema definition. Auto-generated from CSV headers if omitted. |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collectionId` | string | ID of the newly created collection |
+| `imported` | number | Number of rows successfully imported |
+| `total` | number | Total number of rows in the CSV |
+| `schema` | object | The applied or auto-generated schema |
+
+---
+
+## datastore-structured_create_collection_with_template
+
+Create a new structured collection from a pre-built template. Use `list_templates` to see available templates.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `templateId` | string | Yes | Template ID (from `list_templates`) |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | ID of the newly created collection |
+| `isStructured` | boolean | Whether the collection is structured |
+| `schema` | object | The template-based schema definition |
+
+---
+
+## datastore-structured_get_collection
+
+Get details and schema for a specific collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Collection ID |
+| `name` | string | Collection name |
+| `description` | string | Collection description |
+| `type` | string | Collection type |
+| `isStructured` | boolean | Whether the collection uses a structured schema |
+| `maxItems` | number | Maximum number of items allowed |
+| `numItems` | number | Current number of items |
+| `isShared` | boolean | Whether the collection is shared |
+| `status` | string | Collection status |
+| `createdBy` | string | User ID of the creator |
+| `createdByName` | string | Display name of the creator |
+| `schema` | object | Schema definition with `fields` array |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+
+---
+
+## datastore-structured_delete_collection
+
+Delete a collection and all its data. This action is irreversible.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## datastore-structured_update_schema
+
+Update the schema of an existing collection. Use this to add, remove, or rename columns.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `schema` | object | Yes | Updated schema definition with `fields` array and `nextFieldId` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `schema` | object | The updated schema definition |
+
+---
+
+## datastore-structured_list_templates
+
+List all available pre-built collection templates.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `templates` | object[] | Array of template objects |
+| `templates[].id` | string | Template ID |
+| `templates[].name` | string | Template name |
+| `templates[].description` | string | Template description |
+| `templates[].category` | string | Template category |
+| `templates[].schema` | object | Schema definition for the template |
+
+---
+
+## datastore-structured_list_items
+
+List rows in a collection with pagination and sorting options.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `limit` | number | No | `50` | Maximum number of rows to return |
+| `offset` | number | No | — | Number of rows to skip for pagination |
+| `orderedBy` | string | No | `"createdAt:desc"` | Sort order for results |
+| `format` | string | No | `"light"` | Response format: `"light"` or `"full"` |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of row objects |
+| `pagination` | object | Pagination metadata |
+| `pagination.totalCount` | number | Total number of rows in the collection |
+| `pagination.hasNextPage` | boolean | Whether more rows exist after this page |
+| `pagination.hasPrevPage` | boolean | Whether rows exist before this page |
+
+---
+
+## datastore-structured_create_item
+
+Create a new row in a collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `key` | string | Yes | Unique key for the row |
+| `content` | object | Yes | Row data matching the collection schema |
+| `sortField` | string | No | Custom sort field value |
+| `metadata` | object | No | Additional metadata for the row |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | ID of the created row |
+| `key` | string | Key of the created row |
+| `message` | string | Success message |
+
+---
+
+## datastore-structured_batch_create_items
+
+Create multiple rows at once. Maximum 500 items per batch.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `items` | object[] | Yes | Array of items, each with `key`, `content`, and optional `metadata` and `sortField` |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `created` | number | Number of rows successfully created |
+| `failed` | number | Number of rows that failed to create |
+| `message` | string | Summary message |
+
+---
+
+## datastore-structured_get_item
+
+Get a single row by its item ID.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `itemId` | string | Yes | — | Item ID of the row |
+| `decryptSecrets` | boolean | No | `false` | Whether to decrypt secret fields |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Item ID |
+| `key` | string | Row key |
+| `sortField` | string | Sort field value |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+| `isSecret` | boolean | Whether the row contains secret data |
+| `content` | object | Row data |
+| `metadata` | object | Row metadata |
+| `collectionId` | string | Parent collection ID |
+| `providerId` | string | Provider ID |
+
+---
+
+## datastore-structured_get_item_by_key
+
+Get one or more rows by their key value.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `key` | string | Yes | Row key to look up |
+| `sortField` | string | No | Sort field value to narrow results |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of matching rows |
+| `items[].id` | string | Item ID |
+| `items[].key` | string | Row key |
+| `items[].sortField` | string | Sort field value |
+| `items[].createdAt` | string | Creation timestamp |
+| `items[].updatedAt` | string | Last updated timestamp |
+| `items[].isSecret` | boolean | Whether the row contains secret data |
+| `items[].content` | object | Row data |
+| `items[].metadata` | object | Row metadata |
+
+---
+
+## datastore-structured_update_item
+
+Update an existing row. Performs a partial update — only the provided fields are changed.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `itemId` | string | Yes | Item ID of the row to update |
+| `content` | object | Yes | Fields to update |
+| `metadata` | object | No | Metadata fields to update |
+| `triggerChanges` | boolean | No | Whether to trigger change notifications |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Item ID of the updated row |
+| `key` | string | Row key |
+| `message` | string | Success message |
+
+---
+
+## datastore-structured_delete_item
+
+Delete a row from a collection. Specify the row by `itemId` or by `key` (and optionally `sortField`).
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `itemId` | string | No | Item ID of the row to delete |
+| `key` | string | No | Key of the row to delete (alternative to `itemId`) |
+| `sortField` | string | No | Sort field value to narrow deletion when using `key` |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## datastore-structured_import_data
+
+Import CSV data into an existing collection. Rows are appended to the collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `fileUrl` | string | Yes | URL of the CSV file to import |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `imported` | number | Number of rows successfully imported |
+| `total` | number | Total number of rows in the CSV |
+| `failed` | number | Number of rows that failed to import |
+| `message` | string | Summary message |
+
+---
+
+## datastore-structured_search
+
+Search rows by text with configurable matching strategy. Supports fuzzy, exact, and prefix matching across all fields or a specific field.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `q` | string | Yes | — | Search query text |
+| `field` | string | No | `"all"` | Field to search: `"all"`, `"content"`, `"sortField"`, or `"key"` |
+| `type` | string | No | `"fuzzy"` | Match type: `"fuzzy"`, `"exact"`, or `"prefix"` |
+| `threshold` | number | No | `0.3` | Fuzzy match threshold (0–1). Lower values are more permissive. |
+| `limit` | number | No | `50` | Maximum number of results |
+| `compiled` | boolean | No | `false` | Whether the query is a pre-compiled search expression |
+| `queryParams` | object | No | — | Additional query parameters for compiled searches |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of matching rows |
+| `items[].id` | string | Item ID |
+| `items[].key` | string | Row key |
+| `items[].content` | object | Row data |
+| `items[].score` | number | Match relevance score |
+| `items[].snippet` | string | Text snippet highlighting the match |
+
+---
+
+## datastore-structured_natural_query
+
+Query collection data using natural language. Supports two modes: `natural-search` returns matching rows, `natural-answer` returns an AI-generated answer.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `query` | string | Yes | Natural language query |
+| `mode` | string | Yes | `"natural-search"` to return matching rows, or `"natural-answer"` for an AI-generated answer |
+| `limit` | number | No | Maximum number of results |
+| `offset` | number | No | Number of results to skip for pagination |
+| `returnAll` | boolean | No | Whether to return all matching results |
+| `translation` | object | No | Translation configuration for the query |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of matching rows (in `natural-search` mode) |
+| `answer` | string | AI-generated answer (in `natural-answer` mode) |
+| `analysis` | object | Query analysis and interpretation details |
+| `pagination` | object | Pagination metadata |
+| `translation` | object | Translation details if translation was requested |
+
+---
+
+## datastore-structured_analytics_query
+
+Run analytics on collection data using natural language. Returns tabular results with column definitions.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `query` | string | Yes | — | Natural language analytics query (e.g. "total sales by region") |
+| `limit` | number | No | `10000` | Maximum number of result rows |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `columns` | object[] | Column definitions for the result table |
+| `rows` | object[] | Result rows |
+| `totalRows` | number | Total number of result rows |
+| `explanation` | string | Natural language explanation of the analytics query |
+
+---
+
+## datastore-structured_migrate_sortfield
+
+Change the default sort order for a collection. Updates all existing rows to use the new sort configuration.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `sortConfig` | object | Yes | Sort configuration with `fields` array and `direction` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `updated` | number | Number of rows updated with the new sort order |
