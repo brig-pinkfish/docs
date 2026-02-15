@@ -299,11 +299,11 @@ function generateServerPage(
   description: string,
   tools: any[]
 ): string {
-  let md = `${GENERATED_HEADER}\n`
-  md += `---\n`
+  let md = `---\n`
   md += `title: "${serverName}"\n`
   md += `description: "${escapeMarkdown(description)}"\n`
   md += `---\n\n`
+  md += `${GENERATED_HEADER}\n\n`
   md += `**Server path:** \`/${serverName}\` | **Type:** Application | **PCID required:** Yes\n\n`
   md += `${description}\n\n`
 
