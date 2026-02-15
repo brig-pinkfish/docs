@@ -14,7 +14,7 @@ The agent management tools let you build applications that:
 - **Manage chat sessions** — list, create, and reset conversations
 - **Retrieve artifacts** — list files created by agents during code execution
 
-A typical flow looks like this:
+A typical flow:
 
 1. Create an agent with `agent_create` (or use an existing one via `agent_list`)
 2. Invoke the agent with `agent_invoke` — this starts a conversation and returns a `chatId`
@@ -32,13 +32,33 @@ export PINKFISH_TOKEN=$(curl -s -X POST "https://app-api.app.pinkfish.ai/auth/to
   -H "Content-Type: application/json" | jq -r '.token')
 ```
 
-All examples below use this `$PINKFISH_TOKEN` variable.
+All examples below use `$PINKFISH_TOKEN` and the endpoint `https://mcp.app.pinkfish.ai/agent-management`.
+
+---
 
 ## Agent Tools
 
 ### agent_create
 
 Create a new agent with instructions, tool access, and optional workflow bindings.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Display name for the agent |
+| `description` | string | Yes | Description of what the agent does |
+| `instructions` | string | Yes | System prompt that guides the agent's behavior |
+| `outputSchema` | string | No | JSON schema for structured agent output |
+| `servers` | object[] | No | MCP servers and tools to grant access to. Each entry has a `name` (server name) and `tools` (map of tool names to config objects — use `{}` for defaults). Defaults to `[]`. |
+| `workflows` | object[] | No | Workflows the agent can trigger. Each entry has `triggerName`, `workflowName`, `triggerUrl`, and `triggerApiKey`. |
+| `bindToWorkflow` | object | No | Bind the agent to a workflow after creation. Has `automationId` and `resourceName`. |
+
+<Note>
+  The `datastores`, `filestores`, and `knowledgeBases` parameters exist but are **not yet supported**. Do not use them.
+</Note>
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -60,7 +80,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }'
 ```
 
-**Response** includes the agent ID you'll use for all subsequent calls:
+**Response:**
 
 ```json
 {
@@ -68,14 +88,21 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
     "id": "ua_abc123",
     "name": "Research Assistant",
     "description": "An agent that researches topics and summarizes findings",
-    "instructions": "You are a research assistant..."
+    "instructions": "You are a research assistant...",
+    "createdDate": "2026-02-15T10:00:00Z"
   }
 }
 ```
 
+---
+
 ### agent_list
 
 List all agents accessible to the current user.
+
+**Parameters:** None
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -106,13 +133,19 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
 }
 ```
 
+---
+
 ### agent_read
 
-Get the full configuration of a specific agent.
+Get the full configuration of a specific agent, including its instructions, server access, and metadata.
 
-| Parameter | Type   | Required | Description |
-| --------- | ------ | -------- | ----------- |
-| agentId   | string | Yes      | Agent ID    |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `agentId` | string | Yes | ID of the agent to retrieve (e.g. `ua_abc123`) |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -130,17 +163,43 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }'
 ```
 
+**Response:**
+
+```json
+{
+  "structuredContent": {
+    "id": "ua_abc123",
+    "name": "Research Assistant",
+    "description": "An agent that researches topics and summarizes findings",
+    "instructions": "You are a research assistant...",
+    "servers": [],
+    "workflows": [],
+    "createdDate": "2026-02-15T10:00:00Z",
+    "lastModified": "2026-02-15T10:00:00Z",
+    "version": 1
+  }
+}
+```
+
+---
+
 ### agent_update
 
-Update an existing agent. Only the fields you provide are changed.
+Update an existing agent. Only the fields you provide are changed — omitted fields remain unchanged.
 
-| Parameter    | Type   | Required | Description                     |
-| ------------ | ------ | -------- | ------------------------------- |
-| agentId      | string | Yes      | Agent ID                        |
-| name         | string | No       | Updated name                    |
-| description  | string | No       | Updated description             |
-| instructions | string | No       | Updated system prompt           |
-| servers      | array  | No       | Updated MCP server access       |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `agentId` | string | Yes | ID of the agent to update |
+| `name` | string | No | Updated display name |
+| `description` | string | No | Updated description |
+| `instructions` | string | No | Updated system prompt |
+| `outputSchema` | string | No | Updated JSON schema for structured output |
+| `servers` | object[] | No | Updated MCP server access. **Replaces** existing servers entirely. |
+| `workflows` | object[] | No | Updated workflows configuration |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -161,6 +220,10 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }'
 ```
 
+**Response:** Returns the full updated agent object (same shape as `agent_read`).
+
+---
+
 ### agent_invoke
 
 Send a message to an agent and get a response. This is the primary way to interact with agents.
@@ -168,16 +231,19 @@ Send a message to an agent and get a response. This is the primary way to intera
 - **Without `chatId`**: Starts a new conversation. The response includes a `chatId` you can use to continue.
 - **With `chatId`**: Continues an existing conversation with full message history.
 
-| Parameter          | Type    | Required | Description                                      |
-| ------------------ | ------- | -------- | ------------------------------------------------ |
-| agentId            | string  | Yes      | Agent ID                                         |
-| message            | string  | Yes      | Message to send                                  |
-| chatId             | string  | No       | Chat ID to continue a conversation               |
-| mode               | string  | No       | `"action_agent"` (default) or `"claude_agent"`   |
-| messagesInResponse | boolean | No       | Include full message history in response          |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `agentId` | string | Yes | ID of the agent to invoke |
+| `message` | string | Yes | The message to send to the agent |
+| `chatId` | string | No | Chat ID to continue an existing conversation. If omitted, a new conversation is started. |
+| `mode` | string | No | Agent mode: `"action_agent"` (GPT-based, default) or `"claude_agent"` (Claude-based) |
+| `messagesInResponse` | boolean | No | If `true`, includes the full message history in the response |
+
+**Example — start a new conversation:**
 
 ```bash
-# Start a new conversation
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
   -H "Content-Type: application/json" \
@@ -209,8 +275,9 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
 }
 ```
 
+**Example — continue the conversation:**
+
 ```bash
-# Continue the conversation
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
   -H "Content-Type: application/json" \
@@ -230,20 +297,26 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }'
 ```
 
+---
+
 ## Chat Tools
 
 ### chat_create
 
-Create a new chat session for an agent without sending a message. Useful when you want to set up a conversation context before invoking the agent.
+Create a new chat session for an agent without sending a message. Useful when you need a `chatId` before invoking the agent — for example, to use with [code execution artifacts](/api-reference/platform/code-execution#working-with-artifacts).
 
 <Note>
-  You don't always need to call `chat_create` explicitly. Calling `agent_invoke` without a `chatId` automatically creates a new chat and returns its ID.
+  You don't always need `chat_create`. Calling `agent_invoke` without a `chatId` automatically creates a new chat and returns its ID.
 </Note>
 
-| Parameter | Type   | Required | Description                  |
-| --------- | ------ | -------- | ---------------------------- |
-| agentId   | string | Yes      | Agent ID to create a chat for |
-| name      | string | No       | Display name for the chat     |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `agentId` | string | Yes | ID of the agent to create a chat for |
+| `name` | string | No | Display name for the chat. Defaults to `"Chat with agent <agentId>"`. |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -271,18 +344,25 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   "structuredContent": {
     "id": "auto_xyz789",
     "agentId": "ua_abc123",
-    "name": "Quantum Computing Research"
+    "name": "Quantum Computing Research",
+    "createdDate": "2026-02-15T10:30:00Z"
   }
 }
 ```
+
+---
 
 ### chat_list
 
 List all chat sessions, optionally filtered to a specific agent.
 
-| Parameter | Type   | Required | Description                          |
-| --------- | ------ | -------- | ------------------------------------ |
-| agentId   | string | No       | Filter to chats for this agent only  |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `agentId` | string | No | Filter to chats for this agent only. If omitted, returns all chats. |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -310,20 +390,27 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
         "id": "auto_xyz789",
         "agentId": "ua_abc123",
         "name": "Quantum Computing Research",
-        "createdDate": "2026-02-15T10:30:00Z"
+        "createdDate": "2026-02-15T10:30:00Z",
+        "lastModified": "2026-02-15T11:00:00Z"
       }
     ]
   }
 }
 ```
 
+---
+
 ### chat_reset_conversation
 
 Clear all messages in a chat. The chat itself is preserved and can be reused — only the conversation history is wiped.
 
-| Parameter | Type   | Required | Description   |
-| --------- | ------ | -------- | ------------- |
-| chatId    | string | Yes      | Chat ID       |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `chatId` | string | Yes | ID of the chat to reset |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -341,13 +428,30 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
   }'
 ```
 
+**Response:**
+
+```json
+{
+  "structuredContent": {
+    "success": true,
+    "chatId": "auto_xyz789"
+  }
+}
+```
+
+---
+
 ### chat_list_artifacts
 
 List all artifacts (files) associated with a chat. Artifacts are created by agents during [code execution](/api-reference/platform/code-execution) via `createArtifact()`, or uploaded by users.
 
-| Parameter | Type   | Required | Description   |
-| --------- | ------ | -------- | ------------- |
-| chatId    | string | Yes      | Chat ID       |
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `chatId` | string | Yes | ID of the chat to list artifacts for |
+
+**Example:**
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
@@ -376,23 +480,41 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/agent-management" \
         "sourceFileName": "report.pdf",
         "mimeType": "application/pdf",
         "sourceSizeBytes": 45230,
-        "url": "https://..."
+        "url": "https://...",
+        "fileType": "document",
+        "version": 1,
+        "versionDate": "2026-02-15T11:00:00Z"
       }
     ]
   }
 }
 ```
 
+**Artifact fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Artifact ID |
+| `sourceFileName` | string | Original file name |
+| `mimeType` | string | MIME type (e.g. `application/pdf`, `application/json`) |
+| `sourceSizeBytes` | number | File size in bytes |
+| `url` | string | Signed download URL |
+| `fileType` | string | Artifact type classification |
+| `version` | number | Version number |
+| `versionDate` | string | Last update timestamp |
+
+---
+
 ## Tool Summary
 
-| Tool                             | Description                                  | Key Parameters              |
-| -------------------------------- | -------------------------------------------- | --------------------------- |
-| `agent_create`                   | Create a new agent                           | name, description, instructions |
-| `agent_list`                     | List all accessible agents                   | —                           |
-| `agent_read`                     | Get full agent configuration                 | agentId                     |
-| `agent_update`                   | Update agent fields                          | agentId, + fields to update |
-| `agent_invoke`                   | Send a message and get a response            | agentId, message, chatId?   |
-| `chat_create`                    | Create a chat session                        | agentId, name?              |
-| `chat_list`                      | List chat sessions                           | agentId?                    |
-| `chat_reset_conversation`        | Clear conversation history                   | chatId                      |
-| `chat_list_artifacts`            | List artifacts in a chat                     | chatId                      |
+| Tool | Description |
+| --- | --- |
+| `agent_create` | Create a new agent with instructions and tool access |
+| `agent_list` | List all accessible agents |
+| `agent_read` | Get full agent configuration and metadata |
+| `agent_update` | Update agent fields (partial update) |
+| `agent_invoke` | Send a message to an agent and get a response |
+| `chat_create` | Create a chat session for an agent |
+| `chat_list` | List chat sessions, optionally filtered by agent |
+| `chat_reset_conversation` | Clear conversation history in a chat |
+| `chat_list_artifacts` | List artifacts (files) in a chat |
