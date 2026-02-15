@@ -1,0 +1,420 @@
+# MCP Server Documentation Plan
+
+## Objective
+
+Create documentation pages for all MCP servers, organized into two sections:
+
+- **`embedded/`** — Built-in platform servers (no external connection required)
+- **`application/`** — External integration proxy servers (PCID required)
+
+Each embedded server gets its own page following the standard format. Application servers are documented via a single index page with runtime discovery instructions.
+
+## Folder Structure
+
+```
+api-reference/mcp-servers/
+├── PLANNING.md
+├── embedded/
+│   ├── agent-management.mdx       ✅
+│   ├── browser-automation.mdx     ✅
+│   ├── code-execution.mdx         ✅
+│   ├── pinkfish-sidekick.mdx      ✅
+│   ├── datastore-structured.mdx   (pending)
+│   ├── datastore-unstructured.mdx (pending)
+│   ├── filestorage.mdx            (pending)
+│   ├── ...
+│   └── email.mdx                  (pending)
+└── application/
+    └── overview.mdx               ✅
+```
+
+## Standard Format (per embedded page)
+
+```
+---
+title: "server-name"
+description: "One-line description"
+---
+
+**Server path:** `/server-name` | **Type:** Embedded | **PCID required:** No
+
+## Tools
+| Tool | Description |
+| --- | --- |
+| [tool_name](#tool_name) | Brief description |
+
+---
+
+## tool_name
+
+Description.
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+
+**Response fields:**
+| Field | Type | Description |
+
+<Expandable title="inputSchema">
+```json
+{ ... }
+```
+</Expandable>
+
+**Example:** (curl)
+**Response:** (JSON)
+```
+
+## Completed
+
+### Embedded Servers (4 servers, 37 tools)
+
+| Server | File | Tools |
+| --- | --- | --- |
+| agent-management | `embedded/agent-management.mdx` | 9 |
+| code-execution | `embedded/code-execution.mdx` | 1 |
+| browser-automation | `embedded/browser-automation.mdx` | 5 |
+| pinkfish-sidekick | `embedded/pinkfish-sidekick.mdx` | 22 |
+
+### Application Servers
+
+| Server | File | Notes |
+| --- | --- | --- |
+| All (107 servers) | `application/overview.mdx` | Index page with runtime discovery pattern |
+
+## Remaining Embedded Servers (23 servers, ~110 tools)
+
+### Priority 1 — Core data & storage (referenced heavily in guides)
+
+| Server | Path | Tools | Notes |
+| --- | --- | --- | --- |
+| datastore-structured | `/datastore-structured` | 20 | Tables with schemas. Largest embedded server. |
+| datastore-unstructured | `/datastore-unstructured` | 14 | Flexible key-value JSON storage. |
+| filestorage | `/filestorage` | 10 | File upload, download, share links. |
+| knowledge-base | `/knowledge-base` | 7 | RAG search, semantic Q&A, file upload. |
+| vault | `/vault` | 7 | Encrypted secrets storage. |
+
+### Priority 2 — Search, scraping, and web tools
+
+| Server | Path | Tools | Notes |
+| --- | --- | --- | --- |
+| web-search | `/web-search` | 12 | Google, YouTube, Amazon, shopping, flights, hotels, news, academic, restaurants, events. |
+| web-scraping | `/web-scraping` | 4 | Firecrawl-based scrape, crawl, map, RSS. |
+| weather | `/weather` | 2 | Current conditions and forecasts. |
+| http-utils | `/http-utils` | 1 | Raw HTTP requests to public APIs. |
+
+### Priority 3 — AI model servers
+
+| Server | Path | Tools | Notes |
+| --- | --- | --- | --- |
+| embedded-anthropic | `/embedded-anthropic` | 1 | Claude models. |
+| embedded-openai | `/embedded-openai` | 1 | GPT models. |
+| embedded-gemini | `/embedded-gemini` | 1 | Gemini models. |
+| embedded-groq | `/embedded-groq` | 1 | Groq models. |
+| embedded-perplexity | `/embedded-perplexity` | 1 | Perplexity web research. |
+
+### Priority 4 — Media & document processing
+
+| Server | Path | Tools | Notes |
+| --- | --- | --- | --- |
+| docprocess | `/docprocess` | 17 | PDF, Word, CSV, OCR, template fill, format conversion. Large server. |
+| image-processing | `/image-processing` | 3 | AI generate, edit, background removal. |
+| video-processing | `/video-processing` | 3 | VEO generation, poll, audio extraction. |
+| audio-processing | `/audio-processing` | 2 | Text-to-speech, transcription. |
+| ocr | `/ocr` | 1 | Standalone OCR (also available in docprocess). |
+
+### Priority 5 — Deployment & utilities
+
+| Server | Path | Tools | Notes |
+| --- | --- | --- | --- |
+| web-application | `/web-application` | 1 | Deploy HTML to shareable URL. |
+| charting | `/charting` | 1 | Chart.js to shareable URL. |
+| 3d-application | `/3d-application` | 1 | 3D model viewer (GLB/GLTF). |
+| email | `/email` | 1 | Send emails with attachments. |
+
+### Excluded
+
+| Server | Path | Tools | Reason |
+| --- | --- | --- | --- |
+| llm | `/llm` | 3 | **Deprecated.** Replaced by embedded-anthropic, embedded-openai, embedded-gemini. |
+| perplexity | `/perplexity` | 3 | **Deprecated.** Replaced by embedded-perplexity. |
+| pinkfish-utilities | `/pinkfish-utilities` | 3 | **Internal-only.** Analytics and guardian sessions. Not user-facing. |
+| firecrawl | not registered | 5 | **Not registered.** Not in available-servers. Internal use only. |
+
+## Application Servers (107 servers, PCID required)
+
+All application servers are proxied external integrations. Each requires a PCID (PinkConnect connection ID). Tool schemas are dynamically provided at runtime. Documented via a single index page: `application/overview.mdx`.
+
+Source of truth: `platform/servers/agentic/mcp/src/servers/available-servers.ts` — all entries with `embedded: false`.
+
+### Communication (5 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| slack | `/slack` | Slack API |
+| gmail | `/gmail` | Gmail API |
+| microsoft-outlook | `/microsoft-outlook` | Microsoft Outlook API |
+| microsoft-teams | `/microsoft-teams` | Microsoft Teams API |
+| zoom | `/zoom` | Zoom meetings and recordings |
+
+### Google Workspace (12 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| google-drive | `/google-drive` | File storage (select google-docs, google-sheets, or google-slides for specific file types) |
+| google-sheets | `/google-sheets` | Spreadsheet read, write, formatting |
+| google-calendar | `/google-calendar` | Google Calendar API |
+| google-docs | `/google-docs` | Google Docs API |
+| google-forms | `/google-forms` | Google Forms API |
+| google-maps | `/google-maps` | Google Maps API |
+| google-bigquery | `/google-bigquery` | Data warehouse |
+| google-slides | `/google-slides` | Google Slides API |
+| google-iam | `/google-iam` | Google IAM API |
+| google-ad-manager | `/google-ad-manager` | Google Ad Manager API |
+| google-task | `/google-task` | Google Tasks API |
+| google-workspace-admin | `/google-workspace-admin` | Google Workspace Admin API for managing users and groups |
+
+### Microsoft 365 (9 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| onedrive | `/onedrive` | OneDrive file storage and sharing |
+| sharepoint | `/sharepoint` | SharePoint sites, lists, document libraries |
+| microsoft-excel | `/microsoft-excel` | Microsoft Excel API |
+| microsoft-word | `/microsoft-word` | Microsoft Word API |
+| microsoft-powerpoint | `/microsoft-powerpoint` | Microsoft PowerPoint API |
+| microsoft-powerbi | `/microsoft-powerbi` | Microsoft Power BI reports and dashboards |
+| onenote | `/onenote` | OneNote API |
+| microsoft-active-directory | `/microsoft-active-directory` | Microsoft Active Directory API |
+| dynamics-crm | `/dynamics-crm` | Dynamics CRM API |
+
+### CRM & Sales (6 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| salesforce | `/salesforce` | Salesforce CRM |
+| salesforce-sandbox | `/salesforce-sandbox` | Salesforce Sandbox environment |
+| hubspot | `/hubspot` | HubSpot CRM |
+| zoho | `/zoho` | Zoho CRM |
+| affinity | `/affinity` | Affinity relationship intelligence |
+| apollo | `/apollo` | Apollo prospecting and enrichment |
+
+### Project Management (10 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| asana | `/asana` | Asana tasks, projects, workspaces |
+| linear | `/linear` | Linear issues, projects, cycles |
+| monday | `/monday` | Monday.com boards, items, columns |
+| notion | `/notion` | Notion pages, databases, blocks |
+| airtable | `/airtable` | Airtable bases, tables, records |
+| confluence | `/confluence` | Confluence spaces, pages, content |
+| jira | `/jira` | Jira issues, projects, boards |
+| jira-itsm | `/jira-itsm` | Jira IT service management |
+| jira-forms | `/jira-forms` | Jira Forms management |
+| smartsheet | `/smartsheet` | Smartsheet sheets, rows, columns |
+
+### Customer Support (5 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| zendesk | `/zendesk` | Zendesk tickets, users, organizations |
+| servicenow | `/servicenow` | ServiceNow incidents, requests, workflows |
+| freshdesk | `/freshdesk` | Freshdesk tickets and support |
+| freshservice | `/freshservice` | Freshservice IT service management |
+| talkdesk | `/talkdesk` | Talkdesk contact center |
+
+### E-commerce & Payments (5 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| shopify | `/shopify` | Shopify products, orders, customers |
+| stripe | `/stripe` | Stripe payments, subscriptions, customers |
+| commercetools | `/commercetools` | Commercetools product catalog, carts, orders |
+| faire | `/faire` | Faire wholesale marketplace |
+| yotpo | `/yotpo` | Yotpo reviews, loyalty, referrals |
+
+### Document & E-Signature (2 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| docusign | `/docusign` | DocuSign envelopes, signing, templates |
+| adobe-sign | `/adobe-sign` | Adobe Sign e-signatures and agreements |
+
+### Data & Analytics (5 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| snowflake | `/snowflake` | Snowflake SQL queries, warehouses, databases |
+| databricks | `/databricks` | Databricks notebooks, jobs, clusters |
+| tableau | `/tableau` | Tableau workbooks, views, data sources |
+| amplitude | `/amplitude` | Amplitude event analytics and cohorts |
+| iterable | `/iterable` | Iterable marketing analytics |
+
+### Cloud Storage (4 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| dropbox | `/dropbox` | Dropbox files, folders, sharing |
+| box | `/box` | Box files, folders, collaborations |
+| amazon-s3 | `/amazon-s3` | Amazon S3 buckets, objects, presigned URLs |
+| azure-storage | `/azure-storage` | Azure Storage blobs, containers, queues |
+
+### Databases (7 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| postgresql | `/postgresql` | PostgreSQL queries and schema management |
+| mysql | `/mysql` | MySQL queries and schema management |
+| mssql | `/mssql` | Microsoft SQL Server queries and schema management |
+| azure-sql | `/azure-sql` | Azure-hosted SQL databases |
+| sqlite | `/sqlite` | SQLite embedded database |
+| mongodb | `/mongodb` | MongoDB document queries and collections |
+| redis | `/redis` | Redis key-value operations |
+
+### AI & ML Services (5 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| openai | `/openai` | OpenAI chat completions, embeddings, images |
+| anthropic | `/anthropic` | Anthropic Claude models |
+| gemini | `/gemini` | Google Gemini AI models |
+| azure-ai | `/azure-ai` | Azure-hosted AI services |
+| deepgram | `/deepgram` | Deepgram speech-to-text, text-to-speech |
+
+### Marketing & Social (6 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| linkedin | `/linkedin` | LinkedIn profile, posts, connections |
+| linkedin-marketing | `/linkedin-marketing` | LinkedIn ad campaigns, analytics |
+| twitter | `/twitter` | Twitter tweets, users, search |
+| sendgrid | `/sendgrid` | SendGrid email campaigns, contacts |
+| marketo | `/marketo` | Marketo marketing automation |
+| productboard | `/productboard` | Productboard product management and feedback |
+
+### Development & DevOps (2 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| github | `/github` | GitHub repos, issues, pull requests |
+| twilio | `/twilio` | Twilio SMS, voice, messaging |
+
+### HR & IT Management (8 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| greenhouse | `/greenhouse` | Greenhouse recruiting and hiring |
+| kallidus-sapling | `/kallidus-sapling` | Kallidus Sapling HR management |
+| kandji | `/kandji` | Kandji Apple device management |
+| jamf | `/jamf` | Jamf Apple device management |
+| okta | `/okta` | Okta identity and access management |
+| airwatch | `/airwatch` | AirWatch enterprise mobility management |
+| sophos | `/sophos` | Sophos endpoint security |
+| snipeit | `/snipeit` | Snipe-IT asset management |
+
+### Other (14 servers)
+
+| Server | Path | Description |
+| --- | --- | --- |
+| gong | `/gong` | Gong revenue intelligence, call recordings |
+| fireflies | `/fireflies` | Fireflies meeting transcription |
+| hyperproof | `/hyperproof` | Hyperproof compliance management |
+| akeneo | `/akeneo` | Akeneo product information management |
+| responsiveio | `/responsiveio` | Responsive.io RFP response management |
+| apify | `/apify` | Apify web scraping and automation |
+| brightdata | `/brightdata` | Bright Data web data collection |
+| polygon-io | `/polygon-io` | Polygon.io financial market data |
+| figma | `/figma` | Figma design files and components |
+| gamma | `/gamma` | Gamma presentation creation |
+| sftp-ftp | `/sftp-ftp` | SFTP/FTP file transfer |
+| quickbooks | `/quickbooks` | QuickBooks accounting and finance |
+| sirv | `/sirv` | Sirv image hosting and optimization |
+| inform3 | `/inform3` | Inform3 form management |
+
+### Not Production-Ready (2 servers)
+
+| Server | Path | Description | Status |
+| --- | --- | --- | --- |
+| sql-database | `/sql-database` | Generic SQL database operations | `productionEnabled: false` |
+| quickbase | `/quickbase` | Quickbase low-code database applications | `productionEnabled: false` |
+
+---
+
+## Execution Plan
+
+### Phase 1 — Embedded servers (23 pages)
+Work through Priority 1–5 above. Each page requires:
+1. Read the `tools.ts` file for the server
+2. Extract all paramsSchema, outputSchema, descriptions
+3. Write the page following the standard format
+4. Add link from any platform guide page that references the server
+
+### Phase 2 — Navigation
+Once all pages are ready, add "MCP Servers" group to `docs.json` with two sub-groups:
+- **Embedded Servers** — all embedded spec pages
+- **Application Servers** — the overview/index page
+
+## Total Documentation Scope
+
+| Category | Servers | Tools (approx) | Pages |
+| --- | --- | --- | --- |
+| Embedded (completed) | 4 | 37 | 4 + overview |
+| Embedded (remaining) | 23 | ~110 | 23 |
+| Application (production) | 105 | varies | overview |
+| Application (not production-ready) | 2 | varies | — |
+| **Total** | **134** | **~147+ embedded** | **28 + 2 overviews** |
+
+---
+
+## Checklist
+
+### Completed
+
+- [x] agent-management (9 tools)
+- [x] code-execution (1 tool)
+- [x] browser-automation (5 tools)
+- [x] pinkfish-sidekick (22 tools)
+- [x] application-servers index page (107 servers)
+
+### Priority 1 — Core data & storage
+
+- [ ] datastore-structured (20 tools)
+- [ ] datastore-unstructured (14 tools)
+- [ ] filestorage (10 tools)
+- [ ] knowledge-base (7 tools)
+- [ ] vault (7 tools)
+
+### Priority 2 — Search, scraping, and web
+
+- [ ] web-search (12 tools)
+- [ ] web-scraping (4 tools)
+- [ ] weather (2 tools)
+- [ ] http-utils (1 tool)
+
+### Priority 3 — AI model servers
+
+- [ ] embedded-anthropic (1 tool)
+- [ ] embedded-openai (1 tool)
+- [ ] embedded-gemini (1 tool)
+- [ ] embedded-groq (1 tool)
+- [ ] embedded-perplexity (1 tool)
+
+### Priority 4 — Media & document processing
+
+- [ ] docprocess (17 tools)
+- [ ] image-processing (3 tools)
+- [ ] video-processing (3 tools)
+- [ ] audio-processing (2 tools)
+- [ ] ocr (1 tool)
+
+### Priority 5 — Deployment & utilities
+
+- [ ] web-application (1 tool)
+- [ ] charting (1 tool)
+- [ ] 3d-application (1 tool)
+- [ ] email (1 tool)
+
+### Other
+
+- [ ] Add "MCP Servers" group to docs.json navigation
