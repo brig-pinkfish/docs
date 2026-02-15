@@ -1,132 +1,29 @@
 ---
 title: "MCPs (Model Context Protocol)"
-description: "Learn about Model Context Protocol servers and how they extend Agent capabilities"
+description: "How agents use MCP servers and tools to extend their capabilities"
 icon: "server"
 ---
 
-## What is MCP?
+## How Agents Use MCPs
 
-**Model Context Protocol (MCP)** is an open standard that defines how AI models can communicate with external tools and data sources. It's a protocol that enables AI agents to discover and use tools.
+**Model Context Protocol (MCP)** is an open standard that lets AI agents discover and call external tools. In Pinkfish, agents use MCP servers as their toolbox: each server hosts multiple tools (e.g., "read file", "search email", "query database") that the agent can invoke during a conversation.
 
-## MCP Servers and Tools
+When you configure an agent, you select which MCP servers it can use. The agent then discovers the available tools and calls them as needed to complete tasks. All MCP servers on Pinkfish are hosted and verified by Pinkfish — we do not use third-party MCP servers.
 
-- **MCP Server**: The container/application that hosts multiple tools and handles the MCP protocol communication
-- **MCP Tool**: A specific function or capability (like "read file", "query database", "send email") that the server provides
+## Authenticated Integrations
 
-Think of it this way: An MCP server is like a toolbox, while MCP tools are the individual tools inside that toolbox. The server manages authentication, connection handling, and tool discovery, while tools provide the actual functionality.
+For MCP servers that connect to external services (Google Drive, Slack, Salesforce, etc.), you must first authenticate in [Integrations](/essentials/api-connections). After you add a connection, your agents can use the tools provided by that integration. For example, connecting to Google Drive enables tools like list files and write files.
 
-## Authenticated Integrations and MCPs
+## Sharing and Permissions
 
-In order for your agent to make use of authenticated MCP servers/tools, you'll first need to authenticate to the given service in Integrations. After you add an integration, your agents will be able use the tools provided for that integration. For example, if you authenticate to Google Drive, your agents will be able to use the Google Drive tools such as list files and write files.
+The agent acts as your proxy — it only has access to integrations you have permission to use. When you share a custom agent, integrations do **not** share with it (similar to workflows). If you share a "Google Drive Agent," recipients must connect their own Google Drive; they cannot use yours unless you also share your connection.
 
-## Sharing Agents, MCPs, and Permissions
+When building custom agents, you can suggest in your instructions that users connect specific services (e.g., Google Drive) to get the most from the agent. In the product, use the "Examples and Tools" menu from the agent prompt box to see tools per server.
 
-The agent acts like your proxy, so it only has access to integrations to which you already have permission. When you share a custom agent, the integrations do NOT share along with it (similar to sharing a workflow). If you've created a "Google Drive Agent" and you share it, users of that agent will need to connect to their own Google Drives; they cannot use yours (unless you also decide to share your Google Drive connection with them).
+## Full Reference
 
-## Pinkfish MCP servers
+For the complete list of MCP servers, tool schemas, and API details, see the API reference:
 
-Each MCP server that is available has been created, verified, and is hosted by Pinkfish. We do not use any outside 3rd party MCP servers.
-
-## Custom Agents and Suggested MCP Servers
-
-When you're building custom agents, you may add an instruction to your agent that tells it to use a given service (see Preview tab in agent configuration). Eg: Google Drive. However, due to the authentication model above, while using an agent, it can only access your Google Drive. Other users of your custom agents will not be able to access your Google Drive. You can however, _suggest_ to users of your agent that they connect to their own services in order to make best use of the agent that you created.
-
-## Available MCP Servers
-
-Here's the complete list of available servers. Within the product, use the "Examples and Tools" menu from the agent prompt box to see tools per server.
-
-### **Google Workspace Integration Servers**
-
-- **`google-drive`** - Google Drive integration server for file management and operations
-- **`gmail`** - Google Email integration server for email operations
-- **`google-calendar`** - Google Calendar integration server for scheduling and events
-- **`google-task`** - Google Tasks integration server for task management
-- **`google-sheets`** - Google Sheets integration server for spreadsheet operations
-- **`google-slides`** - Google Slides integration server for presentation operations
-- **`google-docs`** - Google Docs integration server for document operations
-- **`google-forms`** - Google Forms integration server for form creation and responses
-- **`google-maps`** - Google Maps integration server for location and mapping services
-- **`google-iam`** - Google IAM integration server for identity and access management
-
-### **Microsoft 365 Integration Servers**
-
-- **`microsoft-outlook`** - Outlook server for calendar and email operations
-- **`microsoft-excel`** - Excel server for spreadsheet operations
-- **`microsoft-powerpoint`** - PowerPoint server for presentation operations
-- **`microsoft-powerbi`** - PowerBI server for data visualization and reporting
-- **`microsoft-word`** - Microsoft Word server for document operations
-- **`microsoft-teams`** - Microsoft Teams integration server for collaboration
-- **`microsoft-active-directory`** - Active Directory integration server for user management
-- **`onedrive`** - OneDrive server for file operations and storage
-- **`sharepoint`** - SharePoint server for file operations and collaboration
-
-### **CRM and Business Tools**
-
-- **`salesforce`** - Salesforce integration server for CRM operations
-- **`hubspot`** - HubSpot CRM integration server for marketing and sales
-- **`zendesk`** - Zendesk server for ticket management and customer support
-- **`servicenow`** - ServiceNow server for incident management and IT operations
-- **`affinity`** - Affinity CRM integration server for relationship management
-- **`greenhouse`** - Greenhouse integration server for recruitment and hiring
-
-### **Project Management and Development**
-
-- **`jira`** - Jira integration server for project management
-- **`jira-itsm`** - Jira ITSM integration server for IT service management
-- **`linear`** - Linear integration server for project tracking
-- **`airtable`** - Airtable integration server for database and project management
-
-### **File Storage and Management**
-
-- **`box`** - Box file storage and management integration server
-- **`amazon-s3`** - Amazon S3 integration server for file and bucket management
-- **`dropbox`** - Dropbox integration server for file storage and sharing
-
-### **Communication and Collaboration**
-
-- **`slack`** - Slack integration server for team communication
-- **`zoom`** - Zoom integration server for video conferencing
-- **`gong`** - Gong server for call analysis and sales intelligence
-- **`fireflies`** - Fireflies integration server for meeting transcription
-
-### **IT and Service Management**
-
-- **`freshservice`** - Freshservice ITSM integration server for IT operations
-- **`jamf`** - Jamf integration server for Apple device management
-- **`kandji`** - Kandji integration server for mobile device management
-- **`snipeit`** - Snipe-IT integration server for IT asset management
-
-### **Document and Signature Services**
-
-- **`adobe-sign`** - Adobe Sign integration server for digital signatures
-- **`docusign`** - DocuSign eSignature integration server for document signing
-
-### **Data and Analytics**
-
-- **`snowflake`** - Snowflake data warehouse integration server for SQL queries and data management
-- **`tableau`** - Tableau integration server for data visualization and analytics
-- **`akeneo`** - Akeneo integration server for product information management
-- **`responsiveio`** - ResponsiveIO integration server for data operations
-
-### **Internal Pinkfish Services (no integration required)**
-
-- **`datastore`** - Datastore server for storing and retrieving structured data items in collections
-- **`filestorage`** - File storage server for storing and retrieving files in collections
-- **`vault`** - Vault server for storing and retrieving encrypted secrets in collections
-- **`knowledge-base`** - Knowledge base server for search and retrieval operations on knowledge collections
-- **`embedded-anthropic`** - Claude models
-- **`embedded-openai`** - OpenAI GPT models
-- **`embedded-gemini`** - Google Gemini models
-- **`embedded-groq`** - Groq models
-- **`embedded-perplexity`** - Perplexity web research
-- **`search`** - Search server for research and information retrieval
-- **`firecrawl`** - Firecrawl server for web scraping and crawling operations
-- **`replicate`** - Replicate server for running AI model predictions
-- **`stagehand`** - Browser automation server for web interactions using Stagehand
-- **`pinkfish-utilities`** - Pinkfish utilities server for polling and other utility operations
-
-### **How to Use These Servers**
-
-1. **Connect to Services**: First authenticate to the desired service in your Integrations section
-2. **Custom Agent Configuration**: When building custom agents, select the MCP servers you want to include
-3. **Tool Discovery**: Each server provides specific tools that can be discovered and used by your agents
+- [Embedded MCP Servers](/api-reference/mcp-servers/embedded/overview) — Built-in servers (code execution, AI models, data storage, search, etc.)
+- [Application MCP Servers](/api-reference/mcp-servers/application/overview) — Integration servers (Google Workspace, Microsoft 365, Slack, Salesforce, and 100+ more)
+- [MCP Protocol](/api-reference/platform/mcp-protocol) — JSON-RPC format, authentication, and calling patterns
