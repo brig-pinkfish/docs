@@ -130,6 +130,16 @@ const DESCRIPTION_OVERRIDES: Record<string, string> = {
   'faire': 'Wholesale marketplace',
   'iterable': 'Marketing analytics',
   'apollo': 'Prospecting and enrichment',
+  'commercetools': 'Products, customers, orders, carts, and inventory',
+  'mssql': 'Microsoft SQL Server queries and schema management',
+  'mysql': 'MySQL database queries and schema management',
+  'onenote': 'Notebooks, pages, and content management',
+  'twitter': 'Tweets, users, timelines, and media',
+  'quickbase': 'Applications, tables, records, and fields',
+  'freshservice': 'IT service management tickets, assets, and agents',
+  'kallidus-sapling': 'Employee records and department management',
+  'sirv': 'Image CDN upload, management, and statistics',
+  'talkdesk': 'Contact center agents, calls, queues, and recordings',
 }
 
 function getDescription(serverName: string, rawDescription: string): string {
