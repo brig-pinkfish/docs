@@ -1,0 +1,89 @@
+---
+title: "weather"
+description: "Current conditions and multi-day forecasts for any location"
+---
+
+**Server path:** `/weather` | **Type:** Embedded | **PCID required:** No
+
+Get current weather conditions and multi-day forecasts for any location worldwide using the Open-Meteo API.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`weather_get_current`](#weather_get_current) | Get current weather conditions |
+| [`weather_get_forecast`](#weather_get_forecast) | Get multi-day weather forecast |
+
+---
+
+## weather_get_current
+
+Get current weather conditions for a location. Provide either `city` or `lat`/`lon` coordinates.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lat` | number | No | — | Latitude of the location |
+| `lon` | number | No | — | Longitude of the location |
+| `city` | string | No | — | City name (e.g. "London", "New York") |
+| `units` | string | No | `"metric"` | Unit system — `"metric"` or `"imperial"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `location` | object | Location details |
+| `location.name` | string | Location name |
+| `location.latitude` | number | Latitude |
+| `location.longitude` | number | Longitude |
+| `location.country` | string | Country name |
+| `location.timezone` | string | Timezone identifier |
+| `current` | object | Current weather conditions |
+| `current.temperature` | number | Current temperature |
+| `current.feels_like` | number | Feels-like temperature |
+| `current.humidity` | number | Relative humidity percentage |
+| `current.wind_speed` | number | Wind speed |
+| `current.wind_direction` | number | Wind direction in degrees |
+| `current.weather_code` | number | WMO weather condition code |
+| `current.description` | string | Human-readable weather description |
+| `current.is_day` | boolean | Whether it is currently daytime |
+| `current.units` | object | Units used in the response |
+| `current.units.temperature` | string | Temperature unit (e.g. "°C" or "°F") |
+| `current.units.wind_speed` | string | Wind speed unit (e.g. "km/h" or "mph") |
+
+---
+
+## weather_get_forecast
+
+Get a multi-day weather forecast for a location. Provide either `city` or `lat`/`lon` coordinates.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lat` | number | No | — | Latitude of the location |
+| `lon` | number | No | — | Longitude of the location |
+| `city` | string | No | — | City name (e.g. "London", "New York") |
+| `days` | number | No | `3` | Number of forecast days (1–7) |
+| `units` | string | No | `"metric"` | Unit system — `"metric"` or `"imperial"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `location` | object | Location details |
+| `location.name` | string | Location name |
+| `location.latitude` | number | Latitude |
+| `location.longitude` | number | Longitude |
+| `location.country` | string | Country name |
+| `location.timezone` | string | Timezone identifier |
+| `forecast` | object[] | Array of daily forecast objects |
+| `forecast[].date` | string | Forecast date |
+| `forecast[].temperature_max` | number | Maximum temperature |
+| `forecast[].temperature_min` | number | Minimum temperature |
+| `forecast[].weather_code` | number | WMO weather condition code |
+| `forecast[].description` | string | Human-readable weather description |
+| `forecast[].precipitation_probability` | number | Probability of precipitation (percentage) |
+| `forecast[].wind_speed_max` | number | Maximum wind speed |
+| `forecast[].units` | object | Units used in the response |
