@@ -1,0 +1,219 @@
+---
+title: "knowledge-base"
+description: "RAG search, semantic Q&A, and document management"
+---
+
+**Server path:** `/knowledge-base` | **Type:** Embedded | **PCID required:** No
+
+Upload documents, ask questions with AI-generated answers, and run semantic searches across your knowledge base collections.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`knowledge-base_list_collections`](#knowledge-base_list_collections) | List all knowledge base collections |
+| [`knowledge-base_create_collection`](#knowledge-base_create_collection) | Create a new knowledge base collection |
+| [`knowledge-base_upload_file`](#knowledge-base_upload_file) | Upload a file to a collection |
+| [`knowledge-base_delete_item`](#knowledge-base_delete_item) | Delete a file from a collection |
+| [`knowledge-base_ask`](#knowledge-base_ask) | Ask questions and get AI-generated answers |
+| [`knowledge-base_search`](#knowledge-base_search) | Semantic search across documents |
+| [`knowledge-base_create_sharelink`](#knowledge-base_create_sharelink) | Create a shareable URL for a file |
+
+---
+
+## knowledge-base_list_collections
+
+List all knowledge base collections in the current workspace.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collections` | object[] | Array of collection objects |
+| `collections[].id` | string | Collection ID |
+| `collections[].name` | string | Collection name |
+| `collections[].description` | string | Collection description |
+| `collections[].type` | string | Collection type |
+| `collections[].maxItems` | number | Maximum number of items allowed |
+| `collections[].numItems` | number | Current number of items |
+| `collections[].isShared` | boolean | Whether the collection is shared |
+| `collections[].status` | string | Collection status |
+| `collections[].createdBy` | string | User ID of the creator |
+| `collections[].createdByName` | string | Display name of the creator |
+| `collections[].permissions` | object | Permission settings |
+| `collections[].permissions.admin` | boolean | Whether the user has admin access |
+| `collections[].permissions.write` | boolean | Whether the user has write access |
+| `collections[].permissions.read` | boolean | Whether the user has read access |
+| `collections[].createdAt` | string | Creation timestamp |
+| `collections[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## knowledge-base_create_collection
+
+Create a new knowledge base collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | ID of the newly created collection |
+
+---
+
+## knowledge-base_upload_file
+
+Upload a file to a knowledge base collection. Provide either `fileUrl` or `fileContent` — not both.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `filename` | string | Yes | — | Name for the uploaded file |
+| `fileUrl` | string | No | — | URL of the file to upload (use either `fileUrl` or `fileContent`) |
+| `fileContent` | string | No | — | Text content of the file (use either `fileUrl` or `fileContent`) |
+| `fileLinksExpireInDays` | number | No | — | Number of days until file links expire (1–7) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `returnFileUrl` | boolean | No | `false` | Whether to return a signed file URL in the response |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | File ID |
+| `collectionId` | string | Parent collection ID |
+| `file_url` | string | Signed file URL (when `returnFileUrl` is `true`) |
+| `file_size` | number | File size in bytes |
+| `mime_type` | string | MIME type of the file |
+| `metadata` | object | File metadata |
+| `metadata.filename` | string | Original filename |
+| `metadata.contentType` | string | Content type of the file |
+
+---
+
+## knowledge-base_delete_item
+
+Delete a file from a knowledge base collection. This action is irreversible.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `filename` | string | Yes | Name of the file to delete |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## knowledge-base_ask
+
+Ask questions about documents in a knowledge base collection and get AI-generated answers. Retrieves relevant document chunks and uses them as context for the response.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `userPrompts` | string or string[] | Yes | — | Question(s) to ask about the documents |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+| `systemPrompts` | string or string[] | No | — | System prompt(s) to guide the AI response |
+| `filterTags` | object | No | — | Filter object to narrow document scope (supports `eq`, `ne`, `gt`, `gte`, `lt`, `lte` operators and compound `and`/`or`) |
+| `maxResults` | number | No | `10` | Maximum number of document chunks to retrieve (1–100) |
+| `model` | string | No | `"gpt-4o-mini"` | AI model to use for generating the answer |
+| `stream` | boolean | No | — | Whether to stream the response |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `vectorStoreId` | string | Vector store ID used for the search |
+| `response` | string | AI-generated answer based on the retrieved documents |
+| `searchResults` | object[] | Array of document chunks used as context |
+| `searchResults[].file_id` | string | File ID of the source document |
+| `searchResults[].filename` | string | Filename of the source document |
+| `searchResults[].score` | number | Relevance score of the chunk |
+| `searchResults[].attributes` | object | Document attributes and metadata |
+| `searchResults[].content` | object[] | Array of content chunks from the document |
+| `model` | string | AI model used for the answer |
+| `provider` | string | AI provider used |
+
+---
+
+## knowledge-base_search
+
+Run a semantic search across documents in a knowledge base collection. Returns matching document chunks ranked by relevance.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `query` | string | Yes | — | Search query text |
+| `filterTags` | object | No | — | Filter object to narrow document scope (supports `eq`, `ne`, `gt`, `gte`, `lt`, `lte` operators and compound `and`/`or`) |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+| `maxResults` | number | No | `10` | Maximum number of results to return (1–50) |
+| `confidence` | number | No | `0.7` | Minimum confidence threshold for results (0–1) |
+| `rewriteQuery` | boolean | No | — | Whether to rewrite the query for better semantic matching |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `vectorStoreId` | string | Vector store ID used for the search |
+| `object` | string | Response object type |
+| `search_query` | string | The query used for the search (may differ from input if `rewriteQuery` is `true`) |
+| `data` | object[] | Array of matching document chunks |
+| `data[].file_id` | string | File ID of the source document |
+| `data[].filename` | string | Filename of the source document |
+| `data[].score` | number | Relevance score of the chunk |
+| `data[].attributes` | object | Document attributes and metadata |
+| `data[].content` | object[] | Array of content chunks from the document |
+| `has_more` | boolean | Whether more results are available |
+| `next_page` | string | Pagination token for the next page of results |
+
+---
+
+## knowledge-base_create_sharelink
+
+Create a shareable URL for a file in a knowledge base collection. The link can be configured to expire after a set number of days or minutes.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `filename` | string | Yes | Name of the file to share |
+| `fileLinksExpireInDays` | number | No | Number of days until the link expires (1–7) |
+| `fileLinksExpireInMinutes` | number | No | Number of minutes until the link expires (overrides days) |
+| `queryParams` | object | No | Additional query parameters to include in the link |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `short_url` | string | Shareable short URL |
+| `expiresAt` | string | Expiration timestamp of the link |
+| `queryParams` | object | Query parameters included in the link |

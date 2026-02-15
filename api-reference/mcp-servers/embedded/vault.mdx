@@ -1,0 +1,202 @@
+---
+title: "vault"
+description: "Encrypted secrets storage and management"
+---
+
+**Server path:** `/vault` | **Type:** Embedded | **PCID required:** No
+
+Store and manage encrypted secrets — API keys, passwords, tokens, and credentials. Secrets are encrypted at rest and can be decrypted on demand.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`vault_list_collections`](#vault_list_collections) | List all vault collections |
+| [`vault_create_collection`](#vault_create_collection) | Create a new vault collection |
+| [`vault_list_items`](#vault_list_items) | List secrets in a collection |
+| [`vault_get_item`](#vault_get_item) | Get a specific secret |
+| [`vault_create_item`](#vault_create_item) | Create a new secret |
+| [`vault_update_item`](#vault_update_item) | Update an existing secret |
+| [`vault_delete_item`](#vault_delete_item) | Delete a secret |
+
+---
+
+## vault_list_collections
+
+List all vault collections in the current workspace.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collections` | object[] | Array of collection objects |
+| `collections[].id` | string | Collection ID |
+| `collections[].name` | string | Collection name |
+| `collections[].description` | string | Collection description |
+| `collections[].type` | string | Collection type |
+| `collections[].maxItems` | number | Maximum number of items allowed |
+| `collections[].numItems` | number | Current number of items |
+| `collections[].isShared` | boolean | Whether the collection is shared |
+| `collections[].status` | string | Collection status |
+| `collections[].createdBy` | string | User ID of the creator |
+| `collections[].createdByName` | string | Display name of the creator |
+| `collections[].createdAt` | string | Creation timestamp |
+| `collections[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## vault_create_collection
+
+Create a new vault collection for organizing secrets.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | ID of the newly created collection |
+| `message` | string | Success message |
+
+---
+
+## vault_list_items
+
+List secrets in a collection. By default, secret content is returned in encrypted form unless `decryptSecrets` is set to `true`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `limit` | number | No | `50` | Maximum number of items to return |
+| `orderedBy` | string | No | `"createdAt:desc"` | Sort order for results |
+| `decryptSecrets` | boolean | No | `false` | Whether to decrypt secret content in the response |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of secret objects |
+| `items[].secretId` | string | Secret ID |
+| `items[].key` | string | Secret key / name |
+| `items[].content` | string | Secret content (encrypted unless `decryptSecrets` is `true`) |
+| `items[].metadata` | object | Secret metadata |
+| `items[].secretType` | string | Type of secret |
+| `items[].collectionId` | string | Parent collection ID |
+| `items[].createdAt` | string | Creation timestamp |
+| `items[].updatedAt` | string | Last updated timestamp |
+
+---
+
+## vault_get_item
+
+Get a specific secret from a collection. By default, secret content is returned in encrypted form unless `decryptSecrets` is set to `true`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `secretId` | string | Yes | — | Secret ID |
+| `decryptSecrets` | boolean | No | `false` | Whether to decrypt secret content in the response |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `secretId` | string | Secret ID |
+| `key` | string | Secret key / name |
+| `content` | string | Secret content (encrypted unless `decryptSecrets` is `true`) |
+| `metadata` | object | Secret metadata |
+| `secretType` | string | Type of secret |
+| `collectionId` | string | Parent collection ID |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+| `isSecret` | boolean | Whether the item is a secret |
+| `providerId` | string | Provider ID |
+| `sortField` | string | Sort field value |
+
+---
+
+## vault_create_item
+
+Create a new secret in a collection. The `content` value will be encrypted at rest automatically.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `key` | string | Yes | — | Secret key / name |
+| `content` | string or object | Yes | — | Secret content (will be encrypted) |
+| `metadata` | object | No | — | Metadata to attach to the secret |
+| `secretType` | string | No | `"login"` | Type of secret |
+| `sortField` | string | No | — | Sort field value |
+| `triggerChanges` | boolean | No | — | Whether to trigger change events |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Secret ID |
+| `docId` | string | Document ID (same as `id`, for backward compatibility) |
+| `key` | string | Secret key / name |
+| `message` | string | Success message |
+
+Use the `docId` value as the `secretId` parameter when calling `vault_get_item`, `vault_update_item`, or `vault_delete_item`.
+
+---
+
+## vault_update_item
+
+Update an existing secret in a collection. The new `content` value will be re-encrypted at rest automatically.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `secretId` | string | Yes | Secret ID |
+| `content` | string or object | Yes | New secret content (will be re-encrypted) |
+| `metadata` | object | No | Metadata to update |
+| `triggerChanges` | boolean | No | Whether to trigger change events |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Secret ID |
+| `docId` | string | Document ID (same as `id`, for backward compatibility) |
+| `key` | string | Secret key / name |
+| `message` | string | Success message |
+
+---
+
+## vault_delete_item
+
+Delete a secret from a collection. This action is destructive and irreversible.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `secretId` | string | No | Secret ID |
+| `key` | string | No | Secret key / name |
+| `sortField` | string | No | Sort field value |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
