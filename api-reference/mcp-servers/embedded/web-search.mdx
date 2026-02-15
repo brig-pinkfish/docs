@@ -1,0 +1,426 @@
+---
+title: "web-search"
+description: "Google, YouTube, Amazon, shopping, flights, hotels, news, academic, restaurants, and events search"
+---
+
+**Server path:** `/web-search` | **Type:** Embedded | **PCID required:** No
+
+Search across Google, YouTube, Amazon, Google Shopping, flights, hotels, news, academic papers, restaurants, and local events.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`search_googlesearch`](#search_googlesearch) | Google web search with advanced filtering |
+| [`search_youtube`](#search_youtube) | Search YouTube videos, playlists, and channels |
+| [`search_amazon`](#search_amazon) | Search Amazon products |
+| [`search_amazon_product`](#search_amazon_product) | Get detailed Amazon product info by ASIN |
+| [`search_shopping`](#search_shopping) | Google Shopping search with price comparison |
+| [`search_competitive_prices`](#search_competitive_prices) | Compare prices across retailers |
+| [`search_flights`](#search_flights) | Search flights with filtering and pricing |
+| [`search_hotels`](#search_hotels) | Search hotels and vacation rentals |
+| [`search_news`](#search_news) | Search news articles and stories |
+| [`search_academic`](#search_academic) | Search academic papers and journals |
+| [`search_restaurants`](#search_restaurants) | Search restaurants with ratings and pricing |
+| [`search_local_events`](#search_local_events) | Discover local events and activities |
+
+---
+
+## search_googlesearch
+
+Perform a Google web search with advanced filtering options including geo-targeting, language, time range, file type, and device emulation.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Search query |
+| `gl` | string | No | Country code for geo-targeting (e.g. `us`, `uk`) |
+| `hl` | string | No | Language code for results (e.g. `en`, `es`) |
+| `location` | string | No | Location for localized results (e.g. `Austin, Texas`) |
+| `tbs` | string | No | Time-based search filter (e.g. `qdr:d` for past day, `qdr:w` for past week) |
+| `lr` | string | No | Restrict results to a specific language (e.g. `lang_en`) |
+| `safe` | string | No | Safe search setting (`active` or `off`) |
+| `filter` | string | No | Enable or disable duplicate content filtering (`0` or `1`) |
+| `site` | string | No | Restrict results to a specific site (e.g. `reddit.com`) |
+| `filetype` | string | No | Restrict results to a file type (e.g. `pdf`, `doc`) |
+| `linksto` | string | No | Find pages linking to this URL |
+| `related` | string | No | Find pages related to this URL |
+| `start` | number | No | Result offset for pagination (default `0`) |
+| `num` | number | No | Number of results to return (default `10`) |
+| `device` | string | No | Device to emulate (`desktop`, `tablet`, `mobile`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `search_metadata` | object | Metadata about the search request |
+| `search_parameters` | object | Echo of the search parameters used |
+| `search_information` | object | Total results count and search time |
+| `knowledge_graph` | object | Knowledge Graph panel data (if present) |
+| `ai_overview` | object | AI-generated overview summary (if present) |
+| `organic_results` | array | Search results with `position`, `title`, `link`, `snippet`, `date`, `source` |
+| `related_questions` | array | "People also ask" questions |
+| `related_searches` | array | Suggested related searches |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_youtube
+
+Search YouTube for videos, playlists, channels, and Shorts.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `search_query` | string | Yes | YouTube search query |
+| `gl` | string | No | Country code for geo-targeting |
+| `hl` | string | No | Language code for results |
+| `sp` | string | No | Pagination or filter token from a previous response |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `search_metadata` | object | Metadata about the search request |
+| `video_results` | array | Videos with `title`, `link`, `video_id`, `thumbnail`, `channel`, `published_date`, `views`, `length`, `description` |
+| `playlist_results` | array | Matching playlists |
+| `channel_results` | array | Matching channels |
+| `shorts_results` | array | Matching YouTube Shorts |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_amazon
+
+Search Amazon product listings with sorting, category filtering, and Prime eligibility.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `k` | string | Yes | Search query (keywords) |
+| `amazon_domain` | string | No | Amazon domain (e.g. `amazon.com`, `amazon.co.uk`) |
+| `language` | string | No | Language code for results |
+| `delivery_zip` | string | No | ZIP code for delivery estimates |
+| `shipping_location` | string | No | Location for shipping calculations |
+| `s` | enum | No | Sort order (e.g. `price-asc-rank`, `price-desc-rank`, `review-rank`) |
+| `node` | string | No | Category node ID to filter by |
+| `rh` | string | No | Attribute refinement filter string |
+| `dc` | boolean | No | Include direct category results (default `true`) |
+| `page` | number | No | Page number for pagination (default `1`) |
+| `device` | string | No | Device to emulate (`desktop`, `tablet`, `mobile`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `organic_results` | array | Products with `position`, `asin`, `title`, `link`, `image`, `price`, `rating`, `reviews_count`, `is_prime`, `is_best_seller` |
+| `pagination` | object | Pagination info and next page tokens |
+| `categories` | array | Category refinement options |
+
+---
+
+## search_amazon_product
+
+Get detailed product information from Amazon using an ASIN (Amazon Standard Identification Number).
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `asin` | string | Yes | Amazon product ASIN |
+| `amazon_domain` | string | No | Amazon domain (e.g. `amazon.com`) |
+| `language` | string | No | Language code for results |
+| `delivery_zip` | string | No | ZIP code for delivery estimates |
+| `shipping_location` | string | No | Location for shipping calculations |
+| `other_sellers` | boolean | No | Include third-party seller offers |
+| `device` | string | No | Device to emulate (`desktop`, `tablet`, `mobile`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh lookup |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `product` | object | Full product details |
+| `product.asin` | string | Product ASIN |
+| `product.title` | string | Product title |
+| `product.link` | string | Product URL |
+| `product.brand` | string | Brand name |
+| `product.main_image` | string | Primary product image URL |
+| `product.images` | array | All product image URLs |
+| `product.rating` | number | Average star rating |
+| `product.ratings_total` | number | Total number of ratings |
+| `product.reviews_total` | number | Total number of written reviews |
+| `product.price` | object | Current price information |
+| `product.buybox_winner` | object | Buy Box winner details (price, seller, shipping) |
+| `product.specifications` | object | Product specifications |
+| `product.feature_bullets` | array | Bullet-point feature list |
+| `product.description` | string | Full product description |
+| `product.categories` | array | Category breadcrumb |
+| `product.bestsellers_rank` | array | Best Sellers rank in each category |
+
+---
+
+## search_shopping
+
+Search Google Shopping for products with price filtering, free shipping, sale items, and small business options.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Shopping search query |
+| `location` | string | No | Location for localized results |
+| `google_domain` | string | No | Google domain (e.g. `google.com`) |
+| `gl` | string | No | Country code for geo-targeting |
+| `hl` | string | No | Language code for results |
+| `min_price` | number | No | Minimum price filter |
+| `max_price` | number | No | Maximum price filter |
+| `sort_by` | enum | No | Sort order: `"1"` (relevance), `"2"` (price low to high) |
+| `free_shipping` | boolean | No | Filter to free shipping only |
+| `on_sale` | boolean | No | Filter to sale items only |
+| `small_business` | boolean | No | Filter to small business sellers |
+| `start` | number | No | Result offset for pagination (default `0`) |
+| `device` | string | No | Device to emulate (`desktop`, `tablet`, `mobile`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `shopping_results` | array | Products with `position`, `title`, `link`, `source`, `price`, `extracted_price`, `rating`, `reviews`, `thumbnail`, `delivery`, `tag` |
+| `filters` | array | Available filter options |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_competitive_prices
+
+Compare prices for a product across multiple retailers to find the best deal.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Product search query |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `shopping_results` | array | Price comparisons with `position`, `product_id`, `title`, `link`, `source`, `price`, `extracted_price`, `old_price`, `rating`, `reviews`, `thumbnail`, `delivery`, `tag` |
+
+---
+
+## search_flights
+
+Search for flights with detailed filtering for stops, airlines, alliances, times, emissions, layover duration, and price limits.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `departure_id` | string | Yes | Departure airport IATA code (e.g. `SFO`) |
+| `arrival_id` | string | Yes | Arrival airport IATA code (e.g. `JFK`) |
+| `outbound_date` | string | Yes | Departure date in `YYYY-MM-DD` format |
+| `type` | enum | No | Trip type: `1` (round trip), `2` (one way), `3` (multi-city). Default `1` |
+| `travel_class` | enum | No | Class: `1` (economy), `2` (premium economy), `3` (business), `4` (first). Default `1` |
+| `adults` | number | No | Number of adults (default `1`) |
+| `children` | number | No | Number of children (default `0`) |
+| `infants_in_seat` | number | No | Number of infants in seat (default `0`) |
+| `infants_on_lap` | number | No | Number of infants on lap (default `0`) |
+| `return_date` | string | No | Return date in `YYYY-MM-DD` format (for round trips) |
+| `legs` | array | No | Leg definitions for multi-city trips |
+| `gl` | string | No | Country code for geo-targeting |
+| `hl` | string | No | Language code for results |
+| `currency` | string | No | Currency code for prices (e.g. `USD`) |
+| `sort_by` | enum | No | Sort: `1` (best), `2` (price), `3` (departure), `4` (arrival), `5` (duration), `6` (emissions) |
+| `max_price` | number | No | Maximum price filter |
+| `stops` | enum | No | Max stops: `0` (nonstop), `1` (1 stop), `2` (2 stops), `3` (any) |
+| `airlines` | string | No | Comma-separated airline codes to include |
+| `exclude_airlines` | string | No | Comma-separated airline codes to exclude |
+| `alliances` | string | No | Filter by airline alliance |
+| `outbound_times` | string | No | Outbound departure/arrival time range filter |
+| `return_times` | string | No | Return departure/arrival time range filter |
+| `exclude_overnight` | boolean | No | Exclude overnight flights |
+| `emissions` | enum | No | Emissions filter level |
+| `layover_duration` | string | No | Min/max layover duration filter |
+| `exclude_conns` | string | No | Exclude connecting airports |
+| `max_duration` | number | No | Maximum flight duration in minutes |
+| `departure_token` | string | No | Token for selecting a specific departure flight |
+| `booking_token` | string | No | Token for retrieving booking details |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `best_flights` | array | Top recommended flight options |
+| `other_flights` | array | Additional flight options |
+| `price_insights` | object | Price analysis and trends |
+| `airports` | array | Airport information for the route |
+
+---
+
+## search_hotels
+
+Search for hotels and vacation rentals with filtering for price, star rating, amenities, and cancellation policy.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Hotel search query (e.g. `hotels in Paris`) |
+| `check_in_date` | string | Yes | Check-in date in `YYYY-MM-DD` format |
+| `check_out_date` | string | Yes | Check-out date in `YYYY-MM-DD` format |
+| `adults` | number | No | Number of adults (default `2`) |
+| `gl` | string | No | Country code for geo-targeting |
+| `hl` | string | No | Language code for results |
+| `currency` | string | No | Currency code for prices (e.g. `USD`) |
+| `children` | number | No | Number of children (default `0`) |
+| `sort_by` | enum | No | Sort: `3` (lowest price), `8` (highest rating), `13` (most reviewed) |
+| `min_price` | number | No | Minimum nightly price filter |
+| `max_price` | number | No | Maximum nightly price filter |
+| `rating` | enum | No | Minimum guest rating: `7` (good), `8` (very good), `9` (excellent) |
+| `hotel_class` | enum | No | Minimum star rating: `2`, `3`, `4`, or `5` |
+| `free_cancellation` | boolean | No | Filter to free cancellation only |
+| `vacation_rentals` | boolean | No | Include vacation rentals |
+| `amenities` | string | No | Comma-separated amenity filters |
+| `hotel_ids` | string | No | Comma-separated hotel IDs to include |
+| `exclude_hotel_ids` | string | No | Comma-separated hotel IDs to exclude |
+| `property_types` | string | No | Comma-separated property type filters |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `properties` | array | Hotels with `name`, `description`, `gps_coordinates`, `check_in_time`, `check_out_time`, `rate_per_night`, `total_rate`, `overall_rating`, `reviews`, `amenities`, `images` |
+| `brands` | array | Hotel brand filter options |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_news
+
+Search for news articles and stories with topic and time filtering.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | News search query |
+| `gl` | string | No | Country code for geo-targeting |
+| `hl` | string | No | Language code for results |
+| `location` | string | No | Location for localized results |
+| `topic` | string | No | Topic filter (e.g. `WORLD`, `BUSINESS`, `TECHNOLOGY`, `SPORTS`, `HEALTH`) |
+| `time_period` | string | No | Time range: `h` (hour), `d` (day), `w` (week), `m` (month), `y` (year) |
+| `sort_by` | string | No | Sort order: `date` or `relevance` |
+| `num` | number | No | Number of results to return (default `10`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `news_results` | array | News items with `position`, `title`, `stories` array |
+| `related_topics` | array | Related topic suggestions |
+| `related_publications` | array | Related news publications |
+| `top_stories` | array | Featured top stories |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_academic
+
+Search academic papers, journals, and scholarly articles with citation tracking and date filtering.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Academic search query |
+| `as_ylo` | string | No | Start year filter (e.g. `2020`) |
+| `as_yhi` | string | No | End year filter (e.g. `2025`) |
+| `scisbd` | number | No | Sort by date (use `1` to sort by date) |
+| `cluster` | string | No | Cluster ID for finding related articles |
+| `hl` | string | No | Language code for results |
+| `lr` | string | No | Restrict results to a specific language |
+| `start` | number | No | Result offset for pagination (default `0`) |
+| `num` | number | No | Number of results to return (default `10`) |
+| `as_sdt` | string | No | Search type filter |
+| `safe` | string | No | Safe search setting |
+| `filter` | string | No | Duplicate content filtering |
+| `as_vis` | string | No | Include or exclude citations |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `organic_results` | array | Papers with `position`, `title`, `link`, `publication_info`, `resources`, `snippet`, `inline_links` (citation count, related articles, versions) |
+| `profiles` | array | Matching author profiles |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_restaurants
+
+Search restaurants with filtering for ratings, price level, cuisine type, and current availability.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Restaurant search query (e.g. `sushi in San Francisco`) |
+| `ll` | string | No | GPS coordinates in `@lat,lng` format for location-based search |
+| `location` | string | No | Location name for localized results |
+| `hl` | string | No | Language code for results |
+| `gl` | string | No | Country code for geo-targeting |
+| `rating` | number | No | Minimum star rating filter |
+| `price_level` | string | No | Price level filter (e.g. `$`, `$$`, `$$$`) |
+| `open_now` | boolean | No | Filter to currently open restaurants |
+| `cuisine_type` | string | No | Cuisine type filter (e.g. `italian`, `japanese`) |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `local_results` | array | Restaurants with `position`, `title`, `place_id`, `rating`, `reviews`, `price`, `type`, `address`, `hours`, `phone`, `website`, `description`, `thumbnail`, `gps_coordinates` |
+| `filters` | array | Available filter options |
+| `pagination` | object | Pagination info and next page tokens |
+
+---
+
+## search_local_events
+
+Discover local events and activities with date range, category, and location filtering.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `q` | string | Yes | Event search query (e.g. `concerts this weekend`) |
+| `location` | string | Yes | Location for event search (e.g. `New York, NY`) |
+| `ll` | string | No | GPS coordinates in `@lat,lng` format |
+| `hl` | string | No | Language code for results |
+| `gl` | string | No | Country code for geo-targeting |
+| `start_date` | string | No | Start date filter |
+| `end_date` | string | No | End date filter |
+| `category` | string | No | Event category filter |
+| `no_cache` | boolean | No | Bypass cache and force a fresh search |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `events_results` | array | Events with `title`, `date`, `address`, `link`, `image`, `description`, `ticket_info`, `venue`, `thumbnail` |
+| `event_location_map` | object | Map data for event locations |
+| `events_chips` | array | Quick filter chips for event categories |
+| `pagination` | object | Pagination info and next page tokens |
