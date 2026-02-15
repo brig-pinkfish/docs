@@ -403,11 +403,11 @@ function generateServerPage(
   let md = `---\n`
   md += `title: "${serverName}"\n`
   md += `sidebarTitle: "${serverName}"\n`
-  md += `description: "${escapeMarkdown(description)}"\n`
+  md += `description: "${description.replace(/"/g, '\\"')}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`
   md += `**Server path:** \`/${serverName}\` | **Type:** Application | **PCID required:** Yes\n\n`
-  md += `${description}\n\n`
+  md += `${escapeMarkdown(description)}\n\n`
 
   // Tools table
   md += `## Tools\n\n`
