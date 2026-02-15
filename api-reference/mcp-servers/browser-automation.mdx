@@ -1,0 +1,418 @@
+---
+title: "browser-automation"
+description: "Natural language and Playwright-based browser automation"
+---
+
+**Server path:** `/browser-automation` | **Type:** Embedded | **PCID required:** No
+
+AI-powered browser automation using natural language or Playwright code. Navigates, clicks, fills forms, extracts data, and downloads files.
+
+For a guided walkthrough, see the [Browser Automation guide](/api-reference/platform/browser-automation).
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`operator_run`](#operator_run) | Start a browser task using natural language |
+| [`operator_run_continue`](#operator_run_continue) | Poll for Browser Operator completion |
+| [`playwright_run`](#playwright_run) | Run Playwright JavaScript code in a cloud browser |
+| [`playwright_run_continue`](#playwright_run_continue) | Poll for Playwright completion |
+| [`logins_list`](#logins_list) | List saved browser login contexts |
+
+---
+
+## operator_run
+
+Start a browser automation task using natural language. Returns immediately with a `sessionId` — poll with `operator_run_continue` until complete.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `task` | string | Yes | — | Natural language task description. Write as a single line. Be specific: include starting URL, action, target elements, and sample data. |
+| `cacheKey` | string | Yes | — | Unique 8-character alphanumeric string. Generate a new one each time you change the task. |
+| `model` | string | No | `google/gemini-3-flash-preview` | AI model. Options: `google/gemini-3-flash-preview`, `google/gemini-2.5-flash`, `google/gemini-2.5-pro`, `openai/gpt-4o`, `openai/gpt-4o-mini`, `anthropic/claude-sonnet-4` |
+| `agentMode` | string | No | `hybrid` | Interaction mode: `dom` (CSS selectors), `hybrid` (visual + DOM), `cua` (Computer Use Agent) |
+| `maxSteps` | number | No | `30` | Max actions the agent can take (1–100). Increase for complex multi-page tasks. |
+| `systemPrompt` | string | No | — | Role/context for the agent (e.g. "You are filling out insurance forms") |
+| `region` | string | No | `us-west-2` | Server region: `us-west-2`, `us-east-1`, `eu-central-1`, `ap-southeast-1` |
+| `proxies` | boolean | No | `false` | Enable residential proxies for sites that block datacenter IPs |
+| `advancedStealth` | boolean | No | `false` | Advanced anti-detection measures |
+| `blockAds` | boolean | No | `true` | Block advertisements |
+| `solveCaptchas` | boolean | No | `true` | Automatically solve CAPTCHAs |
+| `recordSession` | boolean | No | `true` | Enable session recording for replay |
+| `viewportWidth` | number | No | `1288` | Browser viewport width in pixels |
+| `viewportHeight` | number | No | `711` | Browser viewport height in pixels |
+| `disableCache` | boolean | No | `false` | Bypass caching and force fresh execution |
+| `cacheDurationDays` | number | No | `7` | Cache expiration in days (1–30) |
+| `filesToUpload` | object[] | No | — | Files for upload: `[{ url: "https://...", fileName: "doc.pdf" }]` |
+| `collectionId` | string | No | — | Filestorage collection ID for output files |
+| `useContextService` | string | No | — | Saved login context ID (from `logins_list`) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | `"RUNNING"` |
+| `sessionId` | string | Session ID for polling |
+| `collectionId` | string | Collection ID for log/file access |
+| `buildId` | string | Build identifier |
+| `logFileName` | string | Log file name for streaming |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "task": { "type": "string", "description": "Natural language task description" },
+    "cacheKey": { "type": "string", "description": "Unique 8-character alphanumeric cache identifier" },
+    "model": {
+      "type": "string",
+      "enum": ["google/gemini-3-flash-preview", "google/gemini-2.5-flash", "google/gemini-2.5-pro", "openai/gpt-4o", "openai/gpt-4o-mini", "anthropic/claude-sonnet-4"],
+      "default": "google/gemini-3-flash-preview"
+    },
+    "agentMode": { "type": "string", "enum": ["dom", "hybrid", "cua"], "default": "hybrid" },
+    "maxSteps": { "type": "number", "default": 30, "minimum": 1, "maximum": 100 },
+    "systemPrompt": { "type": "string" },
+    "region": { "type": "string", "enum": ["us-west-2", "us-east-1", "eu-central-1", "ap-southeast-1"], "default": "us-west-2" },
+    "proxies": { "type": "boolean", "default": false },
+    "advancedStealth": { "type": "boolean", "default": false },
+    "blockAds": { "type": "boolean", "default": true },
+    "solveCaptchas": { "type": "boolean", "default": true },
+    "recordSession": { "type": "boolean", "default": true },
+    "viewportWidth": { "type": "number", "default": 1288 },
+    "viewportHeight": { "type": "number", "default": 711 },
+    "disableCache": { "type": "boolean", "default": false },
+    "cacheDurationDays": { "type": "number", "default": 7, "minimum": 1, "maximum": 30 },
+    "filesToUpload": { "type": "array", "items": { "type": "object", "properties": { "url": { "type": "string" }, "fileName": { "type": "string" } } } },
+    "collectionId": { "type": "string" },
+    "useContextService": { "type": "string" }
+  },
+  "required": ["task", "cacheKey"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_operator_run",
+      "arguments": {
+        "task": "Navigate to https://news.ycombinator.com, extract the top 10 story titles with URLs, save as stories.json",
+        "cacheKey": "hn8x2k4m",
+        "model": "google/gemini-3-flash-preview",
+        "agentMode": "hybrid",
+        "maxSteps": 30,
+        "blockAds": true,
+        "solveCaptchas": true,
+        "recordSession": true
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "structuredContent": {
+    "status": "RUNNING",
+    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "collectionId": "coll_xyz789",
+    "buildId": "agent-1234567890",
+    "logFileName": "agent-1234567890.log"
+  }
+}
+```
+
+---
+
+## operator_run_continue
+
+Poll for completion of a running Browser Operator task. Call every 3–5 seconds until `status` is `"completed"` or `"failed"`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `sessionId` | string | Yes | Session ID from `operator_run` |
+| `logFileName` | string | No | Log file name from `operator_run`. Enables live log streaming. |
+| `collectionId` | string | No | Collection ID from `operator_run`. Required with `logFileName` for log content. |
+
+**Response fields (completed):**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | `"completed"`, `"failed"`, or `"RUNNING"` |
+| `sessionId` | string | Session ID |
+| `result` | string | Task completion summary |
+| `files` | object[] | Output files. Each has `fileName`, `size`, `url`, `mimeType`, `source`. |
+| `logContent` | string | Session log (if `logFileName` was provided) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "sessionId": { "type": "string", "description": "Session ID from operator_run" },
+    "logFileName": { "type": "string", "description": "Log file name from operator_run" },
+    "collectionId": { "type": "string", "description": "Collection ID from operator_run" }
+  },
+  "required": ["sessionId"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_operator_run_continue",
+      "arguments": {
+        "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "collectionId": "coll_xyz789",
+        "logFileName": "agent-1234567890.log"
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Response (completed):**
+
+```json
+{
+  "structuredContent": {
+    "status": "completed",
+    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "result": "Successfully extracted top 10 stories from Hacker News",
+    "files": [
+      {
+        "fileName": "stories.json",
+        "mimeType": "application/json",
+        "size": 2456,
+        "url": "https://s3-signed-url/stories.json",
+        "source": "extract"
+      }
+    ],
+    "logContent": "Step 1: Navigating to https://news.ycombinator.com...\n..."
+  }
+}
+```
+
+---
+
+## playwright_run
+
+Run Playwright JavaScript code in a remote cloud browser. A `page` variable is pre-configured — you don't need to launch a browser. Returns immediately — poll with `playwright_run_continue`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `code` | string | Yes | Playwright JavaScript code. `page` is pre-configured. Return `{ writeToCollection: true, fileName: "data.json", fileContent: "..." }` to save files. |
+| `bindingData` | object | No | Key-value pairs injected into the code as variables. Must be an object, not a string. |
+| `buildId` | string | No | For predictable file naming. Files become `{buildId}-filename.json`. |
+| `collectionId` | string | No | Filestorage collection ID for output files |
+| `useContextService` | string | No | Saved login context ID (from `logins_list`) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | `"RUNNING"` |
+| `sessionId` | string | Session ID for polling |
+| `buildId` | string | Build identifier |
+| `collectionId` | string | Collection ID |
+| `logFileName` | string | Log file name |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "code": { "type": "string", "description": "Playwright JavaScript code. The page variable is pre-configured." },
+    "bindingData": { "type": "object", "description": "Key-value pairs injected into the code as variables" },
+    "buildId": { "type": "string", "description": "For predictable file naming" },
+    "collectionId": { "type": "string", "description": "Filestorage collection ID for output files" },
+    "useContextService": { "type": "string", "description": "Saved login context ID" }
+  },
+  "required": ["code"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_playwright_run",
+      "arguments": {
+        "code": "await page.goto(\"https://news.ycombinator.com\");\nconst stories = await page.$$eval(\".titleline > a\", links => links.slice(0, 10).map((a, i) => ({ rank: i + 1, title: a.textContent, url: a.href })));\nreturn { writeToCollection: true, fileName: \"stories.json\", fileContent: JSON.stringify(stories, null, 2) };",
+        "buildId": "hn-scrape-001"
+      }
+    },
+    "id": 1
+  }'
+```
+
+---
+
+## playwright_run_continue
+
+Poll for completion of a running Playwright task. Call every 3–5 seconds until `status` is `"completed"` or `"failed"`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `sessionId` | string | Yes | Session ID from `playwright_run` |
+
+**Response fields:** Same structure as `operator_run_continue`, plus `browserOutput` (raw Playwright return value) and `logs` (Playwright console output).
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "sessionId": { "type": "string", "description": "Session ID from playwright_run" }
+  },
+  "required": ["sessionId"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_playwright_run_continue",
+      "arguments": { "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" }
+    },
+    "id": 1
+  }'
+```
+
+---
+
+## logins_list
+
+List saved browser login contexts. These are pre-authenticated sessions that can be reused with the `useContextService` parameter.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `count` | number | Number of saved contexts |
+| `contexts` | object[] | Array of login contexts |
+| `contexts[].id` | string | Context ID (use as `useContextService`) |
+| `contexts[].label` | string | Display label |
+| `contexts[].service` | string | Service name (e.g. `linkedin`) |
+| `contexts[].loginUrl` | string | Login URL |
+| `contexts[].status` | string | Context status |
+| `contexts[].createdAt` | string | Creation timestamp |
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "count": { "type": "number", "description": "Number of saved contexts" },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Context ID" },
+          "label": { "type": "string", "description": "Display label" },
+          "service": { "type": "string", "description": "Service name" },
+          "loginUrl": { "type": "string", "description": "Login URL" },
+          "status": { "type": "string", "description": "Context status" },
+          "createdAt": { "type": "string", "description": "Creation timestamp" }
+        }
+      }
+    }
+  }
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/browser-automation" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "browser-automation_logins_list",
+      "arguments": {}
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "structuredContent": {
+    "count": 1,
+    "contexts": [
+      {
+        "id": "ctx_abc123",
+        "label": "My LinkedIn",
+        "service": "linkedin",
+        "loginUrl": "https://www.linkedin.com/login",
+        "status": "active",
+        "createdAt": "2026-01-15T10:30:00Z"
+      }
+    ]
+  }
+}
+```

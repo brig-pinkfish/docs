@@ -1,0 +1,753 @@
+---
+title: "pinkfish-sidekick"
+description: "Discovery, workflow lifecycle, triggers, and orchestration"
+---
+
+**Server path:** `/pinkfish-sidekick` | **Type:** Embedded | **PCID required:** No
+
+AI-powered discovery, workflow creation and management, triggers, and orchestration.
+
+For guided walkthroughs, see [Discovery](/api-reference/platform/discovery), [Workflows](/api-reference/platform/workflows), and [Discover, Install, and Invoke](/api-reference/platform/dynamic-tool-invocation).
+
+## Tools
+
+### Discovery
+
+| Tool | Description |
+| --- | --- |
+| [`capabilities_discover`](#capabilities_discover) | Find tools, connections, and resources for a task using natural language |
+| [`capability_details`](#capability_details) | Get full parameter schemas for specific tools |
+| [`mcp_discover`](#mcp_discover) | Find MCP servers and tools (includes resources by default) |
+
+### Workflow Lifecycle
+
+| Tool | Description |
+| --- | --- |
+| [`workflow_create`](#workflow_create) | Create a new workflow |
+| [`workflow_update`](#workflow_update) | Update workflow code and/or resource bindings |
+| [`workflow_read`](#workflow_read) | Read workflow structure, nodes, edges, and optionally code |
+| [`workflow_run`](#workflow_run) | Execute a workflow |
+| [`workflow_run_status`](#workflow_run_status) | Check status of a running workflow |
+| [`workflow_results`](#workflow_results) | Inspect workflow run output files |
+| [`workflow_set_inputs`](#workflow_set_inputs) | Set default inputs or input schema |
+| [`workflow_pin`](#workflow_pin) | Pin/unpin node outputs for reuse across runs |
+| [`workflow_list`](#workflow_list) | List all accessible workflows |
+| [`workflow_edit`](#workflow_edit) | Surgical workflow edits (frontend use) |
+
+### Agents & Sub-Workflows
+
+| Tool | Description |
+| --- | --- |
+| [`workflow_agents`](#workflow_agents) | Create, read, update, list, and invoke agents |
+| [`workflow_invoke`](#workflow_invoke) | Invoke another workflow via its webhook trigger |
+
+### Triggers
+
+| Tool | Description |
+| --- | --- |
+| [`workflow_trigger_schedule`](#workflow_trigger_schedule) | Create/manage cron-based schedule triggers |
+| [`workflow_trigger_api`](#workflow_trigger_api) | Create/manage API webhook triggers |
+| [`workflow_trigger_email`](#workflow_trigger_email) | Create/manage email triggers |
+| [`workflow_trigger_application`](#workflow_trigger_application) | Create/manage app event triggers |
+| [`workflow_trigger_interface`](#workflow_trigger_interface) | Create/manage web form triggers |
+| [`workflow_trigger_list_all`](#workflow_trigger_list_all) | List all triggers across all workflows |
+| [`workflow_trigger_cleanup`](#workflow_trigger_cleanup) | Delete unused triggers for a workflow |
+
+---
+
+## capabilities_discover
+
+Find tools, connections, resources, and skills for a task using natural language.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `request` | string | Yes | Natural language description of the task |
+| `types` | string[] | No | Filter by type: `"tool"`, `"agentSkill"`, `"connection"`, `"resource"` |
+| `context` | string | No | `"workflow-creation"` or `"agent-execution"` — filters available skills |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `tools` | object[] | Matching tools. Each has `name`, `serverName`, `hasSkill`, `confidence`. |
+| `connections` | object[] | Matching connections. Each has `name`, `id` (PCID), `application`, `confidence`. |
+| `resources` | object[] | Matching resources. Each has `name`, `collectionId`, `subtype`, `confidence`. |
+| `skills` | object[] | Matching skills. Each has `name`, `ownerType`, `confidence`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "request": { "type": "string", "description": "Natural language description of the task" },
+    "types": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["tool", "agentSkill", "connection", "resource"] },
+      "description": "Filter by capability type"
+    },
+    "context": {
+      "type": "string",
+      "enum": ["workflow-creation", "agent-execution"],
+      "description": "Filter available skills by context"
+    }
+  },
+  "required": ["request"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "capabilities_discover",
+      "arguments": { "request": "search my gmail for unread emails" }
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "structuredContent": {
+    "tools": [{ "name": "gmail_search_emails", "serverName": "gmail", "hasSkill": false, "confidence": 0.95 }],
+    "connections": [{ "name": "My Gmail", "id": "abc123-pcid", "application": "gmail", "confidence": 0.95 }],
+    "resources": [],
+    "skills": []
+  }
+}
+```
+
+---
+
+## capability_details
+
+Get full parameter schemas and usage instructions for specific tools or connections.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `items` | string[] | Yes | Tool names from discovery (use `tools[].name`, not `serverName`) |
+| `types` | string[] | No | Filter: `"tool"`, `"connection"`, `"resource"`, `"agentSkill"` |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Names/IDs of capabilities to get details for"
+    },
+    "types": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["tool", "agentSkill", "connection", "resource"] }
+    }
+  },
+  "required": ["items"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "capability_details",
+      "arguments": { "items": ["gmail_search_emails"] }
+    },
+    "id": 1
+  }'
+```
+
+---
+
+## mcp_discover
+
+Find MCP servers and tools for any task. Broader than `capabilities_discover` — includes resources by default.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `userRequest` | string | Yes | Natural language description of the task |
+| `includeResources` | boolean | No | Include user connections and collections. Default: `true`. |
+| `refreshCache` | boolean | No | Bypass cache for fresh data. Default: `false`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "userRequest": { "type": "string", "description": "Natural language description of the task" },
+    "includeResources": { "type": "boolean", "default": true, "description": "Include user connections and collections" },
+    "refreshCache": { "type": "boolean", "default": false, "description": "Bypass cache for fresh data" }
+  },
+  "required": ["userRequest"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_create
+
+Create a new workflow automation. Returns an `automationId` and starter code template.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Display name for the workflow |
+| `description` | string | No | Brief description of the workflow |
+| `automationId` | string | No | If provided, initializes an existing automation with starter code |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "Display name for the workflow" },
+    "description": { "type": "string", "description": "Brief description" },
+    "automationId": { "type": "string", "description": "If provided, initializes existing automation with starter code" }
+  },
+  "required": ["name"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "workflow_create",
+      "arguments": { "name": "Daily News Summary", "description": "Search and summarize AI news" }
+    },
+    "id": 1
+  }'
+```
+
+---
+
+## workflow_update
+
+Update workflow code and/or apply resource bindings.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `code` | string | No | Workflow code (full replacement or targeted edit format) |
+| `name` | string | No | Workflow display name (only needed on first call) |
+| `changeDescription` | string | No | Brief description of changes |
+| `bindings` | object | No | Resource bindings map. Only include when adding **new** resources. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string", "description": "Automation ID" },
+    "code": { "type": "string", "description": "Workflow code" },
+    "name": { "type": "string", "description": "Workflow display name" },
+    "changeDescription": { "type": "string", "description": "Brief description of changes" },
+    "bindings": { "type": "object", "description": "Resource bindings map (key: resource name, value: ID)" }
+  },
+  "required": ["automationId"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_read
+
+Get workflow structure and optionally focused details for a specific node.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `nodeId` | string | No | Get focused details for a specific node |
+| `includeCode` | boolean | No | Include full workflow code |
+| `checkResources` | boolean | No | Include detailed resource binding status |
+| `addBetween` | object | No | Get insertion context between two nodes |
+| `expandDataFrom` | string[] | No | Get full schemas for specific upstream nodes |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string", "description": "Automation ID" },
+    "nodeId": { "type": "string", "description": "Get focused details for a specific node" },
+    "includeCode": { "type": "boolean", "description": "Include full workflow code" },
+    "checkResources": { "type": "boolean", "description": "Include resource binding status" },
+    "addBetween": {
+      "type": "object",
+      "properties": { "sourceId": { "type": "string" }, "targetId": { "type": "string" } }
+    },
+    "expandDataFrom": { "type": "array", "items": { "type": "string" }, "description": "Node IDs to expand data from" }
+  },
+  "required": ["automationId"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_run
+
+Execute a workflow and return results.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `inputs` | object | No | Runtime input values |
+| `runUntilNode` | string | No | Stop execution after this node completes |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string", "description": "Automation ID" },
+    "inputs": { "type": "object", "description": "Runtime input values" },
+    "runUntilNode": { "type": "string", "description": "Stop execution after this node completes" }
+  },
+  "required": ["automationId"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_run_status
+
+Check the status of a workflow run and wait for completion.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `runId` | string | Yes | Run ID from a previous workflow execution |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string", "description": "Automation ID" },
+    "runId": { "type": "string", "description": "Run ID from a previous workflow execution" }
+  },
+  "required": ["automationId", "runId"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_results
+
+Deep inspection of workflow run output files — search, read data, get signed URLs.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `operation` | string | Yes | `"list"`, `"search"`, `"read"`, or `"getUrl"` |
+| `runId` | string | No | Run ID to inspect (defaults to last dev run) |
+| `pattern` | string | No | Regex pattern (for `search` operation) |
+| `limit` | number | No | Max matches for `search`. Default: `10`. |
+| `filename` | string | No | Output file name (for `read` / `getUrl`) |
+| `path` | string | No | Dot/bracket path to extract specific data |
+| `sample` | number | No | Return only first N items from arrays |
+| `offset` | number | No | Pagination offset |
+| `limitRead` | number | No | Pagination limit |
+| `fields` | string[] | No | Field projection |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string" },
+    "operation": { "type": "string", "enum": ["list", "search", "read", "getUrl"] },
+    "runId": { "type": "string" },
+    "pattern": { "type": "string" },
+    "limit": { "type": "number", "default": 10 },
+    "filename": { "type": "string" },
+    "path": { "type": "string" },
+    "sample": { "type": "number" },
+    "offset": { "type": "number" },
+    "limitRead": { "type": "number" },
+    "fields": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["automationId", "operation"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_set_inputs
+
+Set default input values and/or define an input schema for a workflow.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `inputs` | object | No | Input values as object or JSON string |
+| `inputSchema` | object | No | JSON Schema defining workflow inputs |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string" },
+    "inputs": { "description": "Input values as object or JSON string" },
+    "inputSchema": { "description": "JSON Schema defining workflow inputs" }
+  },
+  "required": ["automationId"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_pin
+
+Pin or unpin node outputs to reuse across workflow runs. Pinned nodes skip execution and reuse stored output.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `pins` | object | Yes | Map of `nodeId` to `runId` (to pin) or `null` (to unpin) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string" },
+    "pins": {
+      "type": "object",
+      "description": "Map of nodeId to runId (pin) or null (unpin)",
+      "additionalProperties": { "type": ["string", "null"] }
+    }
+  },
+  "required": ["automationId", "pins"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_list
+
+List all workflows accessible to the user.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `filter` | string | No | `"all"`, `"with_triggers"` (default), or `"without_triggers"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `workflows` | object[] | Array of workflows. Each has `id`, `name`, and optionally `trigger` (with `id`, `name`, `webhookEndpoint`). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "filter": {
+      "type": "string",
+      "enum": ["all", "with_triggers", "without_triggers"],
+      "default": "with_triggers"
+    }
+  }
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_edit
+
+Surgical workflow edits — add/remove nodes, edges, and resources. Primarily for frontend UI operations.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+| `expectedVersion` | number | No | Expected version for optimistic locking |
+| `addNodes` | object[] | No | Nodes to add |
+| `removeNodes` | string[] | No | Node IDs to remove |
+| `updateNodes` | object[] | No | Nodes to update |
+| `addEdges` | object[] | No | Edges to add |
+| `removeEdges` | object[] | No | Edges to remove |
+| `updateFunctions` | object[] | No | Node functions to update |
+| `updateResources` | object[] | No | Resources to update or rebind |
+
+---
+
+## workflow_agents
+
+Create, read, update, list, and invoke agents for use in workflows.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `action` | string | Yes | `"create"`, `"read"`, `"update"`, `"list"`, or `"invoke"` |
+| `agentId` | string | No | Required for `read`, `update`, `invoke` |
+| `name` | string | No | Required for `create` |
+| `description` | string | No | Agent description |
+| `instructions` | string | No | Required for `create`. System prompt. |
+| `outputSchema` | string | No | JSON schema for structured output |
+| `servers` | object[] | No | MCP servers and tools configuration |
+| `workflows` | object[] | No | Workflows the agent can trigger |
+| `message` | string | No | Required for `invoke`. Message to send. |
+| `chatId` | string | No | Chat ID to continue a conversation (for `invoke`) |
+| `mode` | string | No | `"action_agent"` or `"claude_agent"` (for `invoke`) |
+| `messagesInResponse` | boolean | No | Include full message history (for `invoke`) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": { "type": "string", "enum": ["create", "read", "update", "list", "invoke"] },
+    "agentId": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "instructions": { "type": "string" },
+    "outputSchema": { "type": "string" },
+    "servers": { "type": "array" },
+    "workflows": { "type": "array" },
+    "message": { "type": "string" },
+    "chatId": { "type": "string" },
+    "mode": { "type": "string", "enum": ["action_agent", "claude_agent"] },
+    "messagesInResponse": { "type": "boolean" }
+  },
+  "required": ["action"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_invoke
+
+Invoke another workflow (sub-workflow) via its webhook trigger URL.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `url` | string | Yes | The workflow trigger URL (`webhookEndpoint` from `workflow_list`) |
+| `payload` | object | No | Input parameters for the workflow |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `runId` | string | Run ID |
+| `automationId` | string | Automation ID |
+| `status` | string | `"COMPLETE"`, `"FAILED"`, or `"TIMEOUT"` |
+| `results` | any | Workflow results (if completed) |
+| `elapsed` | string | Elapsed time |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "url": { "type": "string", "description": "Workflow trigger URL (webhookEndpoint)" },
+    "payload": { "type": "object", "description": "Input parameters for the workflow" }
+  },
+  "required": ["url"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_trigger_schedule
+
+Create, manage, and list cron-based schedule triggers.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `action` | string | Yes | `"create"`, `"read"`, `"update"`, `"delete"`, `"list"`, `"enable"`, `"disable"` |
+| `automationId` | string | No | Required for most actions |
+| `id` | string | No | Trigger ID. Required for `read`, `update`, `delete`, `enable`, `disable`. |
+| `name` | string | No | Required for `create` |
+| `cron` | string | No | AWS EventBridge cron expression. Required for `create`. |
+| `tz` | string | No | IANA timezone (e.g. `America/New_York`). Required for `create`. |
+| `version` | number | No | Required for `update` / `delete` |
+| `useDraft` | boolean | No | Run draft code vs published release. Default: `true`. |
+| `release` | number | No | Release version when `useDraft` is `false`. Default: `0`. |
+| `queueId` | string | No | Queue ID for processing runs |
+| `resourceName` | string | No | Workflow resource name to auto-bind |
+| `inputs` | string | No | JSON string of trigger inputs |
+
+---
+
+## workflow_trigger_api
+
+Create, manage, and list API webhook triggers. Returns a `webhookEndpoint` URL.
+
+**Parameters:** Same as `workflow_trigger_schedule`, plus:
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `apiKeyId` | string | No | API key ID for authentication |
+| `designatedOutput` | object | No | `{ stepIndex: number, fileName: string }` for synchronous responses |
+
+---
+
+## workflow_trigger_email
+
+Create, manage, and list email triggers. Returns an `emailEndpoint` address.
+
+**Parameters:** Same base as `workflow_trigger_schedule`, plus:
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `approvedSenders` | string[] | No | Approved sender email addresses |
+| `approvedDomains` | string[] | No | Approved sender domains |
+
+---
+
+## workflow_trigger_application
+
+Create, manage, and list application event triggers (GitHub, Shopify, etc.).
+
+**Parameters:** Same base as `workflow_trigger_schedule`, plus:
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `appService` | string | No | MCP service key. Required for `create`. |
+| `appConnectionId` | string | No | Connection ID. Required for `create`. |
+| `appTriggerType` | string | No | Specific trigger type. Required for `create`. |
+| `appTriggerMechanism` | string | No | `"webhook"` or `"polling"` |
+| `appConfig` | object | No | App-specific configuration |
+| `pollInterval` | number | No | Poll interval in seconds |
+| `pollBatchMode` | boolean | No | Batch events into one run |
+| `webhookSecret` | string | No | Secret for webhook signature verification |
+
+---
+
+## workflow_trigger_interface
+
+Create, manage, and list interface triggers (auto-generated web forms).
+
+**Parameters:** Same as `workflow_trigger_api` (includes `apiKeyId` and `designatedOutput`).
+
+---
+
+## workflow_trigger_list_all
+
+List all triggers across all workflows and trigger types.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `triggers` | object[] | Each has `id`, `name`, `type`, `enabled`, `automationId`, `automationName`. |
+
+---
+
+## workflow_trigger_cleanup
+
+Delete unused triggers for a workflow.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `automationId` | string | Yes | Automation ID |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `deleted` | object[] | Triggers that were removed. Each has `id`, `name`, `type`. |
+| `kept` | object[] | Triggers that were preserved |
+| `failed` | object[] | Triggers that failed to delete (includes `error`) |

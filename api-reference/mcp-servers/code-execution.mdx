@@ -1,0 +1,133 @@
+---
+title: "code-execution"
+description: "Sandboxed JavaScript execution with MCP tool access"
+---
+
+**Server path:** `/restricted/code-execution` | **Type:** Embedded | **PCID required:** No
+
+Run JavaScript in a sandboxed Node.js VM with access to MCP tools, artifact creation, and artifact reading.
+
+For a guided walkthrough, see the [Code Execution guide](/api-reference/platform/code-execution).
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`code-execution_execute`](#code-execution_execute) | Execute JavaScript code in a sandboxed environment |
+
+---
+
+## code-execution_execute
+
+Execute JavaScript code with access to MCP tools, artifact reading, and artifact creation. Code is wrapped in an async function — use `await` and `return` directly.
+
+**Available functions inside the sandbox:**
+
+| Function | Description |
+| --- | --- |
+| `callTool(serverPath, toolName, args)` | Call any MCP tool. `serverPath` is the endpoint path (e.g. `"/gmail"`), `toolName` is the full tool name (e.g. `"gmail_search_emails"`). External integrations require a `PCID` in args. |
+| `readArtifact(identifier)` | Read an existing artifact by file ID, filename, or URL. Returns `{ success, content, size, filename, mimeType, error }`. |
+| `createArtifact(filename, content, fileType)` | Create a new artifact file. `fileType` is one of: `csv`, `json`, `txt`, `md`, `html`, `js`, `ts`, `py`, `xml`. Returns `{ success, filename, url, id, mimeType, size, error }`. Requires `X-Chat-Id` header on the request. |
+| `console.log()` / `warn()` / `error()` | Debug output, captured in the `logs` array. |
+| `setTimeout` / `setInterval` | Timer functions (cleaned up after execution). |
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `code` | string | Yes | JavaScript code to execute. Should be a function body that returns a value. |
+| `timeout` | number | No | Timeout in milliseconds. Default: `600000` (10 min). Max: `900000` (15 min). |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `result` | any | Whatever the code returns |
+| `executionTime` | number | Execution time in milliseconds |
+| `logs` | string[] | Console output (only present if non-empty) |
+| `createdArtifacts` | object[] | Files created with `createArtifact()` (only present if non-empty) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "JavaScript code to execute. Should be a function body that returns a value."
+    },
+    "timeout": {
+      "type": "number",
+      "description": "Timeout in milliseconds (default: 600000 = 10 minutes, max: 900000 = 15 minutes)",
+      "default": 600000
+    }
+  },
+  "required": ["code"]
+}
+```
+
+</Expandable>
+
+<Expandable title="outputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "description": "The result returned by the code execution"
+    },
+    "logs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Console logs from execution"
+    },
+    "executionTime": {
+      "type": "number",
+      "description": "Execution time in milliseconds"
+    }
+  },
+  "required": ["result", "executionTime"]
+}
+```
+
+</Expandable>
+
+**Example:**
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "code-execution_execute",
+      "arguments": {
+        "code": "return { message: \"hello world\", timestamp: new Date().toISOString() };"
+      }
+    },
+    "id": 1
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "structuredContent": {
+      "result": {
+        "message": "hello world",
+        "timestamp": "2026-02-15T07:30:00.000Z"
+      },
+      "executionTime": 12
+    }
+  }
+}
+```
