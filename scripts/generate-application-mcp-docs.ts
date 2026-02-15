@@ -398,6 +398,7 @@ function generateServerPage(
 
   let md = `---\n`
   md += `title: "${serverName}"\n`
+  md += `sidebarTitle: "${serverName}"\n`
   md += `description: "${escapeMarkdown(description)}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`
@@ -508,17 +509,16 @@ function updateDocsJson(serverNames: string[], singleServer?: string): void {
   }
 
   if (singleServer) {
-    // Add single server page if not already present
+    // Add single server page if not already present, maintaining alphabetical order
     const pagePath = `api-reference/mcp-servers/application/${singleServer}`
     const existingPages: string[] = appGroup.pages || []
     if (!existingPages.includes(pagePath)) {
-      // Insert after overview, before any other pages
-      const overviewIdx = existingPages.indexOf(
-        'api-reference/mcp-servers/application/overview'
-      )
-      existingPages.splice(overviewIdx + 1, 0, pagePath)
+      // Insert in alphabetical order after overview
+      const serverPages = existingPages.filter(p => p !== 'api-reference/mcp-servers/application/overview')
+      serverPages.push(pagePath)
+      serverPages.sort()
+      appGroup.pages = ['api-reference/mcp-servers/application/overview', ...serverPages]
     }
-    appGroup.pages = existingPages
   } else {
     // Replace all pages with overview + generated pages
     const pages = ['api-reference/mcp-servers/application/overview']
