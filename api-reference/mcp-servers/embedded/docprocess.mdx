@@ -1,0 +1,384 @@
+---
+title: "docprocess"
+description: "Convert, extract, fill, and create documents — PDF, Word, Excel, CSV, and more"
+---
+
+**Server path:** `/docprocess` | **Type:** Embedded | **PCID required:** No
+
+Document processing tools: convert between formats (CSV, XLSX, HTML, PDF, Markdown, Word, XML, JSON), extract text (PDF, DOCX, PPTX), OCR images and PDFs, fill PDF forms, fill Word templates, create Word documents, validate CSVs, and process Word documents with AI.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`docprocess_csv_to_xlsx`](#docprocess_csv_to_xlsx) | Convert CSV files to Excel |
+| [`docprocess_xlsx_to_csv`](#docprocess_xlsx_to_csv) | Convert Excel files to CSV |
+| [`docprocess_html_to_pdf`](#docprocess_html_to_pdf) | Convert HTML to PDF |
+| [`docprocess_md_to_docx`](#docprocess_md_to_docx) | Convert Markdown to Word |
+| [`docprocess_md_to_pdf`](#docprocess_md_to_pdf) | Convert Markdown to PDF |
+| [`docprocess_xml_to_json`](#docprocess_xml_to_json) | Convert XML to JSON |
+| [`docprocess_docx_to_txt`](#docprocess_docx_to_txt) | Extract text from Word documents |
+| [`docprocess_pdf_to_txt`](#docprocess_pdf_to_txt) | Extract text from PDF files |
+| [`docprocess_pptx_to_txt`](#docprocess_pptx_to_txt) | Extract text from PowerPoint files |
+| [`docprocess_ocr`](#docprocess_ocr) | Extract text from images/PDFs with OCR |
+| [`docprocess_ocr_poll`](#docprocess_ocr_poll) | Poll OCR job status |
+| [`docprocess_fill_pdf`](#docprocess_fill_pdf) | Fill a PDF form with data |
+| [`docprocess_fill_word_tpl`](#docprocess_fill_word_tpl) | Fill a Word template with data |
+| [`docprocess_create_word`](#docprocess_create_word) | Create a Word document from JSON spec |
+| [`docprocess_word_ai`](#docprocess_word_ai) | Edit Word documents with AI |
+| [`docprocess_word_ai_poll`](#docprocess_word_ai_poll) | Poll Word AI processing status |
+| [`docprocess_validate_csv`](#docprocess_validate_csv) | Validate CSV structure and data quality |
+
+---
+
+## Conversion tools — common pattern
+
+The nine conversion and text-extraction tools below all share the same base parameters and response structure.
+
+**Common parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_urls` | string[] | Yes | — | URLs of the source files to convert |
+| `file_links_expire_in_days` | number | No | `7` | Days until output file links expire (1–30) |
+
+**Common response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Summary message |
+| `files` | object[] | Array of conversion results |
+| `files[].file_url` | string | URL of the original file |
+| `files[].file_size` | number | Size of the original file in bytes |
+| `files[].mime_type` | string | MIME type of the original file |
+| `files[].filename` | string | Name of the original file |
+| `files[].converted.file_url` | string | URL of the converted file |
+| `files[].converted.file_size` | number | Size of the converted file in bytes |
+| `files[].converted.mime_type` | string | MIME type of the converted file |
+| `files[].converted.filename` | string | Name of the converted file |
+| `total` | number | Total number of files processed |
+
+---
+
+## docprocess_csv_to_xlsx
+
+Convert one or more CSV files to Excel format.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_xlsx_to_csv
+
+Convert Excel files to CSV. Multi-sheet workbooks produce a separate CSV per sheet.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_html_to_pdf
+
+Convert HTML files to PDF. URLs must point directly to `.html` files.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_md_to_docx
+
+Convert Markdown files to Word documents.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_md_to_pdf
+
+Convert Markdown files to PDF with configurable page size and orientation.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_urls` | string[] | Yes | — | URLs of the Markdown files to convert |
+| `file_links_expire_in_days` | number | No | `7` | Days until output file links expire (1–30) |
+| `pdf_format` | string | No | `"a4"` | Page size — `"a4"` or `"letter"` |
+| `pdf_orientation` | string | No | `"portrait"` | Page orientation — `"portrait"` or `"landscape"` |
+
+**Response fields:** Common response fields — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+---
+
+## docprocess_xml_to_json
+
+Convert XML files to JSON. Can return data inline or store as a file.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_urls` | string[] | Yes | — | URLs of the XML files to convert |
+| `file_links_expire_in_days` | number | No | `7` | Days until output file links expire (1–30) |
+| `store_xml_json` | boolean | No | `false` | `true` to store the JSON as a file, `false` to return data inline |
+
+**Response fields:** Common response fields — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+---
+
+## docprocess_docx_to_txt
+
+Extract plain text from Word documents.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_pdf_to_txt
+
+Extract plain text from PDF files.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_pptx_to_txt
+
+Extract plain text from PowerPoint files.
+
+**Parameters:** Common parameters only — see [conversion tools common pattern](#conversion-tools--common-pattern).
+
+**Response fields:** Common response fields — see above.
+
+---
+
+## docprocess_ocr
+
+Extract text from images or PDFs using OCR. Supports PNG, JPEG, GIF, WebP, BMP, TIFF, SVG, and PDF. Can run synchronously or asynchronously.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fileUrls` | string[] | Yes | — | URLs of images or PDFs to OCR |
+| `languageHints` | string[] | No | — | Language hints for OCR (e.g. `["en", "es"]`) |
+| `extractTextOnly` | boolean | No | `true` | Extract plain text only |
+| `collectionId` | string | No | — | File storage collection ID for output files |
+| `async` | boolean | No | `false` | Run asynchronously — poll with `docprocess_ocr_poll` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the request succeeded |
+| `async` | boolean | Whether the job is running asynchronously |
+| `collectionId` | string | Collection ID (if provided) |
+| `capability` | string | OCR capability used |
+| `totalFiles` | number | Total files submitted |
+| `successfulFiles` | number | Files processed successfully |
+| `failedFiles` | number | Files that failed |
+| `totalOcrPages` | number | Total pages processed |
+| `results` | object[] | Array of per-file results |
+| `results[].fileUrl` | string | URL of the input file |
+| `results[].inputFileName` | string | Original file name |
+| `results[].outputFileName` | string | Output file name |
+| `results[].outputMimeType` | string | MIME type of the output |
+| `results[].extractedText` | string | Extracted text content |
+| `results[].fileId` | string | File ID in storage |
+| `results[].signedUrl` | string | Signed URL for the output file |
+| `status` | string | Job status |
+| `responseId` | string | ID for polling async jobs |
+| `message` | string | Status message |
+
+---
+
+## docprocess_ocr_poll
+
+Poll the status of an asynchronous OCR job.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `responseId` | string | Yes | Response ID from the original `docprocess_ocr` call |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | Job status — `"completed"`, `"failed"`, `"processing"`, or `"queued"` |
+| `responseId` | string | The response ID |
+| `results` | object[] | Per-file results (same structure as `docprocess_ocr` results) |
+| `error` | string | Error message (when status is `"failed"`) |
+| `message` | string | Status message |
+
+---
+
+## docprocess_fill_pdf
+
+Fill a PDF form with field values.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `pdf_url` | string | Yes | — | URL of the PDF form to fill |
+| `form_data` | object | Yes | — | Field-name-to-value pairs for form fields |
+| `output_filename` | string | No | `"filled_form.pdf"` | Name for the output file |
+| `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the operation succeeded |
+| `status` | string | Status message |
+| `file_url` | string | URL of the filled PDF |
+| `filename` | string | Output file name |
+| `size` | number | File size in bytes |
+| `fields_filled` | number | Number of fields filled |
+| `field_summary` | string | Summary of filled fields |
+
+---
+
+## docprocess_fill_word_tpl
+
+Fill a Word template with data. Supports simple placeholders (`{name}`), nested paths (`{user.firstName}`), loops (`{#items}...{/items}`), and conditionals (`{#condition}...{/condition}`).
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `template_url` | string | Yes | — | URL of the Word template |
+| `data` | object | Yes | — | Data object with values for template placeholders |
+| `output_filename` | string | No | `"filled_template.docx"` | Name for the output file |
+| `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the operation succeeded |
+| `status` | string | Status message |
+| `file_url` | string | URL of the filled document |
+| `filename` | string | Output file name |
+| `size` | number | File size in bytes |
+| `placeholders_filled` | number | Number of placeholders filled |
+
+---
+
+## docprocess_create_word
+
+Create a Word document from a JSON specification. The spec defines sections with children containing heading, paragraph, bullet, and table elements.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `document_spec` | object | Yes | — | JSON specification with sections and child elements |
+| `output_filename` | string | No | `"created_document.docx"` | Name for the output file |
+| `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the operation succeeded |
+| `status` | string | Status message |
+| `file_url` | string | URL of the created document |
+| `filename` | string | Output file name |
+| `size` | number | File size in bytes |
+| `element_count` | number | Number of elements in the document |
+
+---
+
+## docprocess_word_ai
+
+Process a Word document with AI. Supports tasks like translation, summarization, and content editing. Runs asynchronously — poll with `docprocess_word_ai_poll`.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `documentUrl` | string | Yes | — | URL of the `.docx` file to process |
+| `task` | string | Yes | — | Task description (e.g. `"translate to Spanish"`) |
+| `model` | string | No | — | AI model — `claude-sonnet-4-5-20250929`, `gpt-4.1`, `gpt-4o`, or `gemini-2.5-flash` |
+| `strategy` | string | No | — | Processing strategy — `"SPARSE_CHANGES"` or `"DENSE_CHANGES"` (auto-detected if omitted) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | Job status |
+| `responseId` | string | ID for polling with `docprocess_word_ai_poll` |
+| `message` | string | Status message |
+| `task` | string | The task description |
+
+---
+
+## docprocess_word_ai_poll
+
+Poll the status of an asynchronous Word AI processing job.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `responseId` | string | Yes | Response ID from the original `docprocess_word_ai` call |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `status` | string | Job status — `"completed"`, `"failed"`, `"queued"`, or `"processing"` |
+| `responseId` | string | The response ID |
+| `resultFile` | object | The processed document (when completed) |
+| `resultFile.url` | string | URL of the processed document |
+| `resultFile.filename` | string | Output file name |
+| `resultFile.size` | number | File size in bytes |
+| `error` | string | Error message (when status is `"failed"`) |
+| `message` | string | Status message |
+
+---
+
+## docprocess_validate_csv
+
+Validate the structure and data quality of CSV files. Reports errors, warnings, and statistics including encoding, delimiter, column/row counts, and detected data types.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_urls` | string[] | Yes | — | URLs of the CSV files to validate |
+| `file_links_expire_in_days` | number | No | `7` | Days until output file links expire (1–30) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Summary message |
+| `files` | object[] | Array of validation results |
+| `files[].validation.isValid` | boolean | Whether the CSV is valid |
+| `files[].validation.errors` | string[] | Validation errors found |
+| `files[].validation.warnings` | string[] | Validation warnings |
+| `files[].validation.statistics.encoding` | string | Detected file encoding |
+| `files[].validation.statistics.delimiter` | string | Detected delimiter character |
+| `files[].validation.statistics.hasHeaders` | boolean | Whether headers were detected |
+| `files[].validation.statistics.columnCount` | number | Number of columns |
+| `files[].validation.statistics.rowCount` | number | Number of rows |
+| `files[].validation.statistics.emptyRowCount` | number | Number of empty rows |
+| `files[].validation.statistics.totalCells` | number | Total number of cells |
+| `files[].validation.statistics.emptyCells` | number | Number of empty cells |
+| `files[].validation.dataTypes` | object | Detected data types per column |
+| `total` | number | Total number of files validated |
