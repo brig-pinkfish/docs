@@ -3,9 +3,13 @@ title: "Code Execution"
 description: "Sandboxed JavaScript environment for chaining tools"
 ---
 
-Sandboxed JavaScript for multi-step logic and chaining tool calls. Server path: `/restricted/code-execution`.
+Run JavaScript in a sandboxed Node.js VM. Chain tool calls, transform data, and create files — all in a single request.
 
-## Calling Code Execution
+The typical pattern: your AI agent writes code, sends it to code execution, inspects the result, and revises if needed — iterating until the output is correct. This gives agents a way to perform multi-step logic, data transformations, and tool orchestration that would be difficult to express in a single tool call.
+
+## Quick Start
+
+Send code, get a result. All you need is a [runtime token](/api-reference/platform/authentication).
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
@@ -18,27 +22,80 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
     "params": {
       "name": "code-execution_execute",
       "arguments": {
-        "code": "const result = await callTool(\"/web-search\", \"search_googlesearch\", { query: \"Pinkfish AI\" });\nreturn result;"
+        "code": "return { message: \"hello world\", timestamp: new Date().toISOString() };"
       }
     },
     "id": 1
   }'
 ```
 
+The response contains your return value, any console output, and execution time:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "structuredContent": {
+      "result": {
+        "message": "hello world",
+        "timestamp": "2026-02-15T07:30:00.000Z"
+      },
+      "executionTime": 12
+    }
+  }
+}
+```
+
+<Note>Your code is wrapped in an async function, so you can use `await` and `return` directly.</Note>
+
+## Response Format
+
+Every response includes:
+
+| Field                | Type     | Description                                      |
+| -------------------- | -------- | ------------------------------------------------ |
+| `result`             | any      | Whatever your code returns                       |
+| `executionTime`      | number   | Milliseconds elapsed                             |
+| `logs`               | string[] | Output from `console.log`, `console.warn`, `console.error` (only present if non-empty) |
+| `createdArtifacts`   | object[] | Files created with `createArtifact()` (only present if non-empty) |
+
 ## Sandbox Environment
 
-Code runs in a **Node.js VM sandbox** with the following built-in helpers:
+Code runs in a **Node.js VM sandbox**. You get standard JavaScript built-ins (`JSON`, `Date`, `Math`, `Array`, `Promise`, etc.) plus these helpers:
 
-| Helper                                        | Description                                                                  |
-| --------------------------------------------- | ---------------------------------------------------------------------------- |
-| `callTool(serverPath, toolName, args)`        | Call any MCP tool via JSON-RPC. This is the primary way to chain tool calls. |
-| `readArtifact(identifier)`                    | Read artifacts by ID, filename, or URL                                       |
-| `createArtifact(filename, content, fileType)` | Create and store artifacts (files)                                           |
+| Helper                                        | Description                                           |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `callTool(serverPath, toolName, args)`        | Call any MCP tool. The primary way to chain tools.    |
+| `readArtifact(identifier)`                    | Read a file by ID, filename, or platform URL          |
+| `createArtifact(filename, content, fileType)` | Create and store a file                               |
+| `console.log()` / `warn()` / `error()`       | Debug output (captured in `logs`)                     |
+| `setTimeout` / `setInterval`                  | Timer functions (cleaned up after execution)          |
 
-## Example: Chaining Multiple Tools
+**Not available:** `require()`, `import()`, `fetch()`, `eval()`, `process`, `fs`, or any npm packages. All external access goes through `callTool()`.
+
+## Examples
+
+### Chain Multiple Tools
 
 ```javascript
-// Discover capabilities, then call the tool
+const searchResults = await callTool("/web-search", "search_googlesearch", {
+  query: "latest AI developments 2026",
+});
+
+const summary = await callTool("/embedded-groq", "embedded-groq_generate", {
+  prompt: JSON.stringify(searchResults),
+  systemPrompt: "Summarize these search results into 5 bullet points.",
+});
+
+return summary;
+```
+
+### Use Connected Services
+
+External integrations require a PCID (connection ID). Discover it first:
+
+```javascript
 const caps = await callTool("/pinkfish-sidekick", "capabilities_discover", {
   request: "search gmail",
 });
@@ -53,51 +110,99 @@ const emails = await callTool("/gmail", "gmail_search_emails", {
 return emails;
 ```
 
-## Example: Search and Summarize
+## Working with Files (Artifacts)
 
-```javascript
-// Step 1: Search the web
-const searchResults = await callTool("/web-search", "search_googlesearch", {
-  query: "latest AI developments 2026",
-});
+Artifacts let you create and read files across executions. They require a **chat context** — pass the `X-Chat-Id` header on your request.
 
-// Step 2: Summarize with an LLM
-const summary = await callTool("/embedded-groq", "embedded-groq_generate", {
-  prompt: JSON.stringify(searchResults),
-  systemPrompt: "Summarize these search results into 5 bullet points.",
-});
+### Setup
 
-return summary;
+Create an automation to get a chat ID, then include it in subsequent requests:
+
+```bash
+# Create an automation (returns an ID you'll use as chat ID)
+CHAT_ID=$(curl -s -X POST "https://app-api.app.pinkfish.ai/service/automations" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Selected-Org: $ORG_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-code-session"}' | jq -r '.id')
+
+# Now include X-Chat-Id in code execution requests
+curl -s -X POST "https://mcp.app.pinkfish.ai/restricted/code-execution" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Chat-Id: $CHAT_ID" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{ ... }'
 ```
 
-## Example: Create and Store a File
+### Create a File
 
 ```javascript
 const data = { report: "Monthly summary", items: [1, 2, 3] };
 
-// Create an artifact that can be retrieved later
-await createArtifact(
+const file = await createArtifact(
   "report.json",
   JSON.stringify(data, null, 2),
-  "application/json",
+  "json"
 );
 
-return { status: "Report saved", filename: "report.json" };
+return file;
+// → { success: true, filename: "report.json", id: "file-abc123", mimeType: "application/json", size: 56 }
+```
+
+The file appears in `createdArtifacts` in the response and is stored in the platform.
+
+**Supported file types:** `csv`, `txt`, `json`, `html`, `xml`, `js`, `ts`, `md`, `py`
+
+### Read a File
+
+In a later execution (same chat ID), read it back:
+
+```javascript
+const data = await readArtifact("report.json");
+
+if (data.success) {
+  const parsed = JSON.parse(data.content);
+  return parsed;
+}
+
+return { error: data.error };
+// readArtifact returns: { success, content, size, filename, mimeType, error }
+```
+
+You can also read by file ID or platform URL instead of filename.
+
+### Retrieve Files via REST API
+
+Outside of code execution, list and download files with the app API:
+
+```bash
+# List files for a chat
+curl -s "https://app-api.app.pinkfish.ai/service/automations/$CHAT_ID/files" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Selected-Org: $ORG_ID"
+
+# Get a specific file by ID
+curl -s "https://app-api.app.pinkfish.ai/service/files/by-id/$FILE_ID" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Selected-Org: $ORG_ID"
 ```
 
 ## Limits
 
 | Constraint      | Value                                                                       |
 | --------------- | --------------------------------------------------------------------------- |
-| **Timeout**     | 10 minutes (max 15 minutes)                                                 |
-| **Network**     | No direct network access — must use `callTool()` to reach external services |
-| **File system** | No file system access — use `createArtifact()` / `readArtifact()` for files |
+| **Timeout**     | 10 minutes (max 15 minutes via `timeout` parameter)                         |
+| **Code size**   | 100 KB                                                                      |
+| **Network**     | No direct network access — use `callTool()` for external services           |
+| **File system** | No file system — use `createArtifact()` / `readArtifact()` for files        |
+| **Libraries**   | No npm packages — only built-in JavaScript and sandbox helpers              |
 
 ## When to Use Code Execution
 
 | Use Case                                   | Recommended Approach                           |
 | ------------------------------------------ | ---------------------------------------------- |
-| Single tool call                           | Call the tool directly via `tools/call`        |
+| Single tool call                           | Call the tool directly via `tools/call`         |
 | Chaining multiple tools with logic         | **Code execution**                             |
 | Transforming data between tool calls       | **Code execution**                             |
 | Retry logic or error handling across tools | **Code execution**                             |
