@@ -1,0 +1,47 @@
+---
+title: "email"
+description: "Send emails with HTML, attachments, and threading"
+---
+
+**Server path:** `/email` | **Type:** Embedded | **PCID required:** No
+
+Send emails via the integrated email service. Supports HTML and plain text, multiple recipients, CC/BCC, file attachments via URL, and reply threading.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`email_send`](#email_send) | Send an email |
+
+---
+
+## email_send
+
+Send an email. Either `htmlBody` or `textBody` (or both) must be provided.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `to` | string or string[] | Yes | — | Recipient email address(es) |
+| `subject` | string | Yes | — | Email subject line |
+| `htmlBody` | string | No | — | HTML email content |
+| `textBody` | string | No | — | Plain text email content |
+| `replyTo` | string | No | — | Reply-to email address |
+| `cc` | string or string[] | No | — | CC recipient(s) |
+| `bcc` | string or string[] | No | — | BCC recipient(s) |
+| `threadId` | string | No | — | Thread ID to continue an existing email thread |
+| `attachmentUrls` | string[] | No | — | URLs of files to attach (fetched automatically) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+| `limits` | object | Current rate limit status |
+| `limits.minutely` | object | Per-minute rate limit |
+| `limits.minutely.current` | number | Emails sent this minute |
+| `limits.minutely.limit` | number | Maximum emails per minute |
+| `limits.daily` | object | Daily rate limit |
+| `limits.daily.current` | number | Emails sent today |
+| `limits.daily.limit` | number | Maximum emails per day |

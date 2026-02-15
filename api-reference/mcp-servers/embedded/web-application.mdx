@@ -1,0 +1,42 @@
+---
+title: "web-application"
+description: "Deploy HTML applications to shareable URLs"
+---
+
+**Server path:** `/web-application` | **Type:** Embedded | **PCID required:** No
+
+Deploy pre-built HTML to a shareable URL. Use for hosting web apps, interactive tools, and data-driven applications.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`web-application_deploy_web_app`](#web-application_deploy_web_app) | Deploy HTML to a shareable URL |
+
+---
+
+## web-application_deploy_web_app
+
+Deploy an HTML application to a shareable URL. Include `{{DATA_URL}}` as a placeholder in `html_content` to inject external data — provide `sdk_file_id` or `filestorage_id` to resolve it.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `html_content` | string | Yes | — | Complete HTML content to deploy |
+| `collectionId` | string | Yes | — | Filestorage collection to store the deployed file |
+| `sdk_file_id` | string | No | — | File ID to resolve for the `{{DATA_URL}}` placeholder (expires ~15 min) |
+| `filestorage_id` | string | No | — | Preferred data source for the `{{DATA_URL}}` placeholder |
+| `output_filename` | string | No | `"web_app.html"` | Output filename for the deployed file |
+| `file_links_expire_in_days` | number or `"never"` | No | `7` | Link expiration in days (1–30) or `"never"` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `success` | boolean | Whether the deployment succeeded |
+| `status` | string | Deployment status |
+| `html_url` | string | Shareable URL for the deployed application |
+| `html_size` | number | Size of the deployed HTML in bytes |
+| `filename` | string | Name of the deployed file |
+| `id` | string | Unique identifier for the deployed file |
