@@ -347,13 +347,14 @@ function extractParams(paramsSchema: Record<string, any>): ParamInfo[] {
 function escapeMarkdown(str: string): string {
   // Escape characters that MDX parses as JSX:
   //   { } → HTML entities (JSX expressions)
-  //   < followed by non-letter → HTML entity (prevents JSX tag parsing, e.g. "<2MB")
+  //   < > → HTML entities (prevents JSX tag parsing, e.g. <Drive>, <tenant>)
   //   | → backslash escape (markdown table delimiter)
   return str
     .replace(/\|/g, '\\|')
     .replace(/\{/g, '&#123;')
     .replace(/\}/g, '&#125;')
-    .replace(/<(?![a-zA-Z/!])/g, '&lt;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
 function generateToolSection(tool: any): string {
