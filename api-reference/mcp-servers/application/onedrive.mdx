@@ -23,7 +23,7 @@ File storage and sharing
 | [`onedrive_copy_item`](#onedrive_copy_item) | Copy a file or folder to a new location in OneDrive |
 | [`onedrive_move_item`](#onedrive_move_item) | Move a file or folder to a new location in OneDrive |
 | [`onedrive_upload_file`](#onedrive_upload_file) | Upload a file to OneDrive. Provide either fileUrl (to upload from a URL) or fileContent (base64 encoded content), but not both. NOTE: Newly uploaded files may not appear in search results for several minutes due to OneDrive indexing delays. Use onedrive_list_children or onedrive_get_item_by_path for immediate access. |
-| [`onedrive_download_file`](#onedrive_download_file) | Download a file from OneDrive. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a downloadUrl for efficient downloading of large files. Only use stream=false for small files (<2MB) that need immediate processing. NEVER use this tool for files that are supported by the microsoft excel, powerpoint, and word tools. |
+| [`onedrive_download_file`](#onedrive_download_file) | Download a file from OneDrive. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a downloadUrl for efficient downloading of large files. Only use stream=false for small files (&lt;2MB) that need immediate processing. NEVER use this tool for files that are supported by the microsoft excel, powerpoint, and word tools. |
 | [`onedrive_search_items`](#onedrive_search_items) | Search for files and folders in OneDrive. Two search modes: (1) FUZZY SEARCH (default): Full-text search across filenames and content. Without folderId, searches recursively through entire OneDrive. With folderId, only returns direct children of that folder (not recursive into subfolders). (2) EXACT MATCH: Find files with an exact filename, only searches direct children of the folder (not recursive). NOTE: Fuzzy search may not find recently uploaded files for several minutes due to OneDrive indexing delays. Use exact match with folderId for immediate results, or use onedrive_list_children. |
 | [`onedrive_get_shared_items`](#onedrive_get_shared_items) | Get items shared with you in OneDrive |
 | [`onedrive_create_sharing_link`](#onedrive_create_sharing_link) | Create a sharing link for a file or folder in OneDrive |
@@ -415,14 +415,14 @@ Upload a file to OneDrive. Provide either fileUrl (to upload from a URL) or file
 
 ## onedrive_download_file
 
-Download a file from OneDrive. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a downloadUrl for efficient downloading of large files. Only use stream=false for small files (<2MB) that need immediate processing. NEVER use this tool for files that are supported by the microsoft excel, powerpoint, and word tools.
+Download a file from OneDrive. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a downloadUrl for efficient downloading of large files. Only use stream=false for small files (&lt;2MB) that need immediate processing. NEVER use this tool for files that are supported by the microsoft excel, powerpoint, and word tools.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `itemId` | string | Yes | — | ID of the file to download |
-| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns a downloadUrl + auth headers for efficient streaming. Set to false only for small files (<2MB) requiring immediate base64 content. |
+| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns a downloadUrl + auth headers for efficient streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content. |
 | `extractText` | boolean | No | `true` | Automatically extracts text from supported formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files do not need extraction. Set to false to skip extraction. |
 
 <Expandable title="inputSchema">
@@ -442,7 +442,7 @@ Download a file from OneDrive. IN WORKFLOWS: Files are automatically saved to No
     "stream": {
       "type": "boolean",
       "default": true,
-      "description": "RECOMMENDED: true (default). Returns a downloadUrl + auth headers for efficient streaming. Set to false only for small files (<2MB) requiring immediate base64 content."
+      "description": "RECOMMENDED: true (default). Returns a downloadUrl + auth headers for efficient streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content."
     },
     "extractText": {
       "type": "boolean",

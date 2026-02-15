@@ -18,7 +18,7 @@ Buckets, objects, and presigned URLs
 | [`amazon-s3_list_objects`](#amazon-s3_list_objects) | List objects within a bucket with optional prefix and delimiter |
 | [`amazon-s3_list_folder`](#amazon-s3_list_folder) | List contents of a specific folder in a bucket, showing both files and subfolders |
 | [`amazon-s3_upload_file`](#amazon-s3_upload_file) | Upload a file to S3 from a URL source |
-| [`amazon-s3_download_file`](#amazon-s3_download_file) | Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a pre-signed downloadUrl for efficient downloading of large files. Only use stream=false for small files (<2MB) that need immediate processing. |
+| [`amazon-s3_download_file`](#amazon-s3_download_file) | Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a pre-signed downloadUrl for efficient downloading of large files. Only use stream=false for small files (&lt;2MB) that need immediate processing. |
 | [`amazon-s3_delete_file`](#amazon-s3_delete_file) | Delete a file from S3 |
 | [`amazon-s3_create_folder`](#amazon-s3_create_folder) | Create an empty folder in an S3 bucket |
 | [`amazon-s3_delete_folder`](#amazon-s3_delete_folder) | Delete a folder and all its contents from S3 |
@@ -196,7 +196,7 @@ Upload a file to S3 from a URL source
 
 ## amazon-s3_download_file
 
-Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a pre-signed downloadUrl for efficient downloading of large files. Only use stream=false for small files (<2MB) that need immediate processing.
+Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Outputs - no manual save step needed. By default, automatically extracts text from supported document formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files (TXT, CSV) do not need extraction. STREAMING IS PREFERRED: Use stream=true (default) to get a pre-signed downloadUrl for efficient downloading of large files. Only use stream=false for small files (&lt;2MB) that need immediate processing.
 
 **Parameters:**
 
@@ -204,7 +204,7 @@ Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Out
 | --- | --- | --- | --- | --- |
 | `bucket` | string | Yes | — | Name of the S3 bucket |
 | `key` | string | Yes | — | Object key/path of the file to download |
-| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns a pre-signed downloadUrl for efficient streaming. Set to false only for small files (<2MB) requiring immediate base64 content. |
+| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns a pre-signed downloadUrl for efficient streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content. |
 | `expiresIn` | number | No | `3600` | Expiration time for the pre-signed URL in seconds (default: 3600 = 1 hour). Only used when stream is true. |
 | `extractText` | boolean | No | `true` | Automatically extracts text from supported formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Text files do not need extraction. Set to false to skip extraction. |
 
@@ -229,7 +229,7 @@ Download a file from S3. IN WORKFLOWS: Files are automatically saved to Node Out
     "stream": {
       "type": "boolean",
       "default": true,
-      "description": "RECOMMENDED: true (default). Returns a pre-signed downloadUrl for efficient streaming. Set to false only for small files (<2MB) requiring immediate base64 content."
+      "description": "RECOMMENDED: true (default). Returns a pre-signed downloadUrl for efficient streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content."
     },
     "expiresIn": {
       "type": "number",

@@ -345,12 +345,15 @@ function extractParams(paramsSchema: Record<string, any>): ParamInfo[] {
 // ============================================================================
 
 function escapeMarkdown(str: string): string {
-  // Escape pipe characters in table cells and curly braces for MDX
-  // MDX treats { } as JSX expressions, so we must escape them outside code fences
+  // Escape characters that MDX parses as JSX:
+  //   { } → HTML entities (JSX expressions)
+  //   < followed by non-letter → HTML entity (prevents JSX tag parsing, e.g. "<2MB")
+  //   | → backslash escape (markdown table delimiter)
   return str
     .replace(/\|/g, '\\|')
     .replace(/\{/g, '&#123;')
     .replace(/\}/g, '&#125;')
+    .replace(/<(?![a-zA-Z/!])/g, '&lt;')
 }
 
 function generateToolSection(tool: any): string {

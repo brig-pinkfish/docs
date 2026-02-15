@@ -31,7 +31,7 @@ Issues, projects, and cycles
 | [`linear_create_attachment`](#linear_create_attachment) | Create an attachment (link) for an existing issue. The URL acts as an idempotent identifier - creating the same URL on the same issue will update the existing attachment. |
 | [`linear_get_attachment_by_id`](#linear_get_attachment_by_id) | Retrieve an attachment by its ID, including the associated issue information |
 | [`linear_get_attachments_by_url`](#linear_get_attachments_by_url) | Retrieve all attachments with a specific URL. Useful for finding attachments and their associated issues by URL. |
-| [`linear_download_file`](#linear_download_file) | Download a file from Linear's authenticated storage (uploads.linear.app). Use this to download images embedded in issue descriptions. The image URLs are found in markdown format like ![name](https://uploads.linear.app/...) in issue description fields. By default returns a downloadUrl for streaming. Set stream=false for small files (<2MB) to get immediate base64 content. |
+| [`linear_download_file`](#linear_download_file) | Download a file from Linear's authenticated storage (uploads.linear.app). Use this to download images embedded in issue descriptions. The image URLs are found in markdown format like ![name](https://uploads.linear.app/...) in issue description fields. By default returns a downloadUrl for streaming. Set stream=false for small files (&lt;2MB) to get immediate base64 content. |
 | [`linear_list_trigger_capabilities`](#linear_list_trigger_capabilities) | List available trigger types that can be created for Linear webhooks |
 | [`linear_create_trigger`](#linear_create_trigger) | Create a Linear webhook that will send events |
 | [`linear_update_trigger`](#linear_update_trigger) | Update an existing Linear webhook (can update label and event types) |
@@ -722,14 +722,14 @@ Retrieve all attachments with a specific URL. Useful for finding attachments and
 
 ## linear_download_file
 
-Download a file from Linear's authenticated storage (uploads.linear.app). Use this to download images embedded in issue descriptions. The image URLs are found in markdown format like ![name](https://uploads.linear.app/...) in issue description fields. By default returns a downloadUrl for streaming. Set stream=false for small files (<2MB) to get immediate base64 content.
+Download a file from Linear's authenticated storage (uploads.linear.app). Use this to download images embedded in issue descriptions. The image URLs are found in markdown format like ![name](https://uploads.linear.app/...) in issue description fields. By default returns a downloadUrl for streaming. Set stream=false for small files (&lt;2MB) to get immediate base64 content.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `url` | string | Yes | — | The full URL to download (must be an https://uploads.linear.app/ URL). Found in issue descriptions as markdown image references. |
-| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns downloadUrl + auth headers for streaming. Set to false only for small files (<2MB) requiring immediate base64 content. |
+| `stream` | boolean | No | `true` | RECOMMENDED: true (default). Returns downloadUrl + auth headers for streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content. |
 | `extractText` | boolean | No | `true` | Automatically extracts text from supported formats (PDF, DOCX, PPTX, XLSX) and includes it in the response. Set to false to skip extraction. |
 
 <Expandable title="inputSchema">
@@ -749,7 +749,7 @@ Download a file from Linear's authenticated storage (uploads.linear.app). Use th
     "stream": {
       "type": "boolean",
       "default": true,
-      "description": "RECOMMENDED: true (default). Returns downloadUrl + auth headers for streaming. Set to false only for small files (<2MB) requiring immediate base64 content."
+      "description": "RECOMMENDED: true (default). Returns downloadUrl + auth headers for streaming. Set to false only for small files (&lt;2MB) requiring immediate base64 content."
     },
     "extractText": {
       "type": "boolean",
