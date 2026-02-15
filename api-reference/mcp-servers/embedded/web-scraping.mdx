@@ -1,0 +1,143 @@
+---
+title: "web-scraping"
+description: "Scrape, crawl, map websites, and read RSS feeds"
+---
+
+**Server path:** `/web-scraping` | **Type:** Embedded | **PCID required:** No
+
+Scrape content from web pages, crawl entire websites, map site structure, and read RSS/Atom feeds.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`web-scraping_scrape`](#web-scraping_scrape) | Scrape content from one or more web pages |
+| [`web-scraping_crawl`](#web-scraping_crawl) | Crawl a website and scrape multiple pages |
+| [`web-scraping_map`](#web-scraping_map) | Map all URLs on a website |
+| [`web-scraping_rss`](#web-scraping_rss) | Read and parse RSS/Atom feeds |
+
+---
+
+## web-scraping_scrape
+
+Scrape content from one or more web pages. Supports multiple output formats, content filtering, and browser actions before scraping.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `urls` | string[] | Yes | — | URLs to scrape |
+| `formats` | enum[] | No | `["markdown"]` | Output formats: `"markdown"`, `"html"`, `"rawHtml"`, `"links"`, `"summary"` |
+| `onlyMainContent` | boolean | No | `true` | Extract only the main content, excluding headers, navs, footers, etc. |
+| `removeBase64Images` | boolean | No | `true` | Remove base64-encoded images from the output |
+| `waitFor` | number | No | — | Milliseconds to wait for the page to load before scraping |
+| `actions` | object[] | No | — | Browser actions to perform before scraping. Each action has `type` (required) and optional fields: `milliseconds`, `selector`, `direction`, `fullPage`, `text`, `key`. |
+| `includeTags` | string[] | No | — | HTML tags to include in the output |
+| `excludeTags` | string[] | No | — | HTML tags to exclude from the output |
+| `location` | object | No | — | Geolocation settings: `{ country?, languages? }` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `results` | object[] | Array of scrape results |
+| `results[].url` | string | The scraped URL |
+| `results[].success` | boolean | Whether the scrape succeeded |
+| `results[].data` | object | Scraped content in the requested formats |
+| `results[].file_urls` | string[] | URLs of any files found on the page |
+
+---
+
+## web-scraping_crawl
+
+Crawl a website starting from one or more URLs and scrape multiple pages. Follows links up to a configurable depth and page limit.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `urls` | string[] | Yes | — | Starting URLs to crawl from |
+| `limit` | number | No | `10` | Maximum number of pages to crawl |
+| `maxDepth` | number | No | — | Maximum link depth to crawl from the starting URLs |
+| `includePaths` | string[] | No | — | Glob patterns for paths to include (e.g. `["/blog/*"]`) |
+| `excludePaths` | string[] | No | — | Glob patterns for paths to exclude |
+| `allowExternalLinks` | boolean | No | `false` | Follow links to external domains |
+| `allowSubdomains` | boolean | No | `false` | Follow links to subdomains of the starting URLs |
+| `scrapeOptions` | object | No | — | Options applied to each scraped page: `{ formats?, onlyMainContent?, proxy?, waitFor? }` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `results` | object[] | Array of crawl results, one per scraped page |
+| `results[].url` | string | The crawled URL |
+| `results[].success` | boolean | Whether the page was scraped successfully |
+| `results[].data` | object | Scraped content in the requested formats |
+
+---
+
+## web-scraping_map
+
+Map all discoverable URLs on a website. Useful for understanding site structure before crawling.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `urls` | string[] | Yes | — | Website URLs to map |
+| `search` | string | No | — | Filter term to narrow results to matching URLs |
+| `limit` | number | No | `100` | Maximum number of URLs to return |
+| `includeSubdomains` | boolean | No | `false` | Include URLs from subdomains |
+| `sitemap` | enum | No | `"include"` | Sitemap handling: `"include"` (use sitemap and crawl), `"skip"` (ignore sitemap), `"only"` (use sitemap exclusively) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `urls` | object[] | Array of discovered URLs |
+| `urls[].url` | string | The discovered URL |
+| `urls[].metadata` | object | URL metadata (title, description, etc.) |
+
+---
+
+## web-scraping_rss
+
+Read and parse RSS/Atom feeds. Supports checking feed validity, retrieving all items, searching items, and getting the latest entries.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `action` | enum | Yes | — | Action to perform: `"check"` (validate feed), `"get"` (all items), `"search"` (filter items), `"get_latest"` (recent items) |
+| `url` | string | Yes | — | RSS/Atom feed URL |
+| `timeout` | number | No | `10000` | Request timeout in milliseconds |
+| `limit` | number | No | — | Maximum number of items to return |
+| `query` | string | No | — | Search query string (used with `"search"` action) |
+| `caseSensitive` | boolean | No | `false` | Whether the search query is case-sensitive |
+| `count` | number | No | `10` | Number of items to return (used with `"get_latest"` action) |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `action` | string | The action that was performed |
+| `result` | object | Result payload (structure varies by action) |
+
+**Response for `"check"` action:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `result.valid` | boolean | Whether the URL is a valid RSS/Atom feed |
+| `result.title` | string | Feed title |
+| `result.description` | string | Feed description |
+| `result.link` | string | Feed website link |
+
+**Response for `"get"`, `"search"`, and `"get_latest"` actions:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `result.items` | object[] | Array of feed items |
+| `result.items[].title` | string | Item title |
+| `result.items[].link` | string | Item URL |
+| `result.items[].pubDate` | string | Publication date |
+| `result.items[].content` | string | Item content or summary |
