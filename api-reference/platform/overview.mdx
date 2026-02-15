@@ -5,15 +5,37 @@ description: "Programmatic access to the Pinkfish MCP Farm"
 
 HTTP access to 1500+ tools via a single auth flow and JSON-RPC 2.0.
 
-## Base URLs
+## Get Started
 
-| Service      | URL                             |
-| ------------ | ------------------------------- |
-| Platform API | https://app-api.app.pinkfish.ai |
-| MCP Farm     | https://mcp.app.pinkfish.ai     |
-| PinkConnect  | https://proxy.pinkfish.ai       |
+Before you can make API calls, you need an **API key** and your **Organization ID**.
+
+<Steps>
+  <Step title="Create a Pinkfish account">
+    Sign up at [pinkfish.ai](https://pinkfish.ai) if you don't have an account.
+  </Step>
+  <Step title="Create an API key">
+    Go to **Settings → API Keys → Create**. Copy the key immediately — it's only shown once.
+    <Frame>
+      <img src="/images/api-keys-settings.png" alt="Settings → API Keys page in the Pinkfish dashboard" style={{ borderRadius: '0.5rem' }} />
+    </Frame>
+  </Step>
+  <Step title="Find your Organization ID">
+    Your Organization ID is displayed on the **Settings → API Keys** page, or under **Settings → Organization**.
+  </Step>
+</Steps>
+
+<Note>New API keys may take up to 60 seconds to activate.</Note>
+
+## How It Works
+
+Every API call follows two steps:
+
+1. **Authenticate** — Exchange your API key for a short-lived runtime token (JWT, 60 min)
+2. **Call a tool** — Send a JSON-RPC 2.0 request to the MCP Farm with your token
 
 ## Quick Start
+
+Requires `curl` and `jq`. Replace `YOUR_API_KEY` and `YOUR_ORG_ID` with the values from the steps above.
 
 ```bash
 # 1. Exchange API key for runtime token
@@ -30,29 +52,26 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/web-search" \
   -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"search_googlesearch","arguments":{"query":"latest AI news"}},"id":1}'
 ```
 
-## Example Script
+## Key Concepts
 
-Runnable script: authenticate, call web search, print result. Requires `curl` and `jq`.
+| Concept       | Description                                                          |
+| ------------- | -------------------------------------------------------------------- |
+| API Key       | Account credential. Exchange for a runtime token.                    |
+| Runtime Token | JWT from `/auth/token`. Bearer token for all MCP requests (60 min).  |
+| MCP Farm      | JSON-RPC 2.0 gateway over HTTPS.                                     |
+| Server        | Tool collection (e.g. `gmail`, `web-search`).                        |
+| Tool          | Callable action (e.g. `search_googlesearch`, `gmail_search_emails`). |
+| PCID          | Connection ID. Required for OAuth integrations (Gmail, Slack).       |
 
-```bash
-#!/bin/bash
-API_KEY="<YOUR_API_KEY>"
-ORG_ID="<YOUR_ORG_ID>"
-API_URL="https://app-api.app.pinkfish.ai"
-MCP_URL="https://mcp.app.pinkfish.ai"
+## Base URLs
 
-TOKEN_RESPONSE=$(curl -s -X POST "${API_URL}/auth/token" \
-  -H "X-Api-Key: ${API_KEY}" -H "X-Selected-Org: ${ORG_ID}" -H "Content-Type: application/json")
-PINKFISH_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.token')
-[ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ] && { echo "Auth failed"; echo "$TOKEN_RESPONSE" | jq .; exit 1; }
+| Service      | URL                             |
+| ------------ | ------------------------------- |
+| Platform API | https://app-api.app.pinkfish.ai |
+| MCP Farm     | https://mcp.app.pinkfish.ai     |
+| PinkConnect  | https://proxy.pinkfish.ai       |
 
-RESULT=$(curl -s -X POST "${MCP_URL}/web-search" \
-  -H "Authorization: Bearer ${PINKFISH_TOKEN}" -H "Content-Type: application/json" -H "Accept: application/json" \
-  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"search_googlesearch","arguments":{"query":"latest AI news"}},"id":1}')
-echo "$RESULT" | jq '.result.structuredContent // .result.content[0].text'
-```
-
-## Documentation
+## Learn More
 
 | Page                                                                             | Description                                    |
 | -------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -66,21 +85,6 @@ echo "$RESULT" | jq '.result.structuredContent // .result.content[0].text'
 | [Browser Automation](/api-reference/platform/browser-automation)                 | Natural language browser automation            |
 | [Workflows](/api-reference/platform/workflows)                                   | Automations with triggers and scheduling       |
 
-## Key Concepts
+## Limits
 
-| Concept       | Description                                                       |
-| ------------- | ----------------------------------------------------------------- |
-| API Key       | Account credential. Exchange for runtime token.                   |
-| Runtime Token | JWT from `/auth/token`. Bearer token for MCP requests.             |
-| MCP Farm      | JSON-RPC 2.0 gateway over HTTPS.                                  |
-| Server        | Tool collection (e.g. `gmail`, `web-search`).                     |
-| Tool          | Callable action (e.g. `search_googlesearch`, `gmail_search_emails`). |
-| PCID          | Connection ID. Required for OAuth integrations (Gmail, Slack).     |
-
-## Prerequisites
-
-- Pinkfish account
-- API key from **Settings → API Keys → Create** (shown once; copy immediately)
-- Organization ID from organization settings
-
-<Note>New API keys may take up to 60 seconds to activate.</Note>
+See [Rate Limits](/essentials/limits#rate-limits) for per-service request limits.
