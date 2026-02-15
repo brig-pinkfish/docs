@@ -25,7 +25,6 @@ Our API supports two execution models:
 When you create a trigger for your workflow, you get two options:
 
 1. **API Trigger Endpoint**: Use this with the API key in the header (`X-API-KEY`)
-
    - Format: `https://triggers.app.pinkfish.ai/ext/triggers/{triggerId}`
    - Requires API key in request headers
    - Best for server-to-server integrations
@@ -117,6 +116,7 @@ curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID'
 API triggers support file attachments using `multipart/form-data`. Attachments are stored in S3 and made available to your workflow via signed URLs in the inputs.
 
 **Limits:**
+
 - Maximum 25MB per file
 - Maximum 100MB total across all attachments
 - Maximum 20 files per request
@@ -268,14 +268,14 @@ https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/triggers/{triggerId}
 
 ### Key Differences from API Triggers
 
-| Feature        | API Trigger                   | Webhook Trigger                              |
-| -------------- | ----------------------------- | -------------------------------------------- |
-| Authentication | API key in `X-API-KEY` header | API key embedded in URL path                 |
-| URL Format     | `/ext/triggers/{triggerId}`   | `/ext/webhook/{apiKey}/triggers/{triggerId}` |
-| Content Types  | JSON, form-encoded, multipart | JSON, form-encoded only                      |
+| Feature          | API Trigger                   | Webhook Trigger                              |
+| ---------------- | ----------------------------- | -------------------------------------------- |
+| Authentication   | API key in `X-API-KEY` header | API key embedded in URL path                 |
+| URL Format       | `/ext/triggers/{triggerId}`   | `/ext/webhook/{apiKey}/triggers/{triggerId}` |
+| Content Types    | JSON, form-encoded, multipart | JSON, form-encoded only                      |
 | File Attachments | ✅ Supported (multipart)      | ❌ Not supported                             |
-| Use Case       | Server-to-server integrations | Third-party services with webhook support    |
-| Security       | More secure (key in headers)  | Less secure (key visible in URL)             |
+| Use Case         | Server-to-server integrations | Third-party services with webhook support    |
+| Security         | More secure (key in headers)  | Less secure (key visible in URL)             |
 
 ### Example Webhook Request
 
