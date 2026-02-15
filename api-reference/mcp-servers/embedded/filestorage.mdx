@@ -1,0 +1,316 @@
+---
+title: "filestorage"
+description: "File upload, download, sharing, and management"
+---
+
+**Server path:** `/filestorage` | **Type:** Embedded | **PCID required:** No
+
+Upload, download, share, and manage files. Create collections to organize files, generate shareable URLs, and make files public.
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| [`filestorage_list_collections`](#filestorage_list_collections) | List all file storage collections |
+| [`filestorage_create_collection`](#filestorage_create_collection) | Create a new file storage collection |
+| [`filestorage_list_items`](#filestorage_list_items) | List files in a collection |
+| [`filestorage_create_file_from_content`](#filestorage_create_file_from_content) | Create a file from text content |
+| [`filestorage_create_file_from_file_url`](#filestorage_create_file_from_file_url) | Upload a file from a URL |
+| [`filestorage_get_item`](#filestorage_get_item) | Get file metadata and optionally content |
+| [`filestorage_update_item`](#filestorage_update_item) | Append content or update metadata |
+| [`filestorage_delete_item`](#filestorage_delete_item) | Delete a file |
+| [`filestorage_create_sharelink`](#filestorage_create_sharelink) | Create a shareable URL for a file |
+| [`filestorage_make_file_public`](#filestorage_make_file_public) | Make a file publicly accessible |
+
+---
+
+## filestorage_list_collections
+
+List all file storage collections in the current workspace.
+
+**Parameters:** None
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `collections` | object[] | Array of collection objects |
+| `collections[].id` | string | Collection ID |
+| `collections[].name` | string | Collection name |
+| `collections[].description` | string | Collection description |
+| `collections[].type` | string | Collection type |
+| `collections[].maxItems` | number | Maximum number of items allowed |
+| `collections[].numItems` | number | Current number of items |
+| `collections[].isShared` | boolean | Whether the collection is shared |
+| `collections[].status` | string | Collection status |
+| `collections[].createdBy` | string | User ID of the creator |
+| `collections[].createdByName` | string | Display name of the creator |
+| `collections[].permissions` | object | Permission settings |
+| `collections[].permissions.admin` | boolean | Whether the user has admin access |
+| `collections[].permissions.read` | boolean | Whether the user has read access |
+| `collections[].permissions.write` | boolean | Whether the user has write access |
+| `collections[].createdAt` | string | Creation timestamp |
+| `collections[].updatedAt` | string | Last updated timestamp |
+| `collections[].triggerUrls` | object | Trigger URLs associated with the collection |
+
+---
+
+## filestorage_create_collection
+
+Create a new file storage collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `name` | string | Yes | Collection name |
+| `description` | string | No | Collection description |
+| `createdBy` | string | Yes | User ID of the creator |
+| `createdByName` | string | Yes | Display name of the creator |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | ID of the newly created collection |
+
+---
+
+## filestorage_list_items
+
+List files in a collection.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `format` | string | No | `"light"` | Response format: `"light"` or `"full"`. Full format includes signed URLs. |
+| `fileLinksExpireInDays` | number | No | `1` | Number of days until file links expire (1–7 or `"never"`) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `queryParams` | object | No | — | Additional query parameters |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `items` | object[] | Array of file objects |
+| `items[].id` | string | File ID |
+| `items[].filename` | string | File name |
+| `items[].filepath` | string | File path in storage |
+| `items[].type` | string | File type |
+| `items[].mime_type` | string | MIME type of the file |
+| `items[].file_size` | number | File size in bytes |
+| `items[].isPublic` | boolean | Whether the file is publicly accessible |
+| `items[].collectionId` | string | Parent collection ID |
+| `items[].createdAt` | string | Creation timestamp |
+| `items[].updatedAt` | string | Last updated timestamp |
+| `items[].signedUrl` | string | Signed download URL (full format only) |
+| `items[].metadata` | object | File metadata |
+
+---
+
+## filestorage_create_file_from_content
+
+Create a file from text content.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `filename` | string | Yes | — | Name for the new file |
+| `content` | string | Yes | — | Text content of the file |
+| `metadata` | object or string | No | — | Metadata to attach to the file |
+| `fileLinksExpireInDays` | number | No | `1` | Number of days until file links expire (1–7 or `"never"`) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `returnFileUrl` | boolean | No | `false` | Whether to return a signed file URL in the response |
+| `replaceExisting` | boolean | No | `true` | Whether to replace an existing file with the same name |
+| `queryParams` | object | No | — | Additional query parameters |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | File ID |
+| `collectionId` | string | Parent collection ID |
+| `file_url` | string | Signed file URL (when `returnFileUrl` is `true`) |
+| `file_size` | number | File size in bytes |
+| `mime_type` | string | MIME type of the file |
+| `metadata` | object | File metadata |
+
+---
+
+## filestorage_create_file_from_file_url
+
+Upload a file from a URL.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `fileUrl` | string | Yes | — | URL of the file to upload |
+| `metadata` | object or string | No | — | Metadata to attach to the file |
+| `fileLinksExpireInDays` | number | No | `1` | Number of days until file links expire (1–7 or `"never"`) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `returnFileUrl` | boolean | No | `false` | Whether to return a signed file URL in the response |
+| `replaceExisting` | boolean | No | `true` | Whether to replace an existing file with the same name |
+| `queryParams` | object | No | — | Additional query parameters |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | File ID |
+| `file_url` | string | Signed file URL |
+| `file_size` | number | File size in bytes |
+| `mime_type` | string | MIME type of the file |
+| `metadata` | object | File metadata |
+| `collectionId` | string | Parent collection ID |
+
+---
+
+## filestorage_get_item
+
+Get file metadata and optionally file content.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `filename` | string | Yes | — | Name of the file to retrieve |
+| `getFileContents` | boolean | No | `false` | Whether to return the file content (text files only) |
+| `fileLinksExpireInDays` | number | No | `1` | Number of days until file links expire (1–7 or `"never"`) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `queryParams` | object | No | — | Additional query parameters |
+| `returnSignedUrl` | boolean | No | `false` | Whether to return a signed download URL |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | File ID |
+| `filename` | string | File name |
+| `filepath` | string | File path in storage |
+| `type` | string | File type |
+| `mime_type` | string | MIME type of the file |
+| `size` | number | File size |
+| `file_size` | number | File size in bytes |
+| `isPublic` | boolean | Whether the file is publicly accessible |
+| `collectionId` | string | Parent collection ID |
+| `createdAt` | string | Creation timestamp |
+| `updatedAt` | string | Last updated timestamp |
+| `signedUrl` | string | Signed download URL (when `returnSignedUrl` is `true`) |
+| `content` | string | File content (when `getFileContents` is `true`) |
+| `metadata` | object | File metadata |
+| `accesslist` | object | Access control list for the file |
+
+---
+
+## filestorage_update_item
+
+Append content to a text file or update file metadata.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collectionId` | string | Yes | — | Collection ID |
+| `filename` | string | Yes | — | Name of the file to update |
+| `content` | string | No | — | Text content to append (text files only) |
+| `metadata` | object or string | No | — | Metadata to update |
+| `fileLinksExpireInDays` | number | No | — | Number of days until file links expire (1–7 or `"never"`) |
+| `fileLinksExpireInMinutes` | number | No | — | Number of minutes until file links expire (overrides days) |
+| `returnFileUrl` | boolean | No | `false` | Whether to return a signed file URL in the response |
+| `proxyId` | string | No | — | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `id` | string | File ID |
+| `file_url` | string | Signed file URL (when `returnFileUrl` is `true`) |
+| `file_size` | number | File size in bytes |
+| `mime_type` | string | MIME type of the file |
+| `isPublic` | boolean | Whether the file is publicly accessible |
+| `filename` | string | File name |
+| `metadata` | object | File metadata |
+
+---
+
+## filestorage_delete_item
+
+Delete a file from a collection. This action is irreversible.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `filename` | string | Yes | Name of the file to delete |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Confirmation message |
+
+---
+
+## filestorage_create_sharelink
+
+Create a shareable URL for a file. The link can be configured to expire after a set number of days or minutes.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `filename` | string | Yes | Name of the file to share |
+| `fileLinksExpireInDays` | number | No | Number of days until the link expires (1–7) |
+| `fileLinksExpireInMinutes` | number | No | Number of minutes until the link expires (overrides days) |
+| `queryParams` | object | No | Additional query parameters to include in the link |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `short_url` | string | Shareable short URL |
+| `expiresAt` | string | Expiration timestamp of the link |
+| `queryParams` | object | Query parameters included in the link |
+
+---
+
+## filestorage_make_file_public
+
+Make a file publicly accessible via a permanent URL. Once public, the file can be accessed by anyone with the URL.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `collectionId` | string | Yes | Collection ID |
+| `filename` | string | Yes | Name of the file to make public |
+| `proxyId` | string | No | Proxy ID for cross-workspace access |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Success message |
+| `public_url` | string | Permanent public URL for the file |
+| `filename` | string | File name |
+| `isPublic` | boolean | Whether the file is now publicly accessible |
