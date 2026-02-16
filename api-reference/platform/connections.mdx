@@ -4,23 +4,44 @@ sidebarTitle: "Connecting to MCPs"
 description: "PCIDs and external integrations"
 ---
 
-Two server types: **embedded** (no connection) and **application** (Gmail, Slack, etc. — require PCID per call). Set up connections on the [Integrations](https://app.pinkfish.ai/integrations) page in the Pinkfish web app. Get PCIDs from `capabilities_discover` or the [PinkConnect API](#listing-connections).
+Pinkfish MCP (Model Context Protocol) servers fall into two categories: **embedded** and **application**. Embedded servers are built into the platform and require no setup. Application servers connect to external services like Gmail or Slack and require an OAuth connection managed through **PinkConnect**.
 
-A **PCID** (PinkConnect ID) identifies a specific OAuth connection to an external service. It is used only with **application MCPs** — embedded MCPs do not use PCIDs. Pass the PCID in tool arguments so the MCP Farm knows which connection to use (e.g. which Gmail account).
+This page explains how to set up connections, retrieve your **PCID** (PinkConnect ID), and pass it when calling application MCP tools.
+
+<Note>All examples on this page require a runtime token (`$PINKFISH_TOKEN`). See [Authentication](/api-reference/platform/authentication) to learn how to get one.</Note>
 
 ## Embedded MCPs
 
-**Embedded MCPs** are built-in platform services — code execution, AI models, data storage, web search, and more. No connection or PCID required; authenticate and call. See the [Embedded MCPs overview](/api-reference/mcp-servers/embedded/overview) for the full list.
+**Embedded MCPs** are built-in platform services — code execution, AI models, data storage, web search, and more. They require no connection or PCID. Just authenticate and call them through the [MCP Farm](/api-reference/platform/mcp-protocol) (`https://mcp.app.pinkfish.ai`). See the [Embedded MCPs overview](/api-reference/mcp-servers/embedded/overview) for the full list.
 
 ## Application MCPs
 
-**Application MCPs** are proxies to external services (Gmail, Slack, Salesforce, Google Drive, etc.). Each requires a connection in PinkConnect and a PCID per tool call. Set up connections on the [Integrations](https://app.pinkfish.ai/integrations) page. See the [Application MCPs overview](/api-reference/mcp-servers/application/overview) for the full list.
+**Application MCPs** are proxied connections to external services (Gmail, Slack, Salesforce, Google Drive, etc.). Each one requires:
 
-## Listing Connections
+1. **A connection** — Set up on the [Integrations](https://app.pinkfish.ai/integrations) page in the Pinkfish web app. This creates an OAuth link to the external service.
+2. **A PCID** — Every connection has a unique PinkConnect ID. You pass this PCID as a tool argument so the [MCP Farm](/api-reference/platform/mcp-protocol) knows which OAuth connection to use (e.g., which Gmail account).
+
+See the [Application MCPs overview](/api-reference/mcp-servers/application/overview) for the full list of supported services.
+
+## Retrieving Your PCID
+
+There are two ways to get the PCID for a connection:
+
+| Method | When to use | Base URL |
+| --- | --- | --- |
+| [PinkConnect API](#pinkconnect-api) | List all your connections and their statuses | `https://proxy.pinkfish.ai` (PinkConnect) |
+| [Discovery](#discovery) | Find the right connection for a specific task using natural language | `https://mcp.app.pinkfish.ai` (MCP Farm) |
 
 ### PinkConnect API
 
-**Base URL:** `https://proxy.pinkfish.ai`
+**PinkConnect** is the connection management service that handles OAuth links to external services. Its API lives at a separate base URL from the MCP Farm:
+
+| Service | Base URL |
+| --- | --- |
+| PinkConnect (connection management) | `https://proxy.pinkfish.ai` |
+| MCP Farm (tool execution) | `https://mcp.app.pinkfish.ai` |
+
+List all your connections:
 
 ```bash
 curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
@@ -28,11 +49,11 @@ curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
   -H "Content-Type: application/json"
 ```
 
-| Query param | Description                                                          |
-| ----------- | -------------------------------------------------------------------- |
-| `statuses`  | Comma-separated: `connected`, `error`, `disconnected`. Default: all. |
+| Query param | Description |
+| --- | --- |
+| `statuses` | Comma-separated filter: `connected`, `error`, `disconnected`. Default: all. |
 
-**Response:** Array of connections. Each `id` is the PCID.
+**Response:** An array of connections. Each `id` field is the PCID you pass to application MCP tools. The `service_key` corresponds to the MCP server path (e.g., a `service_key` of `"gmail"` means you call `https://mcp.app.pinkfish.ai/gmail`).
 
 ```json
 [
@@ -53,7 +74,9 @@ curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
 
 ### Discovery
 
-Use `capabilities_discover` for task-relevant connections. PCIDs are in `connections[].id`:
+If you don't know which connection to use, the `capabilities_discover` tool can find it for you based on a natural language description of your task. This tool lives on the [`pinkfish-sidekick`](/api-reference/mcp-servers/embedded/pinkfish-sidekick) embedded MCP server and is called through the MCP Farm.
+
+It returns both the tools and connections relevant to your request. The PCID is in `connections[].id`. See the [Discovery](/api-reference/platform/discovery) page for full details.
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
@@ -75,7 +98,7 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
 
 ## Using a PCID
 
-Pass the PCID as an argument when calling an application MCP tool:
+Once you have a PCID, pass it as an argument when calling any application MCP tool. The request goes to the MCP Farm (`https://mcp.app.pinkfish.ai`), not PinkConnect:
 
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
