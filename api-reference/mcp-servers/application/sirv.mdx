@@ -18,7 +18,13 @@ Image CDN upload, management, and statistics
 | [`sirv_get_image_info`](#sirv_get_image_info) | Get information about an image on Sirv |
 | [`sirv_list_files`](#sirv_list_files) | List files in Sirv account |
 | [`sirv_delete_file`](#sirv_delete_file) | Delete a file from Sirv |
-| [`sirv_get_stats`](#sirv_get_stats) | Get usage statistics for Sirv account |
+| [`sirv_get_stats`](#sirv_get_stats) | Get HTTP usage statistics for Sirv account |
+| [`sirv_search_files`](#sirv_search_files) | Search files in Sirv using Elasticsearch-style query (filename, basename, dirname, meta, size, dates) |
+| [`sirv_fetch_file`](#sirv_fetch_file) | Fetch a file from a URL and store it in Sirv |
+| [`sirv_get_account`](#sirv_get_account) | Get Sirv account info (CDN URL, aliases, etc.) |
+| [`sirv_get_account_storage`](#sirv_get_account_storage) | Get Sirv account storage usage |
+| [`sirv_download_file`](#sirv_download_file) | Get the public URL to download a file from Sirv CDN. Sirv files are served at public URLs - no auth required. Returns downloadUrl for direct access. Use for images, PDFs, or any file stored in Sirv. |
+| [`sirv_get_storage_stats`](#sirv_get_storage_stats) | Get Sirv storage statistics |
 
 ---
 
@@ -123,8 +129,7 @@ List files in Sirv account
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `dirname` | string | No | `"/"` | Directory to list files from |
-| `limit` | number | No | `100` | Maximum number of files to return |
+| `dirname` | string | No | `"/"` | Directory to list (e.g. /Images, /). Root "/" is supported and lists top-level items. |
 
 <Expandable title="inputSchema">
 
@@ -139,12 +144,7 @@ List files in Sirv account
     "dirname": {
       "type": "string",
       "default": "/",
-      "description": "Directory to list files from"
-    },
-    "limit": {
-      "type": "number",
-      "default": 100,
-      "description": "Maximum number of files to return"
+      "description": "Directory to list (e.g. /Images, /). Root \"/\" is supported and lists top-level items."
     }
   },
   "required": [
@@ -195,7 +195,7 @@ Delete a file from Sirv
 
 ## sirv_get_stats
 
-Get usage statistics for Sirv account
+Get HTTP usage statistics for Sirv account
 
 **Parameters:**
 
@@ -221,6 +221,226 @@ Get usage statistics for Sirv account
     "endDate": {
       "type": "string",
       "description": "End date for stats (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_search_files
+
+Search files in Sirv using Elasticsearch-style query (filename, basename, dirname, meta, size, dates)
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `query` | string | Yes | — | Search query (Elasticsearch syntax) |
+| `size` | number | No | `100` | Max results to return |
+| `from` | number | No | `0` | Offset for pagination |
+| `sort` | object | No | — | Sort options, e.g. &#123; "filename": "asc" &#125; |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search query (Elasticsearch syntax)"
+    },
+    "size": {
+      "type": "number",
+      "default": 100,
+      "description": "Max results to return"
+    },
+    "from": {
+      "type": "number",
+      "default": 0,
+      "description": "Offset for pagination"
+    },
+    "sort": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Sort options, e.g. { \"filename\": \"asc\" }"
+    }
+  },
+  "required": [
+    "PCID",
+    "query"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_fetch_file
+
+Fetch a file from a URL and store it in Sirv
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `url` | string | Yes | — | URL to fetch from |
+| `filename` | string | Yes | — | Destination path in Sirv (e.g. /Images/file.jpg) |
+| `auth` | object | No | — | Basic auth if URL requires it |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "url": {
+      "type": "string",
+      "description": "URL to fetch from"
+    },
+    "filename": {
+      "type": "string",
+      "description": "Destination path in Sirv (e.g. /Images/file.jpg)"
+    },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "description": "Basic auth if URL requires it"
+    }
+  },
+  "required": [
+    "PCID",
+    "url",
+    "filename"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_get_account
+
+Get Sirv account info (CDN URL, aliases, etc.)
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_get_account_storage
+
+Get Sirv account storage usage
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_download_file
+
+Get the public URL to download a file from Sirv CDN. Sirv files are served at public URLs - no auth required. Returns downloadUrl for direct access. Use for images, PDFs, or any file stored in Sirv.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `filename` | string | Yes | — | Sirv file path (e.g. /Images/file.jpg) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "filename": {
+      "type": "string",
+      "description": "Sirv file path (e.g. /Images/file.jpg)"
+    }
+  },
+  "required": [
+    "PCID",
+    "filename"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sirv_get_storage_stats
+
+Get Sirv storage statistics
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
     }
   },
   "required": [

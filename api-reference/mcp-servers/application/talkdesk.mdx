@@ -16,9 +16,7 @@ Contact center agents, calls, queues, and recordings
 | --- | --- |
 | [`talkdesk_get_users`](#talkdesk_get_users) | Get list of users in the Talkdesk account. Uses the Users API (users:read scope). |
 | [`talkdesk_get_user`](#talkdesk_get_user) | Get detailed information about a specific user by ID. |
-| [`talkdesk_create_contact`](#talkdesk_create_contact) | Create a new contact in Talkdesk. |
-| [`talkdesk_get_contact`](#talkdesk_get_contact) | Retrieve a contact by ID or phone number. |
-| [`talkdesk_update_contact`](#talkdesk_update_contact) | Update an existing contact. |
+| [`talkdesk_get_contact`](#talkdesk_get_contact) | Retrieve a contact by ID (returns single contact) or search by phone number (returns paginated list). |
 | [`talkdesk_request`](#talkdesk_request) | Make a raw API request to any Talkdesk endpoint. Use when you need to call APIs not covered by the specialized tools (e.g. ring-groups, data/reports/calls/jobs, recordings). Provide the path (with optional query string) and HTTP method. Access is gated by the connection's OAuth scopes - 401 means the token lacks the required scope for that path. Common paths: users, users/&#123;id&#125;, users/me, contacts, contacts/&#123;id&#125;, ring-groups, data/reports/calls/jobs, calls/&#123;id&#125;/recordings, recordings/&#123;id&#125;. |
 
 ---
@@ -110,87 +108,16 @@ Get detailed information about a specific user by ID.
 
 ---
 
-## talkdesk_create_contact
-
-Create a new contact in Talkdesk.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `name` | string | Yes | — | Contact name |
-| `phoneNumber` | string | Yes | — | Contact phone number |
-| `email` | string | No | — | Contact email address |
-| `company` | string | No | — | Contact company |
-| `notes` | string | No | — | Contact notes |
-| `tags` | string[] | No | — | Tags to associate with the contact |
-| `customFields` | object | No | — | Custom field values |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "name": {
-      "type": "string",
-      "description": "Contact name"
-    },
-    "phoneNumber": {
-      "type": "string",
-      "description": "Contact phone number"
-    },
-    "email": {
-      "type": "string",
-      "description": "Contact email address"
-    },
-    "company": {
-      "type": "string",
-      "description": "Contact company"
-    },
-    "notes": {
-      "type": "string",
-      "description": "Contact notes"
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Tags to associate with the contact"
-    },
-    "customFields": {
-      "type": "object",
-      "additionalProperties": true,
-      "description": "Custom field values"
-    }
-  },
-  "required": [
-    "PCID",
-    "name",
-    "phoneNumber"
-  ]
-}
-```
-
-</Expandable>
-
----
-
 ## talkdesk_get_contact
 
-Retrieve a contact by ID or phone number.
+Retrieve a contact by ID (returns single contact) or search by phone number (returns paginated list).
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `contactId` | string | No | — | Contact ID |
-| `phoneNumber` | string | No | — | Phone number |
+| `contactId` | string | No | — | Contact ID (returns single contact) |
+| `phoneNumber` | string | No | — | Phone number in E.164 format (returns paginated list) |
 
 <Expandable title="inputSchema">
 
@@ -204,90 +131,15 @@ Retrieve a contact by ID or phone number.
     },
     "contactId": {
       "type": "string",
-      "description": "Contact ID"
+      "description": "Contact ID (returns single contact)"
     },
     "phoneNumber": {
       "type": "string",
-      "description": "Phone number"
+      "description": "Phone number in E.164 format (returns paginated list)"
     }
   },
   "required": [
     "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_update_contact
-
-Update an existing contact.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `contactId` | string | Yes | — | Contact ID to update |
-| `name` | string | No | — | Updated contact name |
-| `phoneNumber` | string | No | — | Updated phone number |
-| `email` | string | No | — | Updated email address |
-| `company` | string | No | — | Updated company |
-| `notes` | string | No | — | Updated notes |
-| `tags` | string[] | No | — | Updated tags |
-| `customFields` | object | No | — | Updated custom field values |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "contactId": {
-      "type": "string",
-      "description": "Contact ID to update"
-    },
-    "name": {
-      "type": "string",
-      "description": "Updated contact name"
-    },
-    "phoneNumber": {
-      "type": "string",
-      "description": "Updated phone number"
-    },
-    "email": {
-      "type": "string",
-      "description": "Updated email address"
-    },
-    "company": {
-      "type": "string",
-      "description": "Updated company"
-    },
-    "notes": {
-      "type": "string",
-      "description": "Updated notes"
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Updated tags"
-    },
-    "customFields": {
-      "type": "object",
-      "additionalProperties": true,
-      "description": "Updated custom field values"
-    }
-  },
-  "required": [
-    "PCID",
-    "contactId"
   ]
 }
 ```

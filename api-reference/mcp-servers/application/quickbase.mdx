@@ -22,6 +22,9 @@ Applications, tables, records, and fields
 | [`quickbase_get_table_info`](#quickbase_get_table_info) | Get information about a Quickbase table |
 | [`quickbase_list_tables`](#quickbase_list_tables) | List all tables in a Quickbase application |
 | [`quickbase_get_fields`](#quickbase_get_fields) | Get field definitions for a Quickbase table |
+| [`quickbase_list_reports`](#quickbase_list_reports) | List all reports/views for a Quickbase table |
+| [`quickbase_run_report`](#quickbase_run_report) | Run a saved report/view in a Quickbase table and return its results |
+| [`quickbase_get_relationships`](#quickbase_get_relationships) | Get table relationships (foreign keys, lookups) for a Quickbase table |
 
 ---
 
@@ -33,7 +36,6 @@ Create a new record in a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID to create record in |
 | `fieldData` | object | Yes | — | Field data as key-value pairs (field ID or name as key) |
 | `fieldsToReturn` | string[] | No | — | Specific field IDs to return in response |
@@ -47,10 +49,6 @@ Create a new record in a Quickbase table
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
     },
     "tableId": {
       "type": "string",
@@ -71,7 +69,6 @@ Create a new record in a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
     "tableId",
     "fieldData"
   ]
@@ -90,7 +87,6 @@ Update an existing record in a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID containing the record |
 | `recordId` | string | Yes | — | Record ID to update |
 | `fieldData` | object | Yes | — | Updated field data as key-value pairs |
@@ -105,10 +101,6 @@ Update an existing record in a Quickbase table
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
     },
     "tableId": {
       "type": "string",
@@ -133,7 +125,6 @@ Update an existing record in a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
     "tableId",
     "recordId",
     "fieldData"
@@ -153,7 +144,6 @@ Delete a record from a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID containing the record |
 | `recordId` | string | Yes | — | Record ID to delete |
 
@@ -167,10 +157,6 @@ Delete a record from a Quickbase table
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
-    },
     "tableId": {
       "type": "string",
       "description": "Table ID containing the record"
@@ -182,7 +168,6 @@ Delete a record from a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
     "tableId",
     "recordId"
   ]
@@ -201,7 +186,6 @@ Query records from a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID to query |
 | `where` | string | No | — | WHERE clause for filtering records |
 | `select` | string[] | No | — | Field IDs to select (defaults to all) |
@@ -218,10 +202,6 @@ Query records from a Quickbase table
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
     },
     "tableId": {
       "type": "string",
@@ -270,7 +250,6 @@ Query records from a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
     "tableId"
   ]
 }
@@ -284,12 +263,6 @@ Query records from a Quickbase table
 
 Get information about a Quickbase application
 
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
-
 <Expandable title="inputSchema">
 
 ```json
@@ -299,15 +272,10 @@ Get information about a Quickbase application
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
     }
   },
   "required": [
-    "PCID",
-    "appId"
+    "PCID"
   ]
 }
 ```
@@ -324,7 +292,6 @@ Get information about a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID to get info for |
 
 <Expandable title="inputSchema">
@@ -337,10 +304,6 @@ Get information about a Quickbase table
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
-    },
     "tableId": {
       "type": "string",
       "description": "Table ID to get info for"
@@ -348,7 +311,6 @@ Get information about a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
     "tableId"
   ]
 }
@@ -362,12 +324,6 @@ Get information about a Quickbase table
 
 List all tables in a Quickbase application
 
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
-
 <Expandable title="inputSchema">
 
 ```json
@@ -377,15 +333,10 @@ List all tables in a Quickbase application
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
     }
   },
   "required": [
-    "PCID",
-    "appId"
+    "PCID"
   ]
 }
 ```
@@ -402,7 +353,6 @@ Get field definitions for a Quickbase table
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `appId` | string | Yes | — | Quickbase application ID |
 | `tableId` | string | Yes | — | Table ID to get fields for |
 | `includeFieldPerms` | boolean | No | `false` | Include field permissions in response |
 
@@ -416,10 +366,6 @@ Get field definitions for a Quickbase table
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "appId": {
-      "type": "string",
-      "description": "Quickbase application ID"
-    },
     "tableId": {
       "type": "string",
       "description": "Table ID to get fields for"
@@ -432,7 +378,130 @@ Get field definitions for a Quickbase table
   },
   "required": [
     "PCID",
-    "appId",
+    "tableId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## quickbase_list_reports
+
+List all reports/views for a Quickbase table
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tableId` | string | Yes | — | Table ID to list reports for |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "tableId": {
+      "type": "string",
+      "description": "Table ID to list reports for"
+    }
+  },
+  "required": [
+    "PCID",
+    "tableId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## quickbase_run_report
+
+Run a saved report/view in a Quickbase table and return its results
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tableId` | string | Yes | — | Table ID the report belongs to |
+| `reportId` | string | Yes | — | Report ID to run |
+| `top` | number | No | — | Maximum number of records to return |
+| `skip` | number | No | — | Number of records to skip |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "tableId": {
+      "type": "string",
+      "description": "Table ID the report belongs to"
+    },
+    "reportId": {
+      "type": "string",
+      "description": "Report ID to run"
+    },
+    "top": {
+      "type": "number",
+      "description": "Maximum number of records to return"
+    },
+    "skip": {
+      "type": "number",
+      "description": "Number of records to skip"
+    }
+  },
+  "required": [
+    "PCID",
+    "tableId",
+    "reportId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## quickbase_get_relationships
+
+Get table relationships (foreign keys, lookups) for a Quickbase table
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tableId` | string | Yes | — | Table ID to get relationships for |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "tableId": {
+      "type": "string",
+      "description": "Table ID to get relationships for"
+    }
+  },
+  "required": [
+    "PCID",
     "tableId"
   ]
 }

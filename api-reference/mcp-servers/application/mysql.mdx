@@ -14,27 +14,79 @@ MySQL database queries and schema management
 
 | Tool | Description |
 | --- | --- |
-| [`mysql_execute_query`](#mysql_execute_query) | Execute a SQL query on MySQL database |
-| [`mysql_select_data`](#mysql_select_data) | Select data from a MySQL table |
+| [`mysql_get_info`](#mysql_get_info) | Get MySQL database connection information |
+| [`mysql_list_databases`](#mysql_list_databases) | List all databases on the MySQL server |
+| [`mysql_execute_query`](#mysql_execute_query) | Execute a SQL query on MySQL. Use ? placeholders for parameterized queries (e.g., "SELECT * FROM users WHERE id = ? AND status = ?"). Parameters are applied in order. |
+| [`mysql_select_data`](#mysql_select_data) | Select data from a MySQL table. Use ? placeholders in where with whereParams for safe parameterization. |
 | [`mysql_insert_data`](#mysql_insert_data) | Insert data into a MySQL table |
-| [`mysql_update_data`](#mysql_update_data) | Update data in a MySQL table |
-| [`mysql_delete_data`](#mysql_delete_data) | Delete data from a MySQL table |
+| [`mysql_update_data`](#mysql_update_data) | Update data in a MySQL table. Use ? placeholders in where with whereParams for safe parameterization. |
+| [`mysql_delete_data`](#mysql_delete_data) | Delete data from a MySQL table. Use ? placeholders in where with whereParams for safe parameterization. |
 | [`mysql_describe_table`](#mysql_describe_table) | Get table structure and column information |
 | [`mysql_list_tables`](#mysql_list_tables) | List all tables in the database |
 | [`mysql_create_table`](#mysql_create_table) | Create a new table in MySQL |
 
 ---
 
+## mysql_get_info
+
+Get MySQL database connection information
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## mysql_list_databases
+
+List all databases on the MySQL server
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## mysql_execute_query
 
-Execute a SQL query on MySQL database
+Execute a SQL query on MySQL. Use ? placeholders for parameterized queries (e.g., "SELECT * FROM users WHERE id = ? AND status = ?"). Parameters are applied in order.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `query` | string | Yes | — | SQL query to execute |
-| `parameters` | string[] | No | — | Query parameters for parameterized queries |
+| `query` | string | Yes | — | The SQL query to execute. Use ? as placeholders for parameters (e.g., "SELECT * FROM users WHERE id = ?") |
+| `parameters` | string[] | No | — | Array of parameter values to substitute for ? placeholders in order |
 
 <Expandable title="inputSchema">
 
@@ -48,7 +100,7 @@ Execute a SQL query on MySQL database
     },
     "query": {
       "type": "string",
-      "description": "SQL query to execute"
+      "description": "The SQL query to execute. Use ? as placeholders for parameters (e.g., \"SELECT * FROM users WHERE id = ?\")"
     },
     "parameters": {
       "type": "array",
@@ -68,7 +120,7 @@ Execute a SQL query on MySQL database
           }
         ]
       },
-      "description": "Query parameters for parameterized queries"
+      "description": "Array of parameter values to substitute for ? placeholders in order"
     }
   },
   "required": [
@@ -84,7 +136,7 @@ Execute a SQL query on MySQL database
 
 ## mysql_select_data
 
-Select data from a MySQL table
+Select data from a MySQL table. Use ? placeholders in where with whereParams for safe parameterization.
 
 **Parameters:**
 
@@ -92,7 +144,8 @@ Select data from a MySQL table
 | --- | --- | --- | --- | --- |
 | `table` | string | Yes | — | Table name |
 | `columns` | string[] | No | — | Columns to select (defaults to all) |
-| `where` | string | No | — | WHERE clause conditions |
+| `where` | string | No | — | WHERE clause conditions (use ? for parameterized values) |
+| `whereParams` | string[] | No | — | Parameters for WHERE clause ? placeholders |
 | `orderBy` | string | No | — | ORDER BY clause |
 | `limit` | number | No | — | LIMIT number of results |
 | `offset` | number | No | — | OFFSET for pagination |
@@ -120,7 +173,27 @@ Select data from a MySQL table
     },
     "where": {
       "type": "string",
-      "description": "WHERE clause conditions"
+      "description": "WHERE clause conditions (use ? for parameterized values)"
+    },
+    "whereParams": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "Parameters for WHERE clause ? placeholders"
     },
     "orderBy": {
       "type": "string",
@@ -197,7 +270,7 @@ Insert data into a MySQL table
 
 ## mysql_update_data
 
-Update data in a MySQL table
+Update data in a MySQL table. Use ? placeholders in where with whereParams for safe parameterization.
 
 **Parameters:**
 
@@ -205,7 +278,8 @@ Update data in a MySQL table
 | --- | --- | --- | --- | --- |
 | `table` | string | Yes | — | Table name |
 | `data` | object | Yes | — | Data to update as key-value pairs (supports nested objects and arrays for JSON columns) |
-| `where` | string | Yes | — | WHERE clause to identify rows to update |
+| `where` | string | Yes | — | WHERE clause to identify rows to update (use ? for parameterized values) |
+| `whereParams` | string[] | No | — | Parameters for WHERE clause ? placeholders |
 
 <Expandable title="inputSchema">
 
@@ -228,7 +302,27 @@ Update data in a MySQL table
     },
     "where": {
       "type": "string",
-      "description": "WHERE clause to identify rows to update"
+      "description": "WHERE clause to identify rows to update (use ? for parameterized values)"
+    },
+    "whereParams": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "Parameters for WHERE clause ? placeholders"
     }
   },
   "required": [
@@ -246,14 +340,15 @@ Update data in a MySQL table
 
 ## mysql_delete_data
 
-Delete data from a MySQL table
+Delete data from a MySQL table. Use ? placeholders in where with whereParams for safe parameterization.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `table` | string | Yes | — | Table name |
-| `where` | string | Yes | — | WHERE clause to identify rows to delete |
+| `where` | string | Yes | — | WHERE clause to identify rows to delete (use ? for parameterized values) |
+| `whereParams` | string[] | No | — | Parameters for WHERE clause ? placeholders |
 
 <Expandable title="inputSchema">
 
@@ -271,7 +366,27 @@ Delete data from a MySQL table
     },
     "where": {
       "type": "string",
-      "description": "WHERE clause to identify rows to delete"
+      "description": "WHERE clause to identify rows to delete (use ? for parameterized values)"
+    },
+    "whereParams": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "Parameters for WHERE clause ? placeholders"
     }
   },
   "required": [

@@ -26,6 +26,20 @@ IT service management tickets, assets, and agents
 | [`freshservice_create_agent`](#freshservice_create_agent) | Create a new agent with specified details |
 | [`freshservice_list_departments`](#freshservice_list_departments) | List all departments with optional pagination |
 | [`freshservice_create_department`](#freshservice_create_department) | Create a new department |
+| [`freshservice_delete_ticket`](#freshservice_delete_ticket) | Delete a ticket by ID. The ticket will be moved to trash and can be restored later. |
+| [`freshservice_list_ticket_conversations`](#freshservice_list_ticket_conversations) | List all conversations (replies and notes) for a specific ticket. Returns the full conversation history including public replies, private notes, and system messages. |
+| [`freshservice_add_ticket_note`](#freshservice_add_ticket_note) | Add a note to a ticket. Notes can be private (visible only to agents) or public (visible to requester and agents). |
+| [`freshservice_reply_to_ticket`](#freshservice_reply_to_ticket) | Send a reply to a ticket. The reply will be sent as an email to the requester and will appear in the ticket conversation thread. |
+| [`freshservice_get_asset`](#freshservice_get_asset) | Get detailed information about a specific asset by its display ID |
+| [`freshservice_update_asset`](#freshservice_update_asset) | Update an existing asset with new details |
+| [`freshservice_search_assets`](#freshservice_search_assets) | Search assets using a query string. Query format follows Freshservice filter syntax, e.g. "asset_type_id:1" or "name:'laptop'". |
+| [`freshservice_list_agent_groups`](#freshservice_list_agent_groups) | List all agent groups with optional pagination. Agent groups are used for ticket assignment and routing. |
+| [`freshservice_list_locations`](#freshservice_list_locations) | List all locations with optional pagination. Locations are used by assets, agents, and requesters. |
+| [`freshservice_list_changes`](#freshservice_list_changes) | List all change requests with optional pagination. Status values: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. |
+| [`freshservice_create_change`](#freshservice_create_change) | Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Risk: 1=Low, 2=Medium, 3=High, 4=Very High. Impact: 1=Low, 2=Medium, 3=High. Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency. |
+| [`freshservice_list_problems`](#freshservice_list_problems) | List all problems with optional pagination. Status values: 1=Open, 2=Change Requested, 3=Closed. |
+| [`freshservice_create_problem`](#freshservice_create_problem) | Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Impact: 1=Low, 2=Medium, 3=High. |
+| [`freshservice_list_service_catalog_items`](#freshservice_list_service_catalog_items) | List all service catalog items with optional pagination. Service catalog items are the services that requesters can browse and submit requests for. |
 
 ---
 
@@ -699,6 +713,688 @@ Create a new department
   "required": [
     "PCID",
     "name"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_delete_ticket
+
+Delete a ticket by ID. The ticket will be moved to trash and can be restored later.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | number | Yes | — | Ticket ID to delete |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "ticket_id": {
+      "type": "number",
+      "description": "Ticket ID to delete"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_ticket_conversations
+
+List all conversations (replies and notes) for a specific ticket. Returns the full conversation history including public replies, private notes, and system messages.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | number | Yes | — | Ticket ID to get conversations for |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "ticket_id": {
+      "type": "number",
+      "description": "Ticket ID to get conversations for"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_add_ticket_note
+
+Add a note to a ticket. Notes can be private (visible only to agents) or public (visible to requester and agents).
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | number | Yes | — | Ticket ID to add the note to |
+| `body` | string | Yes | — | HTML content of the note |
+| `private` | boolean | No | — | Whether this is a private note (default: true). Private notes are only visible to agents. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "ticket_id": {
+      "type": "number",
+      "description": "Ticket ID to add the note to"
+    },
+    "body": {
+      "type": "string",
+      "description": "HTML content of the note"
+    },
+    "private": {
+      "type": "boolean",
+      "description": "Whether this is a private note (default: true). Private notes are only visible to agents."
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id",
+    "body"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_reply_to_ticket
+
+Send a reply to a ticket. The reply will be sent as an email to the requester and will appear in the ticket conversation thread.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | number | Yes | — | Ticket ID to reply to |
+| `body` | string | Yes | — | HTML content of the reply |
+| `cc_emails` | string[] | No | — | Array of CC email addresses |
+| `bcc_emails` | string[] | No | — | Array of BCC email addresses |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "ticket_id": {
+      "type": "number",
+      "description": "Ticket ID to reply to"
+    },
+    "body": {
+      "type": "string",
+      "description": "HTML content of the reply"
+    },
+    "cc_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of CC email addresses"
+    },
+    "bcc_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of BCC email addresses"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id",
+    "body"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_get_asset
+
+Get detailed information about a specific asset by its display ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `asset_display_id` | number | Yes | — | Asset display ID to retrieve |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "asset_display_id": {
+      "type": "number",
+      "description": "Asset display ID to retrieve"
+    }
+  },
+  "required": [
+    "PCID",
+    "asset_display_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_update_asset
+
+Update an existing asset with new details
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `asset_display_id` | number | Yes | — | Asset display ID to update |
+| `name` | string | No | — | New asset name |
+| `description` | string | No | — | New asset description |
+| `asset_type_id` | number | No | — | New asset type ID |
+| `asset_tag` | string | No | — | New asset tag |
+| `status` | number | No | — | New asset status |
+| `user_id` | number | No | — | New user ID assigned to asset |
+| `location_id` | number | No | — | New location ID |
+| `department_id` | number | No | — | New department ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "asset_display_id": {
+      "type": "number",
+      "description": "Asset display ID to update"
+    },
+    "name": {
+      "type": "string",
+      "description": "New asset name"
+    },
+    "description": {
+      "type": "string",
+      "description": "New asset description"
+    },
+    "asset_type_id": {
+      "type": "number",
+      "description": "New asset type ID"
+    },
+    "asset_tag": {
+      "type": "string",
+      "description": "New asset tag"
+    },
+    "status": {
+      "type": "number",
+      "description": "New asset status"
+    },
+    "user_id": {
+      "type": "number",
+      "description": "New user ID assigned to asset"
+    },
+    "location_id": {
+      "type": "number",
+      "description": "New location ID"
+    },
+    "department_id": {
+      "type": "number",
+      "description": "New department ID"
+    }
+  },
+  "required": [
+    "PCID",
+    "asset_display_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_search_assets
+
+Search assets using a query string. Query format follows Freshservice filter syntax, e.g. "asset_type_id:1" or "name:'laptop'".
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `query` | string | Yes | — | Search query string using Freshservice filter syntax (e.g. "asset_type_id:1", "name:'laptop'") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search query string using Freshservice filter syntax (e.g. \"asset_type_id:1\", \"name:'laptop'\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "query"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_agent_groups
+
+List all agent groups with optional pagination. Agent groups are used for ticket assignment and routing.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | number | No | — | Page number for pagination |
+| `per_page` | number | No | — | Number of groups per page |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "page": {
+      "type": "number",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "number",
+      "description": "Number of groups per page"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_locations
+
+List all locations with optional pagination. Locations are used by assets, agents, and requesters.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | number | No | — | Page number for pagination |
+| `per_page` | number | No | — | Number of locations per page |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "page": {
+      "type": "number",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "number",
+      "description": "Number of locations per page"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_changes
+
+List all change requests with optional pagination. Status values: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | number | No | — | Page number for pagination |
+| `per_page` | number | No | — | Number of changes per page |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "page": {
+      "type": "number",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "number",
+      "description": "Number of changes per page"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_create_change
+
+Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Risk: 1=Low, 2=Medium, 3=High, 4=Very High. Impact: 1=Low, 2=Medium, 3=High. Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `subject` | string | Yes | — | Change request subject |
+| `description` | string | No | — | Change request description (HTML) |
+| `agent_id` | number | No | — | ID of the agent assigned |
+| `requester_id` | number | No | — | ID of the requester |
+| `priority` | number | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `status` | number | No | — | Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed |
+| `risk` | number | No | — | Risk: 1=Low, 2=Medium, 3=High, 4=Very High |
+| `impact` | number | No | — | Impact: 1=Low, 2=Medium, 3=High |
+| `change_type` | number | No | — | Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency |
+| `planned_start_date` | string | No | — | Planned start date (ISO 8601 format) |
+| `planned_end_date` | string | No | — | Planned end date (ISO 8601 format) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Change request subject"
+    },
+    "description": {
+      "type": "string",
+      "description": "Change request description (HTML)"
+    },
+    "agent_id": {
+      "type": "number",
+      "description": "ID of the agent assigned"
+    },
+    "requester_id": {
+      "type": "number",
+      "description": "ID of the requester"
+    },
+    "priority": {
+      "type": "number",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
+    },
+    "status": {
+      "type": "number",
+      "description": "Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed"
+    },
+    "risk": {
+      "type": "number",
+      "description": "Risk: 1=Low, 2=Medium, 3=High, 4=Very High"
+    },
+    "impact": {
+      "type": "number",
+      "description": "Impact: 1=Low, 2=Medium, 3=High"
+    },
+    "change_type": {
+      "type": "number",
+      "description": "Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency"
+    },
+    "planned_start_date": {
+      "type": "string",
+      "description": "Planned start date (ISO 8601 format)"
+    },
+    "planned_end_date": {
+      "type": "string",
+      "description": "Planned end date (ISO 8601 format)"
+    }
+  },
+  "required": [
+    "PCID",
+    "subject"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_problems
+
+List all problems with optional pagination. Status values: 1=Open, 2=Change Requested, 3=Closed.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | number | No | — | Page number for pagination |
+| `per_page` | number | No | — | Number of problems per page |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "page": {
+      "type": "number",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "number",
+      "description": "Number of problems per page"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_create_problem
+
+Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Impact: 1=Low, 2=Medium, 3=High.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `subject` | string | Yes | — | Problem subject |
+| `description` | string | No | — | Problem description (HTML) |
+| `agent_id` | number | No | — | ID of the agent assigned |
+| `requester_id` | number | No | — | ID of the requester |
+| `priority` | number | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `status` | number | No | — | Status: 1=Open, 2=Change Requested, 3=Closed |
+| `impact` | number | No | — | Impact: 1=Low, 2=Medium, 3=High |
+| `due_by` | string | No | — | Due date (ISO 8601 format) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Problem subject"
+    },
+    "description": {
+      "type": "string",
+      "description": "Problem description (HTML)"
+    },
+    "agent_id": {
+      "type": "number",
+      "description": "ID of the agent assigned"
+    },
+    "requester_id": {
+      "type": "number",
+      "description": "ID of the requester"
+    },
+    "priority": {
+      "type": "number",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
+    },
+    "status": {
+      "type": "number",
+      "description": "Status: 1=Open, 2=Change Requested, 3=Closed"
+    },
+    "impact": {
+      "type": "number",
+      "description": "Impact: 1=Low, 2=Medium, 3=High"
+    },
+    "due_by": {
+      "type": "string",
+      "description": "Due date (ISO 8601 format)"
+    }
+  },
+  "required": [
+    "PCID",
+    "subject"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_service_catalog_items
+
+List all service catalog items with optional pagination. Service catalog items are the services that requesters can browse and submit requests for.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | number | No | — | Page number for pagination |
+| `per_page` | number | No | — | Number of items per page |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "PinkConnect ID"
+    },
+    "page": {
+      "type": "number",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "number",
+      "description": "Number of items per page"
+    }
+  },
+  "required": [
+    "PCID"
   ]
 }
 ```
