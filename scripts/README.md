@@ -26,12 +26,22 @@ npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts
 
 # Generate a single server (useful for testing):
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack
+
+# Generate only servers with changes vs origin/main:
+npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed
+
+# Generate only servers with changes vs a specific git ref:
+npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed HEAD~3
 ```
 
 Or as a one-liner from the docs repo root:
 
 ```bash
+# All servers
 (cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts)
+
+# Only changed servers
+(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts --changed)
 ```
 
 ### What it does
@@ -62,6 +72,10 @@ When a new application server is added to the platform:
 2. Add a human-readable description to the `DESCRIPTION_OVERRIDES` map in this script (optional but recommended — without one, the raw description from `available-servers.ts` is used)
 3. Run the script: `(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts)`
 4. Commit and push the generated files + updated `docs.json`
+
+### Updating the overview page
+
+The overview page at `api-reference/mcp-servers/application/overview.mdx` is **manually maintained** and is NOT updated by this script. When adding a new application server, you must manually add a row for it in the appropriate category table on the overview page.
 
 ### Description overrides
 

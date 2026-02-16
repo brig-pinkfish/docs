@@ -7,8 +7,10 @@
  *
  * Usage (run from platform/servers/agentic/mcp/ for TypeScript path resolution):
  *   cd ../platform/servers/agentic/mcp
- *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts                  # Generate all
- *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack   # Generate one
+ *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts                       # Generate all
+ *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack        # Generate one
+ *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed             # Generate only changed (vs origin/main)
+ *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed HEAD~3      # Generate only changed (vs specific ref)
  *
  * Prerequisites:
  *   - The platform repo must be cloned alongside the docs repo at ../platform
@@ -18,6 +20,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -497,7 +500,7 @@ async function loadToolsForServer(
 // docs.json update
 // ============================================================================
 
-function updateDocsJson(serverNames: string[], singleServer?: string): void {
+function updateDocsJson(serverNames: string[], selectiveServers?: string[]): void {
   const docsJson = JSON.parse(fs.readFileSync(DOCS_JSON_PATH, 'utf-8'))
 
   // Find the "Application MCP Servers" group in the navigation
@@ -525,17 +528,20 @@ function updateDocsJson(serverNames: string[], singleServer?: string): void {
     process.exit(1)
   }
 
-  if (singleServer) {
-    // Add single server page if not already present, maintaining alphabetical order
-    const pagePath = `api-reference/mcp-servers/application/${singleServer}`
+  if (selectiveServers) {
+    // Add server pages if not already present, maintaining alphabetical order
     const existingPages: string[] = appGroup.pages || []
-    if (!existingPages.includes(pagePath)) {
-      // Insert in alphabetical order after overview
-      const serverPages = existingPages.filter(p => p !== 'api-reference/mcp-servers/application/overview')
-      serverPages.push(pagePath)
-      serverPages.sort()
-      appGroup.pages = ['api-reference/mcp-servers/application/overview', ...serverPages]
+    const serverPages = existingPages.filter(
+      (p) => p !== 'api-reference/mcp-servers/application/overview'
+    )
+    for (const name of selectiveServers) {
+      const pagePath = `api-reference/mcp-servers/application/${name}`
+      if (!serverPages.includes(pagePath)) {
+        serverPages.push(pagePath)
+      }
     }
+    serverPages.sort()
+    appGroup.pages = ['api-reference/mcp-servers/application/overview', ...serverPages]
   } else {
     // Replace all pages with overview + generated pages
     const pages = ['api-reference/mcp-servers/application/overview']
@@ -549,6 +555,34 @@ function updateDocsJson(serverNames: string[], singleServer?: string): void {
 }
 
 // ============================================================================
+// Git-based change detection
+// ============================================================================
+
+function getChangedServers(baseRef: string): string[] {
+  const externalPrefix = 'servers/agentic/mcp/src/servers/external/'
+
+  const diffOutput = execSync(
+    `git diff ${baseRef} --name-only -- "${externalPrefix}"`,
+    { cwd: PLATFORM_ROOT, encoding: 'utf-8' }
+  ).trim()
+
+  if (!diffOutput) {
+    return []
+  }
+
+  const serverNames = new Set<string>()
+  for (const filePath of diffOutput.split('\n')) {
+    const relative = filePath.replace(externalPrefix, '')
+    const serverName = relative.split('/')[0]
+    if (serverName) {
+      serverNames.add(serverName)
+    }
+  }
+
+  return Array.from(serverNames).sort()
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -557,6 +591,14 @@ async function main(): Promise<void> {
   const serverFlagIdx = args.indexOf('--server')
   const singleServer =
     serverFlagIdx !== -1 ? args[serverFlagIdx + 1] : undefined
+  const changedFlagIdx = args.indexOf('--changed')
+  const changedBaseRef =
+    changedFlagIdx !== -1 ? (args[changedFlagIdx + 1] || 'origin/main') : undefined
+
+  if (singleServer && changedBaseRef) {
+    console.error('Cannot use --server and --changed together.')
+    process.exit(1)
+  }
 
   console.log('=== Application MCP Server Documentation Generator ===\n')
 
@@ -584,18 +626,39 @@ async function main(): Promise<void> {
     `Found ${externalServers.length} production-enabled application servers\n`
   )
 
-  // Filter to single server if requested
-  const toGenerate = singleServer
-    ? externalServers.filter((s) => s.name === singleServer)
-    : externalServers
+  // Determine which servers to generate
+  let toGenerate: ServerEntry[]
+  let selectiveServers: string[] | undefined
 
-  if (singleServer && toGenerate.length === 0) {
-    console.error(`Server "${singleServer}" not found or not production-enabled.`)
-    console.error(
-      'Available servers:',
-      externalServers.map((s) => s.name).join(', ')
+  if (changedBaseRef) {
+    const changedNames = getChangedServers(changedBaseRef)
+    if (changedNames.length === 0) {
+      console.log(`No external server changes found compared to ${changedBaseRef}.`)
+      console.log('\n=== Done (nothing to generate) ===')
+      return
+    }
+    console.log(`Changed servers (vs ${changedBaseRef}): ${changedNames.join(', ')}\n`)
+    toGenerate = externalServers.filter((s) => changedNames.includes(s.name))
+    selectiveServers = changedNames
+    const missing = changedNames.filter(
+      (name) => !toGenerate.some((s) => s.name === name)
     )
-    process.exit(1)
+    if (missing.length > 0) {
+      console.warn(`  Warning: changed but not production-enabled or not found: ${missing.join(', ')}`)
+    }
+  } else if (singleServer) {
+    toGenerate = externalServers.filter((s) => s.name === singleServer)
+    selectiveServers = [singleServer]
+    if (toGenerate.length === 0) {
+      console.error(`Server "${singleServer}" not found or not production-enabled.`)
+      console.error(
+        'Available servers:',
+        externalServers.map((s) => s.name).join(', ')
+      )
+      process.exit(1)
+    }
+  } else {
+    toGenerate = externalServers
   }
 
   let totalTools = 0
@@ -622,9 +685,9 @@ async function main(): Promise<void> {
 
   // Update docs.json
   if (generatedNames.length > 0) {
-    if (singleServer) {
-      updateDocsJson(generatedNames, singleServer)
-      console.log(`\nUpdated docs.json with ${singleServer} page`)
+    if (selectiveServers) {
+      updateDocsJson(generatedNames, selectiveServers)
+      console.log(`\nUpdated docs.json with ${generatedNames.length} page(s)`)
     } else {
       updateDocsJson(generatedNames)
       console.log(`\nUpdated docs.json with ${generatedNames.length} pages`)
