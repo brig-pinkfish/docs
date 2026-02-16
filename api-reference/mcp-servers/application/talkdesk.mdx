@@ -14,31 +14,27 @@ Contact center agents, calls, queues, and recordings
 
 | Tool | Description |
 | --- | --- |
-| [`talkdesk_get_agents`](#talkdesk_get_agents) | Get list of agents in the contact center |
-| [`talkdesk_get_agent`](#talkdesk_get_agent) | Get detailed information about a specific agent |
-| [`talkdesk_get_calls`](#talkdesk_get_calls) | Get call records with optional filtering |
-| [`talkdesk_get_call`](#talkdesk_get_call) | Get detailed information about a specific call |
-| [`talkdesk_create_contact`](#talkdesk_create_contact) | Create a new contact in Talkdesk |
-| [`talkdesk_get_contact`](#talkdesk_get_contact) | Retrieve a contact by ID or phone number |
-| [`talkdesk_update_contact`](#talkdesk_update_contact) | Update an existing contact |
-| [`talkdesk_get_queues`](#talkdesk_get_queues) | Get list of call queues |
-| [`talkdesk_get_queue_stats`](#talkdesk_get_queue_stats) | Get statistics for a specific queue |
-| [`talkdesk_get_agent_stats`](#talkdesk_get_agent_stats) | Get performance statistics for agents |
-| [`talkdesk_create_callback`](#talkdesk_create_callback) | Schedule a callback for a customer |
-| [`talkdesk_get_recordings`](#talkdesk_get_recordings) | Get call recordings with optional filtering |
+| [`talkdesk_get_users`](#talkdesk_get_users) | Get list of users in the Talkdesk account. Uses the Users API (users:read scope). |
+| [`talkdesk_get_user`](#talkdesk_get_user) | Get detailed information about a specific user by ID. |
+| [`talkdesk_create_contact`](#talkdesk_create_contact) | Create a new contact in Talkdesk. |
+| [`talkdesk_get_contact`](#talkdesk_get_contact) | Retrieve a contact by ID or phone number. |
+| [`talkdesk_update_contact`](#talkdesk_update_contact) | Update an existing contact. |
+| [`talkdesk_request`](#talkdesk_request) | Make a raw API request to any Talkdesk endpoint. Use when you need to call APIs not covered by the specialized tools (e.g. ring-groups, data/reports/calls/jobs, recordings). Provide the path (with optional query string) and HTTP method. Access is gated by the connection's OAuth scopes - 401 means the token lacks the required scope for that path. Common paths: users, users/&#123;id&#125;, users/me, contacts, contacts/&#123;id&#125;, ring-groups, data/reports/calls/jobs, calls/&#123;id&#125;/recordings, recordings/&#123;id&#125;. |
 
 ---
 
-## talkdesk_get_agents
+## talkdesk_get_users
 
-Get list of agents in the contact center
+Get list of users in the Talkdesk account. Uses the Users API (users:read scope).
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `status` | string | No | — | Filter agents by status |
-| `limit` | number | No | `50` | Maximum number of agents to return (1-100) |
+| `page` | number | No | — | Page number (default 1) |
+| `perPage` | number | No | `20` | Results per page (1-200) |
+| `active` | boolean | No | — | Filter by activation status |
+| `email` | string | No | — | Filter by email address |
 
 <Expandable title="inputSchema">
 
@@ -50,20 +46,22 @@ Get list of agents in the contact center
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "status": {
-      "type": "string",
-      "enum": [
-        "online",
-        "offline",
-        "busy",
-        "away"
-      ],
-      "description": "Filter agents by status"
-    },
-    "limit": {
+    "page": {
       "type": "number",
-      "default": 50,
-      "description": "Maximum number of agents to return (1-100)"
+      "description": "Page number (default 1)"
+    },
+    "perPage": {
+      "type": "number",
+      "default": 20,
+      "description": "Results per page (1-200)"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Filter by activation status"
+    },
+    "email": {
+      "type": "string",
+      "description": "Filter by email address"
     }
   },
   "required": [
@@ -76,15 +74,15 @@ Get list of agents in the contact center
 
 ---
 
-## talkdesk_get_agent
+## talkdesk_get_user
 
-Get detailed information about a specific agent
+Get detailed information about a specific user by ID.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `agentId` | string | Yes | — | Agent ID to retrieve |
+| `userId` | string | Yes | — | User ID to retrieve |
 
 <Expandable title="inputSchema">
 
@@ -96,134 +94,14 @@ Get detailed information about a specific agent
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "agentId": {
+    "userId": {
       "type": "string",
-      "description": "Agent ID to retrieve"
+      "description": "User ID to retrieve"
     }
   },
   "required": [
     "PCID",
-    "agentId"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_get_calls
-
-Get call records with optional filtering
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `startDate` | string | Yes | — | Start date for call records (YYYY-MM-DD format) |
-| `endDate` | string | Yes | — | End date for call records (YYYY-MM-DD format) |
-| `agentId` | string | No | — | Filter by specific agent ID |
-| `direction` | string | No | — | Filter by call direction |
-| `status` | string | No | — | Filter by call status |
-| `limit` | number | No | `100` | Maximum number of calls to return (1-1000) |
-| `offset` | number | No | `0` | Offset for pagination |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "startDate": {
-      "type": "string",
-      "description": "Start date for call records (YYYY-MM-DD format)"
-    },
-    "endDate": {
-      "type": "string",
-      "description": "End date for call records (YYYY-MM-DD format)"
-    },
-    "agentId": {
-      "type": "string",
-      "description": "Filter by specific agent ID"
-    },
-    "direction": {
-      "type": "string",
-      "enum": [
-        "inbound",
-        "outbound"
-      ],
-      "description": "Filter by call direction"
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "answered",
-        "missed",
-        "abandoned"
-      ],
-      "description": "Filter by call status"
-    },
-    "limit": {
-      "type": "number",
-      "default": 100,
-      "description": "Maximum number of calls to return (1-1000)"
-    },
-    "offset": {
-      "type": "number",
-      "default": 0,
-      "description": "Offset for pagination"
-    }
-  },
-  "required": [
-    "PCID",
-    "startDate",
-    "endDate"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_get_call
-
-Get detailed information about a specific call
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `callId` | string | Yes | — | Call ID to retrieve |
-| `includeRecording` | boolean | No | `false` | Include call recording URL if available |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "callId": {
-      "type": "string",
-      "description": "Call ID to retrieve"
-    },
-    "includeRecording": {
-      "type": "boolean",
-      "default": false,
-      "description": "Include call recording URL if available"
-    }
-  },
-  "required": [
-    "PCID",
-    "callId"
+    "userId"
   ]
 }
 ```
@@ -234,7 +112,7 @@ Get detailed information about a specific call
 
 ## talkdesk_create_contact
 
-Create a new contact in Talkdesk
+Create a new contact in Talkdesk.
 
 **Parameters:**
 
@@ -305,14 +183,14 @@ Create a new contact in Talkdesk
 
 ## talkdesk_get_contact
 
-Retrieve a contact by ID or phone number
+Retrieve a contact by ID or phone number.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `contactId` | string | No | — | Contact ID |
-| `phoneNumber` | string | No | — | Contact phone number |
+| `phoneNumber` | string | No | — | Phone number |
 
 <Expandable title="inputSchema">
 
@@ -330,7 +208,7 @@ Retrieve a contact by ID or phone number
     },
     "phoneNumber": {
       "type": "string",
-      "description": "Contact phone number"
+      "description": "Phone number"
     }
   },
   "required": [
@@ -345,7 +223,7 @@ Retrieve a contact by ID or phone number
 
 ## talkdesk_update_contact
 
-Update an existing contact
+Update an existing contact.
 
 **Parameters:**
 
@@ -418,43 +296,17 @@ Update an existing contact
 
 ---
 
-## talkdesk_get_queues
+## talkdesk_request
 
-Get list of call queues
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_get_queue_stats
-
-Get statistics for a specific queue
+Make a raw API request to any Talkdesk endpoint. Use when you need to call APIs not covered by the specialized tools (e.g. ring-groups, data/reports/calls/jobs, recordings). Provide the path (with optional query string) and HTTP method. Access is gated by the connection's OAuth scopes - 401 means the token lacks the required scope for that path. Common paths: users, users/&#123;id&#125;, users/me, contacts, contacts/&#123;id&#125;, ring-groups, data/reports/calls/jobs, calls/&#123;id&#125;/recordings, recordings/&#123;id&#125;.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `queueId` | string | Yes | — | Queue ID |
-| `startDate` | string | Yes | — | Start date for statistics (YYYY-MM-DD format) |
-| `endDate` | string | Yes | — | End date for statistics (YYYY-MM-DD format) |
-| `interval` | string | No | `"day"` | Time interval for aggregation |
+| `path` | string | Yes | — | API path (e.g. users, users/123, ring-groups, data/reports/calls/jobs). Include query params in path if needed (e.g. users?page=2&per_page=10). |
+| `method` | string | No | `"GET"` | HTTP method |
+| `body` | object | No | — | Request body for POST/PUT (JSON object) |
 
 <Expandable title="inputSchema">
 
@@ -466,224 +318,30 @@ Get statistics for a specific queue
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "queueId": {
+    "path": {
       "type": "string",
-      "description": "Queue ID"
+      "description": "API path (e.g. users, users/123, ring-groups, data/reports/calls/jobs). Include query params in path if needed (e.g. users?page=2&per_page=10)."
     },
-    "startDate": {
-      "type": "string",
-      "description": "Start date for statistics (YYYY-MM-DD format)"
-    },
-    "endDate": {
-      "type": "string",
-      "description": "End date for statistics (YYYY-MM-DD format)"
-    },
-    "interval": {
+    "method": {
       "type": "string",
       "enum": [
-        "hour",
-        "day",
-        "week",
-        "month"
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
       ],
-      "default": "day",
-      "description": "Time interval for aggregation"
+      "default": "GET",
+      "description": "HTTP method"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Request body for POST/PUT (JSON object)"
     }
   },
   "required": [
     "PCID",
-    "queueId",
-    "startDate",
-    "endDate"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_get_agent_stats
-
-Get performance statistics for agents
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `agentId` | string | No | — | Specific agent ID (if not provided, gets all agents) |
-| `startDate` | string | Yes | — | Start date for statistics (YYYY-MM-DD format) |
-| `endDate` | string | Yes | — | End date for statistics (YYYY-MM-DD format) |
-| `metrics` | string[] | No | — | Specific metrics to retrieve |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "agentId": {
-      "type": "string",
-      "description": "Specific agent ID (if not provided, gets all agents)"
-    },
-    "startDate": {
-      "type": "string",
-      "description": "Start date for statistics (YYYY-MM-DD format)"
-    },
-    "endDate": {
-      "type": "string",
-      "description": "End date for statistics (YYYY-MM-DD format)"
-    },
-    "metrics": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "calls_answered",
-          "calls_missed",
-          "average_talk_time",
-          "average_wait_time",
-          "total_talk_time"
-        ]
-      },
-      "description": "Specific metrics to retrieve"
-    }
-  },
-  "required": [
-    "PCID",
-    "startDate",
-    "endDate"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_create_callback
-
-Schedule a callback for a customer
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `phoneNumber` | string | Yes | — | Customer phone number for callback |
-| `scheduledTime` | string | Yes | — | Scheduled callback time (YYYY-MM-DD HH:MM:SS) |
-| `agentId` | string | No | — | Specific agent ID to assign callback |
-| `queueId` | string | No | — | Queue ID to route callback to |
-| `notes` | string | No | — | Callback notes |
-| `priority` | string | No | `"normal"` | Callback priority |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "phoneNumber": {
-      "type": "string",
-      "description": "Customer phone number for callback"
-    },
-    "scheduledTime": {
-      "type": "string",
-      "description": "Scheduled callback time (YYYY-MM-DD HH:MM:SS)"
-    },
-    "agentId": {
-      "type": "string",
-      "description": "Specific agent ID to assign callback"
-    },
-    "queueId": {
-      "type": "string",
-      "description": "Queue ID to route callback to"
-    },
-    "notes": {
-      "type": "string",
-      "description": "Callback notes"
-    },
-    "priority": {
-      "type": "string",
-      "enum": [
-        "low",
-        "normal",
-        "high",
-        "urgent"
-      ],
-      "default": "normal",
-      "description": "Callback priority"
-    }
-  },
-  "required": [
-    "PCID",
-    "phoneNumber",
-    "scheduledTime"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## talkdesk_get_recordings
-
-Get call recordings with optional filtering
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `startDate` | string | Yes | — | Start date for recordings (YYYY-MM-DD format) |
-| `endDate` | string | Yes | — | End date for recordings (YYYY-MM-DD format) |
-| `agentId` | string | No | — | Filter by specific agent ID |
-| `callId` | string | No | — | Filter by specific call ID |
-| `limit` | number | No | `50` | Maximum number of recordings to return (1-100) |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "startDate": {
-      "type": "string",
-      "description": "Start date for recordings (YYYY-MM-DD format)"
-    },
-    "endDate": {
-      "type": "string",
-      "description": "End date for recordings (YYYY-MM-DD format)"
-    },
-    "agentId": {
-      "type": "string",
-      "description": "Filter by specific agent ID"
-    },
-    "callId": {
-      "type": "string",
-      "description": "Filter by specific call ID"
-    },
-    "limit": {
-      "type": "number",
-      "default": 50,
-      "description": "Maximum number of recordings to return (1-100)"
-    }
-  },
-  "required": [
-    "PCID",
-    "startDate",
-    "endDate"
+    "path"
   ]
 }
 ```

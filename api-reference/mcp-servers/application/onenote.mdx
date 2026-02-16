@@ -19,6 +19,9 @@ Notebooks, pages, and content management
 | [`onenote_create_page`](#onenote_create_page) | Create a new page in OneNote |
 | [`onenote_get_page`](#onenote_get_page) | Get a specific page by ID |
 | [`onenote_update_page`](#onenote_update_page) | Update page content |
+| [`onenote_list_sections`](#onenote_list_sections) | List sections across all notebooks or within a specific notebook. Sections contain pages and are essential for navigation and organizing content. |
+| [`onenote_get_page_content`](#onenote_get_page_content) | Get the full HTML content of a OneNote page. Use this to read what is actually written on a page. The onenote_get_page tool only returns metadata. |
+| [`onenote_create_notebook`](#onenote_create_notebook) | Create a new OneNote notebook. |
 | [`onenote_search_pages`](#onenote_search_pages) | Search pages across all notebooks |
 
 ---
@@ -237,6 +240,118 @@ Update page content
     "PCID",
     "pageId",
     "content"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## onenote_list_sections
+
+List sections across all notebooks or within a specific notebook. Sections contain pages and are essential for navigation and organizing content.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `notebookId` | string | No | — | Optional notebook ID to list sections from. If omitted, lists sections across all notebooks. |
+| `top` | number | No | — | Maximum number of sections to return (default: 20) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "notebookId": {
+      "type": "string",
+      "description": "Optional notebook ID to list sections from. If omitted, lists sections across all notebooks."
+    },
+    "top": {
+      "type": "number",
+      "description": "Maximum number of sections to return (default: 20)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## onenote_get_page_content
+
+Get the full HTML content of a OneNote page. Use this to read what is actually written on a page. The onenote_get_page tool only returns metadata.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `pageId` | string | Yes | — | Page ID to retrieve content from |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "pageId": {
+      "type": "string",
+      "description": "Page ID to retrieve content from"
+    }
+  },
+  "required": [
+    "PCID",
+    "pageId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## onenote_create_notebook
+
+Create a new OneNote notebook.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `displayName` | string | Yes | — | Name for the new notebook |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Name for the new notebook"
+    }
+  },
+  "required": [
+    "PCID",
+    "displayName"
   ]
 }
 ```

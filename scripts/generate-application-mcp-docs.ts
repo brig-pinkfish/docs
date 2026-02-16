@@ -137,7 +137,6 @@ const DESCRIPTION_OVERRIDES: Record<string, string> = {
   'twitter': 'Tweets, users, timelines, and media',
   'quickbase': 'Applications, tables, records, and fields',
   'freshservice': 'IT service management tickets, assets, and agents',
-  'kallidus-sapling': 'Employee records and department management',
   'sirv': 'Image CDN upload, management, and statistics',
   'talkdesk': 'Contact center agents, calls, queues, and recordings',
 }
