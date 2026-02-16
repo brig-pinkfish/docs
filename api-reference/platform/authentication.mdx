@@ -3,7 +3,9 @@ title: "Authentication"
 description: "API keys and runtime tokens"
 ---
 
-Exchange your API key for a runtime token (JWT). Use the token as `Authorization: Bearer <token>` for all MCP requests. Token lifetime: 60 minutes.
+Exchange your API key for a runtime token (JWT). Use the token as `Authorization: Bearer <token>` for MCP requests. Token lifetime: 60 minutes.
+
+<Note>The token is for **MCP requests only**. App API endpoints (e.g. `/api/automations`) require Cognito login and do not accept this token.</Note>
 
 ## Create an API Key
 
@@ -32,9 +34,12 @@ curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
 
 ## Using the Token
 
+Use the token for MCP server requests. The server path depends on your MCP integration—see your MCP client configuration or the MCP integration guide for the correct path.
+
 ```bash
 curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Selected-Org: $ORG_ID" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{ ... }'
