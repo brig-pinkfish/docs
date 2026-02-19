@@ -5,7 +5,7 @@ description: "Convert, extract, fill, and create documents — PDF, Word, Excel,
 
 **Server path:** `/docprocess` | **Type:** Embedded | **PCID required:** No
 
-Document processing tools: convert between formats (CSV, XLSX, HTML, PDF, Markdown, Word, XML, JSON), extract text (PDF, DOCX, PPTX), OCR images and PDFs, fill PDF forms, fill Word templates, create Word documents, validate CSVs, and process Word documents with AI.
+Document processing tools: convert between formats (CSV, XLSX, HTML, PDF, Markdown, Word, XML, JSON), extract text (PDF, DOCX, PPTX), OCR images and PDFs, fill PDF forms, fill Word templates, create Word documents, validate CSVs, extract invoice line items with AI, and process Word documents with AI.
 
 ## Tools
 
@@ -28,6 +28,8 @@ Document processing tools: convert between formats (CSV, XLSX, HTML, PDF, Markdo
 | [`docprocess_word_ai`](#docprocess_word_ai) | Edit Word documents with AI |
 | [`docprocess_word_ai_poll`](#docprocess_word_ai_poll) | Poll Word AI processing status |
 | [`docprocess_validate_csv`](#docprocess_validate_csv) | Validate CSV structure and data quality |
+| [`docprocess_invoice_extract`](#docprocess_invoice_extract) | Extract line items from invoices (PDF/image) with AI |
+| [`docprocess_invoice_extract_poll`](#docprocess_invoice_extract_poll) | Poll invoice extraction job status |
 
 ---
 
@@ -382,3 +384,52 @@ Validate the structure and data quality of CSV files. Reports errors, warnings, 
 | `files[].validation.statistics.emptyCells` | number | Number of empty cells |
 | `files[].validation.dataTypes` | object | Detected data types per column |
 | `total` | number | Total number of files validated |
+
+---
+
+## docprocess_invoice_extract
+
+Extract structured line items from invoices (PDF or image). Uses AI to discover columns dynamically from the document — different invoice types (legal, product, etc.) produce different column names. Supports multi-page PDFs with automatic sharding and parallel processing. Runs asynchronously — poll with `docprocess_invoice_extract_poll` to retrieve results.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fileUrl` | string | Yes | — | URL to the invoice file. Supported: PDF, JPEG, PNG |
+| `pagesPerShard` | number | No | `3` | Pages per processing shard for PDFs (1–20). Smaller values may improve accuracy for dense invoices |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `jobId` | string | Job ID for polling with `docprocess_invoice_extract_poll` |
+| `status` | string | Initial status — `"queued"` |
+| `createdAt` | string | ISO timestamp when the job was created |
+| `message` | string | Human-readable status message with polling instructions |
+
+---
+
+## docprocess_invoice_extract_poll
+
+Check the status of an invoice line-item extraction job. Call after `docprocess_invoice_extract`; poll every 10–15 seconds until `status` is `"completed"` or `"failed"`. When completed, returns artifact URLs for the extracted CSV, JSON, and summary files.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `jobId` | string | Yes | The `jobId` returned by `docprocess_invoice_extract` |
+
+**Response fields:**
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `jobId` | string | Job ID |
+| `status` | string | `"queued"`, `"in_progress"`, `"completed"`, or `"failed"` |
+| `createdAt` | string | ISO timestamp when the job was created |
+| `completedAt` | string | ISO timestamp when the job completed (when status is `"completed"`) |
+| `artifacts` | object | Output artifact URLs (when status is `"completed"`) |
+| `artifacts.csvUrl` | string | URL to download the extracted line items as CSV |
+| `artifacts.jsonUrl` | string | URL to download the extracted line items as JSON |
+| `artifacts.summaryUrl` | string | URL to download the processing summary |
+| `error` | string | Error message (when status is `"failed"`) |
+| `message` | string | Human-readable status message |
