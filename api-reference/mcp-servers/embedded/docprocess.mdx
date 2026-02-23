@@ -229,16 +229,24 @@ Poll the status of an asynchronous OCR job.
 
 ## docprocess_fill_pdf
 
-Fill a PDF form with field values.
+Fill a PDF form with provided data. The PDF must have fillable form fields (not just a static document). Field matching is automatic — exact name match first, then case-insensitive partial match as a fallback.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `pdf_url` | string | Yes | — | URL of the PDF form to fill |
-| `form_data` | object | Yes | — | Field-name-to-value pairs for form fields |
+| `form_data` | object | Yes | — | Field-name-to-value pairs (see field types below) |
 | `output_filename` | string | No | `"filled_form.pdf"` | Name for the output file |
 | `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
+
+**Field types in `form_data`:**
+
+| Field type | Value format | Example |
+| --- | --- | --- |
+| Text fields | `"string value"` | `{"full_name": "Jane Doe"}` |
+| Checkboxes | `true` / `false` or `"checked"` | `{"agree_terms": true}` |
+| Dropdowns | Option text (case-insensitive) | `{"state": "California"}` |
 
 **Response fields:**
 
@@ -256,14 +264,25 @@ Fill a PDF form with field values.
 
 ## docprocess_fill_word_tpl
 
-Fill a Word template with data. Supports simple placeholders (`{name}`), nested paths (`{user.firstName}`), loops (`{#items}...{/items}`), and conditionals (`{#condition}...{/condition}`).
+Fill a Word template (.docx) with data while preserving all formatting. Templates use placeholder syntax in the document text — the tool replaces them with your data.
+
+**Placeholder syntax:**
+
+| Syntax | Purpose | Example |
+| --- | --- | --- |
+| `{name}` | Simple value | `{company}` → "Acme Corp" |
+| `{user.firstName}` | Nested path | Access nested objects |
+| `{#items}...{/items}` | Loop | Repeat a section for each array item |
+| `{#condition}...{/condition}` | Conditional | Show section only if truthy |
+| `{^condition}...{/condition}` | Inverted conditional | Show section only if falsy |
+| `{price * quantity}` | Expression | Evaluate simple expressions |
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `template_url` | string | Yes | — | URL of the Word template |
-| `data` | object | Yes | — | Data object with values for template placeholders |
+| `template_url` | string | Yes | — | URL of the Word template (.docx) |
+| `data` | object | Yes | — | Data object with values for template placeholders (keys are case-sensitive) |
 | `output_filename` | string | No | `"filled_template.docx"` | Name for the output file |
 | `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
 
@@ -282,15 +301,142 @@ Fill a Word template with data. Supports simple placeholders (`{name}`), nested 
 
 ## docprocess_create_word
 
-Create a Word document from a JSON specification. The spec defines sections with children containing heading, paragraph, bullet, and table elements.
+Create a Word document (.docx) from scratch using a JSON specification. Build reports, invoices, contracts, and other professional documents programmatically — no template required.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `document_spec` | object | Yes | — | JSON specification with sections and child elements |
+| `document_spec` | object | Yes | — | JSON specification defining the document structure (see below) |
 | `output_filename` | string | No | `"created_document.docx"` | Name for the output file |
 | `file_links_expire_in_days` | number | No | `7` | Days until the output link expires |
+
+### Document spec structure
+
+The `document_spec` object contains a `sections` array. Each section has a `children` array of elements:
+
+```json
+{
+  "sections": [
+    {
+      "children": [
+        { "type": "heading", "level": 1, "text": "Title" },
+        { "type": "paragraph", "text": "Simple text" },
+        { "type": "bullet", "text": "List item" },
+        { "type": "table", "rows": [["A", "B"], ["1", "2"]] }
+      ]
+    }
+  ]
+}
+```
+
+### Element types
+
+**Heading** — requires `level` (1–6) and `text`:
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `type` | `"heading"` | Yes | Element type |
+| `level` | number | Yes | Heading level (1–6) |
+| `text` | string | Yes | Heading text |
+| `alignment` | string | No | `"left"`, `"center"`, `"right"`, or `"justified"` |
+
+**Paragraph** — simple text or formatted text runs:
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `type` | `"paragraph"` | Yes | Element type |
+| `text` | string | No | Simple text (use this or `children`, not both) |
+| `children` | object[] | No | Array of formatted text runs (see formatting below) |
+| `alignment` | string | No | `"left"`, `"center"`, `"right"`, or `"justified"` |
+
+**Bullet** — bulleted list item:
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `type` | `"bullet"` | Yes | Element type |
+| `text` | string | Yes | Bullet text |
+| `level` | number | No | Indentation level (0+, default 0) |
+| `alignment` | string | No | `"left"`, `"center"`, `"right"`, or `"justified"` |
+
+**Table** — rows of cells:
+
+| Property | Type | Required | Description |
+| --- | --- | --- | --- |
+| `type` | `"table"` | Yes | Element type |
+| `rows` | array[] | Yes | Array of rows, each row is an array of cell values (strings or `&#123;"text": "...", "bold": true&#125;`) |
+| `alignment` | string | No | `"left"`, `"center"`, `"right"`, or `"justified"` |
+
+### Text run formatting
+
+When using `children` in a paragraph, each text run supports these properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `text` | string | Text content (required) |
+| `bold` | boolean | **Bold** |
+| `italic` | boolean | *Italic* |
+| `underline` | boolean | Underline |
+| `strikethrough` | boolean | ~~Strikethrough~~ |
+| `doubleStrikethrough` | boolean | Double strikethrough |
+| `highlight` | string | Background highlight — `"yellow"`, `"green"`, `"cyan"`, `"magenta"`, `"red"`, `"blue"`, `"darkBlue"`, `"darkGreen"`, `"darkYellow"`, `"lightGray"`, `"darkGray"`, `"black"`, `"white"` |
+| `superScript` | boolean | Superscript |
+| `subScript` | boolean | Subscript |
+| `allCaps` | boolean | ALL CAPITALS |
+| `smallCaps` | boolean | Small Capitals |
+| `color` | string | Hex color (e.g. `"FF0000"` for red) |
+| `size` | number | Font size in half-points (e.g. `28` = 14pt) |
+| `font` | string | Font family (e.g. `"Arial"`, `"Times New Roman"`) |
+
+### Example
+
+```json
+{
+  "sections": [{
+    "children": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "Q4 Sales Report",
+        "alignment": "center"
+      },
+      {
+        "type": "paragraph",
+        "children": [
+          { "text": "Revenue: ", "bold": true },
+          { "text": "$1.2M", "color": "2E8B57" },
+          { "text": " (up 25%)", "italic": true }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "children": [
+          { "text": "DRAFT", "highlight": "yellow", "allCaps": true },
+          { "text": " — do not distribute", "strikethrough": true }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "children": [
+          { "text": "H" },
+          { "text": "2", "subScript": true },
+          { "text": "O is the chemical formula for water." }
+        ]
+      },
+      { "type": "bullet", "text": "Expanded to 3 new markets" },
+      { "type": "bullet", "text": "Hired 12 new sales reps", "level": 1 },
+      {
+        "type": "table",
+        "rows": [
+          [{ "text": "Product", "bold": true }, { "text": "Revenue", "bold": true }],
+          ["Widget A", "$450K"],
+          ["Widget B", "$320K"]
+        ]
+      }
+    ]
+  }]
+}
+```
 
 **Response fields:**
 
@@ -307,16 +453,49 @@ Create a Word document from a JSON specification. The spec defines sections with
 
 ## docprocess_word_ai
 
-Process a Word document with AI. Supports tasks like translation, summarization, and content editing. Runs asynchronously — poll with `docprocess_word_ai_poll`.
+Edit an existing Word document with AI while preserving all formatting. The AI reads the document content, applies the requested changes, and produces a new `.docx` with the original styling intact.
 
-**Parameters:**
+This tool runs asynchronously. Call it to start processing, then poll with `docprocess_word_ai_poll` until the result is ready.
+
+### Workflow
+
+1. Call `docprocess_word_ai` with the document URL and task description — returns a `responseId`
+2. Poll `docprocess_word_ai_poll` with that `responseId` every 5–10 seconds
+3. When `status` is `"completed"`, download the result from `resultFile.url`
+
+### What you can do
+
+| Task type | Example `task` values | Suggested `strategy` |
+| --- | --- | --- |
+| **Translation** | `"Translate to Spanish"`, `"Translate to Japanese"` | `DENSE_CHANGES` |
+| **Grammar & spelling** | `"Fix all grammar and spelling errors"` | `SPARSE_CHANGES` |
+| **Rewriting** | `"Rewrite in a formal tone"`, `"Simplify for an 8th-grade reading level"` | `DENSE_CHANGES` |
+| **Summarization** | `"Summarize to 2 paragraphs"` | `DENSE_CHANGES` |
+| **Tone adjustment** | `"Make this more concise and professional"` | `DENSE_CHANGES` |
+| **Minor edits** | `"Replace all instances of 'Acme Corp' with 'Globex Inc'"` | `SPARSE_CHANGES` |
+
+### Parameters
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `documentUrl` | string | Yes | — | URL of the `.docx` file to process |
-| `task` | string | Yes | — | Task description (e.g. `"translate to Spanish"`) |
-| `model` | string | No | — | AI model — `claude-sonnet-4-5-20250929`, `gpt-4.1`, `gpt-4o`, or `gemini-2.5-flash` |
-| `strategy` | string | No | — | Processing strategy — `"SPARSE_CHANGES"` or `"DENSE_CHANGES"` (auto-detected if omitted) |
+| `task` | string | Yes | — | Natural language description of what to do |
+| `model` | string | No | `claude-sonnet-4-5-20250929` | AI model — `claude-sonnet-4-5-20250929`, `gpt-4.1`, `gpt-4o`, or `gemini-2.5-flash` |
+| `strategy` | string | No | auto-detected | `"SPARSE_CHANGES"` for minor edits (grammar, spelling, find-replace) or `"DENSE_CHANGES"` for major changes (translation, rewriting, summarization). Auto-detected if omitted. |
+
+### Preserved formatting
+
+All document formatting is maintained during AI processing:
+
+- Bold, italic, underline, strikethrough
+- Font families, sizes, and colors
+- Text highlighting and backgrounds
+- Paragraph alignment and spacing
+- Bulleted and numbered lists
+- Tables with all formatting
+- Headers and footers
+- Page breaks and sections
+- Images and charts (untouched)
 
 **Response fields:**
 
@@ -331,13 +510,13 @@ Process a Word document with AI. Supports tasks like translation, summarization,
 
 ## docprocess_word_ai_poll
 
-Poll the status of an asynchronous Word AI processing job.
+Poll for the result of a Word AI job. Call every 5–10 seconds until `status` is `"completed"` or `"failed"`. When completed, download the processed document from `resultFile.url`.
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `responseId` | string | Yes | Response ID from the original `docprocess_word_ai` call |
+| `responseId` | string | Yes | The `responseId` returned by `docprocess_word_ai` |
 
 **Response fields:**
 
