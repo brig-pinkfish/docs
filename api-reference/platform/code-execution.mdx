@@ -76,6 +76,89 @@ Code runs in a **Node.js VM sandbox**. You get standard JavaScript built-ins (`J
 
 **Not available:** `require()`, `import()`, `fetch()`, `eval()`, `process`, `fs`, or any npm packages. All external access goes through `callTool()`.
 
+## Calling Other MCP Servers from Code
+
+When your code (including AI-generated code) needs to invoke another MCP server, use `callTool()`. This is the **only** way to reach external services — there is no direct network access.
+
+### callTool Signature
+
+```javascript
+const result = await callTool(serverPath, toolName, args);
+```
+
+| Parameter    | Type   | Description |
+| ------------ | ------ | ----------- |
+| `serverPath` | string | MCP server endpoint path, **with leading slash** (e.g. `"/gmail"`, `"/web-search"`, `"/datastore-unstructured"`) |
+| `toolName`   | string | Tool name as returned by `capabilities_discover` (e.g. `"gmail_search_emails"`, `"search_googlesearch"`) |
+| `args`       | object | Tool arguments as a plain object |
+
+**Returns:** The tool result (unwrapped from the MCP response). Use `await` — `callTool` is async.
+
+### Finding Server Paths and Tool Names
+
+Use `capabilities_discover` to list available servers and connections:
+
+```javascript
+const caps = await callTool("/pinkfish-sidekick", "capabilities_discover", {
+  request: "list all available tools",
+});
+
+// caps.connections — available integrations (Gmail, Slack, etc.) with their IDs
+// caps.servers — available MCP servers and their tools
+```
+
+For external integrations (Gmail, Slack, Jira, etc.), you need a **PCID** (connection ID). Get it from `capabilities_discover`:
+
+```javascript
+const caps = await callTool("/pinkfish-sidekick", "capabilities_discover", {
+  request: "search gmail",
+});
+const gmailPCID = caps.connections?.find((c) => c.application === "gmail")?.id;
+```
+
+### Embedded vs External Servers
+
+- **Embedded servers** (e.g. `/web-search`, `/datastore-unstructured`, `/embedded-groq`): No PCID needed. Call directly with tool args.
+- **External servers** (e.g. `/gmail`, `/slack`, `/jira`): Require `PCID` in `args` to identify which user connection to use. When code runs in an agent context, PCID may be auto-injected from connection selections.
+
+### Example: Generated Code Calling MCP
+
+Typical pattern for AI-generated code that chains tools:
+
+```javascript
+// 1. Call an embedded server (no PCID)
+const searchResults = await callTool("/web-search", "search_googlesearch", {
+  query: "latest AI developments 2026",
+});
+
+// 2. Call another embedded server
+const summary = await callTool("/embedded-groq", "embedded-groq_generate", {
+  prompt: JSON.stringify(searchResults),
+  systemPrompt: "Summarize into 5 bullet points.",
+});
+
+// 3. For external integrations, include PCID (or rely on auto-injection in agent context)
+const caps = await callTool("/pinkfish-sidekick", "capabilities_discover", {
+  request: "search gmail",
+});
+const gmailPCID = caps.connections?.find((c) => c.application === "gmail")?.id;
+
+const emails = await callTool("/gmail", "gmail_search_emails", {
+  PCID: gmailPCID,
+  query: "is:unread",
+});
+
+return { summary, emailCount: emails.messages?.length ?? 0 };
+```
+
+### Tips for Generated Code
+
+1. **Always use `await`** — `callTool` returns a Promise.
+2. **Server path must start with `/`** — e.g. `"/gmail"` not `"gmail"`.
+3. **Use the exact tool name** — get it from `capabilities_discover`; naming varies by server (e.g. `search_googlesearch` for web-search, `gmail_search_emails` for Gmail).
+4. **Handle errors** — wrap tool calls in `try/catch` when generating robust code.
+5. **Check for PCID** — external tools will fail with `"Required" for parameter "PCID"` if PCID is missing and not auto-injected.
+
 ## Examples
 
 ### Chain Multiple Tools
