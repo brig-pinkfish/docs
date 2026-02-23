@@ -18,7 +18,6 @@ For guided walkthroughs, see [Discovery](/api-reference/platform/discovery), [Wo
 | ------------------------------------------------- | ------------------------------------------------------------------------ |
 | [`capabilities_discover`](#capabilities_discover) | Find tools, connections, and resources for a task using natural language |
 | [`capability_details`](#capability_details)       | Get full parameter schemas for specific tools                            |
-| [`mcp_discover`](#mcp_discover)                   | Find MCP servers and tools (includes resources by default)               |
 
 ### Workflow Lifecycle
 
@@ -207,47 +206,6 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
     "id": 1
   }'
 ```
-
----
-
-## mcp_discover
-
-Find MCP servers and tools for any task. Broader than `capabilities_discover` — includes resources by default.
-
-**Parameters:**
-
-| Parameter          | Type    | Required | Description                                                |
-| ------------------ | ------- | -------- | ---------------------------------------------------------- |
-| `userRequest`      | string  | Yes      | Natural language description of the task                   |
-| `includeResources` | boolean | No       | Include user connections and collections. Default: `true`. |
-| `refreshCache`     | boolean | No       | Bypass cache for fresh data. Default: `false`.             |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "userRequest": {
-      "type": "string",
-      "description": "Natural language description of the task"
-    },
-    "includeResources": {
-      "type": "boolean",
-      "default": true,
-      "description": "Include user connections and collections"
-    },
-    "refreshCache": {
-      "type": "boolean",
-      "default": false,
-      "description": "Bypass cache for fresh data"
-    }
-  },
-  "required": ["userRequest"]
-}
-```
-
-</Expandable>
 
 ---
 
@@ -633,6 +591,8 @@ Surgical workflow edits — add/remove nodes, edges, and resources. Primarily fo
 ## workflow_agents
 
 Create, read, update, list, and invoke agents for use in workflows.
+
+**Creating an agent with tools:** Pass the `servers` parameter on create (or update). Each server has a `name` (e.g. `"slack"`, `"gmail"`) and a `tools` object mapping tool names to configs — use `{}` for defaults. Tool names include the server prefix (e.g. `"slack_send_message"`). Use `capabilities_discover` to find valid server and tool names.
 
 **Parameters:**
 
