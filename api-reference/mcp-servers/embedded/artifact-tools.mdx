@@ -1,20 +1,20 @@
 ---
-title: "Artifact Tools"
+title: "artifact-tools"
 description: "Built-in agent tools for creating, reading, and listing downloadable files"
 ---
 
 **Type:** Agent Built-in | **Server path:** N/A | **PCID required:** No
 
-**Built-in and always available.** These tools are part of the agent runtime — no MCP server configuration or setup required. They are automatically available to every Claude and GPT agent. Unlike MCP server tools, artifact tools cannot be invoked directly via the API; they are only used by agents during conversation to create downloadable files, read truncated results, and list artifacts.
+**Built-in and always available to agents (but not available via API).** These tools are part of the agent runtime — no MCP server configuration or setup required. They are automatically available to every Claude and GPT agent. Unlike MCP server tools, artifact tools cannot be invoked directly via the API; they are only used by agents during conversation to create downloadable files, read truncated results, and list artifacts.
 
 ## Tools
 
-| Tool | Description |
-| --- | --- |
-| [`write_artifact`](#write_artifact) | Create a downloadable file from text content |
-| [`write_artifact_from_url`](#write_artifact_from_url) | Create a downloadable file by fetching from a URL |
-| [`read_artifact`](#read_artifact) | Read content from an artifact by file ID (supports smart reading options) |
-| [`list_artifacts`](#list_artifacts) | List all artifact files in the current chat session |
+| Tool                                                  | Description                                                               |
+| ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| [`write_artifact`](#write_artifact)                   | Create a downloadable file from text content                              |
+| [`write_artifact_from_url`](#write_artifact_from_url) | Create a downloadable file by fetching from a URL                         |
+| [`read_artifact`](#read_artifact)                     | Read content from an artifact by file ID (supports smart reading options) |
+| [`list_artifacts`](#list_artifacts)                   | List all artifact files in the current chat session                       |
 
 ---
 
@@ -24,22 +24,22 @@ Create a downloadable file from text content. Use when the user explicitly reque
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `filename` | string | Yes | Name of the file with extension (e.g. `"data.csv"`) |
-| `content` | string | Yes | The file content as a string |
-| `fileType` | string | Yes | File extension/type: `csv`, `json`, `txt`, `md`, `html`, `js`, `ts`, `py` |
+| Parameter  | Type   | Required | Description                                                               |
+| ---------- | ------ | -------- | ------------------------------------------------------------------------- |
+| `filename` | string | Yes      | Name of the file with extension (e.g. `"data.csv"`)                       |
+| `content`  | string | Yes      | The file content as a string                                              |
+| `fileType` | string | Yes      | File extension/type: `csv`, `json`, `txt`, `md`, `html`, `js`, `ts`, `py` |
 
 **Response fields:**
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `success` | boolean | Whether the artifact was created |
-| `filename` | string | Name of the created file |
-| `url` | string | Download URL for the file |
-| `id` | string | File ID (for referencing in `read_artifact`) |
-| `mimeType` | string | MIME type of the file |
-| `size` | number | File size in bytes |
+| Field      | Type    | Description                                  |
+| ---------- | ------- | -------------------------------------------- |
+| `success`  | boolean | Whether the artifact was created             |
+| `filename` | string  | Name of the created file                     |
+| `url`      | string  | Download URL for the file                    |
+| `id`       | string  | File ID (for referencing in `read_artifact`) |
+| `mimeType` | string  | MIME type of the file                        |
+| `size`     | number  | File size in bytes                           |
 
 ---
 
@@ -49,22 +49,22 @@ Create a downloadable file by fetching content from a URL. Use when you have a d
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `sourceUrl` | string | Yes | The URL to fetch the file content from |
-| `filename` | string | Yes | Name for the artifact file with extension (e.g. `"report.pdf"`, `"data.xlsx"`) |
-| `authHeaders` | object | No | Optional authentication headers to include when fetching from the source URL |
+| Parameter     | Type   | Required | Description                                                                    |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------------ |
+| `sourceUrl`   | string | Yes      | The URL to fetch the file content from                                         |
+| `filename`    | string | Yes      | Name for the artifact file with extension (e.g. `"report.pdf"`, `"data.xlsx"`) |
+| `authHeaders` | object | No       | Optional authentication headers to include when fetching from the source URL   |
 
 **Response fields:**
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `success` | boolean | Whether the artifact was created |
-| `filename` | string | Name of the created file |
-| `url` | string | Download URL for the file |
-| `id` | string | File ID |
-| `mimeType` | string | MIME type of the file |
-| `size` | number | File size in bytes |
+| Field      | Type    | Description                      |
+| ---------- | ------- | -------------------------------- |
+| `success`  | boolean | Whether the artifact was created |
+| `filename` | string  | Name of the created file         |
+| `url`      | string  | Download URL for the file        |
+| `id`       | string  | File ID                          |
+| `mimeType` | string  | MIME type of the file            |
+| `size`     | number  | File size in bytes               |
 
 **Note:** URL fetches are subject to SSRF protection. Localhost and private IP URLs are blocked. Maximum download size is 100MB.
 
@@ -76,26 +76,26 @@ Retrieve content from an artifact file by its ID. Use when a tool result shows `
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `file_id` | string | Yes | The file ID of the artifact to read (e.g., `_artifact.id` from a truncated result) |
-| `search` | string | No | Search pattern to find in the content (case-insensitive). Returns matching lines with context. |
-| `context_lines` | number | No | Number of lines to show before and after each search match (default: 2) |
-| `start_line` | number | No | Start line number for line range extraction (1-indexed, inclusive) |
-| `end_line` | number | No | End line number for line range extraction (1-indexed, inclusive) |
-| `json_path` | string | No | Dot notation path to extract from JSON content (e.g. `"data.items"`, `"results[0]"`) |
-| `array_indices` | string | No | Comma-separated indices or ranges to extract from array content (e.g. `"0,1,2"` or `"0-5"`) |
+| Parameter       | Type   | Required | Description                                                                                    |
+| --------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `file_id`       | string | Yes      | The file ID of the artifact to read (e.g., `_artifact.id` from a truncated result)             |
+| `search`        | string | No       | Search pattern to find in the content (case-insensitive). Returns matching lines with context. |
+| `context_lines` | number | No       | Number of lines to show before and after each search match (default: 2)                        |
+| `start_line`    | number | No       | Start line number for line range extraction (1-indexed, inclusive)                             |
+| `end_line`      | number | No       | End line number for line range extraction (1-indexed, inclusive)                               |
+| `json_path`     | string | No       | Dot notation path to extract from JSON content (e.g. `"data.items"`, `"results[0]"`)           |
+| `array_indices` | string | No       | Comma-separated indices or ranges to extract from array content (e.g. `"0,1,2"` or `"0-5"`)    |
 
 **Response fields:**
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `success` | boolean | Whether the read succeeded |
-| `content` | string | File content (full or extracted) |
-| `size` | number | File size in bytes |
-| `filename` | string | File name |
-| `mimeType` | string | MIME type |
-| `mode` | string | When using smart options: `search`, `line_range`, `json_path`, or `array_indices` |
+| Field      | Type    | Description                                                                       |
+| ---------- | ------- | --------------------------------------------------------------------------------- |
+| `success`  | boolean | Whether the read succeeded                                                        |
+| `content`  | string  | File content (full or extracted)                                                  |
+| `size`     | number  | File size in bytes                                                                |
+| `filename` | string  | File name                                                                         |
+| `mimeType` | string  | MIME type                                                                         |
+| `mode`     | string  | When using smart options: `search`, `line_range`, `json_path`, or `array_indices` |
 
 ---
 
@@ -105,22 +105,22 @@ List all artifact files in the current chat session. Returns file names, IDs, si
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
-| `filter_type` | string | No | Filter by MIME type prefix (e.g. `"text/"`, `"application/json"`, `"image/"`) |
-| `filter_name` | string | No | Filter by filename pattern (case-insensitive substring match) |
+| Parameter     | Type   | Required | Description                                                                   |
+| ------------- | ------ | -------- | ----------------------------------------------------------------------------- |
+| `filter_type` | string | No       | Filter by MIME type prefix (e.g. `"text/"`, `"application/json"`, `"image/"`) |
+| `filter_name` | string | No       | Filter by filename pattern (case-insensitive substring match)                 |
 
 **Response fields:**
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `success` | boolean | Whether the list succeeded |
-| `totalCount` | number | Total number of artifacts |
-| `filteredCount` | number | Number after applying filters |
-| `artifacts` | object[] | Array of artifact objects |
-| `artifacts[].id` | string | File ID |
-| `artifacts[].filename` | string | File name |
-| `artifacts[].mimeType` | string | MIME type |
-| `artifacts[].size` | number | File size in bytes |
-| `artifacts[].sizeFormatted` | string | Human-readable size (e.g. "1.2 MB") |
-| `artifacts[].createdAt` | string | Creation timestamp |
+| Field                       | Type     | Description                         |
+| --------------------------- | -------- | ----------------------------------- |
+| `success`                   | boolean  | Whether the list succeeded          |
+| `totalCount`                | number   | Total number of artifacts           |
+| `filteredCount`             | number   | Number after applying filters       |
+| `artifacts`                 | object[] | Array of artifact objects           |
+| `artifacts[].id`            | string   | File ID                             |
+| `artifacts[].filename`      | string   | File name                           |
+| `artifacts[].mimeType`      | string   | MIME type                           |
+| `artifacts[].size`          | number   | File size in bytes                  |
+| `artifacts[].sizeFormatted` | string   | Human-readable size (e.g. "1.2 MB") |
+| `artifacts[].createdAt`     | string   | Creation timestamp                  |
