@@ -14,7 +14,9 @@ Meetings, recordings, and participants
 
 | Tool | Description |
 | --- | --- |
-| [`zoom_list_meetings`](#zoom_list_meetings) | List all scheduled meetings for the current user in Zoom |
+| [`zoom_list_scheduled_meetings`](#zoom_list_scheduled_meetings) | List scheduled meeting templates and upcoming meetings. NOT for past recordings.
+
+ROUTING: If user asks for 'meetings from today', 'recordings from yesterday', 'calls that happened', or 'sales call recordings' → use zoom_list_recordings instead (with from/to dates). This tool only returns scheduled/upcoming meetings, not past recordings. |
 | [`zoom_get_user_details`](#zoom_get_user_details) | Get details about a specific Zoom user |
 | [`zoom_create_meeting`](#zoom_create_meeting) | Create a new scheduled meeting in Zoom |
 | [`zoom_get_meeting_details`](#zoom_get_meeting_details) | Get details about a specific Zoom meeting |
@@ -23,21 +25,27 @@ Meetings, recordings, and participants
 | [`zoom_list_webinars`](#zoom_list_webinars) | List all webinars for the current user in Zoom |
 | [`zoom_create_webinar`](#zoom_create_webinar) | Create a new webinar in Zoom |
 | [`zoom_get_webinar_participants`](#zoom_get_webinar_participants) | Get participants for a specific webinar in Zoom |
-| [`zoom_get_recording_transcript`](#zoom_get_recording_transcript) | Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings first to get the meeting UUID. Returns artifactUrl that you can reference directly - do NOT fetch the URL content. For workflows, returns transcript_content directly. |
-| [`zoom_download_recording`](#zoom_download_recording) | Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats. |
-| [`zoom_list_call_recordings`](#zoom_list_call_recordings) | List recordings for a user. Returns metadata only. Do NOT use for transcripts - use zoom_get_recording_transcript with the meeting UUID instead.
+| [`zoom_get_recording_transcript`](#zoom_get_recording_transcript) | Get transcript from a Zoom meeting recording. Use zoom_list_recordings first to get the meeting UUID. Returns artifactUrl that you can reference directly - do NOT fetch the URL content. For workflows, returns transcript_content directly. from/to are optional; omitting them uses defaults (7 days ago to tomorrow) which often works better for recent recordings due to Zoom indexing lag. |
+| [`zoom_download_recording`](#zoom_download_recording) | Download a Zoom meeting recording file (video/audio). Use zoom_list_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats. |
+| [`zoom_list_recordings`](#zoom_list_recordings) | List past cloud recordings (meetings that already happened). USE THIS for: 'meetings from today', 'get my meetings from today', 'recordings from yesterday', 'calls that happened', 'sales call recordings'. Pass from/to (yyyy-mm-dd, UTC); for today in PST use from=today and to=tomorrow. Returns metadata only - use zoom_get_recording_transcript with the meeting UUID for transcripts.
+
+NOT for: scheduled/upcoming meetings (use zoom_list_scheduled_meetings).
 
 IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file. |
 | [`zoom_send_chat_message`](#zoom_send_chat_message) | Send a chat message to a Zoom contact or channel |
 | [`zoom_list_past_meeting_participants`](#zoom_list_past_meeting_participants) | Get participants list for a past Zoom meeting |
-| [`zoom_list_user_call_logs`](#zoom_list_user_call_logs) | Get call logs for a specific user |
+| [`zoom_list_user_call_logs`](#zoom_list_user_call_logs) | Get Zoom Phone call logs (requires Zoom Phone subscription). For regular meeting recordings (cloud recordings of past meetings), use zoom_list_recordings instead. |
 | [`zoom_list_channels`](#zoom_list_channels) | List available Zoom chat channels |
+| [`zoom_list_trigger_capabilities`](#zoom_list_trigger_capabilities) | List available Zoom trigger types for automation. Used by the trigger configuration system |
+| [`zoom_poll_trigger`](#zoom_poll_trigger) | Poll for new Zoom cloud recordings since last check. Used by automation triggers. Returns recording metadata including files, duration, and topic |
 
 ---
 
-## zoom_list_meetings
+## zoom_list_scheduled_meetings
 
-List all scheduled meetings for the current user in Zoom
+List scheduled meeting templates and upcoming meetings. NOT for past recordings.
+
+ROUTING: If user asks for 'meetings from today', 'recordings from yesterday', 'calls that happened', or 'sales call recordings' → use zoom_list_recordings instead (with from/to dates). This tool only returns scheduled/upcoming meetings, not past recordings.
 
 **Parameters:**
 
@@ -765,16 +773,16 @@ Get participants for a specific webinar in Zoom
 
 ## zoom_get_recording_transcript
 
-Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings first to get the meeting UUID. Returns artifactUrl that you can reference directly - do NOT fetch the URL content. For workflows, returns transcript_content directly.
+Get transcript from a Zoom meeting recording. Use zoom_list_recordings first to get the meeting UUID. Returns artifactUrl that you can reference directly - do NOT fetch the URL content. For workflows, returns transcript_content directly. from/to are optional; omitting them uses defaults (7 days ago to tomorrow) which often works better for recent recordings due to Zoom indexing lag.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `meetingUuid` | string | Yes | — | Meeting UUID from recordings (e.g., "VUe3+A+uSwC1Rb1Cxo/L4w=="). Use the "uuid" field from zoom_list_call_recordings response. |
+| `meetingUuid` | string | Yes | — | Meeting UUID from recordings (e.g., "VUe3+A+uSwC1Rb1Cxo/L4w=="). Use the "uuid" field from zoom_list_recordings response. |
 | `from` | string | No | — | Start date for recording search in YYYY-MM-DD format. Defaults to 7 days ago if not specified. |
-| `to` | string | No | — | End date for recording search in YYYY-MM-DD format. Defaults to today if not specified. |
-| `timezone` | string | No | — | IANA timezone string (e.g., "America/Los_Angeles"). Use the "timezone" field from zoom_list_call_recordings response. Defaults to UTC if not specified. |
+| `to` | string | No | — | End date for recording search in YYYY-MM-DD format. Defaults to tomorrow (today + 1 day) to handle timezone boundaries and indexing lag. |
+| `timezone` | string | No | — | IANA timezone string (e.g., "America/Los_Angeles"). Use the "timezone" field from zoom_list_recordings response. Defaults to UTC if not specified. |
 
 <Expandable title="inputSchema">
 
@@ -788,7 +796,7 @@ Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings firs
     },
     "meetingUuid": {
       "type": "string",
-      "description": "Meeting UUID from recordings (e.g., \"VUe3+A+uSwC1Rb1Cxo/L4w==\"). Use the \"uuid\" field from zoom_list_call_recordings response."
+      "description": "Meeting UUID from recordings (e.g., \"VUe3+A+uSwC1Rb1Cxo/L4w==\"). Use the \"uuid\" field from zoom_list_recordings response."
     },
     "from": {
       "type": "string",
@@ -796,11 +804,11 @@ Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings firs
     },
     "to": {
       "type": "string",
-      "description": "End date for recording search in YYYY-MM-DD format. Defaults to today if not specified."
+      "description": "End date for recording search in YYYY-MM-DD format. Defaults to tomorrow (today + 1 day) to handle timezone boundaries and indexing lag."
     },
     "timezone": {
       "type": "string",
-      "description": "IANA timezone string (e.g., \"America/Los_Angeles\"). Use the \"timezone\" field from zoom_list_call_recordings response. Defaults to UTC if not specified."
+      "description": "IANA timezone string (e.g., \"America/Los_Angeles\"). Use the \"timezone\" field from zoom_list_recordings response. Defaults to UTC if not specified."
     }
   },
   "required": [
@@ -816,17 +824,17 @@ Get transcript from a Zoom meeting recording. Use zoom_list_call_recordings firs
 
 ## zoom_download_recording
 
-Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats.
+Download a Zoom meeting recording file (video/audio). Use zoom_list_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `meetingUuid` | string | Yes | — | Meeting UUID from recordings (e.g., "VUe3+A+uSwC1Rb1Cxo/L4w=="). Use the "uuid" field from zoom_list_call_recordings response. |
+| `meetingUuid` | string | Yes | — | Meeting UUID from recordings (e.g., "VUe3+A+uSwC1Rb1Cxo/L4w=="). Use the "uuid" field from zoom_list_recordings response. |
 | `fileType` | string | No | — | Type of recording file to download. If not specified, downloads the first available recording file (prefers MP4, then M4A). Use "MP4" for video recordings, "M4A" for audio-only recordings. Note: Transcripts are not supported - use zoom_get_recording_transcript instead. |
 | `from` | string | No | — | Start date for recording search in YYYY-MM-DD format. Defaults to 7 days ago if not specified. |
-| `to` | string | No | — | End date for recording search in YYYY-MM-DD format. Defaults to today if not specified. |
-| `timezone` | string | No | — | IANA timezone string (e.g., "America/Los_Angeles"). Use the "timezone" field from zoom_list_call_recordings response. Defaults to UTC if not specified. |
+| `to` | string | No | — | End date for recording search in YYYY-MM-DD format. Defaults to tomorrow (today + 1 day) to handle timezone boundaries and indexing lag. |
+| `timezone` | string | No | — | IANA timezone string (e.g., "America/Los_Angeles"). Use the "timezone" field from zoom_list_recordings response. Defaults to UTC if not specified. |
 | `filename` | string | No | — | Custom filename for the downloaded recording |
 
 <Expandable title="inputSchema">
@@ -841,7 +849,7 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
     },
     "meetingUuid": {
       "type": "string",
-      "description": "Meeting UUID from recordings (e.g., \"VUe3+A+uSwC1Rb1Cxo/L4w==\"). Use the \"uuid\" field from zoom_list_call_recordings response."
+      "description": "Meeting UUID from recordings (e.g., \"VUe3+A+uSwC1Rb1Cxo/L4w==\"). Use the \"uuid\" field from zoom_list_recordings response."
     },
     "fileType": {
       "type": "string",
@@ -861,11 +869,11 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
     },
     "to": {
       "type": "string",
-      "description": "End date for recording search in YYYY-MM-DD format. Defaults to today if not specified."
+      "description": "End date for recording search in YYYY-MM-DD format. Defaults to tomorrow (today + 1 day) to handle timezone boundaries and indexing lag."
     },
     "timezone": {
       "type": "string",
-      "description": "IANA timezone string (e.g., \"America/Los_Angeles\"). Use the \"timezone\" field from zoom_list_call_recordings response. Defaults to UTC if not specified."
+      "description": "IANA timezone string (e.g., \"America/Los_Angeles\"). Use the \"timezone\" field from zoom_list_recordings response. Defaults to UTC if not specified."
     },
     "filename": {
       "type": "string",
@@ -883,9 +891,11 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_call_recordi
 
 ---
 
-## zoom_list_call_recordings
+## zoom_list_recordings
 
-List recordings for a user. Returns metadata only. Do NOT use for transcripts - use zoom_get_recording_transcript with the meeting UUID instead.
+List past cloud recordings (meetings that already happened). USE THIS for: 'meetings from today', 'get my meetings from today', 'recordings from yesterday', 'calls that happened', 'sales call recordings'. Pass from/to (yyyy-mm-dd, UTC); for today in PST use from=today and to=tomorrow. Returns metadata only - use zoom_get_recording_transcript with the meeting UUID for transcripts.
+
+NOT for: scheduled/upcoming meetings (use zoom_list_scheduled_meetings).
 
 IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file.
 
@@ -898,8 +908,8 @@ IMPORTANT: The `download_url` in `recording_files` requires authentication. To d
 | `nextPageToken` | string | No | — | The next page token paginates through a large set of results. Expires in 15 minutes. |
 | `mc` | string | No | `"false"` | The query metadata of the recording if using an on-premise meeting connector |
 | `trash` | boolean | No | `false` | List recordings from trash: true = List from trash, false = Do not list from trash |
-| `from` | string | No | — | Start date in 'yyyy-mm-dd' UTC format. Maximum range is a month. Defaults to current date if not provided. |
-| `to` | string | No | — | End date in 'yyyy-mm-dd' UTC format |
+| `from` | string | No | — | Start date in 'yyyy-mm-dd' UTC format. Maximum range is a month. Defaults to current date if not provided. For 'today' in a timezone like PST, use from=today and to=tomorrow to span the UTC boundary. |
+| `to` | string | No | — | End date in 'yyyy-mm-dd' UTC format. For 'today' in PST, use tomorrow's date as to (since today in PST spans two UTC dates). |
 | `trashType` | string | No | `"meeting_recordings"` | Type of cloud recording to retrieve from trash: meeting_recordings (List all meeting recordings) or recording_file (List all individual recording files) |
 | `meetingId` | number | No | — | The meeting ID to filter recordings |
 
@@ -939,11 +949,11 @@ IMPORTANT: The `download_url` in `recording_files` requires authentication. To d
     },
     "from": {
       "type": "string",
-      "description": "Start date in 'yyyy-mm-dd' UTC format. Maximum range is a month. Defaults to current date if not provided."
+      "description": "Start date in 'yyyy-mm-dd' UTC format. Maximum range is a month. Defaults to current date if not provided. For 'today' in a timezone like PST, use from=today and to=tomorrow to span the UTC boundary."
     },
     "to": {
       "type": "string",
-      "description": "End date in 'yyyy-mm-dd' UTC format"
+      "description": "End date in 'yyyy-mm-dd' UTC format. For 'today' in PST, use tomorrow's date as to (since today in PST spans two UTC dates)."
     },
     "trashType": {
       "type": "string",
@@ -1059,7 +1069,7 @@ Get participants list for a past Zoom meeting
 
 ## zoom_list_user_call_logs
 
-Get call logs for a specific user
+Get Zoom Phone call logs (requires Zoom Phone subscription). For regular meeting recordings (cloud recordings of past meetings), use zoom_list_recordings instead.
 
 **Parameters:**
 
@@ -1137,6 +1147,90 @@ List available Zoom chat channels
     "nextPageToken": {
       "type": "string",
       "description": "Next page token for pagination"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## zoom_list_trigger_capabilities
+
+List available Zoom trigger types for automation. Used by the trigger configuration system
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+</Expandable>
+
+---
+
+## zoom_poll_trigger
+
+Poll for new Zoom cloud recordings since last check. Used by automation triggers. Returns recording metadata including files, duration, and topic
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cursor` | string | No | — | Opaque cursor from previous poll response. Pass this unchanged to get only NEW recordings since last poll |
+| `minTimestamp` | number | No | — | Unix timestamp (seconds). Ignore recordings before this time. Typically set to trigger creation time |
+| `eventTypes` | string[] | No | — | Filter by recording file types. Only meetings containing at least one matching file type are returned |
+| `batchMode` | boolean | No | — | Process all new recordings in a single automation run (batch) vs one run per recording (individual) |
+| `maxResults` | number | No | `100` | Maximum number of recording events to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for Zoom connection"
+    },
+    "cursor": {
+      "type": "string",
+      "description": "Opaque cursor from previous poll response. Pass this unchanged to get only NEW recordings since last poll"
+    },
+    "minTimestamp": {
+      "type": "number",
+      "description": "Unix timestamp (seconds). Ignore recordings before this time. Typically set to trigger creation time"
+    },
+    "eventTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "MP4",
+          "M4A",
+          "TRANSCRIPT",
+          "CHAT",
+          "CC",
+          "TIMELINE"
+        ]
+      },
+      "description": "Filter by recording file types. Only meetings containing at least one matching file type are returned"
+    },
+    "batchMode": {
+      "type": "boolean",
+      "description": "Process all new recordings in a single automation run (batch) vs one run per recording (individual)"
+    },
+    "maxResults": {
+      "type": "number",
+      "default": 100,
+      "description": "Maximum number of recording events to return"
     }
   },
   "required": [
