@@ -14,9 +14,7 @@ Meetings, recordings, and participants
 
 | Tool | Description |
 | --- | --- |
-| [`zoom_list_scheduled_meetings`](#zoom_list_scheduled_meetings) | List scheduled meeting templates and upcoming meetings. NOT for past recordings.
-
-ROUTING: If user asks for 'meetings from today', 'recordings from yesterday', 'calls that happened', or 'sales call recordings' → use zoom_list_recordings instead (with from/to dates). This tool only returns scheduled/upcoming meetings, not past recordings. |
+| [`zoom_list_scheduled_meetings`](#zoom_list_scheduled_meetings) | List scheduled and upcoming meetings for the current user. |
 | [`zoom_get_user_details`](#zoom_get_user_details) | Get details about a specific Zoom user |
 | [`zoom_create_meeting`](#zoom_create_meeting) | Create a new scheduled meeting in Zoom |
 | [`zoom_get_meeting_details`](#zoom_get_meeting_details) | Get details about a specific Zoom meeting |
@@ -27,11 +25,9 @@ ROUTING: If user asks for 'meetings from today', 'recordings from yesterday', 'c
 | [`zoom_get_webinar_participants`](#zoom_get_webinar_participants) | Get participants for a specific webinar in Zoom |
 | [`zoom_get_recording_transcript`](#zoom_get_recording_transcript) | Get transcript from a Zoom meeting recording. Use zoom_list_recordings first to get the meeting UUID. Returns artifactUrl that you can reference directly - do NOT fetch the URL content. For workflows, returns transcript_content directly. from/to are optional; omitting them uses defaults (7 days ago to tomorrow) which often works better for recent recordings due to Zoom indexing lag. |
 | [`zoom_download_recording`](#zoom_download_recording) | Download a Zoom meeting recording file (video/audio). Use zoom_list_recordings first to get the meeting UUID. Returns either artifactUrl (for direct reference - do NOT fetch the URL content) or downloadUrl with streaming format (for efficient downloading via pf.mcp.downloadFile() or MCP server proxy). Supports MP4 (video), M4A (audio), and other recording formats. |
-| [`zoom_list_recordings`](#zoom_list_recordings) | List past cloud recordings (meetings that already happened). USE THIS for: 'meetings from today', 'get my meetings from today', 'recordings from yesterday', 'calls that happened', 'sales call recordings'. Pass from/to (yyyy-mm-dd, UTC); for today in PST use from=today and to=tomorrow. Returns metadata only - use zoom_get_recording_transcript with the meeting UUID for transcripts.
+| [`zoom_list_recordings`](#zoom_list_recordings) | List past meeting recordings. Returns recording metadata including files and transcripts. Use zoom_get_recording_transcript with the meeting UUID to get transcript content.
 
-NOT for: scheduled/upcoming meetings (use zoom_list_scheduled_meetings).
-
-IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file. |
+IMPORTANT: The `download_url` in `recording_files` requires authentication. Append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. |
 | [`zoom_send_chat_message`](#zoom_send_chat_message) | Send a chat message to a Zoom contact or channel |
 | [`zoom_list_past_meeting_participants`](#zoom_list_past_meeting_participants) | Get participants list for a past Zoom meeting |
 | [`zoom_list_user_call_logs`](#zoom_list_user_call_logs) | Get Zoom Phone call logs (requires Zoom Phone subscription). For regular meeting recordings (cloud recordings of past meetings), use zoom_list_recordings instead. |
@@ -43,9 +39,7 @@ IMPORTANT: The `download_url` in `recording_files` requires authentication. To d
 
 ## zoom_list_scheduled_meetings
 
-List scheduled meeting templates and upcoming meetings. NOT for past recordings.
-
-ROUTING: If user asks for 'meetings from today', 'recordings from yesterday', 'calls that happened', or 'sales call recordings' → use zoom_list_recordings instead (with from/to dates). This tool only returns scheduled/upcoming meetings, not past recordings.
+List scheduled and upcoming meetings for the current user.
 
 **Parameters:**
 
@@ -893,11 +887,9 @@ Download a Zoom meeting recording file (video/audio). Use zoom_list_recordings f
 
 ## zoom_list_recordings
 
-List past cloud recordings (meetings that already happened). USE THIS for: 'meetings from today', 'get my meetings from today', 'recordings from yesterday', 'calls that happened', 'sales call recordings'. Pass from/to (yyyy-mm-dd, UTC); for today in PST use from=today and to=tomorrow. Returns metadata only - use zoom_get_recording_transcript with the meeting UUID for transcripts.
+List past meeting recordings. Returns recording metadata including files and transcripts. Use zoom_get_recording_transcript with the meeting UUID to get transcript content.
 
-NOT for: scheduled/upcoming meetings (use zoom_list_scheduled_meetings).
-
-IMPORTANT: The `download_url` in `recording_files` requires authentication. To download files, append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object. Without this token, download requests will redirect to Zoom's login page instead of returning the actual recording file.
+IMPORTANT: The `download_url` in `recording_files` requires authentication. Append `?access_token=&#123;download_access_token&#125;` to each `download_url`, where `download_access_token` comes from the meeting object.
 
 **Parameters:**
 
