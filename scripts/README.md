@@ -4,6 +4,12 @@
 
 Generates `.mdx` documentation pages for application (external) MCP servers by reading tool definitions directly from the platform repo.
 
+**Quick run (single server, e.g. zoom):**
+```bash
+cd platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts --server zoom
+```
+*(Run from docs repo root; platform must be at `../platform`)*
+
 ### When to run
 
 - A new application MCP server is added to the platform
