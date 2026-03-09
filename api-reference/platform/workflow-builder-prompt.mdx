@@ -40,15 +40,15 @@ multiple nodes, synthetic edges for loops/for-each, and advanced control flow pa
 4. **workflow_update** — Upload your workflow code. For existing workflows, use the targeted
    edit format (see below) so edits merge correctly; full replacement wipes headers,
    footers, and other nodes. Call workflow_read before editing to see current state.
-   **Bindings:** Only include the `bindings` parameter when adding NEW resources to
-   WORKFLOW_RESOURCES or when the user explicitly requests a rebind. When updating code
-   without adding resources, omit bindings — this preserves the user's manual connection
-   selections in the UI.
-5. **workflow_run** — Execute and verify. Use workflow_results to inspect output when you need
+5. **workflow_bind_resources** — Bind any newly declared connections, triggers, agents, or
+   collections after saving code. This tool owns all manual binding and rebinding.
+6. **workflow_read** — Call `workflow_read({ automationId, checkResources: true })` to verify
+   every declared resource is valid before running.
+7. **workflow_run** — Execute and verify. Use workflow_results to inspect output when you need
    to search, read, or get URLs from run artifacts.
-6. **workflow_pin** — IMMEDIATELY pin all mcp-tool nodes after successful run. Pinned nodes
+8. **workflow_pin** — IMMEDIATELY pin all mcp-tool nodes after successful run. Pinned nodes
    skip execution and reuse stored output; unpinned nodes re-run every time.
-7. **Fix & iterate** — Review errors, update code, run again until success. Call workflow_read
+9. **Fix & iterate** — Review errors, update code, run again until success. Call workflow_read
    before editing existing workflows to see current state.
 
 ## Code Structure
@@ -156,9 +156,9 @@ Always call capability_details(items: ["triggers"]) before implementing triggers
 ## Available Tools
 
 For discovery: capabilities_discover, capability_details
-For lifecycle: workflow_create, workflow_update, workflow_read, workflow_run,
-  workflow_run_status, workflow_set_inputs, workflow_pin, workflow_results,
-  workflow_list
+For lifecycle: workflow_create, workflow_update, workflow_bind_resources,
+  workflow_read, workflow_run, workflow_run_status, workflow_set_inputs,
+  workflow_pin, workflow_results, workflow_list
 For triggers: workflow_trigger_schedule, workflow_trigger_api, workflow_trigger_email,
   workflow_trigger_application, workflow_trigger_interface, workflow_trigger_list_all,
   workflow_trigger_cleanup

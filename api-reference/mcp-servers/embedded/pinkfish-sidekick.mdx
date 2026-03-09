@@ -24,7 +24,8 @@ For guided walkthroughs, see [Discovery](/api-reference/platform/discovery), [Wo
 | Tool                                          | Description                                                |
 | --------------------------------------------- | ---------------------------------------------------------- |
 | [`workflow_create`](#workflow_create)         | Create a new workflow                                      |
-| [`workflow_update`](#workflow_update)         | Update workflow code and/or resource bindings              |
+| [`workflow_update`](#workflow_update)         | Update workflow code                                       |
+| [`workflow_bind_resources`](#workflow_bind_resources) | Bind declared workflow resources to concrete IDs |
 | [`workflow_read`](#workflow_read)             | Read workflow structure, nodes, edges, and optionally code |
 | [`workflow_run`](#workflow_run)               | Execute a workflow                                         |
 | [`workflow_run_status`](#workflow_run_status) | Check status of a running workflow                         |
@@ -265,17 +266,16 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
 
 ## workflow_update
 
-Update workflow code and/or apply resource bindings.
+Update workflow code only. Save code first, then call `workflow_bind_resources` to apply bindings.
 
 **Parameters:**
 
-| Parameter           | Type   | Required | Description                                                        |
-| ------------------- | ------ | -------- | ------------------------------------------------------------------ |
-| `automationId`      | string | Yes      | Automation ID                                                      |
-| `code`              | string | No       | Workflow code (full replacement or targeted edit format)           |
-| `name`              | string | No       | Workflow display name (only needed on first call)                  |
-| `changeDescription` | string | No       | Brief description of changes                                       |
-| `bindings`          | object | No       | Resource bindings map. Only include when adding **new** resources. |
+| Parameter           | Type   | Required | Description                                              |
+| ------------------- | ------ | -------- | -------------------------------------------------------- |
+| `automationId`      | string | Yes      | Automation ID                                            |
+| `code`              | string | Yes      | Workflow code (full replacement or targeted edit format) |
+| `name`              | string | No       | Workflow display name (only needed on first call)        |
+| `changeDescription` | string | No       | Brief description of changes                             |
 
 <Expandable title="inputSchema">
 
@@ -289,13 +289,54 @@ Update workflow code and/or apply resource bindings.
     "changeDescription": {
       "type": "string",
       "description": "Brief description of changes"
-    },
-    "bindings": {
-      "type": "object",
-      "description": "Resource bindings map (key: resource name, value: ID)"
     }
   },
-  "required": ["automationId"]
+  "required": ["automationId", "code"]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_bind_resources
+
+Bind declared workflow resources to concrete resource IDs after saving code with `workflow_update`.
+
+**Parameters:**
+
+| Parameter      | Type   | Required | Description                                                                  |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------- |
+| `automationId` | string | Yes      | Automation ID                                                                |
+| `bindings`     | object | Yes      | Resource bindings map keyed by `WORKFLOW_RESOURCES` name                     |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": { "type": "string", "description": "Automation ID" },
+    "bindings": {
+      "type": "object",
+      "description": "Bindings keyed by resource name",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Concrete resource ID" },
+          "resourceType": {
+            "type": "string",
+            "enum": ["connection", "collection", "trigger", "agent"],
+            "description": "Bound resource type"
+          },
+          "subtype": { "type": "string", "description": "Optional subtype for collection-like resources" },
+          "description": { "type": "string", "description": "Optional binding note" }
+        },
+        "required": ["id", "resourceType"]
+      }
+    }
+  },
+  "required": ["automationId", "bindings"]
 }
 ```
 
