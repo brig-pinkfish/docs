@@ -29,7 +29,8 @@ All workflow tools are on the `/pinkfish-sidekick` server path. For full paramet
 | `capability_details`           | Get full parameter schemas, connection metadata, and usage instructions for specific tools/connections             |
 | **Workflow Lifecycle**         |                                                                                                                    |
 | `workflow_create`              | Create a new workflow. Returns `automationId` and starter code                                                     |
-| `workflow_update`              | Update workflow code and/or bind resources (connections, collections)                                              |
+| `workflow_update`              | Update workflow code only                                                                                          |
+| `workflow_bind_resources`      | Bind declared connections, triggers, agents, and collections after saving code                                     |
 | `workflow_read`                | Read workflow structure — nodes, edges, resources, and optionally full code                                        |
 | `workflow_run`                 | Execute the workflow and return results                                                                            |
 | `workflow_run_status`          | Check status of a running workflow                                                                                 |
@@ -106,14 +107,24 @@ const WORKFLOW_RESOURCES = {
 };
 ```
 
-When you call `workflow_update` with `bindings`, you map each resource key to a real ID:
+After saving code with `workflow_update`, call `workflow_bind_resources` to map each resource key to a real ID:
 
 ```json
 {
+  "automationId": "auto_abc123",
   "bindings": {
-    "gmailConn": "pcid_abc123",
-    "apiEndpoint": "trigger_xyz",
-    "analyst": "agent_456"
+    "gmailConn": {
+      "id": "pcid_abc123",
+      "resourceType": "connection"
+    },
+    "apiEndpoint": {
+      "id": "trigger_xyz",
+      "resourceType": "trigger"
+    },
+    "analyst": {
+      "id": "agent_456",
+      "resourceType": "agent"
+    }
   }
 }
 ```
@@ -637,19 +648,26 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/pinkfish-sidekick" \
     "jsonrpc": "2.0",
     "method": "tools/call",
     "params": {
-      "name": "workflow_update",
+      "name": "workflow_bind_resources",
       "arguments": {
         "automationId": "auto_abc123",
-        "changeDescription": "Bind Zendesk connection and agent",
         "bindings": {
-          "zendesk": "<YOUR_ZENDESK_PCID>",
-          "ticketAnalyst": "<YOUR_AGENT_ID>"
+          "zendesk": {
+            "id": "<YOUR_ZENDESK_PCID>",
+            "resourceType": "connection"
+          },
+          "ticketAnalyst": {
+            "id": "<YOUR_AGENT_ID>",
+            "resourceType": "agent"
+          }
         }
       }
     },
     "id": 1
   }'
 ```
+
+Use `workflow_read({ automationId, checkResources: true })` after binding to verify every declared resource resolved correctly before running the workflow.
 
 ## Setting Up Triggers
 
@@ -797,15 +815,21 @@ Auto-generates a web form. When users fill it out and submit, the workflow runs 
 3. workflow_create(name: "Daily News Summary")
    -> automationId: "auto_abc123"
 
-4. workflow_update(automationId, code: "...full workflow JS...", bindings: {...})
-   -> Workflow saved with node graph and resource bindings
+4. workflow_update(automationId, code: "...full workflow JS...")
+   -> Workflow saved with node graph
 
-5. workflow_trigger_schedule(automationId, schedule: "0 9 * * *")
+5. workflow_bind_resources(automationId, bindings: {...})
+   -> Declared resources are mapped to concrete IDs
+
+6. workflow_read(automationId, checkResources: true)
+   -> Confirms binding validity before execution
+
+7. workflow_trigger_schedule(automationId, schedule: "0 9 * * *")
    -> Trigger created — workflow fires daily at 9am
 
-6. workflow_run(automationId)
+8. workflow_run(automationId)
    -> Test execution — verifies everything works
 
-7. workflow_results(automationId, operation: "read", filename: "output.json")
+9. workflow_results(automationId, operation: "read", filename: "output.json")
    -> Inspect actual output data
 ```
