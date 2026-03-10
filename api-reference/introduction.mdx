@@ -53,15 +53,158 @@ Both options:
 
 To view the outcome of a workflow run (especially for async calls or timeouts), you have several options:
 
-1. Check the effects of the workflow (e.g., a created Google Doc or message to Slack). This is entirely up to you to devise.
+1. **Poll for results programmatically** (recommended for integrations). See the [Polling for Results](#polling-for-results) section below.
 
-2. Load the workflow in the platform UI (you will see results from the last run). Warning: if you have edited your workflow since your last publish, you won't see results here.
+2. Check the effects of the workflow (e.g., a created Google Doc or message to Slack). This is entirely up to you to devise.
 
-3. Use the Runs Monitor in the platform to view execution status and results. This is the most reliable and simple method.
+3. Load the workflow in the platform UI (you will see results from the last run). Warning: if you have edited your workflow since your last publish, you won't see results here.
+
+4. Use the Runs Monitor in the platform to view execution status and results. This is the most reliable and simple method.
+
+## Polling for Results
+
+When you trigger a workflow asynchronously, the response includes two important headers:
+
+- `X-Pf-Run-Id`: The unique identifier for this workflow run
+- `X-Pf-Automation-Id`: The automation/workflow ID
+
+You can use these values to poll for the run status and retrieve results once the workflow completes.
+
+**Note**: Polling endpoints use the webhook-style URL format (`/ext/webhook/{apiKey}/...`) even if the run was started using the API trigger endpoint with `X-API-KEY` header authentication.
+
+### Check Run Status
+
+Poll the status endpoint to check if the workflow has completed:
+
+```
+GET https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/runs/{automationId}/{runId}/status
+```
+
+**Response:**
+
+The status endpoint returns a `RunStatus` object:
+
+```json
+{
+  "automationId": "csrtvshm36rc711dhoqg",
+  "runId": "1731715310692281375",
+  "status": "RUNNING",
+  "stepStatus": {
+    "1": "COMPLETE",
+    "2": "RUNNING"
+  },
+  "stepInfo": {
+    "1": {
+      "status": "COMPLETE",
+      "name": "Step 1",
+      "executionOrder": 1
+    },
+    "2": {
+      "status": "RUNNING",
+      "name": "Step 2",
+      "executionOrder": 2
+    }
+  }
+}
+```
+
+**Status values:**
+- `PENDING`: Workflow is queued but not yet started
+- `RUNNING`: Workflow is currently executing
+- `COMPLETE`: Workflow completed successfully
+- `FAILED`: Workflow failed with an error
+- `TIMEOUT`: Workflow exceeded execution time limit
+
+### Get Run Results
+
+Once the status is `COMPLETE`, retrieve the full results:
+
+```
+GET https://triggers.app.pinkfish.ai/ext/webhook/{apiKey}/runs/{automationId}/{runId}/results
+```
+
+**Response:**
+
+Returns the complete run object with all step results (same format as synchronous response):
+
+```json
+{
+  "automationId": "csrtvshm36rc711dhoqg",
+  "automationVersion": 1,
+  "automationName": "Hello Triggers",
+  "id": "1731715310692281375",
+  "type": "TRIGGER",
+  "results": [
+    {
+      "stepIndex": 1,
+      "stepVersion": 2,
+      "result": {
+        "stepIndex": 1,
+        "resultType": "markdown",
+        "result": "# Hello from step 1! 👋"
+      },
+      "exitCode": 0,
+      "duration": 790
+    }
+  ],
+  "started": "2024-11-16T00:01:50Z",
+  "startedBy": "588233679836"
+}
+```
+
+### Polling Example
+
+Here's a complete example showing how to trigger a workflow asynchronously and poll for results:
+
+```bash
+# Step 1: Trigger the workflow asynchronously
+RESPONSE=$(curl -s -i --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID' \
+  --header 'Content-Type: application/json' \
+  --header 'X-API-KEY: YOUR_API_KEY' \
+  --header 'x-api-wait: false' \
+  --data '{"user_request": "process this data"}')
+
+# Step 2: Extract runId and automationId from response headers
+RUN_ID=$(echo "$RESPONSE" | grep -i "X-Pf-Run-Id" | cut -d' ' -f2 | tr -d '\r')
+AUTOMATION_ID=$(echo "$RESPONSE" | grep -i "X-Pf-Automation-Id" | cut -d' ' -f2 | tr -d '\r')
+
+# Step 3: Poll for status (check every 2-5 seconds)
+while true; do
+  STATUS_RESPONSE=$(curl -s "https://triggers.app.pinkfish.ai/ext/webhook/YOUR_API_KEY/runs/$AUTOMATION_ID/$RUN_ID/status")
+  STATUS=$(echo "$STATUS_RESPONSE" | jq -r '.status')
+  
+  if [ "$STATUS" = "COMPLETE" ]; then
+    echo "Workflow completed!"
+    break
+  elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "TIMEOUT" ]; then
+    echo "Workflow failed with status: $STATUS"
+    exit 1
+  fi
+  
+  echo "Status: $STATUS, waiting..."
+  sleep 3
+done
+
+# Step 4: Get the results
+RESULTS=$(curl -s "https://triggers.app.pinkfish.ai/ext/webhook/YOUR_API_KEY/runs/$AUTOMATION_ID/$RUN_ID/results")
+echo "$RESULTS" | jq '.'
+```
+
+**Polling best practices:**
+
+- Poll every 2-5 seconds for most workflows
+- For very long-running workflows, you may want to poll less frequently (every 10-30 seconds)
+- Set a maximum polling duration to avoid infinite loops
+- Handle `FAILED` and `TIMEOUT` statuses appropriately in your code
 
 ## Authentication
 
-All API endpoints are authenticated using API keys. Include your API key in the `X-API-KEY` header of each request:
+All trigger API endpoints are authenticated using API keys.
+
+- **API trigger endpoint** (`/ext/triggers/{triggerId}`): include the API key in the `X-API-KEY` header
+- **Webhook endpoint and polling endpoints** (`/ext/webhook/{apiKey}/...`): API key is embedded in the URL path
+
+For header-based authentication:
 
 ```
 X-API-KEY: YOUR_API_KEY_HERE
@@ -92,7 +235,7 @@ API triggers support the following content types:
 ### Asynchronous Request (Form-encoded)
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --header 'x-api-wait: false' \
@@ -102,7 +245,7 @@ curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID'
 ### Synchronous Request (JSON)
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID' \
 --header 'Content-Type: application/json' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --header 'x-api-wait: true' \
@@ -125,7 +268,7 @@ API triggers support file attachments using `multipart/form-data`. Attachments a
 **Example with single file:**
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --form 'description="Process this document"' \
 --form 'file=@"/path/to/document.pdf"'
@@ -134,7 +277,7 @@ curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID'
 **Example with multiple files:**
 
 ```
-curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_WORKFLOW_ID' \
+curl --location 'https://triggers.app.pinkfish.ai/ext/triggers/YOUR_TRIGGER_ID' \
 --header 'X-API-KEY: YOUR_API_KEY' \
 --form 'action="process"' \
 --form 'files=@"/path/to/file1.pdf"' \
