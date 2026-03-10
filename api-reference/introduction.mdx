@@ -152,6 +152,64 @@ Returns the complete run object with all step results (same format as synchronou
 }
 ```
 
+### Using Designated Output with Async Polling
+
+If your trigger has a designated output configured, the async results response includes a top-level `designatedOutput` object.
+
+Important behavior:
+
+- The `results` endpoint still returns the full run payload
+- `designatedOutput` is added as an extra field when it can be resolved
+- There is no query parameter to return only designated output
+
+Example response shape with designated output:
+
+```json
+{
+  "id": "1773184744204578408",
+  "status": "COMPLETE",
+  "results": [
+    {
+      "stepIndex": 1,
+      "resultUrls": {
+        "poem.txt": {
+          "url": "https://run-files.app.pinkfish.ai/..."
+        }
+      }
+    },
+    {
+      "stepIndex": 2,
+      "resultUrls": {
+        "retrieved-poem.txt": {
+          "url": "https://run-files.app.pinkfish.ai/..."
+        }
+      }
+    }
+  ],
+  "designatedOutput": {
+    "url": "https://run-files.app.pinkfish.ai/...",
+    "fileName": "retrieved-poem.txt",
+    "mimeType": "text/plain",
+    "size": 117
+  }
+}
+```
+
+Client-side filtering example:
+
+```bash
+RESULTS=$(curl -s "https://triggers.app.pinkfish.ai/ext/webhook/YOUR_API_KEY/runs/$AUTOMATION_ID/$RUN_ID/results")
+
+# If designatedOutput exists, use it directly
+echo "$RESULTS" | jq '.designatedOutput // "No designated output found"'
+
+# Download designated output content
+DESIGNATED_URL=$(echo "$RESULTS" | jq -r '.designatedOutput.url // empty')
+if [ -n "$DESIGNATED_URL" ]; then
+  curl -s "$DESIGNATED_URL"
+fi
+```
+
 ### Polling Example
 
 Here's a complete example showing how to trigger a workflow asynchronously and poll for results:
