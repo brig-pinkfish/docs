@@ -88,6 +88,99 @@ When a new application server is added to the platform:
 3. Run the script: `(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts)`
 4. Commit and push the generated files + updated `docs.json`
 
+## generate-embedded-mcp-docs.ts
+
+Generates `.mdx` documentation pages for embedded MCP servers by reading tool definitions directly from the platform repo.
+
+**Quick run (single server, e.g. vault):**
+```bash
+cd platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-embedded-mcp-docs.ts --server vault
+```
+*(Run from docs repo root; platform must be at `../platform`)*
+
+### When to run
+
+- A new embedded MCP server is added to the platform
+- An existing embedded server's tools change (new tool, removed tool, parameter changes)
+- The generator script changes in a way that affects generated page content
+- You want to regenerate all embedded pages from scratch
+
+### Prerequisites
+
+- The `platform` repo must be cloned alongside this repo at `../platform`
+- Node.js 20+ and `npx` must be available (`tsx` is used via npx)
+
+### How to run
+
+```bash
+# From the platform MCP directory (required for TypeScript path resolution):
+cd ../platform/servers/agentic/mcp
+
+# Generate ALL embedded server pages:
+npx tsx /path/to/docs/scripts/generate-embedded-mcp-docs.ts
+
+# Generate a single server (useful for testing):
+npx tsx /path/to/docs/scripts/generate-embedded-mcp-docs.ts --server vault
+
+# Generate only servers with changes vs origin/main:
+npx tsx /path/to/docs/scripts/generate-embedded-mcp-docs.ts --changed
+
+# Generate only servers with changes vs a specific git ref:
+npx tsx /path/to/docs/scripts/generate-embedded-mcp-docs.ts --changed HEAD~3
+```
+
+Or as a one-liner from the docs repo root:
+
+```bash
+# All servers
+(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-embedded-mcp-docs.ts)
+
+# Only changed servers
+(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-embedded-mcp-docs.ts --changed)
+```
+
+### What it does
+
+1. Imports `AVAILABLE_SERVERS` from `platform/servers/agentic/mcp/src/servers/available-servers.ts`
+2. Filters to embedded servers that are available to users or agents, excluding deprecated/internal servers (`llm`, `perplexity`, `ocr`, `pinkfish-utilities`)
+3. For each server, reads its tool definitions (Zod schemas) and generates:
+   - A parameters table (excluding PCID)
+   - An expandable `inputSchema` JSON block
+4. Writes `.mdx` files to `docs/api-reference/mcp-servers/embedded/`
+5. Updates `docs.json` navigation with all generated pages
+6. Preserves manually-maintained pages (`overview.mdx`, `artifact-tools.mdx`)
+
+### Output format
+
+Each page follows the embedded server format:
+
+- Frontmatter (title, description)
+- Server metadata line (path, type: Embedded, PCID required: No)
+- Tools overview table
+- Per-tool sections with parameters table + expandable inputSchema
+
+### Server name mapping
+
+Some embedded servers have different directory names vs doc slugs:
+
+| Server name (registry) | Code directory | Doc slug |
+| --- | --- | --- |
+| `embedded-anthropic` | `anthropic/` | `embedded-anthropic` |
+| `embedded-openai` | `openai/` | `embedded-openai` |
+| `embedded-gemini` | `gemini/` | `embedded-gemini` |
+| `embedded-groq` | `groq/` | `embedded-groq` |
+| `embedded-perplexity` | `perplexity-embedded/` | `embedded-perplexity` |
+| `datastore-structured` | `datastore/` | `datastore-structured` |
+| `web-search` | `search/` | `web-search` |
+| `code-execution` | `code-execution/` (sandbox group) | `code-execution` |
+
+### Files modified
+
+- `api-reference/mcp-servers/embedded/*.mdx` — one per server (auto-generated, do not edit manually)
+- `docs.json` — Embedded MCP Servers navigation group updated
+- `api-reference/mcp-servers/embedded/overview.mdx` — NOT touched (manually maintained)
+- `api-reference/mcp-servers/embedded/artifact-tools.mdx` — NOT touched (manually maintained)
+
 ## count-mcp-tools.ts
 
 Counts the current MCP Farm tool total from source definitions in the `platform` repo.
