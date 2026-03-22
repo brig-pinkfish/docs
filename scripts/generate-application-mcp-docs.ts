@@ -233,6 +233,10 @@ function getDisplayName(serverName: string): string {
   return NAME_OVERRIDES[serverName] || serverName
 }
 
+function getSidebarTitle(serverName: string, titleSuffix = ''): string {
+  return `${serverName}${titleSuffix}`
+}
+
 function getDescription(serverName: string, rawDescription: string): string {
   return DESCRIPTION_OVERRIDES[serverName] || rawDescription
 }
@@ -513,7 +517,7 @@ function generateServerPage(
 
   let md = `---\n`
   md += `title: "${titledName.replace(/"/g, '\\"')}"\n`
-  md += `sidebarTitle: "${titledName.replace(/"/g, '\\"')}"\n`
+  md += `sidebarTitle: "${getSidebarTitle(serverName, legacy?.titleSuffix ?? '').replace(/"/g, '\\"')}"\n`
   md += `description: "${descriptionForMeta.replace(/"/g, '\\"')}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`
@@ -765,7 +769,7 @@ async function syncPartitionedFamilyDocPage(
 
   let md = `---\n`
   md += `title: "${title}"\n`
-  md += `sidebarTitle: "${title}"\n`
+  md += `sidebarTitle: "${family.docSlug}"\n`
   md += `description: "${description.replace(/"/g, '\\"')}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`

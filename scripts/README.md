@@ -14,6 +14,7 @@ cd platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-app
 
 - A new application MCP server is added to the platform
 - An existing server's tools change (new tool, removed tool, parameter changes)
+- The generator script changes in a way that affects generated page content or nav labels
 - You want to regenerate all pages from scratch
 
 ### Prerequisites
@@ -72,6 +73,7 @@ Or as a one-liner from the docs repo root:
 Each page follows the lighter application server format:
 
 - Frontmatter (title, description — also used for Mintlify meta; not repeated as a body paragraph)
+- Lower-case `sidebarTitle` values that match the MCP server path shown in the customer-facing nav
 - Server metadata line (path, type, PCID required)
 - Tools overview table
 - Per-tool sections with parameters table + expandable inputSchema
