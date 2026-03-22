@@ -88,6 +88,22 @@ When a new application server is added to the platform:
 3. Run the script: `(cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/generate-application-mcp-docs.ts)`
 4. Commit and push the generated files + updated `docs.json`
 
+## count-mcp-tools.ts
+
+Counts the current MCP Farm tool total from source definitions in the `platform` repo.
+
+**Quick run:**
+```bash
+cd ../platform/servers/agentic/mcp && npx tsx ../../../../docs/scripts/count-mcp-tools.ts
+```
+
+### What it counts
+
+- Classic MCP tools from `AVAILABLE_SERVERS` (embedded + external)
+- Generated dynamic MCP tools from `platform/mcp-server-definitions/**/tools/*.ts`
+
+Use this before updating customer-facing copy such as the Platform API overview or agent prompt so the published number stays fresh.
+
 ### Updating the overview page
 
 The overview page at `api-reference/mcp-servers/application/overview.mdx` is **manually maintained** and is NOT updated by this script. When adding a new application server, you must manually add a row for it in the appropriate category table on the overview page.
