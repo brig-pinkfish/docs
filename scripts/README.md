@@ -33,6 +33,11 @@ npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts
 # Generate a single server (useful for testing):
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack
 
+# One partitioned family (merged page from mcp-server-definitions):
+npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server genesys
+npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server jira-cloud
+npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server workday
+
 # Generate only servers with changes vs origin/main:
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed
 
@@ -53,18 +58,20 @@ Or as a one-liner from the docs repo root:
 ### What it does
 
 1. Imports `AVAILABLE_SERVERS` from `platform/servers/agentic/mcp/src/servers/available-servers.ts`
-2. Filters to external servers where `productionEnabled !== false`
-3. For each server, reads its tool definitions (Zod schemas) and generates:
+2. Merges any `platform/.../external/<name>/` directory that has `tools.ts` and **tools** but is **missing** from `available-servers.ts` (registry drift on some branches). Directories that are only referenced via an import path (e.g. `microsoft-dynamics-crm` tools used by server name `dynamics-crm`) are **not** double-documented.
+3. Filters to external servers where `productionEnabled !== false`
+4. For each server, reads its tool definitions (Zod schemas) and generates:
    - A parameters table (excluding PCID, which is documented in the overview)
    - An expandable `inputSchema` JSON block
-4. Writes `.mdx` files to `docs/api-reference/mcp-servers/application/`
-5. Updates `docs.json` navigation with all generated pages
+5. Writes `.mdx` files to `docs/api-reference/mcp-servers/application/`
+6. Updates `docs.json` navigation with all generated pages
+7. **Partitioned families** (`../platform/mcp-server-definitions/`): For each registered family, writes one merged `.mdx` (sub-servers table + per-partition tool docs) and updates `docs.json`. Today: **`genesys`** (flat `genesys-*` dirs), **`jira-cloud`** (nested under `jira-cloud/`), **`workday`** (nested under `workday/`). Uses dynamic `import()` of each tool file (run from `platform/servers/agentic/mcp` as usual). If a family has no partitions, its `.mdx` is removed and the nav entry is dropped on a full regen. To add another family, extend `PARTITION_FAMILIES` in the script.
 
 ### Output format
 
 Each page follows the lighter application server format:
 
-- Frontmatter (title, description)
+- Frontmatter (title, description — also used for Mintlify meta; not repeated as a body paragraph)
 - Server metadata line (path, type, PCID required)
 - Tools overview table
 - Per-tool sections with parameters table + expandable inputSchema
