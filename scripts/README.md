@@ -34,7 +34,7 @@ npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts
 # Generate a single server (useful for testing):
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack
 
-# One partitioned family (merged page from mcp-server-definitions):
+# One parent page with child servers (merged page from mcp-server-definitions):
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server genesys
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server jira-cloud
 npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server workday
@@ -66,7 +66,7 @@ Or as a one-liner from the docs repo root:
    - An expandable `inputSchema` JSON block
 5. Writes `.mdx` files to `docs/api-reference/mcp-servers/application/`
 6. Updates `docs.json` navigation with all generated pages
-7. **Partitioned families** (`../platform/mcp-server-definitions/`): For each registered family, writes one merged `.mdx` (sub-servers table + per-partition tool docs) and updates `docs.json`. Today: **`genesys`** (flat `genesys-*` dirs), **`jira-cloud`** (nested under `jira-cloud/`), **`workday`** (nested under `workday/`). Uses dynamic `import()` of each tool file (run from `platform/servers/agentic/mcp` as usual). If a family has no partitions, its `.mdx` is removed and the nav entry is dropped on a full regen. To add another family, extend `PARTITION_FAMILIES` in the script.
+7. **Parent pages with child servers** (`../platform/mcp-server-definitions/`): For each registered family, writes one merged `.mdx` (child server table + per-child-server tool docs) and updates `docs.json`. Today: **`genesys`** (flat `genesys-*` dirs), **`jira-cloud`** (nested under `jira-cloud/`), **`workday`** (nested under `workday/`). Uses dynamic `import()` of each tool file (run from `platform/servers/agentic/mcp` as usual). If a family has no child servers, its `.mdx` is removed and the nav entry is dropped on a full regen. To add another family, extend `PARTITION_FAMILIES` in the script.
 
 ### Output format
 

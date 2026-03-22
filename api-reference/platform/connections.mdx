@@ -53,7 +53,16 @@ curl -s -X GET "https://proxy.pinkfish.ai/manage/user-connections" \
 | --- | --- |
 | `statuses` | Comma-separated filter: `connected`, `error`, `disconnected`. Default: all. |
 
-**Response:** An array of connections. Each `id` field is the PCID you pass to application MCP tools. The `service_key` corresponds to the MCP server path (e.g., a `service_key` of `"gmail"` means you call `https://mcp.app.pinkfish.ai/gmail`).
+**Response:** An array of connections. Each `id` field is the PCID you pass to application MCP tools. The `service_key` identifies the connected product or service family.
+
+For most application MCPs, the `service_key` also matches the MCP server path (for example, a `service_key` of `"gmail"` means you call `https://mcp.app.pinkfish.ai/gmail`).
+
+For products with a **parent server and child servers**, the connection is still shared, but you call one of that product's **child server paths** instead of the top-level parent name. For example:
+
+- A connection with `service_key: "genesys"` uses the same PCID across paths like `https://mcp.app.pinkfish.ai/genesys-conversations` and `https://mcp.app.pinkfish.ai/genesys-routing`
+- A connection with `service_key: "jira"` can use paths like `https://mcp.app.pinkfish.ai/jira-issues` and `https://mcp.app.pinkfish.ai/jira-projects`
+
+Use the relevant server page in the [Application MCPs overview](/api-reference/mcp-servers/application/overview) to choose the correct MCP path.
 
 ```json
 [
@@ -113,6 +122,32 @@ curl -s -X POST "https://mcp.app.pinkfish.ai/gmail" \
       "arguments": {
         "PCID": "abc123-def456",
         "query": "is:unread"
+      }
+    },
+    "id": 1
+  }'
+```
+
+For products with a **parent server and child servers**, invocation works the same way:
+
+- Use the **same PCID**
+- Change only the MCP server path to the specific child server you want
+- Call a tool exposed by that child server
+
+Example:
+
+```bash
+curl -s -X POST "https://mcp.app.pinkfish.ai/genesys-routing" \
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "genesys_routing_get_routing_queues",
+      "arguments": {
+        "PCID": "abc123-def456"
       }
     },
     "id": 1

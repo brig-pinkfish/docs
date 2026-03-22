@@ -9,7 +9,7 @@
  *   cd ../platform/servers/agentic/mcp
  *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts                       # Generate all
  *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server slack        # Generate one classic server
- *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server genesys      # One partitioned family (genesys | jira-cloud | workday)
+ *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --server genesys      # One parent page with child servers (genesys | jira-cloud | workday)
  *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed             # Generate only changed (vs origin/main)
  *   npx tsx /path/to/docs/scripts/generate-application-mcp-docs.ts --changed HEAD~3      # Generate only changed (vs specific ref)
  *
@@ -42,12 +42,12 @@ const MCP_SERVER_DEFINITIONS_DIR = path.join(
   'mcp-server-definitions'
 )
 
-/** How to find partition directories under mcp-server-definitions/ */
+/** How to find child-server directories under mcp-server-definitions/ */
 type PartitionDiscovery =
   | { mode: 'flat-prefix'; prefix: string }
   | { mode: 'nested'; rootRelativeDir: string }
 
-/** One Mintlify page + docs.json slug per family (merged partition docs) */
+/** One Mintlify page + docs.json slug per family (merged child-server docs) */
 type PartitionFamily = {
   docSlug: string
   pinkConnectService: string
@@ -63,7 +63,7 @@ const PARTITION_FAMILIES: PartitionFamily[] = [
     docSlug: 'genesys',
     pinkConnectService: 'genesys',
     introParagraph:
-      'Genesys Cloud is exposed as multiple MCP server IDs (one per area below). Each partition has its own server path and tool names.',
+      'Genesys Cloud is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.',
     fallbackDescription: 'Genesys Cloud application MCP tools',
     discovery: { mode: 'flat-prefix', prefix: 'genesys-' },
     gitDiffPathPrefix: 'mcp-server-definitions/genesys-'
@@ -72,7 +72,7 @@ const PARTITION_FAMILIES: PartitionFamily[] = [
     docSlug: 'jira-cloud',
     pinkConnectService: 'jira',
     introParagraph:
-      'Jira Cloud is exposed as multiple MCP server IDs (one per area below). Each partition has its own server path and tool names.',
+      'Jira Cloud is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.',
     fallbackDescription: 'Jira Cloud application MCP tools',
     discovery: { mode: 'nested', rootRelativeDir: 'jira-cloud' },
     gitDiffPathPrefix: 'mcp-server-definitions/jira-cloud/'
@@ -81,7 +81,7 @@ const PARTITION_FAMILIES: PartitionFamily[] = [
     docSlug: 'workday',
     pinkConnectService: 'workday',
     introParagraph:
-      'Workday is exposed as multiple MCP server IDs (one per functional area below). Each partition has its own server path and tool names.',
+      'Workday is exposed as multiple MCP server IDs (one per functional area below). Each child server has its own server path and tool names.',
     fallbackDescription: 'Workday application MCP tools',
     discovery: { mode: 'nested', rootRelativeDir: 'workday' },
     gitDiffPathPrefix: 'mcp-server-definitions/workday/'
@@ -122,7 +122,7 @@ const LEGACY_CLASSIC_SERVER_DOC: Record<
   jira: {
     titleSuffix: ' (legacy)',
     warningMdx:
-      'This monolithic `/jira` application server is **legacy**. For new integrations, use the [Jira Cloud](/api-reference/mcp-servers/application/jira-cloud) page and partitioned server paths (`/jira-issues`, `/jira-projects`, `/jira-users`).'
+      'This monolithic `/jira` application server is **legacy**. For new integrations, use the [Jira Cloud](/api-reference/mcp-servers/application/jira-cloud) page and its child server paths (`/jira-issues`, `/jira-projects`, `/jira-users`).'
   }
 }
 
@@ -222,11 +222,11 @@ const DESCRIPTION_OVERRIDES: Record<string, string> = {
   'sirv': 'Image CDN upload, management, and statistics',
   'talkdesk': 'Contact center agents, calls, queues, and recordings',
   genesys:
-    'Genesys Cloud — conversations, users, routing, analytics, knowledge, contacts, workforce, tasks, and quality APIs (partitioned MCP servers)',
+    'Genesys Cloud — conversations, users, routing, analytics, knowledge, contacts, workforce, tasks, and quality APIs (parent server with child servers)',
   'jira-cloud':
-    'Jira Cloud — users, projects, and issues APIs (partitioned MCP servers)',
+    'Jira Cloud — users, projects, and issues APIs (parent server with child servers)',
   workday:
-    'Workday — HCM, payroll, compensation, finance, and related APIs (partitioned MCP servers)'
+    'Workday — HCM, payroll, compensation, finance, and related APIs (parent server with child servers)'
 }
 
 function getDisplayName(serverName: string): string {
@@ -773,11 +773,11 @@ async function syncPartitionedFamilyDocPage(
   md += `description: "${description.replace(/"/g, '\\"')}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`
-  md += `**PinkConnect service:** \`${family.pinkConnectService}\` | **Type:** Application (partitioned) | **PCID required:** Yes\n\n`
+  md += `**PinkConnect service:** \`${family.pinkConnectService}\` | **Type:** Application (parent with child servers) | **PCID required:** Yes\n\n`
   md += `${family.introParagraph}\n\n`
 
-  md += `## Sub-servers\n\n`
-  md += `| Sub-server | Server path | Tools | Description |\n`
+  md += `## Child servers\n\n`
+  md += `| Child server | Server path | Tools | Description |\n`
   md += `| --- | --- | --- | --- |\n`
   for (const p of partitions) {
     md += `| [${escapeMarkdown(p.id)}](#${p.id}) | \`/${p.id}\` | ${p.tools.length} | ${escapeMarkdown(p.description)} |\n`
@@ -1068,13 +1068,13 @@ async function main(): Promise<void> {
   if (singleServer && PARTITION_DOC_SLUG_SET.has(singleServer)) {
     const family = PARTITION_FAMILIES.find((f) => f.docSlug === singleServer)
     if (!family) {
-      console.error(`Unknown partitioned doc slug: ${singleServer}`)
+      console.error(`Unknown parent/child doc slug: ${singleServer}`)
       process.exit(1)
     }
     const ok = await syncPartitionedFamilyDocPage(family)
     if (!ok) {
       console.error(
-        `No partitions found for "${family.docSlug}" under platform mcp-server-definitions`
+        `No child servers found for "${family.docSlug}" under platform mcp-server-definitions`
       )
       process.exit(1)
     }
@@ -1122,7 +1122,7 @@ async function main(): Promise<void> {
 
     if (allTargetNames.length === 0) {
       console.log(
-        `No external server or partitioned MCP definition changes found compared to ${changedBaseRef}, and all servers have documentation.`
+        `No external server or parent/child MCP definition changes found compared to ${changedBaseRef}, and all servers have documentation.`
       )
       console.log('\n=== Done (nothing to generate) ===')
       return
