@@ -13,7 +13,7 @@ description: "Built-in agent tools for creating, reading, and listing downloadab
 | ----------------------------------------------------- | ------------------------------------------------------------------------- |
 | [`write_artifact`](#write_artifact)                   | Create a downloadable file from text content                              |
 | [`write_artifact_from_url`](#write_artifact_from_url) | Create a downloadable file by fetching from a URL                         |
-| [`read_artifact`](#read_artifact)                     | Read content from an artifact by file ID (supports smart reading options) |
+| [`read_artifact`](#read_artifact)                     | Read content from an artifact — supports LLM-powered smart extraction and pagination |
 | [`list_artifacts`](#list_artifacts)                   | List all artifact files in the current chat session                       |
 
 ---
@@ -72,30 +72,44 @@ Create a downloadable file by fetching content from a URL. Use when you have a d
 
 ## read_artifact
 
-Retrieve content from an artifact file by its ID. Use when a tool result shows `_artifact.truncated: true` to get the full data. Supports selective reading to avoid fetching entire large files.
+Read content from an artifact file. Use when a tool result shows `_artifact.truncated: true` to get the full data.
+
+The recommended approach is **`smartGrepQuery`** — describe what you need in natural language and a fast LLM extracts it from the file. Think of it like grep on steroids: ask for specific fields, filters, summaries, counts, or formatted output. You can iterate by reading the first chunk, refining your query, and continuing with `offset`.
+
+For binary files (XLSX, PDF), use `_textArtifact.id` instead of `_artifact.id` if a `_textArtifact` field is present.
 
 **Parameters:**
 
-| Parameter       | Type   | Required | Description                                                                                    |
-| --------------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
-| `file_id`       | string | Yes      | The file ID of the artifact to read (e.g., `_artifact.id` from a truncated result)             |
-| `search`        | string | No       | Search pattern to find in the content (case-insensitive). Returns matching lines with context. |
-| `context_lines` | number | No       | Number of lines to show before and after each search match (default: 2)                        |
-| `start_line`    | number | No       | Start line number for line range extraction (1-indexed, inclusive)                             |
-| `end_line`      | number | No       | End line number for line range extraction (1-indexed, inclusive)                               |
-| `json_path`     | string | No       | Dot notation path to extract from JSON content (e.g. `"data.items"`, `"results[0]"`)           |
-| `array_indices` | string | No       | Comma-separated indices or ranges to extract from array content (e.g. `"0,1,2"` or `"0-5"`)    |
+| Parameter       | Type   | Required | Default | Description                                                                                    |
+| --------------- | ------ | -------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `file_id`       | string | Yes      | —       | The file ID of the artifact to read (e.g., `_artifact.id` from a truncated result)             |
+| `smartGrepQuery` | string | No      | —       | Natural language query — a fast LLM extracts exactly what you ask for. Examples: `"list all names and emails as a table"`, `"count items by status"`, `"grep -i error"`, `"summarize the key findings"` |
+| `offset`        | number | No       | —       | Character offset to start from. Use `nextOffset` from a previous response to continue reading. |
+| `limit`         | number | No       | —       | Max characters per call. Default: 10K (raw) or 100K (smartGrepQuery). Set to `totalSize` for files under 200K to process in one call. |
+| `search`        | string | No       | —       | Search pattern to find in the content (case-insensitive). Returns matching lines with context. |
+| `context_lines` | number | No       | `2`     | Number of lines to show before and after each search match                                     |
+| `start_line`    | number | No       | —       | Start line number for line range extraction (1-indexed, inclusive)                              |
+| `end_line`      | number | No       | —       | End line number for line range extraction (1-indexed, inclusive)                                |
+| `json_path`     | string | No       | —       | Dot notation path to extract from JSON content (e.g. `"data.items"`, `"results[0]"`)           |
+| `array_indices` | string | No       | —       | Comma-separated indices or ranges to extract from array content (e.g. `"0,1,2"` or `"0-5"`)   |
+
+<Note>
+  When the response includes `hasMore: true`, you have only seen **partial data**. Call `read_artifact` again with `offset` set to `nextOffset` (and the same `smartGrepQuery`) to get the rest. Do not treat partial results as final.
+</Note>
 
 **Response fields:**
 
-| Field      | Type    | Description                                                                       |
-| ---------- | ------- | --------------------------------------------------------------------------------- |
-| `success`  | boolean | Whether the read succeeded                                                        |
-| `content`  | string  | File content (full or extracted)                                                  |
-| `size`     | number  | File size in bytes                                                                |
-| `filename` | string  | File name                                                                         |
-| `mimeType` | string  | MIME type                                                                         |
-| `mode`     | string  | When using smart options: `search`, `line_range`, `json_path`, or `array_indices` |
+| Field         | Type    | Description                                                                       |
+| ------------- | ------- | --------------------------------------------------------------------------------- |
+| `success`     | boolean | Whether the read succeeded                                                        |
+| `content`     | string  | File content (full or extracted)                                                  |
+| `totalSize`   | number  | Total file size in characters                                                     |
+| `size`        | number  | File size in bytes                                                                |
+| `filename`    | string  | File name                                                                         |
+| `mimeType`    | string  | MIME type                                                                         |
+| `hasMore`     | boolean | Whether more content is available (paginate with `offset`/`nextOffset`)           |
+| `nextOffset`  | number  | Character offset for the next page (use as `offset` in follow-up call)            |
+| `mode`        | string  | Reading mode used: `smartGrepQuery`, `search`, `line_range`, `json_path`, or `array_indices` |
 
 ---
 
