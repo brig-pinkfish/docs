@@ -65,8 +65,8 @@ const PARTITION_FAMILIES: PartitionFamily[] = [
     introParagraph:
       'Genesys Cloud is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.',
     fallbackDescription: 'Genesys Cloud application MCP tools',
-    discovery: { mode: 'flat-prefix', prefix: 'genesys-' },
-    gitDiffPathPrefix: 'mcp-server-definitions/genesys-'
+    discovery: { mode: 'nested', rootRelativeDir: 'genesys' },
+    gitDiffPathPrefix: 'mcp-server-definitions/genesys/'
   },
   {
     docSlug: 'jira-cloud',
