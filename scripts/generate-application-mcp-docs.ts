@@ -42,55 +42,49 @@ const MCP_SERVER_DEFINITIONS_DIR = path.join(
   'mcp-server-definitions'
 )
 
-/** How to find child-server directories under mcp-server-definitions/ */
-type PartitionDiscovery =
-  | { mode: 'flat-prefix'; prefix: string }
-  | { mode: 'nested'; rootRelativeDir: string }
-
 /** One Mintlify page + docs.json slug per family (merged child-server docs) */
 type PartitionFamily = {
   docSlug: string
   pinkConnectService: string
   introParagraph: string
   fallbackDescription: string
-  discovery: PartitionDiscovery
+  /** Directory name under mcp-server-definitions/ containing child server subdirs */
+  rootRelativeDir: string
   /** `git diff` path prefix under the platform repo root */
   gitDiffPathPrefix: string
 }
 
-const PARTITION_FAMILIES: PartitionFamily[] = [
-  {
-    docSlug: 'genesys',
-    pinkConnectService: 'genesys',
-    introParagraph:
-      'Genesys Cloud is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.',
-    fallbackDescription: 'Genesys Cloud application MCP tools',
-    discovery: { mode: 'nested', rootRelativeDir: 'genesys' },
-    gitDiffPathPrefix: 'mcp-server-definitions/genesys/'
-  },
-  {
-    docSlug: 'jira-cloud',
-    pinkConnectService: 'jira',
-    introParagraph:
-      'Jira Cloud is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.',
-    fallbackDescription: 'Jira Cloud application MCP tools',
-    discovery: { mode: 'nested', rootRelativeDir: 'jira-cloud' },
-    gitDiffPathPrefix: 'mcp-server-definitions/jira-cloud/'
-  },
-  {
-    docSlug: 'workday',
-    pinkConnectService: 'workday',
-    introParagraph:
-      'Workday is exposed as multiple MCP server IDs (one per functional area below). Each child server has its own server path and tool names.',
-    fallbackDescription: 'Workday application MCP tools',
-    discovery: { mode: 'nested', rootRelativeDir: 'workday' },
-    gitDiffPathPrefix: 'mcp-server-definitions/workday/'
+/**
+ * Auto-discover partitioned families by scanning mcp-server-definitions/ for
+ * directories whose server.ts has `isParent: true`.
+ */
+function discoverPartitionFamilies(): PartitionFamily[] {
+  if (!fs.existsSync(MCP_SERVER_DEFINITIONS_DIR)) return []
+  const families: PartitionFamily[] = []
+  for (const ent of fs.readdirSync(MCP_SERVER_DEFINITIONS_DIR, { withFileTypes: true })) {
+    if (!ent.isDirectory()) continue
+    const serverTs = path.join(MCP_SERVER_DEFINITIONS_DIR, ent.name, 'server.ts')
+    if (!fs.existsSync(serverTs)) continue
+    const src = fs.readFileSync(serverTs, 'utf-8')
+    if (!/\bisParent:\s*true\b/.test(src)) continue
+    const meta = parseMcpServerTs(src)
+    if (!meta) continue
+    const serviceKeyMatch = src.match(/\bserviceKey:\s*'([^']*)'/)
+    const displayName = getDisplayName(meta.id)
+    families.push({
+      docSlug: meta.id,
+      pinkConnectService: serviceKeyMatch?.[1] ?? meta.id,
+      introParagraph: `${displayName} is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.`,
+      fallbackDescription: meta.description || `${displayName} application MCP tools`,
+      rootRelativeDir: ent.name,
+      gitDiffPathPrefix: `mcp-server-definitions/${ent.name}/`
+    })
   }
-]
+  return families.sort((a, b) => a.docSlug.localeCompare(b.docSlug))
+}
 
-const PARTITION_DOC_SLUG_SET = new Set(
-  PARTITION_FAMILIES.map((f) => f.docSlug)
-)
+let PARTITION_FAMILIES: PartitionFamily[] = []
+let PARTITION_DOC_SLUG_SET: Set<string> = new Set()
 
 const OUTPUT_DIR = path.join(
   DOCS_ROOT,
@@ -569,36 +563,18 @@ function parseMcpServerTs(src: string): { id: string; description: string } | nu
 }
 
 function discoverPartitionMetas(family: PartitionFamily): DefinitionPartition[] {
-  if (!fs.existsSync(MCP_SERVER_DEFINITIONS_DIR)) return []
-  const disc = family.discovery
+  const root = path.join(MCP_SERVER_DEFINITIONS_DIR, family.rootRelativeDir)
+  if (!fs.existsSync(root)) return []
   const out: DefinitionPartition[] = []
-
-  if (disc.mode === 'flat-prefix') {
-    for (const ent of fs.readdirSync(MCP_SERVER_DEFINITIONS_DIR, {
-      withFileTypes: true
-    })) {
-      if (!ent.isDirectory() || !ent.name.startsWith(disc.prefix)) continue
-      const absPath = path.join(MCP_SERVER_DEFINITIONS_DIR, ent.name)
-      const serverTs = path.join(absPath, 'server.ts')
-      const toolsDir = path.join(absPath, 'tools')
-      if (!fs.existsSync(serverTs) || !fs.existsSync(toolsDir)) continue
-      const meta = parseMcpServerTs(fs.readFileSync(serverTs, 'utf-8'))
-      if (meta) out.push({ ...meta, absPath })
-    }
-  } else {
-    const root = path.join(MCP_SERVER_DEFINITIONS_DIR, disc.rootRelativeDir)
-    if (!fs.existsSync(root)) return []
-    for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
-      if (!ent.isDirectory()) continue
-      const absPath = path.join(root, ent.name)
-      const serverTs = path.join(absPath, 'server.ts')
-      const toolsDir = path.join(absPath, 'tools')
-      if (!fs.existsSync(serverTs) || !fs.existsSync(toolsDir)) continue
-      const meta = parseMcpServerTs(fs.readFileSync(serverTs, 'utf-8'))
-      if (meta) out.push({ ...meta, absPath })
-    }
+  for (const ent of fs.readdirSync(root, { withFileTypes: true })) {
+    if (!ent.isDirectory()) continue
+    const absPath = path.join(root, ent.name)
+    const serverTs = path.join(absPath, 'server.ts')
+    const toolsDir = path.join(absPath, 'tools')
+    if (!fs.existsSync(serverTs) || !fs.existsSync(toolsDir)) continue
+    const meta = parseMcpServerTs(fs.readFileSync(serverTs, 'utf-8'))
+    if (meta) out.push({ ...meta, absPath })
   }
-
   return out.sort((a, b) => a.id.localeCompare(b.id))
 }
 
@@ -1059,6 +1035,13 @@ async function main(): Promise<void> {
   }
 
   console.log('=== Application MCP Server Documentation Generator ===\n')
+
+  // Auto-discover partitioned parent/child server families
+  PARTITION_FAMILIES = discoverPartitionFamilies()
+  PARTITION_DOC_SLUG_SET = new Set(PARTITION_FAMILIES.map((f) => f.docSlug))
+  if (PARTITION_FAMILIES.length > 0) {
+    console.log(`Discovered ${PARTITION_FAMILIES.length} parent/child server families: ${PARTITION_FAMILIES.map((f) => f.docSlug).join(', ')}\n`)
+  }
 
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
