@@ -542,7 +542,7 @@ function generateServerPage(
 }
 
 // ============================================================================
-// Partitioned families (mcp-server-definitions) — one merged Mintlify page each
+// Partitioned families (mcp-server-definitions) — TOC page + individual child pages
 // ============================================================================
 
 type DefinitionPartition = {
@@ -719,22 +719,28 @@ function mcpPartitionFamilyDefinitionsChanged(
 
 async function syncPartitionedFamilyDocPage(
   family: PartitionFamily
-): Promise<boolean> {
+): Promise<{ written: boolean; childSlugs: string[] }> {
   const partitions = await buildPartitionsWithToolsForFamily(family)
-  const outPath = path.join(OUTPUT_DIR, `${family.docSlug}.mdx`)
+  const familyDir = path.join(OUTPUT_DIR, family.docSlug)
+  const overviewPath = path.join(OUTPUT_DIR, `${family.docSlug}.mdx`)
 
   if (partitions.length === 0) {
-    if (fs.existsSync(outPath)) {
-      fs.unlinkSync(outPath)
-      console.log(
-        `  Removed ${family.docSlug}.mdx (no partitions for family "${family.docSlug}")`
-      )
-    } else {
-      console.log(
-        `  No partitions for family "${family.docSlug}" — skipping ${family.docSlug}.mdx`
-      )
+    // Clean up overview and child directory if they exist
+    if (fs.existsSync(overviewPath)) {
+      fs.unlinkSync(overviewPath)
     }
-    return false
+    if (fs.existsSync(familyDir)) {
+      fs.rmSync(familyDir, { recursive: true })
+    }
+    console.log(
+      `  No partitions for family "${family.docSlug}" — skipping`
+    )
+    return { written: false, childSlugs: [] }
+  }
+
+  // Ensure child directory exists
+  if (!fs.existsSync(familyDir)) {
+    fs.mkdirSync(familyDir, { recursive: true })
   }
 
   const title = getDisplayName(family.docSlug)
@@ -743,6 +749,7 @@ async function syncPartitionedFamilyDocPage(
     family.fallbackDescription
   )
 
+  // Write TOC/overview page
   let md = `---\n`
   md += `title: "${title}"\n`
   md += `sidebarTitle: "${family.docSlug}"\n`
@@ -756,34 +763,56 @@ async function syncPartitionedFamilyDocPage(
   md += `| Child server | Server path | Tools | Description |\n`
   md += `| --- | --- | --- | --- |\n`
   for (const p of partitions) {
-    md += `| [${escapeMarkdown(p.id)}](#${p.id}) | \`/${p.id}\` | ${p.tools.length} | ${escapeMarkdown(p.description)} |\n`
+    md += `| [${escapeMarkdown(p.id)}](${family.docSlug}/${p.id}) | \`/${p.id}\` | ${p.tools.length} | ${escapeMarkdown(p.description)} |\n`
   }
-  md += '\n'
 
+  fs.writeFileSync(overviewPath, md)
+
+  // Write individual child pages
+  const childSlugs: string[] = []
   for (const p of partitions) {
-    md += `\n---\n\n## ${p.id}\n\n`
-    md += `${escapeMarkdown(p.description)}\n\n`
-    md += `**Server path:** \`/${p.id}\` | **Type:** Application | **PCID required:** Yes\n\n`
+    let childMd = `---\n`
+    childMd += `title: "${escapeMarkdown(p.id)}"\n`
+    childMd += `sidebarTitle: "${p.id}"\n`
+    childMd += `description: "${escapeMarkdown(p.description).replace(/"/g, '\\"')}"\n`
+    childMd += `---\n\n`
+    childMd += `${GENERATED_HEADER}\n\n`
+    childMd += `**Server path:** \`/${p.id}\` | **Type:** Application | **PCID required:** Yes\n\n`
 
-    md += `### Tools\n\n`
-    md += `| Tool | Description |\n`
-    md += `| --- | --- |\n`
+    childMd += `## Tools\n\n`
+    childMd += `| Tool | Description |\n`
+    childMd += `| --- | --- |\n`
     for (const t of p.tools) {
-      md += `| [\`${t.name}\`](#${t.name}) | ${escapeMarkdown(t.description)} |\n`
+      childMd += `| [\`${t.name}\`](#${t.name}) | ${escapeMarkdown(t.description)} |\n`
+    }
+    childMd += '\n---\n\n'
+
+    for (let i = 0; i < p.tools.length; i++) {
+      childMd += generateToolSectionFromJsonSchema(p.tools[i])
+      if (i < p.tools.length - 1) {
+        childMd += '\n---\n\n'
+      }
     }
 
-    for (const t of p.tools) {
-      md += '\n---\n\n'
-      md += generateToolSectionFromJsonSchema(t)
+    const childPath = path.join(familyDir, `${p.id}.mdx`)
+    fs.writeFileSync(childPath, childMd)
+    childSlugs.push(p.id)
+  }
+
+  // Clean up stale child pages that no longer have partitions
+  const existingFiles = fs.readdirSync(familyDir).filter((f) => f.endsWith('.mdx'))
+  for (const f of existingFiles) {
+    const slug = f.replace('.mdx', '')
+    if (!childSlugs.includes(slug)) {
+      fs.unlinkSync(path.join(familyDir, f))
     }
   }
 
-  fs.writeFileSync(outPath, md)
   const totalTools = partitions.reduce((acc, part) => acc + part.tools.length, 0)
   console.log(
-    `  Generating ${family.docSlug}.mdx (${partitions.length} partitions, ${totalTools} tools)...`
+    `  Generating ${family.docSlug}/ (${partitions.length} child pages, ${totalTools} tools)...`
   )
-  return true
+  return { written: true, childSlugs }
 }
 
 function shouldSyncPartitionedFamily(
@@ -923,7 +952,11 @@ async function appendExternalServersMissingFromRegistry(
 // docs.json update
 // ============================================================================
 
-function updateDocsJson(serverNames: string[], selectiveServers?: string[]): void {
+function updateDocsJson(
+  serverNames: string[],
+  familyChildSlugs: Map<string, string[]>,
+  selectiveServers?: string[]
+): void {
   const docsJson = JSON.parse(fs.readFileSync(DOCS_JSON_PATH, 'utf-8'))
 
   // Find the "Application MCP Servers" group in the navigation
@@ -951,27 +984,50 @@ function updateDocsJson(serverNames: string[], selectiveServers?: string[]): voi
     process.exit(1)
   }
 
-  if (selectiveServers) {
-    // Add server pages if not already present, maintaining alphabetical order
-    const existingPages: string[] = appGroup.pages || []
-    const serverPages = existingPages.filter(
-      (p) => p !== 'api-reference/mcp-servers/application/overview'
-    )
-    for (const name of selectiveServers) {
-      const pagePath = `api-reference/mcp-servers/application/${name}`
-      if (!serverPages.includes(pagePath)) {
-        serverPages.push(pagePath)
+  /** Build a nav entry: flat string for regular servers, nested group for families */
+  function buildNavEntry(name: string): string | { group: string; pages: string[] } {
+    const childSlugs = familyChildSlugs.get(name)
+    if (childSlugs && childSlugs.length > 0) {
+      const displayName = getDisplayName(name)
+      return {
+        group: displayName,
+        pages: [
+          `api-reference/mcp-servers/application/${name}`,
+          ...childSlugs.map((c) => `api-reference/mcp-servers/application/${name}/${c}`)
+        ]
       }
     }
-    serverPages.sort()
-    appGroup.pages = ['api-reference/mcp-servers/application/overview', ...serverPages]
-  } else {
-    // Replace all pages with overview + generated pages
-    const pages = ['api-reference/mcp-servers/application/overview']
-    for (const name of serverNames.sort()) {
-      pages.push(`api-reference/mcp-servers/application/${name}`)
+    return `api-reference/mcp-servers/application/${name}`
+  }
+
+  if (selectiveServers) {
+    // Preserve existing pages, update/add selective servers
+    const existingPages: (string | any)[] = appGroup.pages || []
+    // Remove overview and any existing entries for selective servers
+    const filtered = existingPages.filter((p) => {
+      if (p === 'api-reference/mcp-servers/application/overview') return false
+      const name = typeof p === 'string'
+        ? p.replace('api-reference/mcp-servers/application/', '')
+        : null
+      const groupName = typeof p === 'object' && p.group
+        ? serverNames.find((n) => getDisplayName(n) === p.group) ?? null
+        : null
+      return !selectiveServers.includes(name ?? '') && !selectiveServers.includes(groupName ?? '')
+    })
+    for (const name of selectiveServers) {
+      filtered.push(buildNavEntry(name))
     }
-    appGroup.pages = pages
+    // Sort: strings by value, objects by group name
+    filtered.sort((a, b) => {
+      const aKey = typeof a === 'string' ? a : a.group?.toLowerCase() ?? ''
+      const bKey = typeof b === 'string' ? b : b.group?.toLowerCase() ?? ''
+      return aKey.localeCompare(bKey)
+    })
+    appGroup.pages = ['api-reference/mcp-servers/application/overview', ...filtered]
+  } else {
+    // Full regen: replace all pages
+    const entries = serverNames.sort().map(buildNavEntry)
+    appGroup.pages = ['api-reference/mcp-servers/application/overview', ...entries]
   }
 
   fs.writeFileSync(DOCS_JSON_PATH, JSON.stringify(docsJson, null, 2) + '\n')
@@ -1054,14 +1110,16 @@ async function main(): Promise<void> {
       console.error(`Unknown parent/child doc slug: ${singleServer}`)
       process.exit(1)
     }
-    const ok = await syncPartitionedFamilyDocPage(family)
-    if (!ok) {
+    const result = await syncPartitionedFamilyDocPage(family)
+    if (!result.written) {
       console.error(
         `No child servers found for "${family.docSlug}" under platform mcp-server-definitions`
       )
       process.exit(1)
     }
-    updateDocsJson([family.docSlug], [family.docSlug])
+    const familyChildSlugs = new Map<string, string[]>()
+    familyChildSlugs.set(family.docSlug, result.childSlugs)
+    updateDocsJson([family.docSlug], familyChildSlugs, [family.docSlug])
     console.log('\n=== Done ===')
     console.log(`  Output:  ${OUTPUT_DIR}/`)
     return
@@ -1169,15 +1227,19 @@ async function main(): Promise<void> {
     generatedNames.push(server.name)
   }
 
+  const familyChildSlugs = new Map<string, string[]>()
   for (const family of PARTITION_FAMILIES) {
     if (
       !shouldSyncPartitionedFamily(family, { singleServer, changedBaseRef })
     ) {
       continue
     }
-    const written = await syncPartitionedFamilyDocPage(family)
-    if (written && !generatedNames.includes(family.docSlug)) {
-      generatedNames.push(family.docSlug)
+    const result = await syncPartitionedFamilyDocPage(family)
+    if (result.written) {
+      if (!generatedNames.includes(family.docSlug)) {
+        generatedNames.push(family.docSlug)
+      }
+      familyChildSlugs.set(family.docSlug, result.childSlugs)
     }
   }
 
@@ -1186,10 +1248,10 @@ async function main(): Promise<void> {
   // Update docs.json
   if (generatedNames.length > 0) {
     if (selectiveServers) {
-      updateDocsJson(generatedNames, selectiveServers)
+      updateDocsJson(generatedNames, familyChildSlugs, selectiveServers)
       console.log(`\nUpdated docs.json with ${generatedNames.length} page(s)`)
     } else {
-      updateDocsJson(generatedNames)
+      updateDocsJson(generatedNames, familyChildSlugs)
       console.log(`\nUpdated docs.json with ${generatedNames.length} pages`)
     }
   }
