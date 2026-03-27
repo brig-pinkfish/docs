@@ -948,6 +948,66 @@ async function appendExternalServersMissingFromRegistry(
   return [...registryServers, ...extra]
 }
 
+/**
+ * Discover flat (non-parent) dynamic servers from mcp-server-definitions/.
+ * These have a server.ts + tools/*.ts but are NOT registered in
+ * available-servers.ts and are NOT partition-family parents.
+ */
+async function appendFlatDynamicServers(
+  existingServers: ServerEntry[]
+): Promise<ServerEntry[]> {
+  if (!fs.existsSync(MCP_SERVER_DEFINITIONS_DIR)) return existingServers
+  const byName = new Set(existingServers.map((s) => s.name))
+  const parentFamilySlugs = new Set(PARTITION_FAMILIES.map((f) => f.docSlug))
+  const extra: ServerEntry[] = []
+
+  for (const ent of fs.readdirSync(MCP_SERVER_DEFINITIONS_DIR, { withFileTypes: true })) {
+    if (!ent.isDirectory()) continue
+    const dirName = ent.name
+    const serverTs = path.join(MCP_SERVER_DEFINITIONS_DIR, dirName, 'server.ts')
+    if (!fs.existsSync(serverTs)) continue
+    const src = fs.readFileSync(serverTs, 'utf-8')
+
+    // Skip parent servers (handled by partition family discovery)
+    if (/\bisParent:\s*true\b/.test(src)) continue
+
+    const meta = parseMcpServerTs(src)
+    if (!meta) continue
+
+    // Skip if already in the registry from available-servers.ts or external/
+    if (byName.has(meta.id)) continue
+
+    // Skip partition family slugs (already handled)
+    if (parentFamilySlugs.has(meta.id)) continue
+
+    // Check productionEnabled
+    const prodMatch = src.match(/\bproductionEnabled:\s*(true|false)/)
+    const productionEnabled = prodMatch ? prodMatch[1] !== 'false' : true
+
+    const absPath = path.join(MCP_SERVER_DEFINITIONS_DIR, dirName)
+    const tools = await loadToolsForPartitionDir(absPath)
+    if (tools.length === 0) continue
+
+    extra.push({
+      name: meta.id,
+      description: getDescription(meta.id, meta.description || `${meta.id} — application MCP tools`),
+      path: `/dynamic/${meta.id}`,
+      embedded: false,
+      productionEnabled,
+      tools
+    })
+    byName.add(meta.id)
+  }
+
+  if (extra.length > 0) {
+    console.log(
+      `Discovered ${extra.length} flat dynamic server(s) from mcp-server-definitions/: ${extra.map((s) => s.name).join(', ')}\n`
+    )
+  }
+
+  return [...existingServers, ...extra]
+}
+
 // ============================================================================
 // docs.json update
 // ============================================================================
@@ -1136,13 +1196,17 @@ async function main(): Promise<void> {
     servers = await fallbackLoadServers()
   }
 
-  // Filter to external, production-enabled servers
+  // Append flat dynamic servers from mcp-server-definitions/ (non-parent, non-registry)
+  servers = await appendFlatDynamicServers(servers)
+
+  // Filter to external servers; when targeting a specific server, include
+  // non-production servers so docs can be generated before production rollout.
   const externalServers = servers.filter(
-    (s) => s.embedded === false && s.productionEnabled !== false
+    (s) => s.embedded === false && (singleServer ? true : s.productionEnabled !== false)
   )
 
   console.log(
-    `Found ${externalServers.length} production-enabled application servers\n`
+    `Found ${externalServers.length} ${singleServer ? '' : 'production-enabled '}application servers\n`
   )
 
   // Determine which servers to generate
