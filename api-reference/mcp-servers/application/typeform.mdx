@@ -34,12 +34,79 @@ description: "Typeform - create and manage forms, retrieve responses, and config
 
 Create a form
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fields` | any[] | No | — | Array of form fields/questions |
+| `hidden` | any[] | No | — | Hidden fields to include in the form URL |
+| `settings` | object | No | — | Form settings |
+| `thankyou_screens` | any[] | No | — | Thank you screen configurations |
+| `theme` | object | No | — | Theme to apply to the form |
+| `title` | string | Yes | — | Title of the form |
+| `type` | string | No | — | Form type |
+| `welcome_screens` | any[] | No | — | Welcome screen configurations |
+| `workspace` | object | No | — | Workspace to create the form in |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "fields": {
+      "type": "array",
+      "description": "Array of form fields/questions"
+    },
+    "hidden": {
+      "type": "array",
+      "description": "Hidden fields to include in the form URL"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Form settings"
+    },
+    "thankyou_screens": {
+      "type": "array",
+      "description": "Thank you screen configurations"
+    },
+    "theme": {
+      "type": "object",
+      "description": "Theme to apply to the form"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the form"
+    },
+    "type": {
+      "type": "string",
+      "description": "Form type",
+      "enum": [
+        "quiz",
+        "classification",
+        "score",
+        "branching",
+        "classification_branching",
+        "score_branching"
+      ]
+    },
+    "welcome_screens": {
+      "type": "array",
+      "description": "Welcome screen configurations"
+    },
+    "workspace": {
+      "type": "object",
+      "description": "Workspace to create the form in"
+    }
+  },
+  "required": [
+    "PCID",
+    "title"
+  ]
 }
 ```
 
@@ -51,12 +118,64 @@ Create a form
 
 Create or update a webhook
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `tag` | string | Yes | — | Unique name/tag for the webhook |
+| `enabled` | boolean | Yes | — | Whether the webhook should send responses immediately |
+| `event_types` | object | No | — | Event types to subscribe to (e.g. form_response, form_response_partial) |
+| `secret` | string | No | — | Secret key for HMAC SHA256 payload signing |
+| `url` | string | Yes | — | URL to send webhook payloads to |
+| `verify_ssl` | boolean | No | — | Whether to verify SSL certificates on the webhook URL |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Unique name/tag for the webhook"
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether the webhook should send responses immediately"
+    },
+    "event_types": {
+      "type": "object",
+      "description": "Event types to subscribe to (e.g. form_response, form_response_partial)"
+    },
+    "secret": {
+      "type": "string",
+      "description": "Secret key for HMAC SHA256 payload signing"
+    },
+    "url": {
+      "type": "string",
+      "description": "URL to send webhook payloads to"
+    },
+    "verify_ssl": {
+      "type": "boolean",
+      "description": "Whether to verify SSL certificates on the webhook URL"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "tag",
+    "enabled",
+    "url"
+  ]
 }
 ```
 
@@ -68,12 +187,31 @@ Create or update a webhook
 
 Delete a form
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id"
+  ]
 }
 ```
 
@@ -85,12 +223,37 @@ Delete a form
 
 Delete form responses
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `included_response_ids` | string | Yes | — | Comma-separated list of response IDs to delete (up to 1000) |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "included_response_ids": {
+      "type": "string",
+      "description": "Comma-separated list of response IDs to delete (up to 1000)"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "included_response_ids"
+  ]
 }
 ```
 
@@ -102,12 +265,37 @@ Delete form responses
 
 Delete a webhook
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `tag` | string | Yes | — | Unique name/tag of the webhook to delete |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Unique name/tag of the webhook to delete"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "tag"
+  ]
 }
 ```
 
@@ -119,12 +307,31 @@ Delete a webhook
 
 Retrieve a form
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form (found in the form URL) |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form (found in the form URL)"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id"
+  ]
 }
 ```
 
@@ -136,12 +343,31 @@ Retrieve a form
 
 Retrieve a theme
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `theme_id` | string | Yes | — | Unique ID for the theme |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "theme_id": {
+      "type": "string",
+      "description": "Unique ID for the theme"
+    }
+  },
+  "required": [
+    "PCID",
+    "theme_id"
+  ]
 }
 ```
 
@@ -153,12 +379,37 @@ Retrieve a theme
 
 Retrieve a webhook
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `tag` | string | Yes | — | Unique name/tag of the webhook |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Unique name/tag of the webhook"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "tag"
+  ]
 }
 ```
 
@@ -170,12 +421,63 @@ Retrieve a webhook
 
 List forms
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `search` | string | No | — | Filter results to forms containing this string in the title |
+| `page` | integer | No | — | Page number to retrieve (default 1) |
+| `page_size` | integer | No | — | Number of results per page (default 10, max 200) |
+| `workspace_id` | string | No | — | Filter forms by workspace ID |
+| `sort_by` | string | No | — | Field to sort by |
+| `order_by` | string | No | — | Sort order |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "search": {
+      "type": "string",
+      "description": "Filter results to forms containing this string in the title"
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number to retrieve (default 1)"
+    },
+    "page_size": {
+      "type": "integer",
+      "description": "Number of results per page (default 10, max 200)"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Filter forms by workspace ID"
+    },
+    "sort_by": {
+      "type": "string",
+      "description": "Field to sort by",
+      "enum": [
+        "created_at",
+        "last_updated_at"
+      ]
+    },
+    "order_by": {
+      "type": "string",
+      "description": "Sort order",
+      "enum": [
+        "asc",
+        "desc"
+      ]
+    }
+  },
+  "required": [
+    "PCID"
+  ]
 }
 ```
 
@@ -187,12 +489,96 @@ List forms
 
 List form responses
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `page_size` | integer | No | — | Maximum number of responses to retrieve (default 25, max 1000) |
+| `since` | string | No | — | Filter responses submitted after this date (ISO 8601 or Unix timestamp) |
+| `until` | string | No | — | Filter responses submitted before this date (ISO 8601 or Unix timestamp) |
+| `after` | string | No | — | Pagination cursor — retrieve responses after this token (mutually exclusive with sort) |
+| `before` | string | No | — | Pagination cursor — retrieve responses before this token (mutually exclusive with sort) |
+| `included_response_ids` | string | No | — | Comma-separated list of response IDs to include |
+| `excluded_response_ids` | string | No | — | Comma-separated list of response IDs to exclude |
+| `response_type` | string | No | — | Filter by response type: started, partial, or completed |
+| `sort` | string | No | — | Sort responses in format: &#123;fieldID&#125;,&#123;asc\|desc&#125; |
+| `query` | string | No | — | Search string to filter across all answers and fields |
+| `fields` | string | No | — | Comma-separated field IDs — only show answers for these fields |
+| `answered_fields` | string | No | — | Comma-separated field IDs — only return responses that answered these fields |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "page_size": {
+      "type": "integer",
+      "description": "Maximum number of responses to retrieve (default 25, max 1000)"
+    },
+    "since": {
+      "type": "string",
+      "description": "Filter responses submitted after this date (ISO 8601 or Unix timestamp)"
+    },
+    "until": {
+      "type": "string",
+      "description": "Filter responses submitted before this date (ISO 8601 or Unix timestamp)"
+    },
+    "after": {
+      "type": "string",
+      "description": "Pagination cursor — retrieve responses after this token (mutually exclusive with sort)"
+    },
+    "before": {
+      "type": "string",
+      "description": "Pagination cursor — retrieve responses before this token (mutually exclusive with sort)"
+    },
+    "included_response_ids": {
+      "type": "string",
+      "description": "Comma-separated list of response IDs to include"
+    },
+    "excluded_response_ids": {
+      "type": "string",
+      "description": "Comma-separated list of response IDs to exclude"
+    },
+    "response_type": {
+      "type": "string",
+      "description": "Filter by response type: started, partial, or completed",
+      "enum": [
+        "started",
+        "partial",
+        "completed"
+      ]
+    },
+    "sort": {
+      "type": "string",
+      "description": "Sort responses in format: {fieldID},{asc|desc}"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search string to filter across all answers and fields"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Comma-separated field IDs — only show answers for these fields"
+    },
+    "answered_fields": {
+      "type": "string",
+      "description": "Comma-separated field IDs — only return responses that answered these fields"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id"
+  ]
 }
 ```
 
@@ -204,12 +590,35 @@ List form responses
 
 List themes
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | integer | No | — | Page number to retrieve (default 1) |
+| `page_size` | integer | No | — | Number of results per page (default 10, max 200) |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number to retrieve (default 1)"
+    },
+    "page_size": {
+      "type": "integer",
+      "description": "Number of results per page (default 10, max 200)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
 }
 ```
 
@@ -221,12 +630,31 @@ List themes
 
 List webhooks for a form
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id"
+  ]
 }
 ```
 
@@ -238,12 +666,40 @@ List webhooks for a form
 
 List workspaces
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `search` | string | No | — | Filter workspaces containing this string |
+| `page` | integer | No | — | Page number to retrieve (default 1) |
+| `page_size` | integer | No | — | Number of results per page (default 10, max 200) |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "search": {
+      "type": "string",
+      "description": "Filter workspaces containing this string"
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number to retrieve (default 1)"
+    },
+    "page_size": {
+      "type": "integer",
+      "description": "Number of results per page (default 10, max 200)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
 }
 ```
 
@@ -255,12 +711,37 @@ List workspaces
 
 Update a form (partial)
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `body` | any[] | Yes | — | Array of JSON Patch operations |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "body": {
+      "type": "array",
+      "description": "Array of JSON Patch operations"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "body"
+  ]
 }
 ```
 
@@ -272,12 +753,83 @@ Update a form (partial)
 
 Update a form (full replace)
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form_id` | string | Yes | — | Unique ID for the form |
+| `fields` | any[] | Yes | — | All fields for the form (include existing field IDs to preserve them) |
+| `hidden` | any[] | No | — | hidden |
+| `logic` | any[] | No | — | logic |
+| `settings` | object | No | — | settings |
+| `thankyou_screens` | any[] | No | — | thankyou_screens |
+| `theme` | object | No | — | theme |
+| `title` | string | Yes | — | Title of the form |
+| `type` | string | No | — | Form type |
+| `welcome_screens` | any[] | No | — | welcome_screens |
+| `workspace` | object | No | — | workspace |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "form_id": {
+      "type": "string",
+      "description": "Unique ID for the form"
+    },
+    "fields": {
+      "type": "array",
+      "description": "All fields for the form (include existing field IDs to preserve them)"
+    },
+    "hidden": {
+      "type": "array",
+      "description": "hidden"
+    },
+    "logic": {
+      "type": "array",
+      "description": "logic"
+    },
+    "settings": {
+      "type": "object",
+      "description": "settings"
+    },
+    "thankyou_screens": {
+      "type": "array",
+      "description": "thankyou_screens"
+    },
+    "theme": {
+      "type": "object",
+      "description": "theme"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the form"
+    },
+    "type": {
+      "type": "string",
+      "description": "Form type"
+    },
+    "welcome_screens": {
+      "type": "array",
+      "description": "welcome_screens"
+    },
+    "workspace": {
+      "type": "object",
+      "description": "workspace"
+    }
+  },
+  "required": [
+    "PCID",
+    "form_id",
+    "fields",
+    "title"
+  ]
 }
 ```
 
