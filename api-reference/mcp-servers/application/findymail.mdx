@@ -26,12 +26,37 @@ description: "Findymail - find and verify email addresses, enrich company data, 
 
 Find a work email address by person name and company domain
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `domain` | string | Yes | — | The company domain to search (e.g. "example.com") |
+| `name` | string | Yes | — | The full name of the person to find an email for |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "domain": {
+      "type": "string",
+      "description": "The company domain to search (e.g. \"example.com\")"
+    },
+    "name": {
+      "type": "string",
+      "description": "The full name of the person to find an email for"
+    }
+  },
+  "required": [
+    "PCID",
+    "domain",
+    "name"
+  ]
 }
 ```
 
@@ -43,12 +68,43 @@ Find a work email address by person name and company domain
 
 Find employees at a company by job title
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `count` | integer | Yes | — | Maximum number of employees to return |
+| `job_titles` | any[] | Yes | — | List of job titles to search for (e.g. ["CEO", "CTO", "VP of Engineering"]) |
+| `website` | string | Yes | — | The company website URL or domain (e.g. "example.com") |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "count": {
+      "type": "integer",
+      "description": "Maximum number of employees to return"
+    },
+    "job_titles": {
+      "type": "array",
+      "description": "List of job titles to search for (e.g. [\"CEO\", \"CTO\", \"VP of Engineering\"])"
+    },
+    "website": {
+      "type": "string",
+      "description": "The company website URL or domain (e.g. \"example.com\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "count",
+    "job_titles",
+    "website"
+  ]
 }
 ```
 
@@ -60,12 +116,31 @@ Find employees at a company by job title
 
 Find a phone number from a LinkedIn profile URL
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `linkedin_url` | string | Yes | — | The LinkedIn profile URL of the person (e.g. "https://linkedin.com/in/johndoe") |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "The LinkedIn profile URL of the person (e.g. \"https://linkedin.com/in/johndoe\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "linkedin_url"
+  ]
 }
 ```
 
@@ -77,12 +152,31 @@ Find a phone number from a LinkedIn profile URL
 
 Look up company data from a domain name
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `domain` | string | Yes | — | The company domain to enrich (e.g. "example.com") |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "domain": {
+      "type": "string",
+      "description": "The company domain to enrich (e.g. \"example.com\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "domain"
+  ]
 }
 ```
 
@@ -94,12 +188,36 @@ Look up company data from a domain name
 
 Look up a person's profile from their email address
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Yes | — | The email address to look up |
+| `with_profile` | boolean | No | — | Whether to include full LinkedIn profile enrichment data (costs 2 credits instead of 1) |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "email": {
+      "type": "string",
+      "description": "The email address to look up"
+    },
+    "with_profile": {
+      "type": "boolean",
+      "description": "Whether to include full LinkedIn profile enrichment data (costs 2 credits instead of 1)"
+    }
+  },
+  "required": [
+    "PCID",
+    "email"
+  ]
 }
 ```
 
@@ -111,12 +229,41 @@ Look up a person's profile from their email address
 
 Search for leads using natural language queries
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `config` | object | No | — | Configuration options for the search |
+| `limit` | integer | No | — | Maximum number of results to return |
+| `query` | string | Yes | — | Natural language search query describing the type of companies or leads to find (e.g. "SaaS companies in San Francisco with 50-200 employees") |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "config": {
+      "type": "object",
+      "description": "Configuration options for the search"
+    },
+    "limit": {
+      "type": "integer",
+      "description": "Maximum number of results to return"
+    },
+    "query": {
+      "type": "string",
+      "description": "Natural language search query describing the type of companies or leads to find (e.g. \"SaaS companies in San Francisco with 50-200 employees\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "query"
+  ]
 }
 ```
 
@@ -128,12 +275,31 @@ Search for leads using natural language queries
 
 Verify if an email address is valid and deliverable
 
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `email` | string | Yes | — | The email address to verify |
+
 <Expandable title="inputSchema">
 
 ```json
 {
   "type": "object",
-  "properties": {}
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "email": {
+      "type": "string",
+      "description": "The email address to verify"
+    }
+  },
+  "required": [
+    "PCID",
+    "email"
+  ]
 }
 ```
 

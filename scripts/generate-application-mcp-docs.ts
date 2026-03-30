@@ -531,8 +531,14 @@ function generateServerPage(
   md += '\n---\n\n'
 
   // Individual tool sections
+  // Dynamic tools (from mcp-server-definitions/) have inputSchema (plain JSON Schema)
+  // Classic tools (from available-servers.ts) have paramsSchema (Zod objects)
   for (let i = 0; i < tools.length; i++) {
-    md += generateToolSection(tools[i])
+    if (tools[i].paramsSchema) {
+      md += generateToolSection(tools[i])
+    } else {
+      md += generateToolSectionFromJsonSchema(tools[i])
+    }
     if (i < tools.length - 1) {
       md += '\n---\n\n'
     }
