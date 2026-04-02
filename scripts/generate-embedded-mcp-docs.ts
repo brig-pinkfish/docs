@@ -404,7 +404,7 @@ function generateServerPage(
 ): string {
   const docSlug = getDocSlug(serverName)
   const description = getDescription(serverName, rawDescription)
-  const displayName = label || docSlug
+  const displayName = (label || docSlug).toLowerCase()
 
   let md = `---\n`
   md += `title: "${displayName.replace(/"/g, '\\"')}"\n`
@@ -472,6 +472,7 @@ function filterEmbeddedServers(servers: ServerEntry[]): ServerEntry[] {
   return servers.filter((s) => {
     if (!s.embedded) return false
     if (EXCLUDED_SERVERS.has(s.name)) return false
+    if ((s.label || s.name).toLowerCase().includes('deprecated')) return false
     // Include servers available to users OR agents (public-facing)
     if (s.availableToUsers === false && s.availableToAgents === false) return false
     return true
