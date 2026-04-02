@@ -1,6 +1,6 @@
 ---
-title: "docprocess"
-sidebarTitle: "docprocess"
+title: "Document Processing"
+sidebarTitle: "Document Processing"
 description: "Document processing — PDF, Word, CSV, and image conversion, OCR, and AI editing"
 ---
 
@@ -31,6 +31,7 @@ description: "Document processing — PDF, Word, CSV, and image conversion, OCR,
 | [`docprocess_xml_to_json`](#docprocess_xml_to_json) | Convert XML files to JSON format. By default returns the full JSON data in the response. Set store_xml_json=true to store as a file and get a download URL instead. |
 | [`docprocess_invoice_extract`](#docprocess_invoice_extract) | Extract structured line items from invoices (PDF or image). Uses AI to discover columns dynamically from the document and extract all line items. Supports multi-page PDFs with automatic sharding and parallel processing. Returns a jobId - use docprocess_invoice_extract_poll to check status and retrieve results (CSV, JSON, and summary artifacts). |
 | [`docprocess_invoice_extract_poll`](#docprocess_invoice_extract_poll) | Check the status of an invoice line-item extraction job. Call this after docprocess_invoice_extract to check if processing is complete. Poll every 10-15 seconds until status is "completed" or "failed". When completed, returns artifact URLs for the extracted CSV, JSON, and summary files. |
+| [`docprocess_split_pdf`](#docprocess_split_pdf) | Split a PDF file into smaller PDF files by page ranges. Each chunk is uploaded to file storage and returns metadata with download information. Useful for breaking large PDFs into manageable pieces for processing. Supports specifying pages per chunk and optional start/end page ranges. Requires a collectionId to specify where split files are stored — use filestorage_list_collections to find available collections. |
 
 ---
 
@@ -833,6 +834,68 @@ Check the status of an invoice line-item extraction job. Call this after docproc
   },
   "required": [
     "jobId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## docprocess_split_pdf
+
+Split a PDF file into smaller PDF files by page ranges. Each chunk is uploaded to file storage and returns metadata with download information. Useful for breaking large PDFs into manageable pieces for processing. Supports specifying pages per chunk and optional start/end page ranges. Requires a collectionId to specify where split files are stored — use filestorage_list_collections to find available collections.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_urls` | string[] | Yes | — | Required: Array of URLs to PDF files to split. Each URL must point to a valid PDF file. |
+| `pages_per_chunk` | number | No | `1` | Number of pages per output file (default: 1). For example, 2 means each output file contains 2 pages. |
+| `start_page` | number | No | — | Optional: First page to include (1-based). If omitted, starts from the first page. |
+| `end_page` | number | No | — | Optional: Last page to include (1-based). If omitted, goes to the last page. |
+| `collectionId` | string | Yes | — | Required: Filestorage collection ID to store split files. Use filestorage_list_collections to find available collections. |
+| `file_links_expire_in_days` | number | No | `7` | Number of days before the download links expire (default: 7) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "file_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required: Array of URLs to PDF files to split. Each URL must point to a valid PDF file."
+    },
+    "pages_per_chunk": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of pages per output file (default: 1). For example, 2 means each output file contains 2 pages."
+    },
+    "start_page": {
+      "type": "number",
+      "description": "Optional: First page to include (1-based). If omitted, starts from the first page."
+    },
+    "end_page": {
+      "type": "number",
+      "description": "Optional: Last page to include (1-based). If omitted, goes to the last page."
+    },
+    "collectionId": {
+      "type": "string",
+      "description": "Required: Filestorage collection ID to store split files. Use filestorage_list_collections to find available collections."
+    },
+    "file_links_expire_in_days": {
+      "type": "number",
+      "default": 7,
+      "description": "Number of days before the download links expire (default: 7)"
+    }
+  },
+  "required": [
+    "file_urls",
+    "collectionId"
   ]
 }
 ```
