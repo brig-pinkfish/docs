@@ -1,0 +1,81 @@
+---
+title: "Dev/Stage/Prod Promotion"
+description: "Promote workflows across development, staging, and production environments using promotion paths"
+icon: "arrow-up-right-dots"
+---
+
+## What is Workflow Promotion?
+
+Workflow promotion lets you move workflows through a defined pipeline of environments — such as Dev, Stage, and Prod — so you can build and test in lower environments before deploying to production. Pinkfish calls these pipelines **promotion paths**.
+
+Each stage in a promotion path maps to a Pinkfish organization. Stages can point to the same org (for simpler setups) or different orgs (for strict permission separation where developers don't have access to production connections or data).
+
+## How It Works
+
+### **1. Admin Creates a Promotion Path**
+
+Organization admins define promotion paths in **Settings > Promotion Paths**. A path consists of:
+
+- **Path name** — a descriptive label (e.g., "Production Pipeline")
+- **Stages** — an ordered list of two or more environments, each with:
+  - **Tag** — a label like `dev`, `stage`, or `prod` (must be unique within the path)
+  - **Organization** — which Pinkfish org this stage maps to
+
+You can create any number of stages with custom tags — you're not limited to the standard dev/stage/prod pattern.
+
+**Example: Cross-org promotion path**
+
+| Stage | Tag | Organization |
+| :--- | :--- | :--- |
+| 1 | dev | Acme Development |
+| 2 | stage | Acme Staging |
+| 3 | prod | Acme Production |
+
+In this setup, promoting a workflow from dev to stage moves it from the Development org to the Staging org, ensuring that production credentials and connections remain isolated.
+
+### **2. User Promotes a Workflow**
+
+Once a promotion path exists and a workflow has at least one published release, the **Promote** button appears in the workflow's release dropdown.
+
+**Promotion flow:**
+
+1. **Publish a release** — the workflow must have a published version before it can be promoted
+2. **Click Promote** — in the release dropdown, click the promote button
+3. **Select a path** — if the workflow is eligible for multiple promotion paths, choose which one to use
+4. **Review stages** — a visual stepper shows completed stages, the current stage, and the next target
+5. **Confirm** — the workflow (including its steps and configuration) is copied to the next stage's organization
+
+**What happens during promotion:**
+
+- **First promotion**: A new workflow is created in the target organization with the same steps and configuration
+- **Subsequent promotions**: The existing workflow in the target org is updated with the latest release from the source
+
+### **3. Permissions**
+
+| Action | Required permission |
+| :--- | :--- |
+| Create, edit, or delete promotion paths | **Administer** on the organization |
+| Promote a workflow to the next stage | **Administer** on the next stage's organization |
+
+This means a developer can build in the dev org but only someone with admin access to the production org can promote to prod — enforcing proper change control.
+
+## Cross-Org vs Same-Org Promotion
+
+**Cross-org** paths are the primary use case. Each stage maps to a separate Pinkfish organization, providing:
+
+- **Permission isolation** — developers can't access production connections or data
+- **Credential separation** — each org has its own API connections and secrets
+- **Audit trail** — clear boundaries between environments
+
+**Same-org** paths are also supported for simpler setups where you want the promotion workflow without full org separation. Multiple stages can point to the same organization, using the stage tag to differentiate environments.
+
+## Key Concepts
+
+- **Promotion paths are org-level** — they're shared across all users in the organization
+- **Stages are ordered** — workflows move forward through the path one stage at a time
+- **Any number of paths** — an organization can have multiple promotion paths for different use cases
+- **Flexible tags** — use whatever naming convention fits your team (`dev`/`stage`/`prod`, `test`/`uat`/`live`, etc.)
+
+---
+
+**Questions?** Reach out on Discord https://discord.com/invite/HaDg7R4VZG
