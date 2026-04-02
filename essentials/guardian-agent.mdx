@@ -1,0 +1,127 @@
+---
+title: "Guardian Agent"
+description: "Self-healing workflows — automatic error diagnosis and AI-driven repair"
+icon: "shield-check"
+---
+
+## What is the Guardian Agent?
+
+The Guardian Agent brings self-healing capabilities to your workflows. When a workflow fails, the Guardian Agent automatically diagnoses the problem, determines the root cause, and generates a concrete fix — then hands that fix to the Workflow Builder Agent to apply the repair. The entire cycle from error detection to code fix happens through AI, with you approving each step.
+
+This means workflows don't just fail and wait for someone to debug them. The Guardian Agent reads the error analytics, inspects the code, figures out what went wrong, and writes the repair — you just review and approve.
+
+## How It Works
+
+The Guardian Agent operates in a three-stage pipeline: **diagnose → propose → repair**.
+
+### 1. Diagnose
+
+When you start a Guardian analysis, the agent:
+
+- Queries error analytics to find failure patterns, counts, and categories
+- Reads the workflow structure and code to understand what each node does
+- Compares draft vs. published versions to see what changed since the last deployment
+- Inspects recent run results to see what data each node received and produced
+
+### 2. Error Categorization
+
+The Guardian Agent classifies each error and determines whether it can be fixed automatically or requires manual action.
+
+#### Code errors (auto-fixable via Workflow Builder Agent)
+
+These errors can be resolved by sending a repair prompt to the Workflow Builder Agent:
+
+| Type | Examples |
+| :--- | :--- |
+| **Syntax errors** | Typos, missing brackets, malformed template strings |
+| **Logic errors** | Wrong conditions, incorrect data transformations, null/undefined handling |
+| **Code configuration errors** | Wrong tool names in `callTool()`, incorrect parameter names, invalid server names |
+| **Data format issues** | Unexpected data structures, missing fields in upstream node output |
+| **Missing error handling** | No retry logic for rate-limited APIs, unhandled edge cases |
+
+#### Resource and connection errors (user action required)
+
+These errors require manual intervention — the Guardian Agent identifies them and tells you exactly what to do:
+
+| Type | Examples | Recommended action |
+| :--- | :--- | :--- |
+| **Missing connections** | "PCID not found", connection doesn't exist | Create the connection, or switch to an existing one (Guardian checks for alternatives) |
+| **Expired OAuth tokens** | "Token expired", "Invalid token" | Refresh the connection's OAuth credentials |
+| **Missing collections** | Collection ID not found in datastore/filestorage/vault | Create the collection or fix the resource binding |
+| **External API outages** | Service unavailable, persistent timeouts | Wait for the external service to recover |
+
+#### Draft vs. published comparison
+
+The Guardian Agent also compares your current draft code against the published version. If a fix has already been made in the draft but not yet published, it will tell you — so you don't duplicate work.
+
+### 3. Propose and Repair
+
+For code-fixable issues, the Guardian Agent writes a detailed repair prompt — including the root cause, the affected nodes, and the specific code changes needed. Multiple issues are combined into a single prompt so everything can be fixed in one pass.
+
+With your approval, the Guardian Agent then hands this repair prompt directly to the **Workflow Builder Agent**, which opens the workflow and applies the fixes automatically. You stay in control — the Guardian Agent always asks before invoking the Workflow Builder Agent, and you can review the proposed changes before they're applied.
+
+For issues that can't be fixed by code (expired tokens, missing connections), the Guardian Agent tells you exactly what manual steps to take.
+
+## Using the Guardian Agent
+
+### Starting an Analysis
+
+1. Open a workflow that has errors
+2. Navigate to the Guardian Agent panel
+3. Click **Start New Analysis**
+4. The Guardian Agent begins analyzing the workflow's error patterns
+
+### Reviewing Results
+
+After analysis, you'll see:
+
+- **Errors analyzed** — Total number of error patterns found
+- **Error summary** — List of error patterns with categories
+- **Proposed fixes** — Count of recommended fixes
+- **Coding prompt** — The repair prompt for code-fixable issues
+- **User actions** — Manual steps you need to take
+
+### Approving Repairs
+
+When the Guardian Agent has a fix ready, it will ask for your approval:
+
+> "I've generated a repair prompt for these issues. Would you like me to send it to the Workflow Builder Agent to fix the workflow?"
+
+Once you approve, the Guardian Agent sends the repair prompt to the Workflow Builder Agent, which opens the workflow and applies the code changes. This is where the self-healing loop closes — diagnosis, fix generation, and repair all happen through AI, with your approval as the gate between each step.
+
+The Guardian Agent will never invoke the Workflow Builder Agent without your explicit permission.
+
+### Continuing Previous Sessions
+
+Each analysis creates a session that persists your results. You can:
+
+- View previous analyses for any workflow
+- Continue a session to ask follow-up questions
+- Track fix status across sessions (pending, in progress, applied, verified)
+
+## Session Status
+
+Guardian sessions track the lifecycle of an analysis:
+
+| Status | Meaning |
+| :--- | :--- |
+| **Active** | Analysis is in progress |
+| **Ongoing** | Analysis complete, fixes pending |
+| **Resolved** | All fixes applied and verified |
+| **Abandoned** | Analysis discontinued |
+
+## What the Guardian Agent Can and Cannot Do
+
+**Can do:**
+- Diagnose workflow errors from analytics, code, and run results
+- Compare draft vs. published code to detect regressions or pending fixes
+- Check for alternative connections when one is missing
+- Write comprehensive repair prompts with specific code changes
+- Hand off repairs to the Workflow Builder Agent (with your approval)
+- Track analysis sessions so you can pick up where you left off
+
+**Cannot do:**
+- Modify workflow code directly — all code changes go through the Workflow Builder Agent
+- Create or change connections — it will tell you what to do
+- Execute workflows
+- Take any action without your approval
