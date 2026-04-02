@@ -29,15 +29,15 @@ The Guardian Agent classifies each error and determines whether it can be fixed 
 
 #### Code errors (auto-fixable via Workflow Builder Agent)
 
-These errors can be resolved by sending a repair prompt to the Workflow Builder Agent:
+Since workflows must be working before they can be published, production errors are almost always caused by real-world conditions that weren't accounted for during development. The Guardian Agent identifies these and writes targeted fixes:
 
 | Type | Examples |
 | :--- | :--- |
-| **Syntax errors** | Typos, missing brackets, malformed template strings |
-| **Logic errors** | Wrong conditions, incorrect data transformations, null/undefined handling |
-| **Code configuration errors** | Wrong tool names in `callTool()`, incorrect parameter names, invalid server names |
-| **Data format issues** | Unexpected data structures, missing fields in upstream node output |
-| **Missing error handling** | No retry logic for rate-limited APIs, unhandled edge cases |
+| **Unexpected data shapes** | An API starts returning a new field format, an upstream node produces null where it didn't before, an array is empty when it was always populated during testing |
+| **Unhandled edge cases** | A user record has no email, a currency field contains a string, a list has 10,000 items instead of the expected 50 |
+| **External API changes** | A third-party API changes its response structure, adds required parameters, or deprecates an endpoint |
+| **Volume and scale issues** | Payloads larger than expected, rate limits hit at production traffic levels, timeouts on operations that were fast in testing |
+| **Code configuration drift** | A tool name or server name was renamed, parameter requirements changed after an MCP server update |
 
 #### Resource and connection errors (user action required)
 
