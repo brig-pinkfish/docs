@@ -1054,9 +1054,8 @@ function updateDocsJson(
   function buildNavEntry(name: string): string | { group: string; pages: string[] } {
     const childSlugs = familyChildSlugs.get(name)
     if (childSlugs && childSlugs.length > 0) {
-      const displayName = getDisplayName(name)
       return {
-        group: displayName,
+        group: name,
         pages: [
           `api-reference/mcp-servers/application/${name}`,
           ...childSlugs.map((c) => `api-reference/mcp-servers/application/${name}/${c}`)
@@ -1085,8 +1084,8 @@ function updateDocsJson(
     }
     // Sort: strings by value, objects by group name
     filtered.sort((a, b) => {
-      const aKey = typeof a === 'string' ? a : a.group?.toLowerCase() ?? ''
-      const bKey = typeof b === 'string' ? b : b.group?.toLowerCase() ?? ''
+      const aKey = typeof a === 'string' ? (a.split('/').pop() ?? a) : a.group?.toLowerCase() ?? ''
+      const bKey = typeof b === 'string' ? (b.split('/').pop() ?? b) : b.group?.toLowerCase() ?? ''
       return aKey.localeCompare(bKey)
     })
     appGroup.pages = ['api-reference/mcp-servers/application/overview', ...filtered]

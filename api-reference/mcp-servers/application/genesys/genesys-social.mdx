@@ -585,7 +585,24 @@ Query for social media aggregates asynchronously
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Boolean operation to apply to the provided predicates and clauses"
+        },
+        "clauses": {
+          "type": "array",
+          "description": "Boolean 'and/or' logic with up to two-levels of nesting"
+        },
+        "predicates": {
+          "type": "array",
+          "description": "Like a three-word sentence: (attribute-name) (operator) (target-value)."
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "granularity": {
       "type": "string",
@@ -651,7 +668,24 @@ Query for social media messages asynchronously
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Boolean operation to apply to the provided predicates and clauses"
+        },
+        "clauses": {
+          "type": "array",
+          "description": "Boolean 'and/or' logic with up to two-levels of nesting"
+        },
+        "predicates": {
+          "type": "array",
+          "description": "Like a three-word sentence: (attribute-name) (operator) (target-value)."
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "interval": {
       "type": "string",
@@ -698,14 +732,14 @@ Create an escalation rule.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `description` | string | No | — | A description of the social escalation rule. |
-| `divisionId` | string | No | — | The ID of the division the social escalation rule belongs to. |
+| `divisionId` | string | Yes | — | The ID of the division the social escalation rule belongs to. |
 | `facebookEscalation` | object | No | — | facebookEscalation |
 | `googleBusinessProfileEscalation` | object | No | — | googleBusinessProfileEscalation |
 | `instagramEscalation` | object | No | — | instagramEscalation |
-| `matchCriteria` | string | No | — | The criteria that defines when a social media message should be escalated. |
-| `name` | string | No | — | The name of the escalation rule. |
+| `matchCriteria` | string | Yes | — | The criteria that defines when a social media message should be escalated. |
+| `name` | string | Yes | — | The name of the escalation rule. |
 | `openEscalation` | object | No | — | openEscalation |
-| `priority` | integer | No | — | The priority of the escalation rule. The lower the number the higer the priority. Once a rule is matched others are skipped. |
+| `priority` | integer | Yes | — | The priority of the escalation rule. The lower the number the higer the priority. Once a rule is matched others are skipped. |
 | `status` | string | No | — | The status of the escalation rule. |
 | `twitterEscalation` | object | No | — | twitterEscalation |
 
@@ -729,15 +763,66 @@ Create an escalation rule.
     },
     "facebookEscalation": {
       "type": "object",
-      "description": "facebookEscalation"
+      "description": "facebookEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "googleBusinessProfileEscalation": {
       "type": "object",
-      "description": "googleBusinessProfileEscalation"
+      "description": "googleBusinessProfileEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "instagramEscalation": {
       "type": "object",
-      "description": "instagramEscalation"
+      "description": "instagramEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "matchCriteria": {
       "type": "string",
@@ -749,7 +834,24 @@ Create an escalation rule.
     },
     "openEscalation": {
       "type": "object",
-      "description": "openEscalation"
+      "description": "openEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "priority": {
       "type": "integer",
@@ -765,11 +867,32 @@ Create an escalation rule.
     },
     "twitterEscalation": {
       "type": "object",
-      "description": "twitterEscalation"
+      "description": "twitterEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "divisionId",
+    "matchCriteria",
+    "name",
+    "priority"
   ]
 }
 ```
@@ -788,7 +911,7 @@ Escalate message to a conversation manually
 | --- | --- | --- | --- | --- |
 | `divisionId` | string | Yes | — | One division ID |
 | `escalationTarget` | object | No | — | escalationTarget |
-| `socialMediaNormalizedMessageId` | string | No | — | The social media normalized message ID to be escalated. |
+| `socialMediaNormalizedMessageId` | string | Yes | — | The social media normalized message ID to be escalated. |
 
 <Expandable title="inputSchema">
 
@@ -806,7 +929,24 @@ Escalate message to a conversation manually
     },
     "escalationTarget": {
       "type": "object",
-      "description": "escalationTarget"
+      "description": "escalationTarget",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "socialMediaNormalizedMessageId": {
       "type": "string",
@@ -815,7 +955,8 @@ Escalate message to a conversation manually
   },
   "required": [
     "PCID",
-    "divisionId"
+    "divisionId",
+    "socialMediaNormalizedMessageId"
   ]
 }
 ```
@@ -833,8 +974,8 @@ Create a social topic.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `description` | string | No | — | A description of the social topic. |
-| `divisionId` | string | No | — | The ID of the division the social topic belongs to. |
-| `name` | string | No | — | Name of the social topic. |
+| `divisionId` | string | Yes | — | The ID of the division the social topic belongs to. |
+| `name` | string | Yes | — | Name of the social topic. |
 
 <Expandable title="inputSchema">
 
@@ -860,7 +1001,9 @@ Create a social topic.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "divisionId",
+    "name"
   ]
 }
 ```
@@ -879,14 +1022,14 @@ Update the escalation rule.
 | --- | --- | --- | --- | --- |
 | `escalationRuleId` | string | Yes | — | escalationRuleId |
 | `description` | string | No | — | A description of the social escalation rule. |
-| `divisionId` | string | No | — | The ID of the division the social escalation rule belongs to. |
+| `divisionId` | string | Yes | — | The ID of the division the social escalation rule belongs to. |
 | `facebookEscalation` | object | No | — | facebookEscalation |
 | `googleBusinessProfileEscalation` | object | No | — | googleBusinessProfileEscalation |
 | `instagramEscalation` | object | No | — | instagramEscalation |
-| `matchCriteria` | string | No | — | The criteria that defines when a social media message should be escalated. |
-| `name` | string | No | — | The name of the escalation rule. |
+| `matchCriteria` | string | Yes | — | The criteria that defines when a social media message should be escalated. |
+| `name` | string | Yes | — | The name of the escalation rule. |
 | `openEscalation` | object | No | — | openEscalation |
-| `priority` | integer | No | — | The priority of the escalation rule. The lower the number the higer the priority. Once a rule is matched others are skipped. |
+| `priority` | integer | Yes | — | The priority of the escalation rule. The lower the number the higer the priority. Once a rule is matched others are skipped. |
 | `status` | string | No | — | The status of the escalation rule. |
 | `twitterEscalation` | object | No | — | twitterEscalation |
 
@@ -914,15 +1057,66 @@ Update the escalation rule.
     },
     "facebookEscalation": {
       "type": "object",
-      "description": "facebookEscalation"
+      "description": "facebookEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "googleBusinessProfileEscalation": {
       "type": "object",
-      "description": "googleBusinessProfileEscalation"
+      "description": "googleBusinessProfileEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "instagramEscalation": {
       "type": "object",
-      "description": "instagramEscalation"
+      "description": "instagramEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "matchCriteria": {
       "type": "string",
@@ -934,7 +1128,24 @@ Update the escalation rule.
     },
     "openEscalation": {
       "type": "object",
-      "description": "openEscalation"
+      "description": "openEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     },
     "priority": {
       "type": "integer",
@@ -950,12 +1161,33 @@ Update the escalation rule.
     },
     "twitterEscalation": {
       "type": "object",
-      "description": "twitterEscalation"
+      "description": "twitterEscalation",
+      "properties": {
+        "targetType": {
+          "type": "string",
+          "description": "Defines the target that the message will be escalated to."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Defines the destination of the escalation.SourceIntegration means use the SocialMedia Source Integration as the destination.OverrideIntegration means the set integration will be used regardless of the source."
+        },
+        "override": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "destination",
+        "targetType"
+      ]
     }
   },
   "required": [
     "PCID",
-    "escalationRuleId"
+    "escalationRuleId",
+    "divisionId",
+    "matchCriteria",
+    "name",
+    "priority"
   ]
 }
 ```

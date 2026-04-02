@@ -38,7 +38,7 @@ description: "Genesys Users - user profiles, presence, groups, teams, search, st
 | [`genesys_users_get_presence_sources`](#genesys_users_get_presence_sources) | Get a list of Presence Sources |
 | [`genesys_users_get_presence_user_primarysource`](#genesys_users_get_presence_user_primarysource) | Get a user's Primary Presence Source |
 | [`genesys_users_get_search`](#genesys_users_get_search) | Search users using the q64 value returned from a previous search |
-| [`genesys_users_get_search`](#genesys_users_get_search) | Search using the q64 value returned from a previous search. |
+| [`genesys_users_get_search`](#genesys_users_get_search) | Search users using the q64 value returned from a previous search |
 | [`genesys_users_get_search_suggest`](#genesys_users_get_search_suggest) | Suggest resources using the q64 value returned from a previous suggest query. |
 | [`genesys_users_get_systempresences`](#genesys_users_get_systempresences) | Get the list of SystemPresences |
 | [`genesys_users_get_team`](#genesys_users_get_team) | Get team |
@@ -81,7 +81,7 @@ description: "Genesys Users - user profiles, presence, groups, teams, search, st
 | [`genesys_users_post_presence_definitions`](#genesys_users_post_presence_definitions) | Create a Presence Definition |
 | [`genesys_users_post_presence_sources`](#genesys_users_post_presence_sources) | Create a Presence Source |
 | [`genesys_users_post_search`](#genesys_users_post_search) | Search users |
-| [`genesys_users_post_search`](#genesys_users_post_search) | Search resources. |
+| [`genesys_users_post_search`](#genesys_users_post_search) | Search users |
 | [`genesys_users_post_search_suggest`](#genesys_users_post_search_suggest) | Suggest resources. |
 | [`genesys_users_post_search_teams_assign`](#genesys_users_post_search_teams_assign) | Search users assigned to teams |
 | [`genesys_users_post_speechandtextanalytics_transcripts_search`](#genesys_users_post_speechandtextanalytics_transcripts_search) | Search resources. |
@@ -1205,15 +1205,15 @@ Search users using the q64 value returned from a previous search
 
 ## genesys_users_get_search
 
-Search using the q64 value returned from a previous search.
+Search users using the q64 value returned from a previous search
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | q64 |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
-| `profile` | boolean | No | — | profile |
+| `expand` | any[] | No | — | expand |
+| `integrationPresenceSource` | string | No | — | integrationPresenceSource |
 
 <Expandable title="inputSchema">
 
@@ -1231,11 +1231,16 @@ Search using the q64 value returned from a previous search.
     },
     "expand": {
       "type": "array",
-      "description": "Which fields, if any, to expand"
+      "description": "expand"
     },
-    "profile": {
-      "type": "boolean",
-      "description": "profile"
+    "integrationPresenceSource": {
+      "type": "string",
+      "description": "integrationPresenceSource",
+      "enum": [
+        "MicrosoftTeams",
+        "ZoomPhone",
+        "EightByEight"
+      ]
     }
   },
   "required": [
@@ -2500,7 +2505,20 @@ Update team
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -2587,7 +2605,26 @@ Update user
     },
     "biography": {
       "type": "object",
-      "description": "biography"
+      "description": "biography",
+      "properties": {
+        "biography": {
+          "type": "string",
+          "description": "Personal detailed description"
+        },
+        "interests": {
+          "type": "array"
+        },
+        "hobbies": {
+          "type": "array"
+        },
+        "spouse": {
+          "type": "string"
+        },
+        "education": {
+          "type": "array",
+          "description": "User education details"
+        }
+      }
     },
     "certifications": {
       "type": "array",
@@ -2595,7 +2632,12 @@ Update user
     },
     "chat": {
       "type": "object",
-      "description": "chat"
+      "description": "chat",
+      "properties": {
+        "jabberId": {
+          "type": "string"
+        }
+      }
     },
     "department": {
       "type": "string",
@@ -2607,7 +2649,21 @@ Update user
     },
     "employerInfo": {
       "type": "object",
-      "description": "employerInfo"
+      "description": "employerInfo",
+      "properties": {
+        "officialName": {
+          "type": "string"
+        },
+        "employeeId": {
+          "type": "string"
+        },
+        "employeeType": {
+          "type": "string"
+        },
+        "dateHire": {
+          "type": "string"
+        }
+      }
     },
     "groups": {
       "type": "array",
@@ -2746,7 +2802,146 @@ Patch a user's CallForwarding
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     },
     "voicemail": {
       "type": "string",
@@ -2906,7 +3101,20 @@ Patch a user's Presence
     },
     "futurePresenceDefinition": {
       "type": "object",
-      "description": "futurePresenceDefinition"
+      "description": "futurePresenceDefinition",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "description"
+        },
+        "systemPresence": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -2926,7 +3134,20 @@ Patch a user's Presence
     },
     "presenceDefinition": {
       "type": "object",
-      "description": "presenceDefinition"
+      "description": "presenceDefinition",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "description"
+        },
+        "systemPresence": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "primary": {
       "type": "boolean",
@@ -2989,7 +3210,20 @@ Patch a Genesys Cloud user's presence
     },
     "futurePresenceDefinition": {
       "type": "object",
-      "description": "futurePresenceDefinition"
+      "description": "futurePresenceDefinition",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "description"
+        },
+        "systemPresence": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -3009,7 +3243,20 @@ Patch a Genesys Cloud user's presence
     },
     "presenceDefinition": {
       "type": "object",
-      "description": "presenceDefinition"
+      "description": "presenceDefinition",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "description"
+        },
+        "systemPresence": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "primary": {
       "type": "boolean",
@@ -3723,23 +3970,21 @@ Search users
 
 ## genesys_users_post_search
 
-Search resources.
+Search users
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `profile` | boolean | No | — | profile |
-| `aggregations` | any[] | No | — | Aggregation criteria |
+| `enforcePermissions` | boolean | No | — | This property only applies to api/v2/user/search; when set to true add additional search criteria to filter users by: directory:user:view |
 | `expand` | any[] | No | — | Provides more details about a specified resource |
+| `integrationPresenceSource` | string | No | — | Gets an integration presence for users instead of their defaults. This parameter will only be used when presence is provided as an "expand". When using this parameter the maximum number of users that can be returned is 100. |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | The search criteria |
-| `returnFields` | any[] | No | — | A List of strings.  Possible values are any field in the resource you are searching on.  The other option is to use ALL_FIELDS, when this is provided all fields in the resource will be returned in the search results. |
+| `query` | any[] | No | — | query |
 | `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
-| `types` | any[] | Yes | — | Resource domain type to search |
 
 <Expandable title="inputSchema">
 
@@ -3751,17 +3996,22 @@ Search resources.
       "type": "string",
       "description": "Pink Connect ID for the authenticated connection"
     },
-    "profile": {
+    "enforcePermissions": {
       "type": "boolean",
-      "description": "profile"
-    },
-    "aggregations": {
-      "type": "array",
-      "description": "Aggregation criteria"
+      "description": "This property only applies to api/v2/user/search; when set to true add additional search criteria to filter users by: directory:user:view"
     },
     "expand": {
       "type": "array",
       "description": "Provides more details about a specified resource"
+    },
+    "integrationPresenceSource": {
+      "type": "string",
+      "description": "Gets an integration presence for users instead of their defaults. This parameter will only be used when presence is provided as an \"expand\". When using this parameter the maximum number of users that can be returned is 100.",
+      "enum": [
+        "MicrosoftTeams",
+        "ZoomPhone",
+        "EightByEight"
+      ]
     },
     "pageNumber": {
       "type": "integer",
@@ -3773,11 +4023,7 @@ Search resources.
     },
     "query": {
       "type": "array",
-      "description": "The search criteria"
-    },
-    "returnFields": {
-      "type": "array",
-      "description": "A List of strings.  Possible values are any field in the resource you are searching on.  The other option is to use ALL_FIELDS, when this is provided all fields in the resource will be returned in the search results."
+      "description": "query"
     },
     "sort": {
       "type": "array",
@@ -3795,15 +4041,10 @@ Search resources.
         "DESC",
         "SCORE"
       ]
-    },
-    "types": {
-      "type": "array",
-      "description": "Resource domain type to search"
     }
   },
   "required": [
-    "PCID",
-    "types"
+    "PCID"
   ]
 }
 ```
@@ -4108,7 +4349,20 @@ Create a team
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4528,7 +4782,7 @@ Update group
 | `rulesVisible` | boolean | No | — | Are membership rules visible to the person requesting to view the group |
 | `selfUri` | string | No | — | The URI for this object |
 | `state` | string | No | — | State of the group. |
-| `version` | integer | No | — | Current version for this resource. |
+| `version` | integer | Yes | — | Current version for this resource. |
 | `visibility` | string | No | — | Who can view this group |
 
 <Expandable title="inputSchema">
@@ -4614,7 +4868,8 @@ Update group
   },
   "required": [
     "PCID",
-    "groupId"
+    "groupId",
+    "version"
   ]
 }
 ```
@@ -4759,7 +5014,26 @@ Update the presence settings
     },
     "restorePresenceSettings": {
       "type": "object",
-      "description": "restorePresenceSettings"
+      "description": "restorePresenceSettings",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the restore presence feature is enabled"
+        },
+        "restoreTimeMilliseconds": {
+          "type": "integer",
+          "description": "How many milliseconds the presence will be restored within"
+        },
+        "restoreOnQueueEnabled": {
+          "type": "boolean",
+          "description": "Whether the ON_QUEUE presence will be restored"
+        }
+      },
+      "required": [
+        "enabled",
+        "restoreOnQueueEnabled",
+        "restoreTimeMilliseconds"
+      ]
     },
     "selfUri": {
       "type": "string",
@@ -4971,7 +5245,146 @@ Update a user's CallForwarding
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     },
     "voicemail": {
       "type": "string",
@@ -5056,7 +5469,147 @@ Update an OutOfOffice
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/OutOfOffice"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     }
   },
   "required": [

@@ -762,7 +762,12 @@ Make Decision/Complete Review
     },
     "decision_checklist": {
       "type": "object",
-      "description": "decision_checklist"
+      "description": "decision_checklist",
+      "properties": {
+        "options": {
+          "type": "array"
+        }
+      }
     },
     "reviewer_id": {
       "type": "string",
@@ -955,7 +960,13 @@ Create New Proof
     },
     "brief": {
       "type": "object",
-      "description": "brief"
+      "description": "brief",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Text that will be displayed in Brief section. Available on Standard, Pro and Enterprise editions only."
+        }
+      }
     },
     "combine": {
       "type": "boolean",
@@ -967,7 +978,21 @@ Create New Proof
     },
     "email_branding": {
       "type": "object",
-      "description": "Available on Pro and Enterprise editions only"
+      "description": "Available on Pro and Enterprise editions only",
+      "properties": {
+        "custom_button": {
+          "type": "object",
+          "description": "Definition of custom button"
+        },
+        "hide_open_proof_button": {
+          "type": "boolean",
+          "description": "Hide standard 'Open proof' button in proof's emails"
+        },
+        "replace_all_proof_urls": {
+          "type": "string",
+          "description": "Provide URL that will replace all links pointing to Ziflow Viewer"
+        }
+      }
     },
     "folder_id": {
       "type": "string",
@@ -1042,7 +1067,23 @@ Create New Proof
     },
     "subscription": {
       "type": "object",
-      "description": "Available on Standard, Pro and Enterprise editions."
+      "description": "Available on Standard, Pro and Enterprise editions.",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "string"
+        },
+        "added_to_stage": {
+          "type": "string",
+          "description": "Stage to which new subscribers will be added, \"new_proof_subscribers\" value available only on Enterprise edition"
+        },
+        "stage_name": {
+          "type": "string",
+          "description": "Stage name for \"new_proof_subscribers\" value"
+        }
+      }
     },
     "suppress_all_emails": {
       "type": "boolean",
@@ -1058,7 +1099,13 @@ Create New Proof
     },
     "workflow_template": {
       "type": "object",
-      "description": "Available on proofs from Enterprise edition only"
+      "description": "Available on proofs from Enterprise edition only",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Available only on Enterprise edition. ID of an active workflow template that should be used to create the proof"
+        }
+      }
     }
   },
   "required": [
@@ -1287,7 +1334,13 @@ Update an Existing Proof
     },
     "brief": {
       "type": "object",
-      "description": "brief"
+      "description": "brief",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Text that will be displayed in Brief section. Available on Standard, Pro and Enterprise editions only."
+        }
+      }
     },
     "custom_properties": {
       "type": "array",
@@ -1295,7 +1348,21 @@ Update an Existing Proof
     },
     "email_branding": {
       "type": "object",
-      "description": "Available on Pro and Enterprise editions only"
+      "description": "Available on Pro and Enterprise editions only",
+      "properties": {
+        "custom_button": {
+          "type": "object",
+          "description": "Definition of custom button"
+        },
+        "hide_open_proof_button": {
+          "type": "boolean",
+          "description": "Hide standard 'Open proof' button in proof's emails"
+        },
+        "replace_all_proof_urls": {
+          "type": "string",
+          "description": "Provide URL that will replace all links pointing to Ziflow Viewer"
+        }
+      }
     },
     "folder_id": {
       "type": "string",
@@ -1353,7 +1420,23 @@ Update an Existing Proof
     },
     "subscription": {
       "type": "object",
-      "description": "Available on Standard, Pro and Enterprise editions."
+      "description": "Available on Standard, Pro and Enterprise editions.",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "string"
+        },
+        "added_to_stage": {
+          "type": "string",
+          "description": "Stage to which new subscribers will be added, \"new_proof_subscribers\" value available only on Enterprise edition"
+        },
+        "stage_name": {
+          "type": "string",
+          "description": "Stage name for \"new_proof_subscribers\" value"
+        }
+      }
     },
     "suppress_all_emails": {
       "type": "boolean",
@@ -1369,7 +1452,17 @@ Update an Existing Proof
     },
     "workflow_template": {
       "type": "object",
-      "description": "Available on proofs from Enterprise edition only"
+      "description": "Available on proofs from Enterprise edition only",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Available only on Enterprise edition. ID of an active workflow template that should be used to create the proof"
+        },
+        "append_stages": {
+          "type": "boolean",
+          "description": "Defines if template stages should be added to the proof at the end of workflow or replace proof's stages"
+        }
+      }
     }
   },
   "required": [
@@ -1491,7 +1584,21 @@ Update Stage
     },
     "final_status_calculation": {
       "type": "object",
-      "description": "Defines how stage decision status is calculated. \"all_decisions\" - all decisions must be made to calculate the stage status.  \"only_one_decision\" - any single decision is enough to calculate the stage status.   \"primary_decision_maker\" - selected reviewer's decision will calculate the stage status.  \"reviewer_id\" or \"reviewer_email\" must be provided for the \"primary_decision_maker\" option."
+      "description": "Defines how stage decision status is calculated. \"all_decisions\" - all decisions must be made to calculate the stage status.  \"only_one_decision\" - any single decision is enough to calculate the stage status.   \"primary_decision_maker\" - selected reviewer's decision will calculate the stage status.  \"reviewer_id\" or \"reviewer_email\" must be provided for the \"primary_decision_maker\" option.",
+      "properties": {
+        "reviewer_id": {
+          "type": "string",
+          "description": "Reviewer ID obtained from proof.stages[].members[].id field"
+        },
+        "reviewer_email": {
+          "type": "string",
+          "description": "If type \"primary_decision_maker\" defines the reviewer, who's decision will decide on stage status"
+        },
+        "type": {
+          "type": "string",
+          "description": "\"primary_decision_maker\" option is available on Enterprise edition only"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -1499,7 +1606,19 @@ Update Stage
     },
     "lock": {
       "type": "object",
-      "description": "lock"
+      "description": "lock",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "When null, then it's set to \"Never\""
+        },
+        "next_stage_name": {
+          "type": "string"
+        },
+        "next_stage_id": {
+          "type": "string"
+        }
+      }
     },
     "members": {
       "type": "array",
@@ -1529,11 +1648,29 @@ Update Stage
     },
     "stage_trigger": {
       "type": "object",
-      "description": "stage_trigger"
+      "description": "stage_trigger",
+      "properties": {
+        "trigger_id": {
+          "type": "string"
+        },
+        "trigger": {
+          "type": "object"
+        },
+        "deadline": {
+          "type": "object",
+          "description": "Available on Enterprise edition only. Object can be successfully set during POST/proofs or PUT/proofs requests only for stages which are \"not_started\" (\"stage_trigger\" type is different than \"immediately\"). On stage start, deadline will be calculated and set in \"deadline\" field where it can be later modified if needed. Updating this object on \"in_progress\" or \"completed\" stage will be ignored."
+        }
+      }
     },
     "status": {
       "type": "object",
-      "description": "status"
+      "description": "status",
+      "properties": {
+        "locked": {
+          "type": "boolean",
+          "description": "Stage lock can be set on Enterprise edition only."
+        }
+      }
     }
   },
   "required": [

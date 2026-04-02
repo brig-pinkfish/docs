@@ -3205,7 +3205,21 @@ Update the ring number OR joined status for a queue member.
     },
     "routingStatus": {
       "type": "object",
-      "description": "routingStatus"
+      "description": "routingStatus",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The userId of the agent"
+        },
+        "status": {
+          "type": "string",
+          "description": "Indicates the Routing State of the agent.  A value of OFF_QUEUE will be returned if the specified user does not exist."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The timestamp when the agent went into this state. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        }
+      }
     },
     "selfUri": {
       "type": "string",
@@ -3213,7 +3227,146 @@ Update the ring number OR joined status for a queue member.
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     }
   },
   "required": [
@@ -3461,7 +3614,20 @@ Update skill group definition
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -3577,15 +3743,45 @@ Join or unjoin a queue for a user
     },
     "acwSettings": {
       "type": "object",
-      "description": "acwSettings"
+      "description": "acwSettings",
+      "properties": {
+        "wrapupPrompt": {
+          "type": "string",
+          "description": "This field controls how the UI prompts the agent for a wrapup."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "description": "The amount of time the agent can stay in ACW (Min: 1 sec, Max: 60 min).  Can only be used when ACW is AGENT_REQUESTED, MANDATORY_TIMEOUT or MANDATORY_FORCED_TIMEOUT."
+        }
+      }
     },
     "agentOwnedRouting": {
       "type": "object",
-      "description": "agentOwnedRouting"
+      "description": "agentOwnedRouting",
+      "properties": {
+        "enableAgentOwnedCallbacks": {
+          "type": "boolean",
+          "description": "Indicates if Agent Owned Callbacks are enabled for the queue"
+        },
+        "maxOwnedCallbackHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be owned (in hours); Allowable range 1 - 168 hour(s) (inclusive)"
+        },
+        "maxOwnedCallbackDelayHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be scheduled out into the future (in hours); Allowable range 1 - 720 hour(s) (inclusive)"
+        }
+      }
     },
     "bullseye": {
       "type": "object",
-      "description": "bullseye"
+      "description": "bullseye",
+      "properties": {
+        "rings": {
+          "type": "array",
+          "description": "The bullseye rings configured for this queue."
+        }
+      }
     },
     "callingPartyName": {
       "type": "string",
@@ -3597,15 +3793,40 @@ Join or unjoin a queue for a user
     },
     "cannedResponseLibraries": {
       "type": "object",
-      "description": "cannedResponseLibraries"
+      "description": "cannedResponseLibraries",
+      "properties": {
+        "libraryIds": {
+          "type": "array",
+          "description": "Set of canned response library IDs associated with the queue only when mode is SelectedOnly."
+        },
+        "mode": {
+          "type": "string",
+          "description": "The association mode of canned response libraries to queue"
+        }
+      }
     },
     "conditionalGroupActivation": {
       "type": "object",
-      "description": "conditionalGroupActivation"
+      "description": "conditionalGroupActivation",
+      "properties": {
+        "pilotRule": {
+          "type": "object"
+        },
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be periodically executed on the queue (if the pilot rule evaluates as true or there is no pilot rule)"
+        }
+      }
     },
     "conditionalGroupRouting": {
       "type": "object",
-      "description": "conditionalGroupRouting"
+      "description": "conditionalGroupRouting",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be executed for each conversation"
+        }
+      }
     },
     "createdBy": {
       "type": "string",
@@ -3629,15 +3850,62 @@ Join or unjoin a queue for a user
     },
     "directRouting": {
       "type": "object",
-      "description": "directRouting"
+      "description": "directRouting",
+      "properties": {
+        "callMediaSettings": {
+          "type": "object"
+        },
+        "emailMediaSettings": {
+          "type": "object"
+        },
+        "messageMediaSettings": {
+          "type": "object"
+        },
+        "backupQueueId": {
+          "type": "string",
+          "description": "ID of another queue to be used as the default backup if an agent does not have their Backup Settings configured. If not set, the current queue will be used as backup, but with Direct Routing criteria removed from the conversation."
+        },
+        "waitForAgent": {
+          "type": "boolean",
+          "description": "Flag indicating if Direct Routing interactions should wait for Direct Routing agent or go immediately to selected backup."
+        },
+        "agentWaitSeconds": {
+          "type": "integer",
+          "description": "Time (in seconds) that a Direct Routing interaction will wait for Direct Routing agent before going to selected backup. Valid range [60, 864000]."
+        }
+      }
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "emailInQueueFlow": {
       "type": "object",
-      "description": "emailInQueueFlow"
+      "description": "emailInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "enableAudioMonitoring": {
       "type": "boolean",
@@ -3674,7 +3942,24 @@ Join or unjoin a queue for a user
     },
     "mediaSettings": {
       "type": "object",
-      "description": "mediaSettings"
+      "description": "mediaSettings",
+      "properties": {
+        "call": {
+          "type": "object"
+        },
+        "callback": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "email": {
+          "type": "object"
+        },
+        "message": {
+          "type": "object"
+        }
+      }
     },
     "memberCount": {
       "type": "integer",
@@ -3686,7 +3971,18 @@ Join or unjoin a queue for a user
     },
     "messageInQueueFlow": {
       "type": "object",
-      "description": "messageInQueueFlow"
+      "description": "messageInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "modifiedBy": {
       "type": "string",
@@ -3698,15 +3994,45 @@ Join or unjoin a queue for a user
     },
     "onHoldPrompt": {
       "type": "object",
-      "description": "onHoldPrompt"
+      "description": "onHoldPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "outboundEmailAddress": {
       "type": "object",
-      "description": "outboundEmailAddress"
+      "description": "outboundEmailAddress",
+      "properties": {
+        "domain": {
+          "type": "object"
+        },
+        "route": {
+          "type": "object"
+        }
+      }
     },
     "outboundMessagingAddresses": {
       "type": "object",
-      "description": "outboundMessagingAddresses"
+      "description": "outboundMessagingAddresses",
+      "properties": {
+        "smsAddress": {
+          "type": "object"
+        },
+        "openMessagingRecipient": {
+          "type": "object"
+        },
+        "whatsAppRecipient": {
+          "type": "object"
+        }
+      }
     },
     "peerId": {
       "type": "string",
@@ -3714,7 +4040,18 @@ Join or unjoin a queue for a user
     },
     "queueFlow": {
       "type": "object",
-      "description": "queueFlow"
+      "description": "queueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "routingRules": {
       "type": "array",
@@ -3751,7 +4088,18 @@ Join or unjoin a queue for a user
     },
     "whisperPrompt": {
       "type": "object",
-      "description": "whisperPrompt"
+      "description": "whisperPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     }
   },
   "required": [
@@ -4155,11 +4503,35 @@ Create a queue
     },
     "acwSettings": {
       "type": "object",
-      "description": "acwSettings"
+      "description": "acwSettings",
+      "properties": {
+        "wrapupPrompt": {
+          "type": "string",
+          "description": "This field controls how the UI prompts the agent for a wrapup."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "description": "The amount of time the agent can stay in ACW (Min: 1 sec, Max: 60 min).  Can only be used when ACW is AGENT_REQUESTED, MANDATORY_TIMEOUT or MANDATORY_FORCED_TIMEOUT."
+        }
+      }
     },
     "agentOwnedRouting": {
       "type": "object",
-      "description": "agentOwnedRouting"
+      "description": "agentOwnedRouting",
+      "properties": {
+        "enableAgentOwnedCallbacks": {
+          "type": "boolean",
+          "description": "Indicates if Agent Owned Callbacks are enabled for the queue"
+        },
+        "maxOwnedCallbackHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be owned (in hours); Allowable range 1 - 168 hour(s) (inclusive)"
+        },
+        "maxOwnedCallbackDelayHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be scheduled out into the future (in hours); Allowable range 1 - 720 hour(s) (inclusive)"
+        }
+      }
     },
     "autoAnswerOnly": {
       "type": "boolean",
@@ -4167,7 +4539,13 @@ Create a queue
     },
     "bullseye": {
       "type": "object",
-      "description": "bullseye"
+      "description": "bullseye",
+      "properties": {
+        "rings": {
+          "type": "array",
+          "description": "The bullseye rings configured for this queue."
+        }
+      }
     },
     "callingPartyName": {
       "type": "string",
@@ -4179,15 +4557,40 @@ Create a queue
     },
     "cannedResponseLibraries": {
       "type": "object",
-      "description": "cannedResponseLibraries"
+      "description": "cannedResponseLibraries",
+      "properties": {
+        "libraryIds": {
+          "type": "array",
+          "description": "Set of canned response library IDs associated with the queue only when mode is SelectedOnly."
+        },
+        "mode": {
+          "type": "string",
+          "description": "The association mode of canned response libraries to queue"
+        }
+      }
     },
     "conditionalGroupActivation": {
       "type": "object",
-      "description": "conditionalGroupActivation"
+      "description": "conditionalGroupActivation",
+      "properties": {
+        "pilotRule": {
+          "type": "object"
+        },
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be periodically executed on the queue (if the pilot rule evaluates as true or there is no pilot rule)"
+        }
+      }
     },
     "conditionalGroupRouting": {
       "type": "object",
-      "description": "conditionalGroupRouting"
+      "description": "conditionalGroupRouting",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be executed for each conversation"
+        }
+      }
     },
     "createdBy": {
       "type": "string",
@@ -4211,15 +4614,62 @@ Create a queue
     },
     "directRouting": {
       "type": "object",
-      "description": "directRouting"
+      "description": "directRouting",
+      "properties": {
+        "callMediaSettings": {
+          "type": "object"
+        },
+        "emailMediaSettings": {
+          "type": "object"
+        },
+        "messageMediaSettings": {
+          "type": "object"
+        },
+        "backupQueueId": {
+          "type": "string",
+          "description": "ID of another queue to be used as the default backup if an agent does not have their Backup Settings configured. If not set, the current queue will be used as backup, but with Direct Routing criteria removed from the conversation."
+        },
+        "waitForAgent": {
+          "type": "boolean",
+          "description": "Flag indicating if Direct Routing interactions should wait for Direct Routing agent or go immediately to selected backup."
+        },
+        "agentWaitSeconds": {
+          "type": "integer",
+          "description": "Time (in seconds) that a Direct Routing interaction will wait for Direct Routing agent before going to selected backup. Valid range [60, 864000]."
+        }
+      }
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "emailInQueueFlow": {
       "type": "object",
-      "description": "emailInQueueFlow"
+      "description": "emailInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "enableAudioMonitoring": {
       "type": "boolean",
@@ -4252,7 +4702,24 @@ Create a queue
     },
     "mediaSettings": {
       "type": "object",
-      "description": "mediaSettings"
+      "description": "mediaSettings",
+      "properties": {
+        "call": {
+          "type": "object"
+        },
+        "callback": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "email": {
+          "type": "object"
+        },
+        "message": {
+          "type": "object"
+        }
+      }
     },
     "memberCount": {
       "type": "integer",
@@ -4264,7 +4731,18 @@ Create a queue
     },
     "messageInQueueFlow": {
       "type": "object",
-      "description": "messageInQueueFlow"
+      "description": "messageInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "modifiedBy": {
       "type": "string",
@@ -4276,15 +4754,45 @@ Create a queue
     },
     "onHoldPrompt": {
       "type": "object",
-      "description": "onHoldPrompt"
+      "description": "onHoldPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "outboundEmailAddress": {
       "type": "object",
-      "description": "outboundEmailAddress"
+      "description": "outboundEmailAddress",
+      "properties": {
+        "domain": {
+          "type": "object"
+        },
+        "route": {
+          "type": "object"
+        }
+      }
     },
     "outboundMessagingAddresses": {
       "type": "object",
-      "description": "outboundMessagingAddresses"
+      "description": "outboundMessagingAddresses",
+      "properties": {
+        "smsAddress": {
+          "type": "object"
+        },
+        "openMessagingRecipient": {
+          "type": "object"
+        },
+        "whatsAppRecipient": {
+          "type": "object"
+        }
+      }
     },
     "peerId": {
       "type": "string",
@@ -4292,7 +4800,18 @@ Create a queue
     },
     "queueFlow": {
       "type": "object",
-      "description": "queueFlow"
+      "description": "queueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "routingRules": {
       "type": "array",
@@ -4333,7 +4852,18 @@ Create a queue
     },
     "whisperPrompt": {
       "type": "object",
-      "description": "whisperPrompt"
+      "description": "whisperPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     }
   },
   "required": [
@@ -4437,7 +4967,20 @@ Create a skill group
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4663,7 +5206,17 @@ Create a utilization label
     },
     "utilization": {
       "type": "object",
-      "description": "utilization"
+      "description": "utilization",
+      "properties": {
+        "maximumCapacity": {
+          "type": "integer",
+          "description": "Defines the maximum number of interactions with this label that an agent can handle at one time."
+        },
+        "interruptingLabelIds": {
+          "type": "array",
+          "description": "Defines other labels that can interrupt an interaction with this label."
+        }
+      }
     }
   },
   "required": [
@@ -4723,7 +5276,20 @@ Create a wrap-up code
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4835,7 +5401,13 @@ Update a recipient
     },
     "flow": {
       "type": "object",
-      "description": "flow"
+      "description": "flow",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The flow identifier"
+        }
+      }
     }
   },
   "required": [
@@ -4916,11 +5488,35 @@ Update a queue
     },
     "acwSettings": {
       "type": "object",
-      "description": "acwSettings"
+      "description": "acwSettings",
+      "properties": {
+        "wrapupPrompt": {
+          "type": "string",
+          "description": "This field controls how the UI prompts the agent for a wrapup."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "description": "The amount of time the agent can stay in ACW (Min: 1 sec, Max: 60 min).  Can only be used when ACW is AGENT_REQUESTED, MANDATORY_TIMEOUT or MANDATORY_FORCED_TIMEOUT."
+        }
+      }
     },
     "agentOwnedRouting": {
       "type": "object",
-      "description": "agentOwnedRouting"
+      "description": "agentOwnedRouting",
+      "properties": {
+        "enableAgentOwnedCallbacks": {
+          "type": "boolean",
+          "description": "Indicates if Agent Owned Callbacks are enabled for the queue"
+        },
+        "maxOwnedCallbackHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be owned (in hours); Allowable range 1 - 168 hour(s) (inclusive)"
+        },
+        "maxOwnedCallbackDelayHours": {
+          "type": "integer",
+          "description": "The max amount of time a callback can be scheduled out into the future (in hours); Allowable range 1 - 720 hour(s) (inclusive)"
+        }
+      }
     },
     "autoAnswerOnly": {
       "type": "boolean",
@@ -4928,7 +5524,13 @@ Update a queue
     },
     "bullseye": {
       "type": "object",
-      "description": "bullseye"
+      "description": "bullseye",
+      "properties": {
+        "rings": {
+          "type": "array",
+          "description": "The bullseye rings configured for this queue."
+        }
+      }
     },
     "callingPartyName": {
       "type": "string",
@@ -4940,15 +5542,40 @@ Update a queue
     },
     "cannedResponseLibraries": {
       "type": "object",
-      "description": "cannedResponseLibraries"
+      "description": "cannedResponseLibraries",
+      "properties": {
+        "libraryIds": {
+          "type": "array",
+          "description": "Set of canned response library IDs associated with the queue only when mode is SelectedOnly."
+        },
+        "mode": {
+          "type": "string",
+          "description": "The association mode of canned response libraries to queue"
+        }
+      }
     },
     "conditionalGroupActivation": {
       "type": "object",
-      "description": "conditionalGroupActivation"
+      "description": "conditionalGroupActivation",
+      "properties": {
+        "pilotRule": {
+          "type": "object"
+        },
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be periodically executed on the queue (if the pilot rule evaluates as true or there is no pilot rule)"
+        }
+      }
     },
     "conditionalGroupRouting": {
       "type": "object",
-      "description": "conditionalGroupRouting"
+      "description": "conditionalGroupRouting",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "The set of rules to be executed for each conversation"
+        }
+      }
     },
     "createdBy": {
       "type": "string",
@@ -4972,15 +5599,62 @@ Update a queue
     },
     "directRouting": {
       "type": "object",
-      "description": "directRouting"
+      "description": "directRouting",
+      "properties": {
+        "callMediaSettings": {
+          "type": "object"
+        },
+        "emailMediaSettings": {
+          "type": "object"
+        },
+        "messageMediaSettings": {
+          "type": "object"
+        },
+        "backupQueueId": {
+          "type": "string",
+          "description": "ID of another queue to be used as the default backup if an agent does not have their Backup Settings configured. If not set, the current queue will be used as backup, but with Direct Routing criteria removed from the conversation."
+        },
+        "waitForAgent": {
+          "type": "boolean",
+          "description": "Flag indicating if Direct Routing interactions should wait for Direct Routing agent or go immediately to selected backup."
+        },
+        "agentWaitSeconds": {
+          "type": "integer",
+          "description": "Time (in seconds) that a Direct Routing interaction will wait for Direct Routing agent before going to selected backup. Valid range [60, 864000]."
+        }
+      }
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "emailInQueueFlow": {
       "type": "object",
-      "description": "emailInQueueFlow"
+      "description": "emailInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "enableAudioMonitoring": {
       "type": "boolean",
@@ -5013,7 +5687,24 @@ Update a queue
     },
     "mediaSettings": {
       "type": "object",
-      "description": "mediaSettings"
+      "description": "mediaSettings",
+      "properties": {
+        "call": {
+          "type": "object"
+        },
+        "callback": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "email": {
+          "type": "object"
+        },
+        "message": {
+          "type": "object"
+        }
+      }
     },
     "memberCount": {
       "type": "integer",
@@ -5025,7 +5716,18 @@ Update a queue
     },
     "messageInQueueFlow": {
       "type": "object",
-      "description": "messageInQueueFlow"
+      "description": "messageInQueueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "modifiedBy": {
       "type": "string",
@@ -5037,15 +5739,45 @@ Update a queue
     },
     "onHoldPrompt": {
       "type": "object",
-      "description": "onHoldPrompt"
+      "description": "onHoldPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "outboundEmailAddress": {
       "type": "object",
-      "description": "outboundEmailAddress"
+      "description": "outboundEmailAddress",
+      "properties": {
+        "domain": {
+          "type": "object"
+        },
+        "route": {
+          "type": "object"
+        }
+      }
     },
     "outboundMessagingAddresses": {
       "type": "object",
-      "description": "outboundMessagingAddresses"
+      "description": "outboundMessagingAddresses",
+      "properties": {
+        "smsAddress": {
+          "type": "object"
+        },
+        "openMessagingRecipient": {
+          "type": "object"
+        },
+        "whatsAppRecipient": {
+          "type": "object"
+        }
+      }
     },
     "peerId": {
       "type": "string",
@@ -5053,7 +5785,18 @@ Update a queue
     },
     "queueFlow": {
       "type": "object",
-      "description": "queueFlow"
+      "description": "queueFlow",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "routingRules": {
       "type": "array",
@@ -5090,7 +5833,18 @@ Update a queue
     },
     "whisperPrompt": {
       "type": "object",
-      "description": "whisperPrompt"
+      "description": "whisperPrompt",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     }
   },
   "required": [
@@ -5519,7 +6273,20 @@ Update wrap-up code
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",

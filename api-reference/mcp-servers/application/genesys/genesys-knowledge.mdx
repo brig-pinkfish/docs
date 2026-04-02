@@ -3098,7 +3098,15 @@ Update search result.
     },
     "selectedAnswer": {
       "type": "object",
-      "description": "selectedAnswer"
+      "description": "selectedAnswer",
+      "properties": {
+        "document": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "document"
+      ]
     },
     "selectedAnswers": {
       "type": "array",
@@ -3246,7 +3254,7 @@ Register chunk search result.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge Base ID |
 | `searchId` | string | Yes | — | Unique identifier of search request |
-| `answered` | boolean | No | — | Mark the chunks search as answered/unanswered |
+| `answered` | boolean | Yes | — | Mark the chunks search as answered/unanswered |
 | `selectedAnswers` | any[] | No | — | The search results selected as answers |
 | `sessionId` | string | No | — | The unique identifier of this session |
 
@@ -3284,7 +3292,8 @@ Register chunk search result.
   "required": [
     "PCID",
     "knowledgeBaseId",
-    "searchId"
+    "searchId",
+    "answered"
   ]
 }
 ```
@@ -3393,7 +3402,7 @@ Update feedback on a document
 | `documentId` | string | Yes | — | Document ID. |
 | `feedbackId` | string | Yes | — | Feedback ID. |
 | `comment` | string | No | — | Feedback comment |
-| `rating` | string | No | — | Feedback rating. |
+| `rating` | string | Yes | — | Feedback rating. |
 | `reason` | string | No | — | Feedback reason |
 | `state` | string | No | — | Feedback state |
 
@@ -3452,7 +3461,8 @@ Update feedback on a document
     "PCID",
     "knowledgeBaseId",
     "documentId",
-    "feedbackId"
+    "feedbackId",
+    "rating"
   ]
 }
 ```
@@ -3507,7 +3517,16 @@ Update a variation for a document.
     },
     "body": {
       "type": "object",
-      "description": "body"
+      "description": "body",
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "description": "The list of building blocks for the document body."
+        }
+      },
+      "required": [
+        "blocks"
+      ]
     },
     "contexts": {
       "type": "array",
@@ -3523,11 +3542,36 @@ Update a variation for a document.
     },
     "document": {
       "type": "object",
-      "description": "document"
+      "description": "document",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the document."
+        },
+        "knowledgeBase": {
+          "type": "object"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "id",
+        "knowledgeBase"
+      ]
     },
     "documentVersion": {
       "type": "object",
-      "description": "documentVersion"
+      "description": "documentVersion",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -3570,7 +3614,7 @@ Update search result.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | The ID of knowledge base containing the documents to query. |
 | `searchId` | string | Yes | — | Search Result ID |
-| `answered` | boolean | No | — | Mark the search as answered/unanswered |
+| `answered` | boolean | Yes | — | Mark the search as answered/unanswered |
 | `selectedAnswer` | object | No | — | selectedAnswer |
 | `selectedAnswers` | any[] | No | — | The search results selected as answers |
 | `sessionId` | string | No | — | The unique identifier of this session |
@@ -3599,7 +3643,15 @@ Update search result.
     },
     "selectedAnswer": {
       "type": "object",
-      "description": "selectedAnswer"
+      "description": "selectedAnswer",
+      "properties": {
+        "document": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "document"
+      ]
     },
     "selectedAnswers": {
       "type": "array",
@@ -3613,7 +3665,8 @@ Update search result.
   "required": [
     "PCID",
     "knowledgeBaseId",
-    "searchId"
+    "searchId",
+    "answered"
   ]
 }
 ```
@@ -3896,7 +3949,20 @@ Update Knowledge setting.
     },
     "generationSetting": {
       "type": "object",
-      "description": "generationSetting"
+      "description": "generationSetting",
+      "properties": {
+        "answerGeneration": {
+          "type": "boolean",
+          "description": "Indicates if answer generation is enabled for the setting."
+        },
+        "generationLanguage": {
+          "type": "string",
+          "description": "Answer generation language."
+        }
+      },
+      "required": [
+        "answerGeneration"
+      ]
     },
     "name": {
       "type": "string",
@@ -3993,8 +4059,8 @@ Indicate that the document was copied by the user.
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
 | `documentId` | string | Yes | — | Document ID |
 | `application` | object | No | — | application |
-| `documentVariationId` | string | No | — | The variation of the document whose content was copied. |
-| `documentVersionId` | string | No | — | The version of the document whose content was copied. |
+| `documentVariationId` | string | Yes | — | The variation of the document whose content was copied. |
+| `documentVersionId` | string | Yes | — | The version of the document whose content was copied. |
 | `queryType` | string | No | — | The type of the query that surfaced the document. |
 | `searchId` | string | No | — | The search that surfaced the document whose content was copied. |
 | `surfacingMethod` | string | No | — | The method how knowledge was surfaced. Article: Full article was shown. Snippet: A snippet from the article was shown. Highlight: A highlighted answer in a snippet was shown.Generative: A generated answer in a snippet was shown. |
@@ -4019,7 +4085,25 @@ Indicate that the document was copied by the user.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "documentVariationId": {
       "type": "string",
@@ -4062,7 +4146,9 @@ Indicate that the document was copied by the user.
   "required": [
     "PCID",
     "sessionId",
-    "documentId"
+    "documentId",
+    "documentVariationId",
+    "documentVersionId"
   ]
 }
 ```
@@ -4084,11 +4170,11 @@ Give feedback on a document
 | `application` | object | No | — | application |
 | `comment` | string | No | — | Free-text comment of the feedback. Maximum length: 2000 characters. |
 | `dateCreated` | string | No | — | The date and time of the feedback. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `document` | object | No | — | document |
-| `documentVariation` | object | No | — | documentVariation |
+| `document` | object | Yes | — | document |
+| `documentVariation` | object | Yes | — | documentVariation |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `queryType` | string | No | — | The type of the query that surfaced the document on which the feedback was given. |
-| `rating` | string | No | — | Feedback rating. |
+| `rating` | string | Yes | — | Feedback rating. |
 | `reason` | string | No | — | Feedback reason. |
 | `search` | object | No | — | search |
 | `state` | string | No | — | The state of the feedback. |
@@ -4114,7 +4200,25 @@ Give feedback on a document
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "comment": {
       "type": "string",
@@ -4126,11 +4230,33 @@ Give feedback on a document
     },
     "document": {
       "type": "object",
-      "description": "document"
+      "description": "document",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the document."
+        },
+        "versionId": {
+          "type": "string",
+          "description": "The globally unique identifier for the version of the document."
+        }
+      },
+      "required": [
+        "versionId"
+      ]
     },
     "documentVariation": {
       "type": "object",
-      "description": "documentVariation"
+      "description": "documentVariation",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "id": {
       "type": "string",
@@ -4168,7 +4294,16 @@ Give feedback on a document
     },
     "search": {
       "type": "object",
-      "description": "search"
+      "description": "search",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "state": {
       "type": "string",
@@ -4193,7 +4328,10 @@ Give feedback on a document
   "required": [
     "PCID",
     "sessionId",
-    "documentId"
+    "documentId",
+    "document",
+    "documentVariation",
+    "rating"
   ]
 }
 ```
@@ -4212,8 +4350,8 @@ Create view event for a document.
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
 | `documentId` | string | Yes | — | Document ID |
-| `documentVariationId` | string | No | — | The variation of the viewed document. |
-| `documentVersionId` | string | No | — | The version of the viewed document. |
+| `documentVariationId` | string | Yes | — | The variation of the viewed document. |
+| `documentVersionId` | string | Yes | — | The version of the viewed document. |
 | `queryType` | string | No | — | The type of the query that surfaced the document. |
 | `searchId` | string | No | — | The search that surfaced the viewed document. |
 | `surfacingMethod` | string | No | — | The method how knowledge was surfaced. Article: Full article was shown. Snippet: A snippet from the article was shown. Highlight: A highlighted answer in a snippet was shown.Generative: A generated answer in a snippet was shown. |
@@ -4277,7 +4415,9 @@ Create view event for a document.
   "required": [
     "PCID",
     "sessionId",
-    "documentId"
+    "documentId",
+    "documentVariationId",
+    "documentVersionId"
   ]
 }
 ```
@@ -4443,7 +4583,7 @@ Indicate that documents were presented to the user.
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
 | `application` | object | No | — | application |
-| `documents` | any[] | No | — | The presented documents |
+| `documents` | any[] | Yes | — | The presented documents |
 | `queryType` | string | No | — | The type of the query that surfaced the documents. |
 | `searchId` | string | No | — | The search that surfaced the documents that were presented. |
 | `surfacingMethod` | string | No | — | The method how knowledge was surfaced. Article: Full article was shown. Snippet: A snippet from the article was shown. Highlight: A highlighted answer in a snippet was shown.Generative: A generated answer in a snippet was shown. |
@@ -4464,7 +4604,25 @@ Indicate that documents were presented to the user.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "documents": {
       "type": "array",
@@ -4502,7 +4660,8 @@ Indicate that documents were presented to the user.
   },
   "required": [
     "PCID",
-    "sessionId"
+    "sessionId",
+    "documents"
   ]
 }
 ```
@@ -4526,7 +4685,7 @@ Search the documents in a guest session.
 | `pageCount` | integer | No | — | Number of pages returned in the result calculated according to the pageSize and the total |
 | `pageNumber` | integer | No | — | Page number of the returned results. |
 | `pageSize` | integer | No | — | Page size of the returned results. |
-| `query` | string | No | — | Query to search content in the knowledge base. Maximum of 30 records per query can be fetched. |
+| `query` | string | Yes | — | Query to search content in the knowledge base. Maximum of 30 records per query can be fetched. |
 | `queryType` | string | No | — | The type of the query that initiates the search. |
 | `searchId` | string | No | — | The globally unique identifier for the search. |
 | `total` | integer | No | — | The total number of documents matching the query. |
@@ -4593,7 +4752,8 @@ Search the documents in a guest session.
   },
   "required": [
     "PCID",
-    "sessionId"
+    "sessionId",
+    "query"
   ]
 }
 ```
@@ -4613,7 +4773,7 @@ Query the knowledge documents to provide suggestions for auto completion.
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
 | `includeDraftDocuments` | boolean | No | — | Indicates whether the suggestion results would also include draft documents. |
 | `pageSize` | integer | No | — | Page size of the returned results. |
-| `query` | string | No | — | Query to get autocomplete suggestions for the matching knowledge documents. |
+| `query` | string | Yes | — | Query to get autocomplete suggestions for the matching knowledge documents. |
 
 <Expandable title="inputSchema">
 
@@ -4644,7 +4804,8 @@ Query the knowledge documents to provide suggestions for auto completion.
   },
   "required": [
     "PCID",
-    "sessionId"
+    "sessionId",
+    "query"
   ]
 }
 ```
@@ -4680,7 +4841,21 @@ Create guest session
     },
     "app": {
       "type": "object",
-      "description": "app"
+      "description": "app",
+      "properties": {
+        "deploymentId": {
+          "type": "string",
+          "description": "App deployment ID."
+        },
+        "type": {
+          "type": "string",
+          "description": "App type."
+        }
+      },
+      "required": [
+        "deploymentId",
+        "type"
+      ]
     },
     "contexts": {
       "type": "array",
@@ -5219,7 +5394,7 @@ Search for chunks in a knowledge base
 | `pageNumber` | integer | No | — | Page number of the returned results. |
 | `pageSize` | integer | No | — | Page size of the returned results. |
 | `preprocessQuery` | boolean | No | — | Indicates whether the chunks search query should be preprocessed. |
-| `query` | string | No | — | Query to search chunks in the knowledge base. |
+| `query` | string | Yes | — | Query to search chunks in the knowledge base. |
 | `queryType` | string | No | — | The type of the query that initiates the chunks search. |
 
 <Expandable title="inputSchema">
@@ -5238,7 +5413,25 @@ Search for chunks in a knowledge base
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "confidenceThreshold": {
       "type": "number",
@@ -5246,11 +5439,50 @@ Search for chunks in a knowledge base
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "Documents filter clauses/criteria. Limit of 20 clauses."
+        },
+        "operator": {
+          "type": "string",
+          "description": "Specifies how the filter clauses will be applied together."
+        }
+      },
+      "required": [
+        "clauses",
+        "operator"
+      ]
     },
     "includeDraftDocuments": {
       "type": "boolean",
@@ -5284,7 +5516,8 @@ Search for chunks in a knowledge base
   },
   "required": [
     "PCID",
-    "knowledgeBaseId"
+    "knowledgeBaseId",
+    "query"
   ]
 }
 ```
@@ -5303,10 +5536,10 @@ Indicate that the document was copied by the user.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `documentId` | string | Yes | — | Document ID. |
-| `application` | object | No | — | application |
+| `application` | object | Yes | — | application |
 | `conversationContext` | object | No | — | conversationContext |
-| `documentVariationId` | string | No | — | The variation of the document whose content was copied. |
-| `documentVersionId` | string | No | — | The version of the document whose content was copied. |
+| `documentVariationId` | string | Yes | — | The variation of the document whose content was copied. |
+| `documentVersionId` | string | Yes | — | The version of the document whose content was copied. |
 | `queryType` | string | No | — | The type of the query that surfaced the document. |
 | `searchId` | string | No | — | The search that surfaced the document whose content was copied. |
 | `sessionId` | string | No | — | Knowledge session ID. |
@@ -5332,11 +5565,54 @@ Indicate that the document was copied by the user.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "documentVariationId": {
       "type": "string",
@@ -5383,7 +5659,10 @@ Indicate that the document was copied by the user.
   "required": [
     "PCID",
     "knowledgeBaseId",
-    "documentId"
+    "documentId",
+    "application",
+    "documentVariationId",
+    "documentVersionId"
   ]
 }
 ```
@@ -5402,15 +5681,15 @@ Give feedback on a document
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `documentId` | string | Yes | — | Document ID. |
-| `application` | object | No | — | application |
+| `application` | object | Yes | — | application |
 | `comment` | string | No | — | Free-text comment of the feedback. Maximum length: 2000 characters. |
 | `conversationContext` | object | No | — | conversationContext |
 | `dateCreated` | string | No | — | The date and time of the feedback. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `document` | object | No | — | document |
-| `documentVariation` | object | No | — | documentVariation |
+| `document` | object | Yes | — | document |
+| `documentVariation` | object | Yes | — | documentVariation |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `queryType` | string | No | — | The type of the query that surfaced the document on which the feedback was given. |
-| `rating` | string | No | — | Feedback rating. |
+| `rating` | string | Yes | — | Feedback rating. |
 | `reason` | string | No | — | Feedback reason. |
 | `search` | object | No | — | search |
 | `selfUri` | string | No | — | The URI for this object |
@@ -5439,7 +5718,25 @@ Give feedback on a document
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "comment": {
       "type": "string",
@@ -5447,7 +5744,32 @@ Give feedback on a document
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "dateCreated": {
       "type": "string",
@@ -5455,11 +5777,41 @@ Give feedback on a document
     },
     "document": {
       "type": "object",
-      "description": "document"
+      "description": "document",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the document."
+        },
+        "knowledgeBase": {
+          "type": "object"
+        },
+        "versionId": {
+          "type": "string",
+          "description": "The globally unique identifier for the version of the document."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "knowledgeBase",
+        "versionId"
+      ]
     },
     "documentVariation": {
       "type": "object",
-      "description": "documentVariation"
+      "description": "documentVariation",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "id": {
       "type": "string",
@@ -5497,7 +5849,16 @@ Give feedback on a document
     },
     "search": {
       "type": "object",
-      "description": "search"
+      "description": "search",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "selfUri": {
       "type": "string",
@@ -5534,7 +5895,11 @@ Give feedback on a document
   "required": [
     "PCID",
     "knowledgeBaseId",
-    "documentId"
+    "documentId",
+    "application",
+    "document",
+    "documentVariation",
+    "rating"
   ]
 }
 ```
@@ -5584,7 +5949,16 @@ Create a variation for a document.
     },
     "body": {
       "type": "object",
-      "description": "body"
+      "description": "body",
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "description": "The list of building blocks for the document body."
+        }
+      },
+      "required": [
+        "blocks"
+      ]
     },
     "contexts": {
       "type": "array",
@@ -5600,11 +5974,36 @@ Create a variation for a document.
     },
     "document": {
       "type": "object",
-      "description": "document"
+      "description": "document",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the document."
+        },
+        "knowledgeBase": {
+          "type": "object"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "id",
+        "knowledgeBase"
+      ]
     },
     "documentVersion": {
       "type": "object",
-      "description": "documentVersion"
+      "description": "documentVersion",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -5682,7 +6081,91 @@ Creates or restores a document version.
     },
     "document": {
       "type": "object",
-      "description": "document"
+      "description": "document",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "title": {
+          "type": "string",
+          "description": "Document title, having a limit of 500 words."
+        },
+        "visible": {
+          "type": "boolean",
+          "description": "Indicates if the knowledge document should be included in search results."
+        },
+        "alternatives": {
+          "type": "array",
+          "description": "List of alternate phrases related to the title which improves search results."
+        },
+        "state": {
+          "type": "string",
+          "description": "State of the document."
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "Document creation date-time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Document last modification date-time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateImported": {
+          "type": "string",
+          "description": "Document import date-time, or null if was not imported. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "lastPublishedVersionNumber": {
+          "type": "integer",
+          "description": "The last published version number of the document."
+        },
+        "datePublished": {
+          "type": "string",
+          "description": "The date on which the document was last published. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "createdBy": {
+          "type": "object"
+        },
+        "modifiedBy": {
+          "type": "object"
+        },
+        "documentVersion": {
+          "type": "object"
+        },
+        "category": {
+          "type": "object"
+        },
+        "labels": {
+          "type": "array",
+          "description": "The references to labels associated with the document."
+        },
+        "knowledgeBase": {
+          "type": "object"
+        },
+        "externalId": {
+          "type": "string",
+          "description": "The reference to external id associated with the document."
+        },
+        "externalUrl": {
+          "type": "string",
+          "description": "The URL to external document."
+        },
+        "source": {
+          "type": "object"
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Whether the document is read-only."
+        },
+        "variations": {
+          "type": "array",
+          "description": "Variations of the document."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -5724,10 +6207,10 @@ Create view for a document.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `documentId` | string | Yes | — | Document ID. |
-| `application` | object | No | — | application |
+| `application` | object | Yes | — | application |
 | `conversationContext` | object | No | — | conversationContext |
-| `documentVariationId` | string | No | — | The variation of the viewed document. |
-| `documentVersionId` | string | No | — | The version of the viewed document. |
+| `documentVariationId` | string | Yes | — | The variation of the viewed document. |
+| `documentVersionId` | string | Yes | — | The version of the viewed document. |
 | `queryType` | string | No | — | The type of the query that surfaced the document. |
 | `searchId` | string | No | — | The search that surfaced the viewed document. |
 | `sessionId` | string | No | — | The unique identifier of the knowledge session in which the document was viewed. |
@@ -5753,11 +6236,54 @@ Create view for a document.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "documentVariationId": {
       "type": "string",
@@ -5804,7 +6330,10 @@ Create view for a document.
   "required": [
     "PCID",
     "knowledgeBaseId",
-    "documentId"
+    "documentId",
+    "application",
+    "documentVariationId",
+    "documentVersionId"
   ]
 }
 ```
@@ -6051,9 +6580,9 @@ Indicate that documents were presented to the user.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
-| `application` | object | No | — | application |
+| `application` | object | Yes | — | application |
 | `conversationContext` | object | No | — | conversationContext |
-| `documents` | any[] | No | — | The presented documents |
+| `documents` | any[] | Yes | — | The presented documents |
 | `queryType` | string | No | — | The type of the query that surfaced the documents. |
 | `searchId` | string | No | — | The search that surfaced the documents that were presented. |
 | `sessionId` | string | No | — | Knowledge session ID. |
@@ -6075,11 +6604,54 @@ Indicate that documents were presented to the user.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "documents": {
       "type": "array",
@@ -6121,7 +6693,9 @@ Indicate that documents were presented to the user.
   },
   "required": [
     "PCID",
-    "knowledgeBaseId"
+    "knowledgeBaseId",
+    "application",
+    "documents"
   ]
 }
 ```
@@ -6140,7 +6714,7 @@ Query for knowledge documents.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge Base ID |
 | `expand` | any[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
-| `filter` | object | No | — | filter |
+| `filter` | object | Yes | — | filter |
 | `includeDraftDocuments` | boolean | No | — | Indicates whether the results would also include draft documents. |
 | `includeVariations` | string | No | — | Indicates which document variations to include in returned documents. All: all variations regardless of the filter expression; AllMatching: all variations that match the filter expression; SingleMostRelevant: single variation that matches the filter expression and has the highest priority. The default is All. |
 | `interval` | object | No | — | interval |
@@ -6169,7 +6743,21 @@ Query for knowledge documents.
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "Documents filter clauses/criteria. Limit of 20 clauses."
+        },
+        "operator": {
+          "type": "string",
+          "description": "Specifies how the filter clauses will be applied together."
+        }
+      },
+      "required": [
+        "clauses",
+        "operator"
+      ]
     },
     "includeDraftDocuments": {
       "type": "boolean",
@@ -6186,7 +6774,17 @@ Query for knowledge documents.
     },
     "interval": {
       "type": "object",
-      "description": "interval"
+      "description": "interval",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Specifies the date field to be used for date and time range."
+        },
+        "value": {
+          "type": "string",
+          "description": "Specifies the date and time range for filtering the documents. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
+        }
+      }
     },
     "pageNumber": {
       "type": "integer",
@@ -6218,7 +6816,8 @@ Query for knowledge documents.
   },
   "required": [
     "PCID",
-    "knowledgeBaseId"
+    "knowledgeBaseId",
+    "filter"
   ]
 }
 ```
@@ -6249,7 +6848,7 @@ Search the documents in a knowledge base.
 | `pageNumber` | integer | No | — | Page number of the returned results. |
 | `pageSize` | integer | No | — | Page size of the returned results. |
 | `preprocessQuery` | boolean | No | — | Indicates whether the search query should be preprocessed. |
-| `query` | string | No | — | Query to search content in the knowledge base. Maximum of 30 records per query can be fetched. |
+| `query` | string | Yes | — | Query to search content in the knowledge base. Maximum of 30 records per query can be fetched. |
 | `queryType` | string | No | — | The type of the query that initiates the search. |
 | `searchId` | string | No | — | The globally unique identifier for the search. |
 | `sortBy` | string | No | — | The field in the documents that you want to sort the search results by. |
@@ -6284,7 +6883,25 @@ Search the documents in a knowledge base.
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "deployment": {
+          "type": "object"
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "confidenceThreshold": {
       "type": "number",
@@ -6292,11 +6909,50 @@ Search the documents in a knowledge base.
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "Documents filter clauses/criteria. Limit of 20 clauses."
+        },
+        "operator": {
+          "type": "string",
+          "description": "Specifies how the filter clauses will be applied together."
+        }
+      },
+      "required": [
+        "clauses",
+        "operator"
+      ]
     },
     "includeDraftDocuments": {
       "type": "boolean",
@@ -6304,7 +6960,17 @@ Search the documents in a knowledge base.
     },
     "interval": {
       "type": "object",
-      "description": "interval"
+      "description": "interval",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Specifies the date field to be used for date and time range."
+        },
+        "value": {
+          "type": "string",
+          "description": "Specifies the date and time range for filtering the documents. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
+        }
+      }
     },
     "pageCount": {
       "type": "integer",
@@ -6365,7 +7031,8 @@ Search the documents in a knowledge base.
   },
   "required": [
     "PCID",
-    "knowledgeBaseId"
+    "knowledgeBaseId",
+    "query"
   ]
 }
 ```
@@ -6387,7 +7054,7 @@ Query the knowledge documents to provide suggestions for auto completion.
 | `includeDraftDocuments` | boolean | No | — | Indicates whether the suggestion results would also include draft documents. |
 | `interval` | object | No | — | interval |
 | `pageSize` | integer | No | — | Page size of the returned results. |
-| `query` | string | No | — | Query to get autocomplete suggestions for the matching knowledge documents. |
+| `query` | string | Yes | — | Query to get autocomplete suggestions for the matching knowledge documents. |
 
 <Expandable title="inputSchema">
 
@@ -6405,7 +7072,21 @@ Query the knowledge documents to provide suggestions for auto completion.
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "Documents filter clauses/criteria. Limit of 20 clauses."
+        },
+        "operator": {
+          "type": "string",
+          "description": "Specifies how the filter clauses will be applied together."
+        }
+      },
+      "required": [
+        "clauses",
+        "operator"
+      ]
     },
     "includeDraftDocuments": {
       "type": "boolean",
@@ -6413,7 +7094,17 @@ Query the knowledge documents to provide suggestions for auto completion.
     },
     "interval": {
       "type": "object",
-      "description": "interval"
+      "description": "interval",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Specifies the date field to be used for date and time range."
+        },
+        "value": {
+          "type": "string",
+          "description": "Specifies the date and time range for filtering the documents. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
+        }
+      }
     },
     "pageSize": {
       "type": "integer",
@@ -6426,7 +7117,8 @@ Query the knowledge documents to provide suggestions for auto completion.
   },
   "required": [
     "PCID",
-    "knowledgeBaseId"
+    "knowledgeBaseId",
+    "query"
   ]
 }
 ```
@@ -6597,7 +7289,25 @@ Create Salesforce Knowledge integration source
     },
     "settings": {
       "type": "object",
-      "description": "settings"
+      "description": "settings",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "description": "Filter source by channel."
+        },
+        "language": {
+          "type": "string",
+          "description": "Filter source by language."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Filter source by categories."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "The base URL to resources."
+        }
+      }
     }
   },
   "required": [
@@ -6706,7 +7416,25 @@ Create ServiceNow Knowledge integration source
     },
     "settings": {
       "type": "object",
-      "description": "settings"
+      "description": "settings",
+      "properties": {
+        "knowledgeBaseIds": {
+          "type": "array",
+          "description": "Filter source by knowledge base ids."
+        },
+        "language": {
+          "type": "string",
+          "description": "Filter source by language."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Filter source by categories."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "The base URL to resources."
+        }
+      }
     }
   },
   "required": [
@@ -6964,8 +7692,8 @@ Get Knowledge Search
 | `conversationContext` | object | No | — | conversationContext |
 | `conversationTurns` | any[] | No | — | List of conversation turns to use for stateful search. |
 | `generationLanguage` | string | No | — | The language to use for answer generation. |
-| `knowledgeSettingId` | string | No | — | Knowledge Setting Id to use for search request. |
-| `query` | string | No | — | Input query to search content on the knowledge setting. |
+| `knowledgeSettingId` | string | Yes | — | Knowledge Setting Id to use for search request. |
+| `query` | string | Yes | — | Input query to search content on the knowledge setting. |
 | `queryType` | string | No | — | The type of the query that initiates the search. |
 | `sessionId` | string | No | — | The session id for search request. |
 
@@ -6981,11 +7709,51 @@ Get Knowledge Search
     },
     "application": {
       "type": "object",
-      "description": "application"
+      "description": "application",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Application type."
+        },
+        "botFlow": {
+          "type": "object"
+        },
+        "assistant": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "conversationContext": {
       "type": "object",
-      "description": "conversationContext"
+      "description": "conversationContext",
+      "properties": {
+        "conversationId": {
+          "type": "string",
+          "description": "The unique identifier of the conversation."
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the conversation."
+        },
+        "messageType": {
+          "type": "string",
+          "description": "The message type of the conversation."
+        },
+        "queueId": {
+          "type": "string",
+          "description": "The unique identifier of the queue used to assign the interaction to the user."
+        },
+        "externalContactId": {
+          "type": "string",
+          "description": "The external contact identifier of the end-user participant."
+        }
+      },
+      "required": [
+        "conversationId"
+      ]
     },
     "conversationTurns": {
       "type": "array",
@@ -7058,7 +7826,9 @@ Get Knowledge Search
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "knowledgeSettingId",
+    "query"
   ]
 }
 ```
@@ -7076,9 +7846,9 @@ Get Knowledge Search Preview
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationTurns` | any[] | No | — | List of conversation turns to use for stateful search. |
-| `generationSetting` | object | No | — | generationSetting |
-| `query` | string | No | — | Query to search content in the knowledge sources. |
-| `sources` | any[] | No | — | Source information to search upon. |
+| `generationSetting` | object | Yes | — | generationSetting |
+| `query` | string | Yes | — | Query to search content in the knowledge sources. |
+| `sources` | any[] | Yes | — | Source information to search upon. |
 | `stateful` | boolean | No | — | Indicates if stateful search and generation is enabled for the knowledge setting. |
 
 <Expandable title="inputSchema">
@@ -7097,7 +7867,20 @@ Get Knowledge Search Preview
     },
     "generationSetting": {
       "type": "object",
-      "description": "generationSetting"
+      "description": "generationSetting",
+      "properties": {
+        "answerGeneration": {
+          "type": "boolean",
+          "description": "Indicates if answer generation is enabled for the setting."
+        },
+        "generationLanguage": {
+          "type": "string",
+          "description": "Answer generation language."
+        }
+      },
+      "required": [
+        "answerGeneration"
+      ]
     },
     "query": {
       "type": "string",
@@ -7113,7 +7896,10 @@ Get Knowledge Search Preview
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "generationSetting",
+    "query",
+    "sources"
   ]
 }
 ```
@@ -7132,8 +7918,8 @@ Create Knowledge setting.
 | --- | --- | --- | --- | --- |
 | `description` | string | No | — | Knowledge setting description. |
 | `generationSetting` | object | No | — | generationSetting |
-| `name` | string | No | — | Knowledge setting name. |
-| `sources` | any[] | No | — | Knowledge source information to search upon. |
+| `name` | string | Yes | — | Knowledge setting name. |
+| `sources` | any[] | Yes | — | Knowledge source information to search upon. |
 | `stateful` | boolean | No | — | Indicates if stateful search and generation is enabled for the knowledge setting. |
 
 <Expandable title="inputSchema">
@@ -7152,7 +7938,20 @@ Create Knowledge setting.
     },
     "generationSetting": {
       "type": "object",
-      "description": "generationSetting"
+      "description": "generationSetting",
+      "properties": {
+        "answerGeneration": {
+          "type": "boolean",
+          "description": "Indicates if answer generation is enabled for the setting."
+        },
+        "generationLanguage": {
+          "type": "string",
+          "description": "Answer generation language."
+        }
+      },
+      "required": [
+        "answerGeneration"
+      ]
     },
     "name": {
       "type": "string",
@@ -7168,7 +7967,9 @@ Create Knowledge setting.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "name",
+    "sources"
   ]
 }
 ```
@@ -7234,7 +8035,25 @@ Update Salesforce Knowledge integration source
     },
     "settings": {
       "type": "object",
-      "description": "settings"
+      "description": "settings",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "description": "Filter source by channel."
+        },
+        "language": {
+          "type": "string",
+          "description": "Filter source by language."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Filter source by categories."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "The base URL to resources."
+        }
+      }
     }
   },
   "required": [
@@ -7307,7 +8126,25 @@ Update ServiceNow Knowledge integration source
     },
     "settings": {
       "type": "object",
-      "description": "settings"
+      "description": "settings",
+      "properties": {
+        "knowledgeBaseIds": {
+          "type": "array",
+          "description": "Filter source by knowledge base ids."
+        },
+        "language": {
+          "type": "string",
+          "description": "Filter source by language."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Filter source by categories."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "The base URL to resources."
+        }
+      }
     }
   },
   "required": [

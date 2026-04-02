@@ -1864,20 +1864,20 @@ Update single action map.
 | `actionMapScheduleGroups` | object | No | — | actionMapScheduleGroups |
 | `activation` | object | No | — | activation |
 | `createdDate` | string | No | — | Timestamp indicating when the action map was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `displayName` | string | No | — | Display name of the action map. |
+| `displayName` | string | Yes | — | Display name of the action map. |
 | `endDate` | string | No | — | Timestamp at which the action map is scheduled to stop firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `ignoreFrequencyCap` | boolean | No | — | Override organization-level frequency cap and always offer web engagements from this action map. |
 | `isActive` | boolean | No | — | Whether the action map is active. |
 | `modifiedDate` | string | No | — | Timestamp indicating when the action map was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `pageUrlConditions` | any[] | No | — | URL conditions that a page must match for web actions to be displayable. |
+| `pageUrlConditions` | any[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
 | `selfUri` | string | No | — | The URI for this object |
 | `startDate` | string | No | — | Timestamp at which the action map is scheduled to start firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `triggerWithEventConditions` | any[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
 | `triggerWithOutcomePercentileConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
 | `triggerWithOutcomeProbabilityConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
 | `triggerWithOutcomeQuantileConditions` | any[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithSegments` | any[] | No | — | Trigger action map if any segment in the list is assigned to a given customer. |
+| `triggerWithSegments` | any[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
 | `version` | integer | No | — | The version of the action map. |
 | `weight` | integer | No | — | Weight of the action map with higher number denoting higher weight. |
 
@@ -1897,15 +1897,71 @@ Update single action map.
     },
     "action": {
       "type": "object",
-      "description": "action"
+      "description": "action",
+      "properties": {
+        "mediaType": {
+          "type": "string",
+          "description": "Media type of action."
+        },
+        "actionTemplate": {
+          "type": "object"
+        },
+        "actionTargetId": {
+          "type": "string",
+          "description": "Action target ID."
+        },
+        "isPacingEnabled": {
+          "type": "boolean",
+          "description": "Whether this action should be throttled."
+        },
+        "props": {
+          "type": "object"
+        },
+        "architectFlowFields": {
+          "type": "object"
+        },
+        "webMessagingOfferFields": {
+          "type": "object"
+        },
+        "openActionFields": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "mediaType"
+      ]
     },
     "actionMapScheduleGroups": {
       "type": "object",
-      "description": "actionMapScheduleGroups"
+      "description": "actionMapScheduleGroups",
+      "properties": {
+        "actionMapScheduleGroup": {
+          "type": "object"
+        },
+        "emergencyActionMapScheduleGroup": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "actionMapScheduleGroup"
+      ]
     },
     "activation": {
       "type": "object",
-      "description": "activation"
+      "description": "activation",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of activation."
+        },
+        "delayInSeconds": {
+          "type": "integer",
+          "description": "Activation delay time amount."
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "createdDate": {
       "type": "string",
@@ -1978,7 +2034,10 @@ Update single action map.
   },
   "required": [
     "PCID",
-    "actionMapId"
+    "actionMapId",
+    "displayName",
+    "pageUrlConditions",
+    "triggerWithSegments"
   ]
 }
 ```
@@ -2030,7 +2089,17 @@ Update a single action target.
     },
     "serviceLevel": {
       "type": "object",
-      "description": "serviceLevel"
+      "description": "serviceLevel",
+      "properties": {
+        "percentage": {
+          "type": "number",
+          "description": "The desired Service Level. A value between 0 and 1."
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Service Level target in milliseconds."
+        }
+      }
     },
     "shortAbandonThreshold": {
       "type": "integer",
@@ -2060,7 +2129,7 @@ Update a single action template.
 | `contentOffer` | object | No | — | contentOffer |
 | `description` | string | No | — | Description of the action template's functionality. |
 | `mediaType` | string | No | — | Media type of action described by the action template. |
-| `name` | string | No | — | Name of the action template. |
+| `name` | string | Yes | — | Name of the action template. |
 | `state` | string | No | — | Whether the action template is currently active, inactive or deleted. |
 | `version` | integer | No | — | The version of the action template. |
 
@@ -2080,7 +2149,43 @@ Update a single action template.
     },
     "contentOffer": {
       "type": "object",
-      "description": "contentOffer"
+      "description": "contentOffer",
+      "properties": {
+        "imageUrl": {
+          "type": "string",
+          "description": "URL for image displayed to the customer when displaying content offer."
+        },
+        "displayMode": {
+          "type": "string",
+          "description": "The display mode of Genesys Widgets when displaying content offer."
+        },
+        "layoutMode": {
+          "type": "string",
+          "description": "The layout mode of the text shown to the user when displaying content offer."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title used in the header of the content offer."
+        },
+        "headline": {
+          "type": "string",
+          "description": "Headline displayed above the body text of the content offer."
+        },
+        "body": {
+          "type": "string",
+          "description": "Body text of the content offer."
+        },
+        "callToAction": {
+          "type": "object"
+        },
+        "style": {
+          "type": "object"
+        },
+        "imageAltText": {
+          "type": "string",
+          "description": "Image description text for accessibility compliance and assistive technology support."
+        }
+      }
     },
     "description": {
       "type": "string",
@@ -2118,7 +2223,8 @@ Update a single action template.
   },
   "required": [
     "PCID",
-    "actionTemplateId"
+    "actionTemplateId",
+    "name"
   ]
 }
 ```
@@ -2139,7 +2245,7 @@ Update an outcome.
 | `associatedValueField` | object | No | — | associatedValueField |
 | `context` | object | No | — | context |
 | `description` | string | No | — | A description of the outcome. |
-| `displayName` | string | No | — | The display name of the outcome. |
+| `displayName` | string | Yes | — | The display name of the outcome. |
 | `isActive` | boolean | No | — | Whether or not the outcome is active. |
 | `isPositive` | boolean | No | — | Whether or not the outcome is positive. |
 | `journey` | object | No | — | journey |
@@ -2161,11 +2267,27 @@ Update an outcome.
     },
     "associatedValueField": {
       "type": "object",
-      "description": "associatedValueField"
+      "description": "associatedValueField",
+      "properties": {
+        "dataType": {
+          "type": "string",
+          "description": "The data type of the value field."
+        },
+        "name": {
+          "type": "string",
+          "description": "The field name for extracting value from event."
+        }
+      }
     },
     "context": {
       "type": "object",
-      "description": "context"
+      "description": "context",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of one or more patterns to match."
+        }
+      }
     },
     "description": {
       "type": "string",
@@ -2185,7 +2307,13 @@ Update an outcome.
     },
     "journey": {
       "type": "object",
-      "description": "journey"
+      "description": "journey",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of zero or more patterns to match."
+        }
+      }
     },
     "version": {
       "type": "integer",
@@ -2194,7 +2322,8 @@ Update an outcome.
   },
   "required": [
     "PCID",
-    "outcomeId"
+    "outcomeId",
+    "displayName"
   ]
 }
 ```
@@ -2247,7 +2376,13 @@ Update a segment.
     },
     "context": {
       "type": "object",
-      "description": "context"
+      "description": "context",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of one or more patterns to match."
+        }
+      }
     },
     "description": {
       "type": "string",
@@ -2259,7 +2394,13 @@ Update a segment.
     },
     "externalSegment": {
       "type": "object",
-      "description": "externalSegment"
+      "description": "externalSegment",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name for the external segment in the system where it originates from."
+        }
+      }
     },
     "isActive": {
       "type": "boolean",
@@ -2267,7 +2408,13 @@ Update a segment.
     },
     "journey": {
       "type": "object",
-      "description": "journey"
+      "description": "journey",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of zero or more patterns to match."
+        }
+      }
     },
     "shouldDisplayToAgent": {
       "type": "boolean",
@@ -2354,7 +2501,61 @@ Update the job for a journey view version. Only the status can be changed and on
     },
     "journeyView": {
       "type": "object",
-      "description": "A journey view"
+      "description": "A journey view",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the journey view"
+        },
+        "version": {
+          "type": "integer",
+          "description": "The version of the journey view"
+        },
+        "createdBy": {
+          "type": "object"
+        },
+        "modifiedBy": {
+          "type": "object"
+        },
+        "interval": {
+          "type": "string",
+          "description": "An absolute timeframe for the journey view, expressed as an ISO 8601 interval. Only one of interval or duration must be specified. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
+        },
+        "duration": {
+          "type": "string",
+          "description": "A relative timeframe for the journey view, expressed as an ISO 8601 duration. Only one of interval or duration must be specified. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H"
+        },
+        "elements": {
+          "type": "array",
+          "description": "The elements within the journey view"
+        },
+        "charts": {
+          "type": "array",
+          "description": "A list of charts to measure within context of the elements of the the journey view"
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "The date when the journey view was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "The date when this version of the journey view was modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "elements"
+      ]
     },
     "selfUri": {
       "type": "string",
@@ -2409,20 +2610,20 @@ Create an action map.
 | `actionMapScheduleGroups` | object | No | — | actionMapScheduleGroups |
 | `activation` | object | No | — | activation |
 | `createdDate` | string | No | — | Timestamp indicating when the action map was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `displayName` | string | No | — | Display name of the action map. |
+| `displayName` | string | Yes | — | Display name of the action map. |
 | `endDate` | string | No | — | Timestamp at which the action map is scheduled to stop firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `ignoreFrequencyCap` | boolean | No | — | Override organization-level frequency cap and always offer web engagements from this action map. |
 | `isActive` | boolean | No | — | Whether the action map is active. |
 | `modifiedDate` | string | No | — | Timestamp indicating when the action map was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `pageUrlConditions` | any[] | No | — | URL conditions that a page must match for web actions to be displayable. |
+| `pageUrlConditions` | any[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
 | `selfUri` | string | No | — | The URI for this object |
 | `startDate` | string | No | — | Timestamp at which the action map is scheduled to start firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `triggerWithEventConditions` | any[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
 | `triggerWithOutcomePercentileConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
 | `triggerWithOutcomeProbabilityConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
 | `triggerWithOutcomeQuantileConditions` | any[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithSegments` | any[] | No | — | Trigger action map if any segment in the list is assigned to a given customer. |
+| `triggerWithSegments` | any[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
 | `version` | integer | No | — | The version of the action map. |
 | `weight` | integer | No | — | Weight of the action map with higher number denoting higher weight. |
 
@@ -2438,15 +2639,68 @@ Create an action map.
     },
     "action": {
       "type": "object",
-      "description": "action"
+      "description": "action",
+      "properties": {
+        "actionTemplate": {
+          "type": "object"
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "Media type of action."
+        },
+        "actionTargetId": {
+          "type": "string",
+          "description": "Action target ID."
+        },
+        "isPacingEnabled": {
+          "type": "boolean",
+          "description": "Whether this action should be throttled."
+        },
+        "props": {
+          "type": "object"
+        },
+        "architectFlowFields": {
+          "type": "object"
+        },
+        "webMessagingOfferFields": {
+          "type": "object"
+        },
+        "openActionFields": {
+          "type": "object"
+        }
+      }
     },
     "actionMapScheduleGroups": {
       "type": "object",
-      "description": "actionMapScheduleGroups"
+      "description": "actionMapScheduleGroups",
+      "properties": {
+        "actionMapScheduleGroup": {
+          "type": "object"
+        },
+        "emergencyActionMapScheduleGroup": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "actionMapScheduleGroup"
+      ]
     },
     "activation": {
       "type": "object",
-      "description": "activation"
+      "description": "activation",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of activation."
+        },
+        "delayInSeconds": {
+          "type": "integer",
+          "description": "Activation delay time amount."
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "createdDate": {
       "type": "string",
@@ -2518,7 +2772,10 @@ Create an action map.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "displayName",
+    "pageUrlConditions",
+    "triggerWithSegments"
   ]
 }
 ```
@@ -2550,7 +2807,32 @@ Query for estimates
     },
     "outcomeCriteria": {
       "type": "object",
-      "description": "outcomeCriteria"
+      "description": "outcomeCriteria",
+      "properties": {
+        "outcomeId": {
+          "type": "string",
+          "description": "ID of outcome."
+        },
+        "maxProbability": {
+          "type": "number",
+          "description": "Probability value for the selected outcome at or above which the action map will trigger."
+        },
+        "probability": {
+          "type": "number",
+          "description": "Additional probability condition, where if set, the action map will trigger if the current outcome probability is lower or equal to the value."
+        },
+        "quantile": {
+          "type": "number",
+          "description": "Represents the quantity of sessions that have a maximum probability less than the predicted probability."
+        },
+        "maxQuantile": {
+          "type": "number",
+          "description": "Represents the quantity of sessions that have a maximum probability less than the predicted session max probability."
+        }
+      },
+      "required": [
+        "outcomeId"
+      ]
     },
     "segmentIds": {
       "type": "array",
@@ -2579,11 +2861,11 @@ Create a single action template.
 | `createdDate` | string | No | — | Date when action template was created in ISO-8601 format. |
 | `description` | string | No | — | Description of the action template's functionality. |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `mediaType` | string | No | — | Media type of action described by the action template. |
+| `mediaType` | string | Yes | — | Media type of action described by the action template. |
 | `modifiedDate` | string | No | — | Date when action template was last modified in ISO-8601 format. |
-| `name` | string | No | — | Name of the action template. |
+| `name` | string | Yes | — | Name of the action template. |
 | `selfUri` | string | No | — | The URI for this object |
-| `state` | string | No | — | Whether the action template is currently active, inactive or deleted. |
+| `state` | string | Yes | — | Whether the action template is currently active, inactive or deleted. |
 | `version` | integer | No | — | The version of the action template. |
 
 <Expandable title="inputSchema">
@@ -2598,7 +2880,47 @@ Create a single action template.
     },
     "contentOffer": {
       "type": "object",
-      "description": "contentOffer"
+      "description": "contentOffer",
+      "properties": {
+        "imageUrl": {
+          "type": "string",
+          "description": "URL for image displayed to the customer when displaying content offer."
+        },
+        "displayMode": {
+          "type": "string",
+          "description": "The display mode of Genesys Widgets when displaying content offer."
+        },
+        "layoutMode": {
+          "type": "string",
+          "description": "The layout mode of the text shown to the user when displaying content offer."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title used in the header of the content offer."
+        },
+        "headline": {
+          "type": "string",
+          "description": "Headline displayed above the body text of the content offer."
+        },
+        "body": {
+          "type": "string",
+          "description": "Body text of the content offer."
+        },
+        "callToAction": {
+          "type": "object"
+        },
+        "style": {
+          "type": "object"
+        },
+        "imageAltText": {
+          "type": "string",
+          "description": "Image description text for accessibility compliance and assistive technology support."
+        }
+      },
+      "required": [
+        "displayMode",
+        "layoutMode"
+      ]
     },
     "createdDate": {
       "type": "string",
@@ -2651,7 +2973,10 @@ Create a single action template.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "mediaType",
+    "name",
+    "state"
   ]
 }
 ```
@@ -2759,15 +3084,15 @@ Send a journey app event, used for tracking customer activity on an application.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `deploymentId` | string | Yes | — | The ID of the deployment sending the app event. |
-| `app` | object | No | — | app |
+| `app` | object | Yes | — | app |
 | `attributes` | object | No | — | User-defined attributes associated with a particular event. These attributes provide additional context about the event. For example, items_in_cart or subscription_level. |
-| `createdDate` | string | No | — | UTC timestamp indicating when the event actually took place, events older than an hour will be rejected. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `customerCookieId` | string | No | — | A UUID representing the customer associated with the app event. This is expected to be set per application install or device and can be used to identify a single customer across multiple sessions. This identifier, along with others passed as traits, is used for identity resolution. |
-| `device` | object | No | — | device |
-| `eventName` | string | No | — | Represents the action the customer performed. Event types are created for each unique event name and can be faceted on in segment and outcome conditions. A valid event name must only contain alphanumeric characters and underscores. A good event name is typically an object followed by the action performed in past tense, e.g. screen_viewed, search_performed, user_registered. |
+| `createdDate` | string | Yes | — | UTC timestamp indicating when the event actually took place, events older than an hour will be rejected. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
+| `customerCookieId` | string | Yes | — | A UUID representing the customer associated with the app event. This is expected to be set per application install or device and can be used to identify a single customer across multiple sessions. This identifier, along with others passed as traits, is used for identity resolution. |
+| `device` | object | Yes | — | device |
+| `eventName` | string | Yes | — | Represents the action the customer performed. Event types are created for each unique event name and can be faceted on in segment and outcome conditions. A valid event name must only contain alphanumeric characters and underscores. A good event name is typically an object followed by the action performed in past tense, e.g. screen_viewed, search_performed, user_registered. |
 | `networkConnectivity` | object | No | — | networkConnectivity |
 | `referrerUrl` | string | No | — | The referrer URL of the first event in the app session. |
-| `screenName` | string | No | — | The name of the screen, view, or fragment in the app where the event took place. |
+| `screenName` | string | Yes | — | The name of the screen, view, or fragment in the app where the event took place. |
 | `sdkLibrary` | object | No | — | sdkLibrary |
 | `searchQuery` | string | No | — | Represents the keywords in a customer search query. |
 | `traits` | object | No | — | Traits are attributes intrinsic to the customer that may be sent in selected events, (e.g. email, givenName, cellPhone). Traits are used to collect information for identity resolution. For example, the same person might be using an application on different devices which might create two sessions with different customerIds. Additional information can be provided as traits to help link those two sessions and customers to a single external contact through common identifiers that were submitted via a form fill, message, or other input in both sessions. |
@@ -2788,7 +3113,31 @@ Send a journey app event, used for tracking customer activity on an application.
     },
     "app": {
       "type": "object",
-      "description": "app"
+      "description": "app",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the application (e.g. mybankingapp)."
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace of the application (e.g. com.genesys.bancodinero)."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the application (e.g. 5.9.27)."
+        },
+        "buildNumber": {
+          "type": "string",
+          "description": "Build number of the application (e.g. 701)."
+        }
+      },
+      "required": [
+        "buildNumber",
+        "name",
+        "namespace",
+        "version"
+      ]
     },
     "attributes": {
       "type": "object",
@@ -2804,7 +3153,55 @@ Send a journey app event, used for tracking customer activity on an application.
     },
     "device": {
       "type": "object",
-      "description": "device"
+      "description": "device",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Device category."
+        },
+        "type": {
+          "type": "string",
+          "description": "Device type (e.g. iPad, iPhone, Other)."
+        },
+        "isMobile": {
+          "type": "boolean",
+          "description": "Flag that is true for mobile devices."
+        },
+        "screenHeight": {
+          "type": "integer",
+          "description": "Device's screen height."
+        },
+        "screenWidth": {
+          "type": "integer",
+          "description": "Device's screen width."
+        },
+        "screenDensity": {
+          "type": "integer",
+          "description": "Device's screen density, measured as a scale factor where a value of 1 represents a baseline 1:1 ratio of pixels to logical (device-independent) pixels."
+        },
+        "fingerprint": {
+          "type": "string",
+          "description": "Fingerprint generated by looking at the individual device features."
+        },
+        "osFamily": {
+          "type": "string",
+          "description": "Operating system family."
+        },
+        "osVersion": {
+          "type": "string",
+          "description": "Operating system version."
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "Manufacturer of the device."
+        }
+      },
+      "required": [
+        "category",
+        "osFamily",
+        "osVersion",
+        "type"
+      ]
     },
     "eventName": {
       "type": "string",
@@ -2812,7 +3209,30 @@ Send a journey app event, used for tracking customer activity on an application.
     },
     "networkConnectivity": {
       "type": "object",
-      "description": "networkConnectivity"
+      "description": "networkConnectivity",
+      "properties": {
+        "carrier": {
+          "type": "string",
+          "description": "The name of the network carrier."
+        },
+        "bluetoothEnabled": {
+          "type": "boolean",
+          "description": "Whether Bluetooth is enabled."
+        },
+        "cellularEnabled": {
+          "type": "boolean",
+          "description": "Whether Cellular is enabled."
+        },
+        "wifiEnabled": {
+          "type": "boolean",
+          "description": "Whether Wi-Fi is enabled."
+        }
+      },
+      "required": [
+        "bluetoothEnabled",
+        "cellularEnabled",
+        "wifiEnabled"
+      ]
     },
     "referrerUrl": {
       "type": "string",
@@ -2824,7 +3244,21 @@ Send a journey app event, used for tracking customer activity on an application.
     },
     "sdkLibrary": {
       "type": "object",
-      "description": "sdkLibrary"
+      "description": "sdkLibrary",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the SDK."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the SDK."
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ]
     },
     "searchQuery": {
       "type": "string",
@@ -2837,7 +3271,13 @@ Send a journey app event, used for tracking customer activity on an application.
   },
   "required": [
     "PCID",
-    "deploymentId"
+    "deploymentId",
+    "app",
+    "createdDate",
+    "customerCookieId",
+    "device",
+    "eventName",
+    "screenName"
   ]
 }
 ```
@@ -2857,12 +3297,12 @@ Send a journey web event, used for tracking customer activity on a website.
 | `deploymentId` | string | Yes | — | The ID of the deployment sending the web event. |
 | `attributes` | object | No | — | User-defined attributes associated with a particular event. These attributes provide additional context about the event. For example, items_in_cart or subscription_level. |
 | `browser` | object | No | — | browser |
-| `createdDate` | string | No | — | UTC timestamp indicating when the event actually took place, events older than an hour will be rejected. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `customerCookieId` | string | No | — | A UUID representing the customer making the request. |
+| `createdDate` | string | Yes | — | UTC timestamp indicating when the event actually took place, events older than an hour will be rejected. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
+| `customerCookieId` | string | Yes | — | A UUID representing the customer making the request. |
 | `device` | object | No | — | device |
-| `eventName` | string | No | — | Represents the action the customer performed. Event types are created for each unique event name and can be faceted on in segment and outcome conditions. A valid event name must only contain alphanumeric characters and underscores. A good event name is typically an object followed by the action performed in past tense, e.g. page_viewed, order_completed, user_registered. |
+| `eventName` | string | Yes | — | Represents the action the customer performed. Event types are created for each unique event name and can be faceted on in segment and outcome conditions. A valid event name must only contain alphanumeric characters and underscores. A good event name is typically an object followed by the action performed in past tense, e.g. page_viewed, order_completed, user_registered. |
 | `ipAddress` | string | No | — | Customer's IP address. |
-| `page` | object | No | — | page |
+| `page` | object | Yes | — | page |
 | `referrerUrl` | string | No | — | Identifies the referrer URL that originally generated the request for the current page being viewed. |
 | `searchQuery` | string | No | — | Represents the keywords in a customer search query. |
 | `traits` | object | No | — | Traits are attributes intrinsic to the customer that may be sent in selected events, e.g. email, givenName, cellPhone. Traits are used to collect information for identity resolution. For example, the same person might be using an application on different devices which might create two sessions with different customerIds. Additional information can be provided as traits to help link those two sessions and customers to a single external contact through common identifiers that were submitted via a form fill, message, or other input in both sessions. |
@@ -2888,7 +3328,25 @@ Send a journey web event, used for tracking customer activity on a website.
     },
     "browser": {
       "type": "object",
-      "description": "browser"
+      "description": "browser",
+      "properties": {
+        "family": {
+          "type": "string",
+          "description": "Browser family (e.g. Chrome, Safari, Firefox)."
+        },
+        "version": {
+          "type": "string",
+          "description": "Browser version (e.g. 68.0.3440.84)."
+        },
+        "lang": {
+          "type": "string",
+          "description": "Language the browser is set to. Must conform to BCP 47."
+        }
+      },
+      "required": [
+        "family",
+        "version"
+      ]
     },
     "createdDate": {
       "type": "string",
@@ -2900,7 +3358,51 @@ Send a journey web event, used for tracking customer activity on a website.
     },
     "device": {
       "type": "object",
-      "description": "device"
+      "description": "device",
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Device category."
+        },
+        "type": {
+          "type": "string",
+          "description": "Device type (e.g. iPad, iPhone, Other)."
+        },
+        "isMobile": {
+          "type": "boolean",
+          "description": "Flag that is true for mobile devices."
+        },
+        "screenHeight": {
+          "type": "integer",
+          "description": "Device's screen height."
+        },
+        "screenWidth": {
+          "type": "integer",
+          "description": "Device's screen width."
+        },
+        "screenDensity": {
+          "type": "integer",
+          "description": "Device's screen density, measured as a scale factor where a value of 1 represents a baseline 1:1 ratio of pixels to logical (device-independent) pixels."
+        },
+        "osFamily": {
+          "type": "string",
+          "description": "Operating system family."
+        },
+        "osVersion": {
+          "type": "string",
+          "description": "Operating system version."
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "Manufacturer of the device."
+        }
+      },
+      "required": [
+        "category",
+        "osFamily",
+        "osVersion",
+        "type"
+      ]
     },
     "eventName": {
       "type": "string",
@@ -2912,7 +3414,29 @@ Send a journey web event, used for tracking customer activity on a website.
     },
     "page": {
       "type": "object",
-      "description": "page"
+      "description": "page",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The page URL."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the page."
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Keywords from the HTML <meta> tag of the page."
+        },
+        "lang": {
+          "type": "string",
+          "description": "ISO 639-1 language code for the page as defined in the <html> tag."
+        }
+      },
+      "required": [
+        "title",
+        "url"
+      ]
     },
     "referrerUrl": {
       "type": "string",
@@ -2933,7 +3457,11 @@ Send a journey web event, used for tracking customer activity on a website.
   },
   "required": [
     "PCID",
-    "deploymentId"
+    "deploymentId",
+    "createdDate",
+    "customerCookieId",
+    "eventName",
+    "page"
   ]
 }
 ```
@@ -2950,8 +3478,8 @@ Query for flow paths.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `category` | string | No | — | Category (use case) of the paths within a given domain. |
-| `flows` | any[] | No | — | List of flows to query the paths result. |
+| `category` | string | Yes | — | Category (use case) of the paths within a given domain. |
+| `flows` | any[] | Yes | — | List of flows to query the paths result. |
 
 <Expandable title="inputSchema">
 
@@ -2983,7 +3511,9 @@ Query for flow paths.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "category",
+    "flows"
   ]
 }
 ```
@@ -3003,7 +3533,7 @@ Create an outcome.
 | `associatedValueField` | object | No | — | associatedValueField |
 | `context` | object | No | — | context |
 | `description` | string | No | — | A description of the outcome. |
-| `displayName` | string | No | — | The display name of the outcome. |
+| `displayName` | string | Yes | — | The display name of the outcome. |
 | `isActive` | boolean | No | — | Whether or not the outcome is active. |
 | `isPositive` | boolean | No | — | Whether or not the outcome is positive. |
 | `journey` | object | No | — | journey |
@@ -3021,11 +3551,31 @@ Create an outcome.
     },
     "associatedValueField": {
       "type": "object",
-      "description": "associatedValueField"
+      "description": "associatedValueField",
+      "properties": {
+        "dataType": {
+          "type": "string",
+          "description": "The data type of the value field."
+        },
+        "name": {
+          "type": "string",
+          "description": "The field name for extracting value from event."
+        }
+      },
+      "required": [
+        "dataType",
+        "name"
+      ]
     },
     "context": {
       "type": "object",
-      "description": "context"
+      "description": "context",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of one or more patterns to match."
+        }
+      }
     },
     "description": {
       "type": "string",
@@ -3045,7 +3595,13 @@ Create an outcome.
     },
     "journey": {
       "type": "object",
-      "description": "journey"
+      "description": "journey",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of zero or more patterns to match."
+        }
+      }
     },
     "version": {
       "type": "integer",
@@ -3053,7 +3609,8 @@ Create an outcome.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "displayName"
   ]
 }
 ```
@@ -3070,7 +3627,7 @@ Create an outcome predictor.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `outcome` | object | No | — | outcome |
+| `outcome` | object | Yes | — | outcome |
 
 <Expandable title="inputSchema">
 
@@ -3084,11 +3641,21 @@ Create an outcome predictor.
     },
     "outcome": {
       "type": "object",
-      "description": "outcome"
+      "description": "outcome",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of outcome."
+        }
+      },
+      "required": [
+        "id"
+      ]
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "outcome"
   ]
 }
 ```
@@ -3106,13 +3673,13 @@ Create a segment.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assignmentExpirationDays` | integer | No | — | Time, in days, from when the segment is assigned until it is automatically unassigned. |
-| `color` | string | No | — | The hexadecimal color value of the segment. |
-| `context` | object | No | — | context |
+| `color` | string | Yes | — | The hexadecimal color value of the segment. |
+| `context` | object | Yes | — | context |
 | `description` | string | No | — | A description of the segment. |
-| `displayName` | string | No | — | The display name of the segment. |
+| `displayName` | string | Yes | — | The display name of the segment. |
 | `externalSegment` | object | No | — | externalSegment |
 | `isActive` | boolean | No | — | Whether or not the segment is active. |
-| `journey` | object | No | — | journey |
+| `journey` | object | Yes | — | journey |
 | `shouldDisplayToAgent` | boolean | No | — | Whether or not the segment should be displayed to agent/supervisor users. |
 | `version` | integer | No | — | The version of the segment. |
 
@@ -3136,7 +3703,13 @@ Create a segment.
     },
     "context": {
       "type": "object",
-      "description": "context"
+      "description": "context",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of one or more patterns to match."
+        }
+      }
     },
     "description": {
       "type": "string",
@@ -3148,7 +3721,25 @@ Create a segment.
     },
     "externalSegment": {
       "type": "object",
-      "description": "externalSegment"
+      "description": "externalSegment",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier for the external segment in the system where it originates from."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name for the external segment in the system where it originates from."
+        },
+        "source": {
+          "type": "string",
+          "description": "The external system where the segment originates from."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
     },
     "isActive": {
       "type": "boolean",
@@ -3156,7 +3747,13 @@ Create a segment.
     },
     "journey": {
       "type": "object",
-      "description": "journey"
+      "description": "journey",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "A list of zero or more patterns to match."
+        }
+      }
     },
     "shouldDisplayToAgent": {
       "type": "boolean",
@@ -3168,7 +3765,11 @@ Create a segment.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "color",
+    "context",
+    "displayName",
+    "journey"
   ]
 }
 ```
@@ -3229,7 +3830,15 @@ Add a new Schedule to a JourneyView
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     }
   },
   "required": [
@@ -3331,7 +3940,21 @@ Update a Journey View by ID
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -3363,7 +3986,21 @@ Update a Journey View by ID
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "name": {
       "type": "string",
@@ -3428,7 +4065,21 @@ Create a new Journey View
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -3460,7 +4111,21 @@ Create a new Journey View
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "name": {
       "type": "string",
@@ -3573,7 +4238,15 @@ Update the Schedule for a JourneyView
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     }
   },
   "required": [
@@ -3638,7 +4311,21 @@ Update a Journey View by ID and version
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -3670,7 +4357,21 @@ Update a Journey View by ID and version
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "name": {
       "type": "string",

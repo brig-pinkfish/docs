@@ -1803,7 +1803,44 @@ Create new Speech & Text Analytics category
     },
     "criteria": {
       "type": "object",
-      "description": "criteria"
+      "description": "criteria",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The Operand type of the category"
+        },
+        "occurrence": {
+          "type": "integer",
+          "description": "The minimum number of occurrences of the defined operand type"
+        },
+        "inverted": {
+          "type": "boolean",
+          "description": "Applies a NOT modifier to the operand group"
+        },
+        "term": {
+          "type": "object"
+        },
+        "topicId": {
+          "type": "string",
+          "description": "Filter interaction by topic ID"
+        },
+        "voiceSecondsPosition": {
+          "type": "object"
+        },
+        "digitalWordsPosition": {
+          "type": "object"
+        },
+        "infixOperator": {
+          "type": "object"
+        },
+        "operands": {
+          "type": "array",
+          "description": "Contains a new level of operands"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "description": {
       "type": "string",
@@ -1876,7 +1913,17 @@ Create a Speech & Text Analytics DictionaryFeedback
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -1904,7 +1951,17 @@ Create a Speech & Text Analytics DictionaryFeedback
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "selfUri": {
       "type": "string",
@@ -2158,7 +2215,15 @@ Create a Speech & Text Analytics SentimentFeedback
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -2343,11 +2408,54 @@ Create new Speech & Text Analytics publish topics job
     },
     "topic": {
       "type": "object",
-      "description": "topic"
+      "description": "topic",
+      "properties": {
+        "phrase": {
+          "type": "object"
+        },
+        "strictness": {
+          "type": "string",
+          "description": "The topic strictness, default value is 72"
+        },
+        "dialect": {
+          "type": "string",
+          "description": "The topic dialect, default value is en-US"
+        },
+        "participants": {
+          "type": "string",
+          "description": "The topic participants, default value is both"
+        }
+      },
+      "required": [
+        "dialect",
+        "phrase"
+      ]
     },
     "transcriptsFilters": {
       "type": "object",
-      "description": "transcriptsFilters"
+      "description": "transcriptsFilters",
+      "properties": {
+        "mediaType": {
+          "type": "string",
+          "description": "The media type of the transcripts, default value is all "
+        },
+        "startTimeMs": {
+          "type": "integer",
+          "description": "start time to filter by, default value is 7 days into the past"
+        },
+        "endTimeMs": {
+          "type": "integer",
+          "description": "end time to filter by, default value is current time"
+        },
+        "queues": {
+          "type": "array",
+          "description": "list of queues ids to filter by"
+        },
+        "flows": {
+          "type": "array",
+          "description": "list of flows ids to filter by"
+        }
+      }
     }
   },
   "required": [
@@ -2391,7 +2499,44 @@ Update a Speech & Text Analytics category by ID
     },
     "criteria": {
       "type": "object",
-      "description": "criteria"
+      "description": "criteria",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The Operand type of the category"
+        },
+        "occurrence": {
+          "type": "integer",
+          "description": "The minimum number of occurrences of the defined operand type"
+        },
+        "inverted": {
+          "type": "boolean",
+          "description": "Applies a NOT modifier to the operand group"
+        },
+        "term": {
+          "type": "object"
+        },
+        "topicId": {
+          "type": "string",
+          "description": "Filter interaction by topic ID"
+        },
+        "voiceSecondsPosition": {
+          "type": "object"
+        },
+        "digitalWordsPosition": {
+          "type": "object"
+        },
+        "infixOperator": {
+          "type": "object"
+        },
+        "operands": {
+          "type": "array",
+          "description": "Contains a new level of operands"
+        }
+      },
+      "required": [
+        "type"
+      ]
     },
     "description": {
       "type": "string",
@@ -2438,7 +2583,7 @@ Update existing Speech & Text Analytics dictionary feedback by id
 | `createdBy` | object | No | — | createdBy |
 | `dateCreated` | string | No | — | The Timestamp when dictionary feedback created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The Timestamp when dictionary feedback modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `dialect` | string | No | — | The dialect for the given term, dialect format is &#123;language&#125;-&#123;country&#125; where language follows ISO 639-1 standard and country follows ISO 3166-1 alpha 2 standard |
+| `dialect` | string | Yes | — | The dialect for the given term, dialect format is &#123;language&#125;-&#123;country&#125; where language follows ISO 639-1 standard and country follows ISO 3166-1 alpha 2 standard |
 | `displayAs` | string | No | — | The display name for the dictionary feedback. Only returned when GenesysExtended feature is enabled. This field is only valid for Extended Services transcription engine. |
 | `examplePhrases` | any[] | No | — | A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine. |
 | `id` | string | No | — | The globally unique identifier for the object. |
@@ -2447,7 +2592,7 @@ Update existing Speech & Text Analytics dictionary feedback by id
 | `soundsLike` | any[] | No | — | A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine. |
 | `source` | string | No | — | The source of the given dictionary feedback |
 | `status` | string | No | — | The status of the dictionary feedback. Only returned when GenesysExtended feature is enabled. |
-| `term` | string | No | — | The dictionary term which needs to be added to dictionary feedback system |
+| `term` | string | Yes | — | The dictionary term which needs to be added to dictionary feedback system |
 | `transcriptionEngine` | string | No | — | The transcription engine for the dictionary feedback. Only returned when GenesysExtended feature is enabled. |
 
 <Expandable title="inputSchema">
@@ -2470,7 +2615,17 @@ Update existing Speech & Text Analytics dictionary feedback by id
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -2498,7 +2653,17 @@ Update existing Speech & Text Analytics dictionary feedback by id
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "selfUri": {
       "type": "string",
@@ -2540,7 +2705,9 @@ Update existing Speech & Text Analytics dictionary feedback by id
   },
   "required": [
     "PCID",
-    "dictionaryFeedbackId"
+    "dictionaryFeedbackId",
+    "dialect",
+    "term"
   ]
 }
 ```
