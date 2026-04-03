@@ -24,7 +24,6 @@ description: "Adobe AEM Sites - content fragments, models, variations, versions,
 | [`adobe_experience_manager_sites_fragments_change_model`](#adobe_experience_manager_sites_fragments_change_model) | Change the model of a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_copy`](#adobe_experience_manager_sites_fragments_copy) | Copy a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_copy_tree`](#adobe_experience_manager_sites_fragments_copy_tree) | Copy a Content Fragment |
-| [`adobe_experience_manager_sites_fragments_create`](#adobe_experience_manager_sites_fragments_create) | Create a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_create_fragment`](#adobe_experience_manager_sites_fragments_create_fragment) | Create a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_create_variation_for_fragment`](#adobe_experience_manager_sites_fragments_create_variation_for_fragment) | Create a Content Fragment Variation |
 | [`adobe_experience_manager_sites_fragments_create_versions_for_fragment`](#adobe_experience_manager_sites_fragments_create_versions_for_fragment) | Create a Version for a Content Fragment |
@@ -528,7 +527,7 @@ Copy a Content Fragment
 | --- | --- | --- | --- | --- |
 | `fragmentId` | string | Yes | — | The unique identifier of the Content Fragment to be copied. |
 | `name` | string | No | — | This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict. |
-| `parentPath` | object | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
+| `parentPath` | string | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
 
 <Expandable title="inputSchema">
 
@@ -549,6 +548,7 @@ Copy a Content Fragment
       "description": "This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict."
     },
     "parentPath": {
+      "type": "string",
       "description": "The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder."
     }
   },
@@ -575,7 +575,7 @@ Copy a Content Fragment
 | `fragmentId` | string | Yes | — | The unique identifier of the Content Fragment to be copied. |
 | `copyReferencesToMainFolder` | boolean | No | — | If set to true, the references of the Content Fragment will be copied under the same folder as the main Content Fragment. If set to false, the references will be copied under their original folders. |
 | `name` | string | No | — | This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict. |
-| `parentPath` | object | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
+| `parentPath` | string | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
 
 <Expandable title="inputSchema">
 
@@ -600,6 +600,7 @@ Copy a Content Fragment
       "description": "This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict."
     },
     "parentPath": {
+      "type": "string",
       "description": "The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder."
     }
   },
@@ -607,69 +608,6 @@ Copy a Content Fragment
     "PCID",
     "fragmentId",
     "parentPath"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## adobe_experience_manager_sites_fragments_create
-
-Create a Content Fragment
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `description` | string | No | — | The description of the new Content Fragment. |
-| `fields` | any[] | No | — | Data needed for populating the content fragment fields defined in the model |
-| `modelId` | string | Yes | — | Defines a `base64url` with no padding encoded ID. |
-| `name` | string | No | — | Optional parameter that represents the name used when storing the new Content Fragment. When missing, the value will be derived by the server from the `title` value. |
-| `parentPath` | string | Yes | — | The folder path where the new Content Fragment will be created, relative to `/content/dam`.  Examples: - `/wknd-shared/en/adventures` creates fragment at `/content/dam/wknd-shared/en/adventures` - `/my-site/content` creates fragment at `/content/dam/my-site/content` |
-| `title` | string | Yes | — | The title of the new Content Fragment. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "description": {
-      "type": "string",
-      "description": "The description of the new Content Fragment."
-    },
-    "fields": {
-      "type": "array",
-      "description": "Data needed for populating the content fragment fields defined in the model"
-    },
-    "modelId": {
-      "type": "string",
-      "description": "Defines a `base64url` with no padding encoded ID."
-    },
-    "name": {
-      "type": "string",
-      "description": "Optional parameter that represents the name used when storing the new Content Fragment. When missing, the value will be derived by the server from the `title` value."
-    },
-    "parentPath": {
-      "type": "string",
-      "description": "The folder path where the new Content Fragment will be created, relative to `/content/dam`.  Examples: - `/wknd-shared/en/adventures` creates fragment at `/content/dam/wknd-shared/en/adventures` - `/my-site/content` creates fragment at `/content/dam/my-site/content`"
-    },
-    "title": {
-      "type": "string",
-      "description": "The title of the new Content Fragment."
-    }
-  },
-  "required": [
-    "PCID",
-    "modelId",
-    "parentPath",
-    "title"
   ]
 }
 ```
