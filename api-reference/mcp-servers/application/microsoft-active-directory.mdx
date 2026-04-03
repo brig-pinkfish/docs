@@ -10,14 +10,1190 @@ description: "Users, groups, and directory management"
 
 microsoft-active-directory is exposed as multiple MCP server IDs (one per area below). Each child server has its own server path and tool names.
 
-## Child servers
+| Tool | Description |
+| --- | --- |
+| [`microsoft_active_directory_add_administrative_unit_member`](#microsoft_active_directory_add_administrative_unit_member) | Add a member to an administrative unit |
+| [`microsoft_active_directory_add_group_member`](#microsoft_active_directory_add_group_member) | Add a member to a group |
+| [`microsoft_active_directory_create_administrative_unit`](#microsoft_active_directory_create_administrative_unit) | Create an administrative unit |
+| [`microsoft_active_directory_create_group`](#microsoft_active_directory_create_group) | Create a new group |
+| [`microsoft_active_directory_create_user`](#microsoft_active_directory_create_user) | Create a new user |
+| [`microsoft_active_directory_delete_administrative_unit`](#microsoft_active_directory_delete_administrative_unit) | Delete an administrative unit |
+| [`microsoft_active_directory_get_administrative_unit`](#microsoft_active_directory_get_administrative_unit) | Get an administrative unit by ID |
+| [`microsoft_active_directory_get_group`](#microsoft_active_directory_get_group) | Get a group by ID |
+| [`microsoft_active_directory_get_service_principal`](#microsoft_active_directory_get_service_principal) | Get a service principal by ID |
+| [`microsoft_active_directory_get_user`](#microsoft_active_directory_get_user) | Get a user by ID |
+| [`microsoft_active_directory_list_administrative_unit_members`](#microsoft_active_directory_list_administrative_unit_members) | List administrative unit members |
+| [`microsoft_active_directory_list_administrative_units`](#microsoft_active_directory_list_administrative_units) | List administrative units |
+| [`microsoft_active_directory_list_directory_role_members`](#microsoft_active_directory_list_directory_role_members) | List members of a directory role |
+| [`microsoft_active_directory_list_directory_roles`](#microsoft_active_directory_list_directory_roles) | List activated directory roles |
+| [`microsoft_active_directory_list_group_members`](#microsoft_active_directory_list_group_members) | List group members |
+| [`microsoft_active_directory_list_groups`](#microsoft_active_directory_list_groups) | List groups |
+| [`microsoft_active_directory_list_service_principals`](#microsoft_active_directory_list_service_principals) | List service principals |
+| [`microsoft_active_directory_list_user_memberships`](#microsoft_active_directory_list_user_memberships) | List groups and roles a user belongs to |
+| [`microsoft_active_directory_list_users`](#microsoft_active_directory_list_users) | List users |
+| [`microsoft_active_directory_remove_administrative_unit_member`](#microsoft_active_directory_remove_administrative_unit_member) | Remove a member from an administrative unit |
+| [`microsoft_active_directory_remove_group_member`](#microsoft_active_directory_remove_group_member) | Remove a member from a group |
+| [`microsoft_active_directory_update_administrative_unit`](#microsoft_active_directory_update_administrative_unit) | Update an administrative unit |
+| [`microsoft_active_directory_update_user`](#microsoft_active_directory_update_user) | Update a user |
 
-| Child server | Server path | Tools | Description |
-| --- | --- | --- | --- |
-| [microsoft-active-directory-applications](microsoft-active-directory/microsoft-active-directory-applications) | `/microsoft-active-directory-applications` | 8 | Active Directory Applications — manage application registrations, owners, and client secrets |
-| [microsoft-active-directory-devices](microsoft-active-directory/microsoft-active-directory-devices) | `/microsoft-active-directory-devices` | 10 | Active Directory Devices — manage Azure AD devices and Intune managed devices (wipe, retire, sync) |
-| [microsoft-active-directory-groups](microsoft-active-directory/microsoft-active-directory-groups) | `/microsoft-active-directory-groups` | 12 | Active Directory Groups — manage security and Microsoft 365 groups, members, owners, and transitive membership |
-| [microsoft-active-directory-lifecycle](microsoft-active-directory/microsoft-active-directory-lifecycle) | `/microsoft-active-directory-lifecycle` | 6 | Active Directory Lifecycle — onboarding invitations, OneDrive handoff, and deleted item recovery |
-| [microsoft-active-directory-roles-and-units](microsoft-active-directory/microsoft-active-directory-roles-and-units) | `/microsoft-active-directory-roles-and-units` | 11 | Active Directory Roles & Units — manage directory roles, administrative units, and resolve directory objects |
-| [microsoft-active-directory-service-principals](microsoft-active-directory/microsoft-active-directory-service-principals) | `/microsoft-active-directory-service-principals` | 5 | Active Directory Service Principals — manage enterprise applications, app role assignments, and OAuth permission grants |
-| [microsoft-active-directory-users](microsoft-active-directory/microsoft-active-directory-users) | `/microsoft-active-directory-users` | 21 | Active Directory Users — manage users, lifecycle, manager/reports, app role assignments, mailbox settings, authentication methods, and licenses |
+---
+
+## microsoft_active_directory_add_administrative_unit_member
+
+Add a member to an administrative unit
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+| `@odata.id` | string | Yes | — | Full URL of the directory object to add (e.g. https://graph.microsoft.com/v1.0/users/&#123;user-id&#125;) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    },
+    "@odata.id": {
+      "type": "string",
+      "description": "Full URL of the directory object to add (e.g. https://graph.microsoft.com/v1.0/users/{user-id})"
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id",
+    "@odata.id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_add_group_member
+
+Add a member to a group
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `group_id` | string | Yes | — | Group ID (GUID) |
+| `@odata.id` | string | Yes | — | Full URL of the directory object to add (e.g. https://graph.microsoft.com/v1.0/users/&#123;user-id&#125;) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Group ID (GUID)"
+    },
+    "@odata.id": {
+      "type": "string",
+      "description": "Full URL of the directory object to add (e.g. https://graph.microsoft.com/v1.0/users/{user-id})"
+    }
+  },
+  "required": [
+    "PCID",
+    "group_id",
+    "@odata.id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_create_administrative_unit
+
+Create an administrative unit
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | string | No | — | Description of the administrative unit |
+| `displayName` | string | Yes | — | Display name of the administrative unit |
+| `membershipRule` | string | No | — | Dynamic membership rule expression (required when membershipType is Dynamic) |
+| `membershipRuleProcessingState` | string | No | — | Processing state of the dynamic membership rule |
+| `membershipType` | string | No | — | Set to 'Dynamic' for rule-based membership, or 'Assigned' (default) for manual |
+| `visibility` | string | No | — | Visibility of the administrative unit |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the administrative unit"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Display name of the administrative unit"
+    },
+    "membershipRule": {
+      "type": "string",
+      "description": "Dynamic membership rule expression (required when membershipType is Dynamic)"
+    },
+    "membershipRuleProcessingState": {
+      "type": "string",
+      "description": "Processing state of the dynamic membership rule",
+      "enum": [
+        "On",
+        "Paused"
+      ]
+    },
+    "membershipType": {
+      "type": "string",
+      "description": "Set to 'Dynamic' for rule-based membership, or 'Assigned' (default) for manual",
+      "enum": [
+        "Assigned",
+        "Dynamic"
+      ]
+    },
+    "visibility": {
+      "type": "string",
+      "description": "Visibility of the administrative unit",
+      "enum": [
+        "Public",
+        "HiddenMembership"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "displayName"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_create_group
+
+Create a new group
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | string | No | — | Description of the group |
+| `displayName` | string | Yes | — | Display name of the group |
+| `groupTypes` | any[] | No | — | Set to ['Unified'] for Microsoft 365 groups, or [] for security groups |
+| `mailEnabled` | boolean | Yes | — | Whether the group is mail-enabled |
+| `mailNickname` | string | Yes | — | Mail alias for the group |
+| `securityEnabled` | boolean | Yes | — | Whether the group is a security group |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the group"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Display name of the group"
+    },
+    "groupTypes": {
+      "type": "array",
+      "description": "Set to ['Unified'] for Microsoft 365 groups, or [] for security groups"
+    },
+    "mailEnabled": {
+      "type": "boolean",
+      "description": "Whether the group is mail-enabled"
+    },
+    "mailNickname": {
+      "type": "string",
+      "description": "Mail alias for the group"
+    },
+    "securityEnabled": {
+      "type": "boolean",
+      "description": "Whether the group is a security group"
+    }
+  },
+  "required": [
+    "PCID",
+    "displayName",
+    "mailEnabled",
+    "mailNickname",
+    "securityEnabled"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_create_user
+
+Create a new user
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `accountEnabled` | boolean | Yes | — | Whether the account is enabled |
+| `department` | string | No | — | department |
+| `displayName` | string | Yes | — | Display name of the user |
+| `givenName` | string | No | — | givenName |
+| `jobTitle` | string | No | — | jobTitle |
+| `mailNickname` | string | Yes | — | Mail alias for the user |
+| `officeLocation` | string | No | — | officeLocation |
+| `passwordProfile` | object | Yes | — | passwordProfile |
+| `surname` | string | No | — | surname |
+| `userPrincipalName` | string | Yes | — | User principal name (e.g. user@contoso.onmicrosoft.com) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "accountEnabled": {
+      "type": "boolean",
+      "description": "Whether the account is enabled"
+    },
+    "department": {
+      "type": "string",
+      "description": "department"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Display name of the user"
+    },
+    "givenName": {
+      "type": "string",
+      "description": "givenName"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "jobTitle"
+    },
+    "mailNickname": {
+      "type": "string",
+      "description": "Mail alias for the user"
+    },
+    "officeLocation": {
+      "type": "string",
+      "description": "officeLocation"
+    },
+    "passwordProfile": {
+      "type": "object",
+      "description": "passwordProfile",
+      "properties": {
+        "password": {
+          "type": "string",
+          "description": "The password for the user"
+        },
+        "forceChangePasswordNextSignIn": {
+          "type": "boolean",
+          "description": "Whether user must change password at next sign-in"
+        }
+      },
+      "required": [
+        "password",
+        "forceChangePasswordNextSignIn"
+      ]
+    },
+    "surname": {
+      "type": "string",
+      "description": "surname"
+    },
+    "userPrincipalName": {
+      "type": "string",
+      "description": "User principal name (e.g. user@contoso.onmicrosoft.com)"
+    }
+  },
+  "required": [
+    "PCID",
+    "accountEnabled",
+    "displayName",
+    "mailNickname",
+    "passwordProfile",
+    "userPrincipalName"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_delete_administrative_unit
+
+Delete an administrative unit
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_get_administrative_unit
+
+Get an administrative unit by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_get_group
+
+Get a group by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `group_id` | string | Yes | — | Group ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Group ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "group_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_get_service_principal
+
+Get a service principal by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `sp_id` | string | Yes | — | Service principal ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "sp_id": {
+      "type": "string",
+      "description": "Service principal ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "sp_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_get_user
+
+Get a user by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `user_id` | string | Yes | — | User ID (GUID) or userPrincipalName |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User ID (GUID) or userPrincipalName"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "user_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_administrative_unit_members
+
+List administrative unit members
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_administrative_units
+
+List administrative units
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$filter` | string | No | — | OData filter expression (e.g. "displayName eq 'West Coast'") |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "OData filter expression (e.g. \"displayName eq 'West Coast'\")"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_directory_role_members
+
+List members of a directory role
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `role_id` | string | Yes | — | Directory role ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "role_id": {
+      "type": "string",
+      "description": "Directory role ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "role_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_directory_roles
+
+List activated directory roles
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_group_members
+
+List group members
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `group_id` | string | Yes | — | Group ID (GUID) |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Group ID (GUID)"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "group_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_groups
+
+List groups
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$filter` | string | No | — | OData filter expression (e.g. "displayName eq 'Marketing'") |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+| `$orderby` | string | No | — | Order results (e.g. "displayName asc") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "OData filter expression (e.g. \"displayName eq 'Marketing'\")"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    },
+    "$orderby": {
+      "type": "string",
+      "description": "Order results (e.g. \"displayName asc\")"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_service_principals
+
+List service principals
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$filter` | string | No | — | OData filter expression |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "OData filter expression"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_user_memberships
+
+List groups and roles a user belongs to
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `user_id` | string | Yes | — | User ID (GUID) or userPrincipalName |
+| `$select` | string | No | — | Comma-separated list of properties to return |
+| `$top` | integer | No | — | Number of results to return |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User ID (GUID) or userPrincipalName"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return"
+    }
+  },
+  "required": [
+    "PCID",
+    "user_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_list_users
+
+List users
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$filter` | string | No | — | OData filter expression (e.g. "displayName eq 'Jane Doe'", "mail eq 'user@contoso.com'", "startsWith(displayName,'Jane')") |
+| `$select` | string | No | — | Comma-separated list of properties to return (e.g. "id,displayName,mail,userPrincipalName") |
+| `$top` | integer | No | — | Number of results to return (max 999) |
+| `$orderby` | string | No | — | Order results (e.g. "displayName asc") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "OData filter expression (e.g. \"displayName eq 'Jane Doe'\", \"mail eq 'user@contoso.com'\", \"startsWith(displayName,'Jane')\")"
+    },
+    "$select": {
+      "type": "string",
+      "description": "Comma-separated list of properties to return (e.g. \"id,displayName,mail,userPrincipalName\")"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Number of results to return (max 999)"
+    },
+    "$orderby": {
+      "type": "string",
+      "description": "Order results (e.g. \"displayName asc\")"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_remove_administrative_unit_member
+
+Remove a member from an administrative unit
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+| `member_id` | string | Yes | — | ID of the member to remove |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    },
+    "member_id": {
+      "type": "string",
+      "description": "ID of the member to remove"
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id",
+    "member_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_remove_group_member
+
+Remove a member from a group
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `group_id` | string | Yes | — | Group ID (GUID) |
+| `member_id` | string | Yes | — | ID of the member to remove |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Group ID (GUID)"
+    },
+    "member_id": {
+      "type": "string",
+      "description": "ID of the member to remove"
+    }
+  },
+  "required": [
+    "PCID",
+    "group_id",
+    "member_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_update_administrative_unit
+
+Update an administrative unit
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `au_id` | string | Yes | — | Administrative unit ID (GUID) |
+| `description` | string | No | — | description |
+| `displayName` | string | No | — | displayName |
+| `membershipRule` | string | No | — | membershipRule |
+| `membershipRuleProcessingState` | string | No | — | membershipRuleProcessingState |
+| `membershipType` | string | No | — | membershipType |
+| `visibility` | string | No | — | visibility |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "au_id": {
+      "type": "string",
+      "description": "Administrative unit ID (GUID)"
+    },
+    "description": {
+      "type": "string",
+      "description": "description"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "displayName"
+    },
+    "membershipRule": {
+      "type": "string",
+      "description": "membershipRule"
+    },
+    "membershipRuleProcessingState": {
+      "type": "string",
+      "description": "membershipRuleProcessingState",
+      "enum": [
+        "On",
+        "Paused"
+      ]
+    },
+    "membershipType": {
+      "type": "string",
+      "description": "membershipType",
+      "enum": [
+        "Assigned",
+        "Dynamic"
+      ]
+    },
+    "visibility": {
+      "type": "string",
+      "description": "visibility",
+      "enum": [
+        "Public",
+        "HiddenMembership"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "au_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft_active_directory_update_user
+
+Update a user
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `user_id` | string | Yes | — | User ID (GUID) or userPrincipalName |
+| `accountEnabled` | boolean | No | — | accountEnabled |
+| `department` | string | No | — | department |
+| `displayName` | string | No | — | displayName |
+| `givenName` | string | No | — | givenName |
+| `jobTitle` | string | No | — | jobTitle |
+| `mobilePhone` | string | No | — | mobilePhone |
+| `officeLocation` | string | No | — | officeLocation |
+| `surname` | string | No | — | surname |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User ID (GUID) or userPrincipalName"
+    },
+    "accountEnabled": {
+      "type": "boolean",
+      "description": "accountEnabled"
+    },
+    "department": {
+      "type": "string",
+      "description": "department"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "displayName"
+    },
+    "givenName": {
+      "type": "string",
+      "description": "givenName"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "jobTitle"
+    },
+    "mobilePhone": {
+      "type": "string",
+      "description": "mobilePhone"
+    },
+    "officeLocation": {
+      "type": "string",
+      "description": "officeLocation"
+    },
+    "surname": {
+      "type": "string",
+      "description": "surname"
+    }
+  },
+  "required": [
+    "PCID",
+    "user_id"
+  ]
+}
+```
+
+</Expandable>
