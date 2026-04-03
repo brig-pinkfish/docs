@@ -24,6 +24,7 @@ description: "Adobe AEM Sites - content fragments, models, variations, versions,
 | [`adobe_experience_manager_sites_fragments_change_model`](#adobe_experience_manager_sites_fragments_change_model) | Change the model of a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_copy`](#adobe_experience_manager_sites_fragments_copy) | Copy a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_copy_tree`](#adobe_experience_manager_sites_fragments_copy_tree) | Copy a Content Fragment |
+| [`adobe_experience_manager_sites_fragments_create`](#adobe_experience_manager_sites_fragments_create) | Create a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_create_fragment`](#adobe_experience_manager_sites_fragments_create_fragment) | Create a Content Fragment |
 | [`adobe_experience_manager_sites_fragments_create_variation_for_fragment`](#adobe_experience_manager_sites_fragments_create_variation_for_fragment) | Create a Content Fragment Variation |
 | [`adobe_experience_manager_sites_fragments_create_versions_for_fragment`](#adobe_experience_manager_sites_fragments_create_versions_for_fragment) | Create a Version for a Content Fragment |
@@ -95,7 +96,7 @@ Create a batch request
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `requests` | any[] | Yes | — | The requests value |
+| `requests` | any[] | Yes | — | requests |
 
 <Expandable title="inputSchema">
 
@@ -109,7 +110,7 @@ Create a batch request
     },
     "requests": {
       "type": "array",
-      "description": "The requests value"
+      "description": "requests"
     }
   },
   "required": [
@@ -527,7 +528,7 @@ Copy a Content Fragment
 | --- | --- | --- | --- | --- |
 | `fragmentId` | string | Yes | — | The unique identifier of the Content Fragment to be copied. |
 | `name` | string | No | — | This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict. |
-| `parentPath` | string | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
+| `parentPath` | object | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
 
 <Expandable title="inputSchema">
 
@@ -548,7 +549,6 @@ Copy a Content Fragment
       "description": "This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict."
     },
     "parentPath": {
-      "type": "string",
       "description": "The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder."
     }
   },
@@ -575,7 +575,7 @@ Copy a Content Fragment
 | `fragmentId` | string | Yes | — | The unique identifier of the Content Fragment to be copied. |
 | `copyReferencesToMainFolder` | boolean | No | — | If set to true, the references of the Content Fragment will be copied under the same folder as the main Content Fragment. If set to false, the references will be copied under their original folders. |
 | `name` | string | No | — | This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict. |
-| `parentPath` | string | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
+| `parentPath` | object | Yes | — | The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder. |
 
 <Expandable title="inputSchema">
 
@@ -600,7 +600,6 @@ Copy a Content Fragment
       "description": "This property allows you to specify a new name for the resource being copied.  When a value is not provided the original name of the resource will be used. In case of resource conflicts in the  destination folder, the server will automatically generate an alternative resource name based on the provided value.  When a value is provided and a conflict exists in the destination folder, the caller will have to explicitly solve the conflict."
     },
     "parentPath": {
-      "type": "string",
       "description": "The folder to which the Content Fragment should be copied. The provided destination path should already exist. If the destination path does not exist, the copy operation will not be performed and the system will return an error.  This path should start with `/content/dam` or should be relative to the `/content/dam` folder."
     }
   },
@@ -608,6 +607,69 @@ Copy a Content Fragment
     "PCID",
     "fragmentId",
     "parentPath"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## adobe_experience_manager_sites_fragments_create
+
+Create a Content Fragment
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | string | No | — | The description of the new Content Fragment. |
+| `fields` | any[] | No | — | Data needed for populating the content fragment fields defined in the model |
+| `modelId` | string | Yes | — | Defines a `base64url` with no padding encoded ID. |
+| `name` | string | No | — | Optional parameter that represents the name used when storing the new Content Fragment. When missing, the value will be derived by the server from the `title` value. |
+| `parentPath` | string | Yes | — | The folder path where the new Content Fragment will be created, relative to `/content/dam`.  Examples: - `/wknd-shared/en/adventures` creates fragment at `/content/dam/wknd-shared/en/adventures` - `/my-site/content` creates fragment at `/content/dam/my-site/content` |
+| `title` | string | Yes | — | The title of the new Content Fragment. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "description": {
+      "type": "string",
+      "description": "The description of the new Content Fragment."
+    },
+    "fields": {
+      "type": "array",
+      "description": "Data needed for populating the content fragment fields defined in the model"
+    },
+    "modelId": {
+      "type": "string",
+      "description": "Defines a `base64url` with no padding encoded ID."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optional parameter that represents the name used when storing the new Content Fragment. When missing, the value will be derived by the server from the `title` value."
+    },
+    "parentPath": {
+      "type": "string",
+      "description": "The folder path where the new Content Fragment will be created, relative to `/content/dam`.  Examples: - `/wknd-shared/en/adventures` creates fragment at `/content/dam/wknd-shared/en/adventures` - `/my-site/content` creates fragment at `/content/dam/my-site/content`"
+    },
+    "title": {
+      "type": "string",
+      "description": "The title of the new Content Fragment."
+    }
+  },
+  "required": [
+    "PCID",
+    "modelId",
+    "parentPath",
+    "title"
   ]
 }
 ```
@@ -2395,7 +2457,7 @@ GraphQL POST request
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `query` | string | Yes | — | Search query string |
+| `query` | string | Yes | — | query |
 | `variables` | object | No | — | Variables simplify GraphQL queries by letting you pass data separately. Can be declared after the query and are passed like arguments to a function and begin with `$`. |
 
 <Expandable title="inputSchema">
@@ -2410,7 +2472,7 @@ GraphQL POST request
     },
     "query": {
       "type": "string",
-      "description": "Search query string"
+      "description": "query"
     },
     "variables": {
       "type": "object",
@@ -2528,7 +2590,7 @@ Create a Content Fragment Model
 | `dryRun` | boolean | No | — | If set to true, this operation allows validating the payload for creating one or more Content Fragment Models  before performing the actual creation request. It performs the same validations as the creation process but does not create the models. |
 | `configurationFolder` | string | No | — | The configuration folder where the models should be created. If both `configurationFolder` and `models.configurationFolder` are provided, the latter will take precedence. |
 | `locked` | boolean | No | — | If the models are locked, then no edits can be performed on them, except for unlocking them. If both `locked` and `models.locked` are provided, the latter will take precedence. |
-| `models` | any[] | No | — | The models value |
+| `models` | any[] | No | — | models |
 | `status` | string | No | — | The status of this model. A model is in `draft` as soon as it's created, unless the user specifically marks the model as `enabled`. A model is in `disabled` state only when a user explicitly disables the model. |
 
 <Expandable title="inputSchema">
@@ -2555,7 +2617,7 @@ Create a Content Fragment Model
     },
     "models": {
       "type": "array",
-      "description": "The models value"
+      "description": "models"
     },
     "status": {
       "type": "string",
@@ -2586,7 +2648,7 @@ Update the existing UI schema associated with a Content Fragment Model
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of the Content Fragment Model. |
-| `constraints` | any[] | No | — | The constraints value |
+| `constraints` | any[] | No | — | constraints |
 | `uiSchema` | object | No | — | Common base interface for any UI schema element. |
 
 <Expandable title="inputSchema">
@@ -2605,7 +2667,7 @@ Update the existing UI schema associated with a Content Fragment Model
     },
     "constraints": {
       "type": "array",
-      "description": "The constraints value"
+      "description": "constraints"
     },
     "uiSchema": {
       "type": "object",
@@ -2617,11 +2679,11 @@ Update the existing UI schema associated with a Content Fragment Model
         },
         "options": {
           "type": "object",
-          "description": "Additional options for a UI Schema element. The options which are not defined in this schema must have a name that starts with 'x-'."
+          "description": "Additional options for a UI Schema element. The options which are not defined in this schema must have a name that starts with 'x-'. "
         },
         "rule": {
           "type": "object",
-          "description": "Rules allow for dynamic aspects for a form, e.g. by hiding or disabling UI schema elements."
+          "description": "Rules allow for dynamic aspects for a form, e.g. by hiding or disabling UI schema elements. "
         }
       },
       "required": [
