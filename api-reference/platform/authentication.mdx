@@ -1,48 +1,99 @@
 ---
 title: "Authentication"
-description: "API keys and runtime tokens"
+description: "OAuth 2.0 Client Credentials and API keys"
 ---
 
-Exchange your API key for a runtime token (JWT). Use the token as `Authorization: Bearer <token>` for MCP requests. Token lifetime: 60 minutes.
+Authenticate programmatically using OAuth 2.0 Client Credentials or the legacy API key exchange. Both return a runtime token (JWT) valid for 60 minutes. Use the token as `Authorization: Bearer <token>` for MCP requests.
 
 <Note>The token is for **MCP requests only**. App API endpoints (e.g. `/api/automations`) require Cognito login and do not accept this token.</Note>
 
-## Create an API Key
+## Create API Credentials
 
-1. **Settings → API Keys → Create**
-2. Copy the key immediately (shown once)
-3. Get your **Organization ID** from organization settings
+1. **Settings → API Credentials → Create Credential**
+2. Copy the **Client ID** and **Client Secret** immediately (the secret is shown once)
+3. Note your **Organization ID** (shown on the same page)
 
-<Note>New API keys may take up to 60 seconds to activate.</Note>
+<Note>New credentials may take up to 60 seconds to activate.</Note>
 
-## Exchange for Runtime Token
+## OAuth 2.0 Client Credentials (Recommended)
+
+Exchange your Client ID and Client Secret for an access token using the standard OAuth 2.0 Client Credentials grant ([RFC 6749 Section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)).
+
+```bash
+curl -X POST "https://app-api.app.pinkfish.ai/oauth/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=YOUR_CLIENT_ID" \
+  -d "client_secret=YOUR_CLIENT_SECRET" \
+  -d "scope=org:YOUR_ORG_ID"
+```
+
+You can also send credentials via the `Authorization: Basic` header:
+
+```bash
+curl -X POST "https://app-api.app.pinkfish.ai/oauth/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic $(echo -n 'YOUR_CLIENT_ID:YOUR_CLIENT_SECRET' | base64)" \
+  -d "grant_type=client_credentials" \
+  -d "scope=org:YOUR_ORG_ID"
+```
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| `grant_type` | Yes | Must be `client_credentials` |
+| `client_id` | Yes | Your credential's Client ID |
+| `client_secret` | Yes | Your credential's Client Secret |
+| `scope` | Yes | `org:<organization_id>` |
+
+**Response:**
+
+```json
+{
+  "access_token": "eyJhbGciOi...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+**Error Response:**
+
+```json
+{
+  "error": "invalid_client",
+  "error_description": "Client authentication failed"
+}
+```
+
+## Legacy API Key Exchange
+
+The original token exchange endpoint is still available for backward compatibility.
 
 ```bash
 curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
-  -H "X-Api-Key: YOUR_API_KEY" \
+  -H "X-Api-Key: YOUR_CLIENT_SECRET" \
   -H "X-Selected-Org: YOUR_ORG_ID" \
   -H "Content-Type: application/json"
 ```
 
-| Header           | Required | Description     |
-| ---------------- | -------- | --------------- |
-| `X-Api-Key`      | Yes      | API key         |
-| `X-Selected-Org` | Yes      | Organization ID |
-| `Content-Type`   | Yes      | `application/json` |
+| Header | Required | Description |
+| --- | --- | --- |
+| `X-Api-Key` | Yes | Your Client Secret (the `pf_live_...` value) |
+| `X-Selected-Org` | Yes | Organization ID |
+| `Content-Type` | Yes | `application/json` |
 
 **Response:** `{ "token": "eyJhbGciOi..." }`
 
 ## Using the Token
 
-Use the token for MCP server requests. The server path depends on your MCP integration—see your MCP client configuration or the MCP integration guide for the correct path.
+Use the token for MCP server requests. The server path depends on your MCP integration.
 
 ```bash
-curl -s -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
+curl -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
   -H "Authorization: Bearer $PINKFISH_TOKEN" \
   -H "X-Selected-Org: $ORG_ID" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
-  -d '{ ... }'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"tool_name","arguments":{}}}'
 ```
 
 ## Bootstrap Script
@@ -51,11 +102,16 @@ Get token and export it. Requires `curl` and `jq`.
 
 ```bash
 #!/bin/bash
-API_KEY="<YOUR_API_KEY>"
+CLIENT_ID="<YOUR_CLIENT_ID>"
+CLIENT_SECRET="<YOUR_CLIENT_SECRET>"
 ORG_ID="<YOUR_ORG_ID>"
 
-R=$(curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
-  -H "X-Api-Key: ${API_KEY}" -H "X-Selected-Org: ${ORG_ID}" -H "Content-Type: application/json")
-export PINKFISH_TOKEN=$(echo "$R" | jq -r '.token')
+R=$(curl -s -X POST "https://app-api.app.pinkfish.ai/oauth/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=${CLIENT_ID}" \
+  -d "client_secret=${CLIENT_SECRET}" \
+  -d "scope=org:${ORG_ID}")
+export PINKFISH_TOKEN=$(echo "$R" | jq -r '.access_token')
 [ "$PINKFISH_TOKEN" = "null" ] || [ -z "$PINKFISH_TOKEN" ] && { echo "Auth failed"; echo "$R" | jq .; exit 1; }
 ```

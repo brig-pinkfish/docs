@@ -12,21 +12,23 @@ description: "AI image generation, editing, and background removal"
 
 | Tool | Description |
 | --- | --- |
-| [`image-processing_ai_generate`](#image-processing_ai_generate) | Generate images from text prompts using AI. Creates high-quality images based on your description. Returns a URL to the generated image. |
-| [`image-processing_nano_banana`](#image-processing_nano_banana) | Powerful AI image editing using Google Nano Banana. Edit images with text instructions, generate variations, or use images as references. Supports text-based editing like "make the sky blue", "add a hat", style transfers, and image-to-image generation. |
+| [`image-processing_ai_generate`](#image-processing_ai_generate) | Generate high-quality images from text prompts using Google Nano Banana 2 (Gemini 3.1 Flash Image). Excels at photorealism, detailed scenes, text rendering, and diverse artistic styles. Returns a URL to the generated image. |
+| [`image-processing_nano_banana`](#image-processing_nano_banana) | Fast AI image generation and editing using Google Nano Banana 2 (Gemini 3.1 Flash Image). Generate images from text, edit images with text instructions, generate variations, or use images as references. Supports text rendering, style transfers, multi-image fusion (up to 14 images), and image-to-image generation. Can use Google Search for real-time info (weather, scores, events). |
+| [`image-processing_nano_banana_pro`](#image-processing_nano_banana_pro) | High-quality AI image generation and editing using Google Nano Banana Pro (Gemini 3 Pro). Produces superior results compared to standard Nano Banana, especially for accurate text rendering, high-fidelity logo reproduction, and overall image quality. Supports text-based editing, style transfers, multi-image fusion (up to 14 images), and resolutions up to 4K. |
 | [`image-processing_ai_background_removal`](#image-processing_ai_background_removal) | Remove the background from an image. Can also replace the background with a solid color, blur, or another image. Returns a transparent PNG or processed image. |
 
 ---
 
 ## image-processing_ai_generate
 
-Generate images from text prompts using AI. Creates high-quality images based on your description. Returns a URL to the generated image.
+Generate high-quality images from text prompts using Google Nano Banana 2 (Gemini 3.1 Flash Image). Excels at photorealism, detailed scenes, text rendering, and diverse artistic styles. Returns a URL to the generated image.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `prompt` | string | Yes | — | Text description of the image to generate. Be specific and descriptive for best results. |
+| `aspect_ratio` | string | No | — | Aspect ratio of the generated image (default: 1:1) |
 | `output_format` | string | No | — | Output image format (default: png) |
 
 <Expandable title="inputSchema">
@@ -38,6 +40,18 @@ Generate images from text prompts using AI. Creates high-quality images based on
     "prompt": {
       "type": "string",
       "description": "Text description of the image to generate. Be specific and descriptive for best results."
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "enum": [
+        "1:1",
+        "3:4",
+        "4:3",
+        "9:16",
+        "16:9"
+      ],
+      "default": "1:1",
+      "description": "Aspect ratio of the generated image (default: 1:1)"
     },
     "output_format": {
       "type": "string",
@@ -61,15 +75,112 @@ Generate images from text prompts using AI. Creates high-quality images based on
 
 ## image-processing_nano_banana
 
-Powerful AI image editing using Google Nano Banana. Edit images with text instructions, generate variations, or use images as references. Supports text-based editing like "make the sky blue", "add a hat", style transfers, and image-to-image generation.
+Fast AI image generation and editing using Google Nano Banana 2 (Gemini 3.1 Flash Image). Generate images from text, edit images with text instructions, generate variations, or use images as references. Supports text rendering, style transfers, multi-image fusion (up to 14 images), and image-to-image generation. Can use Google Search for real-time info (weather, scores, events).
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `prompt` | string | Yes | — | Text instruction describing how to edit the image. Examples: "make the background sunset", "add sunglasses", "change hair color to blonde" |
-| `image_urls` | string[] | Yes | — | Array of image URLs to use as input/reference for editing |
+| `prompt` | string | Yes | — | Text description of the image to generate, or instruction describing how to edit the image. Examples: "make the background sunset", "add sunglasses", "a product photo of a coffee mug" |
+| `image_urls` | string[] | No | — | Array of image URLs to use as input/reference for editing (supports up to 14 images) |
 | `aspect_ratio` | string | No | — | Output aspect ratio (default: match_input_image) |
+| `resolution` | string | No | — | Resolution of the generated image. Higher resolutions take longer. (default: 1K) |
+| `output_format` | string | No | — | Output image format (default: jpg) |
+| `google_search` | boolean | No | — | Use Google Web Search grounding to generate images based on real-time information (e.g. weather, sports scores, recent events). Default: false |
+| `image_search` | boolean | No | — | Use Google Image Search grounding to find web images as visual context for generation. When enabled, web search is also used automatically. Default: false |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string",
+      "description": "Text description of the image to generate, or instruction describing how to edit the image. Examples: \"make the background sunset\", \"add sunglasses\", \"a product photo of a coffee mug\""
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Array of image URLs to use as input/reference for editing (supports up to 14 images)"
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "enum": [
+        "match_input_image",
+        "1:1",
+        "1:4",
+        "1:8",
+        "2:3",
+        "3:2",
+        "3:4",
+        "4:1",
+        "4:3",
+        "4:5",
+        "5:4",
+        "8:1",
+        "9:16",
+        "16:9",
+        "21:9"
+      ],
+      "default": "match_input_image",
+      "description": "Output aspect ratio (default: match_input_image)"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": [
+        "1K",
+        "2K",
+        "4K"
+      ],
+      "default": "1K",
+      "description": "Resolution of the generated image. Higher resolutions take longer. (default: 1K)"
+    },
+    "output_format": {
+      "type": "string",
+      "enum": [
+        "jpg",
+        "png"
+      ],
+      "default": "jpg",
+      "description": "Output image format (default: jpg)"
+    },
+    "google_search": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use Google Web Search grounding to generate images based on real-time information (e.g. weather, sports scores, recent events). Default: false"
+    },
+    "image_search": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use Google Image Search grounding to find web images as visual context for generation. When enabled, web search is also used automatically. Default: false"
+    }
+  },
+  "required": [
+    "prompt"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## image-processing_nano_banana_pro
+
+High-quality AI image generation and editing using Google Nano Banana Pro (Gemini 3 Pro). Produces superior results compared to standard Nano Banana, especially for accurate text rendering, high-fidelity logo reproduction, and overall image quality. Supports text-based editing, style transfers, multi-image fusion (up to 14 images), and resolutions up to 4K.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `prompt` | string | Yes | — | Text description of the image to generate, or instruction describing how to edit the image. Examples: "a retro movie poster for STELLAR DRIFT", "transform this photo into Van Gogh style" |
+| `image_urls` | string[] | No | — | Array of image URLs to use as input/reference for editing (supports up to 14 images) |
+| `aspect_ratio` | string | No | — | Output aspect ratio (default: match_input_image) |
+| `resolution` | string | No | — | Resolution of the generated image. Higher resolutions take longer. (default: 2K) |
 | `output_format` | string | No | — | Output image format (default: jpg) |
 
 <Expandable title="inputSchema">
@@ -80,35 +191,43 @@ Powerful AI image editing using Google Nano Banana. Edit images with text instru
   "properties": {
     "prompt": {
       "type": "string",
-      "description": "Text instruction describing how to edit the image. Examples: \"make the background sunset\", \"add sunglasses\", \"change hair color to blonde\""
+      "description": "Text description of the image to generate, or instruction describing how to edit the image. Examples: \"a retro movie poster for STELLAR DRIFT\", \"transform this photo into Van Gogh style\""
     },
     "image_urls": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Array of image URLs to use as input/reference for editing"
+      "default": [],
+      "description": "Array of image URLs to use as input/reference for editing (supports up to 14 images)"
     },
     "aspect_ratio": {
       "type": "string",
       "enum": [
         "match_input_image",
         "1:1",
-        "16:9",
-        "9:16",
-        "4:3",
-        "3:4",
-        "3:2",
         "2:3",
+        "3:2",
+        "3:4",
+        "4:3",
         "4:5",
         "5:4",
-        "21:9",
-        "9:21",
-        "2:1",
-        "1:2"
+        "9:16",
+        "16:9",
+        "21:9"
       ],
       "default": "match_input_image",
       "description": "Output aspect ratio (default: match_input_image)"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": [
+        "1K",
+        "2K",
+        "4K"
+      ],
+      "default": "2K",
+      "description": "Resolution of the generated image. Higher resolutions take longer. (default: 2K)"
     },
     "output_format": {
       "type": "string",
@@ -121,8 +240,7 @@ Powerful AI image editing using Google Nano Banana. Edit images with text instru
     }
   },
   "required": [
-    "prompt",
-    "image_urls"
+    "prompt"
   ]
 }
 ```
