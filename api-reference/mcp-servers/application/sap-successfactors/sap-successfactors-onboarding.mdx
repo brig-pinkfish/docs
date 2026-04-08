@@ -14,6 +14,7 @@ description: "SAP SuccessFactors Onboarding"
 | --- | --- |
 | [`sap_successfactors_onboarding_create_create_onboardee`](#sap_successfactors_onboarding_create_create_onboardee) | This function import enables you to create an onboarding external user record in the system with information collected from your external Applicant Tracking System (ATS). It also enables you to perform preliminary checks to understand if the onboardee is a new hire or a rehire and take actions as necessary. |
 | [`sap_successfactors_onboarding_create_initiate_onboarding_for_user`](#sap_successfactors_onboarding_create_initiate_onboarding_for_user) | After an external user record is created and Employee Central data is added to the record, you can use this funtion import to initiate onboarding process from an external Application Tracking System. It modifies the ONB2Process and ONB2ProcessTrigger MDF objects. All Employee Central entities (PerPerson, EmpJob, EmpEmployment) should be upserted prior to this call. |
+| [`sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys`](#sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys) | Mass Initiate Onboarding Journeys |
 | [`sap_successfactors_onboarding_get_assigned_compliance_form`](#sap_successfactors_onboarding_get_assigned_compliance_form) | Get entity from AssignedComplianceForm by key |
 | [`sap_successfactors_onboarding_get_compliance_document_flow`](#sap_successfactors_onboarding_get_compliance_document_flow) | Get entity from ComplianceDocumentFlow by key |
 | [`sap_successfactors_onboarding_get_compliance_form_data`](#sap_successfactors_onboarding_get_compliance_form_data) | Get entity from ComplianceFormData by key |
@@ -26,6 +27,10 @@ description: "SAP SuccessFactors Onboarding"
 | [`sap_successfactors_onboarding_list_compliance_form_signature`](#sap_successfactors_onboarding_list_compliance_form_signature) | This entity stores the Compliance form signature assigned to the new hire. |
 | [`sap_successfactors_onboarding_list_compliance_process`](#sap_successfactors_onboarding_list_compliance_process) | This entity represents the compliance workflow assigned to a new hire. |
 | [`sap_successfactors_onboarding_list_compliance_process_task`](#sap_successfactors_onboarding_list_compliance_process_task) | This entity allows you to store the start time, end time, and the status of a particular compliance task. |
+| [`sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id`](#sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id) | Get the Onboarding journey |
+| [`sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id`](#sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id) | Gets custom task information by task ID. |
+| [`sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys`](#sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys) | Resource to mass cancel onboarding journeys |
+| [`sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id`](#sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id) | API to update custom task status. |
 
 ---
 
@@ -67,6 +72,41 @@ After an external user record is created and Employee Central data is added to t
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID for the authenticated connection"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys
+
+Mass Initiate Onboarding Journeys
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `newHireCreateJourneyRequests` | any[] | No | — | Array of Onboarding Journey |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "newHireCreateJourneyRequests": {
+      "type": "array",
+      "description": "Array of Onboarding Journey"
     }
   },
   "required": [
@@ -763,6 +803,154 @@ This entity allows you to store the start time, end time, and the status of a pa
   },
   "required": [
     "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id
+
+Get the Onboarding journey
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `journeyId` | string | Yes | — | Journey Id |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "journeyId": {
+      "type": "string",
+      "description": "Journey Id"
+    }
+  },
+  "required": [
+    "PCID",
+    "journeyId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id
+
+Gets custom task information by task ID.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `taskDataId` | string | Yes | — | id of Custom Task |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "taskDataId": {
+      "type": "string",
+      "description": "id of Custom Task"
+    }
+  },
+  "required": [
+    "PCID",
+    "taskDataId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys
+
+Resource to mass cancel onboarding journeys
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `newHireUpdateJourneyRequests` | any[] | No | — | New Hire Update Journey Requests |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "newHireUpdateJourneyRequests": {
+      "type": "array",
+      "description": "New Hire Update Journey Requests"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id
+
+API to update custom task status.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `taskDataId` | string | Yes | — | id of Custom Task |
+| `status` | string | No | — | Status of task. Valid Values OPEN, COMPLETED |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "taskDataId": {
+      "type": "string",
+      "description": "id of Custom Task"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status of task. Valid Values OPEN, COMPLETED"
+    }
+  },
+  "required": [
+    "PCID",
+    "taskDataId"
   ]
 }
 ```

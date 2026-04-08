@@ -13,11 +13,14 @@ description: "SAP SuccessFactors Compensation"
 | Tool | Description |
 | --- | --- |
 | [`sap_successfactors_compensation_get_emp_compensation`](#sap_successfactors_compensation_get_emp_compensation) | Get entity from EmpCompensation by key |
+| [`sap_successfactors_compensation_get_emp_compensation_expand_emp_compensation_calculated_nav`](#sap_successfactors_compensation_get_emp_compensation_expand_emp_compensation_calculated_nav) | Get entity from EmpCompensationCalculated by key |
 | [`sap_successfactors_compensation_get_emp_pay_comp_non_recurring`](#sap_successfactors_compensation_get_emp_pay_comp_non_recurring) | Get entity from EmpPayCompNonRecurring by key |
 | [`sap_successfactors_compensation_get_emp_pay_comp_recurring`](#sap_successfactors_compensation_get_emp_pay_comp_recurring) | Get entity from EmpPayCompRecurring by key |
 | [`sap_successfactors_compensation_list_emp_compensation`](#sap_successfactors_compensation_list_emp_compensation) | Get entities from EmpCompensation |
+| [`sap_successfactors_compensation_list_emp_compensation_expand_emp_compensation_calculated_nav`](#sap_successfactors_compensation_list_emp_compensation_expand_emp_compensation_calculated_nav) | Get entities from EmpCompensationCalculated |
 | [`sap_successfactors_compensation_list_emp_pay_comp_non_recurring`](#sap_successfactors_compensation_list_emp_pay_comp_non_recurring) | Get entities from EmpPayCompNonRecurring |
 | [`sap_successfactors_compensation_list_emp_pay_comp_recurring`](#sap_successfactors_compensation_list_emp_pay_comp_recurring) | Get entities from EmpPayCompRecurring |
+| [`sap_successfactors_compensation_query_employee_compensation_entries`](#sap_successfactors_compensation_query_employee_compensation_entries) | Retrieves the compensation records on worksheets for a template ID based on your criteria. |
 
 ---
 
@@ -63,6 +66,59 @@ Get entity from EmpCompensation by key
   },
   "required": [
     "PCID",
+    "startDate",
+    "userId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_compensation_get_emp_compensation_expand_emp_compensation_calculated_nav
+
+Get entity from EmpCompensationCalculated by key
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `seqNumber` | integer | Yes | — | key: seqNumber |
+| `startDate` | string | Yes | — | key: startDate |
+| `userId` | string | Yes | — | key: userId |
+| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "seqNumber": {
+      "type": "integer",
+      "description": "key: seqNumber"
+    },
+    "startDate": {
+      "type": "string",
+      "description": "key: startDate"
+    },
+    "userId": {
+      "type": "string",
+      "description": "key: userId"
+    },
+    "$select": {
+      "type": "array",
+      "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    }
+  },
+  "required": [
+    "PCID",
+    "seqNumber",
     "startDate",
     "userId"
   ]
@@ -260,6 +316,71 @@ Get entities from EmpCompensation
 
 ---
 
+## sap_successfactors_compensation_list_emp_compensation_expand_emp_compensation_calculated_nav
+
+Get entities from EmpCompensationCalculated
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `$top` | integer | No | — | Show only the first n items, see [OData Paging - Top](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$skip` | integer | No | — | Skip the first n items, see [OData Paging - Skip](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "Show only the first n items, see [OData Paging - Top](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$skip": {
+      "type": "integer",
+      "description": "Skip the first n items, see [OData Paging - Skip](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$search": {
+      "type": "string",
+      "description": "Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$count": {
+      "type": "boolean",
+      "description": "Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$orderby": {
+      "type": "array",
+      "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    },
+    "$select": {
+      "type": "array",
+      "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## sap_successfactors_compensation_list_emp_pay_comp_non_recurring
 
 Get entities from EmpPayCompNonRecurring
@@ -387,6 +508,67 @@ Get entities from EmpPayCompRecurring
   },
   "required": [
     "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## sap_successfactors_compensation_query_employee_compensation_entries
+
+Retrieves the compensation records on worksheets for a template ID based on your criteria.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `templateId` | integer | Yes | — | Template ID |
+| `$skip` | integer | No | — | The number of events to skip before beginning to return events in the response |
+| `$top` | integer | No | — | The maximum number of events to return in the response |
+| `$filter` | string | No | — | The filter operation (eq and in) for compPlanId, formDataId, location, department, and division |
+| `$expand` | string | No | — | The expand operation for salary, bonus, stock, varpay, commentList, and ratingInfos |
+| `$select` | string | No | — | The selection operation for standard and custom fields |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "templateId": {
+      "type": "integer",
+      "description": "Template ID"
+    },
+    "$skip": {
+      "type": "integer",
+      "description": "The number of events to skip before beginning to return events in the response"
+    },
+    "$top": {
+      "type": "integer",
+      "description": "The maximum number of events to return in the response"
+    },
+    "$filter": {
+      "type": "string",
+      "description": "The filter operation (eq and in) for compPlanId, formDataId, location, department, and division"
+    },
+    "$expand": {
+      "type": "string",
+      "description": "The expand operation for salary, bonus, stock, varpay, commentList, and ratingInfos"
+    },
+    "$select": {
+      "type": "string",
+      "description": "The selection operation for standard and custom fields"
+    }
+  },
+  "required": [
+    "PCID",
+    "templateId"
   ]
 }
 ```
