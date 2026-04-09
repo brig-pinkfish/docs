@@ -18,9 +18,13 @@ description: "DataRobot Batch Predictions"
 | [`datarobot_batch_predictions_batch_predictions_retrieve`](#datarobot_batch_predictions_batch_predictions_retrieve) | Retrieve Batch Prediction job |
 | [`datarobot_batch_predictions_batch_predictions_update`](#datarobot_batch_predictions_batch_predictions_update) | Update a Batch Prediction job |
 | [`datarobot_batch_predictions_computed_training_predictions_list`](#datarobot_batch_predictions_computed_training_predictions_list) | Retrieve training predictions |
+| [`datarobot_batch_predictions_csv_upload_finalize_multipart_create`](#datarobot_batch_predictions_csv_upload_finalize_multipart_create) | Finalize a multipart upload |
+| [`datarobot_batch_predictions_csv_upload_part_put`](#datarobot_batch_predictions_csv_upload_part_put) | Upload CSV data in multiple parts |
+| [`datarobot_batch_predictions_csv_upload_put_many`](#datarobot_batch_predictions_csv_upload_put_many) | Creates a new_model_id Batch Prediction job |
 | [`datarobot_batch_predictions_download_list`](#datarobot_batch_predictions_download_list) | Download the scored data set of a batch prediction job |
 | [`datarobot_batch_predictions_from_existing_create`](#datarobot_batch_predictions_from_existing_create) | Create a new a Batch Prediction job based on an existing Batch Prediction job. |
 | [`datarobot_batch_predictions_from_job_definition_create`](#datarobot_batch_predictions_from_job_definition_create) | Launch a Batch Prediction job for scoring |
+| [`datarobot_batch_predictions_jobs_csv_upload_put_many`](#datarobot_batch_predictions_jobs_csv_upload_put_many) | Stream CSV data to a Batch job |
 | [`datarobot_batch_predictions_jobs_delete`](#datarobot_batch_predictions_jobs_delete) | Cancel a Batch job |
 | [`datarobot_batch_predictions_jobs_download_list`](#datarobot_batch_predictions_jobs_download_list) | Download the scored data set of a batch job |
 | [`datarobot_batch_predictions_jobs_from_job_definition_create`](#datarobot_batch_predictions_jobs_from_job_definition_create) | Launch a Batch job for scoring |
@@ -310,25 +314,16 @@ Cancel a Batch Prediction job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "predictionJobId": {
-      "type": "string",
-      "description": "ID of the Batch Prediction job"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "predictionJobId"
+    "predictionJobId",
+    "partNumber"
   ]
 }
 ```
@@ -464,25 +459,16 @@ Retrieve Batch Prediction job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "predictionJobId": {
-      "type": "string",
-      "description": "ID of the Batch Prediction job"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "predictionJobId"
+    "predictionJobId",
+    "partNumber"
   ]
 }
 ```
@@ -500,31 +486,9 @@ Update a Batch Prediction job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
-| `aborted` | string | No | — | Time when job abortion happened |
-| `completed` | string | No | — | Time when job completed scoring |
-| `failedRows` | integer | No | — | Number of rows that have failed scoring |
-| `hidden` | boolean | No | — | Hides or unhides the job from the job list |
-| `jobIntakeSize` | integer | No | — | Number of bytes in the intake dataset for this job |
-| `jobOutputSize` | integer | No | — | Number of bytes in the output dataset for this job |
-| `logs` | any[] | No | — | The job log. |
-| `scoredRows` | integer | No | — | Number of rows that have been used in prediction computation |
-| `skippedRows` | integer | No | — | Number of rows that have been skipped during scoring. May contain non-zero value only in time-series predictions case if provided dataset contains more than required historical rows. |
-| `started` | string | No | — | Time when job scoring begin |
-| `status` | string | No | — | The current job status |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "predictionJobId": {
-      "type": "string",
-      "description": "ID of the Batch Prediction job"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     },
     "aborted": {
       "type": "string",
@@ -580,7 +544,8 @@ Update a Batch Prediction job
   },
   "required": [
     "PCID",
-    "predictionJobId"
+    "predictionJobId",
+    "partNumber"
   ]
 }
 ```
@@ -643,15 +608,43 @@ Retrieve training predictions
 
 ---
 
-## datarobot_batch_predictions_download_list
+## datarobot_batch_predictions_csv_upload_finalize_multipart_create
 
-Download the scored data set of a batch prediction job
+Finalize a multipart upload
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
+    },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
+    }
+  },
+  "required": [
+    "PCID",
+    "predictionJobId",
+    "partNumber"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## datarobot_batch_predictions_csv_upload_part_put
+
+Upload CSV data in multiple parts
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
+| `partNumber` | integer | Yes | — | The number of which csv part is being uploaded when using multipart upload |
 
 <Expandable title="inputSchema">
 
@@ -666,11 +659,100 @@ Download the scored data set of a batch prediction job
     "predictionJobId": {
       "type": "string",
       "description": "ID of the Batch Prediction job"
+    },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "predictionJobId"
+    "predictionJobId",
+    "partNumber"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## datarobot_batch_predictions_csv_upload_put_many
+
+Creates a new_model_id Batch Prediction job
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
+| `partNumber` | integer | Yes | — | The number of which csv part is being uploaded when using multipart upload |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "predictionJobId": {
+      "type": "string",
+      "description": "ID of the Batch Prediction job"
+    },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
+    }
+  },
+  "required": [
+    "PCID",
+    "predictionJobId",
+    "partNumber"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## datarobot_batch_predictions_download_list
+
+Download the scored data set of a batch prediction job
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
+| `partNumber` | integer | Yes | — | The number of which csv part is being uploaded when using multipart upload |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "predictionJobId": {
+      "type": "string",
+      "description": "ID of the Batch Prediction job"
+    },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
+    }
+  },
+  "required": [
+    "PCID",
+    "predictionJobId",
+    "partNumber"
   ]
 }
 ```
@@ -687,7 +769,8 @@ Create a new a Batch Prediction job based on an existing Batch Prediction job.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `predictionJobId` | string | Yes | — | ID of the Batch Prediction job to clone. |
+| `partNumber` | integer | Yes | — | The number of which csv part is being uploaded when using multipart upload |
+| `predictionJobId` | string | Yes | — | ID of the Batch Prediction job |
 
 <Expandable title="inputSchema">
 
@@ -699,50 +782,36 @@ Create a new a Batch Prediction job based on an existing Batch Prediction job.
       "type": "string",
       "description": "Pink Connect ID for the authenticated connection"
     },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
+    },
     "predictionJobId": {
       "type": "string",
-      "description": "ID of the Batch Prediction job to clone."
+      "description": "ID of the Batch Prediction job"
     }
   },
   "required": [
     "PCID",
-    "predictionJobId"
-  ]
-}
-```
+## datarobot_batch_predictions_jobs_csv_upload_put_many
 
-</Expandable>
-
----
-
-## datarobot_batch_predictions_from_job_definition_create
-
-Launch a Batch Prediction job for scoring
+Stream CSV data to a Batch job
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobDefinitionId` | string | Yes | — | ID of the Batch Prediction job definition |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
+| `batchJobId` | string | Yes | — | ID of the Batch job |
     },
-    "jobDefinitionId": {
-      "type": "string",
-      "description": "ID of the Batch Prediction job definition"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "jobDefinitionId"
+    "batchJobId",
+    "partNumber"
   ]
 }
 ```
@@ -760,6 +829,7 @@ Cancel a Batch job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `batchJobId` | string | Yes | — | ID of the Batch job |
+| `partNumber` | integer | Yes | — | The number of which csv part is being uploaded when using multipart upload |
 
 <Expandable title="inputSchema">
 
@@ -774,11 +844,16 @@ Cancel a Batch job
     "batchJobId": {
       "type": "string",
       "description": "ID of the Batch job"
+    },
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "batchJobId"
+    "batchJobId",
+    "partNumber"
   ]
 }
 ```
@@ -796,25 +871,16 @@ Download the scored data set of a batch job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `batchJobId` | string | Yes | — | ID of the Batch job |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "batchJobId": {
-      "type": "string",
-      "description": "ID of the Batch job"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "batchJobId"
+    "batchJobId",
+    "partNumber"
   ]
 }
 ```
@@ -991,25 +1057,16 @@ Retrieve Batch job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `batchJobId` | string | Yes | — | ID of the Batch job |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "batchJobId": {
-      "type": "string",
-      "description": "ID of the Batch job"
+    "partNumber": {
+      "type": "integer",
+      "description": "The number of which csv part is being uploaded when using multipart upload"
     }
   },
   "required": [
     "PCID",
-    "batchJobId"
+    "batchJobId",
+    "partNumber"
   ]
 }
 ```
@@ -1854,40 +1911,17 @@ Retrieve the current PredictionExplanationsInitialization.
 | `excludeAdjustedPredictions` | string | No | — | Whether to include adjusted predictions in the PredictionExplanationsSample response. |
 | `projectId` | string | Yes | — | The project ID. |
 | `modelId` | string | Yes | — | The model ID. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "excludeAdjustedPredictions": {
-      "type": "string",
-      "description": "Whether to include adjusted predictions in the PredictionExplanationsSample response.",
-      "enum": [
-        "false",
-        "False",
-        "true",
-        "True"
-      ]
-    },
-    "projectId": {
-      "type": "string",
-      "description": "The project ID."
-    },
-    "modelId": {
-      "type": "string",
-      "description": "The model ID."
+    "predictionExplanationsSample": {
+      "type": "array",
+      "description": "Each is a PredictionExplanationsRow. They represent a small sample of prediction explanations that could be generated for a particular dataset. They will have the same schema as the `data` array in the response from :http:get:`/api/v2/projects/(projectId)/predictionExplanations/(predictionExplanationsId)/`. As of v2.21 only difference is that there is no forecastPoint in response for time series projects."
     }
   },
   "required": [
     "PCID",
     "projectId",
-    "modelId"
+    "modelId",
+    "predictionExplanationsSample"
   ]
 }
 ```
@@ -2765,30 +2799,62 @@ Retrieve a PredictionExplanationsRecord object.
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
 | `predictionExplanationsId` | string | Yes | — | The ID of the PredictionExplanationsRecord to retrieve. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
     },
-    "projectId": {
+    "datasetId": {
       "type": "string",
-      "description": "The project ID."
+      "description": "The dataset ID."
     },
-    "predictionExplanationsId": {
+    "finishTime": {
+      "type": "number",
+      "description": "The timestamp referencing when computation for these prediction explanations finished."
+    },
+    "id": {
       "type": "string",
-      "description": "The ID of the PredictionExplanationsRecord to retrieve."
+      "description": "The PredictionExplanationsRecord ID."
+    },
+    "maxExplanations": {
+      "type": "integer",
+      "description": "The maximum number of codes generated per prediction."
+    },
+    "modelId": {
+      "type": "string",
+      "description": "The model ID."
+    },
+    "numColumns": {
+      "type": "integer",
+      "description": "The number of columns prediction explanations were computed for."
+    },
+    "predictionExplanationsLocation": {
+      "type": "string",
+      "description": "Where to retrieve the prediction explanations."
+    },
+    "predictionThreshold": {
+      "type": "number",
+      "description": "The threshold value used for binary classification prediction."
+    },
+    "thresholdHigh": {
+      "type": "number",
+      "description": "The prediction explanation high threshold. Predictions must be above this value (or below the thresholdLow value) to have PredictionExplanations computed."
+    },
+    "thresholdLow": {
+      "type": "number",
+      "description": "The prediction explanation low threshold. Predictions must be below this value (or above the thresholdHigh value) to have PredictionExplanations computed."
     }
   },
   "required": [
     "PCID",
     "projectId",
-    "predictionExplanationsId"
+    "predictionExplanationsId",
+    "datasetId",
+    "finishTime",
+    "id",
+    "maxExplanations",
+    "modelId",
+    "numColumns",
+    "predictionExplanationsLocation",
+    "predictionThreshold",
+    "thresholdHigh",
+    "thresholdLow"
   ]
 }
 ```
