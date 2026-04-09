@@ -83,17 +83,17 @@ curl -s -X POST "https://app-api.app.pinkfish.ai/auth/token" \
 
 **Response:** `{ "token": "eyJhbGciOi..." }`
 
-## Using the Token
+## Example Call to Weather MCP
 
-Use the token for MCP server requests. The server path depends on your MCP integration.
+Use the token to call an MCP server. Here's an example calling the Weather service to get a forecast:
 
 ```bash
-curl -X POST "https://mcp.app.pinkfish.ai/<server-path>" \
-  -H "Authorization: Bearer $PINKFISH_TOKEN" \
-  -H "X-Selected-Org: $ORG_ID" \
+curl -X POST "https://mcp.app.pinkfish.ai/weather" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"tool_name","arguments":{}}}'
+  -H "Authorization: Bearer $PINKFISH_TOKEN" \
+  -H "X-Selected-Org: $ORG_ID" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"weather_get_current","arguments":{"city":"London"}}}'
 ```
 
 ## Bootstrap Script
