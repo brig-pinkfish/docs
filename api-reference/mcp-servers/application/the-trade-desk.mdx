@@ -58,7 +58,7 @@ Create a new ad group
 | `Description` | string | No | — | Optional description |
 | `IndustryCategoryId` | integer | No | — | Industry category ID |
 | `IsEnabled` | boolean | No | — | Whether the ad group is enabled |
-| `RTBAttributes` | object | No | — | RTBAttributes |
+| `RTBAttributes` | object | No | — | RTB Attributes |
 
 <Expandable title="inputSchema">
 
@@ -100,19 +100,23 @@ Create a new ad group
     },
     "RTBAttributes": {
       "type": "object",
-      "description": "RTBAttributes",
+      "description": "RTB Attributes",
       "properties": {
         "BudgetSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Budget Settings"
         },
         "BaseBidCPM": {
-          "type": "object"
+          "type": "object",
+          "description": "Base Bid CPM"
         },
         "MaxBidCPM": {
-          "type": "object"
+          "type": "object",
+          "description": "Max Bid CPM"
         },
         "ROIGoal": {
-          "type": "object"
+          "type": "object",
+          "description": "ROI Goal"
         }
       }
     }
@@ -252,7 +256,7 @@ Create a new bid list
 | `BidListName` | string | Yes | — | Display name of the bid list |
 | `BidListOwner` | string | Yes | — | Owner type (Advertiser or Partner) |
 | `BidListSource` | string | No | — | Source of the bid list |
-| `Description` | string | No | — | Description |
+| `Description` | string | No | — | The description value |
 | `PartnerId` | string | No | — | Partner ID (required if BidListOwner is Partner) |
 
 <Expandable title="inputSchema">
@@ -299,7 +303,7 @@ Create a new bid list
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     },
     "PartnerId": {
       "type": "string",
@@ -327,13 +331,13 @@ Create a new campaign
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdvertiserId` | string | Yes | — | ID of the advertiser that owns this campaign |
-| `Budget` | object | Yes | — | Budget |
+| `Budget` | object | Yes | — | The budget value |
 | `CampaignConversionReportingColumns` | any[] | No | — | Conversion reporting column IDs to associate |
 | `CampaignName` | string | Yes | — | Display name of the campaign |
-| `DailyBudget` | object | No | — | DailyBudget |
+| `DailyBudget` | object | No | — | Daily Budget |
 | `Description` | string | No | — | Optional campaign description |
 | `EndDate` | string | No | — | Campaign end date in UTC (ISO 8601 format) |
-| `FrequencyConfig` | object | No | — | FrequencyConfig |
+| `FrequencyConfig` | object | No | — | Frequency Config |
 | `PacingMode` | string | No | — | Budget pacing mode |
 | `PartnerCostPercentageFee` | number | No | — | Partner cost percentage fee |
 | `StartDate` | string | Yes | — | Campaign start date in UTC (ISO 8601 format) |
@@ -354,7 +358,7 @@ Create a new campaign
     },
     "Budget": {
       "type": "object",
-      "description": "Budget",
+      "description": "The budget value",
       "properties": {
         "Amount": {
           "type": "number",
@@ -376,7 +380,7 @@ Create a new campaign
     },
     "DailyBudget": {
       "type": "object",
-      "description": "DailyBudget",
+      "description": "Daily Budget",
       "properties": {
         "Amount": {
           "type": "number",
@@ -398,7 +402,7 @@ Create a new campaign
     },
     "FrequencyConfig": {
       "type": "object",
-      "description": "FrequencyConfig",
+      "description": "Frequency Config",
       "properties": {
         "MaxImpressions": {
           "type": "integer",
@@ -509,7 +513,7 @@ Create a new creative
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdvertiserId` | string | Yes | — | ID of the advertiser that owns this creative |
-| `Attributes` | object | No | — | Attributes |
+| `Attributes` | object | No | — | The attributes value |
 | `Availability` | string | Yes | — | Creative availability status |
 | `CreativeName` | string | Yes | — | Display name of the creative |
 | `Description` | string | No | — | Optional description |
@@ -534,13 +538,15 @@ Create a new creative
     },
     "Attributes": {
       "type": "object",
-      "description": "Attributes",
+      "description": "The attributes value",
       "properties": {
         "ImageAttributes": {
-          "type": "object"
+          "type": "object",
+          "description": "Image Attributes"
         },
         "VideoAttributes": {
-          "type": "object"
+          "type": "object",
+          "description": "Video Attributes"
         }
       }
     },
@@ -959,8 +965,8 @@ Query ad groups by campaign ID
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `CampaignId` | string | Yes | — | ID of the campaign to query ad groups for |
-| `PageSize` | integer | No | — | PageSize |
-| `PageStartIndex` | integer | No | — | PageStartIndex |
+| `PageSize` | integer | No | — | Number of results per page |
+| `PageStartIndex` | integer | No | — | Page Start Index |
 | `SearchTerms` | any[] | No | — | Optional search terms to filter ad groups by name |
 
 <Expandable title="inputSchema">
@@ -979,11 +985,11 @@ Query ad groups by campaign ID
     },
     "PageSize": {
       "type": "integer",
-      "description": "PageSize"
+      "description": "Number of results per page"
     },
     "PageStartIndex": {
       "type": "integer",
-      "description": "PageStartIndex"
+      "description": "Page Start Index"
     },
     "SearchTerms": {
       "type": "array",
@@ -1061,8 +1067,8 @@ Query campaigns by advertiser ID
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdvertiserId` | string | Yes | — | ID of the advertiser to query campaigns for |
-| `PageSize` | integer | No | — | PageSize |
-| `PageStartIndex` | integer | No | — | PageStartIndex |
+| `PageSize` | integer | No | — | Number of results per page |
+| `PageStartIndex` | integer | No | — | Page Start Index |
 | `SearchTerms` | any[] | No | — | Optional search terms to filter campaigns by name |
 
 <Expandable title="inputSchema">
@@ -1081,11 +1087,11 @@ Query campaigns by advertiser ID
     },
     "PageSize": {
       "type": "integer",
-      "description": "PageSize"
+      "description": "Number of results per page"
     },
     "PageStartIndex": {
       "type": "integer",
-      "description": "PageStartIndex"
+      "description": "Page Start Index"
     },
     "SearchTerms": {
       "type": "array",
@@ -1112,8 +1118,8 @@ Query creatives by advertiser ID
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdvertiserId` | string | Yes | — | ID of the advertiser to query creatives for |
-| `PageSize` | integer | No | — | PageSize |
-| `PageStartIndex` | integer | No | — | PageStartIndex |
+| `PageSize` | integer | No | — | Number of results per page |
+| `PageStartIndex` | integer | No | — | Page Start Index |
 | `SearchTerms` | any[] | No | — | Optional search terms to filter by name |
 
 <Expandable title="inputSchema">
@@ -1132,11 +1138,11 @@ Query creatives by advertiser ID
     },
     "PageSize": {
       "type": "integer",
-      "description": "PageSize"
+      "description": "Number of results per page"
     },
     "PageStartIndex": {
       "type": "integer",
-      "description": "PageStartIndex"
+      "description": "Page Start Index"
     },
     "SearchTerms": {
       "type": "array",
@@ -1163,13 +1169,13 @@ Update an existing ad group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdGroupId` | string | Yes | — | ID of the ad group to update |
-| `AdGroupName` | string | No | — | AdGroupName |
-| `AssociatedBidLists` | any[] | No | — | AssociatedBidLists |
-| `CreativeIds` | any[] | No | — | CreativeIds |
-| `Description` | string | No | — | Description |
-| `IndustryCategoryId` | integer | No | — | IndustryCategoryId |
-| `IsEnabled` | boolean | No | — | IsEnabled |
-| `RTBAttributes` | object | No | — | RTBAttributes |
+| `AdGroupName` | string | No | — | Ad Group Name |
+| `AssociatedBidLists` | any[] | No | — | Associated Bid Lists |
+| `CreativeIds` | any[] | No | — | Creative Ids |
+| `Description` | string | No | — | The description value |
+| `IndustryCategoryId` | integer | No | — | Industry Category Id |
+| `IsEnabled` | boolean | No | — | Is Enabled |
+| `RTBAttributes` | object | No | — | RTB Attributes |
 
 <Expandable title="inputSchema">
 
@@ -1187,43 +1193,47 @@ Update an existing ad group
     },
     "AdGroupName": {
       "type": "string",
-      "description": "AdGroupName"
+      "description": "Ad Group Name"
     },
     "AssociatedBidLists": {
       "type": "array",
-      "description": "AssociatedBidLists"
+      "description": "Associated Bid Lists"
     },
     "CreativeIds": {
       "type": "array",
-      "description": "CreativeIds"
+      "description": "Creative Ids"
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     },
     "IndustryCategoryId": {
       "type": "integer",
-      "description": "IndustryCategoryId"
+      "description": "Industry Category Id"
     },
     "IsEnabled": {
       "type": "boolean",
-      "description": "IsEnabled"
+      "description": "Is Enabled"
     },
     "RTBAttributes": {
       "type": "object",
-      "description": "RTBAttributes",
+      "description": "RTB Attributes",
       "properties": {
         "BudgetSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Budget Settings"
         },
         "BaseBidCPM": {
-          "type": "object"
+          "type": "object",
+          "description": "Base Bid CPM"
         },
         "MaxBidCPM": {
-          "type": "object"
+          "type": "object",
+          "description": "Max Bid CPM"
         },
         "ROIGoal": {
-          "type": "object"
+          "type": "object",
+          "description": "ROI Goal"
         }
       }
     }
@@ -1304,8 +1314,8 @@ Update an existing audience
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AudienceId` | string | Yes | — | ID of the audience to update |
-| `AudienceName` | string | No | — | AudienceName |
-| `Description` | string | No | — | Description |
+| `AudienceName` | string | No | — | Audience Name |
+| `Description` | string | No | — | The description value |
 
 <Expandable title="inputSchema">
 
@@ -1323,11 +1333,11 @@ Update an existing audience
     },
     "AudienceName": {
       "type": "string",
-      "description": "AudienceName"
+      "description": "Audience Name"
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     }
   },
   "required": [
@@ -1350,8 +1360,8 @@ Update an existing bid list
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `BidListId` | string | Yes | — | ID of the bid list to update |
-| `BidListName` | string | No | — | BidListName |
-| `Description` | string | No | — | Description |
+| `BidListName` | string | No | — | Bid List Name |
+| `Description` | string | No | — | The description value |
 
 <Expandable title="inputSchema">
 
@@ -1369,11 +1379,11 @@ Update an existing bid list
     },
     "BidListName": {
       "type": "string",
-      "description": "BidListName"
+      "description": "Bid List Name"
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     }
   },
   "required": [
@@ -1395,14 +1405,14 @@ Update an existing campaign
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `Budget` | object | No | — | Budget |
+| `Budget` | object | No | — | The budget value |
 | `CampaignId` | string | Yes | — | ID of the campaign to update |
 | `CampaignName` | string | No | — | Updated display name |
-| `DailyBudget` | object | No | — | DailyBudget |
-| `Description` | string | No | — | Description |
+| `DailyBudget` | object | No | — | Daily Budget |
+| `Description` | string | No | — | The description value |
 | `EndDate` | string | No | — | Updated end date |
-| `FrequencyConfig` | object | No | — | FrequencyConfig |
-| `PacingMode` | string | No | — | PacingMode |
+| `FrequencyConfig` | object | No | — | Frequency Config |
+| `PacingMode` | string | No | — | Pacing Mode |
 | `StartDate` | string | No | — | Updated start date |
 
 <Expandable title="inputSchema">
@@ -1417,7 +1427,7 @@ Update an existing campaign
     },
     "Budget": {
       "type": "object",
-      "description": "Budget",
+      "description": "The budget value",
       "properties": {
         "Amount": {
           "type": "number",
@@ -1439,7 +1449,7 @@ Update an existing campaign
     },
     "DailyBudget": {
       "type": "object",
-      "description": "DailyBudget",
+      "description": "Daily Budget",
       "properties": {
         "Amount": {
           "type": "number",
@@ -1453,7 +1463,7 @@ Update an existing campaign
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     },
     "EndDate": {
       "type": "string",
@@ -1461,7 +1471,7 @@ Update an existing campaign
     },
     "FrequencyConfig": {
       "type": "object",
-      "description": "FrequencyConfig",
+      "description": "Frequency Config",
       "properties": {
         "MaxImpressions": {
           "type": "integer",
@@ -1475,7 +1485,7 @@ Update an existing campaign
     },
     "PacingMode": {
       "type": "string",
-      "description": "PacingMode",
+      "description": "Pacing Mode",
       "enum": [
         "PaceAhead",
         "PaceToEnd",
@@ -1506,11 +1516,11 @@ Update a campaign flight
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `BudgetInAdvertiserCurrency` | number | No | — | BudgetInAdvertiserCurrency |
+| `BudgetInAdvertiserCurrency` | number | No | — | Budget In Advertiser Currency |
 | `CampaignFlightId` | string | Yes | — | ID of the campaign flight to update |
-| `DailyTargetInAdvertiserCurrency` | number | No | — | DailyTargetInAdvertiserCurrency |
-| `EndDate` | string | No | — | EndDate |
-| `StartDate` | string | No | — | StartDate |
+| `DailyTargetInAdvertiserCurrency` | number | No | — | Daily Target In Advertiser Currency |
+| `EndDate` | string | No | — | End date for filtering |
+| `StartDate` | string | No | — | Start date for filtering |
 
 <Expandable title="inputSchema">
 
@@ -1524,7 +1534,7 @@ Update a campaign flight
     },
     "BudgetInAdvertiserCurrency": {
       "type": "number",
-      "description": "BudgetInAdvertiserCurrency"
+      "description": "Budget In Advertiser Currency"
     },
     "CampaignFlightId": {
       "type": "string",
@@ -1532,15 +1542,15 @@ Update a campaign flight
     },
     "DailyTargetInAdvertiserCurrency": {
       "type": "number",
-      "description": "DailyTargetInAdvertiserCurrency"
+      "description": "Daily Target In Advertiser Currency"
     },
     "EndDate": {
       "type": "string",
-      "description": "EndDate"
+      "description": "End date for filtering"
     },
     "StartDate": {
       "type": "string",
-      "description": "StartDate"
+      "description": "Start date for filtering"
     }
   },
   "required": [
@@ -1562,15 +1572,15 @@ Update an existing creative
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `Attributes` | object | No | — | Attributes |
-| `Availability` | string | No | — | Availability |
+| `Attributes` | object | No | — | The attributes value |
+| `Availability` | string | No | — | The availability value |
 | `CreativeId` | string | Yes | — | ID of the creative to update |
-| `CreativeName` | string | No | — | CreativeName |
-| `Description` | string | No | — | Description |
-| `IsHTTPS` | boolean | No | — | IsHTTPS |
-| `LandingPageUrl` | string | No | — | LandingPageUrl |
-| `Tag` | string | No | — | Tag |
-| `ThirdPartyTags` | any[] | No | — | ThirdPartyTags |
+| `CreativeName` | string | No | — | Creative Name |
+| `Description` | string | No | — | The description value |
+| `IsHTTPS` | boolean | No | — | Is HTTPS |
+| `LandingPageUrl` | string | No | — | Landing Page Url |
+| `Tag` | string | No | — | The tag value |
+| `ThirdPartyTags` | any[] | No | — | Third Party Tags |
 
 <Expandable title="inputSchema">
 
@@ -1584,19 +1594,21 @@ Update an existing creative
     },
     "Attributes": {
       "type": "object",
-      "description": "Attributes",
+      "description": "The attributes value",
       "properties": {
         "ImageAttributes": {
-          "type": "object"
+          "type": "object",
+          "description": "Image Attributes"
         },
         "VideoAttributes": {
-          "type": "object"
+          "type": "object",
+          "description": "Video Attributes"
         }
       }
     },
     "Availability": {
       "type": "string",
-      "description": "Availability",
+      "description": "The availability value",
       "enum": [
         "Available",
         "Archived"
@@ -1608,27 +1620,27 @@ Update an existing creative
     },
     "CreativeName": {
       "type": "string",
-      "description": "CreativeName"
+      "description": "Creative Name"
     },
     "Description": {
       "type": "string",
-      "description": "Description"
+      "description": "The description value"
     },
     "IsHTTPS": {
       "type": "boolean",
-      "description": "IsHTTPS"
+      "description": "Is HTTPS"
     },
     "LandingPageUrl": {
       "type": "string",
-      "description": "LandingPageUrl"
+      "description": "Landing Page Url"
     },
     "Tag": {
       "type": "string",
-      "description": "Tag"
+      "description": "The tag value"
     },
     "ThirdPartyTags": {
       "type": "array",
-      "description": "ThirdPartyTags"
+      "description": "Third Party Tags"
     }
   },
   "required": [

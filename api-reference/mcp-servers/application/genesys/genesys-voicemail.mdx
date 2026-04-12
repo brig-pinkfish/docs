@@ -109,7 +109,7 @@ Get the group's mailbox information
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `groupId` | string | Yes | — | groupId |
+| `groupId` | string | Yes | — | Group Id |
 
 <Expandable title="inputSchema">
 
@@ -123,7 +123,7 @@ Get the group's mailbox information
     },
     "groupId": {
       "type": "string",
-      "description": "groupId"
+      "description": "Group Id"
     }
   },
   "required": [
@@ -544,7 +544,7 @@ Get a user's mailbox information
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | string | Yes | — | userId |
+| `userId` | string | Yes | — | User Id |
 
 <Expandable title="inputSchema">
 
@@ -558,7 +558,7 @@ Get a user's mailbox information
     },
     "userId": {
       "type": "string",
-      "description": "userId"
+      "description": "User Id"
     }
   },
   "required": [
@@ -664,16 +664,16 @@ Update a group's voicemail policy
 | --- | --- | --- | --- | --- |
 | `groupId` | string | Yes | — | Group ID |
 | `disableEmailPii` | boolean | No | — | Removes any PII from group emails. This is overridden by the analogous organization configuration value. This is always true if HIPAA is enabled or unknown for an organization. |
-| `emailPolicy` | object | No | — | emailPolicy |
+| `emailPolicy` | object | No | — | Email Policy |
 | `enabled` | boolean | No | — | Whether voicemail is enabled for the group |
-| `group` | object | No | — | group |
+| `group` | object | No | — | The group value |
 | `groupAlertType` | string | No | — | Specifies if the members in this group should be contacted randomly, in a specific order, or by round-robin. |
 | `includeEmailTranscriptions` | boolean | No | — | Whether to include the voicemail transcription in a group notification email |
 | `includeGroupNumberInUserCallerIdLists` | boolean | No | — | Whether the group phone number should be included in users' caller id lists |
 | `interactiveResponsePromptId` | string | No | — | The prompt to use when connecting a user to a Group Ring call |
 | `interactiveResponseRequired` | boolean | No | — | Whether user should be prompted with a confirmation prompt when connecting to a Group Ring call |
 | `languagePreference` | string | No | — | The language preference for the group.  Used for group voicemail transcription |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `overflowGroupId` | string | No | — | A fallback group to contact when all of the members in this group did not answer the call. |
 | `rotateCallsSecs` | integer | No | — | How many seconds to ring before rotating to the next member in the group |
 | `sendEmailNotifications` | boolean | No | — | Whether email notifications are sent to group members when a new voicemail is received |
@@ -699,13 +699,15 @@ Update a group's voicemail policy
     },
     "emailPolicy": {
       "type": "object",
-      "description": "emailPolicy",
+      "description": "Email Policy",
       "properties": {
         "emailMembers": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Email Members"
         },
         "emailGroup": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Email Group"
         }
       }
     },
@@ -715,7 +717,7 @@ Update a group's voicemail policy
     },
     "group": {
       "type": "object",
-      "description": "group",
+      "description": "The group value",
       "properties": {
         "id": {
           "type": "string",
@@ -726,7 +728,8 @@ Update a group's voicemail policy
           "description": "The group name."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "The description value"
         },
         "dateModified": {
           "type": "string",
@@ -749,10 +752,12 @@ Update a group's voicemail policy
           "description": "Type of group."
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "addresses": {
-          "type": "array"
+          "type": "array",
+          "description": "The addresses value"
         },
         "rulesVisible": {
           "type": "boolean",
@@ -821,7 +826,7 @@ Update a group's voicemail policy
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "overflowGroupId": {
       "type": "string",
@@ -919,23 +924,23 @@ Update a voicemail message
 | `audioRecordingSizeBytes` | integer | No | — | The voicemail message's audio recording size in bytes |
 | `callerAddress` | string | No | — | The caller address |
 | `callerName` | string | No | — | Optionally the name of the caller that left the voicemail message if the caller was a known user |
-| `callerUser` | object | No | — | callerUser |
-| `conversation` | object | No | — | conversation |
-| `copiedFrom` | object | No | — | copiedFrom |
+| `callerUser` | object | No | — | Caller User |
+| `conversation` | object | No | — | The conversation value |
+| `copiedFrom` | object | No | — | Copied From |
 | `copiedTo` | any[] | No | — | Represents where this voicemail has been copied to |
 | `createdDate` | string | No | — | The date the voicemail message was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleted` | boolean | No | — | Whether the voicemail message has been marked as deleted |
 | `deletedDate` | string | No | — | The date the voicemail message deleted property was set to true. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleteRetentionPolicy` | object | No | — | Governs how the voicemail is retained |
-| `group` | object | No | — | group |
+| `group` | object | No | — | The group value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedDate` | string | No | — | The date the voicemail message was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `note` | string | No | — | An optional note |
-| `queue` | object | No | — | queue |
+| `queue` | object | No | — | The queue value |
 | `read` | boolean | No | — | Whether the voicemail message is marked as read |
 | `selfUri` | string | No | — | The URI for this object |
 | `transcription` | string | No | — | The transcription of the voicemail's audio |
-| `user` | object | No | — | user |
+| `user` | object | No | — | The user value |
 
 <Expandable title="inputSchema">
 
@@ -969,26 +974,31 @@ Update a voicemail message
     },
     "callerUser": {
       "type": "object",
-      "description": "callerUser",
+      "description": "Caller User",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -1003,58 +1013,72 @@ Update a voicemail message
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -1069,10 +1093,12 @@ Update a voicemail message
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -1091,7 +1117,8 @@ Update a voicemail message
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -1112,14 +1139,15 @@ Update a voicemail message
     },
     "conversation": {
       "type": "object",
-      "description": "conversation",
+      "description": "The conversation value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "externalTag": {
           "type": "string",
@@ -1189,13 +1217,15 @@ Update a voicemail message
     },
     "copiedFrom": {
       "type": "object",
-      "description": "copiedFrom",
+      "description": "Copied From",
       "properties": {
         "user": {
-          "type": "object"
+          "type": "object",
+          "description": "The user value"
         },
         "group": {
-          "type": "object"
+          "type": "object",
+          "description": "The group value"
         },
         "date": {
           "type": "string",
@@ -1235,7 +1265,7 @@ Update a voicemail message
     },
     "group": {
       "type": "object",
-      "description": "group",
+      "description": "The group value",
       "properties": {
         "id": {
           "type": "string",
@@ -1246,7 +1276,8 @@ Update a voicemail message
           "description": "The group name."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "The description value"
         },
         "dateModified": {
           "type": "string",
@@ -1269,10 +1300,12 @@ Update a voicemail message
           "description": "Type of group."
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "addresses": {
-          "type": "array"
+          "type": "array",
+          "description": "The addresses value"
         },
         "rulesVisible": {
           "type": "boolean",
@@ -1324,17 +1357,19 @@ Update a voicemail message
     },
     "queue": {
       "type": "object",
-      "description": "queue",
+      "description": "The queue value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "description": {
           "type": "string",
@@ -1369,20 +1404,24 @@ Update a voicemail message
           "description": "The number of joined members in the queue."
         },
         "mediaSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Media Settings"
         },
         "routingRules": {
           "type": "array",
           "description": "The routing rules for the queue, used for Preferred Agent Routing."
         },
         "conditionalGroupRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Conditional Group Routing"
         },
         "conditionalGroupActivation": {
-          "type": "object"
+          "type": "object",
+          "description": "Conditional Group Activation"
         },
         "bullseye": {
-          "type": "object"
+          "type": "object",
+          "description": "The bullseye value"
         },
         "scoringMethod": {
           "type": "string",
@@ -1393,7 +1432,8 @@ Update a voicemail message
           "description": "The Last Agent Routing Mode for the queue."
         },
         "acwSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Acw Settings"
         },
         "skillEvaluationMethod": {
           "type": "string",
@@ -1404,26 +1444,32 @@ Update a voicemail message
           "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
         },
         "queueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Queue Flow"
         },
         "emailInQueueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Email In Queue Flow"
         },
         "messageInQueueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Message In Queue Flow"
         },
         "whisperPrompt": {
-          "type": "object"
+          "type": "object",
+          "description": "Whisper Prompt"
         },
         "onHoldPrompt": {
-          "type": "object"
+          "type": "object",
+          "description": "On Hold Prompt"
         },
         "autoAnswerOnly": {
           "type": "boolean",
           "description": "Specifies whether the configured whisper should play for all ACD calls, or only for those which are auto-answered."
         },
         "cannedResponseLibraries": {
-          "type": "object"
+          "type": "object",
+          "description": "Canned Response Libraries"
         },
         "enableTranscription": {
           "type": "boolean",
@@ -1438,10 +1484,12 @@ Update a voicemail message
           "description": "Indicates whether manual assignment is enabled for this queue."
         },
         "agentOwnedRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Agent Owned Routing"
         },
         "directRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Direct Routing"
         },
         "callingPartyName": {
           "type": "string",
@@ -1456,10 +1504,12 @@ Update a voicemail message
           "description": "The default script Ids for the communication types."
         },
         "outboundMessagingAddresses": {
-          "type": "object"
+          "type": "object",
+          "description": "Outbound Messaging Addresses"
         },
         "outboundEmailAddress": {
-          "type": "object"
+          "type": "object",
+          "description": "Outbound Email Address"
         },
         "peerId": {
           "type": "string",
@@ -1489,26 +1539,31 @@ Update a voicemail message
     },
     "user": {
       "type": "object",
-      "description": "user",
+      "description": "The user value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -1523,58 +1578,72 @@ Update a voicemail message
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -1589,10 +1658,12 @@ Update a voicemail message
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -1611,7 +1682,8 @@ Update a voicemail message
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -1762,23 +1834,23 @@ Update a voicemail message
 | `audioRecordingSizeBytes` | integer | No | — | The voicemail message's audio recording size in bytes |
 | `callerAddress` | string | No | — | The caller address |
 | `callerName` | string | No | — | Optionally the name of the caller that left the voicemail message if the caller was a known user |
-| `callerUser` | object | No | — | callerUser |
-| `conversation` | object | No | — | conversation |
-| `copiedFrom` | object | No | — | copiedFrom |
+| `callerUser` | object | No | — | Caller User |
+| `conversation` | object | No | — | The conversation value |
+| `copiedFrom` | object | No | — | Copied From |
 | `copiedTo` | any[] | No | — | Represents where this voicemail has been copied to |
 | `createdDate` | string | No | — | The date the voicemail message was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleted` | boolean | No | — | Whether the voicemail message has been marked as deleted |
 | `deletedDate` | string | No | — | The date the voicemail message deleted property was set to true. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleteRetentionPolicy` | object | No | — | Governs how the voicemail is retained |
-| `group` | object | No | — | group |
+| `group` | object | No | — | The group value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedDate` | string | No | — | The date the voicemail message was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `note` | string | No | — | An optional note |
-| `queue` | object | No | — | queue |
+| `queue` | object | No | — | The queue value |
 | `read` | boolean | No | — | Whether the voicemail message is marked as read |
 | `selfUri` | string | No | — | The URI for this object |
 | `transcription` | string | No | — | The transcription of the voicemail's audio |
-| `user` | object | No | — | user |
+| `user` | object | No | — | The user value |
 
 <Expandable title="inputSchema">
 
@@ -1812,26 +1884,31 @@ Update a voicemail message
     },
     "callerUser": {
       "type": "object",
-      "description": "callerUser",
+      "description": "Caller User",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -1846,58 +1923,72 @@ Update a voicemail message
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -1912,10 +2003,12 @@ Update a voicemail message
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -1934,7 +2027,8 @@ Update a voicemail message
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -1955,14 +2049,15 @@ Update a voicemail message
     },
     "conversation": {
       "type": "object",
-      "description": "conversation",
+      "description": "The conversation value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "externalTag": {
           "type": "string",
@@ -2032,13 +2127,15 @@ Update a voicemail message
     },
     "copiedFrom": {
       "type": "object",
-      "description": "copiedFrom",
+      "description": "Copied From",
       "properties": {
         "user": {
-          "type": "object"
+          "type": "object",
+          "description": "The user value"
         },
         "group": {
-          "type": "object"
+          "type": "object",
+          "description": "The group value"
         },
         "date": {
           "type": "string",
@@ -2078,7 +2175,7 @@ Update a voicemail message
     },
     "group": {
       "type": "object",
-      "description": "group",
+      "description": "The group value",
       "properties": {
         "id": {
           "type": "string",
@@ -2089,7 +2186,8 @@ Update a voicemail message
           "description": "The group name."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "The description value"
         },
         "dateModified": {
           "type": "string",
@@ -2112,10 +2210,12 @@ Update a voicemail message
           "description": "Type of group."
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "addresses": {
-          "type": "array"
+          "type": "array",
+          "description": "The addresses value"
         },
         "rulesVisible": {
           "type": "boolean",
@@ -2167,17 +2267,19 @@ Update a voicemail message
     },
     "queue": {
       "type": "object",
-      "description": "queue",
+      "description": "The queue value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "description": {
           "type": "string",
@@ -2212,20 +2314,24 @@ Update a voicemail message
           "description": "The number of joined members in the queue."
         },
         "mediaSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Media Settings"
         },
         "routingRules": {
           "type": "array",
           "description": "The routing rules for the queue, used for Preferred Agent Routing."
         },
         "conditionalGroupRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Conditional Group Routing"
         },
         "conditionalGroupActivation": {
-          "type": "object"
+          "type": "object",
+          "description": "Conditional Group Activation"
         },
         "bullseye": {
-          "type": "object"
+          "type": "object",
+          "description": "The bullseye value"
         },
         "scoringMethod": {
           "type": "string",
@@ -2236,7 +2342,8 @@ Update a voicemail message
           "description": "The Last Agent Routing Mode for the queue."
         },
         "acwSettings": {
-          "type": "object"
+          "type": "object",
+          "description": "Acw Settings"
         },
         "skillEvaluationMethod": {
           "type": "string",
@@ -2247,26 +2354,32 @@ Update a voicemail message
           "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
         },
         "queueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Queue Flow"
         },
         "emailInQueueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Email In Queue Flow"
         },
         "messageInQueueFlow": {
-          "type": "object"
+          "type": "object",
+          "description": "Message In Queue Flow"
         },
         "whisperPrompt": {
-          "type": "object"
+          "type": "object",
+          "description": "Whisper Prompt"
         },
         "onHoldPrompt": {
-          "type": "object"
+          "type": "object",
+          "description": "On Hold Prompt"
         },
         "autoAnswerOnly": {
           "type": "boolean",
           "description": "Specifies whether the configured whisper should play for all ACD calls, or only for those which are auto-answered."
         },
         "cannedResponseLibraries": {
-          "type": "object"
+          "type": "object",
+          "description": "Canned Response Libraries"
         },
         "enableTranscription": {
           "type": "boolean",
@@ -2281,10 +2394,12 @@ Update a voicemail message
           "description": "Indicates whether manual assignment is enabled for this queue."
         },
         "agentOwnedRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Agent Owned Routing"
         },
         "directRouting": {
-          "type": "object"
+          "type": "object",
+          "description": "Direct Routing"
         },
         "callingPartyName": {
           "type": "string",
@@ -2299,10 +2414,12 @@ Update a voicemail message
           "description": "The default script Ids for the communication types."
         },
         "outboundMessagingAddresses": {
-          "type": "object"
+          "type": "object",
+          "description": "Outbound Messaging Addresses"
         },
         "outboundEmailAddress": {
-          "type": "object"
+          "type": "object",
+          "description": "Outbound Email Address"
         },
         "peerId": {
           "type": "string",
@@ -2332,26 +2449,31 @@ Update a voicemail message
     },
     "user": {
       "type": "object",
-      "description": "user",
+      "description": "The user value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -2366,58 +2488,72 @@ Update a voicemail message
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -2432,10 +2568,12 @@ Update a voicemail message
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -2454,7 +2592,8 @@ Update a voicemail message
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -2500,7 +2639,7 @@ Update a policy
 | `interactiveResponseRequired` | boolean | No | — | Whether user should be prompted with a confirmation prompt when connecting to a Group Ring call |
 | `maximumRecordingTimeSeconds` | integer | No | — | Default value for the maximum length of time in seconds of a recorded voicemail |
 | `modifiedDate` | string | No | — | The date the policy was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `pinConfiguration` | object | No | — | pinConfiguration |
+| `pinConfiguration` | object | No | — | Pin Configuration |
 | `pinRequired` | boolean | No | — | If this is true, a PIN is required when accessing a user's voicemail from a phone. |
 | `sendEmailNotifications` | boolean | No | — | Whether email notifications are sent for new voicemails in the organization. If false, new voicemail email notifications are not be sent for the organization overriding any user or group setting. |
 | `voicemailExtension` | string | No | — | The extension for voicemail retrieval.  The default value is *86. |
@@ -2545,13 +2684,15 @@ Update a policy
     },
     "pinConfiguration": {
       "type": "object",
-      "description": "pinConfiguration",
+      "description": "Pin Configuration",
       "properties": {
         "minimumLength": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Minimum Length"
         },
         "maximumLength": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Maximum Length"
         }
       }
     },
