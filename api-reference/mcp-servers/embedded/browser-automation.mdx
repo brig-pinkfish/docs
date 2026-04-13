@@ -38,12 +38,12 @@ Call capability_details for 'browser-automation' to get the full workflow code p
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task` | string | Yes | — | REQUIRED: Natural language description of the browser task. Write as a SINGLE LINE without line breaks. Be SPECIFIC - include: (1) Starting URL, (2) What action to take (click, fill, extract, navigate, download), (3) Which elements (button text, field labels), (4) Sample data to use for form filling, (5) What NOT to do if needed. GOOD EXAMPLES: "Navigate to https://example.com/contact, fill out the contact form with name=John Doe, email=john@example.com, message=Test inquiry, then submit the form" or "Go to https://example.com/products, scroll through all pages, extract product name, price, and description for each product, save as products.json". BAD EXAMPLES: "Register on the site" (too vague), "Get the data" (what data? from where?). |
-| `model` | string | No | `"google/gemini-3-flash-preview"` | AI model for browser automation. Default: 'google/gemini-3-flash-preview'. Use 'google/gemini-2.5-pro' for complex tasks. |
+| `model` | string | No | `"google/gemini-3-flash-preview"` | AI model for browser automation. Default: 'google/gemini-3-flash-preview'. Only change if explicitly requested by the user. |
 | `agentMode` | string | No | `"hybrid"` | Agent interaction mode. 'dom': DOM-based tools using CSS selectors (works with any model). 'hybrid': Coordinate-based + DOM tools (DEFAULT, visual interactions). 'cua': Computer Use Agent mode (CUA-specific models only). |
 | `maxSteps` | number | No | `30` | Maximum actions the agent can take. Default: 30. Increase for complex multi-page tasks. |
 | `systemPrompt` | string | No | — | Role/context for the agent (e.g., "You are a helpful assistant filling out medical forms"). |
 | `cacheKey` | string | Yes | — | REQUIRED: Cache identifier string. Generate a unique random 8-character alphanumeric string, e.g. "a1b2c3d4" or "xK9mP2qL". Must be a hardcoded string literal, NOT a runtime variable. IMPORTANT: Generate a NEW unique value every time you update the code. |
-| `disableCache` | boolean | No | `false` | Whether to bypass caching. Default: false (caching ON). Set to true to force fresh execution. |
+| `disableCache` | boolean | No | `false` | Whether to bypass caching. Default: false (caching ON). Always leave as false unless the user explicitly asks to disable caching. |
 | `cacheDurationDays` | number | No | `7` | Cache expiration in days. Default: 7. Use 30 for stable sites, 1 for frequently changing sites. |
 | `region` | string | No | `"us-west-2"` | Server region for browser execution. Default: us-west-2 (Oregon). Options: us-east-1 (Virginia), eu-central-1 (Frankfurt), ap-southeast-1 (Singapore). |
 | `proxies` | boolean | No | `false` | Enable residential proxies. Default: false. Set to true for sites that block datacenter IPs. |
@@ -78,7 +78,7 @@ Call capability_details for 'browser-automation' to get the full workflow code p
         "anthropic/claude-sonnet-4"
       ],
       "default": "google/gemini-3-flash-preview",
-      "description": "AI model for browser automation. Default: 'google/gemini-3-flash-preview'. Use 'google/gemini-2.5-pro' for complex tasks."
+      "description": "AI model for browser automation. Default: 'google/gemini-3-flash-preview'. Only change if explicitly requested by the user."
     },
     "agentMode": {
       "type": "string",
@@ -106,7 +106,7 @@ Call capability_details for 'browser-automation' to get the full workflow code p
     "disableCache": {
       "type": "boolean",
       "default": false,
-      "description": "Whether to bypass caching. Default: false (caching ON). Set to true to force fresh execution."
+      "description": "Whether to bypass caching. Default: false (caching ON). Always leave as false unless the user explicitly asks to disable caching."
     },
     "cacheDurationDays": {
       "type": "number",

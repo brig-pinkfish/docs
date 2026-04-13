@@ -12,14 +12,14 @@ description: "File storage, folders, permissions, and sharing"
 
 | Tool | Description |
 | --- | --- |
-| [`google-drive_list_files`](#google-drive_list_files) | List files from Google Drive with optional shared drive access |
+| [`google-drive_list_files`](#google-drive_list_files) | List files from Google Drive with optional shared drive access. IMPORTANT: This tool paginates. Results may be incomplete. Always check pagination.hasMore in the response — if true, you MUST call again with pageToken set to pagination.nextPageToken to get all results. Do not report results as complete without checking pagination.hasMore. |
 | [`google-drive_get_file_information`](#google-drive_get_file_information) | Retrieve metadata and information about a Google Drive file |
 | [`google-drive_upload_file`](#google-drive_upload_file) | Upload a new file to Google Drive from a URL source |
 | [`google-drive_delete_file`](#google-drive_delete_file) | Delete a file from Google Drive |
-| [`google-drive_search_files`](#google-drive_search_files) | Search for files in Google Drive using query syntax |
-| [`google-drive_find_by_name`](#google-drive_find_by_name) | Find files and folders by name and get their IDs |
-| [`google-drive_list_files_in_folder`](#google-drive_list_files_in_folder) | PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! List files in a Google Drive folder by name (exact match) or ID. |
-| [`google-drive_download_file`](#google-drive_download_file) | Download a file from Google Drive and store it as an artifact. Returns a link to the stored file, metadata, and a text preview for supported types (PDF, DOCX, XLSX, PPTX). NOT for Google Docs/Sheets - use their respective MCPs |
+| [`google-drive_search_files`](#google-drive_search_files) | Search for files in Google Drive using query syntax. IMPORTANT: This tool paginates. Results may be incomplete. Always check pagination.hasMore in the response — if true, you MUST call again with pageToken set to pagination.nextPageToken to get all results. Do not report results as complete without checking pagination.hasMore. |
+| [`google-drive_find_by_name`](#google-drive_find_by_name) | Find files and folders by name and get their IDs. This tool automatically fetches ALL matching results across multiple pages — no manual pagination needed. Results are complete unless truncatedAtMax is true. |
+| [`google-drive_list_files_in_folder`](#google-drive_list_files_in_folder) | PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! List files in a Google Drive folder by name (exact match) or ID. This tool automatically fetches ALL files in the folder across multiple pages — no manual pagination needed. Results are complete unless truncatedAtMax is true. |
+| [`google-drive_download_file`](#google-drive_download_file) | Download a file from Google Drive and store it as an artifact. Returns a link to the stored file, metadata, and a text preview for supported types (PDF, DOCX, XLSX, PPTX). NOT for Google Docs/Sheets/Slides — those require their respective MCP servers (Google Docs MCP, Google Sheets MCP). If those connectors are not installed, recommend the user install them from the Pinkfish connections page. |
 | [`google-drive_create_folder`](#google-drive_create_folder) | Create a new folder in Google Drive |
 | [`google-drive_move_file`](#google-drive_move_file) | Move a file to a different folder in Google Drive |
 | [`google-drive_copy_file`](#google-drive_copy_file) | Copy a file in Google Drive |
@@ -42,13 +42,14 @@ description: "File storage, folders, permissions, and sharing"
 
 ## google-drive_list_files
 
-List files from Google Drive with optional shared drive access
+List files from Google Drive with optional shared drive access. IMPORTANT: This tool paginates. Results may be incomplete. Always check pagination.hasMore in the response — if true, you MUST call again with pageToken set to pagination.nextPageToken to get all results. Do not report results as complete without checking pagination.hasMore.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `pageSize` | string | No | `25` | Number of files to retrieve per page (maximum 1000) |
+| `pageToken` | string | No | — | Token from a previous response to fetch the next page of results |
 | `isShared` | boolean | No | `false` | Whether to include files from shared drives and folders |
 
 <Expandable title="inputSchema">
@@ -72,6 +73,10 @@ List files from Google Drive with optional shared drive access
       ],
       "default": 25,
       "description": "Number of files to retrieve per page (maximum 1000)"
+    },
+    "pageToken": {
+      "type": "string",
+      "description": "Token from a previous response to fetch the next page of results"
     },
     "isShared": {
       "type": "boolean",
@@ -199,7 +204,7 @@ Delete a file from Google Drive
 
 ## google-drive_search_files
 
-Search for files in Google Drive using query syntax
+Search for files in Google Drive using query syntax. IMPORTANT: This tool paginates. Results may be incomplete. Always check pagination.hasMore in the response — if true, you MUST call again with pageToken set to pagination.nextPageToken to get all results. Do not report results as complete without checking pagination.hasMore.
 
 **Parameters:**
 
@@ -207,6 +212,7 @@ Search for files in Google Drive using query syntax
 | --- | --- | --- | --- | --- |
 | `query` | string | Yes | — | Query string to search for files. Can be a filename (e.g., "document.docx") or structured query (e.g., "mimeType=application/vnd.google-apps.document").
            All string values (e.g. file, folder IDs, mimeType, etc.) must be enclosed in single quotes (never double quotes) when used in the query string (e.g. 'fileid' or 'folderid'). |
+| `pageToken` | string | No | — | Token from a previous response to fetch the next page of results |
 
 <Expandable title="inputSchema">
 
@@ -221,6 +227,10 @@ Search for files in Google Drive using query syntax
     "query": {
       "type": "string",
       "description": "Query string to search for files. Can be a filename (e.g., \"document.docx\") or structured query (e.g., \"mimeType=application/vnd.google-apps.document\").\n           All string values (e.g. file, folder IDs, mimeType, etc.) must be enclosed in single quotes (never double quotes) when used in the query string (e.g. 'fileid' or 'folderid')."
+    },
+    "pageToken": {
+      "type": "string",
+      "description": "Token from a previous response to fetch the next page of results"
     }
   },
   "required": [
@@ -236,7 +246,7 @@ Search for files in Google Drive using query syntax
 
 ## google-drive_find_by_name
 
-Find files and folders by name and get their IDs
+Find files and folders by name and get their IDs. This tool automatically fetches ALL matching results across multiple pages — no manual pagination needed. Results are complete unless truncatedAtMax is true.
 
 **Parameters:**
 
@@ -244,6 +254,7 @@ Find files and folders by name and get their IDs
 | --- | --- | --- | --- | --- |
 | `name` | string | Yes | — | Name to search for |
 | `exactMatch` | boolean | No | `false` | If true, only returns items with exact name match. If false (default), returns partial matches. |
+| `maxResults` | number | No | `500` | Maximum number of results to return (default 500). Increase if you need more. |
 | `mimeType` | string | No | `"any"` | Filter by type: "folder" for folders only, "document" for Google Docs, "spreadsheet" for Google Sheets, "presentation" for Slides, "any" for all (default) |
 
 <Expandable title="inputSchema">
@@ -264,6 +275,11 @@ Find files and folders by name and get their IDs
       "type": "boolean",
       "default": false,
       "description": "If true, only returns items with exact name match. If false (default), returns partial matches."
+    },
+    "maxResults": {
+      "type": "number",
+      "default": 500,
+      "description": "Maximum number of results to return (default 500). Increase if you need more."
     },
     "mimeType": {
       "type": "string",
@@ -291,7 +307,7 @@ Find files and folders by name and get their IDs
 
 ## google-drive_list_files_in_folder
 
-PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! List files in a Google Drive folder by name (exact match) or ID.
+PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! List files in a Google Drive folder by name (exact match) or ID. This tool automatically fetches ALL files in the folder across multiple pages — no manual pagination needed. Results are complete unless truncatedAtMax is true.
 
 **Parameters:**
 
@@ -299,7 +315,7 @@ PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! L
 | --- | --- | --- | --- | --- |
 | `folderId` | string | No | — | Google Drive folder ID to list files from. Use this if you already have the ID. |
 | `folderName` | string | No | — | Folder name to find and list files from (exact match, uses first result). Simpler than folderId - no need to call find_by_name first. |
-| `pageSize` | string | No | — | Maximum number of files to retrieve |
+| `maxResults` | number | No | `500` | Maximum number of files to return (default 500). Increase if you need more. |
 
 <Expandable title="inputSchema">
 
@@ -319,16 +335,10 @@ PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! L
       "type": "string",
       "description": "Folder name to find and list files from (exact match, uses first result). Simpler than folderId - no need to call find_by_name first."
     },
-    "pageSize": {
-      "oneOf": [
-        {
-          "type": "number"
-        },
-        {
-          "type": "effects"
-        }
-      ],
-      "description": "Maximum number of files to retrieve"
+    "maxResults": {
+      "type": "number",
+      "default": 500,
+      "description": "Maximum number of files to return (default 500). Increase if you need more."
     }
   },
   "required": [
@@ -343,7 +353,7 @@ PREFERRED: Use folderName instead of folderId - no find_by_name lookup needed! L
 
 ## google-drive_download_file
 
-Download a file from Google Drive and store it as an artifact. Returns a link to the stored file, metadata, and a text preview for supported types (PDF, DOCX, XLSX, PPTX). NOT for Google Docs/Sheets - use their respective MCPs
+Download a file from Google Drive and store it as an artifact. Returns a link to the stored file, metadata, and a text preview for supported types (PDF, DOCX, XLSX, PPTX). NOT for Google Docs/Sheets/Slides — those require their respective MCP servers (Google Docs MCP, Google Sheets MCP). If those connectors are not installed, recommend the user install them from the Pinkfish connections page.
 
 **Parameters:**
 

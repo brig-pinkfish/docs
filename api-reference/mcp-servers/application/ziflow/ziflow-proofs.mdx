@@ -12,6 +12,7 @@ description: "Ziflow Proofs - create, search, update, and manage proofs; control
 
 | Tool | Description |
 | --- | --- |
+| [`ziflow_proofs_add_stage_checklists`](#ziflow_proofs_add_stage_checklists) | Add Checklists to Stage |
 | [`ziflow_proofs_delete_id`](#ziflow_proofs_delete_id) | Delete Proof |
 | [`ziflow_proofs_delete_id_all_versions`](#ziflow_proofs_delete_id_all_versions) | Delete All Proof Versions |
 | [`ziflow_proofs_delete_proof_id_stages_stage_id_reviewers_reviewer_identifier`](#ziflow_proofs_delete_proof_id_stages_stage_id_reviewers_reviewer_identifier) | Delete Reviewer by ID or email |
@@ -25,6 +26,8 @@ description: "Ziflow Proofs - create, search, update, and manage proofs; control
 | [`ziflow_proofs_get_proof_id_stages_stage_id_reviewers_reviewer_identifier`](#ziflow_proofs_get_proof_id_stages_stage_id_reviewers_reviewer_identifier) | Get Reviewer by ID or email |
 | [`ziflow_proofs_get_proofs`](#ziflow_proofs_get_proofs) | Get Proofs |
 | [`ziflow_proofs_get_proofs_by_id_activities`](#ziflow_proofs_get_proofs_by_id_activities) | Get Proof Activities |
+| [`ziflow_proofs_get_stage_checklist`](#ziflow_proofs_get_stage_checklist) | Get Stage Checklist by ID |
+| [`ziflow_proofs_mark_checklist_item`](#ziflow_proofs_mark_checklist_item) | Mark Checklist Item |
 | [`ziflow_proofs_post_id_comments_pdf`](#ziflow_proofs_post_id_comments_pdf) | Export comments to PDF (Endpoint Method) |
 | [`ziflow_proofs_post_id_integration_properties`](#ziflow_proofs_post_id_integration_properties) | Add Integration Properties |
 | [`ziflow_proofs_post_id_reviewers_status`](#ziflow_proofs_post_id_reviewers_status) | Make Decision/Complete Review |
@@ -39,6 +42,54 @@ description: "Ziflow Proofs - create, search, update, and manage proofs; control
 | [`ziflow_proofs_put_proof_id_stages_stage_id_final_status_calculation`](#ziflow_proofs_put_proof_id_stages_stage_id_final_status_calculation) | Set Final Status Calculation |
 | [`ziflow_proofs_put_proof_id_stages_stage_id_reviewers_reviewer_identifier`](#ziflow_proofs_put_proof_id_stages_stage_id_reviewers_reviewer_identifier) | Update Reviewer by ID or email |
 | [`ziflow_proofs_put_proof_id_stages_stage_id_start`](#ziflow_proofs_put_proof_id_stages_stage_id_start) | Start Stage |
+
+---
+
+## ziflow_proofs_add_stage_checklists
+
+Add Checklists to Stage
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `proof_id` | string | Yes | — | Proof ID |
+| `stage_id` | string | Yes | — | Stage ID |
+| `body` | any[] | Yes | — | Array of checklist template IDs to add to the stage |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "proof_id": {
+      "type": "string",
+      "description": "Proof ID"
+    },
+    "stage_id": {
+      "type": "string",
+      "description": "Stage ID"
+    },
+    "body": {
+      "type": "array",
+      "description": "Array of checklist template IDs to add to the stage"
+    }
+  },
+  "required": [
+    "PCID",
+    "proof_id",
+    "stage_id",
+    "body"
+  ]
+}
+```
+
+</Expandable>
 
 ---
 
@@ -634,6 +685,119 @@ Get Proof Activities
 
 ---
 
+## ziflow_proofs_get_stage_checklist
+
+Get Stage Checklist by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `proof_id` | string | Yes | — | Proof ID |
+| `stage_id` | string | Yes | — | Stage ID |
+| `checklist_id` | string | Yes | — | Checklist ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "proof_id": {
+      "type": "string",
+      "description": "Proof ID"
+    },
+    "stage_id": {
+      "type": "string",
+      "description": "Stage ID"
+    },
+    "checklist_id": {
+      "type": "string",
+      "description": "Checklist ID"
+    }
+  },
+  "required": [
+    "PCID",
+    "proof_id",
+    "stage_id",
+    "checklist_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## ziflow_proofs_mark_checklist_item
+
+Mark Checklist Item
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `proof_id` | string | Yes | — | Proof ID |
+| `stage_id` | string | Yes | — | Stage ID |
+| `checklist_id` | string | Yes | — | ID of the checklist containing the item to be updated |
+| `item_id` | string | Yes | — | ID of the specific checklist item to be marked/updated |
+| `value` | string | No | — | Use 'pass' or 'fail' for pass/fail items, 'checked' for simple checkboxes, or null to clear the value. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "proof_id": {
+      "type": "string",
+      "description": "Proof ID"
+    },
+    "stage_id": {
+      "type": "string",
+      "description": "Stage ID"
+    },
+    "checklist_id": {
+      "type": "string",
+      "description": "ID of the checklist containing the item to be updated"
+    },
+    "item_id": {
+      "type": "string",
+      "description": "ID of the specific checklist item to be marked/updated"
+    },
+    "value": {
+      "type": "string",
+      "description": "Use 'pass' or 'fail' for pass/fail items, 'checked' for simple checkboxes, or null to clear the value.",
+      "enum": [
+        "pass",
+        "fail",
+        null,
+        "checked"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "proof_id",
+    "stage_id",
+    "checklist_id",
+    "item_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## ziflow_proofs_post_id_comments_pdf
 
 Export comments to PDF (Endpoint Method)
@@ -643,7 +807,7 @@ Export comments to PDF (Endpoint Method)
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
-| `response_url` | string | No | — | response_url |
+| `response_url` | string | No | — | Response Url |
 
 <Expandable title="inputSchema">
 
@@ -661,7 +825,7 @@ Export comments to PDF (Endpoint Method)
     },
     "response_url": {
       "type": "string",
-      "description": "response_url"
+      "description": "Response Url"
     }
   },
   "required": [
@@ -726,9 +890,9 @@ Make Decision/Complete Review
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
-| `completed` | boolean | Yes | — | completed |
-| `decision` | string | Yes | — | decision |
-| `decision_checklist` | object | No | — | decision_checklist |
+| `completed` | boolean | Yes | — | The completed value |
+| `decision` | string | Yes | — | The decision value |
+| `decision_checklist` | object | No | — | Decision Checklist |
 | `reviewer_id` | string | No | — | Reviewer ID obtained from proof.stages[].members[].id field |
 
 <Expandable title="inputSchema">
@@ -747,11 +911,11 @@ Make Decision/Complete Review
     },
     "completed": {
       "type": "boolean",
-      "description": "completed"
+      "description": "The completed value"
     },
     "decision": {
       "type": "string",
-      "description": "decision",
+      "description": "The decision value",
       "enum": [
         "pending",
         "changes_required",
@@ -762,10 +926,11 @@ Make Decision/Complete Review
     },
     "decision_checklist": {
       "type": "object",
-      "description": "decision_checklist",
+      "description": "Decision Checklist",
       "properties": {
         "options": {
-          "type": "array"
+          "type": "array",
+          "description": "The options value"
         }
       }
     },
@@ -796,9 +961,9 @@ Export summary to PDF (Endpoint Method)
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
-| `all_versions` | boolean | No | — | Export all proof versions |
+| `all_versions` | string | No | — | Export all proof versions |
 | `markups_thumbnail` | string | No | — | Specifies comment's markups layout in the export |
-| `response_url` | string | No | — | response_url |
+| `response_url` | string | No | — | Response Url |
 | `stage_summary` | string | No | — | Specifies presence and details of proof workflow on PDF export. "none" removes workflow section from the export. |
 
 <Expandable title="inputSchema">
@@ -816,7 +981,7 @@ Export summary to PDF (Endpoint Method)
       "description": "Proof ID"
     },
     "all_versions": {
-      "type": "boolean",
+      "type": "string",
       "description": "Export all proof versions"
     },
     "markups_thumbnail": {
@@ -830,7 +995,7 @@ Export summary to PDF (Endpoint Method)
     },
     "response_url": {
       "type": "string",
-      "description": "response_url"
+      "description": "Response Url"
     },
     "stage_summary": {
       "type": "string",
@@ -913,27 +1078,27 @@ Create New Proof
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `allow_source_download` | boolean | No | — | allow_source_download |
-| `archived` | boolean | No | — | archived |
-| `brief` | object | No | — | brief |
+| `allow_source_download` | boolean | No | — | Allow Source Download |
+| `archived` | boolean | No | — | The archived value |
+| `brief` | object | No | — | The brief value |
 | `combine` | boolean | No | — | If true, the input sources are combined into one multi-asset proof in the order passed through. Joining different asset types is allowed only on Enterprise edition. On Standard and Pro it's allowed to combine only static files. The Free editions is forced to false |
 | `custom_properties` | any[] | No | — | Available only on Enterprise edition. Values and IDs can be obtained from GET/v1/custom-properties/proofs/groups request. |
 | `email_branding` | object | No | — | Available on Pro and Enterprise editions only |
 | `folder_id` | string | No | — | Folder ID may be required if set in Account proof settings - available only for admins on Standard, Pro and Enterprise editions. |
-| `input` | any[] | No | — | input |
-| `lock_on_decisions` | boolean | No | — | lock_on_decisions |
-| `locked` | boolean | No | — | locked |
+| `input` | any[] | No | — | The input value |
+| `lock_on_decisions` | boolean | No | — | Lock On Decisions |
+| `locked` | boolean | No | — | The locked value |
 | `merge_files` | string | No | — | Available only on Enterprise edition. When "combine" is set to true and input contains files of different types, this field defines, whether files should be merged into one asset. Field "merge_files" overrides "merge_static_files" if both provided |
 | `merge_static_files` | boolean | No | — | Use "merge_files" field. |
 | `minor_version` | boolean | No | — | Available on Pro and Enterprise editions only. If true, "version" fields will be returned as X.y where X is last major version and y is number of minor version, i.e. 0.1, 2.3, 1.1 |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `owner_email` | string | No | — | You can provide an email of a user who you want to be the proof owner |
 | `pass_through_value` | string | No | — | Field allowing to attach a value to a proof that is passed back on the proof and webhook events to easily identify the proof in your own system. Field accepts max of 1024 characters. |
 | `proof_security` | string | No | — | Field describes proof access control settings. If not provided settings are pulled from account settings(on Standard, Pro and Enterprise editions). Value 'users_and_guests_authentication_required' is available only on Enterprise edition. Field overrides 'secure_proofing' and 'require_sign_in' fields. |
 | `require_electronic_signature` | boolean | No | — | Available on Enterprise edition only. Enable this setting to request all reviewers to electronically sign their decisions on proof. |
 | `require_sign_in` | boolean | No | — | Use "proof_security" field. |
 | `secure_proofing` | boolean | No | — | Use "proof_security" field. |
-| `stages` | any[] | No | — | stages |
+| `stages` | any[] | No | — | The stages value |
 | `subscription` | object | No | — | Available on Standard, Pro and Enterprise editions. |
 | `suppress_all_emails` | boolean | No | — | If true, Ziflow will not send any emails regarding this proof. The only emails that can be triggered are the emails that are sent when using the 'remind' function within the web application. |
 | `suppress_creation_email` | boolean | No | — | If true, "New proof created" email will not be sent to proof owner. |
@@ -952,15 +1117,15 @@ Create New Proof
     },
     "allow_source_download": {
       "type": "boolean",
-      "description": "allow_source_download"
+      "description": "Allow Source Download"
     },
     "archived": {
       "type": "boolean",
-      "description": "archived"
+      "description": "The archived value"
     },
     "brief": {
       "type": "object",
-      "description": "brief",
+      "description": "The brief value",
       "properties": {
         "text": {
           "type": "string",
@@ -1000,15 +1165,15 @@ Create New Proof
     },
     "input": {
       "type": "array",
-      "description": "input"
+      "description": "The input value"
     },
     "lock_on_decisions": {
       "type": "boolean",
-      "description": "lock_on_decisions"
+      "description": "Lock On Decisions"
     },
     "locked": {
       "type": "boolean",
-      "description": "locked"
+      "description": "The locked value"
     },
     "merge_files": {
       "type": "string",
@@ -1029,7 +1194,7 @@ Create New Proof
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner_email": {
       "type": "string",
@@ -1063,17 +1228,19 @@ Create New Proof
     },
     "stages": {
       "type": "array",
-      "description": "stages"
+      "description": "The stages value"
     },
     "subscription": {
       "type": "object",
       "description": "Available on Standard, Pro and Enterprise editions.",
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "The enabled value"
         },
         "permissions": {
-          "type": "string"
+          "type": "string",
+          "description": "The permissions value"
         },
         "added_to_stage": {
           "type": "string",
@@ -1178,20 +1345,20 @@ Search Proofs
 | --- | --- | --- | --- | --- |
 | `count` | integer | No | — | Specifies number of records to return with max=100 |
 | `page` | integer | No | — | Used for pagination, starting at 1 |
-| `archived` | any[] | No | — | archived |
-| `custom_properties` | any[] | No | — | custom_properties |
+| `archived` | any[] | No | — | The archived value |
+| `custom_properties` | any[] | No | — | Custom Properties |
 | `fields` | string | No | — | Optional field - if provided, search response body will contain only specified fields in proof objects matching provided search conditions, so that you can filter proofs and only get specific fields from them. For example, "folder.*", will return whole folder object; "stages.name" will return stages' names. |
 | `folder` | any[] | No | — | Providing null in folder ID field will search for proofs that are not in any folder. |
-| `integration_properties` | any[] | No | — | integration_properties |
-| `locked` | any[] | No | — | locked |
-| `name` | any[] | No | — | name |
-| `next_deadline` | any[] | No | — | next_deadline |
-| `owner` | any[] | No | — | owner |
+| `integration_properties` | any[] | No | — | Integration Properties |
+| `locked` | any[] | No | — | The locked value |
+| `name` | any[] | No | — | The name value |
+| `next_deadline` | any[] | No | — | Next Deadline |
+| `owner` | any[] | No | — | The owner value |
 | `pass_through_value` | any[] | No | — | Searching for null, "" or " " will return the same results containing all those values. |
 | `proof_id` | any[] | No | — | An array that can be used to search for multiple proofs by their IDs. Limit proof IDs in array = 100. |
-| `proof_status` | any[] | No | — | proof_status |
-| `reviewer` | any[] | No | — | reviewer |
-| `stages` | any[] | No | — | stages |
+| `proof_status` | any[] | No | — | Proof Status |
+| `reviewer` | any[] | No | — | The reviewer value |
+| `stages` | any[] | No | — | The stages value |
 
 <Expandable title="inputSchema">
 
@@ -1213,11 +1380,11 @@ Search Proofs
     },
     "archived": {
       "type": "array",
-      "description": "archived"
+      "description": "The archived value"
     },
     "custom_properties": {
       "type": "array",
-      "description": "custom_properties"
+      "description": "Custom Properties"
     },
     "fields": {
       "type": "string",
@@ -1229,23 +1396,23 @@ Search Proofs
     },
     "integration_properties": {
       "type": "array",
-      "description": "integration_properties"
+      "description": "Integration Properties"
     },
     "locked": {
       "type": "array",
-      "description": "locked"
+      "description": "The locked value"
     },
     "name": {
       "type": "array",
-      "description": "name"
+      "description": "The name value"
     },
     "next_deadline": {
       "type": "array",
-      "description": "next_deadline"
+      "description": "Next Deadline"
     },
     "owner": {
       "type": "array",
-      "description": "owner"
+      "description": "The owner value"
     },
     "pass_through_value": {
       "type": "array",
@@ -1257,15 +1424,15 @@ Search Proofs
     },
     "proof_status": {
       "type": "array",
-      "description": "proof_status"
+      "description": "Proof Status"
     },
     "reviewer": {
       "type": "array",
-      "description": "reviewer"
+      "description": "The reviewer value"
     },
     "stages": {
       "type": "array",
-      "description": "stages"
+      "description": "The stages value"
     }
   },
   "required": [
@@ -1287,28 +1454,28 @@ Update an Existing Proof
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
-| `allow_source_download` | boolean | No | — | allow_source_download |
-| `archived` | boolean | No | — | archived |
-| `brief` | object | No | — | brief |
+| `allow_source_download` | boolean | No | — | Allow Source Download |
+| `archived` | boolean | No | — | The archived value |
+| `brief` | object | No | — | The brief value |
 | `custom_properties` | any[] | No | — | Available only on Enterprise edition. Values and IDs can be obtained from GET/v1/custom-properties/proofs/groups request. |
 | `email_branding` | object | No | — | Available on Pro and Enterprise editions only |
 | `folder_id` | string | No | — | Folder ID may be required if set in Account proof settings - available only for admins on Standard, Pro and Enterprise editions. |
-| `lock_on_decisions` | boolean | No | — | lock_on_decisions |
-| `locked` | boolean | No | — | locked |
+| `lock_on_decisions` | boolean | No | — | Lock On Decisions |
+| `locked` | boolean | No | — | The locked value |
 | `minor_version` | boolean | No | — | Available on Pro and Enterprise editions only. If true, "version" fields will be returned as X.y where X is last major version and y is number of minor version, i.e. 0.1, 2.3, 1.1 |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `owner_email` | string | No | — | You can provide an email of a user who you want to be the proof owner |
 | `pass_through_value` | string | No | — | Field allowing to attach a value to a proof that is passed back on the proof and webhook events to easily identify the proof in your own system. Field accepts max of 1024 characters. |
 | `proof_security` | string | No | — | Field describes proof access control settings. If not provided settings are pulled from account settings(on Standard, Pro and Enterprise editions). Value 'users_and_guests_authentication_required' is available only on Enterprise edition. Field overrides 'secure_proofing' and 'require_sign_in' fields. |
 | `require_electronic_signature` | boolean | No | — | Available on Enterprise edition only. Enable this setting to request all reviewers to electronically sign their decisions on proof. |
 | `require_sign_in` | boolean | No | — | Use "proof_security" field. |
 | `secure_proofing` | boolean | No | — | Use "proof_security" field. |
-| `stages` | any[] | No | — | stages |
+| `stages` | any[] | No | — | The stages value |
 | `subscription` | object | No | — | Available on Standard, Pro and Enterprise editions. |
 | `suppress_all_emails` | boolean | No | — | If true, Ziflow will not send any emails regarding this proof. The only emails that can be triggered are the emails that are sent when using the 'remind' function within the web application. |
 | `suppress_creation_email` | boolean | No | — | If true, "New proof created" email will not be sent to proof owner. |
 | `version_previous_id` | string | No | — | If provided, it will make this proof a new version of the provided proof with given ID. This does require edit/manage permissions on the proof |
-| `workflow_template` | object | No | — | Available on proofs from Enterprise edition only |
+| `workflow_template` | object | No | — | Workflow Template |
 
 <Expandable title="inputSchema">
 
@@ -1326,15 +1493,15 @@ Update an Existing Proof
     },
     "allow_source_download": {
       "type": "boolean",
-      "description": "allow_source_download"
+      "description": "Allow Source Download"
     },
     "archived": {
       "type": "boolean",
-      "description": "archived"
+      "description": "The archived value"
     },
     "brief": {
       "type": "object",
-      "description": "brief",
+      "description": "The brief value",
       "properties": {
         "text": {
           "type": "string",
@@ -1370,11 +1537,11 @@ Update an Existing Proof
     },
     "lock_on_decisions": {
       "type": "boolean",
-      "description": "lock_on_decisions"
+      "description": "Lock On Decisions"
     },
     "locked": {
       "type": "boolean",
-      "description": "locked"
+      "description": "The locked value"
     },
     "minor_version": {
       "type": "boolean",
@@ -1382,7 +1549,7 @@ Update an Existing Proof
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner_email": {
       "type": "string",
@@ -1416,17 +1583,19 @@ Update an Existing Proof
     },
     "stages": {
       "type": "array",
-      "description": "stages"
+      "description": "The stages value"
     },
     "subscription": {
       "type": "object",
       "description": "Available on Standard, Pro and Enterprise editions.",
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "The enabled value"
         },
         "permissions": {
-          "type": "string"
+          "type": "string",
+          "description": "The permissions value"
         },
         "added_to_stage": {
           "type": "string",
@@ -1451,18 +1620,7 @@ Update an Existing Proof
       "description": "If provided, it will make this proof a new version of the provided proof with given ID. This does require edit/manage permissions on the proof"
     },
     "workflow_template": {
-      "type": "object",
-      "description": "Available on proofs from Enterprise edition only",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Available only on Enterprise edition. ID of an active workflow template that should be used to create the proof"
-        },
-        "append_stages": {
-          "type": "boolean",
-          "description": "Defines if template stages should be added to the proof at the end of workflow or replace proof's stages"
-        }
-      }
+      "description": "Workflow Template"
     }
   },
   "required": [
@@ -1530,19 +1688,20 @@ Update Stage
 | `stage_id` | string | Yes | — | Stage ID |
 | `allow_private_comments` | boolean | No | — | Available only on Enterprise edition. |
 | `allow_public_comments` | boolean | No | — | Default value forced for all editions except Enterprise. |
+| `checklists` | any[] | No | — | List of checklist templates to be used for updating checklists in the current stage |
 | `custom_email_message` | string | No | — | Not allowed on plans below Enterprise. |
 | `custom_email_subject` | string | No | — | Not allowed on plans below Enterprise. |
 | `deadline` | string | No | — | Date and time. Only used if the stage trigger is "immediately" or if the stage has started. If the stage is triggered manually or based on another stage, use the "stage_trigger" deadline field. |
 | `final_status_calculation` | object | No | — | Defines how stage decision status is calculated. "all_decisions" - all decisions must be made to calculate the stage status.  "only_one_decision" - any single decision is enough to calculate the stage status.   "primary_decision_maker" - selected reviewer's decision will calculate the stage status.  "reviewer_id" or "reviewer_email" must be provided for the "primary_decision_maker" option. |
 | `id` | string | Yes | — | Provide ID of every stage you wish to change or leave unchanged - missing stage ID will be deleted. |
-| `lock` | object | No | — | lock |
-| `members` | any[] | Yes | — | members |
-| `name` | string | No | — | name |
+| `lock` | object | No | — | The lock value |
+| `members` | any[] | Yes | — | The members value |
+| `name` | string | No | — | The name value |
 | `only_one_decision` | boolean | No | — | Functionality moved to "final_status_calculation" field |
 | `send_new_proof_email` | boolean | No | — | Send new proof/new version email to reviewers on Stage |
 | `skip` | string | No | — | Skip stage in next version condition. Available for proofs created on Enterprise edition only |
-| `stage_trigger` | object | No | — | stage_trigger |
-| `status` | object | No | — | status |
+| `stage_trigger` | object | No | — | Stage Trigger |
+| `status` | object | No | — | The status value |
 
 <Expandable title="inputSchema">
 
@@ -1569,6 +1728,10 @@ Update Stage
     "allow_public_comments": {
       "type": "boolean",
       "description": "Default value forced for all editions except Enterprise."
+    },
+    "checklists": {
+      "type": "array",
+      "description": "List of checklist templates to be used for updating checklists in the current stage"
     },
     "custom_email_message": {
       "type": "string",
@@ -1606,27 +1769,29 @@ Update Stage
     },
     "lock": {
       "type": "object",
-      "description": "lock",
+      "description": "The lock value",
       "properties": {
         "type": {
           "type": "string",
           "description": "When null, then it's set to \"Never\""
         },
         "next_stage_name": {
-          "type": "string"
+          "type": "string",
+          "description": "Next Stage Name"
         },
         "next_stage_id": {
-          "type": "string"
+          "type": "string",
+          "description": "Next Stage Id"
         }
       }
     },
     "members": {
       "type": "array",
-      "description": "members"
+      "description": "The members value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "only_one_decision": {
       "type": "boolean",
@@ -1648,13 +1813,15 @@ Update Stage
     },
     "stage_trigger": {
       "type": "object",
-      "description": "stage_trigger",
+      "description": "Stage Trigger",
       "properties": {
         "trigger_id": {
-          "type": "string"
+          "type": "string",
+          "description": "Trigger Id"
         },
         "trigger": {
-          "type": "object"
+          "type": "object",
+          "description": "The trigger value"
         },
         "deadline": {
           "type": "object",
@@ -1664,7 +1831,7 @@ Update Stage
     },
     "status": {
       "type": "object",
-      "description": "status",
+      "description": "The status value",
       "properties": {
         "locked": {
           "type": "boolean",

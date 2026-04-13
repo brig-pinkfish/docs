@@ -24,7 +24,7 @@ description: "Genesys Recording - access and annotate conversation recordings, m
 | [`genesys_recording_get_conversation_recording_annotation`](#genesys_recording_get_conversation_recording_annotation) | Get annotation |
 | [`genesys_recording_get_conversation_recording_annotations`](#genesys_recording_get_conversation_recording_annotations) | Get annotations for recording |
 | [`genesys_recording_get_conversation_recordingmetadata`](#genesys_recording_get_conversation_recordingmetadata) | Get recording metadata for a conversation. Does not return playable media nor system annotations. Bookmark annotations will be excluded if either recording:recording:view or recording:annotation:view permission is missing. |
-| [`genesys_recording_get_conversation_recordingmetadata_recording_id`](#genesys_recording_get_conversation_recordingmetadata_recording_id) | Get metadata for a specific recording. Does not return playable media. |
+| [`genesys_recording_get_conversation_recordingmetadata_recording_id`](#genesys_recording_get_conversation_recordingmetadata_recording_id) | Get metadata for a specific recording. Does not return playable media. Bookmark annotations will be excluded if either recording:recording:view or recording:annotation:view permission is missing. |
 | [`genesys_recording_get_conversation_recordings`](#genesys_recording_get_conversation_recordings) | Get all of a Conversation's Recordings. |
 | [`genesys_recording_get_crossplatform_mediaretentionpolicies`](#genesys_recording_get_crossplatform_mediaretentionpolicies) | Gets media retention policy list with query options to filter on name and enabled. |
 | [`genesys_recording_get_crossplatform_mediaretentionpolicy`](#genesys_recording_get_crossplatform_mediaretentionpolicy) | Get a media retention policy |
@@ -44,7 +44,7 @@ description: "Genesys Recording - access and annotate conversation recordings, m
 | [`genesys_recording_get_uploads_report`](#genesys_recording_get_uploads_report) | Get the status of a recording upload status report |
 | [`genesys_recording_patch_crossplatform_mediaretentionpolicy`](#genesys_recording_patch_crossplatform_mediaretentionpolicy) | Patch a media retention policy |
 | [`genesys_recording_patch_mediaretentionpolicy`](#genesys_recording_patch_mediaretentionpolicy) | Patch a media retention policy |
-| [`genesys_recording_post_batchrequests`](#genesys_recording_post_batchrequests) | Submit a batch download request for recordings. Recordings in response will be in their original format/codec - configured in the Trunk configuration. |
+| [`genesys_recording_post_batchrequests`](#genesys_recording_post_batchrequests) | Submit a batch download request for recordings. Recordings in response will be in their original format/codec - configured in the Trunk configuration. If the recording:recording:viewSensitiveData permission is missing and the organization has sensitive data redaction enabled, recordings with sensitive data will be excluded from the batch download. |
 | [`genesys_recording_post_conversation_recording_annotations`](#genesys_recording_post_conversation_recording_annotations) | Create annotation |
 | [`genesys_recording_post_crossplatform_mediaretentionpolicies`](#genesys_recording_post_crossplatform_mediaretentionpolicies) | Create media retention policy |
 | [`genesys_recording_post_jobs`](#genesys_recording_post_jobs) | Create a recording bulk job. |
@@ -123,7 +123,7 @@ Delete media retention policies
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ids` | string | Yes | — | ids |
+| `ids` | string | Yes | — | The ids value |
 
 <Expandable title="inputSchema">
 
@@ -137,7 +137,7 @@ Delete media retention policies
     },
     "ids": {
       "type": "string",
-      "description": "ids"
+      "description": "The ids value"
     }
   },
   "required": [
@@ -195,7 +195,7 @@ Delete the recording bulk job
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 
 <Expandable title="inputSchema">
 
@@ -209,7 +209,7 @@ Delete the recording bulk job
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     }
   },
   "required": [
@@ -231,7 +231,7 @@ Delete media retention policies
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ids` | string | Yes | — | ids |
+| `ids` | string | Yes | — | The ids value |
 
 <Expandable title="inputSchema">
 
@@ -245,7 +245,7 @@ Delete media retention policies
     },
     "ids": {
       "type": "string",
-      "description": "ids"
+      "description": "The ids value"
     }
   },
   "required": [
@@ -339,7 +339,7 @@ Get the status and results for a batch request job, only the user that submitted
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 
 <Expandable title="inputSchema">
 
@@ -353,7 +353,7 @@ Get the status and results for a batch request job, only the user that submitted
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     }
   },
   "required": [
@@ -602,7 +602,7 @@ Get recording metadata for a conversation. Does not return playable media nor sy
 
 ## genesys_recording_get_conversation_recordingmetadata_recording_id
 
-Get metadata for a specific recording. Does not return playable media.
+Get metadata for a specific recording. Does not return playable media. Bookmark annotations will be excluded if either recording:recording:view or recording:annotation:view permission is missing.
 
 **Parameters:**
 
@@ -841,7 +841,7 @@ Get the status of the job associated with the job id.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 
 <Expandable title="inputSchema">
 
@@ -855,7 +855,7 @@ Get the status of the job associated with the job id.
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     }
   },
   "required": [
@@ -877,7 +877,7 @@ Get IDs of recordings that the bulk job failed for
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 | `pageSize` | integer | No | — | Page size. Maximum is 100. |
 | `pageNumber` | integer | No | — | Page number |
 | `includeTotal` | boolean | No | — | If false, cursor will be used to locate the page instead of pageNumber. It is recommended to set it to false for improved performance. |
@@ -895,7 +895,7 @@ Get IDs of recordings that the bulk job failed for
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     },
     "pageSize": {
       "type": "integer",
@@ -1523,7 +1523,7 @@ Get the status of a recording upload status report
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `reportId` | string | Yes | — | reportId |
+| `reportId` | string | Yes | — | Report Id |
 
 <Expandable title="inputSchema">
 
@@ -1537,7 +1537,7 @@ Get the status of a recording upload status report
     },
     "reportId": {
       "type": "string",
-      "description": "reportId"
+      "description": "Report Id"
     }
   },
   "required": [
@@ -1560,7 +1560,7 @@ Patch a media retention policy
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `policyId` | string | Yes | — | Policy ID |
-| `enabled` | boolean | No | — | enabled |
+| `enabled` | boolean | No | — | The enabled value |
 
 <Expandable title="inputSchema">
 
@@ -1578,7 +1578,7 @@ Patch a media retention policy
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     }
   },
   "required": [
@@ -1601,7 +1601,7 @@ Patch a media retention policy
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `policyId` | string | Yes | — | Policy ID |
-| `enabled` | boolean | No | — | enabled |
+| `enabled` | boolean | No | — | The enabled value |
 
 <Expandable title="inputSchema">
 
@@ -1619,7 +1619,7 @@ Patch a media retention policy
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     }
   },
   "required": [
@@ -1635,7 +1635,7 @@ Patch a media retention policy
 
 ## genesys_recording_post_batchrequests
 
-Submit a batch download request for recordings. Recordings in response will be in their original format/codec - configured in the Trunk configuration.
+Submit a batch download request for recordings. Recordings in response will be in their original format/codec - configured in the Trunk configuration. If the recording:recording:viewSensitiveData permission is missing and the organization has sensitive data redaction enabled, recordings with sensitive data will be excluded from the batch download.
 
 **Parameters:**
 
@@ -1686,14 +1686,14 @@ Create annotation
 | `durationMs` | integer | No | — | Duration of annotation in milliseconds. |
 | `id` | string | No | — | Annotation id. All pause annotations on a recording will share an ID value, bookmark annotations will have unique IDs, and hold annotations will have randomly generated UUIDs (i.e. the ID will change at each request). |
 | `location` | integer | No | — | Offset of annotation in milliseconds. |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `realtimeLocation` | integer | No | — | Offset of annotation (milliseconds) from start of the recording before removing the cumulative duration of all pauses before this annotation |
 | `reason` | string | No | — | Reason for a pause annotation. Valid values: Hold,SecurePause,FlowOrQueue,Pause |
 | `recordingDurationMs` | integer | No | — | Duration of annotation (milliseconds), adjusted for any recording cuts. |
 | `recordingLocation` | integer | No | — | Offset of annotation (milliseconds) from start of recording, adjusted for any recording cuts |
 | `selfUri` | string | No | — | The URI for this object |
-| `type` | string | No | — | type |
-| `user` | object | No | — | user |
+| `type` | string | No | — | The type value |
+| `user` | object | No | — | The user value |
 
 <Expandable title="inputSchema">
 
@@ -1743,7 +1743,7 @@ Create annotation
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "realtimeLocation": {
       "type": "integer",
@@ -1773,30 +1773,35 @@ Create annotation
     },
     "type": {
       "type": "string",
-      "description": "type"
+      "description": "The type value"
     },
     "user": {
       "type": "object",
-      "description": "user",
+      "description": "The user value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -1811,58 +1816,72 @@ Create annotation
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -1877,10 +1896,12 @@ Create annotation
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -1899,7 +1920,8 @@ Create annotation
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -1939,17 +1961,17 @@ Create media retention policy
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `actions` | object | No | — | actions |
-| `conditions` | object | No | — | conditions |
+| `actions` | object | No | — | The actions value |
+| `conditions` | object | No | — | The conditions value |
 | `createdDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `description` | string | No | — | description |
-| `enabled` | boolean | No | — | enabled |
+| `description` | string | No | — | The description value |
+| `enabled` | boolean | No | — | The enabled value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `mediaPolicies` | object | No | — | mediaPolicies |
+| `mediaPolicies` | object | No | — | Media Policies |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `name` | string | Yes | — | The policy name. |
-| `order` | integer | No | — | order |
-| `policyErrors` | object | No | — | policyErrors |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `policyErrors` | object | No | — | Policy Errors |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -1964,7 +1986,7 @@ Create media retention policy
     },
     "actions": {
       "type": "object",
-      "description": "actions",
+      "description": "The actions value",
       "properties": {
         "retainRecording": {
           "type": "boolean",
@@ -1979,56 +2001,70 @@ Create media retention policy
           "description": "true to delete the recording associated with the conversation regardless of the values of retainRecording or deleteRecording. Default = false"
         },
         "assignEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Evaluations"
         },
         "assignMeteredEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Evaluations"
         },
         "assignMeteredAssignmentByAgent": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Assignment By Agent"
         },
         "assignCalibrations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Calibrations"
         },
         "retentionDuration": {
-          "type": "object"
+          "type": "object",
+          "description": "Retention Duration"
         },
         "mediaTranscriptions": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Transcriptions"
         },
         "integrationExport": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Export"
         }
       }
     },
     "conditions": {
       "type": "object",
-      "description": "conditions",
+      "description": "The conditions value",
       "properties": {
         "forUsers": {
           "type": "array",
           "description": "List of users to apply this policy to. Each user object can include the 'id' field containing the user's unique identifier. Example: [{\"id\":\"<userId>\"}]."
         },
         "directions": {
-          "type": "array"
+          "type": "array",
+          "description": "The directions value"
         },
         "dateRanges": {
-          "type": "array"
+          "type": "array",
+          "description": "Date Ranges"
         },
         "mediaTypes": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Types"
         },
         "forQueues": {
-          "type": "array"
+          "type": "array",
+          "description": "For Queues"
         },
         "duration": {
-          "type": "object"
+          "type": "object",
+          "description": "The duration value"
         },
         "wrapupCodes": {
-          "type": "array"
+          "type": "array",
+          "description": "Wrapup Codes"
         },
         "timeAllowed": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Allowed"
         },
         "teams": {
           "type": "array",
@@ -2046,11 +2082,11 @@ Create media retention policy
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     },
     "id": {
       "type": "string",
@@ -2058,19 +2094,23 @@ Create media retention policy
     },
     "mediaPolicies": {
       "type": "object",
-      "description": "mediaPolicies",
+      "description": "Media Policies",
       "properties": {
         "callPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Call Policy"
         },
         "chatPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Chat Policy"
         },
         "emailPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Email Policy"
         },
         "messagePolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Message Policy"
         }
       }
     },
@@ -2084,14 +2124,15 @@ Create media retention policy
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "policyErrors": {
       "type": "object",
-      "description": "policyErrors",
+      "description": "Policy Errors",
       "properties": {
         "policyErrorMessages": {
-          "type": "array"
+          "type": "array",
+          "description": "Policy Error Messages"
         }
       }
     },
@@ -2124,7 +2165,7 @@ Create a recording bulk job.
 | `actionDate` | string | No | — | The date when the action will be performed. If screenRecordingActionDate is also provided, this value is only used for non-screen recordings. Otherwise this value is used for all recordings. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `agedConversationInterval` | string | No | — | As an alternative to conversationQuery, specify the date and time range of conversations that are older than 5 years to query.Results will include all conversations that had activity during the interval. This is supported only when querying for conversations older than 5 years;conversationQuery must not be provided when this is provided. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss.Interval duration must not exceed 6 months. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `clearExport` | boolean | No | — | For DELETE action, setting this to true will clear any pending exports for recordings. This field is only used for DELETE action. Default value = false |
-| `conversationQuery` | object | No | — | conversationQuery |
+| `conversationQuery` | object | No | — | Conversation Query |
 | `includeRecordingsWithSensitiveData` | boolean | No | — | Whether to include recordings with PCI DSS and/or PII data, default value = false |
 | `includeScreenRecordings` | boolean | No | — | Whether to include Screen recordings for the action, default value = true |
 | `integrationId` | string | No | — | IntegrationId to Access AWS S3 bucket for bulk recording exports. This field is required and used only for EXPORT action. |
@@ -2168,7 +2209,7 @@ Create a recording bulk job.
     },
     "conversationQuery": {
       "type": "object",
-      "description": "conversationQuery",
+      "description": "Conversation Query",
       "properties": {
         "conversationFilters": {
           "type": "array",
@@ -2303,17 +2344,17 @@ Create media retention policy
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `actions` | object | No | — | actions |
-| `conditions` | object | No | — | conditions |
+| `actions` | object | No | — | The actions value |
+| `conditions` | object | No | — | The conditions value |
 | `createdDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `description` | string | No | — | description |
-| `enabled` | boolean | No | — | enabled |
+| `description` | string | No | — | The description value |
+| `enabled` | boolean | No | — | The enabled value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `mediaPolicies` | object | No | — | mediaPolicies |
+| `mediaPolicies` | object | No | — | Media Policies |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `name` | string | Yes | — | The policy name. |
-| `order` | integer | No | — | order |
-| `policyErrors` | object | No | — | policyErrors |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `policyErrors` | object | No | — | Policy Errors |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -2328,7 +2369,7 @@ Create media retention policy
     },
     "actions": {
       "type": "object",
-      "description": "actions",
+      "description": "The actions value",
       "properties": {
         "retainRecording": {
           "type": "boolean",
@@ -2343,62 +2384,78 @@ Create media retention policy
           "description": "true to delete the recording associated with the conversation regardless of the values of retainRecording or deleteRecording. Default = false"
         },
         "assignEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Evaluations"
         },
         "assignMeteredEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Evaluations"
         },
         "assignMeteredAssignmentByAgent": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Assignment By Agent"
         },
         "assignCalibrations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Calibrations"
         },
         "assignSurveys": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Surveys"
         },
         "retentionDuration": {
-          "type": "object"
+          "type": "object",
+          "description": "Retention Duration"
         },
         "initiateScreenRecording": {
-          "type": "object"
+          "type": "object",
+          "description": "Initiate Screen Recording"
         },
         "mediaTranscriptions": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Transcriptions"
         },
         "integrationExport": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Export"
         }
       }
     },
     "conditions": {
       "type": "object",
-      "description": "conditions",
+      "description": "The conditions value",
       "properties": {
         "forUsers": {
           "type": "array",
           "description": "List of users to apply this policy to. Each user object can include the 'id' field containing the user's unique identifier. Example: [{\"id\":\"<userId>\"}]."
         },
         "directions": {
-          "type": "array"
+          "type": "array",
+          "description": "The directions value"
         },
         "dateRanges": {
-          "type": "array"
+          "type": "array",
+          "description": "Date Ranges"
         },
         "mediaTypes": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Types"
         },
         "forQueues": {
-          "type": "array"
+          "type": "array",
+          "description": "For Queues"
         },
         "duration": {
-          "type": "object"
+          "type": "object",
+          "description": "The duration value"
         },
         "wrapupCodes": {
-          "type": "array"
+          "type": "array",
+          "description": "Wrapup Codes"
         },
         "timeAllowed": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Allowed"
         },
         "teams": {
           "type": "array",
@@ -2416,11 +2473,11 @@ Create media retention policy
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     },
     "id": {
       "type": "string",
@@ -2428,19 +2485,23 @@ Create media retention policy
     },
     "mediaPolicies": {
       "type": "object",
-      "description": "mediaPolicies",
+      "description": "Media Policies",
       "properties": {
         "callPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Call Policy"
         },
         "chatPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Chat Policy"
         },
         "emailPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Email Policy"
         },
         "messagePolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Message Policy"
         }
       }
     },
@@ -2454,14 +2515,15 @@ Create media retention policy
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "policyErrors": {
       "type": "object",
-      "description": "policyErrors",
+      "description": "Policy Errors",
       "properties": {
         "policyErrorMessages": {
-          "type": "array"
+          "type": "array",
+          "description": "Policy Error Messages"
         }
       }
     },
@@ -2550,9 +2612,9 @@ Acknowledge a screen recording.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `conversationId` | string | No | — | conversationId |
-| `participantJid` | string | No | — | participantJid |
-| `roomId` | string | No | — | roomId |
+| `conversationId` | string | No | — | Conversation Id |
+| `participantJid` | string | No | — | Participant Jid |
+| `roomId` | string | No | — | Room Id |
 
 <Expandable title="inputSchema">
 
@@ -2566,15 +2628,15 @@ Acknowledge a screen recording.
     },
     "conversationId": {
       "type": "string",
-      "description": "conversationId"
+      "description": "Conversation Id"
     },
     "participantJid": {
       "type": "string",
-      "description": "participantJid"
+      "description": "Participant Jid"
     },
     "roomId": {
       "type": "string",
-      "description": "roomId"
+      "description": "Room Id"
     }
   },
   "required": [
@@ -2595,9 +2657,9 @@ Provide meta-data a screen recording.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `metaData` | any[] | No | — | metaData |
-| `participantJid` | string | No | — | participantJid |
-| `roomId` | string | No | — | roomId |
+| `metaData` | any[] | No | — | Meta Data |
+| `participantJid` | string | No | — | Participant Jid |
+| `roomId` | string | No | — | Room Id |
 
 <Expandable title="inputSchema">
 
@@ -2611,15 +2673,15 @@ Provide meta-data a screen recording.
     },
     "metaData": {
       "type": "array",
-      "description": "metaData"
+      "description": "Meta Data"
     },
     "participantJid": {
       "type": "string",
-      "description": "participantJid"
+      "description": "Participant Jid"
     },
     "roomId": {
       "type": "string",
-      "description": "roomId"
+      "description": "Room Id"
     }
   },
   "required": [
@@ -2690,7 +2752,7 @@ Updates the retention records on a recording.
 | `conversationId` | string | Yes | — | Conversation ID |
 | `recordingId` | string | Yes | — | Recording ID |
 | `clearExport` | boolean | No | — | Whether to clear the pending export for the recording |
-| `actualTranscodeTimeMs` | integer | No | — | actualTranscodeTimeMs |
+| `actualTranscodeTimeMs` | integer | No | — | Actual Transcode Time Ms |
 | `annotations` | any[] | No | — | Annotations that belong to the recording. |
 | `archiveDate` | string | No | — | The date the recording will be archived. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `archiveMedium` | string | No | — | The type of archive medium used. Example: CloudArchive |
@@ -2698,7 +2760,7 @@ Updates the retention records on a recording.
 | `deleteDate` | string | No | — | The date the recording will be deleted. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `emailTranscript` | any[] | No | — | Represents an email transcript |
 | `endTime` | string | No | — | The end time of the recording. Null when there is no playable media. |
-| `estimatedTranscodeTimeMs` | integer | No | — | estimatedTranscodeTimeMs |
+| `estimatedTranscodeTimeMs` | integer | No | — | Estimated Transcode Time Ms |
 | `exportDate` | string | No | — | The date the recording will be exported. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `exportedDate` | string | No | — | The date the recording was exported. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `fileState` | string | No | — | Represents the current file state for a recording. Examples: Uploading, Archived, etc |
@@ -2709,11 +2771,11 @@ Updates the retention records on a recording.
 | `mediaSubtype` | string | No | — | The media subtype of the recording. |
 | `mediaUris` | object | No | — | The different mediaUris for the recording. Null when there is no playable media. |
 | `messagingTranscript` | any[] | No | — | Represents a messaging transcript |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `originalRecordingStartTime` | string | No | — | The start time of the full recording, before any segment access restrictions are applied. Null when there is no playable media. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `outputDurationMs` | integer | No | — | Duration of transcoded media in milliseconds |
 | `outputSizeInBytes` | integer | No | — | Size of transcoded media in bytes. 0 if there is no transcoded media. |
-| `path` | string | No | — | path |
+| `path` | string | No | — | The path value |
 | `recordingErrorStatus` | string | No | — | Status of a recording that cannot be returned because of an error |
 | `recordingFileRole` | string | No | — | Role of the file recording. It can be either customer_experience or adhoc. |
 | `remainingRestorationsAllowedForOrg` | integer | No | — | The remaining archive restorations the organization has. Deprecated - Always returns 10000 since the restoration limit is no longer enforced. |
@@ -2748,7 +2810,7 @@ Updates the retention records on a recording.
     },
     "actualTranscodeTimeMs": {
       "type": "integer",
-      "description": "actualTranscodeTimeMs"
+      "description": "Actual Transcode Time Ms"
     },
     "annotations": {
       "type": "array",
@@ -2783,7 +2845,7 @@ Updates the retention records on a recording.
     },
     "estimatedTranscodeTimeMs": {
       "type": "integer",
-      "description": "estimatedTranscodeTimeMs"
+      "description": "Estimated Transcode Time Ms"
     },
     "exportDate": {
       "type": "string",
@@ -2843,7 +2905,7 @@ Updates the retention records on a recording.
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "originalRecordingStartTime": {
       "type": "string",
@@ -2859,7 +2921,7 @@ Updates the retention records on a recording.
     },
     "path": {
       "type": "string",
-      "description": "path"
+      "description": "The path value"
     },
     "recordingErrorStatus": {
       "type": "string",
@@ -2935,14 +2997,14 @@ Update annotation
 | `durationMs` | integer | No | — | Duration of annotation in milliseconds. |
 | `id` | string | No | — | Annotation id. All pause annotations on a recording will share an ID value, bookmark annotations will have unique IDs, and hold annotations will have randomly generated UUIDs (i.e. the ID will change at each request). |
 | `location` | integer | No | — | Offset of annotation in milliseconds. |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `realtimeLocation` | integer | No | — | Offset of annotation (milliseconds) from start of the recording before removing the cumulative duration of all pauses before this annotation |
 | `reason` | string | No | — | Reason for a pause annotation. Valid values: Hold,SecurePause,FlowOrQueue,Pause |
 | `recordingDurationMs` | integer | No | — | Duration of annotation (milliseconds), adjusted for any recording cuts. |
 | `recordingLocation` | integer | No | — | Offset of annotation (milliseconds) from start of recording, adjusted for any recording cuts |
 | `selfUri` | string | No | — | The URI for this object |
-| `type` | string | No | — | type |
-| `user` | object | No | — | user |
+| `type` | string | No | — | The type value |
+| `user` | object | No | — | The user value |
 
 <Expandable title="inputSchema">
 
@@ -2996,7 +3058,7 @@ Update annotation
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "realtimeLocation": {
       "type": "integer",
@@ -3026,30 +3088,35 @@ Update annotation
     },
     "type": {
       "type": "string",
-      "description": "type"
+      "description": "The type value"
     },
     "user": {
       "type": "object",
-      "description": "user",
+      "description": "The user value",
       "properties": {
         "id": {
           "type": "string",
           "description": "The globally unique identifier for the object."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name value"
         },
         "division": {
-          "type": "object"
+          "type": "object",
+          "description": "The division value"
         },
         "chat": {
-          "type": "object"
+          "type": "object",
+          "description": "The chat value"
         },
         "department": {
-          "type": "string"
+          "type": "string",
+          "description": "The department value"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         },
         "primaryContactInfo": {
           "type": "array",
@@ -3064,58 +3131,72 @@ Update annotation
           "description": "The current state for this user."
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "The title value"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "description": "The username value"
         },
         "manager": {
           "type": "object",
           "description": "Circular schema reference: #/components/schemas/User"
         },
         "images": {
-          "type": "array"
+          "type": "array",
+          "description": "The images value"
         },
         "version": {
           "type": "integer",
           "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
         },
         "certifications": {
-          "type": "array"
+          "type": "array",
+          "description": "The certifications value"
         },
         "biography": {
-          "type": "object"
+          "type": "object",
+          "description": "The biography value"
         },
         "employerInfo": {
-          "type": "object"
+          "type": "object",
+          "description": "Employer Info"
         },
         "preferredName": {
           "type": "string",
           "description": "Preferred full name of the agent"
         },
         "routingStatus": {
-          "type": "object"
+          "type": "object",
+          "description": "Routing Status"
         },
         "presence": {
-          "type": "object"
+          "type": "object",
+          "description": "The presence value"
         },
         "integrationPresence": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Presence"
         },
         "conversationSummary": {
-          "type": "object"
+          "type": "object",
+          "description": "Conversation Summary"
         },
         "outOfOffice": {
-          "type": "object"
+          "type": "object",
+          "description": "Out Of Office"
         },
         "geolocation": {
-          "type": "object"
+          "type": "object",
+          "description": "The geolocation value"
         },
         "station": {
-          "type": "object"
+          "type": "object",
+          "description": "The station value"
         },
         "authorization": {
-          "type": "object"
+          "type": "object",
+          "description": "The authorization value"
         },
         "profileSkills": {
           "type": "array",
@@ -3130,10 +3211,12 @@ Update annotation
           "description": "The groups the user is a member of"
         },
         "team": {
-          "type": "object"
+          "type": "object",
+          "description": "The team value"
         },
         "workPlanBidRanks": {
-          "type": "object"
+          "type": "object",
+          "description": "Work Plan Bid Ranks"
         },
         "skills": {
           "type": "array",
@@ -3152,7 +3235,8 @@ Update annotation
           "description": "preferred language by the user"
         },
         "lastTokenIssued": {
-          "type": "object"
+          "type": "object",
+          "description": "Last Token Issued"
         },
         "dateLastLogin": {
           "type": "string",
@@ -3194,17 +3278,17 @@ Update a media retention policy
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `policyId` | string | Yes | — | Policy ID |
-| `actions` | object | No | — | actions |
-| `conditions` | object | No | — | conditions |
+| `actions` | object | No | — | The actions value |
+| `conditions` | object | No | — | The conditions value |
 | `createdDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `description` | string | No | — | description |
-| `enabled` | boolean | No | — | enabled |
+| `description` | string | No | — | The description value |
+| `enabled` | boolean | No | — | The enabled value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `mediaPolicies` | object | No | — | mediaPolicies |
+| `mediaPolicies` | object | No | — | Media Policies |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `name` | string | No | — | name |
-| `order` | integer | No | — | order |
-| `policyErrors` | object | No | — | policyErrors |
+| `name` | string | No | — | The name value |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `policyErrors` | object | No | — | Policy Errors |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -3223,7 +3307,7 @@ Update a media retention policy
     },
     "actions": {
       "type": "object",
-      "description": "actions",
+      "description": "The actions value",
       "properties": {
         "retainRecording": {
           "type": "boolean",
@@ -3238,56 +3322,70 @@ Update a media retention policy
           "description": "true to delete the recording associated with the conversation regardless of the values of retainRecording or deleteRecording. Default = false"
         },
         "assignEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Evaluations"
         },
         "assignMeteredEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Evaluations"
         },
         "assignMeteredAssignmentByAgent": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Assignment By Agent"
         },
         "assignCalibrations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Calibrations"
         },
         "retentionDuration": {
-          "type": "object"
+          "type": "object",
+          "description": "Retention Duration"
         },
         "mediaTranscriptions": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Transcriptions"
         },
         "integrationExport": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Export"
         }
       }
     },
     "conditions": {
       "type": "object",
-      "description": "conditions",
+      "description": "The conditions value",
       "properties": {
         "forUsers": {
           "type": "array",
           "description": "List of users to apply this policy to. Each user object can include the 'id' field containing the user's unique identifier. Example: [{\"id\":\"<userId>\"}]."
         },
         "directions": {
-          "type": "array"
+          "type": "array",
+          "description": "The directions value"
         },
         "dateRanges": {
-          "type": "array"
+          "type": "array",
+          "description": "Date Ranges"
         },
         "mediaTypes": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Types"
         },
         "forQueues": {
-          "type": "array"
+          "type": "array",
+          "description": "For Queues"
         },
         "duration": {
-          "type": "object"
+          "type": "object",
+          "description": "The duration value"
         },
         "wrapupCodes": {
-          "type": "array"
+          "type": "array",
+          "description": "Wrapup Codes"
         },
         "timeAllowed": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Allowed"
         },
         "teams": {
           "type": "array",
@@ -3305,11 +3403,11 @@ Update a media retention policy
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     },
     "id": {
       "type": "string",
@@ -3317,19 +3415,23 @@ Update a media retention policy
     },
     "mediaPolicies": {
       "type": "object",
-      "description": "mediaPolicies",
+      "description": "Media Policies",
       "properties": {
         "callPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Call Policy"
         },
         "chatPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Chat Policy"
         },
         "emailPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Email Policy"
         },
         "messagePolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Message Policy"
         }
       }
     },
@@ -3339,18 +3441,19 @@ Update a media retention policy
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "policyErrors": {
       "type": "object",
-      "description": "policyErrors",
+      "description": "Policy Errors",
       "properties": {
         "policyErrorMessages": {
-          "type": "array"
+          "type": "array",
+          "description": "Policy Error Messages"
         }
       }
     },
@@ -3378,7 +3481,7 @@ Execute the recording bulk job.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 | `state` | string | Yes | — | The desired state for the job to be set to. |
 
 <Expandable title="inputSchema">
@@ -3393,7 +3496,7 @@ Execute the recording bulk job.
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     },
     "state": {
       "type": "string",
@@ -3424,17 +3527,17 @@ Update a media retention policy
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `policyId` | string | Yes | — | Policy ID |
-| `actions` | object | No | — | actions |
-| `conditions` | object | No | — | conditions |
+| `actions` | object | No | — | The actions value |
+| `conditions` | object | No | — | The conditions value |
 | `createdDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `description` | string | No | — | description |
-| `enabled` | boolean | No | — | enabled |
+| `description` | string | No | — | The description value |
+| `enabled` | boolean | No | — | The enabled value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `mediaPolicies` | object | No | — | mediaPolicies |
+| `mediaPolicies` | object | No | — | Media Policies |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `name` | string | No | — | name |
-| `order` | integer | No | — | order |
-| `policyErrors` | object | No | — | policyErrors |
+| `name` | string | No | — | The name value |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `policyErrors` | object | No | — | Policy Errors |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -3453,7 +3556,7 @@ Update a media retention policy
     },
     "actions": {
       "type": "object",
-      "description": "actions",
+      "description": "The actions value",
       "properties": {
         "retainRecording": {
           "type": "boolean",
@@ -3468,62 +3571,78 @@ Update a media retention policy
           "description": "true to delete the recording associated with the conversation regardless of the values of retainRecording or deleteRecording. Default = false"
         },
         "assignEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Evaluations"
         },
         "assignMeteredEvaluations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Evaluations"
         },
         "assignMeteredAssignmentByAgent": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Metered Assignment By Agent"
         },
         "assignCalibrations": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Calibrations"
         },
         "assignSurveys": {
-          "type": "array"
+          "type": "array",
+          "description": "Assign Surveys"
         },
         "retentionDuration": {
-          "type": "object"
+          "type": "object",
+          "description": "Retention Duration"
         },
         "initiateScreenRecording": {
-          "type": "object"
+          "type": "object",
+          "description": "Initiate Screen Recording"
         },
         "mediaTranscriptions": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Transcriptions"
         },
         "integrationExport": {
-          "type": "object"
+          "type": "object",
+          "description": "Integration Export"
         }
       }
     },
     "conditions": {
       "type": "object",
-      "description": "conditions",
+      "description": "The conditions value",
       "properties": {
         "forUsers": {
           "type": "array",
           "description": "List of users to apply this policy to. Each user object can include the 'id' field containing the user's unique identifier. Example: [{\"id\":\"<userId>\"}]."
         },
         "directions": {
-          "type": "array"
+          "type": "array",
+          "description": "The directions value"
         },
         "dateRanges": {
-          "type": "array"
+          "type": "array",
+          "description": "Date Ranges"
         },
         "mediaTypes": {
-          "type": "array"
+          "type": "array",
+          "description": "Media Types"
         },
         "forQueues": {
-          "type": "array"
+          "type": "array",
+          "description": "For Queues"
         },
         "duration": {
-          "type": "object"
+          "type": "object",
+          "description": "The duration value"
         },
         "wrapupCodes": {
-          "type": "array"
+          "type": "array",
+          "description": "Wrapup Codes"
         },
         "timeAllowed": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Allowed"
         },
         "teams": {
           "type": "array",
@@ -3541,11 +3660,11 @@ Update a media retention policy
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "enabled": {
       "type": "boolean",
-      "description": "enabled"
+      "description": "The enabled value"
     },
     "id": {
       "type": "string",
@@ -3553,19 +3672,23 @@ Update a media retention policy
     },
     "mediaPolicies": {
       "type": "object",
-      "description": "mediaPolicies",
+      "description": "Media Policies",
       "properties": {
         "callPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Call Policy"
         },
         "chatPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Chat Policy"
         },
         "emailPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Email Policy"
         },
         "messagePolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "Message Policy"
         }
       }
     },
@@ -3575,18 +3698,19 @@ Update a media retention policy
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "policyErrors": {
       "type": "object",
-      "description": "policyErrors",
+      "description": "Policy Errors",
       "properties": {
         "policyErrorMessages": {
-          "type": "array"
+          "type": "array",
+          "description": "Policy Error Messages"
         }
       }
     },
@@ -3676,7 +3800,7 @@ Update key rotation schedule
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `name` | string | No | — | name |
+| `name` | string | No | — | The name value |
 | `period` | string | Yes | — | Value to set schedule to |
 | `selfUri` | string | No | — | The URI for this object |
 
@@ -3696,7 +3820,7 @@ Update key rotation schedule
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "period": {
       "type": "string",
