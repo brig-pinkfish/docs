@@ -14,6 +14,7 @@ description: "Profile, posts, and connections"
 | --- | --- |
 | [`linkedin_get_user_info`](#linkedin_get_user_info) | Get authenticated user information from LinkedIn |
 | [`linkedin_share_post`](#linkedin_share_post) | Share a post on LinkedIn - supports text-only posts, posts with a link/article, or posts with an uploaded image |
+| [`linkedin_search_organizations`](#linkedin_search_organizations) | Search for a LinkedIn organization by vanity name (the URL slug). Returns the organization ID (URN) and basic details. Use this to find the organization URN needed for mentions in posts. |
 | [`linkedin_like_post`](#linkedin_like_post) | Like a LinkedIn post |
 | [`linkedin_comment_on_post`](#linkedin_comment_on_post) | Comment on a LinkedIn post |
 
@@ -53,13 +54,14 @@ Share a post on LinkedIn - supports text-only posts, posts with a link/article, 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `author` | string | Yes | — | Author URN (e.g., urn:li:person:XXXXXX) |
-| `text` | string | Yes | — | Post text content or commentary |
+| `text` | string | Yes | — | Post text content or commentary. When using mentions, the organization name must appear in the text at the specified start/length position. |
 | `url` | string | No | — | Optional URL of the link/article to share. Creates an article post. Cannot be combined with imageUrl |
 | `imageUrl` | string | No | — | Optional URL of an image to upload and attach to the post. Creates an image post. Cannot be combined with url |
 | `title` | string | No | — | Title for the shared link (only used when url is provided) |
 | `description` | string | No | — | Description for the shared link (only used when url is provided) |
 | `lifecycleState` | string | No | `"PUBLISHED"` | Post lifecycle state |
 | `visibility` | string | No | `"PUBLIC"` | Post visibility setting |
+| `mentions` | object[] | No | — | Optional array of entity mentions to tag in the post. The name must appear in the text — the tool will automatically find its position. Use linkedin_search_organizations to get the organization URN. |
 
 <Expandable title="inputSchema">
 
@@ -77,7 +79,7 @@ Share a post on LinkedIn - supports text-only posts, posts with a link/article, 
     },
     "text": {
       "type": "string",
-      "description": "Post text content or commentary"
+      "description": "Post text content or commentary. When using mentions, the organization name must appear in the text at the specified start/length position."
     },
     "url": {
       "type": "string",
@@ -113,12 +115,65 @@ Share a post on LinkedIn - supports text-only posts, posts with a link/article, 
       ],
       "default": "PUBLIC",
       "description": "Post visibility setting"
+    },
+    "mentions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The exact name of the entity as it appears in the post text (e.g., \"Slack\"). Must match a substring in the text."
+          },
+          "urn": {
+            "type": "string",
+            "description": "URN of the entity to mention (e.g., urn:li:organization:221390). Use linkedin_search_organizations to find organization URNs."
+          }
+        }
+      },
+      "description": "Optional array of entity mentions to tag in the post. The name must appear in the text — the tool will automatically find its position. Use linkedin_search_organizations to get the organization URN."
     }
   },
   "required": [
     "PCID",
     "author",
     "text"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## linkedin_search_organizations
+
+Search for a LinkedIn organization by vanity name (the URL slug). Returns the organization ID (URN) and basic details. Use this to find the organization URN needed for mentions in posts.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `vanityName` | string | Yes | — | The organization vanity name (URL slug, e.g., "activecampaign") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "vanityName": {
+      "type": "string",
+      "description": "The organization vanity name (URL slug, e.g., \"activecampaign\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "vanityName"
   ]
 }
 ```

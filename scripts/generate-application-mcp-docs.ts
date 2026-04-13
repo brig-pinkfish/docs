@@ -105,7 +105,69 @@ const NAME_OVERRIDES: Record<string, string> = {
   genesys: 'Genesys',
   jira: 'Jira',
   'jira-cloud': 'Jira Cloud',
-  workday: 'Workday'
+  workday: 'Workday',
+  lokalise: 'Lokalise',
+  'parallel-web-systems': 'Parallel Web Systems'
+}
+
+/**
+ * Remote MCP server family (auto-discovered at runtime from `serviceKey`).
+ *
+ * When a vendor publishes multiple official MCP servers under the same
+ * `serviceKey` (e.g. Lokalise ships project-management + software-development
+ * as separate endpoints), they render as parent/child doc pages — mirroring
+ * the dynamic-definition partition families (genesys, jira-cloud, workday).
+ *
+ * Solo remote servers (unique `serviceKey`) render as flat pages.
+ */
+type RemoteFamily = {
+  slug: string
+  members: ServerEntry[]
+}
+
+/** Normalized doc slug for flat (non-family) remote MCP servers. */
+function remoteDocSlug(name: string): string {
+  return name.replace(/-official-mcp$/, '').replace(/-mcp$/, '')
+}
+
+/** Child slug within a remote family: strip serviceKey prefix + `-mcp`/`-official-mcp` suffix. */
+function remoteFamilyChildSlug(memberName: string, serviceKey: string): string {
+  const prefixStripped = memberName.replace(
+    new RegExp(`^${escapeRegExp(serviceKey)}-`),
+    ''
+  )
+  return prefixStripped.replace(/-official-mcp$/, '').replace(/-mcp$/, '')
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
+ * Groups remote servers by `serviceKey`. Service keys with 2+ members become
+ * families; solo entries stay flat (the family Map does not include them).
+ */
+function discoverRemoteFamilies(remoteServers: ServerEntry[]): {
+  families: RemoteFamily[]
+  memberToFamily: Map<string, RemoteFamily>
+} {
+  const byKey = new Map<string, ServerEntry[]>()
+  for (const s of remoteServers) {
+    const key = s.serviceKey
+    if (!key) continue
+    if (!byKey.has(key)) byKey.set(key, [])
+    byKey.get(key)!.push(s)
+  }
+  const families: RemoteFamily[] = []
+  const memberToFamily = new Map<string, RemoteFamily>()
+  for (const [key, members] of byKey) {
+    if (members.length < 2) continue
+    const family: RemoteFamily = { slug: key, members }
+    families.push(family)
+    for (const m of members) memberToFamily.set(m.name, family)
+  }
+  families.sort((a, b) => a.slug.localeCompare(b.slug))
+  return { families, memberToFamily }
 }
 
 /** Classic application servers documented for backwards compatibility — marked in MDX. */
@@ -821,6 +883,133 @@ async function syncPartitionedFamilyDocPage(
   return { written: true, childSlugs }
 }
 
+// ============================================================================
+// Remote MCP server pages (tool-less; tools discovered at runtime)
+// ============================================================================
+
+function cleanRemoteTitle(label: string | undefined, fallback: string): string {
+  const raw = (label ?? fallback).trim()
+  return raw.replace(/\s*\(official mcp\)\s*$/i, '').trim() || fallback
+}
+
+function generateRemoteServerPageBody(
+  server: ServerEntry,
+  slug: string
+): string {
+  const titleName = cleanRemoteTitle(server.label, slug)
+  const description = getDescription(slug, server.description)
+  const url = server.remoteMcpUrl ?? ''
+  const authType = server.remoteMcpAuth?.type ?? 'apikey'
+  const serviceKey = server.serviceKey ?? slug
+  // Always use the canonical platform server path from the registry — customers
+  // need this exact value to configure their agents.
+  const serverPath = server.path || `/${server.name}`
+
+  let md = `---\n`
+  md += `title: "${titleName.replace(/"/g, '\\"')}"\n`
+  md += `sidebarTitle: "${slug}"\n`
+  md += `description: "${description.replace(/"/g, '\\"')}"\n`
+  md += `---\n\n`
+  md += `${GENERATED_HEADER}\n\n`
+  md += `**Server path:** \`${serverPath}\` | **Type:** Application (Remote MCP) | **PCID required:** Yes\n\n`
+  md += `<Note>\n`
+  md += `Tools are discovered at runtime from the upstream MCP server${url ? ` at \`${url}\`` : ''}. Authenticate via \`${authType}\`. Use a \`${serviceKey}\` PinkConnect connection.\n`
+  md += `</Note>\n`
+  return md
+}
+
+function generateRemoteServerPage(server: ServerEntry): {
+  slug: string
+  mdx: string
+} {
+  const slug = remoteDocSlug(server.name)
+  return {
+    slug,
+    mdx: generateRemoteServerPageBody(server, slug)
+  }
+}
+
+/** Derive a human-readable parent display name from any member's label. */
+function deriveFamilyDisplayName(members: ServerEntry[], slug: string): string {
+  // Prefer NAME_OVERRIDES, then the vendor portion of a member label (before "—" or "("),
+  // then a title-cased slug.
+  if (NAME_OVERRIDES[slug]) return NAME_OVERRIDES[slug]
+  for (const m of members) {
+    const label = (m.label ?? '').trim()
+    if (!label) continue
+    const cut = label.split(/\s+[—–-]\s+|\s*\(/)[0]?.trim()
+    if (cut) return cut
+  }
+  return slug
+    .split('-')
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ')
+}
+
+async function syncRemoteFamilyDocPage(
+  family: RemoteFamily
+): Promise<{ written: boolean; childSlugs: string[] }> {
+  const familyDir = path.join(OUTPUT_DIR, family.slug)
+  const overviewPath = path.join(OUTPUT_DIR, `${family.slug}.mdx`)
+
+  if (family.members.length === 0) {
+    if (fs.existsSync(overviewPath)) fs.unlinkSync(overviewPath)
+    if (fs.existsSync(familyDir)) fs.rmSync(familyDir, { recursive: true })
+    console.log(`  No members for remote family "${family.slug}" — skipping`)
+    return { written: false, childSlugs: [] }
+  }
+
+  if (!fs.existsSync(familyDir)) {
+    fs.mkdirSync(familyDir, { recursive: true })
+  }
+
+  const displayName = deriveFamilyDisplayName(family.members, family.slug)
+  const fallbackDescription = `${displayName} — official MCP servers published by the vendor as separate endpoints.`
+  const description = getDescription(family.slug, fallbackDescription)
+  const introParagraph = `${displayName} publishes ${family.members.length} official MCP servers. Tools are discovered at runtime; select the child server matching the workflow you need.`
+
+  let md = `---\n`
+  md += `title: "${displayName}"\n`
+  md += `sidebarTitle: "${family.slug}"\n`
+  md += `description: "${description.replace(/"/g, '\\"')}"\n`
+  md += `---\n\n`
+  md += `${GENERATED_HEADER}\n\n`
+  md += `**PinkConnect service:** \`${family.slug}\` | **Type:** Application (parent with child servers, Remote MCP) | **PCID required:** Yes\n\n`
+  md += `${introParagraph}\n\n`
+  md += `## Child servers\n\n`
+  md += `| Child server | Server path | Description |\n`
+  md += `| --- | --- | --- |\n`
+  for (const m of family.members) {
+    const childSlug = remoteFamilyChildSlug(m.name, family.slug)
+    const platformPath = m.path || `/${m.name}`
+    md += `| [${escapeMarkdown(childSlug)}](${family.slug}/${childSlug}) | \`${platformPath}\` | ${escapeMarkdown(m.description)} |\n`
+  }
+  fs.writeFileSync(overviewPath, md)
+
+  const childSlugs: string[] = []
+  for (const m of family.members) {
+    const childSlug = remoteFamilyChildSlug(m.name, family.slug)
+    const childMd = generateRemoteServerPageBody(m, childSlug)
+    fs.writeFileSync(path.join(familyDir, `${childSlug}.mdx`), childMd)
+    childSlugs.push(childSlug)
+  }
+
+  const existingFiles = fs.readdirSync(familyDir).filter((f) => f.endsWith('.mdx'))
+  for (const f of existingFiles) {
+    const slug = f.replace('.mdx', '')
+    if (!childSlugs.includes(slug)) {
+      fs.unlinkSync(path.join(familyDir, f))
+    }
+  }
+
+  console.log(
+    `  Generating ${family.slug}/ (${family.members.length} child pages, remote)...`
+  )
+  return { written: true, childSlugs }
+}
+
+// ============================================================================
+
 function shouldSyncPartitionedFamily(
   family: PartitionFamily,
   opts: { singleServer?: string; changedBaseRef?: string }
@@ -843,11 +1032,16 @@ function shouldSyncPartitionedFamily(
 
 interface ServerEntry {
   name: string
+  label?: string
   description: string
   path: string
   embedded: boolean
   productionEnabled?: boolean
   tools: any[]
+  remoteMcp?: boolean
+  remoteMcpUrl?: string
+  remoteMcpAuth?: { type?: string; header?: string }
+  serviceKey?: string
 }
 
 async function loadAvailableServers(): Promise<ServerEntry[]> {
@@ -1277,7 +1471,28 @@ async function main(): Promise<void> {
   let totalTools = 0
   const generatedNames: string[] = []
 
+  // Auto-discover remote MCP families by grouping remote servers on serviceKey.
+  // Any serviceKey with 2+ members becomes a parent/child family.
+  const { families: remoteFamilies, memberToFamily: remoteMemberToFamily } =
+    discoverRemoteFamilies(externalServers.filter((s) => s.remoteMcp === true))
+  if (remoteFamilies.length > 0) {
+    console.log(
+      `Discovered ${remoteFamilies.length} remote MCP family/families: ${remoteFamilies.map((f) => `${f.slug}(${f.members.length})`).join(', ')}\n`
+    )
+  }
+
   for (const server of toGenerate) {
+    // Remote MCP servers: tool-less page. Family members are handled in the
+    // remote-family loop below.
+    if (server.remoteMcp) {
+      if (remoteMemberToFamily.has(server.name)) continue
+      const { slug, mdx } = generateRemoteServerPage(server)
+      console.log(`  Generating ${slug}.mdx (remote)...`)
+      fs.writeFileSync(path.join(OUTPUT_DIR, `${slug}.mdx`), mdx)
+      generatedNames.push(slug)
+      continue
+    }
+
     const tools = server.tools || (await loadToolsForServer(server.name))
     if (!tools || tools.length === 0) {
       console.warn(`  Skipping ${server.name}: no tools found`)
@@ -1297,6 +1512,23 @@ async function main(): Promise<void> {
   }
 
   const familyChildSlugs = new Map<string, string[]>()
+
+  // Remote-family parent/child pages (auto-discovered via serviceKey)
+  for (const family of remoteFamilies) {
+    if (singleServer) {
+      const targetsFamily = singleServer === family.slug
+      const targetsMember = family.members.some((m) => m.name === singleServer)
+      if (!targetsFamily && !targetsMember) continue
+    }
+    const result = await syncRemoteFamilyDocPage(family)
+    if (result.written) {
+      if (!generatedNames.includes(family.slug)) {
+        generatedNames.push(family.slug)
+      }
+      familyChildSlugs.set(family.slug, result.childSlugs)
+    }
+  }
+
   for (const family of PARTITION_FAMILIES) {
     if (
       !shouldSyncPartitionedFamily(family, { singleServer, changedBaseRef })
