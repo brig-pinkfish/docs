@@ -1617,7 +1617,29 @@ Update an existing appointment
     },
     "wfmSchedule": {
       "type": "object",
-      "description": "wfmSchedule"
+      "description": "wfmSchedule",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the WFM schedule"
+        },
+        "businessUnit": {
+          "type": "object"
+        },
+        "weekDate": {
+          "type": "string",
+          "description": "The start week date for this schedule. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "businessUnit",
+        "id",
+        "weekDate"
+      ]
     }
   },
   "required": [
@@ -1679,7 +1701,17 @@ Update an existing annotation.
     },
     "createdBy": {
       "type": "object",
-      "description": "createdBy"
+      "description": "createdBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateCreated": {
       "type": "string",
@@ -1699,7 +1731,17 @@ Update an existing annotation.
     },
     "modifiedBy": {
       "type": "object",
-      "description": "modifiedBy"
+      "description": "modifiedBy",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "selfUri": {
       "type": "string",
@@ -1798,7 +1840,40 @@ Update Learning Assignment
     },
     "assessment": {
       "type": "object",
-      "description": "assessment"
+      "description": "assessment",
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "description": "The Id of the assessment"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The context Id of the related assessment form"
+        },
+        "assessmentFormId": {
+          "type": "string",
+          "description": "The Id of the related assessment form"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the assessment"
+        },
+        "answers": {
+          "type": "object"
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "Date the assessment was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Date the assessment was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateSubmitted": {
+          "type": "string",
+          "description": "Date the assessment was submitted. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        }
+      }
     },
     "state": {
       "type": "string",
@@ -1834,7 +1909,7 @@ Reschedule Learning Assignment
 | --- | --- | --- | --- | --- |
 | `assignmentId` | string | Yes | — | The ID of Learning Assignment |
 | `addToSchedule` | boolean | No | — | If True, adds the assignment to their schedule |
-| `dateRecommendedForCompletion` | string | No | — | The recommended completion date of the assignment. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
+| `dateRecommendedForCompletion` | string | Yes | — | The recommended completion date of the assignment. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `lengthInMinutes` | integer | No | — | The length in minutes of the assignment |
 
 <Expandable title="inputSchema">
@@ -1866,7 +1941,8 @@ Reschedule Learning Assignment
   },
   "required": [
     "PCID",
-    "assignmentId"
+    "assignmentId",
+    "dateRecommendedForCompletion"
   ]
 }
 ```
@@ -1934,7 +2010,46 @@ Update Learning Assignment Step
     },
     "moduleStep": {
       "type": "object",
-      "description": "moduleStep"
+      "description": "moduleStep",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The learning module inform step type"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the inform step or content"
+        },
+        "value": {
+          "type": "string",
+          "description": "The value for inform step"
+        },
+        "sharingUri": {
+          "type": "string",
+          "description": "The sharing uri for Content type inform step"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "The document type for Content type Inform step"
+        },
+        "order": {
+          "type": "integer",
+          "description": "The order of inform step in a learning module"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name for the inform step"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description for the inform step"
+        }
+      },
+      "required": [
+        "order",
+        "type",
+        "value"
+      ]
     },
     "percentageScore": {
       "type": "number",
@@ -1946,11 +2061,90 @@ Update Learning Assignment Step
     },
     "shareableContentObject": {
       "type": "object",
-      "description": "Learning assignment SCO (Shareable Content Object)"
+      "description": "Learning assignment SCO (Shareable Content Object)",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the SCO from the course manifest."
+        },
+        "lessonStatus": {
+          "type": "string",
+          "description": "The status of the SCO. Maps to the SCORM 1.2 cmi.core.lesson_status property."
+        },
+        "exit": {
+          "type": "string",
+          "description": "Indicates how or why the learner left the SCO. Maps to the SCORM 1.2 cmi.core.exit property."
+        },
+        "location": {
+          "type": "string",
+          "description": "The learner’s current location in the SCO. Maps to the SCORM 1.2 cmi.core.lesson_location property."
+        },
+        "scoreRaw": {
+          "type": "number",
+          "description": "The score of the most recent attempt on the SCO. Maps to the SCORM 1.2 cmi.core.score.raw property."
+        },
+        "scoreMax": {
+          "type": "number",
+          "description": "The maximum score that could be achieved on the SCO. Maps to the SCORM 1.2 cmi.core.score.max property."
+        },
+        "scoreMin": {
+          "type": "number",
+          "description": "The minimum score that could be achieved on the SCO. Maps to the SCORM 1.2 cmi.core.score.min property."
+        },
+        "suspendData": {
+          "type": "string",
+          "description": "The unique information generated by the SCO from previous uses. Maps to the SCORM 1.2 cmi.suspend_data property."
+        },
+        "credit": {
+          "type": "string",
+          "description": "Whether completing this course counts towards the overall assignment. Maps to the SCORM 1.2 cmi.core.credit property."
+        },
+        "entry": {
+          "type": "string",
+          "description": "Whether the learner has previously accessed this SCO. Maps to the SCORM 1.2 cmi.core.entry property."
+        },
+        "mode": {
+          "type": "string",
+          "description": "Identifies the mode in which the SCO should be presented to the learner. Maps to the SCORM 1.2 cmi.core.lesson_mode property."
+        },
+        "totalTime": {
+          "type": "string",
+          "description": "The total amount of time the learner has spent in the SCO expressed as an ISO 8601 Duration, for example PT2H10M3.5S. Maps to the SCORM 1.2 cmi.core.total_time property."
+        },
+        "sessionTime": {
+          "type": "string",
+          "description": "The amount of time spent in the SCO in this session expressed as an ISO-8601 Duration, for example PT2H10M3.5S. Maps to the SCORM 1.2 cmi.core.session_time property."
+        },
+        "href": {
+          "type": "string",
+          "description": "The href from the course manifest for this SCO."
+        },
+        "parameters": {
+          "type": "string",
+          "description": "The parameters from the course manifest for this SCO."
+        },
+        "launchData": {
+          "type": "string",
+          "description": "The launch data from the course manifest for this SCO."
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "signedCookie": {
       "type": "object",
-      "description": "signedCookie"
+      "description": "signedCookie",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The base URL for the signed cookie"
+        },
+        "cookieValues": {
+          "type": "object",
+          "description": "The cookie values required to access content from the base URL"
+        }
+      }
     },
     "structure": {
       "type": "array",
@@ -2090,7 +2284,89 @@ Update an existing notification.
     },
     "appointment": {
       "type": "object",
-      "description": "Coaching appointment response"
+      "description": "Coaching appointment response",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of coaching appointment"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of coaching appointment"
+        },
+        "dateStart": {
+          "type": "string",
+          "description": "The date/time the coaching appointment starts. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "lengthInMinutes": {
+          "type": "integer",
+          "description": "The duration of coaching appointment in minutes"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of coaching appointment"
+        },
+        "facilitator": {
+          "type": "object"
+        },
+        "attendees": {
+          "type": "array",
+          "description": "The list of attendees attending the coaching"
+        },
+        "createdBy": {
+          "type": "object"
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "The date/time the coaching appointment was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "modifiedBy": {
+          "type": "object"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "The date/time the coaching appointment was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "conversations": {
+          "type": "array",
+          "description": "The list of conversations associated with coaching appointment."
+        },
+        "documents": {
+          "type": "array",
+          "description": "The list of documents associated with coaching appointment."
+        },
+        "isOverdue": {
+          "type": "boolean",
+          "description": "Whether the appointment is overdue."
+        },
+        "wfmSchedule": {
+          "type": "object"
+        },
+        "dateCompleted": {
+          "type": "string",
+          "description": "The date/time the coaching appointment was set to completed status. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "externalLinks": {
+          "type": "array",
+          "description": "The list of external links related to the appointment"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the appointment"
+        },
+        "shareInsightsData": {
+          "type": "boolean",
+          "description": "Whether to share the insight data"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "dateStart": {
       "type": "string",
@@ -2137,7 +2413,17 @@ Update an existing notification.
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     }
   },
   "required": [
@@ -2327,7 +2613,29 @@ Create a new appointment
     },
     "wfmSchedule": {
       "type": "object",
-      "description": "wfmSchedule"
+      "description": "wfmSchedule",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the WFM schedule"
+        },
+        "businessUnit": {
+          "type": "object"
+        },
+        "weekDate": {
+          "type": "string",
+          "description": "The start week date for this schedule. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "businessUnit",
+        "id",
+        "weekDate"
+      ]
     }
   },
   "required": [
@@ -2370,7 +2678,21 @@ Retrieve aggregated appointment data
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The logic used to combine the clauses"
+        },
+        "clauses": {
+          "type": "array",
+          "description": "The list of clauses used to filter the data"
+        }
+      },
+      "required": [
+        "clauses",
+        "type"
+      ]
     },
     "groupBy": {
       "type": "array",
@@ -2420,11 +2742,82 @@ Score learning assessment for preview
     },
     "answers": {
       "type": "object",
-      "description": "answers"
+      "description": "answers",
+      "properties": {
+        "totalScore": {
+          "type": "number",
+          "description": "The total score of the answers"
+        },
+        "totalCriticalScore": {
+          "type": "number",
+          "description": "The total score for the critical questions"
+        },
+        "totalNonCriticalScore": {
+          "type": "number",
+          "description": "The total score for the non-critical questions"
+        },
+        "questionGroupScores": {
+          "type": "array",
+          "description": "The individual scores for each question group"
+        },
+        "failureReasons": {
+          "type": "array",
+          "description": "If the assessment was not passed, the reasons for failure."
+        },
+        "comments": {
+          "type": "string",
+          "description": "Comments provided for these answers."
+        },
+        "agentComments": {
+          "type": "string",
+          "description": "Comments provided by agent."
+        },
+        "isPassed": {
+          "type": "boolean",
+          "description": "True if the assessment was passed"
+        }
+      },
+      "required": [
+        "questionGroupScores"
+      ]
     },
     "assessmentForm": {
       "type": "object",
-      "description": "assessmentForm"
+      "description": "assessmentForm",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date of the assessment form. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The unique Id for all versions of this assessment form"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "If true, assessment form is published"
+        },
+        "passPercent": {
+          "type": "integer",
+          "description": "The pass percent for the assessment form"
+        },
+        "questionGroups": {
+          "type": "array",
+          "description": "A list of question groups"
+        }
+      },
+      "required": [
+        "passPercent",
+        "questionGroups"
+      ]
     }
   },
   "required": [
@@ -2521,9 +2914,9 @@ Create Learning Assignment
 | --- | --- | --- | --- | --- |
 | `addToSchedule` | boolean | No | — | If True, adds the assignment to their schedule |
 | `lengthInMinutes` | integer | No | — | The length in minutes of assignment |
-| `moduleId` | string | No | — | The Learning module Id associated with this assignment |
+| `moduleId` | string | Yes | — | The Learning module Id associated with this assignment |
 | `recommendedCompletionDate` | string | No | — | The recommended completion date of assignment. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `userId` | string | No | — | The User for whom the assignment is assigned |
+| `userId` | string | Yes | — | The User for whom the assignment is assigned |
 
 <Expandable title="inputSchema">
 
@@ -2557,7 +2950,9 @@ Create Learning Assignment
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "moduleId",
+    "userId"
   ]
 }
 ```
@@ -2591,7 +2986,21 @@ Retrieve aggregated assignment data
     },
     "filter": {
       "type": "object",
-      "description": "filter"
+      "description": "filter",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The logic used to combine the clauses"
+        },
+        "clauses": {
+          "type": "array",
+          "description": "The list of clauses used to filter the data. Note that clauses must filter by attendeeId and a maximum of 100 user IDs are allowed"
+        }
+      },
+      "required": [
+        "clauses",
+        "type"
+      ]
     },
     "groupBy": {
       "type": "array",
@@ -2742,11 +3151,59 @@ Create a new learning module
     },
     "assessmentForm": {
       "type": "object",
-      "description": "assessmentForm"
+      "description": "assessmentForm",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date of the assessment form. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The unique Id for all versions of this assessment form"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "If true, assessment form is published"
+        },
+        "passPercent": {
+          "type": "integer",
+          "description": "The pass percent for the assessment form"
+        },
+        "questionGroups": {
+          "type": "array",
+          "description": "A list of question groups"
+        }
+      },
+      "required": [
+        "passPercent",
+        "questionGroups"
+      ]
     },
     "autoAssign": {
       "type": "object",
-      "description": "Auto assign request"
+      "description": "Auto assign request",
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "description": "The id of the rule"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the rule is enabled for the module"
+        }
+      },
+      "required": [
+        "enabled",
+        "ruleId"
+      ]
     },
     "completionTimeInDays": {
       "type": "integer",
@@ -2754,7 +3211,16 @@ Create a new learning module
     },
     "coverArt": {
       "type": "object",
-      "description": "coverArt"
+      "description": "coverArt",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The key identifier for the cover art"
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "description": {
       "type": "string",
@@ -2786,7 +3252,17 @@ Create a new learning module
     },
     "reviewAssessmentResults": {
       "type": "object",
-      "description": "reviewAssessmentResults"
+      "description": "reviewAssessmentResults",
+      "properties": {
+        "byAssignees": {
+          "type": "boolean",
+          "description": "If true, learning assignment results can be seen in detail by assignees"
+        },
+        "byViewers": {
+          "type": "boolean",
+          "description": "If true, learning assignment results can be seen in detail by people who are eligible to view"
+        }
+      }
     },
     "type": {
       "type": "string",
@@ -2845,7 +3321,29 @@ Get users for learning module rule
     },
     "rule": {
       "type": "object",
-      "description": "rule"
+      "description": "rule",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "If true, rule is active"
+        },
+        "parts": {
+          "type": "array",
+          "description": "The parts of a learning module rule"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "isActive",
+        "parts"
+      ]
     },
     "searchTerm": {
       "type": "string",
@@ -2989,7 +3487,7 @@ Create a SCORM package upload request
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `contentMd5` | string | No | — | The MD5 content of the SCORM package |
+| `contentMd5` | string | Yes | — | The MD5 content of the SCORM package |
 
 <Expandable title="inputSchema">
 
@@ -3007,7 +3505,8 @@ Create a SCORM package upload request
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "contentMd5"
   ]
 }
 ```
@@ -3181,11 +3680,59 @@ Update a learning module
     },
     "assessmentForm": {
       "type": "object",
-      "description": "assessmentForm"
+      "description": "assessmentForm",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date of the assessment form. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The unique Id for all versions of this assessment form"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "If true, assessment form is published"
+        },
+        "passPercent": {
+          "type": "integer",
+          "description": "The pass percent for the assessment form"
+        },
+        "questionGroups": {
+          "type": "array",
+          "description": "A list of question groups"
+        }
+      },
+      "required": [
+        "passPercent",
+        "questionGroups"
+      ]
     },
     "autoAssign": {
       "type": "object",
-      "description": "Auto assign request"
+      "description": "Auto assign request",
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "description": "The id of the rule"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the rule is enabled for the module"
+        }
+      },
+      "required": [
+        "enabled",
+        "ruleId"
+      ]
     },
     "completionTimeInDays": {
       "type": "integer",
@@ -3193,7 +3740,16 @@ Update a learning module
     },
     "coverArt": {
       "type": "object",
-      "description": "coverArt"
+      "description": "coverArt",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The key identifier for the cover art"
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "description": {
       "type": "string",
@@ -3225,7 +3781,17 @@ Update a learning module
     },
     "reviewAssessmentResults": {
       "type": "object",
-      "description": "reviewAssessmentResults"
+      "description": "reviewAssessmentResults",
+      "properties": {
+        "byAssignees": {
+          "type": "boolean",
+          "description": "If true, learning assignment results can be seen in detail by assignees"
+        },
+        "byViewers": {
+          "type": "boolean",
+          "description": "If true, learning assignment results can be seen in detail by people who are eligible to view"
+        }
+      }
     },
     "type": {
       "type": "string",
@@ -3283,15 +3849,96 @@ Update a learning module preview
     },
     "assessment": {
       "type": "object",
-      "description": "assessment"
+      "description": "assessment",
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "description": "The Id of the assessment"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The context Id of the related assessment form"
+        },
+        "assessmentFormId": {
+          "type": "string",
+          "description": "The Id of the related assessment form"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the assessment"
+        },
+        "answers": {
+          "type": "object"
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "Date the assessment was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Date the assessment was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateSubmitted": {
+          "type": "string",
+          "description": "Date the assessment was submitted. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        }
+      }
     },
     "assessmentForm": {
       "type": "object",
-      "description": "assessmentForm"
+      "description": "assessmentForm",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date of the assessment form. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "The unique Id for all versions of this assessment form"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "If true, assessment form is published"
+        },
+        "passPercent": {
+          "type": "integer",
+          "description": "The pass percent for the assessment form"
+        },
+        "questionGroups": {
+          "type": "array",
+          "description": "A list of question groups"
+        }
+      },
+      "required": [
+        "passPercent",
+        "questionGroups"
+      ]
     },
     "currentStep": {
       "type": "object",
-      "description": "Learning module preview update request current step"
+      "description": "Learning module preview update request current step",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The id of this step"
+        },
+        "completionPercentage": {
+          "type": "number",
+          "description": "The completion percentage for this step"
+        },
+        "shareableContentObject": {
+          "type": "object",
+          "description": "Learning assignment SCO (Shareable Content Object)"
+        }
+      }
     },
     "state": {
       "type": "string",

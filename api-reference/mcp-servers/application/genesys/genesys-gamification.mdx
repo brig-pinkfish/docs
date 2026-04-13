@@ -3344,7 +3344,20 @@ Creates a Contest
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -3483,7 +3496,7 @@ Write External Metric Data
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `items` | any[] | No | — | A list of external metric data items. A maximum of 100 items are allowed. |
+| `items` | any[] | Yes | — | A list of external metric data items. A maximum of 100 items are allowed. |
 
 <Expandable title="inputSchema">
 
@@ -3501,7 +3514,8 @@ Write External Metric Data
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "items"
   ]
 }
 ```
@@ -3518,11 +3532,11 @@ Create External Metric Definition
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `defaultObjectiveType` | string | No | — | The default objective type of the External Metric Definition |
-| `enabled` | boolean | No | — | True if the External Metric Definition is enabled |
-| `name` | string | No | — | The name of the External Metric Definition |
-| `precision` | integer | No | — | The decimal precision of the External Metric Definition. Must be at least 0 and at most 5 |
-| `unit` | string | No | — | The unit of the External Metric Definition |
+| `defaultObjectiveType` | string | Yes | — | The default objective type of the External Metric Definition |
+| `enabled` | boolean | Yes | — | True if the External Metric Definition is enabled |
+| `name` | string | Yes | — | The name of the External Metric Definition |
+| `precision` | integer | Yes | — | The decimal precision of the External Metric Definition. Must be at least 0 and at most 5 |
+| `unit` | string | Yes | — | The unit of the External Metric Definition |
 | `unitDefinition` | string | No | — | The unit definition of the External Metric Definition |
 
 <Expandable title="inputSchema">
@@ -3572,7 +3586,12 @@ Create External Metric Definition
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "defaultObjectiveType",
+    "enabled",
+    "name",
+    "precision",
+    "unit"
   ]
 }
 ```
@@ -3836,7 +3855,53 @@ Creates a gamified metric with a given metric definition and metric objective un
     },
     "objective": {
       "type": "object",
-      "description": "objective"
+      "description": "objective",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "templateId": {
+          "type": "string",
+          "description": "The id of this objective's base template"
+        },
+        "zones": {
+          "type": "array",
+          "description": "Objective zone specifies min,max points and values for the associated metric"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "A flag for whether this objective is enabled for the related metric"
+        },
+        "topicIds": {
+          "type": "array",
+          "description": "A list of topic ids for detected topic metrics"
+        },
+        "mediaTypes": {
+          "type": "array",
+          "description": "A list of media types for the metric"
+        },
+        "queueIds": {
+          "type": "array",
+          "description": "A list of queue ids for the metric"
+        },
+        "topicIdsFilterType": {
+          "type": "string",
+          "description": "A filter type for topic Ids. It's only used for objectives with topicIds. Default filter behavior is \"or\"."
+        },
+        "evaluationFormContextIds": {
+          "type": "array",
+          "description": "The ids of associated evaluation form context, for Quality Evaluation Score metrics"
+        },
+        "initialDirection": {
+          "type": "string",
+          "description": "The initial direction to filter on"
+        },
+        "dateStart": {
+          "type": "string",
+          "description": "start date of the objective. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd"
+        }
+      }
     },
     "performanceProfileId": {
       "type": "string",
@@ -3918,7 +3983,20 @@ Create a new custom performance profile
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4125,7 +4203,20 @@ Update a Contest by Id
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4198,13 +4289,13 @@ Updates a performance profile
 | `profileId` | string | Yes | — | performanceProfileId |
 | `active` | boolean | No | — | The flag for active profiles |
 | `dateCreated` | string | No | — | Creation date for this performance profile. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `description` | string | No | — | A description about this performance profile |
+| `description` | string | Yes | — | A description about this performance profile |
 | `division` | object | No | — | division |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `maxLeaderboardRankSize` | integer | No | — | The maximum rank size for the leaderboard. This counts the number of ranks can be retrieved in a leaderboard queries |
 | `memberCount` | integer | No | — | The number of members in this performance profile |
-| `metricOrders` | any[] | No | — | Order of the associated metrics. The list should contain valid ids for metrics |
-| `name` | string | No | — | A name for this performance profile |
+| `metricOrders` | any[] | Yes | — | Order of the associated metrics. The list should contain valid ids for metrics |
+| `name` | string | Yes | — | A name for this performance profile |
 | `reportingIntervals` | any[] | No | — | The reporting interval periods for this performance profile |
 | `selfUri` | string | No | — | The URI for this object |
 
@@ -4236,7 +4327,20 @@ Updates a performance profile
     },
     "division": {
       "type": "object",
-      "description": "division"
+      "description": "division",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "id": {
       "type": "string",
@@ -4269,7 +4373,10 @@ Updates a performance profile
   },
   "required": [
     "PCID",
-    "profileId"
+    "profileId",
+    "description",
+    "metricOrders",
+    "name"
   ]
 }
 ```
@@ -4328,7 +4435,53 @@ Updates a metric in performance profile
     },
     "objective": {
       "type": "object",
-      "description": "objective"
+      "description": "objective",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "templateId": {
+          "type": "string",
+          "description": "The id of this objective's base template"
+        },
+        "zones": {
+          "type": "array",
+          "description": "Objective zone specifies min,max points and values for the associated metric"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "A flag for whether this objective is enabled for the related metric"
+        },
+        "topicIds": {
+          "type": "array",
+          "description": "A list of topic ids for detected topic metrics"
+        },
+        "mediaTypes": {
+          "type": "array",
+          "description": "A list of media types for the metric"
+        },
+        "queueIds": {
+          "type": "array",
+          "description": "A list of queue ids for the metric"
+        },
+        "topicIdsFilterType": {
+          "type": "string",
+          "description": "A filter type for topic Ids. It's only used for objectives with topicIds. Default filter behavior is \"or\"."
+        },
+        "evaluationFormContextIds": {
+          "type": "array",
+          "description": "The ids of associated evaluation form context, for Quality Evaluation Score metrics"
+        },
+        "initialDirection": {
+          "type": "string",
+          "description": "The initial direction to filter on"
+        },
+        "dateStart": {
+          "type": "string",
+          "description": "start date of the objective. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd"
+        }
+      }
     },
     "performanceProfileId": {
       "type": "string",

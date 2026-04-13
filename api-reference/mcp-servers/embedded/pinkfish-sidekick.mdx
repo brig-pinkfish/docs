@@ -1,6 +1,6 @@
 ---
-title: "pinkfish-sidekick"
-sidebarTitle: "pinkfish-sidekick"
+title: "workflow building"
+sidebarTitle: "workflow building"
 description: "Visual workflow builder, execution, triggers, and sub-workflow invocation"
 ---
 
@@ -83,7 +83,6 @@ Uses optimistic locking (expectedVersion) to detect conflicts when multiple user
 | [`workflow_run`](#workflow_run) | Execute workflow and return results. Runs entire workflow by default. Use runUntilNode to stop after a specific node completes. Long-running workflows are automatically handled by the async execution system. |
 | [`workflow_pin`](#workflow_pin) | Pin or unpin node outputs to reuse across workflow runs. Pinned nodes skip execution and use stored output from a previous run. Use this to avoid re-running expensive operations (LLM calls, API requests) during development. |
 | [`workflow_run_status`](#workflow_run_status) | Check the status of a workflow run and wait for completion. Automatically polls until the workflow completes or the async execution system handles long-running operations. Returns full results when complete. |
-| [`workflow_set_inputs`](#workflow_set_inputs) | Set default/test input values for workflows. Values are used when running via workflow_run (dev/test runs) and optionally merged with trigger-provided values at runtime when useAsGlobals is true. Use this to define test data that matches your trigger type — for example, simulated email fields for email triggers, custom values for schedule triggers, or form field values for API/interface triggers. For input schemas (form field definitions), use the trigger tools (workflow_trigger_api or workflow_trigger_interface) instead. |
 | [`mcp_discover`](#mcp_discover) | Find MCP servers and tools for any task. Covers external integrations (gmail, slack, zendesk, salesforce) AND embedded capabilities (datastore, llm, ocr, web-application, summarization, translation, web scraping). Returns tool specifications along with IDs needed to use them when relevant. |
 | [`capabilities_discover`](#capabilities_discover) | Discover available capabilities for a task. Returns lightweight recommendations for tools, agent skills, connections, and/or resources. Call capability_details to get full details for selected items. Use the "types" parameter to filter by capability type. |
 | [`capability_details`](#capability_details) | Get full details for selected capabilities. For tools: returns inputSchema (full JSON Schema with nested objects, arrays, enums, and required fields), outputSchema, isDynamic (true for dynamic MCP servers), and any matching agent skill content. For agent skills: returns full knowledge content. For connections: returns connection metadata. For resources: returns collection details. Use the "types" parameter to filter by capability type. For custom integrations, when capabilities_discover returns a tool name like "myintegration_c_request", pass ONLY that exact tool name to capability_details (not the integration name or skill name). The response automatically includes all associated content including skill instructions. |
@@ -795,7 +794,7 @@ Execute workflow and return results. Runs entire workflow by default. Use runUnt
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `automationId` | string | Yes | — | Automation ID to run |
-| `inputs` | object | No | — | Runtime input values as key-value pairs (overrides default inputs set via workflow_set_inputs). |
+| `inputs` | object | No | — | Runtime input values as key-value pairs. |
 | `runUntilNode` | string | No | — | Stop execution after this node completes. Only nodes on the path from trigger to this node will execute. Use this to run part of a workflow without executing downstream nodes. |
 | `nodeId` | string | No | — | DEPRECATED: Use runUntilNode instead. Node ID to run in isolation for testing. |
 | `maxWaitMs` | number | No | — | [Testing only] Maximum internal polling time in milliseconds before returning. Default 14 minutes. Use a smaller value (e.g. 2000) in tests to quickly trigger RUNNING response. |
@@ -813,7 +812,7 @@ Execute workflow and return results. Runs entire workflow by default. Use runUnt
     "inputs": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Runtime input values as key-value pairs (overrides default inputs set via workflow_set_inputs)."
+      "description": "Runtime input values as key-value pairs."
     },
     "runUntilNode": {
       "type": "string",
@@ -918,54 +917,6 @@ Check the status of a workflow run and wait for completion. Automatically polls 
 
 ---
 
-## workflow_set_inputs
-
-Set default/test input values for workflows. Values are used when running via workflow_run (dev/test runs) and optionally merged with trigger-provided values at runtime when useAsGlobals is true. Use this to define test data that matches your trigger type — for example, simulated email fields for email triggers, custom values for schedule triggers, or form field values for API/interface triggers. For input schemas (form field definitions), use the trigger tools (workflow_trigger_api or workflow_trigger_interface) instead.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `automationId` | string | Yes | — | Automation ID to set inputs for |
-| `inputs` | string | Yes | — | Input values as object or JSON string. Keys must match the input names used in @workflow.keyName references. Set values that match your trigger type for realistic test runs:
-• Email triggers: &#123; from: "sender@example.com", subject: "Test Subject", body: "Email body text", htmlBody: "&lt;p&gt;HTML body&lt;/p&gt;", attachments: [] &#125;
-• Schedule triggers: any custom key-value pairs the workflow expects (e.g., &#123; reportDate: "2026-01-15", region: "US" &#125;)
-• API/Interface triggers: values matching the form fields defined in the trigger inputSchema (e.g., &#123; full_name: "Jane Doe", department: "engineering" &#125;) |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "automationId": {
-      "type": "string",
-      "description": "Automation ID to set inputs for"
-    },
-    "inputs": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": true
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "description": "Input values as object or JSON string. Keys must match the input names used in @workflow.keyName references. Set values that match your trigger type for realistic test runs:\n• Email triggers: { from: \"sender@example.com\", subject: \"Test Subject\", body: \"Email body text\", htmlBody: \"<p>HTML body</p>\", attachments: [] }\n• Schedule triggers: any custom key-value pairs the workflow expects (e.g., { reportDate: \"2026-01-15\", region: \"US\" })\n• API/Interface triggers: values matching the form fields defined in the trigger inputSchema (e.g., { full_name: \"Jane Doe\", department: \"engineering\" })"
-    }
-  },
-  "required": [
-    "automationId",
-    "inputs"
-  ]
-}
-```
-
-</Expandable>
-
----
-
 ## mcp_discover
 
 Find MCP servers and tools for any task. Covers external integrations (gmail, slack, zendesk, salesforce) AND embedded capabilities (datastore, llm, ocr, web-application, summarization, translation, web scraping). Returns tool specifications along with IDs needed to use them when relevant.
@@ -1020,6 +971,8 @@ Discover available capabilities for a task. Returns lightweight recommendations 
 | `request` | string | Yes | — | Natural language description of the task (e.g., "process vendor invoices", "create HTML dashboard", "send email with attachments"). |
 | `types` | string[] | No | — | Filter results to specific capability types. If omitted, returns all types. Examples: ["connection"] for connections only, ["resource"] for resources only, ["tool", "agentSkill"] for tools and skills only. |
 | `context` | string | No | — | Skill context filter. Use "workflow-creation" if you are the Agent Mode Workflow Builder (building or editing workflows). Use "agent-execution" for all other agents executing tasks. If omitted, returns all skills. |
+| `bypassCache` | boolean | No | — | Bypass internal caches (for testing). |
+| `debug` | boolean | No | — | Include LLM prompts in _metadata (for integration test debugging). |
 
 <Expandable title="inputSchema">
 
@@ -1051,6 +1004,14 @@ Discover available capabilities for a task. Returns lightweight recommendations 
         "agent-execution"
       ],
       "description": "Skill context filter. Use \"workflow-creation\" if you are the Agent Mode Workflow Builder (building or editing workflows). Use \"agent-execution\" for all other agents executing tasks. If omitted, returns all skills."
+    },
+    "bypassCache": {
+      "type": "boolean",
+      "description": "Bypass internal caches (for testing)."
+    },
+    "debug": {
+      "type": "boolean",
+      "description": "Include LLM prompts in _metadata (for integration test debugging)."
     }
   },
   "required": [
@@ -1351,6 +1312,7 @@ Create, manage, and list API (webhook) triggers that provide an HTTP endpoint to
 | `apiKeyId` | string | No | — | API key ID for authentication. If omitted or set to "new", a new API key is auto-created with name "API key for &#123;triggerName&#125;, &#123;automationId&#125;". |
 | `designatedOutput` | object | No | — | Specifies which output file to return when the API is called with wait=true. Object with stepIndex (number) and fileName (string). Example: &#123;stepIndex: 1, fileName: "output.json"&#125;. If omitted, all outputs are returned. |
 | `inputSchema` | any | No | — | JSON object documenting the inputs this API trigger expects. Informational only — callers (agents, systems) read this to know what values to send. Each key is a field name mapping to an object with type, required, label, placeholder, and other options. Supported types: string, number, boolean, enum, array, object, csv, date, datetime, email, url, file. This is NOT JSON Schema — do not use "type": "object" or "properties" at the top level. See the workflow-trigger-schema skill for full format reference. |
+| `inputs` | string | No | — | JSON string of test/default input values for this API trigger. These are the values used when running the workflow in dev/test mode via the "Run Workflow" button. Keys should match the fields defined in inputSchema. |
 
 <Expandable title="inputSchema">
 
@@ -1424,6 +1386,10 @@ Create, manage, and list API (webhook) triggers that provide an HTTP endpoint to
     "inputSchema": {
       "type": "effects",
       "description": "JSON object documenting the inputs this API trigger expects. Informational only — callers (agents, systems) read this to know what values to send. Each key is a field name mapping to an object with type, required, label, placeholder, and other options. Supported types: string, number, boolean, enum, array, object, csv, date, datetime, email, url, file. This is NOT JSON Schema — do not use \"type\": \"object\" or \"properties\" at the top level. See the workflow-trigger-schema skill for full format reference."
+    },
+    "inputs": {
+      "type": "string",
+      "description": "JSON string of test/default input values for this API trigger. These are the values used when running the workflow in dev/test mode via the \"Run Workflow\" button. Keys should match the fields defined in inputSchema."
     }
   },
   "required": [
@@ -1455,6 +1421,8 @@ Create, manage, and list email triggers that start workflows when emails are rec
 | `resourceName` | string | No | — | Optional workflow resource name to auto-bind on create (e.g., "emailTrigger"). |
 | `approvedSenders` | string[] | No | — | List of approved sender email addresses. Emails from addresses not in this list (or approvedDomains) are rejected. |
 | `approvedDomains` | string[] | No | — | List of approved sender domains (e.g., "company.com"). Emails from domains not in this list (or approvedSenders) are rejected. |
+| `inputSchema` | string | No | — | JSON string defining the email input fields schema. Describes the shape of data the email trigger provides (from, subject, body, attachments, etc.). |
+| `inputs` | string | No | — | JSON string of sample/test input values matching the inputSchema. Used for dev/test runs to simulate realistic email data. |
 
 <Expandable title="inputSchema">
 
@@ -1522,6 +1490,14 @@ Create, manage, and list email triggers that start workflows when emails are rec
         "type": "string"
       },
       "description": "List of approved sender domains (e.g., \"company.com\"). Emails from domains not in this list (or approvedSenders) are rejected."
+    },
+    "inputSchema": {
+      "type": "string",
+      "description": "JSON string defining the email input fields schema. Describes the shape of data the email trigger provides (from, subject, body, attachments, etc.)."
+    },
+    "inputs": {
+      "type": "string",
+      "description": "JSON string of sample/test input values matching the inputSchema. Used for dev/test runs to simulate realistic email data."
     }
   },
   "required": [

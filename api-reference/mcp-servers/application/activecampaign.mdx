@@ -81,7 +81,21 @@ Add a contact to an automation
     },
     "contactAutomation": {
       "type": "object",
-      "description": "contactAutomation"
+      "description": "contactAutomation",
+      "properties": {
+        "contact": {
+          "type": "integer",
+          "description": "Contact ID to enroll in the automation"
+        },
+        "automation": {
+          "type": "integer",
+          "description": "Automation ID to enroll the contact in"
+        }
+      },
+      "required": [
+        "contact",
+        "automation"
+      ]
     }
   },
   "required": [
@@ -117,7 +131,26 @@ Add or update contact list subscription
     },
     "contactList": {
       "type": "object",
-      "description": "contactList"
+      "description": "contactList",
+      "properties": {
+        "list": {
+          "type": "integer",
+          "description": "List ID"
+        },
+        "contact": {
+          "type": "integer",
+          "description": "Contact ID"
+        },
+        "status": {
+          "type": "integer",
+          "description": "Subscription status (1=active/subscribed, 2=unsubscribed)"
+        }
+      },
+      "required": [
+        "list",
+        "contact",
+        "status"
+      ]
     }
   },
   "required": [
@@ -153,7 +186,21 @@ Add a tag to a contact
     },
     "contactTag": {
       "type": "object",
-      "description": "contactTag"
+      "description": "contactTag",
+      "properties": {
+        "contact": {
+          "type": "integer",
+          "description": "Contact ID to tag"
+        },
+        "tag": {
+          "type": "integer",
+          "description": "Tag ID to apply to the contact"
+        }
+      },
+      "required": [
+        "contact",
+        "tag"
+      ]
     }
   },
   "required": [
@@ -189,7 +236,45 @@ Create a contact custom field
     },
     "field": {
       "type": "object",
-      "description": "field"
+      "description": "field",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Field type"
+        },
+        "title": {
+          "type": "string",
+          "description": "Field label shown in the UI"
+        },
+        "description": {
+          "type": "string",
+          "description": "Field description"
+        },
+        "perstag": {
+          "type": "string",
+          "description": "Personalization tag for use in email templates"
+        },
+        "defval": {
+          "type": "string",
+          "description": "Default value for the field"
+        },
+        "show_in_list": {
+          "type": "integer",
+          "description": "Whether to show field in contact list view (0=no, 1=yes)"
+        },
+        "visible": {
+          "type": "integer",
+          "description": "Whether field is visible (0=hidden, 1=visible)"
+        },
+        "ordernum": {
+          "type": "integer",
+          "description": "Display order of the field"
+        }
+      },
+      "required": [
+        "type",
+        "title"
+      ]
     }
   },
   "required": [
@@ -230,7 +315,21 @@ Link custom field to lists
     },
     "fieldRel": {
       "type": "object",
-      "description": "fieldRel"
+      "description": "fieldRel",
+      "properties": {
+        "field": {
+          "type": "integer",
+          "description": "Custom field ID (should match path parameter)"
+        },
+        "relid": {
+          "type": "integer",
+          "description": "List ID to link the field to"
+        }
+      },
+      "required": [
+        "field",
+        "relid"
+      ]
     }
   },
   "required": [
@@ -267,7 +366,26 @@ Create a contact field value
     },
     "fieldValue": {
       "type": "object",
-      "description": "fieldValue"
+      "description": "fieldValue",
+      "properties": {
+        "contact": {
+          "type": "integer",
+          "description": "Contact ID"
+        },
+        "field": {
+          "type": "integer",
+          "description": "Custom field ID"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value to store in the field"
+        }
+      },
+      "required": [
+        "contact",
+        "field",
+        "value"
+      ]
     }
   },
   "required": [
@@ -303,7 +421,25 @@ Create a tag
     },
     "tag": {
       "type": "object",
-      "description": "tag"
+      "description": "tag",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Tag name"
+        },
+        "tagType": {
+          "type": "string",
+          "description": "Tag type (e.g., \"contact\" for contact tags)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description for the tag"
+        }
+      },
+      "required": [
+        "tag",
+        "tagType"
+      ]
     }
   },
   "required": [
@@ -339,7 +475,55 @@ Create a deal
     },
     "deal": {
       "type": "object",
-      "description": "deal"
+      "description": "deal",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Deal title"
+        },
+        "contact": {
+          "type": "integer",
+          "description": "Contact ID associated with the deal"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Deal value in cents (e.g., 10000 = $100.00)"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code (e.g., \"usd\", \"eur\")"
+        },
+        "group": {
+          "type": "integer",
+          "description": "Pipeline (deal group) ID"
+        },
+        "stage": {
+          "type": "integer",
+          "description": "Deal stage ID within the pipeline"
+        },
+        "owner": {
+          "type": "integer",
+          "description": "Deal owner (user) ID"
+        },
+        "percent": {
+          "type": "integer",
+          "description": "Probability percentage of closing (0-100)"
+        },
+        "status": {
+          "type": "integer",
+          "description": "Deal status (0=open, 1=won, 2=lost)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Deal description"
+        }
+      },
+      "required": [
+        "title",
+        "contact",
+        "value",
+        "currency"
+      ]
     }
   },
   "required": [
@@ -380,7 +564,16 @@ Create a deal note
     },
     "note": {
       "type": "object",
-      "description": "note"
+      "description": "note",
+      "properties": {
+        "note": {
+          "type": "string",
+          "description": "Note content text"
+        }
+      },
+      "required": [
+        "note"
+      ]
     }
   },
   "required": [
@@ -417,7 +610,29 @@ Create a deal pipeline
     },
     "dealGroup": {
       "type": "object",
-      "description": "dealGroup"
+      "description": "dealGroup",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Pipeline name"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Default currency code for deals in this pipeline (e.g., \"usd\")"
+        },
+        "autoAssign": {
+          "type": "integer",
+          "description": "Auto-assign deals to users (0=off, 1=on)"
+        },
+        "allgroups": {
+          "type": "integer",
+          "description": "Make pipeline accessible to all groups (0=no, 1=yes)"
+        }
+      },
+      "required": [
+        "title",
+        "currency"
+      ]
     }
   },
   "required": [
@@ -495,7 +710,54 @@ Create a list
     },
     "list": {
       "type": "object",
-      "description": "list"
+      "description": "list",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "List name"
+        },
+        "stringid": {
+          "type": "string",
+          "description": "Unique string identifier for the list (URL-safe)"
+        },
+        "sender_url": {
+          "type": "string",
+          "description": "URL of the sender's website"
+        },
+        "sender_reminder": {
+          "type": "string",
+          "description": "Reminder message shown to subscribers about why they are on the list"
+        },
+        "sender_name": {
+          "type": "string",
+          "description": "Name of the sender"
+        },
+        "sender_addr1": {
+          "type": "string",
+          "description": "Sender's address line 1"
+        },
+        "sender_city": {
+          "type": "string",
+          "description": "Sender's city"
+        },
+        "sender_state": {
+          "type": "string",
+          "description": "Sender's state/province"
+        },
+        "sender_zip": {
+          "type": "string",
+          "description": "Sender's postal/zip code"
+        },
+        "sender_country": {
+          "type": "string",
+          "description": "Sender's country"
+        }
+      },
+      "required": [
+        "name",
+        "sender_url",
+        "sender_reminder"
+      ]
     }
   },
   "required": [
@@ -536,7 +798,21 @@ Create list group permission
     },
     "listGroupPermission": {
       "type": "object",
-      "description": "listGroupPermission"
+      "description": "listGroupPermission",
+      "properties": {
+        "groupid": {
+          "type": "integer",
+          "description": "Group ID to grant permission to"
+        },
+        "listid": {
+          "type": "integer",
+          "description": "List ID (should match path parameter)"
+        }
+      },
+      "required": [
+        "groupid",
+        "listid"
+      ]
     }
   },
   "required": [
@@ -573,7 +849,32 @@ Create or update a contact
     },
     "contact": {
       "type": "object",
-      "description": "contact"
+      "description": "contact",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Contact's email address (used as unique identifier)"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Contact's first name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Contact's last name"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact's phone number"
+        },
+        "fieldValues": {
+          "type": "array",
+          "description": "Custom field values to set on the contact"
+        }
+      },
+      "required": [
+        "email"
+      ]
     }
   },
   "required": [
@@ -1715,7 +2016,16 @@ Update a contact field value
     },
     "fieldValue": {
       "type": "object",
-      "description": "fieldValue"
+      "description": "fieldValue",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "New value for the field"
+        }
+      },
+      "required": [
+        "value"
+      ]
     }
   },
   "required": [
@@ -1757,7 +2067,45 @@ Update a deal
     },
     "deal": {
       "type": "object",
-      "description": "deal"
+      "description": "deal",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Deal title"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Deal value in cents"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code"
+        },
+        "group": {
+          "type": "integer",
+          "description": "Pipeline (deal group) ID"
+        },
+        "stage": {
+          "type": "integer",
+          "description": "Deal stage ID"
+        },
+        "owner": {
+          "type": "integer",
+          "description": "Deal owner (user) ID"
+        },
+        "percent": {
+          "type": "integer",
+          "description": "Probability percentage (0-100)"
+        },
+        "status": {
+          "type": "integer",
+          "description": "Deal status (0=open, 1=won, 2=lost)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Deal description"
+        }
+      }
     }
   },
   "required": [
@@ -1804,7 +2152,16 @@ Update a deal note
     },
     "note": {
       "type": "object",
-      "description": "note"
+      "description": "note",
+      "properties": {
+        "note": {
+          "type": "string",
+          "description": "Updated note content"
+        }
+      },
+      "required": [
+        "note"
+      ]
     }
   },
   "required": [
@@ -1847,7 +2204,25 @@ Update a deal pipeline
     },
     "dealGroup": {
       "type": "object",
-      "description": "dealGroup"
+      "description": "dealGroup",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Pipeline name"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Default currency code"
+        },
+        "autoAssign": {
+          "type": "integer",
+          "description": "Auto-assign deals to users (0=off, 1=on)"
+        },
+        "allgroups": {
+          "type": "integer",
+          "description": "Make pipeline accessible to all groups (0=no, 1=yes)"
+        }
+      }
     }
   },
   "required": [
@@ -1889,7 +2264,45 @@ Update a list
     },
     "list": {
       "type": "object",
-      "description": "list"
+      "description": "list",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "List name"
+        },
+        "sender_url": {
+          "type": "string",
+          "description": "URL of the sender's website"
+        },
+        "sender_reminder": {
+          "type": "string",
+          "description": "Reminder message for subscribers"
+        },
+        "sender_name": {
+          "type": "string",
+          "description": "Name of the sender"
+        },
+        "sender_addr1": {
+          "type": "string",
+          "description": "Sender's address line 1"
+        },
+        "sender_city": {
+          "type": "string",
+          "description": "Sender's city"
+        },
+        "sender_state": {
+          "type": "string",
+          "description": "Sender's state/province"
+        },
+        "sender_zip": {
+          "type": "string",
+          "description": "Sender's postal/zip code"
+        },
+        "sender_country": {
+          "type": "string",
+          "description": "Sender's country"
+        }
+      }
     }
   },
   "required": [

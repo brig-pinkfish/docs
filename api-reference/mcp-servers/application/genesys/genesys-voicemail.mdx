@@ -699,7 +699,15 @@ Update a group's voicemail policy
     },
     "emailPolicy": {
       "type": "object",
-      "description": "emailPolicy"
+      "description": "emailPolicy",
+      "properties": {
+        "emailMembers": {
+          "type": "boolean"
+        },
+        "emailGroup": {
+          "type": "boolean"
+        }
+      }
     },
     "enabled": {
       "type": "boolean",
@@ -707,7 +715,80 @@ Update a group's voicemail policy
     },
     "group": {
       "type": "object",
-      "description": "group"
+      "description": "group",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string",
+          "description": "The group name."
+        },
+        "description": {
+          "type": "string"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date/time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "memberCount": {
+          "type": "integer",
+          "description": "Number of members."
+        },
+        "state": {
+          "type": "string",
+          "description": "Active, inactive, or deleted state."
+        },
+        "version": {
+          "type": "integer",
+          "description": "Current version for this resource."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of group."
+        },
+        "images": {
+          "type": "array"
+        },
+        "addresses": {
+          "type": "array"
+        },
+        "rulesVisible": {
+          "type": "boolean",
+          "description": "Are membership rules visible to the person requesting to view the group"
+        },
+        "visibility": {
+          "type": "string",
+          "description": "Who can view this group"
+        },
+        "rolesEnabled": {
+          "type": "boolean",
+          "description": "Allow roles to be assigned to this group"
+        },
+        "includeOwners": {
+          "type": "boolean",
+          "description": "Allow owners to be included as members of the group"
+        },
+        "callsEnabled": {
+          "type": "boolean",
+          "description": "Allow calls to be placed to this group."
+        },
+        "owners": {
+          "type": "array",
+          "description": "Owners of the group"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "name",
+        "rulesVisible",
+        "type",
+        "visibility"
+      ]
     },
     "groupAlertType": {
       "type": "string",
@@ -888,15 +969,239 @@ Update a voicemail message
     },
     "callerUser": {
       "type": "object",
-      "description": "callerUser"
+      "description": "callerUser",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     },
     "conversation": {
       "type": "object",
-      "description": "conversation"
+      "description": "conversation",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "externalTag": {
+          "type": "string",
+          "description": "The external tag associated with the conversation."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The time when the conversation started. This will be the time when the first participant joined the conversation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound."
+        },
+        "participants": {
+          "type": "array",
+          "description": "The list of all participants in the conversation."
+        },
+        "conversationIds": {
+          "type": "array",
+          "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
+        },
+        "maxParticipants": {
+          "type": "integer",
+          "description": "If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference."
+        },
+        "recordingState": {
+          "type": "string",
+          "description": "On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording."
+        },
+        "state": {
+          "type": "string",
+          "description": "On update, 'disconnected' will disconnect the conversation. No other values are valid. When reading conversations, this field will never have a value present."
+        },
+        "divisions": {
+          "type": "array",
+          "description": "Identifiers of divisions associated with this conversation"
+        },
+        "recentTransfers": {
+          "type": "array",
+          "description": "The list of the most recent 20 transfer commands applied to this conversation."
+        },
+        "securePause": {
+          "type": "boolean",
+          "description": "True when the recording of this conversation is in secure pause status."
+        },
+        "utilizationLabelId": {
+          "type": "string",
+          "description": "An optional label that categorizes the conversation.  Max-utilization settings can be configured at a per-label level"
+        },
+        "inactivityTimeout": {
+          "type": "string",
+          "description": "The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "participants",
+        "startTime"
+      ]
     },
     "copiedFrom": {
       "type": "object",
-      "description": "copiedFrom"
+      "description": "copiedFrom",
+      "properties": {
+        "user": {
+          "type": "object"
+        },
+        "group": {
+          "type": "object"
+        },
+        "date": {
+          "type": "string",
+          "description": "The date when the voicemail was copied. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        }
+      }
     },
     "copiedTo": {
       "type": "array",
@@ -916,11 +1221,94 @@ Update a voicemail message
     },
     "deleteRetentionPolicy": {
       "type": "object",
-      "description": "Governs how the voicemail is retained"
+      "description": "Governs how the voicemail is retained",
+      "properties": {
+        "voicemailRetentionPolicyType": {
+          "type": "string",
+          "description": "The retention policy type"
+        },
+        "numberOfDays": {
+          "type": "integer",
+          "description": "If retentionPolicyType == RETAIN_WITH_TTL, then this value represents the number of days for the TTL"
+        }
+      }
     },
     "group": {
       "type": "object",
-      "description": "group"
+      "description": "group",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string",
+          "description": "The group name."
+        },
+        "description": {
+          "type": "string"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date/time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "memberCount": {
+          "type": "integer",
+          "description": "Number of members."
+        },
+        "state": {
+          "type": "string",
+          "description": "Active, inactive, or deleted state."
+        },
+        "version": {
+          "type": "integer",
+          "description": "Current version for this resource."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of group."
+        },
+        "images": {
+          "type": "array"
+        },
+        "addresses": {
+          "type": "array"
+        },
+        "rulesVisible": {
+          "type": "boolean",
+          "description": "Are membership rules visible to the person requesting to view the group"
+        },
+        "visibility": {
+          "type": "string",
+          "description": "Who can view this group"
+        },
+        "rolesEnabled": {
+          "type": "boolean",
+          "description": "Allow roles to be assigned to this group"
+        },
+        "includeOwners": {
+          "type": "boolean",
+          "description": "Allow owners to be included as members of the group"
+        },
+        "callsEnabled": {
+          "type": "boolean",
+          "description": "Allow calls to be placed to this group."
+        },
+        "owners": {
+          "type": "array",
+          "description": "Owners of the group"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "name",
+        "rulesVisible",
+        "type",
+        "visibility"
+      ]
     },
     "id": {
       "type": "string",
@@ -936,7 +1324,156 @@ Update a voicemail message
     },
     "queue": {
       "type": "object",
-      "description": "queue"
+      "description": "queue",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "description": {
+          "type": "string",
+          "description": "The queue description."
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "The date the queue was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "The date of the last modification to the queue. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "modifiedBy": {
+          "type": "string",
+          "description": "The ID of the user that last modified the queue."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "The ID of the user that created the queue."
+        },
+        "memberCount": {
+          "type": "integer",
+          "description": "The total number of members in the queue."
+        },
+        "userMemberCount": {
+          "type": "integer",
+          "description": "The number of user members (i.e., non-group members) in the queue."
+        },
+        "joinedMemberCount": {
+          "type": "integer",
+          "description": "The number of joined members in the queue."
+        },
+        "mediaSettings": {
+          "type": "object"
+        },
+        "routingRules": {
+          "type": "array",
+          "description": "The routing rules for the queue, used for Preferred Agent Routing."
+        },
+        "conditionalGroupRouting": {
+          "type": "object"
+        },
+        "conditionalGroupActivation": {
+          "type": "object"
+        },
+        "bullseye": {
+          "type": "object"
+        },
+        "scoringMethod": {
+          "type": "string",
+          "description": "The Scoring Method for the queue."
+        },
+        "lastAgentRoutingMode": {
+          "type": "string",
+          "description": "The Last Agent Routing Mode for the queue."
+        },
+        "acwSettings": {
+          "type": "object"
+        },
+        "skillEvaluationMethod": {
+          "type": "string",
+          "description": "The skill evaluation method to use when routing conversations."
+        },
+        "memberGroups": {
+          "type": "array",
+          "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
+        },
+        "queueFlow": {
+          "type": "object"
+        },
+        "emailInQueueFlow": {
+          "type": "object"
+        },
+        "messageInQueueFlow": {
+          "type": "object"
+        },
+        "whisperPrompt": {
+          "type": "object"
+        },
+        "onHoldPrompt": {
+          "type": "object"
+        },
+        "autoAnswerOnly": {
+          "type": "boolean",
+          "description": "Specifies whether the configured whisper should play for all ACD calls, or only for those which are auto-answered."
+        },
+        "cannedResponseLibraries": {
+          "type": "object"
+        },
+        "enableTranscription": {
+          "type": "boolean",
+          "description": "Indicates whether voice transcription is enabled for this queue."
+        },
+        "enableAudioMonitoring": {
+          "type": "boolean",
+          "description": "Indicates whether audio monitoring is enabled for this queue."
+        },
+        "enableManualAssignment": {
+          "type": "boolean",
+          "description": "Indicates whether manual assignment is enabled for this queue."
+        },
+        "agentOwnedRouting": {
+          "type": "object"
+        },
+        "directRouting": {
+          "type": "object"
+        },
+        "callingPartyName": {
+          "type": "string",
+          "description": "The name to use for caller identification for outbound calls from this queue."
+        },
+        "callingPartyNumber": {
+          "type": "string",
+          "description": "The phone number to use for caller identification for outbound calls from this queue."
+        },
+        "defaultScripts": {
+          "type": "object",
+          "description": "The default script Ids for the communication types."
+        },
+        "outboundMessagingAddresses": {
+          "type": "object"
+        },
+        "outboundEmailAddress": {
+          "type": "object"
+        },
+        "peerId": {
+          "type": "string",
+          "description": "The ID of an associated external queue."
+        },
+        "suppressInQueueCallRecording": {
+          "type": "boolean",
+          "description": "Indicates whether recording in-queue calls is suppressed for this queue."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "read": {
       "type": "boolean",
@@ -952,7 +1489,146 @@ Update a voicemail message
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     }
   },
   "required": [
@@ -1037,7 +1713,7 @@ Copy a voicemail message to a user or group
 | --- | --- | --- | --- | --- |
 | `groupId` | string | No | — | The id of the Group to copy the VoicemailMessage to |
 | `userId` | string | No | — | The id of the User to copy the VoicemailMessage to |
-| `voicemailMessageId` | string | No | — | The id of the VoicemailMessage to copy |
+| `voicemailMessageId` | string | Yes | — | The id of the VoicemailMessage to copy |
 
 <Expandable title="inputSchema">
 
@@ -1063,7 +1739,8 @@ Copy a voicemail message to a user or group
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "voicemailMessageId"
   ]
 }
 ```
@@ -1135,15 +1812,239 @@ Update a voicemail message
     },
     "callerUser": {
       "type": "object",
-      "description": "callerUser"
+      "description": "callerUser",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     },
     "conversation": {
       "type": "object",
-      "description": "conversation"
+      "description": "conversation",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "externalTag": {
+          "type": "string",
+          "description": "The external tag associated with the conversation."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The time when the conversation started. This will be the time when the first participant joined the conversation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound."
+        },
+        "participants": {
+          "type": "array",
+          "description": "The list of all participants in the conversation."
+        },
+        "conversationIds": {
+          "type": "array",
+          "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
+        },
+        "maxParticipants": {
+          "type": "integer",
+          "description": "If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference."
+        },
+        "recordingState": {
+          "type": "string",
+          "description": "On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording."
+        },
+        "state": {
+          "type": "string",
+          "description": "On update, 'disconnected' will disconnect the conversation. No other values are valid. When reading conversations, this field will never have a value present."
+        },
+        "divisions": {
+          "type": "array",
+          "description": "Identifiers of divisions associated with this conversation"
+        },
+        "recentTransfers": {
+          "type": "array",
+          "description": "The list of the most recent 20 transfer commands applied to this conversation."
+        },
+        "securePause": {
+          "type": "boolean",
+          "description": "True when the recording of this conversation is in secure pause status."
+        },
+        "utilizationLabelId": {
+          "type": "string",
+          "description": "An optional label that categorizes the conversation.  Max-utilization settings can be configured at a per-label level"
+        },
+        "inactivityTimeout": {
+          "type": "string",
+          "description": "The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "participants",
+        "startTime"
+      ]
     },
     "copiedFrom": {
       "type": "object",
-      "description": "copiedFrom"
+      "description": "copiedFrom",
+      "properties": {
+        "user": {
+          "type": "object"
+        },
+        "group": {
+          "type": "object"
+        },
+        "date": {
+          "type": "string",
+          "description": "The date when the voicemail was copied. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        }
+      }
     },
     "copiedTo": {
       "type": "array",
@@ -1163,11 +2064,94 @@ Update a voicemail message
     },
     "deleteRetentionPolicy": {
       "type": "object",
-      "description": "Governs how the voicemail is retained"
+      "description": "Governs how the voicemail is retained",
+      "properties": {
+        "voicemailRetentionPolicyType": {
+          "type": "string",
+          "description": "The retention policy type"
+        },
+        "numberOfDays": {
+          "type": "integer",
+          "description": "If retentionPolicyType == RETAIN_WITH_TTL, then this value represents the number of days for the TTL"
+        }
+      }
     },
     "group": {
       "type": "object",
-      "description": "group"
+      "description": "group",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string",
+          "description": "The group name."
+        },
+        "description": {
+          "type": "string"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "Last modified date/time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "memberCount": {
+          "type": "integer",
+          "description": "Number of members."
+        },
+        "state": {
+          "type": "string",
+          "description": "Active, inactive, or deleted state."
+        },
+        "version": {
+          "type": "integer",
+          "description": "Current version for this resource."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of group."
+        },
+        "images": {
+          "type": "array"
+        },
+        "addresses": {
+          "type": "array"
+        },
+        "rulesVisible": {
+          "type": "boolean",
+          "description": "Are membership rules visible to the person requesting to view the group"
+        },
+        "visibility": {
+          "type": "string",
+          "description": "Who can view this group"
+        },
+        "rolesEnabled": {
+          "type": "boolean",
+          "description": "Allow roles to be assigned to this group"
+        },
+        "includeOwners": {
+          "type": "boolean",
+          "description": "Allow owners to be included as members of the group"
+        },
+        "callsEnabled": {
+          "type": "boolean",
+          "description": "Allow calls to be placed to this group."
+        },
+        "owners": {
+          "type": "array",
+          "description": "Owners of the group"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "name",
+        "rulesVisible",
+        "type",
+        "visibility"
+      ]
     },
     "id": {
       "type": "string",
@@ -1183,7 +2167,156 @@ Update a voicemail message
     },
     "queue": {
       "type": "object",
-      "description": "queue"
+      "description": "queue",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "description": {
+          "type": "string",
+          "description": "The queue description."
+        },
+        "dateCreated": {
+          "type": "string",
+          "description": "The date the queue was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateModified": {
+          "type": "string",
+          "description": "The date of the last modification to the queue. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "modifiedBy": {
+          "type": "string",
+          "description": "The ID of the user that last modified the queue."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "The ID of the user that created the queue."
+        },
+        "memberCount": {
+          "type": "integer",
+          "description": "The total number of members in the queue."
+        },
+        "userMemberCount": {
+          "type": "integer",
+          "description": "The number of user members (i.e., non-group members) in the queue."
+        },
+        "joinedMemberCount": {
+          "type": "integer",
+          "description": "The number of joined members in the queue."
+        },
+        "mediaSettings": {
+          "type": "object"
+        },
+        "routingRules": {
+          "type": "array",
+          "description": "The routing rules for the queue, used for Preferred Agent Routing."
+        },
+        "conditionalGroupRouting": {
+          "type": "object"
+        },
+        "conditionalGroupActivation": {
+          "type": "object"
+        },
+        "bullseye": {
+          "type": "object"
+        },
+        "scoringMethod": {
+          "type": "string",
+          "description": "The Scoring Method for the queue."
+        },
+        "lastAgentRoutingMode": {
+          "type": "string",
+          "description": "The Last Agent Routing Mode for the queue."
+        },
+        "acwSettings": {
+          "type": "object"
+        },
+        "skillEvaluationMethod": {
+          "type": "string",
+          "description": "The skill evaluation method to use when routing conversations."
+        },
+        "memberGroups": {
+          "type": "array",
+          "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
+        },
+        "queueFlow": {
+          "type": "object"
+        },
+        "emailInQueueFlow": {
+          "type": "object"
+        },
+        "messageInQueueFlow": {
+          "type": "object"
+        },
+        "whisperPrompt": {
+          "type": "object"
+        },
+        "onHoldPrompt": {
+          "type": "object"
+        },
+        "autoAnswerOnly": {
+          "type": "boolean",
+          "description": "Specifies whether the configured whisper should play for all ACD calls, or only for those which are auto-answered."
+        },
+        "cannedResponseLibraries": {
+          "type": "object"
+        },
+        "enableTranscription": {
+          "type": "boolean",
+          "description": "Indicates whether voice transcription is enabled for this queue."
+        },
+        "enableAudioMonitoring": {
+          "type": "boolean",
+          "description": "Indicates whether audio monitoring is enabled for this queue."
+        },
+        "enableManualAssignment": {
+          "type": "boolean",
+          "description": "Indicates whether manual assignment is enabled for this queue."
+        },
+        "agentOwnedRouting": {
+          "type": "object"
+        },
+        "directRouting": {
+          "type": "object"
+        },
+        "callingPartyName": {
+          "type": "string",
+          "description": "The name to use for caller identification for outbound calls from this queue."
+        },
+        "callingPartyNumber": {
+          "type": "string",
+          "description": "The phone number to use for caller identification for outbound calls from this queue."
+        },
+        "defaultScripts": {
+          "type": "object",
+          "description": "The default script Ids for the communication types."
+        },
+        "outboundMessagingAddresses": {
+          "type": "object"
+        },
+        "outboundEmailAddress": {
+          "type": "object"
+        },
+        "peerId": {
+          "type": "string",
+          "description": "The ID of an associated external queue."
+        },
+        "suppressInQueueCallRecording": {
+          "type": "boolean",
+          "description": "Indicates whether recording in-queue calls is suppressed for this queue."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "read": {
       "type": "boolean",
@@ -1199,7 +2332,146 @@ Update a voicemail message
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "name": {
+          "type": "string"
+        },
+        "division": {
+          "type": "object"
+        },
+        "chat": {
+          "type": "object"
+        },
+        "department": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "primaryContactInfo": {
+          "type": "array",
+          "description": "Auto populated from addresses."
+        },
+        "addresses": {
+          "type": "array",
+          "description": "Email addresses and phone numbers for this user"
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state for this user."
+        },
+        "title": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "object",
+          "description": "Circular schema reference: #/components/schemas/User"
+        },
+        "images": {
+          "type": "array"
+        },
+        "version": {
+          "type": "integer",
+          "description": "Required when updating a user, this value should be the current version of the user.  The current version can be obtained with a GET on the user before doing a PATCH."
+        },
+        "certifications": {
+          "type": "array"
+        },
+        "biography": {
+          "type": "object"
+        },
+        "employerInfo": {
+          "type": "object"
+        },
+        "preferredName": {
+          "type": "string",
+          "description": "Preferred full name of the agent"
+        },
+        "routingStatus": {
+          "type": "object"
+        },
+        "presence": {
+          "type": "object"
+        },
+        "integrationPresence": {
+          "type": "object"
+        },
+        "conversationSummary": {
+          "type": "object"
+        },
+        "outOfOffice": {
+          "type": "object"
+        },
+        "geolocation": {
+          "type": "object"
+        },
+        "station": {
+          "type": "object"
+        },
+        "authorization": {
+          "type": "object"
+        },
+        "profileSkills": {
+          "type": "array",
+          "description": "Profile skills possessed by the user"
+        },
+        "locations": {
+          "type": "array",
+          "description": "The user placement at each site location."
+        },
+        "groups": {
+          "type": "array",
+          "description": "The groups the user is a member of"
+        },
+        "team": {
+          "type": "object"
+        },
+        "workPlanBidRanks": {
+          "type": "object"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Routing (ACD) skills possessed by the user"
+        },
+        "languages": {
+          "type": "array",
+          "description": "Routing (ACD) languages possessed by the user"
+        },
+        "acdAutoAnswer": {
+          "type": "boolean",
+          "description": "acd auto answer"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "preferred language by the user"
+        },
+        "lastTokenIssued": {
+          "type": "object"
+        },
+        "dateLastLogin": {
+          "type": "string",
+          "description": "The last time the user logged in using username and password. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "dateWelcomeSent": {
+          "type": "string",
+          "description": "The date & time the user was sent their welcome email. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      },
+      "required": [
+        "version"
+      ]
     }
   },
   "required": [
@@ -1273,7 +2545,15 @@ Update a policy
     },
     "pinConfiguration": {
       "type": "object",
-      "description": "pinConfiguration"
+      "description": "pinConfiguration",
+      "properties": {
+        "minimumLength": {
+          "type": "integer"
+        },
+        "maximumLength": {
+          "type": "integer"
+        }
+      }
     },
     "pinRequired": {
       "type": "boolean",

@@ -12,19 +12,21 @@ description: "Channels, messages, and meetings"
 
 | Tool | Description |
 | --- | --- |
-| [`microsoft-teams_get_my_joined_teams`](#microsoft-teams_get_my_joined_teams) | Get all joined teams for the current user |
-| [`microsoft-teams_get_channel_list`](#microsoft-teams_get_channel_list) | Getting channel list of a team |
-| [`microsoft-teams_get_apps_list`](#microsoft-teams_get_apps_list) | Getting installed apps list of a team |
-| [`microsoft-teams_get_chats`](#microsoft-teams_get_chats) | Getting chats list for the user |
-| [`microsoft-teams_get_threads_by_chat_id`](#microsoft-teams_get_threads_by_chat_id) | Getting threads list for a specific chat |
-| [`microsoft-teams_post_message_to_channel`](#microsoft-teams_post_message_to_channel) | Posting a message to a specific channel for the team |
-| [`microsoft-teams_send_message_in_chat`](#microsoft-teams_send_message_in_chat) | Sending a message in a specific chat |
+| [`microsoft-teams_get_my_joined_teams`](#microsoft-teams_get_my_joined_teams) | Get all Microsoft Teams teams the current user is a member of. Use this to discover available teams before reading channels or posting messages. |
+| [`microsoft-teams_get_channel_list`](#microsoft-teams_get_channel_list) | List all channels in a Microsoft Teams team. Accepts team name (e.g. "Engineering") or raw team ID — resolves names automatically. Use this to discover available channels before reading or posting messages. |
+| [`microsoft-teams_search_users`](#microsoft-teams_search_users) | Search for users in the Microsoft Teams organisation by name or email. Returns matching users with display name, email, job title, and department. Useful for finding a person before sending them a direct message. |
+| [`microsoft-teams_get_channel_messages`](#microsoft-teams_get_channel_messages) | Retrieve message history from a Microsoft Teams channel. Accepts team and channel as names (e.g. "Engineering", "General") or raw IDs — resolves names automatically. Returns messages with sender, content, and timestamp. Supports time range filtering. |
+| [`microsoft-teams_get_channel_message_replies`](#microsoft-teams_get_channel_message_replies) | Retrieve all replies to a message thread in a Microsoft Teams channel. Accepts team and channel as names or IDs — resolves names automatically. Use after get_channel_messages to drill into a specific thread. |
+| [`microsoft-teams_send_channel_message`](#microsoft-teams_send_channel_message) | Post a new message to a Microsoft Teams channel. Accepts team and channel as names (e.g. "Engineering", "General") or raw IDs — resolves names automatically. |
+| [`microsoft-teams_reply_to_channel_message`](#microsoft-teams_reply_to_channel_message) | Reply to an existing message thread in a Microsoft Teams channel. Accepts team and channel as names or IDs — resolves names automatically. Use after get_channel_messages to reply to a specific thread. |
+| [`microsoft-teams_get_dm_history`](#microsoft-teams_get_dm_history) | Retrieve message history from a Microsoft Teams direct message (DM) conversation. Provide the other person's name or email — the tool finds the conversation automatically. Supports time range filtering. |
+| [`microsoft-teams_send_direct_message`](#microsoft-teams_send_direct_message) | Send a direct message (DM) to a person in Microsoft Teams. Provide the recipient's name or email — the tool finds their conversation automatically. |
 
 ---
 
 ## microsoft-teams_get_my_joined_teams
 
-Get all joined teams for the current user
+Get all Microsoft Teams teams the current user is a member of. Use this to discover available teams before reading channels or posting messages.
 
 <Expandable title="inputSchema">
 
@@ -49,13 +51,13 @@ Get all joined teams for the current user
 
 ## microsoft-teams_get_channel_list
 
-Getting channel list of a team
+List all channels in a Microsoft Teams team. Accepts team name (e.g. "Engineering") or raw team ID — resolves names automatically. Use this to discover available channels before reading or posting messages.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `team_id` | string | Yes | — | Team ID |
+| `team` | string | Yes | — | Team name (e.g. "Engineering") or team ID (UUID format) |
 
 <Expandable title="inputSchema">
 
@@ -67,14 +69,14 @@ Getting channel list of a team
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "team_id": {
+    "team": {
       "type": "string",
-      "description": "Team ID"
+      "description": "Team name (e.g. \"Engineering\") or team ID (UUID format)"
     }
   },
   "required": [
     "PCID",
-    "team_id"
+    "team"
   ]
 }
 ```
@@ -83,15 +85,15 @@ Getting channel list of a team
 
 ---
 
-## microsoft-teams_get_apps_list
+## microsoft-teams_search_users
 
-Getting installed apps list of a team
+Search for users in the Microsoft Teams organisation by name or email. Returns matching users with display name, email, job title, and department. Useful for finding a person before sending them a direct message.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `team_id` | string | Yes | — | Team ID |
+| `query` | string | Yes | — | Name or email prefix to search for (e.g. "Jane", "jane.doe@company.com") |
 
 <Expandable title="inputSchema">
 
@@ -103,14 +105,14 @@ Getting installed apps list of a team
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "team_id": {
+    "query": {
       "type": "string",
-      "description": "Team ID"
+      "description": "Name or email prefix to search for (e.g. \"Jane\", \"jane.doe@company.com\")"
     }
   },
   "required": [
     "PCID",
-    "team_id"
+    "query"
   ]
 }
 ```
@@ -119,40 +121,19 @@ Getting installed apps list of a team
 
 ---
 
-## microsoft-teams_get_chats
+## microsoft-teams_get_channel_messages
 
-Getting chats list for the user
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## microsoft-teams_get_threads_by_chat_id
-
-Getting threads list for a specific chat
+Retrieve message history from a Microsoft Teams channel. Accepts team and channel as names (e.g. "Engineering", "General") or raw IDs — resolves names automatically. Returns messages with sender, content, and timestamp. Supports time range filtering.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `chat_id` | string | Yes | — | Chat ID |
+| `team` | string | Yes | — | Team name (e.g. "Engineering") or team ID (UUID format) |
+| `channel` | string | Yes | — | Channel name (e.g. "General") or channel ID (contains "@thread") |
+| `limit` | number | No | `10` | Maximum number of messages to return (default: 10) |
+| `after` | string | No | — | Only return messages after this timestamp (ISO 8601, e.g. "2025-12-16T00:00:00Z") |
+| `before` | string | No | — | Only return messages before this timestamp (ISO 8601, e.g. "2025-12-17T00:00:00Z") |
 
 <Expandable title="inputSchema">
 
@@ -164,14 +145,32 @@ Getting threads list for a specific chat
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "chat_id": {
+    "team": {
       "type": "string",
-      "description": "Chat ID"
+      "description": "Team name (e.g. \"Engineering\") or team ID (UUID format)"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Channel name (e.g. \"General\") or channel ID (contains \"@thread\")"
+    },
+    "limit": {
+      "type": "number",
+      "default": 10,
+      "description": "Maximum number of messages to return (default: 10)"
+    },
+    "after": {
+      "type": "string",
+      "description": "Only return messages after this timestamp (ISO 8601, e.g. \"2025-12-16T00:00:00Z\")"
+    },
+    "before": {
+      "type": "string",
+      "description": "Only return messages before this timestamp (ISO 8601, e.g. \"2025-12-17T00:00:00Z\")"
     }
   },
   "required": [
     "PCID",
-    "chat_id"
+    "team",
+    "channel"
   ]
 }
 ```
@@ -180,17 +179,17 @@ Getting threads list for a specific chat
 
 ---
 
-## microsoft-teams_post_message_to_channel
+## microsoft-teams_get_channel_message_replies
 
-Posting a message to a specific channel for the team
+Retrieve all replies to a message thread in a Microsoft Teams channel. Accepts team and channel as names or IDs — resolves names automatically. Use after get_channel_messages to drill into a specific thread.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `team_id` | string | Yes | — | Team ID |
-| `channel_id` | string | Yes | — | Channel ID |
-| `message` | string | No | — | Message to be sent |
+| `team` | string | Yes | — | Team name (e.g. "Engineering") or team ID (UUID format) |
+| `channel` | string | Yes | — | Channel name (e.g. "General") or channel ID (contains "@thread") |
+| `message_id` | string | Yes | — | ID of the parent message to get replies for |
 
 <Expandable title="inputSchema">
 
@@ -202,23 +201,72 @@ Posting a message to a specific channel for the team
       "type": "string",
       "description": "Pink Connect ID"
     },
-    "team_id": {
+    "team": {
       "type": "string",
-      "description": "Team ID"
+      "description": "Team name (e.g. \"Engineering\") or team ID (UUID format)"
     },
-    "channel_id": {
+    "channel": {
       "type": "string",
-      "description": "Channel ID"
+      "description": "Channel name (e.g. \"General\") or channel ID (contains \"@thread\")"
+    },
+    "message_id": {
+      "type": "string",
+      "description": "ID of the parent message to get replies for"
+    }
+  },
+  "required": [
+    "PCID",
+    "team",
+    "channel",
+    "message_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft-teams_send_channel_message
+
+Post a new message to a Microsoft Teams channel. Accepts team and channel as names (e.g. "Engineering", "General") or raw IDs — resolves names automatically.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `team` | string | Yes | — | Team name (e.g. "Engineering") or team ID (UUID format) |
+| `channel` | string | Yes | — | Channel name (e.g. "General") or channel ID (contains "@thread") |
+| `message` | string | Yes | — | Message text to post |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "team": {
+      "type": "string",
+      "description": "Team name (e.g. \"Engineering\") or team ID (UUID format)"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Channel name (e.g. \"General\") or channel ID (contains \"@thread\")"
     },
     "message": {
       "type": "string",
-      "description": "Message to be sent"
+      "description": "Message text to post"
     }
   },
   "required": [
     "PCID",
-    "team_id",
-    "channel_id"
+    "team",
+    "channel",
+    "message"
   ]
 }
 ```
@@ -227,16 +275,18 @@ Posting a message to a specific channel for the team
 
 ---
 
-## microsoft-teams_send_message_in_chat
+## microsoft-teams_reply_to_channel_message
 
-Sending a message in a specific chat
+Reply to an existing message thread in a Microsoft Teams channel. Accepts team and channel as names or IDs — resolves names automatically. Use after get_channel_messages to reply to a specific thread.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `chat_id` | string | Yes | — | The chat ID |
-| `message` | string | No | — | Message to be sent |
+| `team` | string | Yes | — | Team name (e.g. "Engineering") or team ID (UUID format) |
+| `channel` | string | Yes | — | Channel name (e.g. "General") or channel ID (contains "@thread") |
+| `message_id` | string | Yes | — | ID of the parent message to reply to |
+| `message` | string | Yes | — | Reply text to post |
 
 <Expandable title="inputSchema">
 
@@ -246,20 +296,125 @@ Sending a message in a specific chat
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "The Pink Connect ID for the user"
+      "description": "Pink Connect ID"
     },
-    "chat_id": {
+    "team": {
       "type": "string",
-      "description": "The chat ID"
+      "description": "Team name (e.g. \"Engineering\") or team ID (UUID format)"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Channel name (e.g. \"General\") or channel ID (contains \"@thread\")"
+    },
+    "message_id": {
+      "type": "string",
+      "description": "ID of the parent message to reply to"
     },
     "message": {
       "type": "string",
-      "description": "Message to be sent"
+      "description": "Reply text to post"
     }
   },
   "required": [
     "PCID",
-    "chat_id"
+    "team",
+    "channel",
+    "message_id",
+    "message"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft-teams_get_dm_history
+
+Retrieve message history from a Microsoft Teams direct message (DM) conversation. Provide the other person's name or email — the tool finds the conversation automatically. Supports time range filtering.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `user` | string | Yes | — | Person to get DM history with. Accepts display name ("Jane Doe"), email ("jane@company.com"), or AAD user ID. |
+| `limit` | number | No | `10` | Maximum number of messages to return (default: 10) |
+| `after` | string | No | — | Only return messages after this timestamp (ISO 8601, e.g. "2025-12-16T00:00:00Z") |
+| `before` | string | No | — | Only return messages before this timestamp (ISO 8601, e.g. "2025-12-17T00:00:00Z") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "user": {
+      "type": "string",
+      "description": "Person to get DM history with. Accepts display name (\"Jane Doe\"), email (\"jane@company.com\"), or AAD user ID."
+    },
+    "limit": {
+      "type": "number",
+      "default": 10,
+      "description": "Maximum number of messages to return (default: 10)"
+    },
+    "after": {
+      "type": "string",
+      "description": "Only return messages after this timestamp (ISO 8601, e.g. \"2025-12-16T00:00:00Z\")"
+    },
+    "before": {
+      "type": "string",
+      "description": "Only return messages before this timestamp (ISO 8601, e.g. \"2025-12-17T00:00:00Z\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "user"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## microsoft-teams_send_direct_message
+
+Send a direct message (DM) to a person in Microsoft Teams. Provide the recipient's name or email — the tool finds their conversation automatically.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `user` | string | Yes | — | Recipient's display name ("Jane Doe") or email ("jane@company.com") |
+| `message` | string | Yes | — | Message text to send |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID"
+    },
+    "user": {
+      "type": "string",
+      "description": "Recipient's display name (\"Jane Doe\") or email (\"jane@company.com\")"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message text to send"
+    }
+  },
+  "required": [
+    "PCID",
+    "user",
+    "message"
   ]
 }
 ```

@@ -392,7 +392,7 @@ Allows an entity to mute/snooze an alert or update the unread status of the aler
 | `alertId` | string | Yes | — | Alert ID |
 | `dateEnd` | string | No | — | The end date of the mute/snooze period. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateStart` | string | No | — | The start date of the mute/snooze period. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `type` | string | No | — | The action being taken on the alert. |
+| `type` | string | Yes | — | The action being taken on the alert. |
 | `unread` | object | No | — | unread |
 | `validRequest` | boolean | No | — | validRequest |
 
@@ -430,7 +430,16 @@ Allows an entity to mute/snooze an alert or update the unread status of the aler
     },
     "unread": {
       "type": "object",
-      "description": "unread"
+      "description": "unread",
+      "properties": {
+        "state": {
+          "type": "boolean",
+          "description": "The new unread state of the alert"
+        }
+      },
+      "required": [
+        "state"
+      ]
     },
     "validRequest": {
       "type": "boolean",
@@ -439,7 +448,8 @@ Allows an entity to mute/snooze an alert or update the unread status of the aler
   },
   "required": [
     "PCID",
-    "alertId"
+    "alertId",
+    "type"
   ]
 }
 ```
@@ -456,7 +466,7 @@ Updates all alerts
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `type` | string | No | — | The action to take |
+| `type` | string | Yes | — | The action to take |
 | `unread` | object | No | — | unread |
 
 <Expandable title="inputSchema">
@@ -481,11 +491,21 @@ Updates all alerts
     },
     "unread": {
       "type": "object",
-      "description": "unread"
+      "description": "unread",
+      "properties": {
+        "state": {
+          "type": "boolean",
+          "description": "The new unread state of the alert"
+        }
+      },
+      "required": [
+        "state"
+      ]
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "type"
   ]
 }
 ```
@@ -505,8 +525,8 @@ Gets a paged list of alerts. The max page size is 50
 | `alertStatus` | string | No | — | The status of the alerts the query will return. |
 | `pageNumber` | integer | No | — | The page number of the queried response |
 | `pageSize` | integer | No | — | The number of entities to return of the queried response.  The max is 25 |
-| `queryType` | string | No | — | The type of query being performed. |
-| `ruleType` | string | No | — | The rule type of the alerts the query will return |
+| `queryType` | string | Yes | — | The type of query being performed. |
+| `ruleType` | string | Yes | — | The rule type of the alerts the query will return |
 | `sortBy` | string | No | — | The field to sort responses by.  The accepted choices are Name and DateStart |
 | `sortOrder` | string | No | — | The order in which response will be sorted.  The accepted choices are Asc and Desc |
 | `viewedStatus` | string | No | — | The view status of the alerts the query will return. |
@@ -582,7 +602,9 @@ Gets a paged list of alerts. The max page size is 50
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "queryType",
+    "ruleType"
   ]
 }
 ```
@@ -627,7 +649,29 @@ Create a Rule.
     },
     "conditions": {
       "type": "object",
-      "description": "conditions"
+      "description": "conditions",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "The list of predicates groups to be evaluated"
+        },
+        "predicates": {
+          "type": "array",
+          "description": "The list of rule metric predicates to be evaluated."
+        },
+        "type": {
+          "type": "string",
+          "description": "the logic operator performed."
+        },
+        "id": {
+          "type": "string",
+          "description": "The id."
+        }
+      },
+      "required": [
+        "predicates",
+        "type"
+      ]
     },
     "dateCreated": {
       "type": "string",
@@ -682,7 +726,17 @@ Create a Rule.
     },
     "user": {
       "type": "object",
-      "description": "user"
+      "description": "user",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The globally unique identifier for the object."
+        },
+        "selfUri": {
+          "type": "string",
+          "description": "The URI for this object"
+        }
+      }
     },
     "version": {
       "type": "integer",
@@ -717,9 +771,9 @@ Get a paged list of rules.  The max size of the page is 50 items.
 | `nameSearchType` | string | No | — | Specifies how strict the name search needs to be. Expected values are Exact and Contains if querying by name. |
 | `pageNumber` | integer | No | — | The page number of the queried response |
 | `pageSize` | integer | No | — | The number of entities to return of the queried response.  The max is 25 |
-| `queryType` | string | No | — | The type of query being performed. |
+| `queryType` | string | Yes | — | The type of query being performed. |
 | `ruleName` | string | No | — | The name of the rule being queries. |
-| `ruleType` | string | No | — | The rule type of the alerts the query will return |
+| `ruleType` | string | Yes | — | The rule type of the alerts the query will return |
 | `sortBy` | string | No | — | The field to sort responses by.  The accepted choices are Name and DateStart |
 | `sortOrder` | string | No | — | The order in which response will be sorted.  The accepted choices are Asc and Desc |
 
@@ -798,7 +852,9 @@ Get a paged list of rules.  The max size of the page is 50 items.
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "queryType",
+    "ruleType"
   ]
 }
 ```
@@ -901,7 +957,20 @@ Create a Trigger
     },
     "target": {
       "type": "object",
-      "description": "The target of a trigger invocation"
+      "description": "The target of a trigger invocation",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The entity type to target"
+        },
+        "id": {
+          "type": "string",
+          "description": "The ID of the entity to target"
+        },
+        "workflowTargetSettings": {
+          "type": "object"
+        }
+      }
     },
     "topicName": {
       "type": "string",
@@ -972,7 +1041,7 @@ Update an alert read status
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `alertId` | string | Yes | — | Alert ID |
-| `unread` | boolean | No | — | True is alert is unread, false if it has not been. |
+| `unread` | boolean | Yes | — | True is alert is unread, false if it has not been. |
 
 <Expandable title="inputSchema">
 
@@ -995,7 +1064,8 @@ Update an alert read status
   },
   "required": [
     "PCID",
-    "alertId"
+    "alertId",
+    "unread"
   ]
 }
 ```
@@ -1039,7 +1109,29 @@ Update a rule
     },
     "conditions": {
       "type": "object",
-      "description": "conditions"
+      "description": "conditions",
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "description": "The list of predicates groups to be evaluated"
+        },
+        "predicates": {
+          "type": "array",
+          "description": "The list of rule metric predicates to be evaluated."
+        },
+        "type": {
+          "type": "string",
+          "description": "the logic operator performed."
+        },
+        "id": {
+          "type": "string",
+          "description": "The id."
+        }
+      },
+      "required": [
+        "predicates",
+        "type"
+      ]
     },
     "description": {
       "type": "string",
@@ -1145,7 +1237,20 @@ Update a Trigger
     },
     "target": {
       "type": "object",
-      "description": "The target of a trigger invocation"
+      "description": "The target of a trigger invocation",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The entity type to target"
+        },
+        "id": {
+          "type": "string",
+          "description": "The ID of the entity to target"
+        },
+        "workflowTargetSettings": {
+          "type": "object"
+        }
+      }
     },
     "topicName": {
       "type": "string",

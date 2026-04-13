@@ -12,22 +12,22 @@ description: "Current conditions and multi-day forecasts for any location worldw
 
 | Tool | Description |
 | --- | --- |
-| [`weather_get_current`](#weather_get_current) | Get current weather conditions for a location. Provide either lat/lon coordinates or a city name. |
-| [`weather_get_forecast`](#weather_get_forecast) | Get a multi-day weather forecast for a location. Provide either lat/lon coordinates or a city name. |
+| [`weather_get_current`](#weather_get_current) | Get current weather conditions for a location. Provide either a city name or lat/lon coordinates. |
+| [`weather_get_forecast`](#weather_get_forecast) | Get a multi-day weather forecast for a location. Provide either a city name or lat/lon coordinates. |
 
 ---
 
 ## weather_get_current
 
-Get current weather conditions for a location. Provide either lat/lon coordinates or a city name.
+Get current weather conditions for a location. Provide either a city name or lat/lon coordinates.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `lat` | number | No | — | Latitude of the location (e.g., 51.5074 for London) |
-| `lon` | number | No | — | Longitude of the location (e.g., -0.1278 for London) |
-| `city` | string | No | — | City name to look up (e.g., "London", "New York", "Tokyo"). If ambiguous, include country (e.g., "Portland, US") |
+| `city` | string | No | — | City name to look up (e.g., "London", "New York", "Tokyo"). Required if lat/lon not provided. If ambiguous, include country (e.g., "Portland, US") |
+| `lat` | number | No | — | Latitude of the location (e.g., 51.5074 for London). Required if city not provided |
+| `lon` | number | No | — | Longitude of the location (e.g., -0.1278 for London). Required if city not provided |
 | `units` | string | No | — | Unit system: "metric" (Celsius, km/h) or "imperial" (Fahrenheit, mph). Defaults to metric |
 
 <Expandable title="inputSchema">
@@ -36,17 +36,17 @@ Get current weather conditions for a location. Provide either lat/lon coordinate
 {
   "type": "object",
   "properties": {
+    "city": {
+      "type": "string",
+      "description": "City name to look up (e.g., \"London\", \"New York\", \"Tokyo\"). Required if lat/lon not provided. If ambiguous, include country (e.g., \"Portland, US\")"
+    },
     "lat": {
       "type": "number",
-      "description": "Latitude of the location (e.g., 51.5074 for London)"
+      "description": "Latitude of the location (e.g., 51.5074 for London). Required if city not provided"
     },
     "lon": {
       "type": "number",
-      "description": "Longitude of the location (e.g., -0.1278 for London)"
-    },
-    "city": {
-      "type": "string",
-      "description": "City name to look up (e.g., \"London\", \"New York\", \"Tokyo\"). If ambiguous, include country (e.g., \"Portland, US\")"
+      "description": "Longitude of the location (e.g., -0.1278 for London). Required if city not provided"
     },
     "units": {
       "type": "string",
@@ -66,15 +66,15 @@ Get current weather conditions for a location. Provide either lat/lon coordinate
 
 ## weather_get_forecast
 
-Get a multi-day weather forecast for a location. Provide either lat/lon coordinates or a city name.
+Get a multi-day weather forecast for a location. Provide either a city name or lat/lon coordinates.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `lat` | number | No | — | Latitude of the location (e.g., 51.5074 for London) |
-| `lon` | number | No | — | Longitude of the location (e.g., -0.1278 for London) |
-| `city` | string | No | — | City name to look up (e.g., "London", "New York", "Tokyo"). If ambiguous, include country (e.g., "Portland, US") |
+| `city` | string | No | — | City name to look up (e.g., "London", "New York", "Tokyo"). Required if lat/lon not provided. If ambiguous, include country (e.g., "Portland, US") |
+| `lat` | number | No | — | Latitude of the location (e.g., 51.5074 for London). Required if city not provided |
+| `lon` | number | No | — | Longitude of the location (e.g., -0.1278 for London). Required if city not provided |
 | `days` | number | No | — | Number of forecast days (1-7). Defaults to 3 |
 | `units` | string | No | — | Unit system: "metric" (Celsius, km/h) or "imperial" (Fahrenheit, mph). Defaults to metric |
 
@@ -84,17 +84,17 @@ Get a multi-day weather forecast for a location. Provide either lat/lon coordina
 {
   "type": "object",
   "properties": {
+    "city": {
+      "type": "string",
+      "description": "City name to look up (e.g., \"London\", \"New York\", \"Tokyo\"). Required if lat/lon not provided. If ambiguous, include country (e.g., \"Portland, US\")"
+    },
     "lat": {
       "type": "number",
-      "description": "Latitude of the location (e.g., 51.5074 for London)"
+      "description": "Latitude of the location (e.g., 51.5074 for London). Required if city not provided"
     },
     "lon": {
       "type": "number",
-      "description": "Longitude of the location (e.g., -0.1278 for London)"
-    },
-    "city": {
-      "type": "string",
-      "description": "City name to look up (e.g., \"London\", \"New York\", \"Tokyo\"). If ambiguous, include country (e.g., \"Portland, US\")"
+      "description": "Longitude of the location (e.g., -0.1278 for London). Required if city not provided"
     },
     "days": {
       "type": "number",

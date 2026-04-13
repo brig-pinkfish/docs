@@ -13,7 +13,7 @@ description: "Profile, posts, and connections"
 | Tool | Description |
 | --- | --- |
 | [`linkedin_get_user_info`](#linkedin_get_user_info) | Get authenticated user information from LinkedIn |
-| [`linkedin_share_post`](#linkedin_share_post) | Share a post on LinkedIn - can be a text-only post or a post with a link/article |
+| [`linkedin_share_post`](#linkedin_share_post) | Share a post on LinkedIn - supports text-only posts, posts with a link/article, or posts with an uploaded image |
 | [`linkedin_like_post`](#linkedin_like_post) | Like a LinkedIn post |
 | [`linkedin_comment_on_post`](#linkedin_comment_on_post) | Comment on a LinkedIn post |
 
@@ -22,12 +22,6 @@ description: "Profile, posts, and connections"
 ## linkedin_get_user_info
 
 Get authenticated user information from LinkedIn
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `fields` | string[] | No | — | User info fields to retrieve |
 
 <Expandable title="inputSchema">
 
@@ -38,27 +32,6 @@ Get authenticated user information from LinkedIn
     "PCID": {
       "type": "string",
       "description": "Pink Connect ID"
-    },
-    "fields": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "id",
-          "firstName",
-          "lastName",
-          "headline",
-          "summary",
-          "location",
-          "industry",
-          "positions",
-          "educations",
-          "skills",
-          "profilePicture",
-          "publicProfileUrl"
-        ]
-      },
-      "description": "User info fields to retrieve"
     }
   },
   "required": [
@@ -73,7 +46,7 @@ Get authenticated user information from LinkedIn
 
 ## linkedin_share_post
 
-Share a post on LinkedIn - can be a text-only post or a post with a link/article
+Share a post on LinkedIn - supports text-only posts, posts with a link/article, or posts with an uploaded image
 
 **Parameters:**
 
@@ -81,7 +54,8 @@ Share a post on LinkedIn - can be a text-only post or a post with a link/article
 | --- | --- | --- | --- | --- |
 | `author` | string | Yes | — | Author URN (e.g., urn:li:person:XXXXXX) |
 | `text` | string | Yes | — | Post text content or commentary |
-| `url` | string | No | — | Optional URL of the link/article to share. If provided, creates an article post; otherwise creates a text-only post |
+| `url` | string | No | — | Optional URL of the link/article to share. Creates an article post. Cannot be combined with imageUrl |
+| `imageUrl` | string | No | — | Optional URL of an image to upload and attach to the post. Creates an image post. Cannot be combined with url |
 | `title` | string | No | — | Title for the shared link (only used when url is provided) |
 | `description` | string | No | — | Description for the shared link (only used when url is provided) |
 | `lifecycleState` | string | No | `"PUBLISHED"` | Post lifecycle state |
@@ -107,7 +81,11 @@ Share a post on LinkedIn - can be a text-only post or a post with a link/article
     },
     "url": {
       "type": "string",
-      "description": "Optional URL of the link/article to share. If provided, creates an article post; otherwise creates a text-only post"
+      "description": "Optional URL of the link/article to share. Creates an article post. Cannot be combined with imageUrl"
+    },
+    "imageUrl": {
+      "type": "string",
+      "description": "Optional URL of an image to upload and attach to the post. Creates an image post. Cannot be combined with url"
     },
     "title": {
       "type": "string",

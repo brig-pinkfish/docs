@@ -119,6 +119,7 @@ const DESCRIPTION_OVERRIDES: Record<string, string> = {
   'http-utils': 'Make HTTP requests to public APIs or through custom integrations',
   'image-processing': 'AI image generation, editing, and background removal',
   'knowledge-base': 'RAG search, document Q&A, and semantic search over uploaded documents',
+  'pf-account': 'Manage organization members, invitations, permissions, personas, and sub-organizations',
   'pinkfish-sidekick': 'Visual workflow builder, execution, triggers, and sub-workflow invocation',
   'vault': 'Encrypted secrets storage and management',
   'video-processing': 'AI video generation and audio extraction',
@@ -398,14 +399,16 @@ function generateToolSection(tool: any): string {
 function generateServerPage(
   serverName: string,
   rawDescription: string,
-  tools: any[]
+  tools: any[],
+  label?: string
 ): string {
   const docSlug = getDocSlug(serverName)
   const description = getDescription(serverName, rawDescription)
+  const displayName = (label || docSlug).toLowerCase()
 
   let md = `---\n`
-  md += `title: "${docSlug.replace(/"/g, '\\"')}"\n`
-  md += `sidebarTitle: "${docSlug.replace(/"/g, '\\"')}"\n`
+  md += `title: "${displayName.replace(/"/g, '\\"')}"\n`
+  md += `sidebarTitle: "${displayName.replace(/"/g, '\\"')}"\n`
   md += `description: "${description.replace(/"/g, '\\"')}"\n`
   md += `---\n\n`
   md += `${GENERATED_HEADER}\n\n`
@@ -437,6 +440,7 @@ function generateServerPage(
 
 interface ServerEntry {
   name: string
+  label?: string
   description: string
   path: string
   embedded: boolean
@@ -468,6 +472,7 @@ function filterEmbeddedServers(servers: ServerEntry[]): ServerEntry[] {
   return servers.filter((s) => {
     if (!s.embedded) return false
     if (EXCLUDED_SERVERS.has(s.name)) return false
+    if ((s.label || s.name).toLowerCase().includes('deprecated')) return false
     // Include servers available to users OR agents (public-facing)
     if (s.availableToUsers === false && s.availableToAgents === false) return false
     return true
@@ -478,7 +483,17 @@ function filterEmbeddedServers(servers: ServerEntry[]): ServerEntry[] {
 // docs.json update
 // ============================================================================
 
-function updateDocsJson(serverSlugs: string[], selectiveSlugs?: string[]): void {
+function updateDocsJson(serverSlugs: string[], selectiveSlugs?: string[], slugToLabel?: Map<string, string>): void {
+  /** Sort page paths by their display label (falling back to slug) */
+  const sortByLabel = (pages: string[]) => {
+    return pages.sort((a, b) => {
+      const slugA = a.split('/').pop() || a
+      const slugB = b.split('/').pop() || b
+      const labelA = (slugToLabel?.get(slugA) || slugA).toLowerCase()
+      const labelB = (slugToLabel?.get(slugB) || slugB).toLowerCase()
+      return labelA.localeCompare(labelB)
+    })
+  }
   const docsJson = JSON.parse(fs.readFileSync(DOCS_JSON_PATH, 'utf-8'))
 
   // Find the "Embedded MCP Servers" group in the navigation
@@ -526,20 +541,18 @@ function updateDocsJson(serverSlugs: string[], selectiveSlugs?: string[]): void 
         serverPages.push(pagePath)
       }
     }
-    serverPages.sort()
     embeddedGroup.pages = [
       'api-reference/mcp-servers/embedded/overview',
-      // Manual pages sorted among server pages
-      ...insertManualPages(serverPages)
+      ...sortByLabel(insertManualPages(serverPages))
     ]
   } else {
     // Full replacement
-    const serverPages = serverSlugs.sort().map(
+    const serverPages = serverSlugs.map(
       (slug) => `api-reference/mcp-servers/embedded/${slug}`
     )
     embeddedGroup.pages = [
       'api-reference/mcp-servers/embedded/overview',
-      ...insertManualPages(serverPages)
+      ...sortByLabel(insertManualPages(serverPages))
     ]
   }
 
@@ -716,6 +729,15 @@ async function main(): Promise<void> {
     toGenerate = embeddedServers
   }
 
+  // Build slug-to-label map from all embedded servers (not just toGenerate)
+  const slugToLabel = new Map<string, string>()
+  for (const server of embeddedServers) {
+    const slug = getDocSlug(server.name)
+    if (server.label) {
+      slugToLabel.set(slug, server.label)
+    }
+  }
+
   let totalTools = 0
   const generatedSlugs: string[] = []
 
@@ -731,7 +753,7 @@ async function main(): Promise<void> {
       `  Generating ${docSlug}.mdx (${tools.length} tools)...`
     )
 
-    const mdx = generateServerPage(server.name, server.description, tools)
+    const mdx = generateServerPage(server.name, server.description, tools, server.label)
     const outputPath = path.join(OUTPUT_DIR, `${docSlug}.mdx`)
     fs.writeFileSync(outputPath, mdx)
 
@@ -739,15 +761,13 @@ async function main(): Promise<void> {
     generatedSlugs.push(docSlug)
   }
 
-  generatedSlugs.sort()
-
   // Update docs.json
   if (generatedSlugs.length > 0) {
     if (selectiveSlugs) {
-      updateDocsJson(generatedSlugs, selectiveSlugs)
+      updateDocsJson(generatedSlugs, selectiveSlugs, slugToLabel)
       console.log(`\nUpdated docs.json with ${generatedSlugs.length} page(s)`)
     } else {
-      updateDocsJson(generatedSlugs)
+      updateDocsJson(generatedSlugs, undefined, slugToLabel)
       console.log(`\nUpdated docs.json with ${generatedSlugs.length} pages`)
     }
   }
