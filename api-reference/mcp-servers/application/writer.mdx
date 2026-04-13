@@ -16,12 +16,8 @@ description: "Writer AI platform — chat completions, knowledge graphs, file ma
 | [`writer_analyze_vision`](#writer_analyze_vision) | Analyze images |
 | [`writer_chat`](#writer_chat) | Chat completion |
 | [`writer_completions`](#writer_completions) | Text generation |
-| [`writer_comprehend_medical`](#writer_comprehend_medical) | Medical comprehend |
-| [`writer_context_aware_splitting`](#writer_context_aware_splitting) | Context-aware text splitting |
-| [`writer_convert_text_to_graph`](#writer_convert_text_to_graph) | Text-to-graph |
 | [`writer_create_graph`](#writer_create_graph) | Create graph |
 | [`writer_delete_graph`](#writer_delete_graph) | Delete graph |
-| [`writer_detect_ai_content`](#writer_detect_ai_content) | AI detection |
 | [`writer_find_graph_with_file_status`](#writer_find_graph_with_file_status) | Retrieve graph |
 | [`writer_find_graphs_with_file_status`](#writer_find_graphs_with_file_status) | List graphs |
 | [`writer_gateway_delete_file`](#writer_gateway_delete_file) | Delete file |
@@ -101,7 +97,7 @@ Analyze images
 | --- | --- | --- | --- | --- |
 | `model` | string | Yes | — | The model to use for image analysis. |
 | `prompt` | string | Yes | — | The prompt to use for the image analysis. The prompt must include the name of each image variable, surrounded by double curly braces (`&#123;&#123;&#125;&#125;`). For example, `Describe the difference between the image &#123;&#123;image_1&#125;&#125; and the image &#123;&#123;image_2&#125;&#125;`. |
-| `variables` | any[] | Yes | — | variables |
+| `variables` | any[] | Yes | — | The variables value |
 
 <Expandable title="inputSchema">
 
@@ -126,7 +122,7 @@ Analyze images
     },
     "variables": {
       "type": "array",
-      "description": "variables"
+      "description": "The variables value"
     }
   },
   "required": [
@@ -337,137 +333,6 @@ Text generation
 
 ---
 
-## writer_comprehend_medical
-
-Medical comprehend
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `content` | string | Yes | — | The text to analyze. |
-| `response_type` | string | Yes | — | response_type |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "content": {
-      "type": "string",
-      "description": "The text to analyze."
-    },
-    "response_type": {
-      "type": "string",
-      "description": "response_type",
-      "enum": [
-        "Entities",
-        "RxNorm",
-        "ICD-10-CM",
-        "SNOMED CT"
-      ]
-    }
-  },
-  "required": [
-    "PCID",
-    "content",
-    "response_type"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## writer_context_aware_splitting
-
-Context-aware text splitting
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `strategy` | string | Yes | — | strategy |
-| `text` | string | Yes | — | The text to split into chunks. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "strategy": {
-      "type": "string",
-      "description": "strategy",
-      "enum": [
-        "llm_split",
-        "fast_split",
-        "hybrid_split"
-      ]
-    },
-    "text": {
-      "type": "string",
-      "description": "The text to split into chunks."
-    }
-  },
-  "required": [
-    "PCID",
-    "strategy",
-    "text"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## writer_convert_text_to_graph
-
-Text-to-graph
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `text` | string | Yes | — | The text to convert into a graph structure. Maximum of 35,000 words. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "text": {
-      "type": "string",
-      "description": "The text to convert into a graph structure. Maximum of 35,000 words."
-    }
-  },
-  "required": [
-    "PCID",
-    "text"
-  ]
-}
-```
-
-</Expandable>
-
----
-
 ## writer_create_graph
 
 Create graph
@@ -536,42 +401,6 @@ Delete graph
   "required": [
     "PCID",
     "graph_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## writer_detect_ai_content
-
-AI detection
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `input` | string | Yes | — | The content to determine if it is AI- or human-generated. Content must have at least 350 characters. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "input": {
-      "type": "string",
-      "description": "The content to determine if it is AI- or human-generated. Content must have at least 350 characters."
-    }
-  },
-  "required": [
-    "PCID",
-    "input"
   ]
 }
 ```
@@ -979,7 +808,7 @@ Generate from application
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `application_id` | string | Yes | — | The unique identifier of a [no-code agent](/no-code/introduction) in AI Studio. |
-| `inputs` | any[] | Yes | — | inputs |
+| `inputs` | any[] | Yes | — | The inputs value |
 | `stream` | boolean | No | — | Indicates whether the response should be streamed. Currently only supported for research assistant applications. |
 
 <Expandable title="inputSchema">
@@ -998,7 +827,7 @@ Generate from application
     },
     "inputs": {
       "type": "array",
-      "description": "inputs"
+      "description": "The inputs value"
     },
     "stream": {
       "type": "boolean",

@@ -14,12 +14,14 @@ description: "Ziflow Collaboration - manage proof comments, comment labels, deci
 | --- | --- |
 | [`ziflow_collaboration_delete_comment_labels_label_id`](#ziflow_collaboration_delete_comment_labels_label_id) | Delete label |
 | [`ziflow_collaboration_delete_decision_reasons_options_option_id`](#ziflow_collaboration_delete_decision_reasons_options_option_id) | Delete option |
+| [`ziflow_collaboration_get_checklist_template`](#ziflow_collaboration_get_checklist_template) | Get Checklist by ID |
 | [`ziflow_collaboration_get_comment_labels`](#ziflow_collaboration_get_comment_labels) | Get labels |
 | [`ziflow_collaboration_get_comment_labels_label_id`](#ziflow_collaboration_get_comment_labels_label_id) | Get label by ID |
 | [`ziflow_collaboration_get_decision_reasons`](#ziflow_collaboration_get_decision_reasons) | Get reasons |
 | [`ziflow_collaboration_get_decision_reasons_options_option_id`](#ziflow_collaboration_get_decision_reasons_options_option_id) | Get option |
 | [`ziflow_collaboration_get_proofs_id_comments`](#ziflow_collaboration_get_proofs_id_comments) | Get comments |
 | [`ziflow_collaboration_get_proofs_id_comments_comment_id`](#ziflow_collaboration_get_proofs_id_comments_comment_id) | Get comment by ID |
+| [`ziflow_collaboration_post_checklist_template`](#ziflow_collaboration_post_checklist_template) | Create new checklist template |
 | [`ziflow_collaboration_post_comment_labels`](#ziflow_collaboration_post_comment_labels) | Add label |
 | [`ziflow_collaboration_post_decision_reasons_options`](#ziflow_collaboration_post_decision_reasons_options) | Add reasons option |
 | [`ziflow_collaboration_post_proofs_id_comments`](#ziflow_collaboration_post_proofs_id_comments) | Add comment |
@@ -97,6 +99,42 @@ Delete option
   "required": [
     "PCID",
     "option_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## ziflow_collaboration_get_checklist_template
+
+Get Checklist by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | string | Yes | — | Checklist Template ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "id": {
+      "type": "string",
+      "description": "Checklist Template ID"
+    }
+  },
+  "required": [
+    "PCID",
+    "id"
   ]
 }
 ```
@@ -323,6 +361,41 @@ Get comment by ID
 
 ---
 
+## ziflow_collaboration_post_checklist_template
+
+Create new checklist template
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `body` | object | Yes | — | Checklist template object |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "body": {
+      "description": "Checklist template object"
+    }
+  },
+  "required": [
+    "PCID",
+    "body"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## ziflow_collaboration_post_comment_labels
 
 Add label
@@ -331,7 +404,7 @@ Add label
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `active` | boolean | No | — | active |
+| `active` | boolean | No | — | The active value |
 | `label` | string | Yes | — | Label name |
 | `order` | integer | No | — | The order in which the label is displayed. |
 
@@ -347,7 +420,7 @@ Add label
     },
     "active": {
       "type": "boolean",
-      "description": "active"
+      "description": "The active value"
     },
     "label": {
       "type": "string",
@@ -377,9 +450,9 @@ Add reasons option
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `label` | string | No | — | label |
-| `order` | integer | No | — | order |
-| `text_field_available` | boolean | No | — | text_field_available |
+| `label` | string | No | — | The label value |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `text_field_available` | boolean | No | — | Text Field Available |
 
 <Expandable title="inputSchema">
 
@@ -393,15 +466,15 @@ Add reasons option
     },
     "label": {
       "type": "string",
-      "description": "label"
+      "description": "The label value"
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "text_field_available": {
       "type": "boolean",
-      "description": "text_field_available"
+      "description": "Text Field Available"
     }
   },
   "required": [
@@ -423,15 +496,16 @@ Add comment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
+| `checklist_items` | any[] | No | — | checklist item to be linked with comment |
 | `comment` | string | Yes | — | A Reviewer on the proof can be mentioned in the comment using $&#123;reviewer:reviewer_id&#125;. Field accepts max of 10000 characters. |
 | `labels` | any[] | No | — | IDs of labels |
 | `location` | object | Yes | — | For static, rich media and live website proof provide page number, for audio and video - start time |
-| `markers` | any[] | No | — | markers |
-| `parent_comment_id` | string | No | — | parent_comment_id |
+| `markers` | any[] | No | — | The markers value |
+| `parent_comment_id` | string | No | — | Parent Comment Id |
 | `private` | boolean | No | — | Available only on Enterprise edition |
-| `proof_id` | string | No | — | proof_id |
+| `proof_id` | string | No | — | Proof Id |
 | `resolved` | boolean | No | — | If true, the comment is added and immediately resolved and locked. Available on the Pro and Enterprise editions. |
-| `reviewer` | object | No | — | reviewer |
+| `reviewer` | object | No | — | The reviewer value |
 
 <Expandable title="inputSchema">
 
@@ -447,6 +521,10 @@ Add comment
       "type": "string",
       "description": "Proof ID"
     },
+    "checklist_items": {
+      "type": "array",
+      "description": "checklist item to be linked with comment"
+    },
     "comment": {
       "type": "string",
       "description": "A Reviewer on the proof can be mentioned in the comment using ${reviewer:reviewer_id}. Field accepts max of 10000 characters."
@@ -460,7 +538,8 @@ Add comment
       "description": "For static, rich media and live website proof provide page number, for audio and video - start time",
       "properties": {
         "page": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Page number for pagination"
         },
         "start_time": {
           "type": "string",
@@ -471,17 +550,18 @@ Add comment
           "description": "Time in format HH:mm:ss.SSS"
         },
         "asset_id": {
-          "type": "string"
+          "type": "string",
+          "description": "Asset Id"
         }
       }
     },
     "markers": {
       "type": "array",
-      "description": "markers"
+      "description": "The markers value"
     },
     "parent_comment_id": {
       "type": "string",
-      "description": "parent_comment_id"
+      "description": "Parent Comment Id"
     },
     "private": {
       "type": "boolean",
@@ -489,7 +569,7 @@ Add comment
     },
     "proof_id": {
       "type": "string",
-      "description": "proof_id"
+      "description": "Proof Id"
     },
     "resolved": {
       "type": "boolean",
@@ -497,14 +577,15 @@ Add comment
     },
     "reviewer": {
       "type": "object",
-      "description": "reviewer",
+      "description": "The reviewer value",
       "properties": {
         "reviewer_id": {
           "type": "string",
           "description": "Reviewer ID obtained from proof.stages[].members[].id field"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email value"
         }
       }
     }
@@ -532,7 +613,7 @@ Like comment
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
 | `comment_id` | string | Yes | — | Comment ID |
-| `like` | boolean | Yes | — | like |
+| `like` | boolean | Yes | — | The like value |
 | `reviewer_id` | string | No | — | Reviewer ID obtained from proof.stages[].members[].id field |
 
 <Expandable title="inputSchema">
@@ -555,7 +636,7 @@ Like comment
     },
     "like": {
       "type": "boolean",
-      "description": "like"
+      "description": "The like value"
     },
     "reviewer_id": {
       "type": "string",
@@ -584,10 +665,10 @@ Update an existing label
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `label_id` | string | Yes | — | Label ID |
-| `active` | boolean | No | — | active |
-| `id` | string | No | — | id |
-| `label` | string | No | — | label |
-| `order` | integer | No | — | order |
+| `active` | boolean | No | — | The active value |
+| `id` | string | No | — | The id value |
+| `label` | string | No | — | The label value |
+| `order` | integer | No | — | Sort direction (asc or desc) |
 
 <Expandable title="inputSchema">
 
@@ -605,19 +686,19 @@ Update an existing label
     },
     "active": {
       "type": "boolean",
-      "description": "active"
+      "description": "The active value"
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "label": {
       "type": "string",
-      "description": "label"
+      "description": "The label value"
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     }
   },
   "required": [
@@ -639,9 +720,9 @@ Update reasons settings
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `display_text` | string | No | — | display_text |
-| `mandatory` | boolean | No | — | mandatory |
-| `multiple_selection` | boolean | No | — | multiple_selection |
+| `display_text` | string | No | — | Display Text |
+| `mandatory` | boolean | No | — | The mandatory value |
+| `multiple_selection` | boolean | No | — | Multiple Selection |
 
 <Expandable title="inputSchema">
 
@@ -655,15 +736,15 @@ Update reasons settings
     },
     "display_text": {
       "type": "string",
-      "description": "display_text"
+      "description": "Display Text"
     },
     "mandatory": {
       "type": "boolean",
-      "description": "mandatory"
+      "description": "The mandatory value"
     },
     "multiple_selection": {
       "type": "boolean",
-      "description": "multiple_selection"
+      "description": "Multiple Selection"
     }
   },
   "required": [
@@ -685,9 +766,9 @@ Update an existing option
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `option_id` | string | Yes | — | Option ID |
-| `label` | string | No | — | label |
-| `order` | integer | No | — | order |
-| `text_field_available` | boolean | No | — | text_field_available |
+| `label` | string | No | — | The label value |
+| `order` | integer | No | — | Sort direction (asc or desc) |
+| `text_field_available` | boolean | No | — | Text Field Available |
 
 <Expandable title="inputSchema">
 
@@ -705,15 +786,15 @@ Update an existing option
     },
     "label": {
       "type": "string",
-      "description": "label"
+      "description": "The label value"
     },
     "order": {
       "type": "integer",
-      "description": "order"
+      "description": "Sort direction (asc or desc)"
     },
     "text_field_available": {
       "type": "boolean",
-      "description": "text_field_available"
+      "description": "Text Field Available"
     }
   },
   "required": [
@@ -737,7 +818,7 @@ Label comment
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Proof ID |
 | `comment_id` | string | Yes | — | Comment ID |
-| `ids` | any[] | Yes | — | ids |
+| `ids` | any[] | Yes | — | The ids value |
 | `reviewer_id` | string | No | — | Reviewer ID obtained from proof.stages[].members[].id field |
 
 <Expandable title="inputSchema">
@@ -760,7 +841,7 @@ Label comment
     },
     "ids": {
       "type": "array",
-      "description": "ids"
+      "description": "The ids value"
     },
     "reviewer_id": {
       "type": "string",
@@ -791,8 +872,8 @@ Add comment reactions
 | `id` | string | Yes | — | Proof ID |
 | `comment_id` | string | Yes | — | Comment ID |
 | `reviewer_id` | string | No | — | Reviewer ID obtained from proof.stages[].members[].id field |
-| `status` | boolean | No | — | status |
-| `type` | string | Yes | — | type |
+| `status` | boolean | No | — | The status value |
+| `type` | string | Yes | — | The type value |
 
 <Expandable title="inputSchema">
 
@@ -818,11 +899,11 @@ Add comment reactions
     },
     "status": {
       "type": "boolean",
-      "description": "status"
+      "description": "The status value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "like",
         "insightful",
@@ -855,7 +936,7 @@ Resolve comment
 | `id` | string | Yes | — | Proof ID |
 | `comment_id` | string | Yes | — | Comment ID |
 | `reviewer_id` | string | No | — | Reviewer ID obtained from proof.stages[].members[].id field |
-| `type` | string | Yes | — | type |
+| `type` | string | Yes | — | The type value |
 
 <Expandable title="inputSchema">
 
@@ -881,7 +962,7 @@ Resolve comment
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "resolved",
         "unresolved"

@@ -16,7 +16,7 @@ description: "Execute JavaScript code in a sandboxed environment with MCP tool a
 
 Available globals:
 
-- callTool(serverPath, toolName, toolArgs) — Call any MCP tool via HTTP. DO NOT pass PCID — connection is auto-injected from selection context.
+- callTool(serverPath, toolName, toolArgs) — Call a configured MCP tool via HTTP. DO NOT pass PCID — connection is auto-injected from selection context.
 - codeExec.createArtifact(filename, content, fileType) — Create a file (uploads to platform, returns &#123; success, id, url, filename, mimeType, size &#125;). Supported types: csv, txt, json, html, xml, js, ts, md, py. This is a simplified file helper — for full artifact features, use the agent's write_artifact tool.
 - codeExec.readArtifact(identifier) — Read a file by ID, filename, or URL (returns &#123; success, content, size, filename, mimeType &#125;). This is a simplified reader — for advanced features (search, pagination, smartGrepQuery), use the agent's read_artifact tool after code execution returns.
 - console.log/error/warn(...args) — Captured to logs array returned in the response.
@@ -59,7 +59,7 @@ Execute JavaScript code in a sandboxed VM with access to MCP tools and file help
 
 Available globals:
 
-- callTool(serverPath, toolName, toolArgs) — Call any MCP tool via HTTP. DO NOT pass PCID — connection is auto-injected from selection context.
+- callTool(serverPath, toolName, toolArgs) — Call a configured MCP tool via HTTP. DO NOT pass PCID — connection is auto-injected from selection context.
 - codeExec.createArtifact(filename, content, fileType) — Create a file (uploads to platform, returns &#123; success, id, url, filename, mimeType, size &#125;). Supported types: csv, txt, json, html, xml, js, ts, md, py. This is a simplified file helper — for full artifact features, use the agent's write_artifact tool.
 - codeExec.readArtifact(identifier) — Read a file by ID, filename, or URL (returns &#123; success, content, size, filename, mimeType &#125;). This is a simplified reader — for advanced features (search, pagination, smartGrepQuery), use the agent's read_artifact tool after code execution returns.
 - console.log/error/warn(...args) — Captured to logs array returned in the response.
@@ -110,6 +110,7 @@ await codeExec.createArtifact('collections.csv', csv, 'csv');
 return &#123; count: collections.collections.length &#125;;
  |
 | `timeout` | number | No | `600000` | Timeout in milliseconds (default: 600000 = 10 minutes, min: 1000 = 1 second, max: 900000 = 15 minutes) |
+| `connectionSelections` | object | No | — | Optional mapping of service key to PCID for callTool() connection injection. Use this when the user has multiple connections for the same service and you need to select a specific one. Keys are service names (e.g., "gmail", "slack"), values are PCIDs obtained from capabilities_discover. When omitted, connections are auto-selected (first connection per service). Code should NOT contain PCIDs — pass them here instead so code remains portable across users. |
 
 <Expandable title="inputSchema">
 
@@ -125,6 +126,11 @@ return &#123; count: collections.collections.length &#125;;
       "type": "number",
       "default": 600000,
       "description": "Timeout in milliseconds (default: 600000 = 10 minutes, min: 1000 = 1 second, max: 900000 = 15 minutes)"
+    },
+    "connectionSelections": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional mapping of service key to PCID for callTool() connection injection. Use this when the user has multiple connections for the same service and you need to select a specific one. Keys are service names (e.g., \"gmail\", \"slack\"), values are PCIDs obtained from capabilities_discover. When omitted, connections are auto-selected (first connection per service). Code should NOT contain PCIDs — pass them here instead so code remains portable across users."
     }
   },
   "required": [

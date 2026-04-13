@@ -441,7 +441,7 @@ Query the status of a historical adherence request operation. Only the user who 
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `jobId` | string | Yes | — | jobId |
+| `jobId` | string | Yes | — | Job Id |
 
 <Expandable title="inputSchema">
 
@@ -455,7 +455,7 @@ Query the status of a historical adherence request operation. Only the user who 
     },
     "jobId": {
       "type": "string",
-      "description": "jobId"
+      "description": "Job Id"
     }
   },
   "required": [
@@ -617,7 +617,7 @@ Get management unit
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `expand` | any[] | No | — | expand |
+| `expand` | any[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -635,7 +635,7 @@ Get management unit
     },
     "expand": {
       "type": "array",
-      "description": "expand"
+      "description": "Related resources to expand inline"
     }
   },
   "required": [
@@ -701,7 +701,7 @@ Get data for agent in the management unit
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `agentId` | string | Yes | — | The agent id |
 | `excludeCapabilities` | boolean | No | — | Excludes all capabilities of the agent such as queues, languages, and skills |
-| `expand` | any[] | No | — | expand |
+| `expand` | any[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -727,7 +727,7 @@ Get data for agent in the management unit
     },
     "expand": {
       "type": "array",
-      "description": "expand"
+      "description": "Related resources to expand inline"
     }
   },
   "required": [
@@ -1341,7 +1341,7 @@ Get work plan rotations
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `expand` | any[] | No | — | expand |
+| `expand` | any[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -1359,7 +1359,7 @@ Get work plan rotations
     },
     "expand": {
       "type": "array",
-      "description": "expand"
+      "description": "Related resources to expand inline"
     }
   },
   "required": [
@@ -2293,7 +2293,7 @@ Update the requested management unit
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `divisionId` | string | No | — | The new division id for the management unit |
 | `name` | string | No | — | The new name of the management unit |
-| `settings` | object | No | — | settings |
+| `settings` | object | No | — | The settings value |
 
 <Expandable title="inputSchema">
 
@@ -2319,25 +2319,31 @@ Update the requested management unit
     },
     "settings": {
       "type": "object",
-      "description": "settings",
+      "description": "The settings value",
       "properties": {
         "adherence": {
-          "type": "object"
+          "type": "object",
+          "description": "The adherence value"
         },
         "shortTermForecasting": {
-          "type": "object"
+          "type": "object",
+          "description": "Short Term Forecasting"
         },
         "timeOff": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Off"
         },
         "scheduling": {
-          "type": "object"
+          "type": "object",
+          "description": "The scheduling value"
         },
         "shiftTrading": {
-          "type": "object"
+          "type": "object",
+          "description": "Shift Trading"
         },
         "metadata": {
-          "type": "object"
+          "type": "object",
+          "description": "The metadata value"
         }
       },
       "required": [
@@ -2408,7 +2414,7 @@ Updates a time off limit object.
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
 | `timeOffLimitId` | string | Yes | — | The id of time off limit object to update |
 | `defaultLimitMinutes` | integer | No | — | The default time off limit value in minutes per granularity |
-| `metadata` | object | Yes | — | metadata |
+| `metadata` | object | Yes | — | The metadata value |
 
 <Expandable title="inputSchema">
 
@@ -2434,21 +2440,23 @@ Updates a time off limit object.
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -2484,13 +2492,13 @@ Updates a time off plan
 | `managementUnitId` | string | Yes | — | The ID of the management unit |
 | `timeOffPlanId` | string | Yes | — | The ID of the time off plan to update |
 | `active` | boolean | No | — | Whether this time off plan should be used by agents. |
-| `activityCodeIds` | object | No | — | activityCodeIds |
+| `activityCodeIds` | object | No | — | Activity Code Ids |
 | `autoApprovalRule` | string | No | — | Auto approval rule for the time off plan. |
 | `daysBeforeStartToExpireFromWaitlist` | integer | No | — | The number of days before the time off request start date for when the request will be expired from the waitlist. |
-| `hrisTimeOffType` | object | No | — | hrisTimeOffType |
-| `metadata` | object | Yes | — | metadata |
+| `hrisTimeOffType` | object | No | — | Hris Time Off Type |
+| `metadata` | object | Yes | — | The metadata value |
 | `name` | string | No | — | The name of this time off plan. |
-| `timeOffLimitIds` | object | No | — | timeOffLimitIds |
+| `timeOffLimitIds` | object | No | — | Time Off Limit Ids |
 
 <Expandable title="inputSchema">
 
@@ -2516,10 +2524,11 @@ Updates a time off plan
     },
     "activityCodeIds": {
       "type": "object",
-      "description": "activityCodeIds",
+      "description": "Activity Code Ids",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -2540,30 +2549,33 @@ Updates a time off plan
     },
     "hrisTimeOffType": {
       "type": "object",
-      "description": "hrisTimeOffType",
+      "description": "Hris Time Off Type",
       "properties": {
         "value": {
-          "type": "object"
+          "type": "object",
+          "description": "The value value"
         }
       }
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -2580,10 +2592,11 @@ Updates a time off plan
     },
     "timeOffLimitIds": {
       "type": "object",
-      "description": "timeOffLimitIds",
+      "description": "Time Off Limit Ids",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     }
@@ -2675,11 +2688,11 @@ Update a time off request
 | `activityCodeId` | string | No | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | No | — | The daily duration of this time off request in minutes |
 | `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone. |
-| `metadata` | object | Yes | — | metadata |
+| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone |
+| `metadata` | object | Yes | — | The metadata value |
 | `notes` | string | No | — | Notes about the time off request |
 | `paid` | boolean | No | — | Whether this is a paid time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests. |
+| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
 | `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
 | `status` | string | No | — | The status of this time off request |
 
@@ -2719,25 +2732,27 @@ Update a time off request
     },
     "fullDayManagementUnitDates": {
       "type": "array",
-      "description": "A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone."
+      "description": "A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone"
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -2758,7 +2773,7 @@ Update a time off request
     },
     "partialDayStartDateTimes": {
       "type": "array",
-      "description": "A set of start date-times in ISO-8601 format for partial day requests."
+      "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
@@ -2799,10 +2814,10 @@ Updates a shift trade. This route can only be called by the initiating agent
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `weekDateId` | string | Yes | — | The start week date of the initiating shift in yyyy-MM-dd format. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `tradeId` | string | Yes | — | The ID of the shift trade to update |
-| `acceptableIntervals` | object | No | — | acceptableIntervals |
-| `expiration` | object | No | — | expiration |
-| `metadata` | object | Yes | — | metadata |
-| `receivingUserId` | object | No | — | receivingUserId |
+| `acceptableIntervals` | object | No | — | Acceptable Intervals |
+| `expiration` | object | No | — | The expiration value |
+| `metadata` | object | Yes | — | The metadata value |
+| `receivingUserId` | object | No | — | Receiving User Id |
 
 <Expandable title="inputSchema">
 
@@ -2828,7 +2843,7 @@ Updates a shift trade. This route can only be called by the initiating agent
     },
     "acceptableIntervals": {
       "type": "object",
-      "description": "acceptableIntervals",
+      "description": "Acceptable Intervals",
       "properties": {
         "values": {
           "type": "array",
@@ -2838,7 +2853,7 @@ Updates a shift trade. This route can only be called by the initiating agent
     },
     "expiration": {
       "type": "object",
-      "description": "expiration",
+      "description": "The expiration value",
       "properties": {
         "value": {
           "type": "string",
@@ -2848,21 +2863,23 @@ Updates a shift trade. This route can only be called by the initiating agent
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -2875,7 +2892,7 @@ Updates a shift trade. This route can only be called by the initiating agent
     },
     "receivingUserId": {
       "type": "object",
-      "description": "receivingUserId",
+      "description": "Receiving User Id",
       "properties": {
         "value": {
           "type": "string",
@@ -2926,20 +2943,20 @@ Update a work plan
 | `maximumDaysOffPerPlanningPeriod` | integer | No | — | Maximum days off in the planning period |
 | `maximumPaidMinutesPerPlanningPeriod` | integer | No | — | Maximum paid minutes in the planning period |
 | `maximumWorkingWeekendsPerPlanningPeriod` | integer | No | — | Maximum working weekends in the planning period |
-| `metadata` | object | Yes | — | metadata |
+| `metadata` | object | Yes | — | The metadata value |
 | `minimumConsecutiveNonWorkingMinutesPerWeek` | integer | No | — | Minimum amount of consecutive non working minutes per week that agents who are assigned this work plan are allowed to have off |
 | `minimumDaysOffPerPlanningPeriod` | integer | No | — | Minimum days off in the planning period |
 | `minimumPaidMinutesPerPlanningPeriod` | integer | No | — | Minimum paid minutes in the planning period |
 | `minimumShiftStartDistanceMinutes` | integer | No | — | The time period in minutes for the duration between the start times of two consecutive working days |
 | `minimumTimeBetweenShiftsMinutes` | integer | No | — | Minimum time between shifts in minutes defined in this work plan. Used if constrainMinimumTimeBetweenShifts == true |
 | `minimumWorkingDaysPerWeek` | integer | No | — | The minimum number of days that agents assigned to a work plan must work per week |
-| `name` | string | No | — | name |
-| `optionalDays` | object | No | — | optionalDays |
+| `name` | string | No | — | The name value |
+| `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
 | `selfUri` | string | No | — | The URI for this object |
 | `shifts` | any[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
-| `shiftStartVariances` | object | No | — | shiftStartVariances |
+| `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
 | `valid` | boolean | No | — | Whether the work plan is valid or not |
 | `weeklyExactPaidMinutes` | integer | No | — | Exact weekly paid time in minutes for this work plan. Used if flexibleWeeklyPaidTime == false |
@@ -3041,21 +3058,23 @@ Update a work plan
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -3092,14 +3111,15 @@ Update a work plan
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "optionalDays": {
       "type": "object",
-      "description": "optionalDays",
+      "description": "Optional Days",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -3125,10 +3145,11 @@ Update a work plan
     },
     "shiftStartVariances": {
       "type": "object",
-      "description": "shiftStartVariances",
+      "description": "Shift Start Variances",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -3181,11 +3202,11 @@ Update a work plan rotation
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `workPlanRotationId` | string | Yes | — | The ID of the work plan rotation to update |
 | `agents` | any[] | No | — | Agents in this work plan rotation |
-| `dateRange` | object | No | — | dateRange |
+| `dateRange` | object | No | — | Date Range |
 | `enabled` | boolean | No | — | Whether the work plan rotation is enabled for scheduling |
-| `metadata` | object | Yes | — | metadata |
+| `metadata` | object | Yes | — | The metadata value |
 | `name` | string | No | — | Name of this work plan rotation |
-| `pattern` | object | No | — | pattern |
+| `pattern` | object | No | — | The pattern value |
 
 <Expandable title="inputSchema">
 
@@ -3211,7 +3232,7 @@ Update a work plan rotation
     },
     "dateRange": {
       "type": "object",
-      "description": "dateRange",
+      "description": "Date Range",
       "properties": {
         "startBusinessUnitDate": {
           "type": "string",
@@ -3232,21 +3253,23 @@ Update a work plan rotation
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -3263,7 +3286,7 @@ Update a work plan rotation
     },
     "pattern": {
       "type": "object",
-      "description": "pattern",
+      "description": "The pattern value",
       "properties": {
         "workPlanIds": {
           "type": "array",
@@ -4154,7 +4177,7 @@ Creates a new time off plan
 | `activityCodeIds` | any[] | No | — | The set of activity code IDs to associate with this time off plan. |
 | `autoApprovalRule` | string | Yes | — | Auto approval rule for the time off plan. |
 | `daysBeforeStartToExpireFromWaitlist` | integer | No | — | The number of days before the time off request start date for when the request will be expired from the waitlist. |
-| `hrisTimeOffType` | object | No | — | hrisTimeOffType |
+| `hrisTimeOffType` | object | No | — | Hris Time Off Type |
 | `name` | string | Yes | — | The name of this time off plan. |
 | `timeOffLimitIds` | any[] | No | — | The set of time off limit IDs to associate with this time off plan. |
 
@@ -4197,7 +4220,7 @@ Creates a new time off plan
     },
     "hrisTimeOffType": {
       "type": "object",
-      "description": "hrisTimeOffType",
+      "description": "Hris Time Off Type",
       "properties": {
         "id": {
           "type": "string",
@@ -4257,10 +4280,10 @@ Create a new time off request
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | Yes | — | The daily duration of this time off request in minutes |
 | `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone. |
+| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
 | `notes` | string | No | — | Notes about the time off request |
 | `paid` | boolean | No | — | Whether this is a paid time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests. |
+| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
 | `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
 | `status` | string | Yes | — | The status of this time off request |
 | `users` | any[] | Yes | — | A set of IDs for users to associate with this time off request |
@@ -4293,7 +4316,7 @@ Create a new time off request
     },
     "fullDayManagementUnitDates": {
       "type": "array",
-      "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone."
+      "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone"
     },
     "notes": {
       "type": "string",
@@ -4305,7 +4328,7 @@ Create a new time off request
     },
     "partialDayStartDateTimes": {
       "type": "array",
-      "description": "A set of start date-times in ISO-8601 format for partial day requests."
+      "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
@@ -4391,7 +4414,7 @@ Fetches time off requests matching the conditions specified in the request body
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `forceDownloadService` | boolean | No | — | Force the result of this operation to be sent via download service. For testing/app development purposes |
-| `dateRange` | object | No | — | dateRange |
+| `dateRange` | object | No | — | Date Range |
 | `ids` | any[] | No | — | The set of ids to filter time off requests |
 | `statuses` | any[] | No | — | The set of statuses to filter time off requests |
 | `substatuses` | any[] | No | — | The set of substatuses to filter time off requests |
@@ -4417,7 +4440,7 @@ Fetches time off requests matching the conditions specified in the request body
     },
     "dateRange": {
       "type": "object",
-      "description": "dateRange",
+      "description": "Date Range",
       "properties": {
         "startDate": {
           "type": "string",
@@ -4675,7 +4698,7 @@ Matches a shift trade. This route can only be called by the receiving agent
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `weekDateId` | string | Yes | — | The start week date of the initiating shift in yyyy-MM-dd format. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `tradeId` | string | Yes | — | The ID of the shift trade to update |
-| `metadata` | object | Yes | — | metadata |
+| `metadata` | object | Yes | — | The metadata value |
 | `receivingScheduleId` | string | Yes | — | The ID of the schedule with which the shift trade is associated |
 | `receivingShiftId` | string | No | — | The ID of the shift the receiving user is giving up in trade, if applicable |
 
@@ -4703,21 +4726,23 @@ Matches a shift trade. This route can only be called by the receiving agent
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -4937,7 +4962,7 @@ Validate Work Plan
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `workPlanId` | string | Yes | — | The ID of the work plan to validate. For new work plan, use the word 'new' for the ID. |
-| `expand` | any[] | No | — | expand |
+| `expand` | any[] | No | — | Related resources to expand inline |
 | `agentCount` | integer | No | — | Number of agents in this work plan |
 | `agents` | any[] | No | — | Agents in this work plan |
 | `constrainMaximumConsecutiveWorkingDays` | boolean | No | — | Whether to constrain the maximum consecutive working days |
@@ -4961,13 +4986,13 @@ Validate Work Plan
 | `minimumShiftStartDistanceMinutes` | integer | No | — | The time period in minutes for the duration between the start times of two consecutive working days |
 | `minimumTimeBetweenShiftsMinutes` | integer | No | — | Minimum time between shifts in minutes defined in this work plan. Used if constrainMinimumTimeBetweenShifts == true |
 | `minimumWorkingDaysPerWeek` | integer | No | — | The minimum number of days that agents assigned to a work plan must work per week |
-| `name` | string | No | — | name |
-| `optionalDays` | object | No | — | optionalDays |
+| `name` | string | No | — | The name value |
+| `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
 | `selfUri` | string | No | — | The URI for this object |
 | `shifts` | any[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
-| `shiftStartVariances` | object | No | — | shiftStartVariances |
+| `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
 | `valid` | boolean | No | — | Whether the work plan is valid or not |
 | `weeklyExactPaidMinutes` | integer | No | — | Exact weekly paid time in minutes for this work plan. Used if flexibleWeeklyPaidTime == false |
@@ -4994,7 +5019,7 @@ Validate Work Plan
     },
     "expand": {
       "type": "array",
-      "description": "expand"
+      "description": "Related resources to expand inline"
     },
     "agentCount": {
       "type": "integer",
@@ -5090,14 +5115,15 @@ Validate Work Plan
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "optionalDays": {
       "type": "object",
-      "description": "optionalDays",
+      "description": "Optional Days",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -5123,10 +5149,11 @@ Validate Work Plan
     },
     "shiftStartVariances": {
       "type": "object",
-      "description": "shiftStartVariances",
+      "description": "Shift Start Variances",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -5225,9 +5252,9 @@ Create a new work plan rotation
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `agents` | any[] | No | — | Agents in this work plan rotation |
-| `dateRange` | object | Yes | — | dateRange |
+| `dateRange` | object | Yes | — | Date Range |
 | `name` | string | Yes | — | Name of this work plan rotation |
-| `pattern` | object | Yes | — | pattern |
+| `pattern` | object | Yes | — | The pattern value |
 
 <Expandable title="inputSchema">
 
@@ -5249,7 +5276,7 @@ Create a new work plan rotation
     },
     "dateRange": {
       "type": "object",
-      "description": "dateRange",
+      "description": "Date Range",
       "properties": {
         "startBusinessUnitDate": {
           "type": "string",
@@ -5270,7 +5297,7 @@ Create a new work plan rotation
     },
     "pattern": {
       "type": "object",
-      "description": "pattern",
+      "description": "The pattern value",
       "properties": {
         "workPlanIds": {
           "type": "array",
@@ -5328,11 +5355,11 @@ Create a new work plan
 | `minimumTimeBetweenShiftsMinutes` | integer | No | — | Minimum time between shifts in minutes defined in this work plan. Used if constrainMinimumTimeBetweenShifts == true |
 | `minimumWorkingDaysPerWeek` | integer | No | — | The minimum number of days that agents assigned to a work plan must work per week |
 | `name` | string | Yes | — | Name of this work plan |
-| `optionalDays` | object | No | — | optionalDays |
+| `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
 | `shifts` | any[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
-| `shiftStartVariances` | object | No | — | shiftStartVariances |
+| `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
 | `weeklyExactPaidMinutes` | integer | No | — | Exact weekly paid time in minutes for this work plan. Used if flexibleWeeklyPaidTime == false |
 | `weeklyMaximumPaidMinutes` | integer | No | — | Maximum weekly paid time in minutes for this work plan. Used if flexibleWeeklyPaidTime == true |
@@ -5449,10 +5476,11 @@ Create a new work plan
     },
     "optionalDays": {
       "type": "object",
-      "description": "optionalDays",
+      "description": "Optional Days",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -5474,10 +5502,11 @@ Create a new work plan
     },
     "shiftStartVariances": {
       "type": "object",
-      "description": "shiftStartVariances",
+      "description": "Shift Start Variances",
       "properties": {
         "values": {
-          "type": "array"
+          "type": "array",
+          "description": "The values value"
         }
       }
     },
@@ -5525,7 +5554,7 @@ Add a management unit
 | `businessUnitId` | string | Yes | — | The id of the business unit to which this management unit belongs |
 | `divisionId` | string | No | — | The id of the division to which this management unit belongs.  Defaults to home division ID |
 | `name` | string | Yes | — | The name of the management unit |
-| `settings` | object | No | — | settings |
+| `settings` | object | No | — | The settings value |
 | `startDayOfWeek` | string | No | — | The configured first day of the week for scheduling and forecasting purposes. Moving to Business Unit |
 | `timeZone` | string | No | — | The default time zone to use for this management unit.  Moving to Business Unit |
 
@@ -5553,22 +5582,27 @@ Add a management unit
     },
     "settings": {
       "type": "object",
-      "description": "settings",
+      "description": "The settings value",
       "properties": {
         "adherence": {
-          "type": "object"
+          "type": "object",
+          "description": "The adherence value"
         },
         "shortTermForecasting": {
-          "type": "object"
+          "type": "object",
+          "description": "Short Term Forecasting"
         },
         "timeOff": {
-          "type": "object"
+          "type": "object",
+          "description": "Time Off"
         },
         "scheduling": {
-          "type": "object"
+          "type": "object",
+          "description": "The scheduling value"
         },
         "shiftTrading": {
-          "type": "object"
+          "type": "object",
+          "description": "Shift Trading"
         }
       }
     },
@@ -5794,9 +5828,9 @@ Create a time off request for the current user
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | Yes | — | The daily duration of this time off request in minutes |
 | `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone. |
+| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
 | `notes` | string | No | — | Notes about the time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests. |
+| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
 | `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
 
 <Expandable title="inputSchema">
@@ -5823,7 +5857,7 @@ Create a time off request for the current user
     },
     "fullDayManagementUnitDates": {
       "type": "array",
-      "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone."
+      "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone"
     },
     "notes": {
       "type": "string",
@@ -5831,7 +5865,7 @@ Create a time off request for the current user
     },
     "partialDayStartDateTimes": {
       "type": "array",
-      "description": "A set of start date-times in ISO-8601 format for partial day requests."
+      "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
@@ -6186,8 +6220,8 @@ Sets daily values for a date range of time off limit object
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
 | `timeOffLimitId` | string | Yes | — | The ID of the time off limit object to set values for |
-| `metadata` | object | Yes | — | metadata |
-| `values` | any[] | No | — | values |
+| `metadata` | object | Yes | — | The metadata value |
+| `values` | any[] | No | — | The values value |
 
 <Expandable title="inputSchema">
 
@@ -6209,21 +6243,23 @@ Sets daily values for a date range of time off limit object
     },
     "metadata": {
       "type": "object",
-      "description": "metadata",
+      "description": "The metadata value",
       "properties": {
         "version": {
           "type": "integer",
           "description": "The version of the associated entity.  Used to prevent conflicts on concurrent edits"
         },
         "modifiedBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Modified By"
         },
         "dateModified": {
           "type": "string",
           "description": "The date the associated entity was last modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z"
         },
         "createdBy": {
-          "type": "object"
+          "type": "object",
+          "description": "Created By"
         },
         "dateCreated": {
           "type": "string",
@@ -6236,7 +6272,7 @@ Sets daily values for a date range of time off limit object
     },
     "values": {
       "type": "array",
-      "description": "values"
+      "description": "The values value"
     }
   },
   "required": [
