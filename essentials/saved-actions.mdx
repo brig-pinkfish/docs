@@ -4,7 +4,7 @@ description: "Save successful code executions and replay them automatically when
 icon: "bookmark"
 ---
 
-Saved Actions let Pinkfish remember code it has already written and run for you, so the next time you send a similar prompt, the same working solution can be reused instantly. This cuts down on redundant code generation, makes repeated tasks faster, and keeps known-good patterns at your fingertips.
+Saved Actions let Pinkfish remember code that has already been written and executed for you, so the next time you send a similar prompt, the same working solution can be reused instantly. This cuts down on redundant code generation, makes repeated tasks faster, and keeps known-good patterns at your fingertips.
 
 ## How It Works
 
@@ -14,40 +14,72 @@ The next time you send a prompt, Pinkfish performs a similarity search against t
 
 Matching is cascading: your personal saved actions take priority, then your organization's, and finally the global pool shared across all organizations.
 
-## Saving an Action
+## Walkthrough
 
-After an agent finishes a response that included a successful code execution, a thumbs-up and thumbs-down button appear below the message.
+The best way to understand Saved Actions is to walk through a full round-trip: send a prompt that triggers code execution, save it with thumbs-up, then send a similar prompt in a new chat and watch it replay.
 
-- **Thumbs up** — Saves the prompt and the executed code as a new saved action.
-- **Thumbs down** — Marks the response as unhelpful. If the response came from a previously saved action, the saved action is deleted.
+### 1. Send a prompt that triggers code execution
 
-You'll see a confirmation message (for example, "Saved action created" or "Saved action deleted") next to the buttons after you click.
+In a new chat, send a prompt that the agent will clearly answer by writing and running code — for example:
+
+> *Use code to compute the sum of squares from 1 to 100 and return the result as a single integer.*
+
+The agent generates code, executes it, and returns the answer. When a response includes a successful code execution, the thumbs-up and thumbs-down buttons appear below it.
+
+![Chat response with code execution result and thumbs-up / thumbs-down buttons](/images/saved-actions/chat-with-code-execution.png)
+
+Here's the key part of the response close up — the thumbs controls sit directly under the agent's answer:
+
+![Close-up of the thumbs-up and thumbs-down buttons below a response](/images/saved-actions/thumbs-close.png)
+
+### 2. Thumbs-up to save
+
+Click **thumbs-up** to save the prompt and the executed code as a new saved action. The thumbs-up turns green and a confirmation appears:
+
+![Thumbs-up is green with "Saved action created" shown next to it](/images/saved-actions/thumbs-saved-close.png)
 
 <Tip>
   The prompt saved is the original request you sent — not any intermediate tool calls — and the code saved is the last successful code execution from that response.
 </Tip>
 
-## Replaying a Saved Action
+### 3. See it in your Saved Actions list
 
-### Automatic replay
+Open **Settings → Saved Actions** (under **PERSONAL**) and the new entry appears immediately, with the prompt preview and creation date.
 
-Just send a prompt. If it closely matches a saved action you (or your organization, or the global pool) have created, Pinkfish injects the matching code as a suggestion into the conversation. The agent can use it directly, which typically produces a faster and more consistent result.
+![Personal Saved Actions settings page showing the newly saved action](/images/saved-actions/saved-actions-populated.png)
 
-When the response comes from a saved action match, the thumbs-up button changes to **"This result was correct"** — clicking it confirms the match worked, and clicking thumbs-down removes the saved action that was matched.
+### 4. Replay it from a new chat — automatic match
 
-### Inserting manually with `/`
+Start a new chat and send a similar (but not identical) prompt:
 
-In any Coworker chat input, press `/` on an empty line to open the Saved Actions picker.
+> *With code, please calculate the sum of squares from 1 to 100 and give me the integer.*
 
-![Saved Actions picker opened from the chat input](/images/saved-actions/slash-command.png)
+Because the semantic similarity is above the match threshold, Pinkfish intercepts the prompt and suggests the saved code to the agent. The response is tagged with an amber **Saved action** pill above it, so you know the answer came from a cache hit rather than a fresh generation:
 
-- Type to search through your saved actions by prompt text.
+![Coworker response with the amber "Saved action" badge above the message](/images/saved-actions/saved-action-badge.png)
+
+Full chat view for context:
+
+![Full chat showing the Saved action replay response](/images/saved-actions/saved-action-replay.png)
+
+On a cache hit, the thumbs controls behave differently:
+
+- **Thumbs-up** now means *"This result was correct"* — confirming that the replayed saved action was the right one to use.
+- **Thumbs-down** means *"Delete this saved action"* — removing it so it won't be used again.
+
+### 5. Insert a saved prompt manually with `/`
+
+You can also replay a saved action by hand. In any chat input, press `/` on an empty line to open the Saved Actions picker:
+
+![Slash-command picker listing the saved action](/images/saved-actions/slash-command-populated.png)
+
+- Type to search by prompt text.
 - Click an entry to insert its prompt into the chat input so you can send it (or edit it first).
 - Click the trash icon on a row to delete that saved action.
 
 ## Managing Your Saved Actions
 
-Navigate to **Settings → Saved Actions** (under the **PERSONAL** section) to see and manage everything you've saved.
+The **Settings → Saved Actions** page (under **PERSONAL**) is where you manage everything you've saved.
 
 ![Personal Saved Actions settings page](/images/saved-actions/saved-actions-settings.png)
 
@@ -56,8 +88,6 @@ From this page you can:
 - **Enable Saved Actions** — toggle the entire feature on or off for your account. When disabled, the thumbs-up controls and the `/` slash command in chat are hidden, and no automatic matching is performed against your prompts.
 - **Your Saved Actions** — browse the full list, with the prompt preview and creation date for each entry.
 - **Delete** — remove any individual saved action with the trash icon.
-
-New saved actions appear here as soon as you thumbs-up a response in chat.
 
 ## Organization-Level Controls
 
@@ -77,7 +107,7 @@ Every saved action is tagged with the user and organization that created it. Mat
 2. **Organization** — saved actions created by any member of your organization (always searched).
 3. **Global** — saved actions created by any Pinkfish user, unless your organization has opted out of the global pool.
 
-A saved action is only ever visible to you in the Settings UI — other users can't browse the list, even if their prompts match and reuse your code.
+A saved action is only ever visible to you in the Settings UI — other users can't browse your list, even if their prompts match and reuse your code.
 
 ## Notes
 
