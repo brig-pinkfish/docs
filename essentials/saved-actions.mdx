@@ -65,7 +65,11 @@ Full chat view for context:
 On a cache hit, the thumbs controls behave differently:
 
 - **Thumbs-up** now means *"This result was correct"* — confirming that the replayed saved action was the right one to use.
-- **Thumbs-down** means *"Delete this saved action"* — removing it so it won't be used again.
+- **Thumbs-down** means *"Delete this saved action"* — removing it so it won't be used again. You'll be asked to confirm before the entry is deleted.
+
+<Tip>
+  If the agent **adapts** the cached code rather than running it as-is, thumbs-up on the new response saves the adapted version as a *new* saved action, linked back to the original. This lets the cache evolve over time as your prompts shift, without overwriting the entry that someone else might still be matching against.
+</Tip>
 
 ### 5. Insert a saved prompt manually with `/`
 
@@ -101,16 +105,17 @@ Use this toggle when your organization wants stricter isolation — for example,
 
 ## Scope and Privacy
 
-Every saved action is tagged with the user and organization that created it. Matching is performed in this order:
+Every saved action is tagged with the user and organization that created it. When a prompt comes in, Pinkfish queries all eligible scopes at once and returns the strongest match, with priority broken in this order:
 
-1. **Personal** — your own saved actions (always searched).
-2. **Organization** — saved actions created by any member of your organization (always searched).
+1. **Personal** — your own saved actions.
+2. **Organization** — saved actions created by any member of your organization.
 3. **Global** — saved actions created by any Pinkfish user, unless your organization has opted out of the global pool.
 
-A saved action is only ever visible to you in the Settings UI — other users can't browse your list, even if their prompts match and reuse your code.
+A saved action is only ever visible to its creator in the Settings UI — other users can't browse your list, even if their prompts match and reuse your code. Organization administrators can toggle the global-pool opt-out, but cannot view, edit, or delete saved actions made by individual members of the org.
 
 ## Notes
 
 - Saved Actions are enabled by default for all accounts. Administrators can't disable the feature org-wide, but individual users can turn it off from **Settings → Saved Actions**.
 - There's no expiry: saved actions live until you delete them, either from the Settings page, from the `/` slash command picker, or by thumbs-down on a cached response.
 - Only successful code executions trigger the save-able state — if an agent's response didn't run code, the thumbs-up control won't appear.
+- Saved actions aren't deduplicated. Thumbs-upping the same prompt + code twice creates two entries; remove duplicates from **Settings → Saved Actions** if you want to keep the list tidy.
