@@ -1,62 +1,83 @@
 ---
 title: "Custom MCP Servers"
-description: "Register your own remote MCP servers so their tools appear alongside Pinkfish's built-in catalog"
+description: "Register and manage remote MCP servers generated from your custom integrations or provided by third parties"
 icon: "server"
 ---
 
-**Custom MCP Servers** let your organization plug external MCP servers into Pinkfish. Once registered, every tool the server exposes shows up in the agent tool catalog and in the workflow builder's slash menu — right next to Pinkfish's [embedded services](/essentials/embedded-services) and third-party [connections](/essentials/api-connections).
+**Custom MCP Servers** is where every MCP server your organization has registered or generated shows up. Once a server is here, every tool it exposes is available in the agent catalog and the workflow builder's slash menu — right alongside Pinkfish's [embedded services](/essentials/embedded-services) and third-party [connections](/essentials/connections).
 
-Find them under **Tools → Custom MCP Servers**.
+Find it under **Tools → Custom MCP Servers**.
 
-![Custom MCP Servers list with empty state](/images/custom-mcp-servers/custom-mcp-servers-overview.png)
+![Custom MCP Servers page — list with search and the empty state "No custom MCP servers available"](/images/custom-mcp-servers/custom-mcp-servers-overview.png)
 
-## When to Register a Custom MCP Server
+## How Servers Get Here
 
-Reach for a custom MCP server when:
+Custom MCP servers are created in two ways:
 
-- You've built or deployed an MCP server that wraps an internal system (a proprietary API, a data warehouse, a service mesh) and you want Pinkfish agents to use it.
-- A vendor ships an official remote MCP server and you'd like its tools available without building a new integration.
-- You're extending Pinkfish with specialized capabilities that aren't covered by the embedded catalog.
+1. **Generated from a custom integration.** When you build a [custom integration](/essentials/connections#building-a-custom-integration) and upload an OpenAPI spec on Step 3 (MCP Server Setup), Pinkfish generates a new MCP server from the spec. The generated server lands on this page automatically, and the integration is wired up so connections built from it know about the new tools.
+2. **Registered manually.** Remote MCP servers that your org operates (or that a vendor ships) can be registered by admins through the platform's MCP registration API. Contact support@pinkfish.ai to get one added if you don't have admin access.
 
-For connections to hosted SaaS apps that expose a normal REST API, use [API Connections](/essentials/api-connections) instead — those are optimized for OAuth and API-key auth flows.
+Both paths produce the same record: a server with an ID, a service key, a description, and a set of tools.
 
 ## What Each Row Shows
 
-Every registered server appears as a row with:
+Each row on the list is one registered server. Columns:
 
-- **Name and description** — the display label and short summary you provided at registration.
-- **More menu** — actions available for that server.
+| Column | Description |
+|--------|-------------|
+| **Name** | Display label (falls back to the raw server name if no label was set) with a short description underneath. |
+| **Actions** | A More menu (⋯) with **View Details** and **Delete** options. |
 
-### Row actions
+The list supports free-text search in the top toolbar.
 
-| Action | Description | Required permission |
-|--------|-------------|---------------------|
-| View Details | Open a side panel listing the server ID, service key, and every tool the server exposes. | Any member |
-| Delete | Remove the server from the org. Agents and workflows that reference its tools will need to be updated. | Write |
+### Empty state
 
-## Server Details
+When your org has no custom servers, the list shows `No custom MCP servers available`. That's the expected state for fresh orgs — registering one or generating one from a custom integration will fill it in.
 
-Click **View Details** on the More menu to open the details panel. It contains:
+## Row Actions
 
-- **Server ID** — the internal identifier for the server.
-- **Service Key** — the stable key your agents reference when calling this server's tools.
-- **Tools** — a count badge plus a card for every tool, showing the tool name as a monospace badge and a short description pulled from the server's own schema.
+### View Details
 
-If a tool doesn't have a description, Pinkfish shows `No description available` rather than hiding the row — so you always know what's registered.
+Opens a side sheet with everything Pinkfish knows about the server:
 
-## Deleting a Server
+- **Server ID** — the internal identifier used when tools are called.
+- **Service Key** — the stable key agents and workflows reference (for example `mycompany-orders` or `vendor-widgets`).
+- **Tools (N)** — a count badge plus one card per tool. Each card shows the tool name as a monospace badge and a description pulled from the server's schema. If a tool has no description, Pinkfish shows `No description available` rather than hiding the row, so you always know what's registered.
 
-From the More menu, choose **Delete**. A confirmation dialog asks you to confirm — this action cannot be undone. On success a toast appears with the deleted server's name. Any agent or workflow that still references the server's tools will start failing at call time, so audit usage before removing anything in active use.
+Use the details panel to audit what an agent can actually do with a server before you reference it in a workflow.
 
-## Using Custom MCP Servers
+### Delete
 
-Once a server is registered, its tools behave exactly like every other tool in Pinkfish:
+Also in the More menu. Delete opens a confirmation dialog titled **Delete MCP Server** with the body `Are you sure you want to delete "{name}"? This action cannot be undone.` Click the destructive **Delete** button to confirm; on success a toast reads `Server "{name}" deleted` and the row disappears.
 
-- Agents can be configured to use them.
-- Workflow steps can invoke them through the slash menu.
-- The tool name follows the registered service key as a prefix, which keeps names unique across servers.
+Delete is only shown for users with write permission on the server — regular members see only **View Details**.
+
+<Warning>
+  Deleting a custom MCP server doesn't remove references to its tools from existing agents or workflows. Those references will start failing at call time. Audit usage before removing a server that's in active production use.
+</Warning>
+
+## Using Custom MCP Server Tools
+
+Once a server is registered, its tools behave identically to every other tool in Pinkfish:
+
+- **Agents** can be configured to use them in the agent builder's tool picker.
+- **Workflows** (both guided and agent mode) invoke them through the slash menu.
+- **Tool names** follow the registered service key as a prefix, which keeps names unique across servers and Pinkfish's own catalog.
+
+To test a tool, the easiest path today is to use the connection test modal on any [Connection](/essentials/connections) linked to the server — that exposes the same parameter form and response viewer.
+
+## Relationship to Connections
+
+It's worth being explicit about the three things that live on the Tools → MCPs category:
+
+| Surface | What it is | When to use |
+|---------|------------|-------------|
+| [Connections](/essentials/connections) | An established link to one *instance* of an app (one Salesforce org, one Slack workspace) with its credentials. Each connection points at an MCP server. | Whenever an agent needs to *act on* a specific account. |
+| [Embedded Services](/essentials/embedded-services) | Pinkfish's built-in MCP servers (web search, code exec, etc.). Always available; no connection needed. | Whenever you need a generic capability that doesn't tie to a customer's account. |
+| **Custom MCP Servers** (this page) | The *definitions* of MCP servers your org has generated or registered. One row here can back many connections. | Whenever you add new tools to your org — either by generating from an OpenAPI spec or by registering an external server. |
 
 ## Notes
 
-- Registering a new custom MCP server is handled by your org admin through the platform's MCP registration flow — reach out to support@pinkfish.ai if you need a server added and you don't have admin access.
-- Empty state text is `No custom MCP servers available` — if you expected a server to be listed and it isn't, confirm it was registered against the current org.
+- The list paginates at 50 rows; searching filters by name and description.
+- Servers generated from a custom integration inherit the integration's label and description, but you can rename them from the details panel.
+- Tool execution logs for custom MCP servers appear in the standard Monitor view alongside other tool calls.

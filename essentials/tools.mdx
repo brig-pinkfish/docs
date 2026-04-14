@@ -1,115 +1,93 @@
 ---
 title: "Tools"
-description: "The hub for every external capability an agent can use — connections, embedded services, custom MCP servers, resources, and browser logins"
+description: "The hub for every capability an agent can use — MCPs, resources, and browser logins"
 icon: "wrench"
 ---
 
-The **Tools** page is where you manage everything your agents and workflows can reach out to: third-party apps you've connected, Pinkfish's built-in services, custom MCP servers registered by your team, structured and unstructured data resources, and authenticated browser sessions. Anything an agent can call, you configure here.
+**Tools** is the area of Pinkfish where you manage everything an agent can reach out to. It has three top-level categories — **MCPs**, **Resources**, and **Browser** — and each category has its own dedicated pages for configuration, testing, and monitoring.
 
-Navigate to **Tools** from the top nav. The page opens on **Connections** by default.
+Navigate to **Tools** from the top nav. The page opens on the first MCPs sub-section, **Connections**.
 
-![Tools page showing the Connections list with the sidebar on the left](/images/tools/tools-overview.png)
+![Tools page layout showing the sidebar categories and the Connections list as the default landing](/images/tools/tools-overview.png)
 
-## How Tools are Organized
+## How Tools is Organized
 
-The left sidebar groups every capability into three sections.
+The left sidebar groups everything into three categories. Each item in the sidebar is its own feature with its own page.
 
-![Tools sidebar — MCPs, Resources, and Browser sections](/images/tools/tools-sidebar-close.png)
+![Tools sidebar — MCPs, Resources, and Browser groups](/images/tools/tools-sidebar-close.png)
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card title="MCPs" icon="plug">
-    Connections to third-party apps, Pinkfish's embedded services, and custom MCP servers your org has registered.
+    Everything an agent calls as an MCP tool — connected third-party apps, Pinkfish's built-in services, and custom MCP servers your org has registered.
   </Card>
   <Card title="Resources" icon="database">
-    Databases, file stores, knowledge bases, and vault collections your agents can read from and write to.
+    Structured and unstructured data your agents read from and write to — databases, file stores, knowledge bases, and secret vaults.
   </Card>
   <Card title="Browser" icon="browser">
-    Saved browser sessions for services that don't expose an API.
+    Authenticated browser sessions for services that don't expose an API.
   </Card>
 </CardGroup>
-
-Some items are only visible to users with the **Builder** role. Vault is further gated by your plan.
 
 ## MCPs
 
-Every tool an agent can call is exposed as an MCP (Model Context Protocol) server. The MCPs section has three pages.
+Every tool an agent can call is exposed as an MCP (Model Context Protocol) server. This category has three dedicated pages:
 
-### Connections
-
-Your list of connected third-party apps — Salesforce, Slack, Google Sheets, HubSpot, and so on. Each row shows the app logo, connection name, category, last update time, and status indicator.
-
-Row actions:
-
-- **Test MCP tools** (flask icon) — open a dialog that lists every tool the app exposes, lets you fill in parameters as JSON, run the tool, and inspect the live response.
-- **Reconnect** (refresh icon) — available for OAuth-based apps when the session has expired.
-- **Edit** — rename the connection or adjust its configuration.
-- **Share** — grant view or edit access to specific team members (admins only).
-- **Delete** — remove the connection (write permission required).
-
-Click **Add Connection** in the top right to launch the integration picker.
-
-![Add Connection — integration picker with Custom Apps and Available Apps grid](/images/tools/tools-add-connection.png)
-
-Pick an app, authenticate, and save. The new connection joins the list immediately. If the app you want isn't there, you can build your own — see [API Connections](/essentials/api-connections).
-
-### Testing a connection's tools
-
-Click the flask icon on any row that supports MCP tools. The **{App} Tools** dialog opens with the full tool catalog on the left and a parameter form on the right. Select a tool, fill in the inputs, and run it without ever leaving the Tools page.
-
-![ActiveCampaign Tools dialog showing the Available Tools list](/images/tools/tools-test-modal.png)
-
-This is the fastest way to verify a connection is healthy and to learn what a tool expects before you wire it into an agent or workflow.
-
-### Embedded Services
-
-Pinkfish's built-in MCP servers — web search, charting, email, code execution, browser automation, image and video processing, knowledge base retrieval, and more. These don't require a connection; they're always available to agents in your org. See [Embedded Services](/essentials/embedded-services).
-
-### Custom MCP Servers
-
-Remote MCP servers your org has registered with Pinkfish. Each custom server contributes its own tools into the agent catalog. See [Custom MCP Servers](/essentials/custom-mcp-servers).
-
-## Resources
-
-The Resources section is where agents read and write data. Each resource is organized into **collections** — you create a collection, set its schema or configuration, and then reference it from agents and workflows. Sharing rules follow the same view/edit/admin model as connections.
-
-<CardGroup cols={2}>
-  <Card title="Database" icon="database" href="/essentials/datastore">
-    Structured, schema-aware tables for business data — customers, deals, inventory, or anything else you'd keep in rows.
+<CardGroup cols={3}>
+  <Card title="Connections" icon="plug" href="/essentials/connections">
+    Third-party app integrations (Salesforce, Slack, Google Sheets, and hundreds more) plus the flow for building your own custom integration with OAuth, API Key, or Basic Auth.
   </Card>
-  <Card title="File Store" icon="folder" href="/essentials/filestore">
-    Unstructured file collections — documents, images, exports — that workflows can list, read, and update.
+  <Card title="Embedded Services" icon="puzzle-piece" href="/essentials/embedded-services">
+    Pinkfish's built-in MCP servers — web search, charting, email, code execution, document processing, and more. Always available, no setup.
   </Card>
-  <Card title="Knowledge Base" icon="brain" href="/essentials/knowledgebase">
-    Indexed, searchable document collections for RAG-style retrieval inside agent conversations.
-  </Card>
-  <Card title="Vault" icon="shield" href="/essentials/vault">
-    Encrypted storage for credentials and secrets, referenced from workflows without exposing raw values.
+  <Card title="Custom MCP Servers" icon="server" href="/essentials/custom-mcp-servers">
+    Remote MCP servers you register with your org so their tools join the agent catalog alongside connections and embedded services.
   </Card>
 </CardGroup>
 
-To create a resource, click the section in the sidebar, then use the **Create** button on the list page. Drill into a collection to add rows, upload files, index documents, or store secrets.
+## Resources
+
+Resources hold the data agents work with. Each resource is organized into **collections** that you can share, reference from workflows, and version.
+
+<CardGroup cols={2}>
+  <Card title="Database" icon="database" href="/essentials/database">
+    Structured tables with schemas (customers, orders, inventory), and unstructured document stores for semi-structured payloads.
+  </Card>
+  <Card title="File Store" icon="folder" href="/essentials/file-store">
+    Unstructured file collections for documents, exports, uploads, and generated artifacts.
+  </Card>
+  <Card title="Knowledge Base" icon="brain" href="/essentials/knowledge-base">
+    Indexed document collections that agents can query with natural-language retrieval.
+  </Card>
+  <Card title="Vault" icon="shield" href="/essentials/vault">
+    Encrypted storage for API keys, passwords, and other secrets, referenced from workflows without exposing raw values.
+  </Card>
+</CardGroup>
 
 ## Browser
 
-### Browser Login
+<Card title="Browser Login" icon="browser" href="/essentials/browser-login">
+  Saved browser sessions for services that don't offer an API. Once stored, workflows can drive the `/scraper` and `/browser session` skills against them.
+</Card>
 
-When a service doesn't expose an API, Pinkfish can automate it through an authenticated browser session. **Browser Logins** is where you create and manage those saved sessions. Once a login is stored, your workflows can drive the `/scraper` and `/browser session` skills against it. See [Browser Logins](/essentials/browser-logins).
+## Who Sees What
 
-## Permissions and Sharing
+The Tools page respects role and plan:
 
-Every item on the Tools page has access controls:
+| Section | Role gate | Plan gate |
+|---------|-----------|-----------|
+| Connections | — | — |
+| Embedded Services | Builder | — |
+| Custom MCP Servers | — | — |
+| Database | Builder | — |
+| File Store | Builder | — |
+| Knowledge Base | — | — |
+| Vault | Builder | eligible plan |
+| Browser Login | Builder | — |
 
-| Action | Required permission |
-|--------|---------------------|
-| View and use | Read |
-| Edit, rename, reconfigure | Write |
-| Share with others | Admin |
-| Delete | Write |
+Shared items (connections, collections) show a small "Shared" indicator next to the name regardless of category.
 
-Shared resources show a small "Shared" indicator next to the name. Use the **Share** action on any connection or resource to invite specific teammates.
+## Next Steps
 
-## Notes
-
-- The **Embedded Services**, **Database**, **File Store**, **Vault**, and **Browser Login** sections require the Builder role.
-- Vault additionally requires an eligible plan.
-- Connection tools only appear in the **Test MCP tools** dialog once the connection is established and at least one MCP server has been generated for the app.
+- Start with [Connections](/essentials/connections) to wire up your first third-party app.
+- Spin up a [Database](/essentials/database) or [Knowledge Base](/essentials/knowledge-base) to give your agent something to read and write.
+- Review [Embedded Services](/essentials/embedded-services) for the capabilities that ship with Pinkfish.
