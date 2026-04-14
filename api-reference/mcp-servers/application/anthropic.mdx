@@ -12,143 +12,47 @@ description: "Claude models"
 
 | Tool | Description |
 | --- | --- |
-| [`anthropic_create_message`](#anthropic_create_message) | Create a message using Claude AI models |
-| [`anthropic_list_models`](#anthropic_list_models) | List available Claude models |
-| [`anthropic_analyze_image`](#anthropic_analyze_image) | Analyze an image using Claude vision capabilities |
-| [`anthropic_count_tokens`](#anthropic_count_tokens) | Count tokens in a text string for Claude models |
-| [`anthropic_batch_messages`](#anthropic_batch_messages) | Process multiple messages in a batch for efficiency |
-
----
-
-## anthropic_create_message
-
-Create a message using Claude AI models
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `model` | string | No | `"claude-sonnet-4-5-20250929"` | Claude model to use (e.g., claude-opus-4-6, claude-sonnet-4-5-20250929, claude-haiku-4-5-20251001) |
-| `messages` | object[] | Yes | — | Array of conversation messages |
-| `system` | string | No | — | System prompt to guide Claude behavior |
-| `maxTokens` | number | No | `1024` | Maximum tokens to generate |
-| `temperature` | number | No | — | Sampling temperature (0-1) |
-| `topP` | number | No | — | Nucleus sampling parameter |
-| `topK` | number | No | — | Top-k sampling parameter |
-| `stream` | boolean | No | `false` | Whether to stream the response |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "model": {
-      "type": "string",
-      "default": "claude-sonnet-4-5-20250929",
-      "description": "Claude model to use (e.g., claude-opus-4-6, claude-sonnet-4-5-20250929, claude-haiku-4-5-20251001)"
-    },
-    "messages": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "role": {
-            "type": "string",
-            "enum": [
-              "user",
-              "assistant"
-            ],
-            "description": "Message role"
-          },
-          "content": {
-            "type": "string",
-            "description": "Message content"
-          }
-        }
-      },
-      "description": "Array of conversation messages"
-    },
-    "system": {
-      "type": "string",
-      "description": "System prompt to guide Claude behavior"
-    },
-    "maxTokens": {
-      "type": "number",
-      "default": 1024,
-      "description": "Maximum tokens to generate"
-    },
-    "temperature": {
-      "type": "number",
-      "description": "Sampling temperature (0-1)"
-    },
-    "topP": {
-      "type": "number",
-      "description": "Nucleus sampling parameter"
-    },
-    "topK": {
-      "type": "number",
-      "description": "Top-k sampling parameter"
-    },
-    "stream": {
-      "type": "boolean",
-      "default": false,
-      "description": "Whether to stream the response"
-    }
-  },
-  "required": [
-    "PCID",
-    "messages"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## anthropic_list_models
-
-List available Claude models
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
+| [`anthropic_analyze_image`](#anthropic_analyze_image) | DEPRECATED — Analyze an image using Claude vision capabilities. Use anthropic_create_message with image content blocks instead. |
+| [`anthropic_batch_messages`](#anthropic_batch_messages) | DEPRECATED — Process multiple messages sequentially. Use anthropic_create_message_batch for proper async batch processing instead. |
+| [`anthropic_cancel_message_batch`](#anthropic_cancel_message_batch) | Cancel a Message Batch |
+| [`anthropic_count_tokens`](#anthropic_count_tokens) | Count tokens in a Message |
+| [`anthropic_create_message`](#anthropic_create_message) | Create a Message |
+| [`anthropic_create_message_batch`](#anthropic_create_message_batch) | Create a Message Batch |
+| [`anthropic_create_skill`](#anthropic_create_skill) | Create Skill |
+| [`anthropic_create_skill_version`](#anthropic_create_skill_version) | Create Skill Version |
+| [`anthropic_delete_file`](#anthropic_delete_file) | Delete File |
+| [`anthropic_delete_message_batch`](#anthropic_delete_message_batch) | Delete a Message Batch |
+| [`anthropic_delete_skill`](#anthropic_delete_skill) | Delete Skill |
+| [`anthropic_delete_skill_version`](#anthropic_delete_skill_version) | Delete Skill Version |
+| [`anthropic_download_file`](#anthropic_download_file) | Download File |
+| [`anthropic_get_file`](#anthropic_get_file) | Get File Metadata |
+| [`anthropic_get_message_batch`](#anthropic_get_message_batch) | Retrieve a Message Batch |
+| [`anthropic_get_message_batch_results`](#anthropic_get_message_batch_results) | Retrieve Message Batch results |
+| [`anthropic_get_model`](#anthropic_get_model) | Get a Model |
+| [`anthropic_get_skill`](#anthropic_get_skill) | Get Skill |
+| [`anthropic_get_skill_version`](#anthropic_get_skill_version) | Get Skill Version |
+| [`anthropic_list_files`](#anthropic_list_files) | List Files |
+| [`anthropic_list_message_batches`](#anthropic_list_message_batches) | List Message Batches |
+| [`anthropic_list_models`](#anthropic_list_models) | List Models |
+| [`anthropic_list_skill_versions`](#anthropic_list_skill_versions) | List Skill Versions |
+| [`anthropic_list_skills`](#anthropic_list_skills) | List Skills |
+| [`anthropic_upload_file`](#anthropic_upload_file) | Upload File |
 
 ---
 
 ## anthropic_analyze_image
 
-Analyze an image using Claude vision capabilities
+DEPRECATED — Analyze an image using Claude vision capabilities. Use anthropic_create_message with image content blocks instead.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `model` | string | No | `"claude-sonnet-4-5-20250929"` | Claude model with vision capabilities |
+| `model` | string | No | — | Claude model with vision capabilities (e.g., claude-sonnet-4-5-20250929) |
 | `imageUrl` | string | No | — | URL of image to analyze |
 | `imageBase64` | string | No | — | Base64 encoded image data |
 | `prompt` | string | Yes | — | Question or instruction about the image |
-| `maxTokens` | number | No | `1024` | Maximum tokens to generate |
+| `maxTokens` | integer | No | — | Maximum tokens to generate |
 
 <Expandable title="inputSchema">
 
@@ -158,12 +62,11 @@ Analyze an image using Claude vision capabilities
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "Pink Connect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "model": {
       "type": "string",
-      "default": "claude-sonnet-4-5-20250929",
-      "description": "Claude model with vision capabilities"
+      "description": "Claude model with vision capabilities (e.g., claude-sonnet-4-5-20250929)"
     },
     "imageUrl": {
       "type": "string",
@@ -178,8 +81,7 @@ Analyze an image using Claude vision capabilities
       "description": "Question or instruction about the image"
     },
     "maxTokens": {
-      "type": "number",
-      "default": 1024,
+      "type": "integer",
       "description": "Maximum tokens to generate"
     }
   },
@@ -194,16 +96,17 @@ Analyze an image using Claude vision capabilities
 
 ---
 
-## anthropic_count_tokens
+## anthropic_batch_messages
 
-Count tokens in a text string for Claude models
+DEPRECATED — Process multiple messages sequentially. Use anthropic_create_message_batch for proper async batch processing instead.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `text` | string | Yes | — | Text to count tokens for |
-| `model` | string | No | `"claude-sonnet-4-5-20250929"` | Model to use for token counting |
+| `model` | string | Yes | — | Claude model to use (e.g., claude-sonnet-4-5-20250929) |
+| `requests` | object[] | Yes | — | Array of message requests to process sequentially |
+| `temperature` | number | No | — | Sampling temperature (0-1) |
 
 <Expandable title="inputSchema">
 
@@ -213,21 +116,62 @@ Count tokens in a text string for Claude models
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "Pink Connect ID"
-    },
-    "text": {
-      "type": "string",
-      "description": "Text to count tokens for"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "model": {
       "type": "string",
-      "default": "claude-sonnet-4-5-20250929",
-      "description": "Model to use for token counting"
+      "description": "Claude model to use (e.g., claude-sonnet-4-5-20250929)"
+    },
+    "requests": {
+      "type": "array",
+      "description": "Array of message requests to process sequentially",
+      "items": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "description": "Messages for this request",
+            "items": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "description": "Message role (user or assistant)"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Message content"
+                }
+              },
+              "required": [
+                "role",
+                "content"
+              ]
+            }
+          },
+          "system": {
+            "type": "string",
+            "description": "System prompt"
+          },
+          "maxTokens": {
+            "type": "integer",
+            "description": "Max tokens for this request"
+          }
+        },
+        "required": [
+          "messages"
+        ]
+      }
+    },
+    "temperature": {
+      "type": "number",
+      "description": "Sampling temperature (0-1)"
     }
   },
   "required": [
     "PCID",
-    "text"
+    "model",
+    "requests"
   ]
 }
 ```
@@ -236,17 +180,15 @@ Count tokens in a text string for Claude models
 
 ---
 
-## anthropic_batch_messages
+## anthropic_cancel_message_batch
 
-Process multiple messages in a batch for efficiency
+Cancel a Message Batch
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `model` | string | No | `"claude-sonnet-4-5-20250929"` | Claude model to use |
-| `requests` | object[] | Yes | — | Array of message requests to process |
-| `temperature` | number | No | — | Sampling temperature |
+| `message_batch_id` | string | Yes | — | ID of the Message Batch. |
 
 <Expandable title="inputSchema">
 
@@ -256,60 +198,1004 @@ Process multiple messages in a batch for efficiency
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "Pink Connect ID"
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "message_batch_id": {
+      "type": "string",
+      "description": "ID of the Message Batch."
+    }
+  },
+  "required": [
+    "PCID",
+    "message_batch_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_count_tokens
+
+Count tokens in a Message
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cache_control` | object | No | — | Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request. |
+| `messages` | any[] | Yes | — | Input messages.  Our models are trained to operate on alternating `user` and `assistant` conversational turns. When creating a new `Message`, you specify the prior conversational turns with the `messages` parameter, and the model then generates the next `Message` in the conversation. Consecutive `user` or `assistant` turns in your request will be combined into a single turn.  Each input message must be an object with a `role` and `content`. You can specify a single `user`-role message, or you can include multiple `user` and `assistant` messages.  If the final message uses the `assistant` role, the response content will continue immediately from the content in that message. This can be used to constrain part of the model's response.  Example with a single `user` message:  ```json [&#123;"role": "user", "content": "Hello, Claude"&#125;] ```  Example with multiple conversational turns:  ```json [   &#123;"role": "user", "content": "Hello there."&#125;,   &#123;"role": "assistant", "content": "Hi, I'm Claude. How can I help you?"&#125;,   &#123;"role": "user", "content": "Can you explain LLMs in plain English?"&#125;, ] ```  Example with a partially-filled response from Claude:  ```json [   &#123;"role": "user", "content": "What's the Greek name for Sun? (A) Sol (B) Helios (C) Sun"&#125;,   &#123;"role": "assistant", "content": "The best answer is ("&#125;, ] ```  Each input message `content` may be either a single `string` or an array of content blocks, where each block has a specific `type`. Using a `string` for `content` is shorthand for an array of one content block of type `"text"`. The following input messages are equivalent:  ```json &#123;"role": "user", "content": "Hello, Claude"&#125; ```  ```json &#123;"role": "user", "content": [&#123;"type": "text", "text": "Hello, Claude"&#125;]&#125; ```  See [input examples](https://docs.claude.com/en/api/messages-examples).  Note that if you want to include a [system prompt](https://docs.claude.com/en/docs/system-prompts), you can use the top-level `system` parameter — there is no `"system"` role for input messages in the Messages API.  There is a limit of 100,000 messages in a single request. |
+| `model` | object | Yes | — | The model that will complete your prompt.\n\nSee [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options. |
+| `output_config` | object | No | — | Output Config |
+| `system` | object | No | — | System prompt.  A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.claude.com/en/docs/system-prompts). |
+| `thinking` | object | No | — | Configuration for enabling Claude's extended thinking.  When enabled, responses include `thinking` content blocks showing Claude's thinking process before the final answer. Requires a minimum budget of 1,024 tokens and counts towards your `max_tokens` limit.  See [extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) for details. |
+| `tool_choice` | object | No | — | How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all. |
+| `tools` | any[] | No | — | Definitions of tools that the model may use.  If you include `tools` in your API request, the model may return `tool_use` content blocks that represent the model's use of those tools. You can then run those tools using the tool input generated by the model and then optionally return results back to the model using `tool_result` content blocks.  There are two types of tools: **client tools** and **server tools**. The behavior described below applies to client tools. For [server tools](https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview\#server-tools), see their individual documentation as each has its own behavior (e.g., the [web search tool](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool)).  Each tool definition includes:  * `name`: Name of the tool. * `description`: Optional, but strongly-recommended description of the tool. * `input_schema`: [JSON schema](https://json-schema.org/draft/2020-12) for the tool `input` shape that the model will produce in `tool_use` output content blocks.  For example, if you defined `tools` as:  ```json [   &#123;     "name": "get_stock_price",     "description": "Get the current stock price for a given ticker symbol.",     "input_schema": &#123;       "type": "object",       "properties": &#123;         "ticker": &#123;           "type": "string",           "description": "The stock ticker symbol, e.g. AAPL for Apple Inc."         &#125;       &#125;,       "required": ["ticker"]     &#125;   &#125; ] ```  And then asked the model "What's the S&P 500 at today?", the model might produce `tool_use` content blocks in the response like this:  ```json [   &#123;     "type": "tool_use",     "id": "toolu_01D7FLrfh4GYq7yT1ULFeyMV",     "name": "get_stock_price",     "input": &#123; "ticker": "^GSPC" &#125;   &#125; ] ```  You might then run your `get_stock_price` tool with `&#123;"ticker": "^GSPC"&#125;` as an input, and return the following back to the model in a subsequent `user` message:  ```json [   &#123;     "type": "tool_result",     "tool_use_id": "toolu_01D7FLrfh4GYq7yT1ULFeyMV",     "content": "259.75 USD"   &#125; ] ```  Tools can be used for workflows that include running client-side tools and functions, or more generally whenever you want the model to produce a particular JSON structure of output.  See our [guide](https://docs.claude.com/en/docs/tool-use) for more details. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "cache_control": {
+      "description": "Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request."
+    },
+    "messages": {
+      "type": "array",
+      "description": "Input messages.  Our models are trained to operate on alternating `user` and `assistant` conversational turns. When creating a new `Message`, you specify the prior conversational turns with the `messages` parameter, and the model then generates the next `Message` in the conversation. Consecutive `user` or `assistant` turns in your request will be combined into a single turn.  Each input message must be an object with a `role` and `content`. You can specify a single `user`-role message, or you can include multiple `user` and `assistant` messages.  If the final message uses the `assistant` role, the response content will continue immediately from the content in that message. This can be used to constrain part of the model's response.  Example with a single `user` message:  ```json [{\"role\": \"user\", \"content\": \"Hello, Claude\"}] ```  Example with multiple conversational turns:  ```json [   {\"role\": \"user\", \"content\": \"Hello there.\"},   {\"role\": \"assistant\", \"content\": \"Hi, I'm Claude. How can I help you?\"},   {\"role\": \"user\", \"content\": \"Can you explain LLMs in plain English?\"}, ] ```  Example with a partially-filled response from Claude:  ```json [   {\"role\": \"user\", \"content\": \"What's the Greek name for Sun? (A) Sol (B) Helios (C) Sun\"},   {\"role\": \"assistant\", \"content\": \"The best answer is (\"}, ] ```  Each input message `content` may be either a single `string` or an array of content blocks, where each block has a specific `type`. Using a `string` for `content` is shorthand for an array of one content block of type `\"text\"`. The following input messages are equivalent:  ```json {\"role\": \"user\", \"content\": \"Hello, Claude\"} ```  ```json {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"Hello, Claude\"}]} ```  See [input examples](https://docs.claude.com/en/api/messages-examples).  Note that if you want to include a [system prompt](https://docs.claude.com/en/docs/system-prompts), you can use the top-level `system` parameter — there is no `\"system\"` role for input messages in the Messages API.  There is a limit of 100,000 messages in a single request."
     },
     "model": {
-      "type": "string",
-      "default": "claude-sonnet-4-5-20250929",
-      "description": "Claude model to use"
+      "description": "The model that will complete your prompt.\\n\\nSee [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options."
     },
-    "requests": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "messages": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "role": {
-                  "type": "string",
-                  "enum": [
-                    "user",
-                    "assistant"
-                  ],
-                  "description": "Message role"
-                },
-                "content": {
-                  "type": "string",
-                  "description": "Message content"
-                }
-              }
-            },
-            "description": "Messages for this request"
-          },
-          "system": {
-            "type": "string",
-            "description": "System prompt"
-          },
-          "maxTokens": {
-            "type": "number",
-            "default": 1024,
-            "description": "Max tokens for this request"
-          }
+    "output_config": {
+      "type": "object",
+      "description": "Output Config",
+      "properties": {
+        "effort": {
+          "description": "How much effort the model should put into its response. Higher effort levels may result in more thorough analysis but take longer.  Valid values are `low`, `medium`, `high`, or `max`."
+        },
+        "format": {
+          "description": "A schema to specify Claude's output format in responses. See [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)"
         }
-      },
-      "description": "Array of message requests to process"
+      }
+    },
+    "system": {
+      "description": "System prompt.  A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.claude.com/en/docs/system-prompts)."
+    },
+    "thinking": {
+      "description": "Configuration for enabling Claude's extended thinking.  When enabled, responses include `thinking` content blocks showing Claude's thinking process before the final answer. Requires a minimum budget of 1,024 tokens and counts towards your `max_tokens` limit.  See [extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) for details."
+    },
+    "tool_choice": {
+      "description": "How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all."
+    },
+    "tools": {
+      "type": "array",
+      "description": "Definitions of tools that the model may use.  If you include `tools` in your API request, the model may return `tool_use` content blocks that represent the model's use of those tools. You can then run those tools using the tool input generated by the model and then optionally return results back to the model using `tool_result` content blocks.  There are two types of tools: **client tools** and **server tools**. The behavior described below applies to client tools. For [server tools](https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview\\#server-tools), see their individual documentation as each has its own behavior (e.g., the [web search tool](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool)).  Each tool definition includes:  * `name`: Name of the tool. * `description`: Optional, but strongly-recommended description of the tool. * `input_schema`: [JSON schema](https://json-schema.org/draft/2020-12) for the tool `input` shape that the model will produce in `tool_use` output content blocks.  For example, if you defined `tools` as:  ```json [   {     \"name\": \"get_stock_price\",     \"description\": \"Get the current stock price for a given ticker symbol.\",     \"input_schema\": {       \"type\": \"object\",       \"properties\": {         \"ticker\": {           \"type\": \"string\",           \"description\": \"The stock ticker symbol, e.g. AAPL for Apple Inc.\"         }       },       \"required\": [\"ticker\"]     }   } ] ```  And then asked the model \"What's the S&P 500 at today?\", the model might produce `tool_use` content blocks in the response like this:  ```json [   {     \"type\": \"tool_use\",     \"id\": \"toolu_01D7FLrfh4GYq7yT1ULFeyMV\",     \"name\": \"get_stock_price\",     \"input\": { \"ticker\": \"^GSPC\" }   } ] ```  You might then run your `get_stock_price` tool with `{\"ticker\": \"^GSPC\"}` as an input, and return the following back to the model in a subsequent `user` message:  ```json [   {     \"type\": \"tool_result\",     \"tool_use_id\": \"toolu_01D7FLrfh4GYq7yT1ULFeyMV\",     \"content\": \"259.75 USD\"   } ] ```  Tools can be used for workflows that include running client-side tools and functions, or more generally whenever you want the model to produce a particular JSON structure of output.  See our [guide](https://docs.claude.com/en/docs/tool-use) for more details."
+    }
+  },
+  "required": [
+    "PCID",
+    "messages",
+    "model"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_create_message
+
+Create a Message
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cache_control` | object | No | — | Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request. |
+| `container` | object | No | — | Container identifier for reuse across requests. |
+| `inference_geo` | object | No | — | Specifies the geographic region for inference processing. If not specified, the workspace's `default_inference_geo` is used. |
+| `max_tokens` | integer | Yes | — | The maximum number of tokens to generate before stopping.  Note that our models may stop _before_ reaching this maximum. This parameter only specifies the absolute maximum number of tokens to generate.  Different models have different maximum values for this parameter.  See [models](https://docs.claude.com/en/docs/models-overview) for details. |
+| `messages` | any[] | Yes | — | Input messages.  Our models are trained to operate on alternating `user` and `assistant` conversational turns. When creating a new `Message`, you specify the prior conversational turns with the `messages` parameter, and the model then generates the next `Message` in the conversation. Consecutive `user` or `assistant` turns in your request will be combined into a single turn.  Each input message must be an object with a `role` and `content`. You can specify a single `user`-role message, or you can include multiple `user` and `assistant` messages.  If the final message uses the `assistant` role, the response content will continue immediately from the content in that message. This can be used to constrain part of the model's response.  Example with a single `user` message:  ```json [&#123;"role": "user", "content": "Hello, Claude"&#125;] ```  Example with multiple conversational turns:  ```json [   &#123;"role": "user", "content": "Hello there."&#125;,   &#123;"role": "assistant", "content": "Hi, I'm Claude. How can I help you?"&#125;,   &#123;"role": "user", "content": "Can you explain LLMs in plain English?"&#125;, ] ```  Example with a partially-filled response from Claude:  ```json [   &#123;"role": "user", "content": "What's the Greek name for Sun? (A) Sol (B) Helios (C) Sun"&#125;,   &#123;"role": "assistant", "content": "The best answer is ("&#125;, ] ```  Each input message `content` may be either a single `string` or an array of content blocks, where each block has a specific `type`. Using a `string` for `content` is shorthand for an array of one content block of type `"text"`. The following input messages are equivalent:  ```json &#123;"role": "user", "content": "Hello, Claude"&#125; ```  ```json &#123;"role": "user", "content": [&#123;"type": "text", "text": "Hello, Claude"&#125;]&#125; ```  See [input examples](https://docs.claude.com/en/api/messages-examples).  Note that if you want to include a [system prompt](https://docs.claude.com/en/docs/system-prompts), you can use the top-level `system` parameter — there is no `"system"` role for input messages in the Messages API.  There is a limit of 100,000 messages in a single request. |
+| `metadata` | object | No | — | The metadata value |
+| `model` | object | Yes | — | The model that will complete your prompt.\n\nSee [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options. |
+| `output_config` | object | No | — | Output Config |
+| `service_tier` | string | No | — | Determines whether to use priority capacity (if available) or standard capacity for this request.  Anthropic offers different levels of service for your API requests. See [service-tiers](https://docs.claude.com/en/api/service-tiers) for details. |
+| `stop_sequences` | any[] | No | — | Custom text sequences that will cause the model to stop generating.  Our models will normally stop when they have naturally completed their turn, which will result in a response `stop_reason` of `"end_turn"`.  If you want the model to stop generating when it encounters custom strings of text, you can use the `stop_sequences` parameter. If the model encounters one of the custom sequences, the response `stop_reason` value will be `"stop_sequence"` and the response `stop_sequence` value will contain the matched stop sequence. |
+| `stream` | boolean | No | — | Whether to incrementally stream the response using server-sent events.  See [streaming](https://docs.claude.com/en/api/messages-streaming) for details. |
+| `system` | object | No | — | System prompt.  A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.claude.com/en/docs/system-prompts). |
+| `temperature` | number | No | — | Amount of randomness injected into the response.  Defaults to `1.0`. Ranges from `0.0` to `1.0`. Use `temperature` closer to `0.0` for analytical / multiple choice, and closer to `1.0` for creative and generative tasks.  Note that even with `temperature` of `0.0`, the results will not be fully deterministic. |
+| `thinking` | object | No | — | Configuration for enabling Claude's extended thinking.  When enabled, responses include `thinking` content blocks showing Claude's thinking process before the final answer. Requires a minimum budget of 1,024 tokens and counts towards your `max_tokens` limit.  See [extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) for details. |
+| `tool_choice` | object | No | — | How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all. |
+| `tools` | any[] | No | — | Definitions of tools that the model may use.  If you include `tools` in your API request, the model may return `tool_use` content blocks that represent the model's use of those tools. You can then run those tools using the tool input generated by the model and then optionally return results back to the model using `tool_result` content blocks.  There are two types of tools: **client tools** and **server tools**. The behavior described below applies to client tools. For [server tools](https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview\#server-tools), see their individual documentation as each has its own behavior (e.g., the [web search tool](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool)).  Each tool definition includes:  * `name`: Name of the tool. * `description`: Optional, but strongly-recommended description of the tool. * `input_schema`: [JSON schema](https://json-schema.org/draft/2020-12) for the tool `input` shape that the model will produce in `tool_use` output content blocks.  For example, if you defined `tools` as:  ```json [   &#123;     "name": "get_stock_price",     "description": "Get the current stock price for a given ticker symbol.",     "input_schema": &#123;       "type": "object",       "properties": &#123;         "ticker": &#123;           "type": "string",           "description": "The stock ticker symbol, e.g. AAPL for Apple Inc."         &#125;       &#125;,       "required": ["ticker"]     &#125;   &#125; ] ```  And then asked the model "What's the S&P 500 at today?", the model might produce `tool_use` content blocks in the response like this:  ```json [   &#123;     "type": "tool_use",     "id": "toolu_01D7FLrfh4GYq7yT1ULFeyMV",     "name": "get_stock_price",     "input": &#123; "ticker": "^GSPC" &#125;   &#125; ] ```  You might then run your `get_stock_price` tool with `&#123;"ticker": "^GSPC"&#125;` as an input, and return the following back to the model in a subsequent `user` message:  ```json [   &#123;     "type": "tool_result",     "tool_use_id": "toolu_01D7FLrfh4GYq7yT1ULFeyMV",     "content": "259.75 USD"   &#125; ] ```  Tools can be used for workflows that include running client-side tools and functions, or more generally whenever you want the model to produce a particular JSON structure of output.  See our [guide](https://docs.claude.com/en/docs/tool-use) for more details. |
+| `top_k` | integer | No | — | Only sample from the top K options for each subsequent token.  Used to remove "long tail" low probability responses. [Learn more technical details here](https://towardsdatascience.com/how-to-sample-from-language-models-682bceb97277).  Recommended for advanced use cases only. You usually only need to use `temperature`. |
+| `top_p` | number | No | — | Use nucleus sampling.  In nucleus sampling, we compute the cumulative distribution over all the options for each subsequent token in decreasing probability order and cut it off once it reaches a particular probability specified by `top_p`. You should either alter `temperature` or `top_p`, but not both.  Recommended for advanced use cases only. You usually only need to use `temperature`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "cache_control": {
+      "description": "Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request."
+    },
+    "container": {
+      "description": "Container identifier for reuse across requests."
+    },
+    "inference_geo": {
+      "description": "Specifies the geographic region for inference processing. If not specified, the workspace's `default_inference_geo` is used."
+    },
+    "max_tokens": {
+      "type": "integer",
+      "description": "The maximum number of tokens to generate before stopping.  Note that our models may stop _before_ reaching this maximum. This parameter only specifies the absolute maximum number of tokens to generate.  Different models have different maximum values for this parameter.  See [models](https://docs.claude.com/en/docs/models-overview) for details."
+    },
+    "messages": {
+      "type": "array",
+      "description": "Input messages.  Our models are trained to operate on alternating `user` and `assistant` conversational turns. When creating a new `Message`, you specify the prior conversational turns with the `messages` parameter, and the model then generates the next `Message` in the conversation. Consecutive `user` or `assistant` turns in your request will be combined into a single turn.  Each input message must be an object with a `role` and `content`. You can specify a single `user`-role message, or you can include multiple `user` and `assistant` messages.  If the final message uses the `assistant` role, the response content will continue immediately from the content in that message. This can be used to constrain part of the model's response.  Example with a single `user` message:  ```json [{\"role\": \"user\", \"content\": \"Hello, Claude\"}] ```  Example with multiple conversational turns:  ```json [   {\"role\": \"user\", \"content\": \"Hello there.\"},   {\"role\": \"assistant\", \"content\": \"Hi, I'm Claude. How can I help you?\"},   {\"role\": \"user\", \"content\": \"Can you explain LLMs in plain English?\"}, ] ```  Example with a partially-filled response from Claude:  ```json [   {\"role\": \"user\", \"content\": \"What's the Greek name for Sun? (A) Sol (B) Helios (C) Sun\"},   {\"role\": \"assistant\", \"content\": \"The best answer is (\"}, ] ```  Each input message `content` may be either a single `string` or an array of content blocks, where each block has a specific `type`. Using a `string` for `content` is shorthand for an array of one content block of type `\"text\"`. The following input messages are equivalent:  ```json {\"role\": \"user\", \"content\": \"Hello, Claude\"} ```  ```json {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"Hello, Claude\"}]} ```  See [input examples](https://docs.claude.com/en/api/messages-examples).  Note that if you want to include a [system prompt](https://docs.claude.com/en/docs/system-prompts), you can use the top-level `system` parameter — there is no `\"system\"` role for input messages in the Messages API.  There is a limit of 100,000 messages in a single request."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "The metadata value",
+      "properties": {
+        "user_id": {
+          "description": "An external identifier for the user who is associated with the request.  This should be a uuid, hash value, or other opaque identifier. Anthropic may use this id to help detect abuse. Do not include any identifying information such as name, email address, or phone number."
+        }
+      }
+    },
+    "model": {
+      "description": "The model that will complete your prompt.\\n\\nSee [models](https://docs.anthropic.com/en/docs/models-overview) for additional details and options."
+    },
+    "output_config": {
+      "type": "object",
+      "description": "Output Config",
+      "properties": {
+        "effort": {
+          "description": "How much effort the model should put into its response. Higher effort levels may result in more thorough analysis but take longer.  Valid values are `low`, `medium`, `high`, or `max`."
+        },
+        "format": {
+          "description": "A schema to specify Claude's output format in responses. See [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)"
+        }
+      }
+    },
+    "service_tier": {
+      "type": "string",
+      "description": "Determines whether to use priority capacity (if available) or standard capacity for this request.  Anthropic offers different levels of service for your API requests. See [service-tiers](https://docs.claude.com/en/api/service-tiers) for details.",
+      "enum": [
+        "auto",
+        "standard_only"
+      ]
+    },
+    "stop_sequences": {
+      "type": "array",
+      "description": "Custom text sequences that will cause the model to stop generating.  Our models will normally stop when they have naturally completed their turn, which will result in a response `stop_reason` of `\"end_turn\"`.  If you want the model to stop generating when it encounters custom strings of text, you can use the `stop_sequences` parameter. If the model encounters one of the custom sequences, the response `stop_reason` value will be `\"stop_sequence\"` and the response `stop_sequence` value will contain the matched stop sequence."
+    },
+    "stream": {
+      "type": "boolean",
+      "description": "Whether to incrementally stream the response using server-sent events.  See [streaming](https://docs.claude.com/en/api/messages-streaming) for details."
+    },
+    "system": {
+      "description": "System prompt.  A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.claude.com/en/docs/system-prompts)."
     },
     "temperature": {
       "type": "number",
-      "description": "Sampling temperature"
+      "description": "Amount of randomness injected into the response.  Defaults to `1.0`. Ranges from `0.0` to `1.0`. Use `temperature` closer to `0.0` for analytical / multiple choice, and closer to `1.0` for creative and generative tasks.  Note that even with `temperature` of `0.0`, the results will not be fully deterministic."
+    },
+    "thinking": {
+      "description": "Configuration for enabling Claude's extended thinking.  When enabled, responses include `thinking` content blocks showing Claude's thinking process before the final answer. Requires a minimum budget of 1,024 tokens and counts towards your `max_tokens` limit.  See [extended thinking](https://docs.claude.com/en/docs/build-with-claude/extended-thinking) for details."
+    },
+    "tool_choice": {
+      "description": "How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all."
+    },
+    "tools": {
+      "type": "array",
+      "description": "Definitions of tools that the model may use.  If you include `tools` in your API request, the model may return `tool_use` content blocks that represent the model's use of those tools. You can then run those tools using the tool input generated by the model and then optionally return results back to the model using `tool_result` content blocks.  There are two types of tools: **client tools** and **server tools**. The behavior described below applies to client tools. For [server tools](https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview\\#server-tools), see their individual documentation as each has its own behavior (e.g., the [web search tool](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool)).  Each tool definition includes:  * `name`: Name of the tool. * `description`: Optional, but strongly-recommended description of the tool. * `input_schema`: [JSON schema](https://json-schema.org/draft/2020-12) for the tool `input` shape that the model will produce in `tool_use` output content blocks.  For example, if you defined `tools` as:  ```json [   {     \"name\": \"get_stock_price\",     \"description\": \"Get the current stock price for a given ticker symbol.\",     \"input_schema\": {       \"type\": \"object\",       \"properties\": {         \"ticker\": {           \"type\": \"string\",           \"description\": \"The stock ticker symbol, e.g. AAPL for Apple Inc.\"         }       },       \"required\": [\"ticker\"]     }   } ] ```  And then asked the model \"What's the S&P 500 at today?\", the model might produce `tool_use` content blocks in the response like this:  ```json [   {     \"type\": \"tool_use\",     \"id\": \"toolu_01D7FLrfh4GYq7yT1ULFeyMV\",     \"name\": \"get_stock_price\",     \"input\": { \"ticker\": \"^GSPC\" }   } ] ```  You might then run your `get_stock_price` tool with `{\"ticker\": \"^GSPC\"}` as an input, and return the following back to the model in a subsequent `user` message:  ```json [   {     \"type\": \"tool_result\",     \"tool_use_id\": \"toolu_01D7FLrfh4GYq7yT1ULFeyMV\",     \"content\": \"259.75 USD\"   } ] ```  Tools can be used for workflows that include running client-side tools and functions, or more generally whenever you want the model to produce a particular JSON structure of output.  See our [guide](https://docs.claude.com/en/docs/tool-use) for more details."
+    },
+    "top_k": {
+      "type": "integer",
+      "description": "Only sample from the top K options for each subsequent token.  Used to remove \"long tail\" low probability responses. [Learn more technical details here](https://towardsdatascience.com/how-to-sample-from-language-models-682bceb97277).  Recommended for advanced use cases only. You usually only need to use `temperature`."
+    },
+    "top_p": {
+      "type": "number",
+      "description": "Use nucleus sampling.  In nucleus sampling, we compute the cumulative distribution over all the options for each subsequent token in decreasing probability order and cut it off once it reaches a particular probability specified by `top_p`. You should either alter `temperature` or `top_p`, but not both.  Recommended for advanced use cases only. You usually only need to use `temperature`."
+    }
+  },
+  "required": [
+    "PCID",
+    "max_tokens",
+    "messages",
+    "model"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_create_message_batch
+
+Create a Message Batch
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `requests` | any[] | Yes | — | List of requests for prompt completion. Each is an individual request to create a Message. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "requests": {
+      "type": "array",
+      "description": "List of requests for prompt completion. Each is an individual request to create a Message."
     }
   },
   "required": [
     "PCID",
     "requests"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_create_skill
+
+Create Skill
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `display_title` | object | No | — | Display title for the skill.  This is a human-readable label that is not included in the prompt sent to the model. |
+| `files` | object | No | — | Files to upload for the skill.  All files must be in the same top-level directory and must include a SKILL.md file at the root of that directory. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "display_title": {
+      "description": "Display title for the skill.  This is a human-readable label that is not included in the prompt sent to the model."
+    },
+    "files": {
+      "description": "Files to upload for the skill.  All files must be in the same top-level directory and must include a SKILL.md file at the root of that directory."
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_create_skill_version
+
+Create Skill Version
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+| `files` | object | No | — | Files to upload for the skill.  All files must be in the same top-level directory and must include a SKILL.md file at the root of that directory. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    },
+    "files": {
+      "description": "Files to upload for the skill.  All files must be in the same top-level directory and must include a SKILL.md file at the root of that directory."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_delete_file
+
+Delete File
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_id` | string | Yes | — | ID of the File. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "file_id": {
+      "type": "string",
+      "description": "ID of the File."
+    }
+  },
+  "required": [
+    "PCID",
+    "file_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_delete_message_batch
+
+Delete a Message Batch
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `message_batch_id` | string | Yes | — | ID of the Message Batch. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "message_batch_id": {
+      "type": "string",
+      "description": "ID of the Message Batch."
+    }
+  },
+  "required": [
+    "PCID",
+    "message_batch_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_delete_skill
+
+Delete Skill
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_delete_skill_version
+
+Delete Skill Version
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+| `version` | string | Yes | — | Version identifier for the skill.  Each version is identified by a Unix epoch timestamp (e.g., "1759178010641129"). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    },
+    "version": {
+      "type": "string",
+      "description": "Version identifier for the skill.  Each version is identified by a Unix epoch timestamp (e.g., \"1759178010641129\")."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id",
+    "version"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_download_file
+
+Download File
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_id` | string | Yes | — | ID of the File. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "file_id": {
+      "type": "string",
+      "description": "ID of the File."
+    }
+  },
+  "required": [
+    "PCID",
+    "file_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_file
+
+Get File Metadata
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file_id` | string | Yes | — | ID of the File. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "file_id": {
+      "type": "string",
+      "description": "ID of the File."
+    }
+  },
+  "required": [
+    "PCID",
+    "file_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_message_batch
+
+Retrieve a Message Batch
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `message_batch_id` | string | Yes | — | ID of the Message Batch. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "message_batch_id": {
+      "type": "string",
+      "description": "ID of the Message Batch."
+    }
+  },
+  "required": [
+    "PCID",
+    "message_batch_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_message_batch_results
+
+Retrieve Message Batch results
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `message_batch_id` | string | Yes | — | ID of the Message Batch. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "message_batch_id": {
+      "type": "string",
+      "description": "ID of the Message Batch."
+    }
+  },
+  "required": [
+    "PCID",
+    "message_batch_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_model
+
+Get a Model
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `model_id` | string | Yes | — | Model identifier or alias. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier or alias."
+    }
+  },
+  "required": [
+    "PCID",
+    "model_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_skill
+
+Get Skill
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_get_skill_version
+
+Get Skill Version
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+| `version` | string | Yes | — | Version identifier for the skill.  Each version is identified by a Unix epoch timestamp (e.g., "1759178010641129"). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    },
+    "version": {
+      "type": "string",
+      "description": "Version identifier for the skill.  Each version is identified by a Unix epoch timestamp (e.g., \"1759178010641129\")."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id",
+    "version"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_list_files
+
+List Files
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `before_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object. |
+| `after_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object. |
+| `limit` | integer | No | — | Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "before_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object."
+    },
+    "after_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object."
+    },
+    "limit": {
+      "type": "integer",
+      "description": "Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`."
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_list_message_batches
+
+List Message Batches
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `before_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object. |
+| `after_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object. |
+| `limit` | integer | No | — | Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "before_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object."
+    },
+    "after_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object."
+    },
+    "limit": {
+      "type": "integer",
+      "description": "Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`."
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_list_models
+
+List Models
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `before_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object. |
+| `after_id` | string | No | — | ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object. |
+| `limit` | integer | No | — | Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "before_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately before this object."
+    },
+    "after_id": {
+      "type": "string",
+      "description": "ID of the object to use as a cursor for pagination. When provided, returns the page of results immediately after this object."
+    },
+    "limit": {
+      "type": "integer",
+      "description": "Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`."
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_list_skill_versions
+
+List Skill Versions
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `skill_id` | string | Yes | — | Unique identifier for the skill.  The format and length of IDs may change over time. |
+| `page` | object | No | — | Optionally set to the `next_page` token from the previous response. |
+| `limit` | object | No | — | Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill.  The format and length of IDs may change over time."
+    },
+    "page": {
+      "description": "Optionally set to the `next_page` token from the previous response."
+    },
+    "limit": {
+      "description": "Number of items to return per page.  Defaults to `20`. Ranges from `1` to `1000`."
+    }
+  },
+  "required": [
+    "PCID",
+    "skill_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_list_skills
+
+List Skills
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | object | No | — | Pagination token for fetching a specific page of results.  Pass the value from a previous response's `next_page` field to get the next page of results. |
+| `limit` | integer | No | — | Number of results to return per page.  Maximum value is 100. Defaults to 20. |
+| `source` | object | No | — | Filter skills by source.  If provided, only skills from the specified source will be returned: * `"custom"`: only return user-created skills * `"anthropic"`: only return Anthropic-created skills |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page": {
+      "description": "Pagination token for fetching a specific page of results.  Pass the value from a previous response's `next_page` field to get the next page of results."
+    },
+    "limit": {
+      "type": "integer",
+      "description": "Number of results to return per page.  Maximum value is 100. Defaults to 20."
+    },
+    "source": {
+      "description": "Filter skills by source.  If provided, only skills from the specified source will be returned: * `\"custom\"`: only return user-created skills * `\"anthropic\"`: only return Anthropic-created skills"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## anthropic_upload_file
+
+Upload File
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `file` | string | Yes | — | The file to upload |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "file": {
+      "type": "string",
+      "description": "The file to upload"
+    }
+  },
+  "required": [
+    "PCID",
+    "file"
   ]
 }
 ```
