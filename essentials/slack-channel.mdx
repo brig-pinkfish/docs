@@ -4,7 +4,7 @@ description: "Talk to your Pinkfish agents and Coworker directly from Slack — 
 icon: "slack"
 ---
 
-Connect your agents and Coworker to Slack so your team can get work done from the tool they already use. Send a DM to the Pinkfish Slack app from your laptop or phone and an agent replies in the thread — with a written answer, any files it produced, and links to rendered web-app visualizations for data that deserves more than text.
+Connect your agents and Coworker to Slack so your team can get work done from the tool they already use. DM the Pinkfish app from your laptop or phone, drop in files or questions, and an agent replies in the thread — with a written answer, any files it produced, and links to rendered web-app visualizations for data that deserves more than text.
 
 ## Key Features
 
@@ -15,11 +15,11 @@ Connect your agents and Coworker to Slack so your team can get work done from th
   <Card title="Per-agent or org-wide" icon="toggle-on">
     Enable Slack on one agent at a time, or turn it on for the whole organization and opt individual agents out.
   </Card>
-  <Card title="Rich responses" icon="chart-column">
-    Agents post answers in-thread and attach generated files. HTML web-app artifacts come through as shareable links you can open in a browser.
+  <Card title="Upload files into the chat" icon="paperclip">
+    Drop images, PDFs, CSVs, or documents into the thread and the agent can read and act on them.
   </Card>
-  <Card title="Works with Coworker" icon="comments">
-    Coworker is available in Slack too, so you can ask general questions or delegate across multiple agents without picking one up front.
+  <Card title="Rich responses" icon="chart-column">
+    Agents post answers in-thread, upload generated files, and share rendered web apps as links you can open in a browser.
   </Card>
 </CardGroup>
 
@@ -27,20 +27,20 @@ Connect your agents and Coworker to Slack so your team can get work done from th
 
 1. **Install the Pinkfish Slack app** into your workspace via OAuth. You can connect one agent at a time, or enable Slack for the entire organization.
 2. **Open a DM** with the Pinkfish app in Slack.
-3. **Send a message.** Pinkfish identifies you by the email on your Slack profile and matches it to your Pinkfish account.
-4. **An agent responds in the thread.** If the DM is wired to a specific agent, that agent answers. Otherwise Pinkfish picks the best match from the agents available in the workspace and asks you to confirm.
-5. **Outputs flow back.** Short text answers appear as Slack messages. Files the agent produces are uploaded to the thread. Rendered HTML artifacts (dashboards, charts, interactive views) come through as links that open the web app in your browser.
+3. **Send a message.** Pinkfish identifies you by the email on your Slack profile and matches it to your Pinkfish account. On your first message, the app walks you through any account, organization, or agent selection it needs.
+4. **The agent runs.** Pinkfish posts a short "thinking" note in the thread so you know the request was received, then replies with the full answer once the agent is done.
+5. **Outputs flow back.** Short text answers appear as Slack messages, generated files upload to the thread, and rendered HTML artifacts come through as shareable links that open the web app in your browser.
 
 ![Slack DM with the Pinkfish app: a user asks for a 360° view of an account and the agent replies in the thread with a summary and a link to a rendered dashboard](/images/slack-channel/slack-channel-dm.png)
 
 ## Enabling Slack for an Agent
 
-Open the agent you want to reach from Slack and go to the **Channels** section of the agent editor.
+Open the agent you want to reach from Slack and go to the **Channel** section of the agent editor.
 
-![Agent editor showing the Slack channel card with a toggle and description](/images/slack-channel/slack-channel-toggle.png)
+![Agent editor Channel tab showing the Slack toggle card alongside Microsoft Teams and External channels](/images/slack-channel/slack-channel-toggle.png)
 
 1. Toggle **Slack** on.
-2. A browser popup opens and redirects you to Slack to authorize the Pinkfish app in your workspace.
+2. A browser popup redirects you to Slack to authorize the Pinkfish app in your workspace.
 3. Approve the requested permissions. Slack returns you to Pinkfish, and the agent is now reachable from a DM in that workspace.
 4. The Pinkfish app sends you a welcome DM confirming the connection.
 
@@ -54,32 +54,81 @@ If your organization has Slack enabled globally, every published agent is reacha
 
 Admins turn this on under **Settings → Agents → Channels**. It's useful when most of your team works from Slack and you'd rather whitelist exceptions than opt each agent in one by one.
 
-## Using Coworker from Slack
+## Threads and Conversations
 
-You don't need to pre-select an agent to start a conversation. Send a plain-language request to the Pinkfish app and Coworker behavior kicks in: Pinkfish routes the message to the most relevant agent in your workspace, or answers directly if no specialized agent is needed.
+Pinkfish treats Slack threads as chats.
 
-A typical flow:
+- **Start a new conversation** by sending a new top-level message in the DM. Each new thread starts a fresh chat with a clean context.
+- **Continue a conversation** by replying inside an existing thread. The same agent keeps the context of everything that was said.
+- **Switch agents** by starting a new thread. You can't swap agents inside an existing thread.
 
-- From your phone, DM the Pinkfish app: *"Give me a 360 on Global Media."*
-- Pinkfish finds a matching agent (for example, a Customer 360° agent) and runs it.
-- The agent replies in the thread with a written summary and attaches a link to a rendered web app with the full visual breakdown — charts, contacts, recent activity, open deals — ready to open in your browser.
+## Picking an Agent
 
-Because every DM with the Pinkfish app is a thread, each conversation stays scoped and easy to come back to later.
+When you send a new message, Pinkfish routes it one of two ways:
 
-## Supported Artifact Types
+- If the DM is wired to a specific agent, that agent answers.
+- Otherwise, Pinkfish picks the best match from the agents available in your organization and runs it.
 
-| Artifact type | How it appears in Slack |
-|---------------|-------------------------|
-| Short text answers | Posted directly as Slack messages |
-| Generated files (images, PDFs, CSVs, etc.) | Uploaded to the thread as Slack files |
-| Rendered HTML web apps | Posted as shareable links that open the web app in your browser |
+If you want to choose the agent yourself, start a new thread and send `list agents`. Pinkfish replies with a dropdown labeled **Select Agents…** listing every agent you have access to; pick one and it handles the thread.
 
-Web-app artifacts stay interactive — they are not flattened to images — so charts, filters, and other controls work when you open the link.
+If you belong to multiple Pinkfish organizations, the app asks which one you want to use on your first message — you'll see a dropdown labeled **Select organization**. To change it later, start a new thread and send `switch orgs`.
+
+## Built-in Commands
+
+Pinkfish recognizes a few plain-text phrases as commands when they're the first message in a new thread:
+
+| Command | What it does |
+|---------|--------------|
+| `help` | Posts a short help message with tips on picking agents and switching orgs. |
+| `list agents` | Shows a dropdown of agents you can route the thread to. |
+| `switch orgs` | Lets you switch the Pinkfish organization this thread is associated with. |
+
+These aren't Slack slash commands — just type them as a normal message.
+
+## Uploading Files Into the Chat
+
+Drop files into the Slack DM the same way you'd share them with a teammate — drag them in, paste an image, or use Slack's **+** attachment button — and send a message alongside. Pinkfish downloads the attachments and hands them to the agent, so you can ask things like *"Summarize this contract"* or *"Extract the line items from this invoice."*
+
+Common file types work: images (PNG, JPG), PDFs, CSVs, spreadsheets, and text documents. Individual files up to **50 MB** are supported.
+
+## Rich Responses
+
+### Formatting
+
+Agents write in Markdown, and Pinkfish renders responses using Slack's native formatting:
+
+- **Bold** and links show up as Slack-formatted text.
+- Headings become bold section labels.
+- Code blocks and inline code are preserved as monospace.
+- Markdown tables are rendered inside code blocks so columns stay aligned in Slack.
+
+### Files and artifacts
+
+| Output | How it appears in Slack |
+|--------|-------------------------|
+| Short text | Posted as a regular Slack message in the thread. |
+| Generated files (images, PDFs, CSVs, spreadsheets, etc.) | Uploaded to the thread as Slack file attachments. |
+| Rendered HTML web apps | Posted as shareable links that open the web app in your browser. |
+
+![A rendered HTML web-app artifact opened from a Slack link, showing charts and interactive visuals](/images/slack-channel/slack-channel-artifact.png)
+
+Web-app artifacts stay interactive — they aren't flattened to images — so charts, filters, and other controls still work when you open the link.
+
+## Approving Tools
+
+When an agent needs to use a tool for the first time, Pinkfish asks for approval right in the thread. You'll see a prompt like **🔧 Tool Approval Required** along with four buttons:
+
+- **Reject** — cancel the tool call
+- **Approve Once** — allow just this call
+- **Approve for this chat** — allow this tool for the rest of the thread
+- **Approve always** — allow this tool in any future Slack conversation
+
+If a tool needs to be linked to a specific connection (for example, which Google account to use), Pinkfish shows a dropdown to pick the connection. If the right connection isn't set up yet, you'll be pointed back to the Pinkfish web app to complete the setup and then return to Slack.
 
 ## Notes
 
 - The Pinkfish Slack app authenticates you using the email on your Slack profile. Make sure that email matches the one on your Pinkfish account.
-- An agent connects to a single Slack workspace per organization.
-- Conversations happen in DMs with the Pinkfish app; each new thread starts a new chat.
+- Each agent connects to a single Slack workspace per organization.
+- The app only responds in direct messages. Mentioning the Pinkfish bot in a channel or adding it to a channel has no effect.
 - The Slack Channel is a separate feature from the [Slack MCP server](/slash-commands/slack), which lets agents act on Slack as a tool (posting to channels, reading messages, and so on). The two can be used together.
 - For other ways to start a workflow or agent, see [Triggers](/essentials/triggers). For Coworker inside the Pinkfish app, see [Coworker](/essentials/coworker).
