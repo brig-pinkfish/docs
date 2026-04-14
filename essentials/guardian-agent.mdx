@@ -10,6 +10,19 @@ The Guardian Agent brings self-healing capabilities to your workflows. When a wo
 
 This means workflows don't just fail and wait for someone to debug them. The Guardian Agent reads the error analytics, inspects the code, figures out what went wrong, and writes the repair — you just review and approve.
 
+<Frame caption="Watch the Guardian Agent in action">
+  <iframe
+    src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7447455753046618112"
+    height="570"
+    width="100%"
+    frameborder="0"
+    allowfullscreen
+    title="Guardian Agent — self-healing workflows on Pinkfish"
+  ></iframe>
+</Frame>
+
+> Prefer to watch on LinkedIn? [Open the post in a new tab](https://www.linkedin.com/posts/getpinkfish_a-customer-told-us-something-that-stuck-activity-7447455753046618112-36-h).
+
 ## How It Works
 
 The Guardian Agent operates in a three-stage pipeline: **diagnose → propose → repair**.
@@ -62,12 +75,103 @@ With your approval, the Guardian Agent then hands this repair prompt directly to
 
 For issues that can't be fixed by code (expired tokens, missing connections), the Guardian Agent tells you exactly what manual steps to take.
 
+## See It In Action — A Real-World Walkthrough
+
+The easiest way to understand the Guardian Agent is to watch it close the loop on an automation that is actively failing. This walkthrough takes you from **"my workflow just broke in production"** to **"it's fixed and running again"** without leaving the Pinkfish app.
+
+<Steps>
+  <Step title="Build an automation that touches real-world data">
+    Create a workflow that calls an external API and transforms its response. In development, every record the API returns looks the same — so a snippet like `items.map(x => x.email.toLowerCase())` passes testing and gets published.
+
+    Typical shapes that later cause failures in production:
+
+    - A field you expected to always be present (`email`, `name`, `id`) is `null` or missing on some records
+    - An upstream API adds a new field format, changes casing, or returns a string where it previously returned a number
+    - A list you tested with 50 items arrives with 10,000
+    - An MCP tool or connection is renamed after the workflow is published
+
+    None of these break a workflow during the build — they only surface once real traffic hits the published version.
+  </Step>
+
+  <Step title="Publish and let it fail">
+    Publish the workflow and let it run against real production traffic — either on a schedule, via a trigger, or through a live integration. A record eventually comes through where `email` is `null`, the transform throws `Cannot read property 'toLowerCase' of null`, and the run fails.
+
+    One failed run on its own is a blip. A pattern of failing runs is what the Guardian Agent picks up on.
+  </Step>
+
+  <Step title="Guardian surfaces the problem in Notifications">
+    You don't have to go looking for errors. The **Notifications** bell in the top navigation bar shows an unread count the moment a workflow starts accumulating failures from triggered runs.
+
+    Open the bell and you'll see a card for each affected workflow:
+
+    > **This workflow has encountered errors from triggered runs.**
+    >
+    > *3 published errors · 0 draft errors*
+    >
+    > **Review**
+
+    Click **Review**. This opens the Guardian Agent panel docked beside your workflow, with the affected workflow already selected and its error summary pre-loaded — *"12 errors in the last 30 days"*, plus the **Top Errors** list grouped by pattern.
+  </Step>
+
+  <Step title="Start a new analysis">
+    Inside the Guardian Agent panel, click **How to fix it**, then **Start New Analysis**. The button label changes to *"Starting Analysis…"* while the session spins up, then the right side of the panel shows:
+
+    > **Analysis in progress…**
+    >
+    > The Guardian Agent is analyzing your workflow
+
+    During this phase, the Guardian Agent pulls the workflow's error analytics, reads the published and draft code, and inspects recent run inputs and outputs. When it's done, the session moves to **Ongoing** and the panel populates with:
+
+    - **Errors analyzed** — the total number of error patterns it found
+    - **Top Errors** — the patterns that matter most
+    - **Coding prompt** — a detailed repair instruction for any code-fixable issues
+    - **User actions** — manual steps if anything requires your attention (expired tokens, missing connections, etc.)
+  </Step>
+
+  <Step title="Chat with the Guardian Agent">
+    The Guardian Agent isn't just a one-shot analyzer — it's a chat agent you can talk to. The chat panel opens with:
+
+    > **Guardian Agent**
+    >
+    > *I analyze workflows for errors and recommend fixes.*
+
+    Ask it anything about what it found. Good prompts:
+
+    - *"Why is this failing?"*
+    - *"Show me the exact records that triggered the error."*
+    - *"What's different between the draft and the published version?"*
+    - *"Can you fix this?"*
+
+    When you ask it to fix the issue, the Guardian Agent responds with a summary of the root cause and the proposed repair, then asks for your approval before doing anything:
+
+    > I've generated a repair prompt for these issues. Would you like me to send it to the Workflow Builder Agent to fix the workflow?
+
+    The Guardian Agent never modifies your workflow without this explicit confirmation.
+  </Step>
+
+  <Step title="Approve the fix — the Workflow Builder Agent takes over">
+    Reply **Yes** (or click the approval action) and the Guardian Agent hands the repair prompt to the **Workflow Builder Agent**. The Workflow Builder Agent opens the workflow, applies the code changes — typically adding the null check, adjusting the data shape, renaming the tool, whatever the fix requires — and saves a new draft.
+
+    In the Guardian panel, the fix status transitions through **Pending → In Progress → Applied**. You can review the draft that the Workflow Builder Agent produced before publishing.
+  </Step>
+
+  <Step title="Publish and watch it succeed">
+    Once you're happy with the repaired draft, publish it. The next triggered run picks up the new version and completes successfully — the loop is closed.
+
+    Back in the Guardian panel, mark the session **Resolved** (or let it auto-resolve once the fix status reaches **Verified**). The **Previous Analyses** list keeps the full history, so the next time someone asks *"what changed?"*, the answer — diagnosis, proposed fix, approval, repair, and outcome — is all in one place.
+  </Step>
+</Steps>
+
+### Why the loop matters
+
+Without the Guardian Agent, the path from a failing production run back to a fix is: someone notices the red alert, opens the workflow, scrubs through run history, hypothesizes a cause, edits the code, republishes, and hopes. With the Guardian Agent, the diagnosis and the fix are generated for you, the Workflow Builder Agent applies them, and you stay in control of the approval — the whole cycle happens inside Pinkfish, in minutes, without leaving chat.
+
 ## Using the Guardian Agent
 
 ### Starting an Analysis
 
-1. Open a workflow that has errors
-2. Navigate to the Guardian Agent panel
+1. Open a workflow that has errors — or open the **Notifications** bell and click **Review** on a workflow's error card
+2. In the Guardian Agent panel, click **How to fix it**
 3. Click **Start New Analysis**
 4. The Guardian Agent begins analyzing the workflow's error patterns
 
