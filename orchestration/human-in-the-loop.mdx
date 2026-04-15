@@ -8,6 +8,64 @@ icon: "user-check"
 
 Human-in-the-Loop (HITL) workflows combine the efficiency of automation with human judgment and oversight. Pinkfish enables you to seamlessly integrate human decision points, approvals, and interventions into your automated processes through dynamic web applications, notifications, and data-driven workflow resumption.
 
+Pinkfish supports HITL two ways:
+
+1. **The Approval node** — a built-in control-flow node for agentic workflows that pauses the run, shows a hosted approval form, and branches on the approver's response. This is the fastest way to add a single approval gate.
+2. **The pattern-based approach** — manually generate an HTML form, store it in the filestore, write the decision to a datastore, and resume via a datastore trigger. Use this when you need a custom review UI or want to collect more than a yes/no decision.
+
+Start with the Approval node; drop down to the pattern when you outgrow it.
+
+## Approval Node (Agentic Editor)
+
+The Approval node is the fastest way to add a "wait for a human" gate to an agentic workflow. It handles the approval form, the secure link, the notification hand-off, the timeout, and the branching so you do not have to build any of it yourself.
+
+### When to use it
+
+- You need a simple **approve / deny** decision before continuing the run.
+- You want to send the approver a link over Slack, Teams, or email and let them act without logging in.
+- The decision should expire automatically (for example, if nobody responds in 24 hours, deny by default).
+
+### Adding the node
+
+1. Open an agentic workflow in the [agentic editor](/agentic-editor/overview).
+2. Click **Add Node** on the canvas and expand **Flow Control**.
+3. Pick **Approval (Human-in-the-Loop)**.
+
+The node drops onto the canvas with three output handles:
+
+| Handle | Color | When it fires |
+| --- | --- | --- |
+| `notify` | Blue (top) | Fires once when the run reaches the node — use it to send the approver the approval link. |
+| `approved` | Green | Fires if the approver clicks **Approve** on the form. |
+| `denied` | Rose / Red | Fires if the approver clicks **Deny** **or** the link expires without a response. |
+
+Wire `notify` to a messaging node (Slack, Teams, email, SMS) that includes the `{{approvalLink}}` variable from the node's output. Wire `approved` and `denied` to the next steps you want for each outcome.
+
+### Configuration
+
+Open the node's settings panel to configure:
+
+| Field | Default | Purpose |
+| --- | --- | --- |
+| **Preamble** | empty | Text shown to the approver on the form. Up to 5,000 characters. Supports Markdown. |
+| **Expiration (minutes)** | 60 | How long the approval link stays valid. Minimum 1 minute, maximum 43,200 (30 days). After expiration the `denied` handle fires. |
+| **Allow public access** | off | When on, anyone with the link can respond without signing in. When off, only authenticated org members can approve. |
+| **Name** | `Approval` | Label that appears on the canvas. Does not affect behavior. |
+
+### What the approver sees
+
+The approver clicks the link from the notification and lands on a hosted form at `/approve/{token}` served by Pinkfish. The form shows the preamble text (rendered as Markdown) with **Approve** and **Deny** buttons. Submitting either button closes the loop and the workflow resumes immediately on the corresponding handle.
+
+If **Allow public access** is off, the approver is prompted to sign in before the form renders.
+
+### Timeout behavior
+
+If nobody submits the form before the expiration, Pinkfish marks the approval as expired and fires the `denied` handle. The expired link can no longer be used — a stale approver who follows the link later sees an expired-approval page.
+
+### Legacy note: the pattern-based approach
+
+If you need more than a yes/no decision, a custom form layout, or multi-stage review, the pattern-based approach still works. It's described below and relies on generating HTML forms into the filestore, writing responses to a datastore, and resuming with a datastore trigger.
+
 ## How Human-in-the-Loop Works in Pinkfish
 
 ### **The HITL Pattern**
