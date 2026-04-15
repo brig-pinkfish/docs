@@ -1,36 +1,89 @@
 ---
 title: "AI Agents"
-description: "Configure AI assistants with custom instructions, MCP tools, and optional resources"
+description: "Configurable AI assistants with custom instructions, tools, resources, and channels"
 icon: "robot"
 ---
 
-An agent is a configurable AI assistant. You define its behavior with instructions, choose which tools it can use (via MCP servers), and optionally attach resources and workflows.
+An **agent** in Pinkfish is a configurable AI assistant. You define how it behaves with instructions, choose which model it runs on, pick the tools it can call (via MCP servers, attached workflows, or other agents), grant it access to resources (datastores, filestores, knowledge bases), and expose it through one or more channels (web chat, Slack, Microsoft Teams, a public URL). You **save** drafts while iterating and **release** published versions that become usable from Coworker.
 
-## What an agent is
+<img src="/images/agents/my-agents-list.png" alt="The /agents page showing a list of published agents with status badges, filters, search, and a Create new agent button" />
 
-- **Instructions** — The system prompt. Defines behavior, tone, and expertise.
-- **MCP servers** — Tools from integrations (Google Drive, Gmail, Slack, Salesforce, and many more). You select which servers the agent can use; it discovers and calls tools as needed. See [MCPs](/agents/mcps) for details.
-- **Resources** (optional) — Datastores, filestores, and knowledge bases. You grant read/write/delete per resource.
-- **Workflows** (optional) — Existing workflows the agent can invoke for multi-step processes.
+## What's in this section
 
-## Where you can use agents
-
-- **Web chat** — In the Pinkfish app
-- **Slack** — Connect an agent to a Slack workspace
-- **Microsoft Teams** — Connect an agent to a Teams tenant
-- **API** — Use agent API keys for programmatic access. See [Agent Management](/api-reference/platform/agent-management).
+<CardGroup cols={2}>
+  <Card title="My Agents" icon="table-list" href="/agents/my-agents">
+    The `/agents` page — list, filter, search, and monitor all agents in your workspace.
+  </Card>
+  <Card title="Agent Builder" icon="wrench" href="/agents/agent-builder">
+    Anatomy of the builder: tabs on the left, live preview on the right, save and release controls on top.
+  </Card>
+  <Card title="Instructions" icon="scroll" href="/agents/instructions">
+    Name, icon, description, system prompt, model choice, and prompt bubbles.
+  </Card>
+  <Card title="Tools" icon="screwdriver-wrench" href="/agents/tools">
+    MCP connections, embedded services, agents-as-tools, and workflows-as-tools.
+  </Card>
+  <Card title="Resources" icon="folder" href="/agents/resources">
+    Attach datastores, filestores, and knowledge bases with Read / Write / Admin permissions.
+  </Card>
+  <Card title="Channels" icon="radio" href="/agents/channels">
+    Publish your agent to Slack, Microsoft Teams, or a public External URL.
+  </Card>
+  <Card title="Monitor" icon="chart-line" href="/agents/monitor">
+    Replay an agent's chats, inspect tool calls, and debug behavior from inside the builder.
+  </Card>
+  <Card title="Advanced" icon="sliders" href="/agents/advanced">
+    Output Schema — force structured JSON responses when calling the agent via API.
+  </Card>
+  <Card title="Save & Release" icon="rocket" href="/agents/releases">
+    The draft-vs-release model, how releases reach Coworker, and how to roll back.
+  </Card>
+  <Card title="MCPs" icon="plug" href="/agents/mcps">
+    How agents discover and invoke MCP tools from your integrations.
+  </Card>
+</CardGroup>
 
 ## Agent types
 
-- **Chat** — Standalone conversational agent
-- **Workflow** — Agent bound to a specific workflow
+Pinkfish supports two agent types:
 
-## Key capabilities
+- **Chat** — A conversational agent that responds to messages. Use for assistants, researchers, and copilots.
+- **Workflow** — An agent bound to a specific workflow. Use when you want a workflow run to be triggered conversationally.
 
-- **Custom instructions** — Define behavior and tone
-- **MCP tools** — Access tools from 100+ integrations; authenticate once in [Integrations](/api-reference/platform/connections), agents use your connections
-- **Workflow orchestration** — Attach workflows for specialized processes
-- **Sharing** — Share agents with your org via ACLs (integrations do not share; recipients connect their own)
+Both types use the same builder.
+
+## Where agents run
+
+An agent can answer messages from any of these places once you release it:
+
+- **Coworker** — The chat tab inside Pinkfish. `@`-mention the agent in a Coworker chat.
+- **Slack** — Connect a Slack workspace in the Channels tab.
+- **Microsoft Teams** — Connect a Teams tenant in the Channels tab.
+- **External (public URL)** — A public link that anyone can chat with, with no Pinkfish login.
+- **API** — Programmatic access with an agent API key. See [Agent Management API](/api-reference/platform/agent-management).
+
+## How the pieces fit together
+
+<Steps>
+  <Step title="Write instructions">
+    On the **Instructions** tab, give the agent a name, an icon, a description users will see, a system prompt that defines its behavior, and a model. Optionally add prompt bubbles — one-click conversation starters.
+  </Step>
+  <Step title="Pick tools">
+    On the **Tools** tab, select MCP servers (integrations), Embedded Services, other agents you want this agent to be able to delegate to, and workflows it can trigger. Pinkfish adds a few Auto-selected Tools for every agent.
+  </Step>
+  <Step title="Attach resources">
+    On the **Resources** tab, grant read/write/admin access to specific datastores, filestores, and knowledge bases. Required tools are added to the Tools tab automatically.
+  </Step>
+  <Step title="Pick channels">
+    On the **Channels** tab, enable Slack, Microsoft Teams, or make the agent public via External. A published release is required before External works.
+  </Step>
+  <Step title="Test in preview">
+    The right-hand **Preview** pane is a live chat against your current draft. Click **Information** in the preview to double-check the selected model, tools, and resources.
+  </Step>
+  <Step title="Save, then release">
+    **Save** commits a draft. **Release** publishes an immutable snapshot that becomes available in everyone's Coworker tab (subject to sharing).
+  </Step>
+</Steps>
 
 ## Agent Memory
 
@@ -39,11 +92,13 @@ An agent is a configurable AI assistant. You define its behavior with instructio
   sessions.
 </Card>
 
-## Getting started
+## Sharing agents
 
-1. **Navigate to Agents** → Create New Agent
-2. **Instructions** — Name, description, and system prompt
-3. **MCP servers** — Select which servers (and thus tools) the agent can use
-4. **Resources** (optional) — Add datastores, filestores, or knowledge bases
-5. **Workflows** (optional) — Attach workflows from your library
-6. **Save and share** — Deploy with your team
+Agents can be shared with other people in your org via the agent's **Share** action. Recipients get access to chat with the agent, but they must connect their own integrations — Pinkfish does not share your OAuth tokens. See the [API reference](/api-reference/platform/agent-management) for programmatic sharing.
+
+## Related features
+
+- **[Coworker](/essentials/coworker)** — Where released agents appear for `@`-mention and chat.
+- **[Agent Monitor](/essentials/agent-monitor)** — Org-wide view of every agent chat across all users.
+- **[Datastores](/essentials/database)**, **[Filestores](/essentials/file-store)**, **[Knowledge Bases](/essentials/knowledge-base)** — The three resource types you can attach.
+- **[API connections](/essentials/connections)** — The integrations that feed the Tools tab.

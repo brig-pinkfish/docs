@@ -1,0 +1,196 @@
+---
+title: "Microsoft Teams"
+description: "Chat with Pinkfish agents and Coworker directly from Microsoft Teams"
+icon: "microsoft"
+---
+
+The Microsoft Teams integration brings Pinkfish agents and Coworker into the Teams chat surface your organization already uses. Once the "Pinkfish for Teams" app is installed by an administrator, anyone in your organization can message the bot from Teams to delegate work to an agent, get help from Coworker, or run any published agent they have access to — without opening the Pinkfish web app.
+
+Every conversation in Teams is also saved in Coworker, so you can pick up any Teams chat from the web app and vice versa.
+
+<Info>
+A short demo walk-through is available here: [Pinkfish for Teams demo](https://youtu.be/ue2xmY9IG8s).
+</Info>
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Agents in Teams" icon="robot">
+    Message any published agent you have access to from a Teams direct chat with the Pinkfish bot.
+  </Card>
+  <Card title="Coworker Sync" icon="comments">
+    Every Teams conversation appears as a chat in Coworker — continue the same thread from the web app.
+  </Card>
+  <Card title="Auto Agent Routing" icon="shuffle">
+    Send a message and Pinkfish routes it to the best-matching agent, or pick an agent explicitly with `list agents`.
+  </Card>
+  <Card title="Adaptive Cards" icon="table-cells">
+    Interactive cards handle agent selection, tool approvals, and connection picks directly inside Teams.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+Teams users chat with a single app called **Pinkfish for Teams**. Behind the scenes:
+
+1. Each incoming Teams message is routed to an agent in your active organization.
+2. If you haven't picked an agent for the conversation, Pinkfish uses the message to auto-select the best-matching published agent — or shows a picker if it can't decide.
+3. The agent runs the same way it would in the Pinkfish web app, posting its response (and any interactive prompts) back into the Teams conversation as Adaptive Cards.
+4. The full conversation is persisted to Coworker, with each Teams conversation mapped to one Coworker chat.
+
+Teams uses a flat conversation model (no threads), so power commands and agent selection apply to the whole conversation. Use `reset chat` to start over.
+
+## Setup
+
+Setting up Microsoft Teams has two sides: an admin installs the Pinkfish app in your Teams org once, then each end user signs in to link their account.
+
+### Admin: Install the Pinkfish app in Teams
+
+An administrator needs to sideload the Pinkfish app into your Microsoft Teams organization so the bot becomes available to everyone.
+
+1. In the Pinkfish web app, open an agent and go to the **Channel** tab, or go to **Settings → Agents**. Find the **Microsoft Teams** row.
+2. Click the download icon next to the Microsoft Teams label to open the **Set up Pinkfish for Teams** dialog.
+
+   ![Set up Pinkfish for Teams dialog in the Pinkfish web app](/images/microsoft-teams/setup-dialog.png)
+
+3. Click **Download app**. This generates a ZIP package (`teams-{environment}-package.zip`) that contains the app manifest and icons configured for your Pinkfish environment.
+4. Open **Microsoft Teams** (desktop) and navigate to **Apps → Manage your apps**.
+
+   ![Microsoft Teams Apps → Manage your apps](/images/microsoft-teams/teams-manage-apps.png)
+
+5. **Upload** the ZIP to your org's app catalog.
+
+   ![Uploading the Pinkfish ZIP to the Teams org app catalog](/images/microsoft-teams/teams-upload-zip.png)
+
+6. Under **Built for your org**, find the Pinkfish app and click **Add**.
+
+   ![Pinkfish app under Built for your org in Teams](/images/microsoft-teams/teams-built-for-your-org.png)
+
+7. Confirm installation when Teams prompts you, then click **Open** to start using Pinkfish for Teams.
+
+   ![Teams confirmation dialog with Open button](/images/microsoft-teams/teams-open-app.png)
+
+<Warning>
+The Pinkfish email of each Teams user must match their Microsoft 365 email. Pinkfish uses the Microsoft account email to match the Teams user back to a Pinkfish account.
+</Warning>
+
+### End user: First-time sign in
+
+The first time a user messages the Pinkfish bot in Teams, they are asked to sign in with their Microsoft account. This uses Microsoft's OAuth2 flow against Azure AD and grants Pinkfish access to the Teams profile needed to match the user to their Pinkfish account.
+
+After signing in once, the user can send messages freely.
+
+## Enabling Agents in Teams
+
+Pinkfish offers two ways to make published agents available in Teams:
+
+### Option 1: Org-level (all agents)
+
+Enable Teams once for the whole organization. Every published agent becomes reachable from Teams automatically, and individual agents can opt out if needed.
+
+1. In the Pinkfish web app, go to **Settings → Agents**.
+2. In the **Channels** section, toggle **Microsoft Teams** on.
+
+   ![Settings → Agents → Channels with Microsoft Teams toggle](/images/microsoft-teams/settings-channels-teams.png)
+
+When org-level Teams is enabled, the Teams toggle in the agent editor changes meaning — it now acts as an opt-out switch for that specific agent. Turning it off excludes the agent from Teams.
+
+### Option 2: Per-agent
+
+Enable Teams for each agent individually. Useful when only a subset of agents should appear in Teams.
+
+1. Open the agent in the **agent editor**.
+2. Open the **Channel** tab (pin it from the **+** menu if it isn't visible yet).
+3. Toggle **Microsoft Teams** on.
+
+   ![Agent editor Channel tab with Slack, Microsoft Teams, and External toggles](/images/microsoft-teams/agent-editor-channels.png)
+
+4. A Microsoft OAuth popup opens. Sign in with the Microsoft account that should host the agent in Teams.
+5. On success, a toast confirms **"Microsoft Teams integration enabled successfully"** and the agent becomes reachable from Teams.
+
+<Note>
+If both the org-level toggle and the per-agent toggle are available, org-level takes precedence. The per-agent toggle switches to opt-out behavior as soon as the org-level toggle is enabled.
+</Note>
+
+## Using Pinkfish from Teams
+
+Open a direct chat with the **Pinkfish for Teams** app in Microsoft Teams and send a message. By default, Pinkfish picks the best-matching agent for your message. If it can't confidently match one, it shows an agent picker as an Adaptive Card.
+
+![Pinkfish for Teams direct chat with an agent response](/images/microsoft-teams/teams-chat.png)
+
+### Power commands
+
+Power commands work when you start a fresh conversation (send them as the first message in a new chat, or after `reset chat`):
+
+| Command | What it does |
+|---------|--------------|
+| `help` | Show the list of available commands and a short intro. |
+| `list agents` | Show an Adaptive Card with all the agents you can pick from. |
+| `switch orgs` | Switch the active Pinkfish organization for this Teams chat. |
+| `reset chat` | Start a brand new conversation with the bot (Teams-only). |
+
+### Interactive cards
+
+When Pinkfish needs input — picking an agent, approving a tool action, selecting a connection, or confirming a sign-in — it posts an **Adaptive Card** in Teams. Tap the buttons or pick from the dropdown in the card, and the bot continues the flow based on your selection.
+
+![Adaptive Card asking the user to pick an agent](/images/microsoft-teams/teams-agent-picker-card.png)
+
+### File attachments
+
+To send a file to Pinkfish in Teams, **paste it into the message box** with **Cmd+V** (macOS) or **Ctrl+V** (Windows). The standard Teams paperclip / upload button is not supported — only clipboard paste works. Copy a file (or screenshot) to your clipboard, click into the chat with the Pinkfish bot, and paste.
+
+Pinkfish ingests the pasted attachment and makes it available to the agent as input, the same way file uploads work in Coworker.
+
+## Coworker and Teams
+
+Microsoft Teams is one of the **channels** Coworker can be reached through. The other channels are the Pinkfish web app, Slack, and the embedded Agent web app.
+
+- Each Teams conversation shows up as a chat in **Coworker** in the web app — with the same messages, attachments, and agent responses.
+- Chats you've shared, or chats belonging to orgs you share with, also appear in your Coworker chat list.
+- You can answer a Teams message from the web app and vice versa — the conversation stays in sync.
+
+See the [Coworker](/essentials/coworker) guide for more on chat history, knowledge base selection, and sharing.
+
+## Administration
+
+### Managing the org-level channel setting
+
+The org-level Teams channel is controlled in **Settings → Agents → Channels**. Only org admins can change it. When the setting changes:
+
+- Turning it **on** makes every published agent in the org reachable from Teams, except agents that have explicitly opted out.
+- Turning it **off** removes every agent from Teams at once. Individual per-agent Teams connections remain in place and can still be used, but the blanket exposure stops.
+
+### Removing Teams access for a single agent
+
+- **Per-agent mode:** open the agent editor, go to **Channel**, and toggle Microsoft Teams off. A toast confirms **"Microsoft Teams integration disabled"**.
+- **Org-level mode:** open the agent editor, go to **Channel**, and toggle Microsoft Teams off. The toggle acts as an opt-out for that agent only; other agents stay reachable.
+
+### Multi-environment app IDs
+
+Pinkfish ships separate Teams bot registrations for each environment (production, staging, dev, and white-label deployments). The **Download app** button in the web app always generates the ZIP that matches the environment you're currently using, so admins do not have to worry about picking the right app ID manually. If your org uses multiple Pinkfish environments (for example, a staging org and a production org), each environment requires its own Teams app installation.
+
+## Limitations and Notes
+
+- Teams uses a flat conversation model — there are no threads inside the direct chat. Use `reset chat` to start a new conversation.
+- Power commands (`help`, `list agents`, `switch orgs`, `reset chat`) only take effect as the first message in a new conversation.
+- Channels and group chats are not currently supported — the Pinkfish app is scoped to personal (direct) chats only.
+- File attachments must be sent via **Cmd+V / Ctrl+V** paste. The Teams upload (paperclip) button is not supported.
+- Users who are members of multiple Pinkfish organizations can switch between them with `switch orgs`.
+- The integration is OAuth2-based against Azure AD `/common` tenant, so it works in multi-tenant Microsoft 365 environments out of the box.
+
+## Troubleshooting
+
+**The bot doesn't show up in Teams "Built for your org".**
+Your administrator has not completed the upload step. Ask them to download the app ZIP from **Settings → Agents** (or from the Channels tab on any agent) and sideload it into the Teams org catalog.
+
+**Sign-in fails or never completes.**
+Check that the Pinkfish account email and the Microsoft 365 account email are identical. Pinkfish matches users by email.
+
+**An agent doesn't appear when I send `list agents`.**
+Verify the agent is **published** and that you have access to it. Unpublished or draft agents are not exposed through Teams.
+
+**Teams toggle in the agent editor does nothing visible.**
+When the org-level Teams channel is on, the agent-level toggle is an opt-out switch rather than an OAuth trigger. Switch it off to exclude the agent from Teams; switch it on to include it again.
+
+**I want to start a new conversation but `reset chat` isn't working.**
+`reset chat` must be sent as the first message in a new Teams exchange with the bot, not as a reply in an existing conversation.
