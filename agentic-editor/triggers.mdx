@@ -1,0 +1,139 @@
+---
+title: "Triggers"
+description: "Every way an Agent Mode workflow can start — manual, API, schedule, email, and third-party app events."
+icon: "bolt"
+---
+
+A **trigger** is the entry point of your workflow. Each workflow has at least one — the built-in Manual trigger — and you can add more to make the workflow react to events: an HTTP request, a cron schedule, an inbound email, or an event in a connected app like Slack or Gmail.
+
+{/* TODO screenshot: Triggers tab of the Add Node panel showing the full list of trigger types. */}
+
+## Trigger types
+
+<CardGroup cols={2}>
+  <Card title="Manual Trigger by Builder" icon="play">
+    Run manually from the builder.
+  </Card>
+  <Card title="API Trigger" icon="webhook">
+    Start via an HTTP endpoint.
+  </Card>
+  <Card title="Schedule Trigger" icon="clock">
+    Run on a schedule.
+  </Card>
+  <Card title="Email Trigger" icon="envelope">
+    Start when an email is received.
+  </Card>
+  <Card title="Integration App Trigger" icon="puzzle-piece">
+    Start from an external app event (Slack, Gmail, GitHub, etc.).
+  </Card>
+  <Card title="Interface" icon="window-maximize">
+    Start from a user-facing form. See [Interface](/agentic-editor/interface).
+  </Card>
+</CardGroup>
+
+### Manual Trigger
+
+The simplest trigger — always present on every workflow and cannot be deleted. Fires when you click **Run Workflow** in the editor header or when you call the workflow programmatically without a specific trigger. Useful for authoring and testing.
+
+### API Trigger
+
+Exposes the workflow as an HTTP endpoint. Each API trigger has two URLs:
+
+- **Draft URL** — hits the current draft of the workflow. Useful while iterating.
+- **Live URL** — hits the most recent [release](/agentic-editor/releases) of the workflow.
+
+Settings include:
+
+- **Authentication** — an auth header Pinkfish auto-provisions for the trigger.
+- **Input schema** — declare the expected request body shape so the coding agent (and downstream nodes) know what fields to expect.
+
+{/* TODO screenshot: API trigger settings panel showing Draft and Live URLs, Copy buttons, and the auth header preview. */}
+
+Pinkfish provides a helper to test an API trigger without leaving the editor — click **Call API trigger** in the run area to open a modal that generates a sample `curl` command with your auth token and a pretty-printed JSON body editor.
+
+{/* TODO screenshot: Call API Trigger modal open with a generated curl snippet and editable body. */}
+
+For programmatic invocation details, see [Triggers API](/api-reference/introduction).
+
+### Schedule Trigger
+
+Runs the workflow on a cron schedule. Configure with:
+
+- **Cron expression** — standard 5-field cron (`* * * * *`).
+- **Timezone** — the timezone the cron runs in.
+- A **next-run preview** that shows when the trigger will fire next, in a human-readable form ("Tomorrow at 08:00 UTC").
+
+<Frame>
+  <img src="/images/agentic-editor/triggers/schedule-trigger-settings.png" alt="Schedule Trigger settings panel with Timezone, Run every, and time-of-day fields filled in, plus an Input Payload editor." />
+</Frame>
+
+### Email Trigger
+
+Gives the workflow an inbound email address — `trigger-<id>@pinkfish.email` — and fires whenever a message arrives at that address. The email body, subject, sender, and attachments are exposed as inputs to downstream nodes.
+
+{/* TODO screenshot: Email trigger settings panel displaying the inbound address with a Copy button. */}
+
+### Integration App Trigger
+
+Start the workflow from an event inside a connected app. Pick the app (Slack, Gmail, GitHub, HubSpot, Linear, Notion, and many more), then pick the event (`New Email`, `New Slack Message`, `Issue Created`, etc.). Pinkfish subscribes to the app's webhook or polls its API and fires your workflow when the event occurs.
+
+Authentication flows through your existing [connections](/essentials/api-connections). If the app isn't connected yet, the trigger editor walks you through adding the connection inline.
+
+{/* TODO screenshot: App trigger picker drilled into Slack, with the available Slack triggers like "New Message" and "Mention" listed. */}
+
+### Event Trigger
+
+For internal Pinkfish events — another workflow completing, a data collection updating, a specific agent finishing a run. See [Event triggers](/essentials/event-triggers) for the full reference.
+
+## Trigger input schema
+
+Every trigger can declare an **input schema** — a JSON-schema-like definition of the data shape the workflow expects to receive. Inputs appear as named fields the coding agent and downstream nodes can reference (`{{trigger.customerName}}`), and they're validated before the workflow runs.
+
+Click **Edit input schema** on any trigger settings panel to open the schema editor. Fields support types: `string`, `number`, `boolean`, `object`, `array`, `file`, `enum`, `date`, and more.
+
+{/* TODO screenshot: Trigger Input Schema modal open with three fields defined — text, number, and enum. */}
+
+<Tip>
+  Declaring an input schema makes your workflow much easier for others to call correctly — both via API and via the in-editor Run button.
+</Tip>
+
+## Draft vs live triggers
+
+Agentic workflows maintain separate **draft** and **live** versions of each trigger. Iterating on the draft doesn't affect production callers; when you release the workflow, the live trigger URL starts pointing at the new version.
+
+You'll see a small **Draft** or **Live** badge in the trigger settings panel indicating which version's configuration you're editing.
+
+## Testing a trigger
+
+- **Manual** — click **Run Workflow** in the header.
+- **API** — open **Call API trigger** and send the generated curl.
+- **Schedule** — click **Run now** (fires as if the scheduled time had arrived).
+- **Email** — send a real email to the trigger's address.
+- **App trigger** — perform the event in the source app (post a message, open an issue).
+
+See [Running a Workflow](/agentic-editor/running) for the full run flow.
+
+## Adding a trigger
+
+Open the **Add Node** panel, switch to the **Triggers** tab, and pick a trigger type. The trigger node appears on the canvas at the left edge and its settings panel opens automatically so you can configure it immediately.
+
+<Warning>
+  App triggers require a live connection to the source app. If the connection expires or is revoked, the trigger shows an **Inactive connection** badge in the editor and pauses firing. Re-authenticate from [Connections](/essentials/api-connections).
+</Warning>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Running a workflow" icon="play" href="/agentic-editor/running">
+    Test your trigger with real or simulated invocations.
+  </Card>
+  <Card title="Interface" icon="window-maximize" href="/agentic-editor/interface">
+    Configure the user-facing form that the Interface trigger serves.
+  </Card>
+  <Card title="Event triggers" icon="bell" href="/essentials/event-triggers">
+    Pinkfish's internal event system.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/introduction">
+    Program against trigger endpoints from outside Pinkfish.
+  </Card>
+</CardGroup>

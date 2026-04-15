@@ -1,0 +1,131 @@
+---
+title: "Canvas"
+description: "Arrange, connect, and execute nodes on the infinite canvas that sits at the heart of every Agent Mode workflow."
+icon: "diagram-project"
+---
+
+The canvas is the visual workspace where your workflow lives. Every node — triggers, tool calls, code blocks, control flow, interfaces — appears as a tile that you can drag, connect, and inspect. The Agentic Editor uses an infinite pan-and-zoom canvas so even very large workflows stay navigable.
+
+<Frame>
+  <img src="/images/agentic-editor/canvas/canvas-populated.png" alt="Agent Mode canvas with a connected four-node workflow — a trigger connected to weather, formatting, and email-sending nodes." />
+</Frame>
+
+## Navigating the canvas
+
+<CardGroup cols={2}>
+  <Card title="Pan" icon="arrows-up-down-left-right">
+    Click and drag on empty canvas, or hold Space and drag from anywhere.
+  </Card>
+  <Card title="Zoom" icon="magnifying-glass-plus">
+    Scroll with the mouse wheel or pinch on a trackpad. Use the **+** / **−** controls in the bottom-left to zoom in fixed steps.
+  </Card>
+  <Card title="Fit to view" icon="expand">
+    Click the fit-to-view button in the canvas controls to frame all nodes in the current viewport.
+  </Card>
+  <Card title="Minimap" icon="map">
+    The minimap in the corner shows your full workflow and highlights the current viewport. Click anywhere in the minimap to jump there.
+  </Card>
+</CardGroup>
+
+{/* TODO screenshot: Close-up of the DiagramControls toolbar (zoom, fit, auto-layout, undo, redo) in the bottom-left of the canvas. */}
+
+## Working with nodes
+
+### Selecting nodes
+
+- **Single-select** — click a node.
+- **Multi-select** — hold `Shift` and click each node, or click on empty canvas and drag a selection box around them.
+- **Deselect** — click any empty area.
+
+Selected nodes get a highlighted ring and become the target of keyboard shortcuts like `Backspace` / `Delete`.
+
+{/* TODO screenshot: Canvas showing three nodes selected via drag-box with the selection highlight visible. */}
+
+### Moving nodes
+
+Click and drag any node to reposition it. When you release, the new position is saved to the workflow automatically — there's no "save" button for layout. Multi-select and drag to move several nodes together.
+
+<Tip>
+  Pinkfish remembers your layout, so workflows always look the way you left them across sessions.
+</Tip>
+
+### Connecting nodes
+
+Each node has **handles** on its sides — input handles on the left, output handles on the right. Drag from an output handle to another node's input handle to create an edge between them. Release outside any handle to cancel.
+
+- Nodes with multiple outputs (like **If-Else** or **Router**) expose labeled handles — you'll see `true` / `false` for If-Else, and your custom labels for Router.
+- **Merge** nodes accept multiple incoming edges so you can fan several branches back into one path.
+
+### Editing edges
+
+Click any edge to open the **Edge settings** panel on the right. For edges coming out of If-Else, Router, or other conditional nodes, this panel exposes the condition that gates whether execution follows the edge — including the full mention-based expression editor. Regular edges have minimal configuration (mostly a label).
+
+{/* TODO screenshot: Edge settings panel open for an If-Else "true" branch, showing the condition editor with a mention of a previous node's output. */}
+
+### Deleting nodes and edges
+
+Select any node or edge and press `Backspace` or `Delete`. The **Manual** trigger cannot be deleted — every workflow needs at least one entry point.
+
+## Canvas controls
+
+The bottom-left of the canvas hosts a small toolbar with four controls:
+
+| Button | Action |
+| --- | --- |
+| <span>🧹 Auto-layout</span> | Re-flows all nodes into a clean, left-to-right layout. Safe to click — you can always undo. |
+| <span>↶ Undo</span> | Step back through diagram edits: node adds, moves, deletes, edge changes. Disabled when there's nothing to undo. |
+| <span>↷ Redo</span> | Step forward after an undo. Disabled when there's nothing to redo. |
+| <span>➕ Zoom / fit</span> | ReactFlow's standard zoom and fit-to-view controls. |
+
+<Info>
+  Undo and redo operate on **canvas structure** only — node positions, edges, sticky notes, node additions and deletions. They do not undo content changes inside a node's settings panel; those persist as you type.
+</Info>
+
+## The right-click menu
+
+Right-clicking a selected node opens a context menu with quick actions:
+
+- **Run until this node** — runs the workflow from its trigger up to (and including) this node, then stops. Useful for iterating on a specific step.
+- **Run entire workflow** (on trigger nodes) — fires the workflow from this trigger.
+- **Add node to the chat context** — piles the node into the Coding Agent Chat's context so your next prompt references it directly.
+- **View node details** — opens the node's settings side-panel, same as a double-click.
+- **Delete** — removes the node. Disabled for the Manual trigger.
+
+<Frame>
+  <img src="/images/agentic-editor/canvas/context-menu.png" alt="Right-click context menu open on the Manual Trigger node showing Run entire workflow and View node details." />
+</Frame>
+
+## Node status indicators
+
+While a workflow runs, every node displays its live status via color and iconography:
+
+- **Pending** — gray outline, waiting to run.
+- **Running** — animated pulse on the node border.
+- **Success** — green checkmark badge in the top-right corner.
+- **Error** — red exclamation badge; click to open the error in the Log tab.
+- **Skipped** — dimmed with a slash badge when the node was bypassed (for example, the "false" branch of an If-Else).
+
+<Frame>
+  <img src="/images/agentic-editor/running/run-complete.png" alt="Canvas after a completed run with green checkmark status badges on the executed nodes." />
+</Frame>
+
+## Hover actions
+
+Hovering over a node reveals a small menu with shortcut buttons — typically **Run**, **Open settings**, and **Delete**. The hover menu is a faster path for the most common actions without needing the right-click menu.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Adding nodes" icon="plus" href="/agentic-editor/adding-nodes">
+    Open the Add Node panel and pick from Nodes, Triggers, and Interface tabs.
+  </Card>
+  <Card title="Node types reference" icon="cubes" href="/agentic-editor/node-types">
+    The full catalog of executable and control-flow nodes you can place.
+  </Card>
+  <Card title="Sticky notes & canvas colors" icon="note-sticky" href="/agentic-editor/sticky-notes-and-canvas">
+    Annotate the canvas and customize its background.
+  </Card>
+  <Card title="Running a workflow" icon="play" href="/agentic-editor/running">
+    Kick off a run from the canvas or chat, with inputs, batch mode, or a trigger.
+  </Card>
+</CardGroup>
