@@ -1,0 +1,78 @@
+---
+title: "Channels tab"
+description: "Publish your agent to Slack, Microsoft Teams, or a public External URL"
+icon: "radio"
+---
+
+The **Channels** tab controls where users can chat with your agent. By default every agent is usable from Coworker inside Pinkfish. Channels extend that reach to Slack, Microsoft Teams, and — optionally — a public URL that works without a Pinkfish login.
+
+<img src="/images/agents/channels-tab.png" alt="Channels tab showing three cards — Slack, Microsoft Teams, and External — each with an icon, a short description, and an off toggle on the right" />
+
+## Slack
+
+Connects your agent to a Slack workspace so users can `@`-mention it in channels or DMs.
+
+> *"Enable to let users interact with this agent via Slack."*
+
+If your organization has enabled Slack for all agents, the copy changes to:
+
+> *"Your org has Slack enabled for all agents. Toggle off to exclude this agent."*
+
+### How to connect
+
+1. Click the toggle. A popup opens (`about:blank` first, then redirects to Slack's OAuth page).
+2. Approve the Pinkfish app for the target workspace.
+3. Wait for the toast: **"Slack integration enabled successfully"**.
+
+Disabling shows: **"Slack integration disabled"**.
+
+<Note>
+  New agents must be saved at least once before Slack can be enabled. Clicking the toggle on an unsaved agent pops a **Save agent first** warning modal.
+</Note>
+
+## Microsoft Teams
+
+Same pattern as Slack, but for Microsoft Teams.
+
+> *"Enable to let users interact with this agent via Microsoft Teams."*
+
+Enabling triggers an OAuth flow and, on success, the toast **"Microsoft Teams integration enabled successfully"**. A separate **Setup Modal** walks through installing the Pinkfish app into your Teams tenant if it isn't already there.
+
+## External
+
+Makes the agent available as a **public URL** — anyone with the link can chat with it, no Pinkfish login required.
+
+> *"Users can interact with this agent without logging into Pinkfish. Ideal for public-facing agents."*
+
+### How it works
+
+- Toggling **External** on requires the agent to have at least one [Release](/agents/releases). If you're still on a pure draft, publish first.
+- After publishing, a public URL appears under the External card with a copy-to-clipboard button.
+- Share the URL anywhere — it's a full chat surface, not a widget snippet.
+
+<Warning>
+  Enabling External on an agent that uses tools from **Connections** (Slack, Gmail, Salesforce, etc.) pops a warning: those tools will be removed from the agent, because they depend on an authenticated user's connection and can't run anonymously. Tools from **Embedded Services** (code execution, artifacts, etc.) stay available.
+</Warning>
+
+If you change External settings but haven't saved, a yellow triangle appears next to the card with the tooltip:
+
+> *"Save the agent to persist this external access change."*
+
+Click **Save** in the top bar to commit.
+
+### What External is not
+
+- **It is not a widget embed.** There's no iframe snippet to drop into your site and no appearance customization today. If you want an embedded widget, give users the public URL as a link.
+- **It is not an API key.** Programmatic access is separate — see the [Agent Management API](/api-reference/platform/agent-management).
+
+## Channel behavior at runtime
+
+When a channel is enabled, Pinkfish maps each conversation there back to an agent chat. Thread context is preserved: a Slack thread, a Teams reply chain, and a Coworker chat each become their own conversation record that the agent sees in sequence.
+
+Org admins can opt individual agents out of org-wide channel enablement via the [Agent Management API](/api-reference/platform/agent-management). For most users, the per-agent Slack / Teams toggles in this tab are all you need.
+
+## Related
+
+- [Save & Release](/agents/releases) — External requires a release.
+- [Coworker](/essentials/coworker) — the default web channel, always on.
+- [Agent Management API](/api-reference/platform/agent-management) — programmatic / API-key access.

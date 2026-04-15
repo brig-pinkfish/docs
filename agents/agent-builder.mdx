@@ -1,0 +1,128 @@
+---
+title: "Agent Builder"
+description: "Anatomy of the builder — tabs on the left, live preview on the right, save and release on top"
+icon: "wrench"
+---
+
+The **Agent Builder** is where you configure every aspect of an agent. You open it by clicking an agent in the [My Agents list](/agents/my-agents) or by clicking **Create new agent** (which goes to `/agents/builder/new`).
+
+<img src="/images/agents/agent-builder-overview.png" alt="Agent Builder for the Sales Assistant agent — all six tabs (Instructions, Tools, Resources, Channel, Monitor, Advanced) pinned on the left, Instructions tab active with the agent name and system prompt, and the right-hand Preview pane showing an active chat where the user asked 'Summarize this week's pipeline changes and highlight anything at risk' and the agent is replying" />
+
+The builder is a three-part layout:
+
+1. **Top bar** — back arrow, agent name (with quick actions), tab strip, **Save** and **Release** buttons.
+2. **Tab panel** (left) — the configuration surface. You can have up to six tabs pinned at once.
+3. **Preview pane** (right) — a live chat against your draft, or an Information view of the agent's current config.
+
+## The top bar
+
+From left to right:
+
+- **← Back arrow** — returns you to `/agents`.
+- **Agent name** — click the chevron next to the name to open a small menu with **Tag**, **Share**, and **Delete** actions. Edit the name itself from the **Instructions** tab.
+
+<img src="/images/agents/agent-builder-name-menu.png" alt="Agent name dropdown open showing Tag, Share, and Delete (in red) options" />
+- **Tabs** — a horizontal strip of the sections you've pinned. See below.
+- **Save** — writes the current form values as a new draft version. Disabled when nothing has changed and on brand-new agents until required fields are filled.
+- **Release** — opens the Publish dropdown. See [Save & Release](/agents/releases).
+
+<Note>
+  Some buttons fire **"Please save the agent before [action]"** toasts when you try to Tag, Share, or Delete a brand-new agent that hasn't been saved yet.
+</Note>
+
+## The six tabs
+
+<img src="/images/agents/agent-builder-tabs.png" alt="Builder tabs strip with all six tabs pinned — Instructions, Tools, Resources, Channel, Monitor, Advanced — plus a trailing + button for un/re-pinning" />
+
+Every agent has up to six configuration tabs, listed here in their canonical order:
+
+<CardGroup cols={2}>
+  <Card title="Instructions" icon="scroll" href="/agents/instructions">
+    Name, icon, description, system prompt, model, prompt bubbles. **Always pinned** — you can't remove it.
+  </Card>
+  <Card title="Tools" icon="screwdriver-wrench" href="/agents/tools">
+    MCP connections, embedded services, agents-as-tools, workflows-as-tools.
+  </Card>
+  <Card title="Resources" icon="folder" href="/agents/resources">
+    Datastores, filestores, knowledge bases with Read / Write / Admin permissions.
+  </Card>
+  <Card title="Channels" icon="radio" href="/agents/channels">
+    Slack, Microsoft Teams, External (public URL).
+  </Card>
+  <Card title="Monitor" icon="chart-line" href="/agents/monitor">
+    Replay this agent's chats from inside the builder.
+  </Card>
+  <Card title="Advanced" icon="sliders" href="/agents/advanced">
+    Output Schema — structured JSON responses for API callers.
+  </Card>
+</CardGroup>
+
+### Pinning tabs
+
+Only **Instructions** and **Tools** are pinned by default. Click the **+** at the end of the tab strip to pin **Resources**, **Channels**, **Monitor**, or **Advanced**. Pinned tabs persist across sessions.
+
+If a tab has validation errors, its label turns red.
+
+<Note>
+  The **Channels** and **Advanced** tabs are hidden for Pinkfish's built-in system agents.
+</Note>
+
+## The preview pane
+
+The right side of the builder is a live sandbox against your current draft. It has two tabs:
+
+### Test
+
+The default view — a chat interface connected to the draft you're editing. Type a message, watch the agent respond with the current instructions, model, and tools. This is where you validate changes before releasing.
+
+<img src="/images/agents/agent-builder-preview-chat.png" alt="Preview pane showing an active chat with the Sales Assistant agent — user prompt 'Summarize this week's pipeline changes and highlight anything at risk.' and the agent replying with a 'Working... 5s' indicator" />
+
+For brand-new agents you'll see:
+
+> *"Save the agent first, then start a conversation to test it here."*
+
+Click **+ New Chat** to clear the preview and start fresh — useful when you've changed instructions and want to see behavior from a clean starting point.
+
+### Information
+
+The **Information** tab is a read-only summary of what the agent will actually do when invoked.
+
+<img src="/images/agents/agent-builder-information.png" alt="Information pane showing Selected Model (Sonnet 4.5), Selected Tools (1) — Knowledge Base expanded showing four tools (Ask, Create/Rewrite, Search, Update/Delete), Auto-selected Tools (5) — Write Artifact, Read Artifact, List Artifacts, Write Artifact from URL, Code Execution — and Selected Resources (2) — two Blueberries Chat Collection entries with Read/Write/Admin summaries" />
+
+It shows:
+
+- **Selected Model** — the model label (e.g. `Sonnet 4.5`).
+- **Selected Tools (N)** — tools you picked, grouped by server. Shows `All X tools` when you've selected a server wholesale, or the exact tool names when you picked a subset. Expand rows with more than five tools via **+N more**.
+- **Auto-selected Tools** — built-in tools that every agent gets automatically (e.g. Write Artifact, Read Artifact, Run Code). These can't be turned off.
+- **Selected Resources (N)** — attached datastores/filestores/KBs with a Read / Write / Admin summary.
+
+The Information view is especially handy when debugging — if the agent isn't using a tool you expected, this pane tells you whether it's in scope.
+
+## The full workflow
+
+<Steps>
+  <Step title="Open or create">
+    Click a row in [My Agents](/agents/my-agents), or click **Create new agent** to land on `/agents/builder/new`.
+  </Step>
+  <Step title="Fill the Instructions tab">
+    Name, instructions, icon, description, model. These are the minimum to save.
+  </Step>
+  <Step title="Save">
+    Click **Save** to persist a draft. You can test it in the Preview pane now.
+  </Step>
+  <Step title="Pin the other tabs as needed">
+    Click **+** to add Resources, Channels, Monitor, or Advanced. Configure each.
+  </Step>
+  <Step title="Iterate in Preview">
+    Chat with the draft. Check the **Information** tab to confirm model, tools, and resources look right.
+  </Step>
+  <Step title="Release">
+    Open the **Release** dropdown and publish. The released version becomes available in Coworker and on enabled channels.
+  </Step>
+</Steps>
+
+## Related
+
+- [Save & Release](/agents/releases) — what Save vs Release actually does.
+- [Instructions](/agents/instructions) — the first tab in detail.
+- [Monitor](/agents/monitor) — the in-builder monitor, not the org-wide one.
