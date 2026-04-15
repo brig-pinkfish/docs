@@ -1,0 +1,228 @@
+---
+title: "Organization Settings"
+description: "Admin-level controls for users, usage, billing, SSO, skills, models, API credentials, and channel integrations"
+icon: "building-shield"
+---
+
+Organization Settings is where administrators configure the shared behavior of an entire Pinkfish organization — inviting teammates, controlling log retention, managing billing, setting up SSO, publishing organization-wide skills and Saved Actions, minting API credentials, choosing default LLM models, and enabling channel integrations. Most sections are admin-only; read-only views are available to regular members where it makes sense.
+
+Open **Settings** from the user menu and pick any item under the **ORGANIZATION** heading in the sidebar.
+
+## Key Sections
+
+<CardGroup cols={2}>
+  <Card title="Users" icon="users">
+    Invite, edit, and remove organization members.
+  </Card>
+  <Card title="Usage" icon="chart-line">
+    Workflow runs, credit burn, and analytics over time.
+  </Card>
+  <Card title="Workflows" icon="sliders">
+    Global log verbosity for dev and production runs.
+  </Card>
+  <Card title="Billing" icon="credit-card">
+    Plan details, invoices, and subscription management.
+  </Card>
+  <Card title="Organizations" icon="sitemap">
+    Parent and sub-organization hierarchy.
+  </Card>
+  <Card title="SSO" icon="key">
+    SAML identity provider configuration.
+  </Card>
+  <Card title="Skills" icon="graduation-cap">
+    Organization-wide skills for all members' agents.
+  </Card>
+  <Card title="Saved Actions" icon="floppy-disk">
+    Opt out of the cross-organization code cache pool.
+  </Card>
+  <Card title="Promotion Paths" icon="diagram-project">
+    Ordered stages for promoting workflows across orgs.
+  </Card>
+  <Card title="API Credentials" icon="key-skeleton">
+    OAuth 2.0 client credentials for programmatic access.
+  </Card>
+  <Card title="Agents" icon="message-bot">
+    Enable Slack and Microsoft Teams channels for agents.
+  </Card>
+  <Card title="Models" icon="microchip-ai">
+    Primary and fallback LLM models for the organization.
+  </Card>
+</CardGroup>
+
+## Users
+
+The **Users** page is the membership roster. Admins invite new members, change permissions, copy invite links, and remove accounts from here.
+
+![Organization Users page showing a search bar, Invite Users button, and a table of members with permission badges](/images/settings-organization/settings-org-users.png)
+
+Each row shows:
+
+- **Name** and avatar
+- **Org Permission** — `Admin` or `Member`
+- **User Role** — `Builder` or `End User`
+- **Created** date
+- **Actions** menu — edit, copy invite link, resend invite, revoke invite (for pending invites), or remove user (for accepted members)
+
+Pending invitees get a **Pending** badge next to their name until they accept. Hover the info tooltips on the column headers for the full definition of each role. The **Invite Users** button is disabled when the organization has no available seats.
+
+## Usage
+
+The **Usage** section is the operational dashboard for the organization — how many runs, how many credits consumed, and who drove the work.
+
+![Organization Usage dashboard with User Reporting, Leaderboard, Organization Reporting, and Monthly Trends report tiles](/images/settings-organization/settings-org-usage.png)
+
+Choose a report from the top:
+
+- **User Reporting** — breakdown of runs and credits per member
+- **Leaderboard** — top users by workflow execution
+- **Organization Reporting** — agent, skill, and session usage at the org level
+- **Monthly Trends** — month-over-month activity chart
+
+Each report supports date-range selection (Last 24 hours, Last 7 days, Last Month, or a custom range) and CSV export for daily summaries. The classic Recent Runs / Daily Summary table view is available by toggling off the new dashboard.
+
+## Workflows
+
+The organization **Workflows** page controls log verbosity for every workflow in the org. These settings exist so you can tune how much data Pinkfish retains per run — useful for GDPR/HIPAA compliance.
+
+![Organization Workflows page showing Development and Production log level dropdowns](/images/settings-organization/settings-org-workflows.png)
+
+Two dropdowns, each with the same four levels:
+
+- **None** — don't store logs
+- **Minimal** — errors only
+- **Standard** — errors, warnings, and success messages
+- **Verbose** — all messages
+
+The **Development Log Level** applies when workflows run from the editor; the **Production Log Level** applies when they run from triggers. Both apply organization-wide and take effect immediately.
+
+## Billing
+
+The **Billing** page shows your current plan, credit consumption, and subscription controls. It's hidden for enterprise organizations — enterprise billing runs through the dedicated Pinkfish billing process — and only plan modification actions are restricted to admins.
+
+Typical elements on this page:
+
+- **Your Current Plan** card with plan name, subscription type (Weekly / Monthly / Annual), included credits, usage cost, credits refresh date, total credits used, and a usage bar chart
+- **Manage Plan** / **Upgrade Plan** / **Reactivate Plan** (label depends on status)
+- **Invoices and Payment** and **Update Payment Info** buttons
+- **Cancel Subscription** link
+- Links to learn more about plans and usage pricing
+
+See [Pricing](/billing/pricing) and [Credits](/billing/credits) for the broader billing model.
+
+## Organizations
+
+The **Organizations** page shows the organization hierarchy available to your account. For enterprise prime organizations this is where you create and manage sub-organizations.
+
+![Organization Organizations page showing the parent org card with an Add sub-organization button](/images/settings-organization/settings-org-organizations.png)
+
+The page header tells you how many organizations are in your group. Each organization is shown as a card with its name, your role (`Admin`), and the plan (`Enterprise Prime`, etc.). Click the pencil icon to edit the organization's details or the card itself to switch into it. The **Sub-organizations** panel lists children underneath the parent; click **+ Add sub-organization** to spin up a new child org (enterprise prime admins only). The search box filters the list when you have many orgs.
+
+## SSO
+
+The **SSO** page walks you through configuring SAML 2.0 Single Sign-On. It's an Enterprise-plan feature and is only configurable from the **parent** organization in a multi-org group.
+
+![Organization SSO page showing provider picker and Setup in Okta instructions](/images/settings-organization/settings-org-sso.png)
+
+The page is split into two steps:
+
+1. **Select Your Identity Provider** — pick a preset (Okta, Google Workspace, Microsoft Entra, Ping Identity, Other SAML 2.0 Provider). The page then shows provider-specific instructions.
+2. **Setup in {Provider}** — the Single Sign-On URL (ACS URL), Audience URI, a table of required SAML attribute mappings (`email`, `firstName`, `lastName`, and others), and numbered step-by-step instructions for that provider.
+
+Once you've configured the IdP, paste the metadata URL into the form below, specify the email domain that should be routed through SSO, and toggle **Enforce domain** to require SSO for users on that domain. The form also has an **Enable / Disable** switch so you can stage setup without cutting over.
+
+Non-enterprise organizations see an **Enterprise Feature** notice; non-admins see **Access Restricted**; sub-orgs are told to configure SSO from the parent org.
+
+## Skills (Organization)
+
+Organization-wide skills work like [personal skills](/organization/settings-personal#skills), but every member's agents can discover them. Use them to capture house style, compliance rules, or shared domain knowledge.
+
+![Organization Skills page listing a skill with availability badges and a Create Skill button](/images/settings-organization/settings-org-skills.png)
+
+The table format is identical to personal skills (Name, Description, Available to, Actions). The page header reads **Organization-wide skills that all members' agents will discover and use.** Only organization admins can create, edit, or delete entries.
+
+## Saved Actions (Organization)
+
+The organization **Saved Actions** page has a single control: an opt-out toggle for the shared global pool.
+
+![Organization Saved Actions page showing the Opt out of global saved actions pool toggle](/images/settings-organization/settings-org-saved-actions.png)
+
+When the toggle is on, code cache matching only searches your organization's own Saved Actions — it will not pull from the pool shared across all Pinkfish organizations. This is useful for organizations with strict data-isolation requirements.
+
+## Promotion Paths
+
+Promotion Paths define ordered pipelines for moving workflows between organizations — a common pattern is `dev → staging → prod`, where each stage maps a workflow tag to a target org.
+
+![Organization Promotion Paths page showing two paths — Production Pipeline with dev/staging/prod stages and Hotfix Rollout with hotfix/prod stages](/images/settings-organization/settings-org-promotion-paths.png)
+
+The page header reads **Promotion paths define ordered stages for promoting workflows across organizations. Each stage maps a tag to an organization.** When no paths exist yet, the empty state says `No promotion paths yet. Create one to get started.`
+
+Click **Create Path** to open the dialog: give the path a name, then add one stage at a time — each stage pairs a workflow tag (e.g. `staging`) with a destination organization. Paths must have at least two stages and each stage's tag must be unique. Once saved, existing paths appear as rows in a table with two columns — **Name** and **Stages** — plus a trash icon to delete the path. Each stage is rendered as a small tag chip followed by the target organization name in parentheses, and consecutive stages are joined by `→` arrows (for example `dev (My Organization) → staging (My Organization) → prod (My Organization)`).
+
+> Promotion Paths is feature-flag gated and may not be enabled for every organization. If you don't see it in the sidebar, ask your Pinkfish contact to turn it on.
+
+## API Credentials
+
+The **API Credentials** page is where organization admins mint OAuth 2.0 client credentials for programmatic access to Pinkfish APIs.
+
+![Organization API Credentials page listing existing credentials with Client IDs, secret prefixes, and last-used timestamps](/images/settings-organization/settings-org-api-credentials.png)
+
+Each row shows:
+
+- **Name** — your label for the credential
+- **Client ID** — copyable
+- **Secret Prefix** — the first few characters of the secret, masked
+- **Status** — `active`, etc.
+- **Created** date
+- **Last Used** — when the credential last minted a token
+- **Delete** action
+
+Click **Create Credential**, give it a name, and Pinkfish returns both the Client ID and the full Client Secret — copy them immediately because the secret is only shown once. The dialog also includes copy-ready curl commands for exchanging credentials for an access token and calling an MCP server.
+
+New credentials can take up to 60 seconds to activate. This section is only available on enterprise plans.
+
+## Agents
+
+The **Agents** page is where organization admins toggle channel integrations that expose published agents outside the Pinkfish app.
+
+![Organization Agents page showing Slack and Microsoft Teams channel toggles](/images/settings-organization/settings-org-agents.png)
+
+The header explains the behavior:
+
+> When enabled, all published agents in your organization are automatically accessible via the selected channel. Individual agents can still opt out from their channel settings.
+
+Each row represents one channel — currently Slack and Microsoft Teams — with its logo, name, a short description, and an enable/disable toggle. For Teams, a **Download App** button is shown so you can distribute the Teams app package to your members.
+
+## Models
+
+The **Models** page sets the default LLM models used wherever members see a model-selection dropdown inside the organization.
+
+![Organization Models page showing Primary and Fallback model dropdowns](/images/settings-organization/settings-org-models.png)
+
+You configure two models:
+
+- **Primary Model** — pick a connection and a specific model under it
+- **Fallback Model** — used when the primary model fails; same connection / model structure
+
+Additional controls:
+
+- **Only use my custom LLM models** — when checked, Pinkfish's built-in platform models are hidden from your members, leaving only the models you've connected
+- **Offer same models to sub-organizations** — only shown on parent organizations, this propagates the current configuration down the hierarchy
+
+If you haven't connected any LLM providers yet, the page shows call-to-action buttons for Anthropic and OpenAI and a link to connect other providers. Sub-organizations that inherit from a parent see a banner with the parent's configuration and instructions for overriding it.
+
+## Who Can See What
+
+| Section | Members | Admins | Enterprise |
+|---|---|---|---|
+| Users | Read-only list | Invite / edit / remove | — |
+| Usage | View | View | View |
+| Workflows (org) | — | Configure | Configure |
+| Billing | View | Manage | Hidden (managed separately) |
+| Organizations | View own | Edit | Create sub-orgs |
+| SSO | — | Configure (parent org only) | Required plan |
+| Skills (org) | View | Create / edit / delete | Create / edit / delete |
+| Saved Actions (org) | — | Configure | Configure |
+| Promotion Paths | — | Create / delete | Create / delete |
+| API Credentials | — | — | Create / delete |
+| Agents | View | Configure | Configure |
+| Models | — | Configure | Configure |
