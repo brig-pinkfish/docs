@@ -1,0 +1,135 @@
+---
+title: "Releases & Version History"
+description: "Promote a draft workflow to a versioned release, compare changes, restore previous versions, and publish as a public template."
+icon: "rocket"
+---
+
+A **release** is a versioned snapshot of your workflow. Until you release, your workflow exists only as a **draft** that you're iterating on — live API triggers, scheduled runs, and public interfaces all point at whichever version you most recently released.
+
+The **Release** dropdown in the tab bar is your hub for promoting drafts, inspecting what changed, restoring old versions, and publishing templates.
+
+{/* TODO screenshot: The Release dropdown closed — just the button in the tab bar next to Run Workflow. */}
+
+## Draft vs. released
+
+Every Agent Mode workflow has two states:
+
+- **Draft** — the live editor state you're working on. Every edit is auto-saved. Draft API trigger URLs exist so you can test without affecting production.
+- **Released versions** — numbered snapshots (0, 1, 2, ...). Live trigger URLs, scheduled runs, and public interface URLs always point at the most recent release.
+
+Until you release once, the workflow has no "live" URLs at all — only the draft. After the first release, both exist independently.
+
+## The release gate
+
+<Warning>
+  You cannot release a workflow until it has at least one successful run in **live** mode — that is, a run where no nodes were in [mock mode](/agentic-editor/mock-mode-and-pinning). The Release button is disabled until this condition is met.
+</Warning>
+
+The rule protects against a mocked-only workflow being promoted to production by accident. If the Release button is disabled, hover for a tooltip explaining what's missing. Typically the fix is:
+
+1. Toggle off any nodes still in mock mode (use the Mock Mode indicator's **Clear all**).
+2. Click **Run Workflow** to fire a live run.
+3. Wait for success.
+4. Retry the release.
+
+## Creating a release
+
+1. Click the **Release** dropdown on the tab bar.
+2. Pick **Release this draft** (or the highlighted primary action).
+3. Optionally add release notes describing what changed.
+4. Confirm.
+
+Pinkfish snapshots the workflow, bumps the version number, and points all live URLs at the new release.
+
+{/* TODO screenshot: Release dropdown open with the release list above and the primary "Release" CTA at the bottom. */}
+
+### Test data warning
+
+If the system detects that your recent runs used test-like inputs, you may see a **Test Data Warning Dialog** before the release completes. It's a reminder to sanity-check against realistic data. Dismiss and proceed, or cancel and run with real inputs first.
+
+## Comparing releases
+
+Before (or after) releasing, click **View diff** or **Compare** in the Release dropdown to open the **Release Diff Modal**. It shows exactly what changed between your draft and the last release:
+
+- Added / removed / modified nodes.
+- Changed connections.
+- Changed node configurations.
+
+Useful for double-checking what you're about to push live, and for writing better release notes.
+
+{/* TODO screenshot: Release Diff Modal open with node-level diffs visible — color-coded adds, removes, and changes. */}
+
+## Restoring a previous version
+
+Made a change you want to undo? The **Restore Version** dropdown (accessible from the canvas toolbar or the Release area) lists every past release with timestamp and version number.
+
+1. Open the dropdown.
+2. Pick a past release.
+3. Preview what restoring would change in the **Restore Preview**.
+4. Click **Restore** to revert the draft to that version's contents.
+
+Your current draft is preserved in the restore process — you're not destroying progress, you're setting the draft to match an older snapshot so you can continue from there.
+
+{/* TODO screenshot: Restore Version dropdown open showing 3-4 past releases with dates like "Apr 10, 26, 8:12 AM". */}
+
+While viewing an older release in preview mode, a **Version Preview Badge** appears on the canvas indicating you're looking at historical state, not the current draft.
+
+{/* TODO screenshot: Version Preview Badge shown on the canvas while a past release is previewed. */}
+
+## Publishing as a public template
+
+You can promote a released workflow into a **public template** that anyone on the internet can use via a public URL. This is useful for:
+
+- Sharing a workflow with customers for lead capture or onboarding.
+- Publishing reusable automations to your org's library.
+- Marketing use cases — "fill this form, get an AI-generated report".
+
+To publish:
+
+1. Open the **Release** dropdown.
+2. Toggle **Make Available as Public Template**.
+3. The **Publish Template Dialog** opens to collect the template's metadata — name, description, icon, category.
+4. Save. Pinkfish generates a public URL.
+
+Copy the public URL with the **Copy** button next to it. Anyone with the URL hits your workflow's [interface](/agentic-editor/interface) (if you defined one) or the API endpoint.
+
+{/* TODO screenshot: Public Template toggle on with the "Make Available as Public Template" label and a generated public URL with Copy button. */}
+
+<Info>
+  Public templates require an Interface or an API trigger — the public URL only makes sense if there's a way for external users to invoke the workflow. See [Templates](/essentials/templates) for template discovery.
+</Info>
+
+### Unpublishing
+
+Toggle **Make Available as Public Template** off to remove the public URL immediately. Existing released versions remain; only the public entry point is removed.
+
+## Promoting across environments
+
+If your Pinkfish workspace has multiple environments (dev, staging, prod), the **Promote** section of the Release dropdown lets you push a release from one environment to another without re-running the full setup. See [Publishing](/essentials/publishing) for environment promotion details.
+
+## Release history
+
+Every release is preserved. You can:
+
+- Restore any past release as the new draft.
+- View the diff between any two past releases.
+- See which release is currently live (marked in the dropdown).
+
+Releases are never deleted — they're your audit trail for what production was running at any point in time.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Running a workflow" icon="play" href="/agentic-editor/running">
+    Trigger the live run that unlocks the release gate.
+  </Card>
+  <Card title="Mock mode & pinning" icon="thumbtack" href="/agentic-editor/mock-mode-and-pinning">
+    Why mocked runs don't count toward the release gate.
+  </Card>
+  <Card title="Interface" icon="window-maximize" href="/agentic-editor/interface">
+    Define the interface before going public.
+  </Card>
+  <Card title="Templates" icon="copy" href="/essentials/templates">
+    How public templates surface in Pinkfish.
+  </Card>
+</CardGroup>
