@@ -1,56 +1,107 @@
 ---
 title: "Vault"
-description: "Secure storage for sensitive information and credentials"
+description: "Encrypted storage for API keys, passwords, and other secrets used across agents and workflows"
 icon: "shield"
 ---
 
-The Vault feature provides secure, encrypted storage for credentials and sensitive information used across your workflows. Store API keys, passwords, and other sensitive data in encrypted collections without exposing them in your code. All secrets are encrypted at rest and only decrypted when accessed by authorized workflows.
+**Vault** is Pinkfish's encrypted secret store. It's where you keep API keys, passwords, tokens, and any other sensitive value that needs to be used from a workflow without being exposed in code or shared via chat. Secrets are encrypted at rest, referenced by ID, and never decrypted client-side.
 
-## Key Features
+Find it under **Tools → Vault**.
 
-- **Encrypted Storage**: All secrets are encrypted at rest for maximum security
-- **Collection-Based Organization**: Group related secrets into secure collections
-- **JSON Support**: Store complex objects and nested data structures as secrets
-- **Access Controls**: Fine-grained permissions for viewing and editing secrets
-- **Workflow Integration**: Seamlessly retrieve secrets without hardcoding values
-- **Audit Trail**: Track access patterns and usage across your workflows
+![Vault list — collections with max, content count, creator, and the New Vault action](/images/vault/vault-list.png)
 
-## Common Use Cases
+## The Vault List
 
-- API key and token management for third-party services
-- Database credentials and connection strings
-- Authentication secrets for external systems
-- Environment-specific configuration values
-- Shared credentials for team workflows
+Each row is a **vault collection** — a logical group of secrets you can share and reference as a unit. Columns mirror the other resource types:
 
-<Card title="Learn More" icon="code" href="/slash-commands/get-secret">
-  Get detailed examples and advanced usage patterns for the Vault slash command
-</Card>
+| Column | Description |
+|--------|-------------|
+| **Name** | Vault collection name. |
+| **Max** | Max secrets allowed in the collection. |
+| **Current** | Current secret count. |
+| **Created by** | Email of the creator. |
+| **Actions** | Share, Rename, More (Delete, Export). |
 
-## Vault Collections
+Use the search box to filter. Click **+ New Vault** to create a collection.
 
-Vault Collections help you organize your secure credentials and sensitive information stored in Pinkfish's Vault. They provide a structured way to manage secrets used across your workflows.
+## Inside a Vault Collection
 
-With Vault Collections, you can:
+Clicking a row opens the collection.
 
-- Group related credentials by service, environment, or purpose
-- Manage access to sensitive information with fine-grained controls
-- Reference entire collections of secrets in workflow workflows
-- Rotate credentials across collections when needed
-- Maintain clear separation between different security contexts
+![Vault collection — secret list with name, type, timestamps, and filter controls](/images/vault/vault-collection.png)
 
-## Sharing Collections
+Toolbar:
+
+| Button | Action |
+|--------|--------|
+| **Filter by name** | Search by secret name. |
+| **Filter by type** | Filter by Login / API Key / Other. |
+| **+ New Vault Item** | Add a new secret. |
+
+Each secret row shows:
+
+| Column | Description |
+|--------|-------------|
+| **Name** | Display name (e.g. `Stripe Secret Key`, `GitHub Token`, `DB Admin`). |
+| **Type** | One of **Login**, **API Key**, or **Other**. |
+| **Created At / Last Updated At** | Timestamps. |
+| **Actions** | Edit, Delete. |
+
+Secret values are never shown in plain text in the list — you have to open the edit dialog to reveal or copy them.
+
+## Adding a Secret
+
+Click **+ New Vault Item** to open the New Item dialog.
+
+![New Item dialog — Login / API Key / Other tabs, with name, username, password fields](/images/vault/vault-create-secret.png)
+
+Pick a type:
+
+<CardGroup cols={3}>
+  <Card title="Login" icon="user-lock">
+    Username + password pairs — for services where your agent signs in as a user.
+  </Card>
+  <Card title="API Key" icon="key">
+    Single token or API key — for header-based auth to third-party APIs.
+  </Card>
+  <Card title="Other" icon="file-code">
+    Arbitrary JSON payloads — for multi-field secrets (certificates, connection strings, credential bundles).
+  </Card>
+</CardGroup>
+
+Give the secret a **Name**, fill in the type-specific fields (username/password, key value, or a JSON blob), and click **Save**. The value is encrypted immediately and never leaves the server in plaintext again.
+
+## Sharing
+
+Vault collections are the most sensitive items on the Tools page, so share them deliberately.
 
 <Warning>
-  Be extremely cautious when sharing vault collections. Only share with trusted team members who require access, and always apply the principle of least privilege when configuring access permissions.
+  Only share vault collections with trusted team members who actually need access. Apply the principle of least privilege — prefer **Read** over **Write** unless the recipient needs to rotate secrets. Avoid org-wide sharing except for genuinely org-wide credentials (like a shared support account).
 </Warning>
 
-Vault collections can be shared with specific team members, but should never be shared with the entire organization unless absolutely necessary. Different permission levels (View/Edit) control what actions others can perform with your shared collections.
+The share dialog offers the same ACLs as every other resource:
 
-For detailed information about sharing permissions and procedures, see our [Sharing](/essentials/sharing) documentation.
+- **Read** — reference the secret from workflows.
+- **Write** — add, edit, and delete secrets.
+- **Admin** — share with others.
 
-## Using Collections with Workflows
+## Using Vault Secrets in Workflows
 
-To reference a vault collection from your workflow, select it from the Slash command. Selecting it will insert a reference to that collection and the secrets within it into your code.
+Workflows reference secrets through the [`/get-secret` slash command](/slash-commands/get-secret) and the built-in [Vault MCP server](/api-reference/mcp-servers/embedded/vault). The pattern:
 
-For more details on using the Vault feature in workflows, see the [Get Secret slash command documentation](/slash-commands/get-secret).
+1. Insert a `/get-secret` reference where you'd otherwise hardcode a credential.
+2. At run time, Pinkfish decrypts the value on the server and passes it into the downstream call (HTTP request, database query, etc.).
+3. The decrypted value never appears in logs, chat history, or workflow outputs.
+
+Common recipes:
+
+- Store the API key for a custom integration in a vault and reference it from a scraper workflow.
+- Keep DB credentials for an internal tool in a shared vault so multiple workflows can connect without each developer knowing the password.
+- Rotate the vault value when a secret expires — every workflow that references it picks up the new value on the next run without changes.
+
+## Notes
+
+- Vault is builder-only **and** requires an eligible plan. When plan access is missing, the Vault entry doesn't appear in the Tools sidebar at all.
+- Secrets are encrypted with per-organization keys and decrypted only within the Pinkfish worker that executes a workflow step. Decrypted values are never written to disk.
+- There is no "export secrets" action — secrets can't be bulk-downloaded, by design.
+- For non-sensitive configuration values (feature flags, environment names), use a regular [Database](/essentials/database) collection instead of Vault.
