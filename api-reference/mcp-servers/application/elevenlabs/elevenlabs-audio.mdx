@@ -53,14 +53,14 @@ Compose Music With A Detailed Response
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `composition_plan` | object | No | — | A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`. |
-| `finetune_id` | object | No | — | The ID of the finetune to use for the generation |
+| `finetune_id` | string | No | — | The ID of the finetune to use for the generation |
 | `force_instrumental` | boolean | No | — | If true, guarantees that the generated song will be instrumental. If false, the song may or may not be instrumental depending on the `prompt`. Can only be used with `prompt`. |
 | `model_id` | string | No | — | The model to use for the generation. |
-| `music_length_ms` | object | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
+| `music_length_ms` | integer | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
 | `music_prompt` | object | No | — | A music prompt. Deprecated. Use `composition_plan` instead. |
-| `prompt` | object | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
+| `prompt` | string | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
 | `respect_sections_durations` | boolean | No | — | Controls how strictly section durations in the `composition_plan` are enforced. Only used with `composition_plan`. When set to true, the model will precisely respect each section's `duration_ms` from the plan. When set to false, the model may adjust individual section durations which will generally lead to better generation quality and improved latency, while always preserving the total song duration from the plan. |
-| `seed` | object | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
+| `seed` | integer | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
 | `sign_with_c2pa` | boolean | No | — | Whether to sign the generated song with C2PA. Applicable only for mp3 files. |
 | `store_for_inpainting` | boolean | No | — | Whether to store the generated song for inpainting. Only available to enterprise clients with access to the inpainting feature. |
 | `use_phonetic_names` | boolean | No | — | If true, proper names in the prompt will be phonetically spelled in the lyrics for better pronunciation by the music model. The original names will be restored in word timestamps. |
@@ -104,9 +104,30 @@ Compose Music With A Detailed Response
       ]
     },
     "composition_plan": {
-      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`."
+      "type": "object",
+      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "finetune_id": {
+      "type": "string",
       "description": "The ID of the finetune to use for the generation"
     },
     "force_instrumental": {
@@ -121,12 +142,34 @@ Compose Music With A Detailed Response
       ]
     },
     "music_length_ms": {
+      "type": "integer",
       "description": "The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt."
     },
     "music_prompt": {
-      "description": "A music prompt. Deprecated. Use `composition_plan` instead."
+      "type": "object",
+      "description": "A music prompt. Deprecated. Use `composition_plan` instead.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "prompt": {
+      "type": "string",
       "description": "A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`."
     },
     "respect_sections_durations": {
@@ -134,6 +177,7 @@ Compose Music With A Detailed Response
       "description": "Controls how strictly section durations in the `composition_plan` are enforced. Only used with `composition_plan`. When set to true, the model will precisely respect each section's `duration_ms` from the plan. When set to false, the model may adjust individual section durations which will generally lead to better generation quality and improved latency, while always preserving the total song duration from the plan."
     },
     "seed": {
+      "type": "integer",
       "description": "Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt."
     },
     "sign_with_c2pa": {
@@ -172,7 +216,7 @@ Generate Composition Plan
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `model_id` | string | No | — | The model to use for the generation. |
-| `music_length_ms` | object | No | — | The length of the composition plan to generate in milliseconds. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
+| `music_length_ms` | integer | No | — | The length of the composition plan to generate in milliseconds. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
 | `prompt` | string | Yes | — | A simple text prompt to compose a plan from. |
 | `source_composition_plan` | object | No | — | An optional composition plan to use as a source for the new composition plan. |
 
@@ -194,6 +238,7 @@ Generate Composition Plan
       ]
     },
     "music_length_ms": {
+      "type": "integer",
       "description": "The length of the composition plan to generate in milliseconds. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt."
     },
     "prompt": {
@@ -201,7 +246,27 @@ Generate Composition Plan
       "description": "A simple text prompt to compose a plan from."
     },
     "source_composition_plan": {
-      "description": "An optional composition plan to use as a source for the new composition plan."
+      "type": "object",
+      "description": "An optional composition plan to use as a source for the new composition plan.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     }
   },
   "required": [
@@ -295,8 +360,8 @@ Download History Items
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `history_item_ids` | any[] | Yes | — | A list of history items to download, you can get IDs of history items and other metadata using the GET https://api.elevenlabs.io/v1/history endpoint. |
-| `output_format` | object | No | — | Output format to transcode the audio file, can be wav or default. |
+| `history_item_ids` | string[] | Yes | — | A list of history items to download, you can get IDs of history items and other metadata using the GET https://api.elevenlabs.io/v1/history endpoint. |
+| `output_format` | string | No | — | Output format to transcode the audio file, can be wav or default. |
 
 <Expandable title="inputSchema">
 
@@ -310,9 +375,13 @@ Download History Items
     },
     "history_item_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of history items to download, you can get IDs of history items and other metadata using the GET https://api.elevenlabs.io/v1/history endpoint."
     },
     "output_format": {
+      "type": "string",
       "description": "Output format to transcode the audio file, can be wav or default."
     }
   },
@@ -337,14 +406,14 @@ Compose Music
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `composition_plan` | object | No | — | A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`. |
-| `finetune_id` | object | No | — | The ID of the finetune to use for the generation |
+| `finetune_id` | string | No | — | The ID of the finetune to use for the generation |
 | `force_instrumental` | boolean | No | — | If true, guarantees that the generated song will be instrumental. If false, the song may or may not be instrumental depending on the `prompt`. Can only be used with `prompt`. |
 | `model_id` | string | No | — | The model to use for the generation. |
-| `music_length_ms` | object | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
+| `music_length_ms` | integer | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
 | `music_prompt` | object | No | — | A music prompt. Deprecated. Use `composition_plan` instead. |
-| `prompt` | object | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
+| `prompt` | string | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
 | `respect_sections_durations` | boolean | No | — | Controls how strictly section durations in the `composition_plan` are enforced. Only used with `composition_plan`. When set to true, the model will precisely respect each section's `duration_ms` from the plan. When set to false, the model may adjust individual section durations which will generally lead to better generation quality and improved latency, while always preserving the total song duration from the plan. |
-| `seed` | object | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
+| `seed` | integer | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
 | `sign_with_c2pa` | boolean | No | — | Whether to sign the generated song with C2PA. Applicable only for mp3 files. |
 | `store_for_inpainting` | boolean | No | — | Whether to store the generated song for inpainting. Only available to enterprise clients with access to the inpainting feature. |
 | `use_phonetic_names` | boolean | No | — | If true, proper names in the prompt will be phonetically spelled in the lyrics for better pronunciation by the music model. The original names will be restored in word timestamps. |
@@ -387,9 +456,30 @@ Compose Music
       ]
     },
     "composition_plan": {
-      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`."
+      "type": "object",
+      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "finetune_id": {
+      "type": "string",
       "description": "The ID of the finetune to use for the generation"
     },
     "force_instrumental": {
@@ -404,12 +494,34 @@ Compose Music
       ]
     },
     "music_length_ms": {
+      "type": "integer",
       "description": "The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt."
     },
     "music_prompt": {
-      "description": "A music prompt. Deprecated. Use `composition_plan` instead."
+      "type": "object",
+      "description": "A music prompt. Deprecated. Use `composition_plan` instead.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "prompt": {
+      "type": "string",
       "description": "A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`."
     },
     "respect_sections_durations": {
@@ -417,6 +529,7 @@ Compose Music
       "description": "Controls how strictly section durations in the `composition_plan` are enforced. Only used with `composition_plan`. When set to true, the model will precisely respect each section's `duration_ms` from the plan. When set to false, the model may adjust individual section durations which will generally lead to better generation quality and improved latency, while always preserving the total song duration from the plan."
     },
     "seed": {
+      "type": "integer",
       "description": "Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt."
     },
     "sign_with_c2pa": {
@@ -487,14 +600,14 @@ List Generated Items
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `page_size` | integer | No | — | How many history items to return at maximum. Can not exceed 1000, defaults to 100. |
-| `start_after_history_item_id` | object | No | — | After which ID to start fetching, use this parameter to paginate across a large collection of history items. In case this parameter is not provided history items will be fetched starting from the most recently created one ordered descending by their creation date. |
-| `voice_id` | object | No | — | Voice ID to be filtered for, you can use GET https://api.elevenlabs.io/v1/voices to receive a list of voices and their IDs. |
-| `model_id` | object | No | — | Model ID to filter history items by. |
-| `date_before_unix` | object | No | — | Unix timestamp to filter history items before this date (exclusive). |
-| `date_after_unix` | object | No | — | Unix timestamp to filter history items after this date (inclusive). |
-| `sort_direction` | object | No | — | Sort direction for the results. |
-| `search` | object | No | — | search term used for filtering |
-| `source` | object | No | — | Source of the generated history item |
+| `start_after_history_item_id` | string | No | — | After which ID to start fetching, use this parameter to paginate across a large collection of history items. In case this parameter is not provided history items will be fetched starting from the most recently created one ordered descending by their creation date. |
+| `voice_id` | string | No | — | Voice ID to be filtered for, you can use GET https://api.elevenlabs.io/v1/voices to receive a list of voices and their IDs. |
+| `model_id` | string | No | — | Model ID to filter history items by. |
+| `date_before_unix` | integer | No | — | Unix timestamp to filter history items before this date (exclusive). |
+| `date_after_unix` | integer | No | — | Unix timestamp to filter history items after this date (inclusive). |
+| `sort_direction` | string | No | — | Sort direction for the results. |
+| `search` | string | No | — | search term used for filtering |
+| `source` | string | No | — | Source of the generated history item |
 
 <Expandable title="inputSchema">
 
@@ -511,28 +624,44 @@ List Generated Items
       "description": "How many history items to return at maximum. Can not exceed 1000, defaults to 100."
     },
     "start_after_history_item_id": {
+      "type": "string",
       "description": "After which ID to start fetching, use this parameter to paginate across a large collection of history items. In case this parameter is not provided history items will be fetched starting from the most recently created one ordered descending by their creation date."
     },
     "voice_id": {
+      "type": "string",
       "description": "Voice ID to be filtered for, you can use GET https://api.elevenlabs.io/v1/voices to receive a list of voices and their IDs."
     },
     "model_id": {
+      "type": "string",
       "description": "Model ID to filter history items by."
     },
     "date_before_unix": {
+      "type": "integer",
       "description": "Unix timestamp to filter history items before this date (exclusive)."
     },
     "date_after_unix": {
+      "type": "integer",
       "description": "Unix timestamp to filter history items after this date (inclusive)."
     },
     "sort_direction": {
-      "description": "Sort direction for the results."
+      "type": "string",
+      "description": "Sort direction for the results.",
+      "enum": [
+        "asc",
+        "desc"
+      ]
     },
     "search": {
+      "type": "string",
       "description": "search term used for filtering"
     },
     "source": {
-      "description": "Source of the generated history item"
+      "type": "string",
+      "description": "Source of the generated history item",
+      "enum": [
+        "TTS",
+        "STS"
+      ]
     }
   },
   "required": [
@@ -626,8 +755,8 @@ Audio Isolation
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `audio` | string | Yes | — | The audio file from which vocals/speech will be isolated from. |
-| `file_format` | object | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
-| `preview_b64` | object | No | — | Optional preview image base64 for tracking this generation. |
+| `file_format` | string | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
+| `preview_b64` | string | No | — | Optional preview image base64 for tracking this generation. |
 
 <Expandable title="inputSchema">
 
@@ -644,9 +773,15 @@ Audio Isolation
       "description": "The audio file from which vocals/speech will be isolated from."
     },
     "file_format": {
-      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform."
+      "type": "string",
+      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform.",
+      "enum": [
+        "pcm_s16le_16",
+        "other"
+      ]
     },
     "preview_b64": {
+      "type": "string",
       "description": "Optional preview image base64 for tracking this generation."
     }
   },
@@ -670,7 +805,7 @@ Audio Isolation Stream
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `audio` | string | Yes | — | The audio file from which vocals/speech will be isolated from. |
-| `file_format` | object | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
+| `file_format` | string | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
 
 <Expandable title="inputSchema">
 
@@ -687,7 +822,12 @@ Audio Isolation Stream
       "description": "The audio file from which vocals/speech will be isolated from."
     },
     "file_format": {
-      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform."
+      "type": "string",
+      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform.",
+      "enum": [
+        "pcm_s16le_16",
+        "other"
+      ]
     }
   },
   "required": [
@@ -788,10 +928,10 @@ Sound Generation
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
-| `duration_seconds` | object | No | — | The duration of the sound which will be generated in seconds. Must be at least 0.5 and at most 30. If set to None we will guess the optimal duration using the prompt. Defaults to None. |
+| `duration_seconds` | number | No | — | The duration of the sound which will be generated in seconds. Must be at least 0.5 and at most 30. If set to None we will guess the optimal duration using the prompt. Defaults to None. |
 | `loop` | boolean | No | — | Whether to create a sound effect that loops smoothly. Only available for the 'eleven_text_to_sound_v2 model'. |
 | `model_id` | string | No | — | The model ID to use for the sound generation. |
-| `prompt_influence` | object | No | — | A higher prompt influence makes your generation follow the prompt more closely while also making generations less variable. Must be a value between 0 and 1. Defaults to 0.3. |
+| `prompt_influence` | number | No | — | A higher prompt influence makes your generation follow the prompt more closely while also making generations less variable. Must be a value between 0 and 1. Defaults to 0.3. |
 | `text` | string | Yes | — | The text that will get converted into a sound effect. |
 
 <Expandable title="inputSchema">
@@ -832,6 +972,7 @@ Sound Generation
       ]
     },
     "duration_seconds": {
+      "type": "number",
       "description": "The duration of the sound which will be generated in seconds. Must be at least 0.5 and at most 30. If set to None we will guess the optimal duration using the prompt. Defaults to None."
     },
     "loop": {
@@ -843,6 +984,7 @@ Sound Generation
       "description": "The model ID to use for the sound generation."
     },
     "prompt_influence": {
+      "type": "number",
       "description": "A higher prompt influence makes your generation follow the prompt more closely while also making generations less variable. Must be a value between 0 and 1. Defaults to 0.3."
     },
     "text": {
@@ -871,14 +1013,14 @@ Speech To Speech
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `audio` | string | Yes | — | The audio file which holds the content and emotion that will control the generated speech. |
-| `file_format` | object | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
+| `file_format` | string | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for speech to speech, you can check this using the can_do_voice_conversion property. |
 | `remove_background_noise` | boolean | No | — | If set, will remove the background noise from your audio input using our audio isolation model. Only applies to Voice Changer. |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
-| `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string. |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `voice_settings` | string | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string. |
 
 <Expandable title="inputSchema">
 
@@ -899,6 +1041,7 @@ Speech To Speech
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -933,7 +1076,12 @@ Speech To Speech
       "description": "The audio file which holds the content and emotion that will control the generated speech."
     },
     "file_format": {
-      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform."
+      "type": "string",
+      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform.",
+      "enum": [
+        "pcm_s16le_16",
+        "other"
+      ]
     },
     "model_id": {
       "type": "string",
@@ -944,9 +1092,11 @@ Speech To Speech
       "description": "If set, will remove the background noise from your audio input using our audio isolation model. Only applies to Voice Changer."
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "voice_settings": {
+      "type": "string",
       "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string."
     }
   },
@@ -972,14 +1122,14 @@ Speech To Speech Streaming
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `audio` | string | Yes | — | The audio file which holds the content and emotion that will control the generated speech. |
-| `file_format` | object | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
+| `file_format` | string | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for speech to speech, you can check this using the can_do_voice_conversion property. |
 | `remove_background_noise` | boolean | No | — | If set, will remove the background noise from your audio input using our audio isolation model. Only applies to Voice Changer. |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
-| `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string. |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `voice_settings` | string | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string. |
 
 <Expandable title="inputSchema">
 
@@ -1000,6 +1150,7 @@ Speech To Speech Streaming
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -1034,7 +1185,12 @@ Speech To Speech Streaming
       "description": "The audio file which holds the content and emotion that will control the generated speech."
     },
     "file_format": {
-      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform."
+      "type": "string",
+      "description": "The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform.",
+      "enum": [
+        "pcm_s16le_16",
+        "other"
+      ]
     },
     "model_id": {
       "type": "string",
@@ -1045,9 +1201,11 @@ Speech To Speech Streaming
       "description": "If set, will remove the background noise from your audio input using our audio isolation model. Only applies to Voice Changer."
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "voice_settings": {
+      "type": "string",
       "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request. Needs to be send as a JSON encoded string."
     }
   },
@@ -1073,27 +1231,27 @@ Speech To Text
 | --- | --- | --- | --- | --- |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean log and transcript storage features are unavailable for this request. Zero retention mode may only be used by enterprise customers. |
 | `additional_formats` | any[] | No | — | Additional Formats |
-| `cloud_storage_url` | object | No | — | The HTTPS URL of the file to transcribe. Exactly one of the file or cloud_storage_url parameters must be provided. The file must be accessible via HTTPS and the file size must be less than 2GB. Any valid HTTPS URL is accepted, including URLs from cloud storage providers (AWS S3, Google Cloud Storage, Cloudflare R2, etc.), CDNs, or any other HTTPS source. URLs can be pre-signed or include authentication tokens in query parameters. |
-| `diarization_threshold` | object | No | — | Diarization threshold to apply during speaker diarization. A higher value means there will be a lower chance of one speaker being diarized as two different speakers but also a higher chance of two different speakers being diarized as one speaker (less total speakers predicted). A low value means there will be a higher chance of one speaker being diarized as two different speakers but also a lower chance of two different speakers being diarized as one speaker (more total speakers predicted). Can only be set when diarize=True and num_speakers=None. Defaults to None, in which case we will choose a threshold based on the model_id (0.22 usually). |
+| `cloud_storage_url` | string | No | — | The HTTPS URL of the file to transcribe. Exactly one of the file or cloud_storage_url parameters must be provided. The file must be accessible via HTTPS and the file size must be less than 2GB. Any valid HTTPS URL is accepted, including URLs from cloud storage providers (AWS S3, Google Cloud Storage, Cloudflare R2, etc.), CDNs, or any other HTTPS source. URLs can be pre-signed or include authentication tokens in query parameters. |
+| `diarization_threshold` | number | No | — | Diarization threshold to apply during speaker diarization. A higher value means there will be a lower chance of one speaker being diarized as two different speakers but also a higher chance of two different speakers being diarized as one speaker (less total speakers predicted). A low value means there will be a higher chance of one speaker being diarized as two different speakers but also a lower chance of two different speakers being diarized as one speaker (more total speakers predicted). Can only be set when diarize=True and num_speakers=None. Defaults to None, in which case we will choose a threshold based on the model_id (0.22 usually). |
 | `diarize` | boolean | No | — | Whether to annotate which speaker is currently talking in the uploaded file. |
 | `entity_detection` | object | No | — | Detect entities in the transcript. Can be 'all' to detect all entities, a single entity type or category string, or a list of entity types/categories. Categories include 'pii', 'phi', 'pci', 'other', 'offensive_language'. When enabled, detected entities will be returned in the 'entities' field with their text, type, and character positions. Usage of this parameter will incur additional costs. |
 | `entity_redaction` | object | No | — | Redact entities from the transcript text. Accepts the same format as entity_detection: 'all', a category ('pii', 'phi'), or specific entity types. Must be a subset of entity_detection. When redaction is enabled, the entities field will not be returned. |
 | `entity_redaction_mode` | string | No | — | How to format redacted entities. 'redacted' replaces with &#123;REDACTED&#125;, 'entity_type' replaces with &#123;ENTITY_TYPE&#125;, 'enumerated_entity_type' replaces with &#123;ENTITY_TYPE_N&#125; where N enumerates each occurrence. Only used when entity_redaction is set. |
-| `file` | object | No | — | The file to transcribe (100ms minimum audio length). All major audio and video formats are supported. Exactly one of the file or cloud_storage_url parameters must be provided. The file size must be less than 3.0GB. |
+| `file` | string | No | — | The file to transcribe (100ms minimum audio length). All major audio and video formats are supported. Exactly one of the file or cloud_storage_url parameters must be provided. The file size must be less than 3.0GB. |
 | `file_format` | string | No | — | The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. |
-| `keyterms` | any[] | No | — | A list of keyterms to bias the transcription towards.           The keyterms are words or phrases you want the model to recognise more accurately.           The number of keyterms cannot exceed 1000.           The length of each keyterm must be less than 50 characters.           Keyterms can contain at most 5 words (after normalisation).           For example ["hello", "world", "technical term"].           Usage of this parameter will incur additional costs.           When more than 100 keyterms are provided, a minimum billable duration of 20 seconds applies per request. |
-| `language_code` | object | No | — | An ISO-639-1 or ISO-639-3 language_code corresponding to the language of the audio file. Can sometimes improve transcription performance if known beforehand. Defaults to null, in this case the language is predicted automatically. |
+| `keyterms` | string[] | No | — | A list of keyterms to bias the transcription towards.           The keyterms are words or phrases you want the model to recognise more accurately.           The number of keyterms cannot exceed 1000.           The length of each keyterm must be less than 50 characters.           Keyterms can contain at most 5 words (after normalisation).           For example ["hello", "world", "technical term"].           Usage of this parameter will incur additional costs.           When more than 100 keyterms are provided, a minimum billable duration of 20 seconds applies per request. |
+| `language_code` | string | No | — | An ISO-639-1 or ISO-639-3 language_code corresponding to the language of the audio file. Can sometimes improve transcription performance if known beforehand. Defaults to null, in this case the language is predicted automatically. |
 | `model_id` | string | Yes | — | The ID of the model to use for transcription. |
 | `no_verbatim` | boolean | No | — | If true, the transcription will not have any filler words, false starts and non-speech sounds. Only supported with scribe_v2 model. |
-| `num_speakers` | object | No | — | The maximum amount of speakers talking in the uploaded file. Can help with predicting who speaks when. The maximum amount of speakers that can be predicted is 32. Defaults to null, in this case the amount of speakers is set to the maximum value the model supports. |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be an integer between 0 and 2147483647. |
-| `source_url` | object | No | — | The URL of an audio or video file to transcribe. Supports hosted video or audio files, YouTube video URLs, TikTok video URLs, and other video hosting services. |
+| `num_speakers` | integer | No | — | The maximum amount of speakers talking in the uploaded file. Can help with predicting who speaks when. The maximum amount of speakers that can be predicted is 32. Defaults to null, in this case the amount of speakers is set to the maximum value the model supports. |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be an integer between 0 and 2147483647. |
+| `source_url` | string | No | — | The URL of an audio or video file to transcribe. Supports hosted video or audio files, YouTube video URLs, TikTok video URLs, and other video hosting services. |
 | `tag_audio_events` | boolean | No | — | Whether to tag audio events like (laughter), (footsteps), etc. in the transcription. |
-| `temperature` | object | No | — | Controls the randomness of the transcription output. Accepts values between 0.0 and 2.0, where higher values result in more diverse and less deterministic results. If omitted, we will use a temperature based on the model you selected which is usually 0. |
+| `temperature` | number | No | — | Controls the randomness of the transcription output. Accepts values between 0.0 and 2.0, where higher values result in more diverse and less deterministic results. If omitted, we will use a temperature based on the model you selected which is usually 0. |
 | `timestamps_granularity` | string | No | — | The granularity of the timestamps in the transcription. 'word' provides word-level timestamps and 'character' provides character-level timestamps per word. |
 | `use_multi_channel` | boolean | No | — | Whether the audio file contains multiple channels where each channel contains a single speaker. When enabled, each channel will be transcribed independently and the results will be combined. Each word in the response will include a 'channel_index' field indicating which channel it was spoken on. A maximum of 5 channels is supported. |
 | `webhook` | boolean | No | — | Whether to send the transcription result to configured speech-to-text webhooks.  If set the request will return early without the transcription, which will be delivered later via webhook. |
-| `webhook_id` | object | No | — | Optional specific webhook ID to send the transcription result to. Only valid when webhook is set to true. If not provided, transcription will be sent to all configured speech-to-text webhooks. |
+| `webhook_id` | string | No | — | Optional specific webhook ID to send the transcription result to. Only valid when webhook is set to true. If not provided, transcription will be sent to all configured speech-to-text webhooks. |
 | `webhook_metadata` | object | No | — | Optional metadata to be included in the webhook response. This should be a JSON string representing an object with a maximum depth of 2 levels and maximum size of 16KB. Useful for tracking internal IDs, job references, or other contextual information. |
 
 <Expandable title="inputSchema">
@@ -1115,9 +1273,11 @@ Speech To Text
       "description": "Additional Formats"
     },
     "cloud_storage_url": {
+      "type": "string",
       "description": "The HTTPS URL of the file to transcribe. Exactly one of the file or cloud_storage_url parameters must be provided. The file must be accessible via HTTPS and the file size must be less than 2GB. Any valid HTTPS URL is accepted, including URLs from cloud storage providers (AWS S3, Google Cloud Storage, Cloudflare R2, etc.), CDNs, or any other HTTPS source. URLs can be pre-signed or include authentication tokens in query parameters."
     },
     "diarization_threshold": {
+      "type": "number",
       "description": "Diarization threshold to apply during speaker diarization. A higher value means there will be a lower chance of one speaker being diarized as two different speakers but also a higher chance of two different speakers being diarized as one speaker (less total speakers predicted). A low value means there will be a higher chance of one speaker being diarized as two different speakers but also a lower chance of two different speakers being diarized as one speaker (more total speakers predicted). Can only be set when diarize=True and num_speakers=None. Defaults to None, in which case we will choose a threshold based on the model_id (0.22 usually)."
     },
     "diarize": {
@@ -1135,6 +1295,7 @@ Speech To Text
       "description": "How to format redacted entities. 'redacted' replaces with {REDACTED}, 'entity_type' replaces with {ENTITY_TYPE}, 'enumerated_entity_type' replaces with {ENTITY_TYPE_N} where N enumerates each occurrence. Only used when entity_redaction is set."
     },
     "file": {
+      "type": "string",
       "description": "The file to transcribe (100ms minimum audio length). All major audio and video formats are supported. Exactly one of the file or cloud_storage_url parameters must be provided. The file size must be less than 3.0GB."
     },
     "file_format": {
@@ -1147,9 +1308,13 @@ Speech To Text
     },
     "keyterms": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of keyterms to bias the transcription towards.           The keyterms are words or phrases you want the model to recognise more accurately.           The number of keyterms cannot exceed 1000.           The length of each keyterm must be less than 50 characters.           Keyterms can contain at most 5 words (after normalisation).           For example [\"hello\", \"world\", \"technical term\"].           Usage of this parameter will incur additional costs.           When more than 100 keyterms are provided, a minimum billable duration of 20 seconds applies per request."
     },
     "language_code": {
+      "type": "string",
       "description": "An ISO-639-1 or ISO-639-3 language_code corresponding to the language of the audio file. Can sometimes improve transcription performance if known beforehand. Defaults to null, in this case the language is predicted automatically."
     },
     "model_id": {
@@ -1165,12 +1330,15 @@ Speech To Text
       "description": "If true, the transcription will not have any filler words, false starts and non-speech sounds. Only supported with scribe_v2 model."
     },
     "num_speakers": {
+      "type": "integer",
       "description": "The maximum amount of speakers talking in the uploaded file. Can help with predicting who speaks when. The maximum amount of speakers that can be predicted is 32. Defaults to null, in this case the amount of speakers is set to the maximum value the model supports."
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be an integer between 0 and 2147483647."
     },
     "source_url": {
+      "type": "string",
       "description": "The URL of an audio or video file to transcribe. Supports hosted video or audio files, YouTube video URLs, TikTok video URLs, and other video hosting services."
     },
     "tag_audio_events": {
@@ -1178,6 +1346,7 @@ Speech To Text
       "description": "Whether to tag audio events like (laughter), (footsteps), etc. in the transcription."
     },
     "temperature": {
+      "type": "number",
       "description": "Controls the randomness of the transcription output. Accepts values between 0.0 and 2.0, where higher values result in more diverse and less deterministic results. If omitted, we will use a temperature based on the model you selected which is usually 0."
     },
     "timestamps_granularity": {
@@ -1198,6 +1367,7 @@ Speech To Text
       "description": "Whether to send the transcription result to configured speech-to-text webhooks.  If set the request will return early without the transcription, which will be delivered later via webhook."
     },
     "webhook_id": {
+      "type": "string",
       "description": "Optional specific webhook ID to send the transcription result to. Only valid when webhook is set to true. If not provided, transcription will be sent to all configured speech-to-text webhooks."
     },
     "webhook_metadata": {
@@ -1225,13 +1395,13 @@ Stream Composed Music
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `composition_plan` | object | No | — | A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`. |
-| `finetune_id` | object | No | — | The ID of the finetune to use for the generation |
+| `finetune_id` | string | No | — | The ID of the finetune to use for the generation |
 | `force_instrumental` | boolean | No | — | If true, guarantees that the generated song will be instrumental. If false, the song may or may not be instrumental depending on the `prompt`. Can only be used with `prompt`. |
 | `model_id` | string | No | — | The model to use for the generation. |
-| `music_length_ms` | object | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
+| `music_length_ms` | integer | No | — | The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt. |
 | `music_prompt` | object | No | — | A music prompt. Deprecated. Use `composition_plan` instead. |
-| `prompt` | object | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
-| `seed` | object | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
+| `prompt` | string | No | — | A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`. |
+| `seed` | integer | No | — | Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt. |
 | `store_for_inpainting` | boolean | No | — | Whether to store the generated song for inpainting. Only available to enterprise clients with access to the inpainting feature. |
 | `use_phonetic_names` | boolean | No | — | If true, proper names in the prompt will be phonetically spelled in the lyrics for better pronunciation by the music model. The original names will be restored in word timestamps. |
 
@@ -1273,9 +1443,30 @@ Stream Composed Music
       ]
     },
     "composition_plan": {
-      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`."
+      "type": "object",
+      "description": "A detailed composition plan to guide music generation. Cannot be used in conjunction with `prompt`.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "finetune_id": {
+      "type": "string",
       "description": "The ID of the finetune to use for the generation"
     },
     "force_instrumental": {
@@ -1290,15 +1481,38 @@ Stream Composed Music
       ]
     },
     "music_length_ms": {
+      "type": "integer",
       "description": "The length of the song to generate in milliseconds. Used only in conjunction with `prompt`. Must be between 3000ms and 600000ms. Optional - if not provided, the model will choose a length based on the prompt."
     },
     "music_prompt": {
-      "description": "A music prompt. Deprecated. Use `composition_plan` instead."
+      "type": "object",
+      "description": "A music prompt. Deprecated. Use `composition_plan` instead.",
+      "properties": {
+        "positive_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should be present in the entire song. Use English language for best result."
+        },
+        "negative_global_styles": {
+          "type": "array",
+          "description": "The styles and musical directions that should not be present in the entire song. Use English language for best result."
+        },
+        "sections": {
+          "type": "array",
+          "description": "The sections of the song."
+        }
+      },
+      "required": [
+        "positive_global_styles",
+        "negative_global_styles",
+        "sections"
+      ]
     },
     "prompt": {
+      "type": "string",
       "description": "A simple text prompt to generate a song from. Cannot be used in conjunction with `composition_plan`."
     },
     "seed": {
+      "type": "integer",
       "description": "Random seed to initialize the music generation process. Providing the same seed with the same parameters can help achieve more consistent results, but exact reproducibility is not guaranteed and outputs may change across system updates. Cannot be used in conjunction with prompt."
     },
     "store_for_inpainting": {
@@ -1331,11 +1545,11 @@ Text To Dialogue (Multi-Voice)
 | `output_format` | object | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM and WAV formats with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
 | `avatar_context` | object | No | — | Avatar context when this generation is made from the Avatars video editor. |
-| `inputs` | any[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `inputs` | object[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `settings` | object | No | — | Settings controlling the dialogue generation. |
 
 <Expandable title="inputSchema">
@@ -1391,13 +1605,36 @@ Text To Dialogue (Multi-Voice)
       ]
     },
     "avatar_context": {
-      "description": "Avatar context when this generation is made from the Avatars video editor."
+      "type": "object",
+      "description": "Avatar context when this generation is made from the Avatars video editor.",
+      "properties": {
+        "avatar_id": {
+          "type": "string",
+          "description": "Avatar Id"
+        },
+        "avatar_style_id": {
+          "type": "string",
+          "description": "Avatar Style Id"
+        },
+        "avatar_name": {
+          "type": "string",
+          "description": "Avatar Name"
+        },
+        "avatar_style_name": {
+          "type": "string",
+          "description": "Avatar Style Name"
+        }
+      }
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10."
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1405,13 +1642,25 @@ Text To Dialogue (Multi-Voice)
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "settings": {
-      "description": "Settings controlling the dialogue generation."
+      "type": "object",
+      "description": "Settings controlling the dialogue generation.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        }
+      }
     }
   },
   "required": [
@@ -1435,11 +1684,11 @@ Text To Dialogue With Timestamps
 | --- | --- | --- | --- | --- |
 | `output_format` | object | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM and WAV formats with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
-| `inputs` | any[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `inputs` | object[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `settings` | object | No | — | Settings controlling the dialogue generation. |
 
 <Expandable title="inputSchema">
@@ -1496,9 +1745,13 @@ Text To Dialogue With Timestamps
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10."
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1506,13 +1759,25 @@ Text To Dialogue With Timestamps
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "settings": {
-      "description": "Settings controlling the dialogue generation."
+      "type": "object",
+      "description": "Settings controlling the dialogue generation.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        }
+      }
     }
   },
   "required": [
@@ -1537,11 +1802,11 @@ Text To Dialogue (Multi-Voice) Streaming
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
 | `avatar_context` | object | No | — | Avatar context when this generation is made from the Avatars video editor. |
-| `inputs` | any[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `inputs` | object[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `settings` | object | No | — | Settings controlling the dialogue generation. |
 
 <Expandable title="inputSchema">
@@ -1591,13 +1856,36 @@ Text To Dialogue (Multi-Voice) Streaming
       ]
     },
     "avatar_context": {
-      "description": "Avatar context when this generation is made from the Avatars video editor."
+      "type": "object",
+      "description": "Avatar context when this generation is made from the Avatars video editor.",
+      "properties": {
+        "avatar_id": {
+          "type": "string",
+          "description": "Avatar Id"
+        },
+        "avatar_style_id": {
+          "type": "string",
+          "description": "Avatar Style Id"
+        },
+        "avatar_name": {
+          "type": "string",
+          "description": "Avatar Name"
+        },
+        "avatar_style_name": {
+          "type": "string",
+          "description": "Avatar Style Name"
+        }
+      }
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10."
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1605,13 +1893,25 @@ Text To Dialogue (Multi-Voice) Streaming
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "settings": {
-      "description": "Settings controlling the dialogue generation."
+      "type": "object",
+      "description": "Settings controlling the dialogue generation.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        }
+      }
     }
   },
   "required": [
@@ -1635,11 +1935,11 @@ Text To Dialogue Streaming With Timestamps
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
-| `inputs` | any[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `inputs` | object[] | Yes | — | A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `settings` | object | No | — | Settings controlling the dialogue generation. |
 
 <Expandable title="inputSchema">
@@ -1690,9 +1990,13 @@ Text To Dialogue Streaming With Timestamps
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of dialogue inputs, each containing text and a voice ID which will be converted into speech. The maximum number of unique voice IDs is 10."
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1700,13 +2004,25 @@ Text To Dialogue Streaming With Timestamps
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "settings": {
-      "description": "Settings controlling the dialogue generation."
+      "type": "object",
+      "description": "Settings controlling the dialogue generation.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        }
+      }
     }
   },
   "required": [
@@ -1730,19 +2046,19 @@ Text To Speech
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM and WAV formats with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_language_text_normalization` | boolean | No | — | This parameter controls language text normalization. This helps with proper pronunciation of text in some supported languages. WARNING: This parameter can heavily increase the latency of the request. Currently only supported for Japanese. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
 | `avatar_context` | object | No | — | Avatar context when this generation is made from the Avatars video editor. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `next_request_ids` | object | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
-| `next_text` | object | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `previous_request_ids` | object | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
-| `previous_text` | object | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `next_request_ids` | string[] | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
+| `next_text` | string | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `previous_request_ids` | string[] | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
+| `previous_text` | string | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `text` | string | Yes | — | The text that will get converted into speech. |
 | `use_pvc_as_ivc` | boolean | No | — | If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions. |
 | `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. |
@@ -1766,6 +2082,7 @@ Text To Speech
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -1816,9 +2133,29 @@ Text To Speech
       ]
     },
     "avatar_context": {
-      "description": "Avatar context when this generation is made from the Avatars video editor."
+      "type": "object",
+      "description": "Avatar context when this generation is made from the Avatars video editor.",
+      "properties": {
+        "avatar_id": {
+          "type": "string",
+          "description": "Avatar Id"
+        },
+        "avatar_style_id": {
+          "type": "string",
+          "description": "Avatar Style Id"
+        },
+        "avatar_name": {
+          "type": "string",
+          "description": "Avatar Name"
+        },
+        "avatar_style_name": {
+          "type": "string",
+          "description": "Avatar Style Name"
+        }
+      }
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1826,21 +2163,36 @@ Text To Speech
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "next_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "next_text": {
+      "type": "string",
       "description": "The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "previous_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "previous_text": {
+      "type": "string",
       "description": "The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "text": {
@@ -1852,7 +2204,30 @@ Text To Speech
       "description": "If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions."
     },
     "voice_settings": {
-      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request."
+      "type": "object",
+      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        },
+        "use_speaker_boost": {
+          "type": "boolean",
+          "description": "This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency."
+        },
+        "similarity_boost": {
+          "type": "number",
+          "description": "Determines how closely the AI should adhere to the original voice when attempting to replicate it."
+        },
+        "style": {
+          "type": "number",
+          "description": "Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0."
+        },
+        "speed": {
+          "type": "number",
+          "description": "Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up."
+        }
+      }
     }
   },
   "required": [
@@ -1877,18 +2252,18 @@ Text To Speech With Timestamps
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM and WAV formats with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_language_text_normalization` | boolean | No | — | This parameter controls language text normalization. This helps with proper pronunciation of text in some supported languages. WARNING: This parameter can heavily increase the latency of the request. Currently only supported for Japanese. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `next_request_ids` | any[] | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
-| `next_text` | object | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `previous_request_ids` | any[] | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
-| `previous_text` | object | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `pronunciation_dictionary_locators` | any[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `next_request_ids` | string[] | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
+| `next_text` | string | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `previous_request_ids` | string[] | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
+| `previous_text` | string | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `text` | string | Yes | — | The text that will get converted into speech. |
 | `use_pvc_as_ivc` | boolean | No | — | If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions. |
 | `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. |
@@ -1912,6 +2287,7 @@ Text To Speech With Timestamps
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -1962,6 +2338,7 @@ Text To Speech With Timestamps
       ]
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -1970,23 +2347,35 @@ Text To Speech With Timestamps
     },
     "next_request_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "next_text": {
+      "type": "string",
       "description": "The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "previous_request_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "previous_text": {
+      "type": "string",
       "description": "The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "pronunciation_dictionary_locators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "text": {
@@ -1998,7 +2387,30 @@ Text To Speech With Timestamps
       "description": "If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions."
     },
     "voice_settings": {
-      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request."
+      "type": "object",
+      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        },
+        "use_speaker_boost": {
+          "type": "boolean",
+          "description": "This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency."
+        },
+        "similarity_boost": {
+          "type": "number",
+          "description": "Determines how closely the AI should adhere to the original voice when attempting to replicate it."
+        },
+        "style": {
+          "type": "number",
+          "description": "Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0."
+        },
+        "speed": {
+          "type": "number",
+          "description": "Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up."
+        }
+      }
     }
   },
   "required": [
@@ -2023,19 +2435,19 @@ Text To Speech Streaming
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_language_text_normalization` | boolean | No | — | This parameter controls language text normalization. This helps with proper pronunciation of text in some supported languages. WARNING: This parameter can heavily increase the latency of the request. Currently only supported for Japanese. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
 | `avatar_context` | object | No | — | Avatar context when this generation is made from the Avatars video editor. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `next_request_ids` | object | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
-| `next_text` | object | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `previous_request_ids` | object | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
-| `previous_text` | object | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `next_request_ids` | string[] | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
+| `next_text` | string | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `previous_request_ids` | string[] | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
+| `previous_text` | string | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `text` | string | Yes | — | The text that will get converted into speech. |
 | `use_pvc_as_ivc` | boolean | No | — | If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions. |
 | `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. |
@@ -2059,6 +2471,7 @@ Text To Speech Streaming
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -2102,9 +2515,29 @@ Text To Speech Streaming
       ]
     },
     "avatar_context": {
-      "description": "Avatar context when this generation is made from the Avatars video editor."
+      "type": "object",
+      "description": "Avatar context when this generation is made from the Avatars video editor.",
+      "properties": {
+        "avatar_id": {
+          "type": "string",
+          "description": "Avatar Id"
+        },
+        "avatar_style_id": {
+          "type": "string",
+          "description": "Avatar Style Id"
+        },
+        "avatar_name": {
+          "type": "string",
+          "description": "Avatar Name"
+        },
+        "avatar_style_name": {
+          "type": "string",
+          "description": "Avatar Style Name"
+        }
+      }
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -2112,21 +2545,36 @@ Text To Speech Streaming
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "next_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "next_text": {
+      "type": "string",
       "description": "The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "previous_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "previous_text": {
+      "type": "string",
       "description": "The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "text": {
@@ -2138,7 +2586,30 @@ Text To Speech Streaming
       "description": "If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions."
     },
     "voice_settings": {
-      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request."
+      "type": "object",
+      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        },
+        "use_speaker_boost": {
+          "type": "boolean",
+          "description": "This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency."
+        },
+        "similarity_boost": {
+          "type": "number",
+          "description": "Determines how closely the AI should adhere to the original voice when attempting to replicate it."
+        },
+        "style": {
+          "type": "number",
+          "description": "Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0."
+        },
+        "speed": {
+          "type": "number",
+          "description": "Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up."
+        }
+      }
     }
   },
   "required": [
@@ -2163,18 +2634,18 @@ Text To Speech Streaming With Timestamps
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
 | `enable_logging` | boolean | No | — | When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers. |
-| `optimize_streaming_latency` | object | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
+| `optimize_streaming_latency` | integer | No | — | You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None. |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
 | `apply_language_text_normalization` | boolean | No | — | This parameter controls language text normalization. This helps with proper pronunciation of text in some supported languages. WARNING: This parameter can heavily increase the latency of the request. Currently only supported for Japanese. |
 | `apply_text_normalization` | string | No | — | This parameter controls text normalization with three modes: 'auto', 'on', and 'off'. When set to 'auto', the system will automatically decide whether to apply text normalization (e.g., spelling out numbers). With 'on', text normalization will always be applied, while with 'off', it will be skipped. |
-| `language_code` | object | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
+| `language_code` | string | No | — | Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned. |
 | `model_id` | string | No | — | Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property. |
-| `next_request_ids` | object | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
-| `next_text` | object | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `previous_request_ids` | object | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
-| `previous_text` | object | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
-| `pronunciation_dictionary_locators` | object | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
-| `seed` | object | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
+| `next_request_ids` | string[] | No | — | A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send. |
+| `next_text` | string | No | — | The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `previous_request_ids` | string[] | No | — | A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send. |
+| `previous_text` | string | No | — | The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation. |
+| `pronunciation_dictionary_locators` | object[] | No | — | A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request |
+| `seed` | integer | No | — | If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295. |
 | `text` | string | Yes | — | The text that will get converted into speech. |
 | `use_pvc_as_ivc` | boolean | No | — | If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions. |
 | `voice_settings` | object | No | — | Voice settings overriding stored settings for the given voice. They are applied only on the given request. |
@@ -2198,6 +2669,7 @@ Text To Speech Streaming With Timestamps
       "description": "When enable_logging is set to false zero retention mode will be used for the request. This will mean history features are unavailable for this request, including request stitching. Zero retention mode may only be used by enterprise customers."
     },
     "optimize_streaming_latency": {
+      "type": "integer",
       "description": "You can turn on latency optimizations at some cost of quality. The best possible final latency varies by model. Possible values: 0 - default mode (no latency optimizations) 1 - normal latency optimizations (about 50% of possible latency improvement of option 3) 2 - strong latency optimizations (about 75% of possible latency improvement of option 3) 3 - max latency optimizations 4 - max latency optimizations, but also with text normalizer turned off for even more latency savings (best latency, but can mispronounce eg numbers and dates).  Defaults to None."
     },
     "output_format": {
@@ -2241,6 +2713,7 @@ Text To Speech Streaming With Timestamps
       ]
     },
     "language_code": {
+      "type": "string",
       "description": "Language code (ISO 639-1) used to enforce a language for the model and text normalization. If the model does not support provided language code, an error will be returned."
     },
     "model_id": {
@@ -2248,21 +2721,36 @@ Text To Speech Streaming With Timestamps
       "description": "Identifier of the model that will be used, you can query them using GET /v1/models. The model needs to have support for text to speech, you can check this using the can_do_text_to_speech property."
     },
     "next_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that come after this generation. next_request_ids is especially useful for maintaining the speech's continuity when regenerating a sample that has had some audio quality issues. For example, if you have generated 3 speech clips, and you want to improve clip 2, passing the request id of clip 3 as a next_request_id (and that of clip 1 as a previous_request_id) will help maintain natural flow in the combined speech. The results will be best when the same model is used across the generations. In case both next_text and next_request_ids is send, next_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "next_text": {
+      "type": "string",
       "description": "The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "previous_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of request_id of the samples that were generated before this generation. Can be used to improve the speech's continuity when splitting up a large task into multiple requests. The results will be best when the same model is used across the generations. In case both previous_text and previous_request_ids is send, previous_text will be ignored. A maximum of 3 request_ids can be send."
     },
     "previous_text": {
+      "type": "string",
       "description": "The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation."
     },
     "pronunciation_dictionary_locators": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (id, version_id) to be applied to the text. They will be applied in order. You may have up to 3 locators per request"
     },
     "seed": {
+      "type": "integer",
       "description": "If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed. Must be integer between 0 and 4294967295."
     },
     "text": {
@@ -2274,7 +2762,30 @@ Text To Speech Streaming With Timestamps
       "description": "If true, we won't use PVC version of the voice for the generation but the IVC version. This is a temporary workaround for higher latency in PVC versions."
     },
     "voice_settings": {
-      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request."
+      "type": "object",
+      "description": "Voice settings overriding stored settings for the given voice. They are applied only on the given request.",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
+        },
+        "use_speaker_boost": {
+          "type": "boolean",
+          "description": "This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency."
+        },
+        "similarity_boost": {
+          "type": "number",
+          "description": "Determines how closely the AI should adhere to the original voice when attempting to replicate it."
+        },
+        "style": {
+          "type": "number",
+          "description": "Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0."
+        },
+        "speed": {
+          "type": "number",
+          "description": "Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up."
+        }
+      }
     }
   },
   "required": [
@@ -2339,10 +2850,10 @@ Video To Music
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `output_format` | string | No | — | Output format of the generated audio. Formatted as codec_sample_rate_bitrate. So an mp3 with 22.05kHz sample rate at 32kbs is represented as mp3_22050_32. MP3 with 192kbps bitrate requires you to be subscribed to Creator tier or above. PCM with 44.1kHz sample rate requires you to be subscribed to Pro tier or above. Note that the μ-law format (sometimes written mu-law, often approximated as u-law) is commonly used for Twilio audio inputs. |
-| `description` | object | No | — | Optional text description of the music you want. A maximum of 1000 characters is allowed. |
+| `description` | string | No | — | Optional text description of the music you want. A maximum of 1000 characters is allowed. |
 | `sign_with_c2pa` | boolean | No | — | Whether to sign the generated song with C2PA. Applicable only for mp3 files. |
-| `tags` | any[] | No | — | Optional list of style tags (e.g. ['upbeat', 'cinematic']). A maximum of 10 tags is allowed. |
-| `videos` | any[] | Yes | — | One or more video files sent via FormData array (multipart/form-data). They will be combined into one codec in order.             A maximum of 10 videos is allowed, where the total size of the combined video is limited to 200MB.             In total, the video can be up to 600 seconds long. Note that combining multiple videos may increase the request duration significantly. If possible, combine the videos beforehand. |
+| `tags` | string[] | No | — | Optional list of style tags (e.g. ['upbeat', 'cinematic']). A maximum of 10 tags is allowed. |
+| `videos` | string[] | Yes | — | One or more video files sent via FormData array (multipart/form-data). They will be combined into one codec in order.             A maximum of 10 videos is allowed, where the total size of the combined video is limited to 200MB.             In total, the video can be up to 600 seconds long. Note that combining multiple videos may increase the request duration significantly. If possible, combine the videos beforehand. |
 
 <Expandable title="inputSchema">
 
@@ -2382,6 +2893,7 @@ Video To Music
       ]
     },
     "description": {
+      "type": "string",
       "description": "Optional text description of the music you want. A maximum of 1000 characters is allowed."
     },
     "sign_with_c2pa": {
@@ -2390,10 +2902,17 @@ Video To Music
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional list of style tags (e.g. ['upbeat', 'cinematic']). A maximum of 10 tags is allowed."
     },
     "videos": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "binary"
+      },
       "description": "One or more video files sent via FormData array (multipart/form-data). They will be combined into one codec in order.             A maximum of 10 videos is allowed, where the total size of the combined video is limited to 200MB.             In total, the video can be up to 600 seconds long. Note that combining multiple videos may increase the request duration significantly. If possible, combine the videos beforehand."
     }
   },

@@ -60,7 +60,7 @@ Add domains to block list
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `domains` | any[] | Yes | — | List of domains to block |
+| `domains` | string[] | Yes | — | List of domains to block |
 
 <Expandable title="inputSchema">
 
@@ -74,6 +74,9 @@ Add domains to block list
     },
     "domains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of domains to block"
     }
   },
@@ -139,7 +142,7 @@ Add leads to a campaign
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `campaign_id` | integer | Yes | — | The campaign ID |
-| `lead_list` | any[] | Yes | — | Array of lead objects to add |
+| `lead_list` | object[] | Yes | — | Array of lead objects to add |
 | `settings` | object | No | — | Import settings |
 
 <Expandable title="inputSchema">
@@ -158,6 +161,9 @@ Add leads to a campaign
     },
     "lead_list": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of lead objects to add"
     },
     "settings": {
@@ -1280,7 +1286,7 @@ Save campaign email sequences
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `campaign_id` | integer | Yes | — | The campaign ID |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1298,6 +1304,9 @@ Save campaign email sequences
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -1400,7 +1409,7 @@ Update campaign sending schedule
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `campaign_id` | integer | Yes | — | The campaign ID |
-| `days_of_the_week` | any[] | Yes | — | Active days (0=Sunday through 6=Saturday) |
+| `days_of_the_week` | integer[] | Yes | — | Active days (0=Sunday through 6=Saturday) |
 | `end_hour` | string | Yes | — | End hour in 24-hour format (e.g., 19:00) |
 | `max_leads_per_day` | integer | Yes | — | Maximum number of leads to contact per day |
 | `min_time_btw_emails` | integer | Yes | — | Minimum minutes between emails |
@@ -1423,6 +1432,9 @@ Update campaign sending schedule
     },
     "days_of_the_week": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "Active days (0=Sunday through 6=Saturday)"
     },
     "end_hour": {
@@ -1477,7 +1489,7 @@ Update campaign general settings
 | `follow_up_percentage` | number | No | — | Follow-up percentage (0-100) |
 | `send_as_plain_text` | boolean | No | — | Send emails as plain text instead of HTML |
 | `stop_lead_settings` | string | No | — | When to stop sending to a lead |
-| `track_settings` | any[] | No | — | Tracking flags to disable |
+| `track_settings` | string[] | No | — | Tracking flags to disable |
 | `unsubscribe_text` | string | No | — | Custom unsubscribe text |
 
 <Expandable title="inputSchema">
@@ -1522,6 +1534,13 @@ Update campaign general settings
     },
     "track_settings": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DONT_EMAIL_OPEN",
+          "DONT_LINK_CLICK"
+        ]
+      },
       "description": "Tracking flags to disable"
     },
     "unsubscribe_text": {

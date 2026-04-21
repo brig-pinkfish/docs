@@ -626,7 +626,7 @@ Get documents.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
-| `categoryId` | any[] | No | — | If specified, retrieves documents associated with category ids, comma separated values expected. |
+| `categoryId` | string[] | No | — | If specified, retrieves documents associated with category ids, comma separated values expected. |
 | `pageSize` | integer | No | — | Number of entities to return. Maximum of 200. |
 
 <Expandable title="inputSchema">
@@ -645,6 +645,9 @@ Get documents.
     },
     "categoryId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves documents associated with category ids, comma separated values expected."
     },
     "pageSize": {
@@ -672,7 +675,7 @@ Get sync options available for a knowledge-connect integration
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `integrationId` | string | Yes | — | Integration ID |
-| `knowledgeBaseIds` | any[] | No | — | Narrowing down filtering option results by knowledge base. |
+| `knowledgeBaseIds` | string[] | No | — | Narrowing down filtering option results by knowledge base. |
 
 <Expandable title="inputSchema">
 
@@ -690,6 +693,9 @@ Get sync options available for a knowledge-connect integration
     },
     "knowledgeBaseIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Narrowing down filtering option results by knowledge base."
     }
   },
@@ -1457,7 +1463,7 @@ Get document.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `documentId` | string | Yes | — | Document ID. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. Max No. of variations that can be returned on expand is 20. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. Max No. of variations that can be returned on expand is 20. |
 | `state` | string | No | — | "when state is "Draft", draft version of the document is returned,otherwise by default published version is returned in the response. |
 
 <Expandable title="inputSchema">
@@ -1480,6 +1486,14 @@ Get document.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "labels",
+          "variations"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected. Max No. of variations that can be returned on expand is 20."
     },
     "state": {
@@ -1682,7 +1696,7 @@ Get a variation for a document.
 | `documentId` | string | Yes | — | Globally unique identifier for a document. |
 | `knowledgeBaseId` | string | Yes | — | Globally unique identifier for a knowledge base. |
 | `documentState` | string | No | — | The state of the document. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -1716,6 +1730,12 @@ Get a variation for a document.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "contentUrl"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -1746,7 +1766,7 @@ Get variations for a document.
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
 | `pageSize` | string | No | — | Number of entities to return. Maximum of 200. |
 | `documentState` | string | No | — | The state of the document. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -1788,6 +1808,12 @@ Get variations for a document.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "contentUrl"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -1814,7 +1840,7 @@ Get document version.
 | `knowledgeBaseId` | string | Yes | — | Globally unique identifier for the knowledge base. |
 | `documentId` | string | Yes | — | Globally unique identifier for the document. |
 | `versionId` | string | Yes | — | Globally unique identifier for the document version. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -1840,6 +1866,13 @@ Get document version.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "labels"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -1986,7 +2019,7 @@ Get document versions.
 | `before` | string | No | — | The cursor that points to the start of the set of entities that has been returned. |
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
 | `pageSize` | string | No | — | Number of entities to return. Maximum of 200. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -2020,6 +2053,13 @@ Get document versions.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "labels"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -2048,13 +2088,13 @@ Get documents.
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
 | `pageSize` | string | No | — | Number of entities to return. Maximum of 200. |
 | `interval` | string | No | — | Retrieves the documents modified in specified date and time range. If the after and before cursor parameters are within this interval, it would return valid data, otherwise it throws an error.The dates in the interval are represented in ISO-8601 format: YYYY-MM-DDThh:mm:ssZ/YYYY-MM-DDThh:mm:ssZ |
-| `documentId` | any[] | No | — | Retrieves the specified documents, comma separated values expected. |
-| `categoryId` | any[] | No | — | If specified, retrieves documents associated with category ids, comma separated values expected. |
+| `documentId` | string[] | No | — | Retrieves the specified documents, comma separated values expected. |
+| `categoryId` | string[] | No | — | If specified, retrieves documents associated with category ids, comma separated values expected. |
 | `includeSubcategories` | boolean | No | — | Works along with 'categoryId' query parameter. If specified, retrieves documents associated with category ids and its children categories. |
 | `includeDrafts` | boolean | No | — | If includeDrafts is true, Documents in the draft state are also returned in the response. |
-| `labelIds` | any[] | No | — | If specified, retrieves documents associated with label ids, comma separated values expected. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
-| `externalIds` | any[] | No | — | If specified, retrieves documents associated with external ids, comma separated values expected. |
+| `labelIds` | string[] | No | — | If specified, retrieves documents associated with label ids, comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `externalIds` | string[] | No | — | If specified, retrieves documents associated with external ids, comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -2088,10 +2128,16 @@ Get documents.
     },
     "documentId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Retrieves the specified documents, comma separated values expected."
     },
     "categoryId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves documents associated with category ids, comma separated values expected."
     },
     "includeSubcategories": {
@@ -2104,14 +2150,27 @@ Get documents.
     },
     "labelIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves documents associated with label ids, comma separated values expected."
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "labels"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     },
     "externalIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves documents associated with external ids, comma separated values expected."
     }
   },
@@ -2241,11 +2300,11 @@ Get operations
 | `before` | string | No | — | The cursor that points to the start of the set of entities that has been returned. |
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
 | `pageSize` | string | No | — | Number of entities to return. Maximum of 200. |
-| `userId` | any[] | No | — | If specified, retrieves operations associated with user ids, comma separated values expected. |
-| `type` | any[] | No | — | If specified, retrieves operations with specified operation type, comma separated values expected. |
-| `status` | any[] | No | — | If specified, retrieves operations with specified operation status, comma separated values expected. |
+| `userId` | string[] | No | — | If specified, retrieves operations associated with user ids, comma separated values expected. |
+| `type` | string[] | No | — | If specified, retrieves operations with specified operation type, comma separated values expected. |
+| `status` | string[] | No | — | If specified, retrieves operations with specified operation status, comma separated values expected. |
 | `interval` | string | No | — | Retrieves the operations modified in specified date and time range. If the after and before cursor parameters are within this interval, it would return valid data, otherwise it throws an error.The dates in the interval are represented in ISO-8601 format: YYYY-MM-DDThh:mm:ssZ/YYYY-MM-DDThh:mm:ssZ |
-| `sourceId` | any[] | No | — | If specified, retrieves operations associated with source ids, comma separated values expected. |
+| `sourceId` | string[] | No | — | If specified, retrieves operations associated with source ids, comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -2275,14 +2334,29 @@ Get operations
     },
     "userId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves operations associated with user ids, comma separated values expected."
     },
     "type": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Export",
+          "Import",
+          "Parse",
+          "Sync"
+        ]
+      },
       "description": "If specified, retrieves operations with specified operation type, comma separated values expected."
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves operations with specified operation status, comma separated values expected."
     },
     "interval": {
@@ -2291,6 +2365,9 @@ Get operations
     },
     "sourceId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves operations associated with source ids, comma separated values expected."
     }
   },
@@ -2351,7 +2428,7 @@ Get parse job report
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
 | `parseJobId` | string | Yes | — | Parse job ID |
-| `expand` | any[] | No | — | If expand contains 'urls' downloadURL and failedEntitiesURL will be filled. |
+| `expand` | string[] | No | — | If expand contains 'urls' downloadURL and failedEntitiesURL will be filled. |
 
 <Expandable title="inputSchema">
 
@@ -2373,6 +2450,12 @@ Get parse job report
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "urls"
+        ]
+      },
       "description": "If expand contains 'urls' downloadURL and failedEntitiesURL will be filled."
     }
   },
@@ -2398,8 +2481,8 @@ Get Knowledge integration sources
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
 | `type` | string | No | — | If specified, retrieves integration sources with specified integration type. |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
-| `ids` | any[] | No | — | If specified, retrieves integration sources with specified IDs. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `ids` | string[] | No | — | If specified, retrieves integration sources with specified IDs. |
 
 <Expandable title="inputSchema">
 
@@ -2425,10 +2508,19 @@ Get Knowledge integration sources
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "lastsync"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, retrieves integration sources with specified IDs."
     }
   },
@@ -2453,7 +2545,7 @@ Get Salesforce Knowledge integration source
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
 | `sourceId` | string | Yes | — | Source ID |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -2475,6 +2567,12 @@ Get Salesforce Knowledge integration source
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "lastsync"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -2500,7 +2598,7 @@ Get ServiceNow Knowledge integration source
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
 | `sourceId` | string | Yes | — | Source ID |
-| `expand` | any[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
+| `expand` | string[] | No | — | The specified entity attributes will be filled. Comma separated values expected. |
 
 <Expandable title="inputSchema">
 
@@ -2522,6 +2620,12 @@ Get ServiceNow Knowledge integration source
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "lastsync"
+        ]
+      },
       "description": "The specified entity attributes will be filled. Comma separated values expected."
     }
   },
@@ -3072,7 +3176,7 @@ Update search result.
 | `searchId` | string | Yes | — | Search Result ID |
 | `answered` | boolean | Yes | — | Mark the search as answered/unanswered |
 | `selectedAnswer` | object | No | — | Selected Answer |
-| `selectedAnswers` | any[] | No | — | The search results selected as answers |
+| `selectedAnswers` | object[] | No | — | The search results selected as answers |
 
 <Expandable title="inputSchema">
 
@@ -3111,6 +3215,9 @@ Update search result.
     },
     "selectedAnswers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The search results selected as answers"
     }
   },
@@ -3256,7 +3363,7 @@ Register chunk search result.
 | `knowledgeBaseId` | string | Yes | — | Knowledge Base ID |
 | `searchId` | string | Yes | — | Unique identifier of search request |
 | `answered` | boolean | Yes | — | Mark the chunks search as answered/unanswered |
-| `selectedAnswers` | any[] | No | — | The search results selected as answers |
+| `selectedAnswers` | object[] | No | — | The search results selected as answers |
 | `sessionId` | string | No | — | The unique identifier of this session |
 
 <Expandable title="inputSchema">
@@ -3283,6 +3390,9 @@ Register chunk search result.
     },
     "selectedAnswers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The search results selected as answers"
     },
     "sessionId": {
@@ -3313,12 +3423,12 @@ Update document.
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `documentId` | string | Yes | — | Document ID. |
-| `alternatives` | any[] | No | — | List of alternate phrases related to the title which improves search results. |
+| `alternatives` | object[] | No | — | List of alternate phrases related to the title which improves search results. |
 | `categoryId` | string | No | — | The category associated with the document. |
 | `externalId` | string | No | — | The external id associated with the document. |
 | `externalUrl` | string | No | — | The URL to external document. |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `labelIds` | any[] | No | — | The ids of labels associated with the document. |
+| `labelIds` | string[] | No | — | The ids of labels associated with the document. |
 | `selfUri` | string | No | — | The URI for this object |
 | `title` | string | Yes | — | Document title. |
 | `visible` | boolean | No | — | Indicates if the knowledge document should be included in search results. |
@@ -3343,6 +3453,9 @@ Update document.
     },
     "alternatives": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of alternate phrases related to the title which improves search results."
     },
     "categoryId": {
@@ -3363,6 +3476,9 @@ Update document.
     },
     "labelIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of labels associated with the document."
     },
     "selfUri": {
@@ -3484,7 +3600,7 @@ Update a variation for a document.
 | `documentId` | string | Yes | — | Globally unique identifier for a document. |
 | `knowledgeBaseId` | string | Yes | — | Globally unique identifier for a knowledge base. |
 | `body` | object | No | — | The body value |
-| `contexts` | any[] | Yes | — | The context values associated with the variation. |
+| `contexts` | object[] | Yes | — | The context values associated with the variation. |
 | `dateCreated` | string | No | — | The creation date-time for the document variation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The last modification date-time for the document variation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `document` | object | No | — | The document value |
@@ -3531,6 +3647,9 @@ Update a variation for a document.
     },
     "contexts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The context values associated with the variation."
     },
     "dateCreated": {
@@ -3620,7 +3739,7 @@ Update search result.
 | `searchId` | string | Yes | — | Search Result ID |
 | `answered` | boolean | Yes | — | Mark the search as answered/unanswered |
 | `selectedAnswer` | object | No | — | Selected Answer |
-| `selectedAnswers` | any[] | No | — | The search results selected as answers |
+| `selectedAnswers` | object[] | No | — | The search results selected as answers |
 | `sessionId` | string | No | — | The unique identifier of this session |
 
 <Expandable title="inputSchema">
@@ -3660,6 +3779,9 @@ Update search result.
     },
     "selectedAnswers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The search results selected as answers"
     },
     "sessionId": {
@@ -3757,7 +3879,7 @@ Send update to the parse operation
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
 | `parseJobId` | string | Yes | — | Parse job ID |
-| `hints` | any[] | No | — | Hinted titles for the parser. |
+| `hints` | string[] | No | — | Hinted titles for the parser. |
 
 <Expandable title="inputSchema">
 
@@ -3779,6 +3901,9 @@ Send update to the parse operation
     },
     "hints": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Hinted titles for the parser."
     }
   },
@@ -3868,7 +3993,7 @@ Update a Knowledge base unanswered phrase group
 | `phraseGroupId` | string | Yes | — | The ID of the phraseGroup to be updated. |
 | `dateEnd` | string | No | — | The end date to be used for filtering phrases. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `dateStart` | string | No | — | The start date to be used for filtering phrases. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `phraseAssociations` | any[] | Yes | — | List of phrases and documents to be linked |
+| `phraseAssociations` | object[] | Yes | — | List of phrases and documents to be linked |
 
 <Expandable title="inputSchema">
 
@@ -3902,6 +4027,9 @@ Update a Knowledge base unanswered phrase group
     },
     "phraseAssociations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of phrases and documents to be linked"
     }
   },
@@ -3931,7 +4059,7 @@ Update Knowledge setting.
 | `description` | string | No | — | Knowledge setting description. |
 | `generationSetting` | object | No | — | Generation Setting |
 | `name` | string | Yes | — | Knowledge setting name. |
-| `sources` | any[] | Yes | — | Knowledge source information to search upon. |
+| `sources` | object[] | Yes | — | Knowledge source information to search upon. |
 | `stateful` | boolean | No | — | Indicates if stateful search and generation is enabled for the knowledge setting. |
 
 <Expandable title="inputSchema">
@@ -3975,6 +4103,9 @@ Update Knowledge setting.
     },
     "sources": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Knowledge source information to search upon."
     },
     "stateful": {
@@ -4446,14 +4577,14 @@ Answer documents.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
-| `answerMode` | any[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight |
+| `answerMode` | string[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight |
 | `appType` | string | No | — | The appType |
 | `insertHighlightIntoVariationContent` | boolean | No | — | If specified - insert highlight data into the variation content. |
 | `language` | string | No | — | The language of the documents. |
 | `query` | string | No | — | The search query. |
 | `queryType` | string | No | — | The query type |
 | `searchId` | string | No | — | The search id. |
-| `variationIds` | any[] | Yes | — | The variation Ids to answer. |
+| `variationIds` | string[] | Yes | — | The variation Ids to answer. |
 
 <Expandable title="inputSchema">
 
@@ -4471,6 +4602,13 @@ Answer documents.
     },
     "answerMode": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "AnswerHighlight",
+          "AnswerGeneration"
+        ]
+      },
       "description": "Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight"
     },
     "appType": {
@@ -4569,6 +4707,9 @@ Answer documents.
     },
     "variationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The variation Ids to answer."
     }
   },
@@ -4594,7 +4735,7 @@ Indicate that documents were presented to the user.
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
 | `application` | object | No | — | The application value |
-| `documents` | any[] | Yes | — | The presented documents |
+| `documents` | object[] | Yes | — | The presented documents |
 | `queryType` | string | No | — | The type of the query that surfaced the documents. |
 | `searchId` | string | No | — | The search that surfaced the documents that were presented. |
 | `surfacingMethod` | string | No | — | The method how knowledge was surfaced. Article: Full article was shown. Snippet: A snippet from the article was shown. Highlight: A highlighted answer in a snippet was shown.Generative: A generated answer in a snippet was shown. |
@@ -4640,6 +4781,9 @@ Indicate that documents were presented to the user.
     },
     "documents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The presented documents"
     },
     "queryType": {
@@ -4693,7 +4837,7 @@ Search the documents in a guest session.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `sessionId` | string | Yes | — | Knowledge guest session ID. |
-| `expand` | any[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
+| `expand` | string[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
 | `answerHighlightTopResults` | integer | No | — | The number of articles to be sent for answer-highlighting. Can range from 1-5. |
 | `includeDraftDocuments` | boolean | No | — | Indicates whether the search results would also include draft documents. |
 | `pageCount` | integer | No | — | Number of pages returned in the result calculated according to the pageSize and the total |
@@ -4720,6 +4864,14 @@ Search the documents in a guest session.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "documentVariations",
+          "documentAlternatives",
+          "knowledgeBaseLanguageCode"
+        ]
+      },
       "description": "Fields, if any, to expand for each document in the search result matching the query."
     },
     "answerHighlightTopResults": {
@@ -4837,7 +4989,7 @@ Create guest session
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `app` | object | Yes | — | The app value |
-| `contexts` | any[] | No | — | The session contexts. |
+| `contexts` | object[] | No | — | The session contexts. |
 | `customerId` | string | Yes | — | An arbitrary ID for the customer starting the session. Used to track multiple sessions started by the same customer. |
 | `id` | string | No | — | Session ID. |
 | `journeySessionId` | string | No | — | Journey session ID. Used to get the segments of the customer to filter search results. |
@@ -4873,6 +5025,9 @@ Create guest session
     },
     "contexts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The session contexts."
     },
     "customerId": {
@@ -5943,7 +6098,7 @@ Create a variation for a document.
 | `knowledgeBaseId` | string | Yes | — | Globally unique identifier for the knowledge base. |
 | `documentId` | string | Yes | — | Globally unique identifier for the document. |
 | `body` | object | No | — | The body value |
-| `contexts` | any[] | Yes | — | The context values associated with the variation. |
+| `contexts` | object[] | Yes | — | The context values associated with the variation. |
 | `dateCreated` | string | No | — | The creation date-time for the document variation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The last modification date-time for the document variation. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `document` | object | No | — | The document value |
@@ -5986,6 +6141,9 @@ Create a variation for a document.
     },
     "contexts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The context values associated with the variation."
     },
     "dateCreated": {
@@ -6387,12 +6545,12 @@ Create document.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
-| `alternatives` | any[] | No | — | List of alternate phrases related to the title which improves search results. |
+| `alternatives` | object[] | No | — | List of alternate phrases related to the title which improves search results. |
 | `categoryId` | string | No | — | The category associated with the document. |
 | `externalId` | string | No | — | The external id associated with the document. |
 | `externalUrl` | string | No | — | The URL to external document. |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `labelIds` | any[] | No | — | The ids of labels associated with the document. |
+| `labelIds` | string[] | No | — | The ids of labels associated with the document. |
 | `selfUri` | string | No | — | The URI for this object |
 | `title` | string | Yes | — | Document title. |
 | `visible` | boolean | No | — | Indicates if the knowledge document should be included in search results. |
@@ -6413,6 +6571,9 @@ Create document.
     },
     "alternatives": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of alternate phrases related to the title which improves search results."
     },
     "categoryId": {
@@ -6433,6 +6594,9 @@ Create document.
     },
     "labelIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of labels associated with the document."
     },
     "selfUri": {
@@ -6469,14 +6633,14 @@ Answer documents.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
-| `answerMode` | any[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight |
+| `answerMode` | string[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight |
 | `appType` | string | No | — | The appType |
 | `insertHighlightIntoVariationContent` | boolean | No | — | If specified - insert highlight data into the variation content. |
 | `language` | string | No | — | The language of the documents. |
 | `query` | string | No | — | The search query. |
 | `queryType` | string | No | — | The query type |
 | `searchId` | string | No | — | The search id. |
-| `variationIds` | any[] | Yes | — | The variation Ids to answer. |
+| `variationIds` | string[] | Yes | — | The variation Ids to answer. |
 
 <Expandable title="inputSchema">
 
@@ -6494,6 +6658,13 @@ Answer documents.
     },
     "answerMode": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "AnswerHighlight",
+          "AnswerGeneration"
+        ]
+      },
       "description": "Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight"
     },
     "appType": {
@@ -6592,6 +6763,9 @@ Answer documents.
     },
     "variationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The variation Ids to answer."
     }
   },
@@ -6618,7 +6792,7 @@ Indicate that documents were presented to the user.
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID. |
 | `application` | object | Yes | — | The application value |
 | `conversationContext` | object | No | — | Conversation Context |
-| `documents` | any[] | Yes | — | The presented documents |
+| `documents` | object[] | Yes | — | The presented documents |
 | `queryType` | string | No | — | The type of the query that surfaced the documents. |
 | `searchId` | string | No | — | The search that surfaced the documents that were presented. |
 | `sessionId` | string | No | — | Knowledge session ID. |
@@ -6694,6 +6868,9 @@ Indicate that documents were presented to the user.
     },
     "documents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The presented documents"
     },
     "queryType": {
@@ -6752,7 +6929,7 @@ Query for knowledge documents.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge Base ID |
-| `expand` | any[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
+| `expand` | string[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
 | `filter` | object | Yes | — | The filter value |
 | `includeDraftDocuments` | boolean | No | — | Indicates whether the results would also include draft documents. |
 | `includeVariations` | string | No | — | Indicates which document variations to include in returned documents. All: all variations regardless of the filter expression; AllMatching: all variations that match the filter expression; SingleMostRelevant: single variation that matches the filter expression and has the highest priority. The default is All. |
@@ -6778,6 +6955,15 @@ Query for knowledge documents.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "documentVariations",
+          "documentAlternatives",
+          "knowledgeBaseLanguageCode",
+          "variationChunks"
+        ]
+      },
       "description": "Fields, if any, to expand for each document in the search result matching the query."
     },
     "filter": {
@@ -6874,9 +7060,9 @@ Search the documents in a knowledge base.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | The ID of knowledge base containing the documents to query. |
-| `expand` | any[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
+| `expand` | string[] | No | — | Fields, if any, to expand for each document in the search result matching the query. |
 | `answerHighlightTopResults` | integer | No | — | The number of articles to be sent for answer-highlighting. Can range from 1-5. |
-| `answerMode` | any[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight. Use this property with answerHighlightTopResults. |
+| `answerMode` | string[] | No | — | Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight. Use this property with answerHighlightTopResults. |
 | `application` | object | No | — | The application value |
 | `confidenceThreshold` | number | No | — | The confidence threshold for the search results. If applied, the returned results will have an equal or higher confidence than the threshold. The value should be between 0 to 1. |
 | `conversationContext` | object | No | — | Conversation Context |
@@ -6910,6 +7096,15 @@ Search the documents in a knowledge base.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "documentVariations",
+          "documentAlternatives",
+          "knowledgeBaseLanguageCode",
+          "variationChunks"
+        ]
+      },
       "description": "Fields, if any, to expand for each document in the search result matching the query."
     },
     "answerHighlightTopResults": {
@@ -6918,6 +7113,13 @@ Search the documents in a knowledge base.
     },
     "answerMode": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "AnswerHighlight",
+          "AnswerGeneration"
+        ]
+      },
       "description": "Allows extracted answers from an article (AnswerHighlight) and/or AI-generated answers (AnswerGeneration). Default mode: AnswerHighlight. Use this property with answerHighlightTopResults."
     },
     "application": {
@@ -7241,7 +7443,7 @@ Create parse job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `knowledgeBaseId` | string | Yes | — | Knowledge base ID |
-| `hints` | any[] | No | — | Hinted titles for the parser. |
+| `hints` | string[] | No | — | Hinted titles for the parser. |
 | `uploadKey` | string | Yes | — | Upload key |
 
 <Expandable title="inputSchema">
@@ -7260,6 +7462,9 @@ Create parse job
     },
     "hints": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Hinted titles for the parser."
     },
     "uploadKey": {
@@ -7732,7 +7937,7 @@ Get Knowledge Search
 | --- | --- | --- | --- | --- |
 | `application` | object | No | — | The application value |
 | `conversationContext` | object | No | — | Conversation Context |
-| `conversationTurns` | any[] | No | — | List of conversation turns to use for stateful search. |
+| `conversationTurns` | object[] | No | — | List of conversation turns to use for stateful search. |
 | `generationLanguage` | string | No | — | The language to use for answer generation. |
 | `knowledgeSettingId` | string | Yes | — | Knowledge Setting Id to use for search request. |
 | `query` | string | Yes | — | Input query to search content on the knowledge setting. |
@@ -7801,6 +8006,9 @@ Get Knowledge Search
     },
     "conversationTurns": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of conversation turns to use for stateful search."
     },
     "generationLanguage": {
@@ -7889,10 +8097,10 @@ Get Knowledge Search Preview
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `conversationTurns` | any[] | No | — | List of conversation turns to use for stateful search. |
+| `conversationTurns` | object[] | No | — | List of conversation turns to use for stateful search. |
 | `generationSetting` | object | Yes | — | Generation Setting |
 | `query` | string | Yes | — | Query to search content in the knowledge sources. |
-| `sources` | any[] | Yes | — | Source information to search upon. |
+| `sources` | object[] | Yes | — | Source information to search upon. |
 | `stateful` | boolean | No | — | Indicates if stateful search and generation is enabled for the knowledge setting. |
 
 <Expandable title="inputSchema">
@@ -7907,6 +8115,9 @@ Get Knowledge Search Preview
     },
     "conversationTurns": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of conversation turns to use for stateful search."
     },
     "generationSetting": {
@@ -7932,6 +8143,9 @@ Get Knowledge Search Preview
     },
     "sources": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Source information to search upon."
     },
     "stateful": {
@@ -7963,7 +8177,7 @@ Create Knowledge setting.
 | `description` | string | No | — | Knowledge setting description. |
 | `generationSetting` | object | No | — | Generation Setting |
 | `name` | string | Yes | — | Knowledge setting name. |
-| `sources` | any[] | Yes | — | Knowledge source information to search upon. |
+| `sources` | object[] | Yes | — | Knowledge source information to search upon. |
 | `stateful` | boolean | No | — | Indicates if stateful search and generation is enabled for the knowledge setting. |
 
 <Expandable title="inputSchema">
@@ -8003,6 +8217,9 @@ Create Knowledge setting.
     },
     "sources": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Knowledge source information to search upon."
     },
     "stateful": {

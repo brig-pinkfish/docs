@@ -13,7 +13,7 @@ description: "Text-to-speech generation and audio/video transcription"
 | Tool | Description |
 | --- | --- |
 | [`audio-processing_text_to_speech`](#audio-processing_text_to_speech) | Convert text to speech using minimax/speech-02-turbo model. Generates high-quality audio from text input with configurable voice settings. Returns a URL to the generated audio file. |
-| [`audio-processing_transcribe_audio_or_video`](#audio-processing_transcribe_audio_or_video) | Transcribe audio or video files to text using Deepgram AI. Supports speaker diarization, automatic punctuation, summaries, topic extraction, and sentiment analysis. Returns the transcription text and metadata. |
+| [`audio-processing_transcribe_audio_or_video`](#audio-processing_transcribe_audio_or_video) | Transcribe audio or video files to text using Deepgram AI. Returns transcription text plus optional word-level / utterance / paragraph / speaker timestamps via the includeDetailedResults flag. Supports diarization, keyword boosting (keyterm for Nova-3), search, replace, multichannel, filler words, and more. |
 
 ---
 
@@ -149,22 +149,46 @@ Convert text to speech using minimax/speech-02-turbo model. Generates high-quali
 
 ## audio-processing_transcribe_audio_or_video
 
-Transcribe audio or video files to text using Deepgram AI. Supports speaker diarization, automatic punctuation, summaries, topic extraction, and sentiment analysis. Returns the transcription text and metadata.
+Transcribe audio or video files to text using Deepgram AI. Returns transcription text plus optional word-level / utterance / paragraph / speaker timestamps via the includeDetailedResults flag. Supports diarization, keyword boosting (keyterm for Nova-3), search, replace, multichannel, filler words, and more.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `fileUrl` | string | Yes | — | URL of the audio or video file to transcribe |
-| `model` | string | No | — | Deepgram model to use. nova-3 is the latest and most accurate (default) |
-| `languageCode` | string | No | — | Language code (e.g., "en", "es", "fr"). Default: auto-detect |
-| `enableDiarization` | boolean | No | — | Identify different speakers in the audio |
-| `diarizationSpeakerCount` | number | No | — | Expected number of speakers (required if enableDiarization is true) |
-| `enableParagraphs` | boolean | No | — | Format output into paragraphs |
-| `enableSummary` | boolean | No | — | Generate AI summary of the content |
-| `enableTopics` | boolean | No | — | Extract key topics discussed |
-| `enableSentiment` | boolean | No | — | Analyze sentiment (positive/negative/neutral) |
-| `redact` | string[] | No | — | Redaction options to remove sensitive information. Common: pci (credit card info), pii (personally identifiable info), phi (protected health info), numbers (numerical entities), ssn (social security numbers). Supports all options plus specific entity types for pre-recorded audio. |
+| `model` | string | No | — | Deepgram model. nova-3 is the latest (required for keyterm). Whisper tiers available. |
+| `languageCode` | string | No | — | Language code (e.g., "en", "es", "fr"). Omit for auto-detect. |
+| `detectLanguage` | boolean | No | — | Explicitly request language auto-detection (most models detect by default when languageCode is omitted) |
+| `smartFormat` | boolean | No | — | Smart formatting of numbers, dates, times, etc. Default true. |
+| `numerals` | boolean | No | — | Convert number words to numerals |
+| `profanityFilter` | boolean | No | — | Filter profanity |
+| `dictation` | boolean | No | — | Interpret spoken punctuation commands |
+| `measurements` | boolean | No | — | Normalize measurement abbreviations |
+| `fillerWords` | boolean | No | — | Include "um" / "uh" / etc. in transcript |
+| `enableDiarization` | boolean | No | — | Identify different speakers. Auto-enables utterances with speaker-attributed timestamps. |
+| `diarizationSpeakerCount` | number | No | — | Hint for expected number of speakers |
+| `diarizeVersion` | string | No | — | Pin diarization algorithm version |
+| `enableUtterances` | boolean | No | — | Group output into utterances with start/end timestamps per phrase/speaker. Auto-enabled when diarization is on. Compact — does not include per-word timestamps. |
+| `uttSplit` | number | No | — | Silence threshold in seconds for splitting utterances (default 0.8) |
+| `enableParagraphs` | boolean | No | — | Format output into paragraphs with timestamps |
+| `multichannel` | boolean | No | — | Transcribe each audio channel separately. Critical for stereo call recordings. |
+| `alternatives` | number | No | — | Return N transcription candidates per channel |
+| `keywords` | string[] | No | — | Keyword boosting. Each entry may be "word" or "word:intensifier". Pre-Nova-3 models. |
+| `keyterm` | string[] | No | — | Nova-3 keyterm boosting (superior to keywords; supports multi-word phrases). English-only. |
+| `search` | string[] | No | — | Search for phrases; hits returned with timestamps |
+| `replace` | string[] | No | — | Find-and-replace in transcript. Format: "find:replace". |
+| `enableSummary` | boolean | No | — | Generate a short text summary of the audio. Requires 50+ words of audio — shorter inputs return the original text. Returns a summary.short field. |
+| `enableTopics` | boolean | No | — | Detect topics discussed in the audio. Returns topic segments with labels and confidence scores (0-1). Example topics: "healthcare", "data collection", "budget". English only. |
+| `customTopics` | string[] | No | — | Provide up to 100 custom topics to detect. By default uses extended mode — returns your topics plus auto-detected ones. Requires enableTopics. Example: ["sales", "support", "billing", "technical issue"] |
+| `enableIntents` | boolean | No | — | Detect speaker intents — what speakers are trying to do. Returns intent segments with verb-form labels and confidence scores (0-1). Example intents: "schedule a meeting", "request a refund". English only. |
+| `customIntents` | string[] | No | — | Provide up to 100 custom intents to detect. By default uses extended mode — returns your intents plus auto-detected ones. Requires enableIntents. Example: ["purchase", "cancel subscription", "get status update", "file complaint"] |
+| `enableSentiment` | boolean | No | — | Analyze sentiment per segment — tags each part as positive, negative, or neutral with a confidence score (0-1). Also provides an average sentiment for the entire transcript. Useful for call center analysis. |
+| `redact` | string[] | No | — | Redaction options. Common: pci, pii, phi, numbers, ssn. Also supports specific entity types. |
+| `mipOptOut` | boolean | No | — | Opt out of Deepgram model improvement program |
+| `tag` | string[] | No | — | Labels for Deepgram console analytics filtering |
+| `extra` | string[] | No | — | Arbitrary "key:value" metadata passthrough |
+| `outputMode` | string | No | — | Output mode. "transcription" (default): text only (~5KB). "transcription_with_timestamps": includes utterance-level timestamps with start/end per phrase/speaker (~15KB). Use timestamps mode when you need to know when things were said. |
+| `includeDetailedResults` | boolean | No | — | Include the full raw Deepgram response with word-level timestamps. Warning: very large output (200KB+ per minute of audio). Only use when you need per-word timing data. |
 
 <Expandable title="inputSchema">
 
@@ -180,45 +204,157 @@ Transcribe audio or video files to text using Deepgram AI. Supports speaker diar
       "type": "string",
       "enum": [
         "nova-3",
+        "nova-3-general",
+        "nova-3-medical",
         "nova-2",
+        "nova-2-general",
+        "nova-2-meeting",
+        "nova-2-phonecall",
+        "nova-2-voicemail",
+        "nova-2-finance",
+        "nova-2-conversationalai",
+        "nova-2-video",
+        "nova-2-medical",
+        "nova-2-drivethru",
+        "nova-2-automotive",
+        "nova",
         "enhanced",
-        "base"
+        "base",
+        "whisper-tiny",
+        "whisper-base",
+        "whisper-small",
+        "whisper-medium",
+        "whisper-large"
       ],
       "default": "nova-3",
-      "description": "Deepgram model to use. nova-3 is the latest and most accurate (default)"
+      "description": "Deepgram model. nova-3 is the latest (required for keyterm). Whisper tiers available."
     },
     "languageCode": {
       "type": "string",
-      "description": "Language code (e.g., \"en\", \"es\", \"fr\"). Default: auto-detect"
+      "description": "Language code (e.g., \"en\", \"es\", \"fr\"). Omit for auto-detect."
+    },
+    "detectLanguage": {
+      "type": "boolean",
+      "description": "Explicitly request language auto-detection (most models detect by default when languageCode is omitted)"
+    },
+    "smartFormat": {
+      "type": "boolean",
+      "description": "Smart formatting of numbers, dates, times, etc. Default true."
+    },
+    "numerals": {
+      "type": "boolean",
+      "description": "Convert number words to numerals"
+    },
+    "profanityFilter": {
+      "type": "boolean",
+      "description": "Filter profanity"
+    },
+    "dictation": {
+      "type": "boolean",
+      "description": "Interpret spoken punctuation commands"
+    },
+    "measurements": {
+      "type": "boolean",
+      "description": "Normalize measurement abbreviations"
+    },
+    "fillerWords": {
+      "type": "boolean",
+      "description": "Include \"um\" / \"uh\" / etc. in transcript"
     },
     "enableDiarization": {
       "type": "boolean",
       "default": false,
-      "description": "Identify different speakers in the audio"
+      "description": "Identify different speakers. Auto-enables utterances with speaker-attributed timestamps."
     },
     "diarizationSpeakerCount": {
       "type": "number",
-      "description": "Expected number of speakers (required if enableDiarization is true)"
+      "description": "Hint for expected number of speakers"
+    },
+    "diarizeVersion": {
+      "type": "string",
+      "description": "Pin diarization algorithm version"
+    },
+    "enableUtterances": {
+      "type": "boolean",
+      "description": "Group output into utterances with start/end timestamps per phrase/speaker. Auto-enabled when diarization is on. Compact — does not include per-word timestamps."
+    },
+    "uttSplit": {
+      "type": "number",
+      "description": "Silence threshold in seconds for splitting utterances (default 0.8)"
     },
     "enableParagraphs": {
       "type": "boolean",
       "default": false,
-      "description": "Format output into paragraphs"
+      "description": "Format output into paragraphs with timestamps"
+    },
+    "multichannel": {
+      "type": "boolean",
+      "description": "Transcribe each audio channel separately. Critical for stereo call recordings."
+    },
+    "alternatives": {
+      "type": "number",
+      "description": "Return N transcription candidates per channel"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keyword boosting. Each entry may be \"word\" or \"word:intensifier\". Pre-Nova-3 models."
+    },
+    "keyterm": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Nova-3 keyterm boosting (superior to keywords; supports multi-word phrases). English-only."
+    },
+    "search": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search for phrases; hits returned with timestamps"
+    },
+    "replace": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Find-and-replace in transcript. Format: \"find:replace\"."
     },
     "enableSummary": {
       "type": "boolean",
       "default": false,
-      "description": "Generate AI summary of the content"
+      "description": "Generate a short text summary of the audio. Requires 50+ words of audio — shorter inputs return the original text. Returns a summary.short field."
     },
     "enableTopics": {
       "type": "boolean",
       "default": false,
-      "description": "Extract key topics discussed"
+      "description": "Detect topics discussed in the audio. Returns topic segments with labels and confidence scores (0-1). Example topics: \"healthcare\", \"data collection\", \"budget\". English only."
+    },
+    "customTopics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Provide up to 100 custom topics to detect. By default uses extended mode — returns your topics plus auto-detected ones. Requires enableTopics. Example: [\"sales\", \"support\", \"billing\", \"technical issue\"]"
+    },
+    "enableIntents": {
+      "type": "boolean",
+      "description": "Detect speaker intents — what speakers are trying to do. Returns intent segments with verb-form labels and confidence scores (0-1). Example intents: \"schedule a meeting\", \"request a refund\". English only."
+    },
+    "customIntents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Provide up to 100 custom intents to detect. By default uses extended mode — returns your intents plus auto-detected ones. Requires enableIntents. Example: [\"purchase\", \"cancel subscription\", \"get status update\", \"file complaint\"]"
     },
     "enableSentiment": {
       "type": "boolean",
       "default": false,
-      "description": "Analyze sentiment (positive/negative/neutral)"
+      "description": "Analyze sentiment per segment — tags each part as positive, negative, or neutral with a confidence score (0-1). Also provides an average sentiment for the entire transcript. Useful for call center analysis."
     },
     "redact": {
       "type": "array",
@@ -259,7 +395,38 @@ Transcribe audio or video files to text using Deepgram AI. Supports speaker diar
           "routing_number"
         ]
       },
-      "description": "Redaction options to remove sensitive information. Common: pci (credit card info), pii (personally identifiable info), phi (protected health info), numbers (numerical entities), ssn (social security numbers). Supports all options plus specific entity types for pre-recorded audio."
+      "description": "Redaction options. Common: pci, pii, phi, numbers, ssn. Also supports specific entity types."
+    },
+    "mipOptOut": {
+      "type": "boolean",
+      "description": "Opt out of Deepgram model improvement program"
+    },
+    "tag": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Labels for Deepgram console analytics filtering"
+    },
+    "extra": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Arbitrary \"key:value\" metadata passthrough"
+    },
+    "outputMode": {
+      "type": "string",
+      "enum": [
+        "transcription",
+        "transcription_with_timestamps"
+      ],
+      "default": "transcription",
+      "description": "Output mode. \"transcription\" (default): text only (~5KB). \"transcription_with_timestamps\": includes utterance-level timestamps with start/end per phrase/speaker (~15KB). Use timestamps mode when you need to know when things were said."
+    },
+    "includeDetailedResults": {
+      "type": "boolean",
+      "description": "Include the full raw Deepgram response with word-level timestamps. Warning: very large output (200KB+ per minute of audio). Only use when you need per-word timing data."
     }
   },
   "required": [
