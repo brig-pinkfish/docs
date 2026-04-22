@@ -1,0 +1,128 @@
+---
+title: "Monitor Tab"
+description: "Inspect every past run of an Agent Mode workflow — execution timing, node-level inputs and outputs, streaming logs, and agent reasoning traces."
+icon: "chart-line"
+---
+
+The **Monitor tab** is where you audit and debug runs after the fact. It's the second of the two view modes in the Agentic Editor (alongside **Editor**), and switching into it replaces the chat panel with a list of runs and the right pane with a read-only execution view.
+
+{/* TODO screenshot: Monitor view — runs list on the left, selected run's canvas with execution-state overlay on the right. */}
+
+## Switching to Monitor
+
+At the top of the editor, use the **Editor / Monitor** toggle. Flipping to **Monitor**:
+
+- Replaces the chat panel with a **Runs Panel** (list of past executions).
+- Swaps the Workflow tab for a read-only **Monitor canvas** with execution-state overlays.
+- Opens a **Node side-panel** on demand with inputs/outputs/logs/timing for any node you click.
+
+The Workflow canvas here is a **viewer**, not an editor — you can't drag nodes or change wiring while in Monitor mode. Flip back to **Editor** to make changes.
+
+## The runs list
+
+The left panel shows every run of this workflow, most-recent first. Each row displays:
+
+- **Status** — success (green), error (red), running (pulsing yellow), cancelled (gray).
+- **Trigger** — what kicked it off (Manual, API, Schedule, Email, App, Event).
+- **Timestamp** — relative ("3 minutes ago") and absolute on hover.
+- **Duration** — total elapsed wall-clock time.
+
+{/* TODO screenshot: Runs list close-up with a mix of success, error, and running states visible. */}
+
+### Filtering
+
+Controls at the top of the runs list let you narrow down:
+
+- **Date range** — restrict to runs from a specific time window.
+- **Status** — show only successes, only errors, etc.
+- **Trigger type** — restrict to runs from a specific kind of trigger.
+
+### Exporting
+
+Click the **Download CSV** button to export the currently-filtered run list as a CSV file. Useful for post-mortem analysis in external tools or reporting.
+
+## The Monitor canvas
+
+Selecting a run loads its execution state onto the main canvas. Every node is colored and badged to reflect what happened to it during that specific run:
+
+- **Gray** — not executed (typically because it was on a skipped branch).
+- **Yellow pulse** — running (for an in-progress run).
+- **Green check** — completed successfully.
+- **Red X** — failed.
+- **Dimmed slash** — skipped explicitly.
+
+{/* TODO screenshot: Monitor canvas showing a mix of node states — two succeeded, one failed with a red badge, one skipped. */}
+
+## Node side-panel
+
+Click any node on the Monitor canvas to open the **Node side-panel** with four sub-tabs:
+
+<CardGroup cols={2}>
+  <Card title="Inputs" icon="arrow-down-to-bracket">
+    The exact arguments the node received, rendered as JSON.
+  </Card>
+  <Card title="Outputs" icon="arrow-up-from-bracket">
+    The node's return value. The same view modes as the Result tab (JSON, table, markdown, HTML).
+  </Card>
+  <Card title="Logs" icon="scroll">
+    Streaming output from this specific node — stdout, tool-call traces, errors.
+  </Card>
+  <Card title="Timing" icon="stopwatch">
+    Duration, started-at, ended-at, and any retries.
+  </Card>
+</CardGroup>
+
+{/* TODO screenshot: Node side-panel open on the Inputs tab for a failed tool call. */}
+
+## Agent Debugger Panel
+
+For runs that involve an Agent node or any LLM-driven step, the **Agent Debugger Panel** exposes a detailed trace of the agent's reasoning:
+
+- **Messages** — the full conversation history the agent saw.
+- **Tool calls** — every tool the agent invoked, with arguments and results.
+- **Thoughts / reasoning** — the agent's internal monologue, where exposed by the model.
+
+This view is essential when an agent-driven workflow produces an unexpected result — you can see exactly why the agent made the decisions it did.
+
+{/* TODO screenshot: Agent Debugger Panel open showing a reasoning trace with tool calls and thought bubbles. */}
+
+## Bottom detail panel
+
+Below the main panel, the **Monitor Bottom Panel** aggregates additional detail about the selected run — metadata, batch-run siblings (if this is part of a batch), triggering event payload, and any run-level artifacts.
+
+## Streaming live runs
+
+Runs that are currently in progress stream their state into the Monitor view in real-time:
+
+- Node statuses update as each node completes.
+- Log entries append live.
+- The **Streaming** badge in the run list row indicates a live run.
+
+You can kick off a run from the Editor, switch to Monitor, and watch the execution progress without refreshing.
+
+{/* TODO screenshot: Monitor view showing a live run mid-execution with streaming logs in the node side-panel. */}
+
+## Run artifacts
+
+If the workflow produced files (a generated report, a scraped dataset, a rendered image), they surface as **run state files** — downloadable artifacts attached to the run. Access them from the run's detail view.
+
+## Related: global Monitor
+
+The Monitor tab documented here is **per-workflow**. Pinkfish also has a **global Monitor** — a dashboard of runs across every workflow in your org. See [Monitor](/orchestration/monitor) for the org-wide view. The [Agent Monitor](/orchestration/monitor) and [Guardian Agent](/orchestration/guardian-agent) offer AI-driven observability on top.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Running a workflow" icon="play" href="/workflows/running">
+    The execution flow whose runs end up in Monitor.
+  </Card>
+  <Card title="Canvas" icon="diagram-project" href="/workflows/canvas">
+    The Editor counterpart to the Monitor canvas.
+  </Card>
+  <Card title="Global Monitor" icon="chart-column" href="/orchestration/monitor">
+    Org-wide run observability.
+  </Card>
+  <Card title="Guardian Agent" icon="shield" href="/orchestration/guardian-agent">
+    AI-driven analysis of runs and failures.
+  </Card>
+</CardGroup>

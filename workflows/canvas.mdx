@@ -1,0 +1,162 @@
+---
+title: "Canvas"
+description: "Arrange, connect, and execute nodes on the infinite canvas that sits at the heart of every Agent Mode workflow."
+icon: "diagram-project"
+---
+
+The canvas is the visual workspace where your workflow lives. Every node — triggers, tool calls, code blocks, control flow, interfaces — appears as a tile that you can drag, connect, and inspect. The Agentic Editor uses an infinite pan-and-zoom canvas so even very large workflows stay navigable.
+
+<Frame>
+  <img src="/images/workflows/canvas/canvas-populated.png" alt="Agent Mode canvas with a connected four-node workflow — a trigger connected to weather, formatting, and email-sending nodes." />
+</Frame>
+
+## Navigating the canvas
+
+<CardGroup cols={2}>
+  <Card title="Pan" icon="arrows-up-down-left-right">
+    Click and drag on empty canvas, or hold Space and drag from anywhere.
+  </Card>
+  <Card title="Zoom" icon="magnifying-glass-plus">
+    Scroll with the mouse wheel or pinch on a trackpad. Use the **+** / **−** controls in the bottom-left to zoom in fixed steps.
+  </Card>
+  <Card title="Fit to view" icon="expand">
+    Click the fit-to-view button in the canvas controls to frame all nodes in the current viewport.
+  </Card>
+  <Card title="Minimap" icon="map">
+    The minimap in the corner shows your full workflow and highlights the current viewport. Click anywhere in the minimap to jump there.
+  </Card>
+</CardGroup>
+
+{/* TODO screenshot: Close-up of the DiagramControls toolbar (zoom, fit, auto-layout, undo, redo) in the bottom-left of the canvas. */}
+
+## Working with nodes
+
+### Selecting nodes
+
+- **Single-select** — click a node.
+- **Multi-select** — hold `Shift` and click each node, or click on empty canvas and drag a selection box around them.
+- **Deselect** — click any empty area.
+
+Selected nodes get a highlighted ring and become the target of keyboard shortcuts like `Backspace` / `Delete`.
+
+{/* TODO screenshot: Canvas showing three nodes selected via drag-box with the selection highlight visible. */}
+
+### Moving nodes
+
+Click and drag any node to reposition it. When you release, the new position is saved to the workflow automatically — there's no "save" button for layout. Multi-select and drag to move several nodes together.
+
+<Tip>
+  Pinkfish remembers your layout, so workflows always look the way you left them across sessions.
+</Tip>
+
+### Connecting nodes
+
+Each node has **handles** on its sides — input handles on the left, output handles on the right. Drag from an output handle to another node's input handle to create an edge between them. Release outside any handle to cancel.
+
+- Nodes with multiple outputs (like **If-Else** or **Router**) expose labeled handles — you'll see `true` / `false` for If-Else, and your custom labels for Router.
+- **Merge** nodes accept multiple incoming edges so you can fan several branches back into one path.
+
+### Editing edges
+
+Click any edge to open the **Edge settings** panel on the right. For edges coming out of If-Else, Router, or other conditional nodes, this panel exposes the condition that gates whether execution follows the edge — including the full mention-based expression editor. Regular edges have minimal configuration (mostly a label).
+
+{/* TODO screenshot: Edge settings panel open for an If-Else "true" branch, showing the condition editor with a mention of a previous node's output. */}
+
+### Deleting nodes and edges
+
+Select any node or edge and press `Backspace` or `Delete`. The **Manual** trigger cannot be deleted — every workflow needs at least one entry point.
+
+## Canvas controls
+
+The bottom-left of the canvas hosts a small toolbar with four controls:
+
+| Button | Action |
+| --- | --- |
+| <span>🧹 Auto-layout</span> | Re-flows all nodes into a clean, left-to-right layout. Safe to click — you can always undo. |
+| <span>↶ Undo</span> | Step back through diagram edits: node adds, moves, deletes, edge changes. Disabled when there's nothing to undo. |
+| <span>↷ Redo</span> | Step forward after an undo. Disabled when there's nothing to redo. |
+| <span>➕ Zoom / fit</span> | ReactFlow's standard zoom and fit-to-view controls. |
+
+<Info>
+  Undo and redo operate on **canvas structure** only — node positions, edges, sticky notes, node additions and deletions. They do not undo content changes inside a node's settings panel; those persist as you type.
+</Info>
+
+## The right-click menu
+
+Right-clicking a selected node opens a context menu with quick actions:
+
+- **Run until this node** — runs the workflow from its trigger up to (and including) this node, then stops. Useful for iterating on a specific step.
+- **Run entire workflow** (on trigger nodes) — fires the workflow from this trigger.
+- **Add node to the chat context** — piles the node into the Coding Agent Chat's context so your next prompt references it directly.
+- **View node details** — opens the node's settings side-panel, same as a double-click.
+- **Delete** — removes the node. Disabled for the Manual trigger.
+
+<Frame>
+  <img src="/images/workflows/canvas/context-menu.png" alt="Right-click context menu open on the Manual Trigger node showing Run entire workflow and View node details." />
+</Frame>
+
+## Node status indicators
+
+While a workflow runs, every node displays its live status via color and iconography:
+
+- **Pending** — gray outline, waiting to run.
+- **Running** — animated pulse on the node border.
+- **Success** — green checkmark badge in the top-right corner.
+- **Error** — red exclamation badge; click to open the error in the Log tab.
+- **Skipped** — dimmed with a slash badge when the node was bypassed (for example, the "false" branch of an If-Else).
+
+<Frame>
+  <img src="/images/workflows/running/run-complete.png" alt="Canvas after a completed run with green checkmark status badges on the executed nodes." />
+</Frame>
+
+## Hover actions
+
+Hovering over a node reveals a small menu with shortcut buttons — typically **Run**, **Open settings**, and **Delete**. The hover menu is a faster path for the most common actions without needing the right-click menu.
+
+## Collaborating on the canvas
+
+When two or more teammates open the same agentic workflow, the canvas automatically switches into collaborative mode. No setting to toggle — if anyone else is in the editor, you see them.
+
+### Avatars
+
+A group of avatars appears in the editor header showing who else is in the workflow right now. Up to four avatars are visible at once; any additional collaborators are grouped behind a **+N** pill you can hover to see the full list.
+
+Each avatar is color-coded per user, and the same color is used for that person's cursor on the canvas. When a collaborator becomes idle (no mouse or keyboard activity for about two minutes) their avatar fades to half opacity.
+
+### Live cursors
+
+Every other collaborator's cursor is rendered live on the canvas, labelled with their name and tinted with their avatar color. Cursor updates are throttled to stay smooth even with many collaborators in the same workflow.
+
+### Real-time node dragging
+
+When another user picks up and drags a node, the node's position updates in real time on your canvas. This makes it easy to follow along while a teammate rearranges the graph during a pairing session.
+
+### What is and isn't shared
+
+- **Shared in real time:** cursor position, node positions while being dragged, idle/active status, and each collaborator's name, avatar, and color.
+- **Not shared in real time:** selections, node edits, settings panel content, sticky-note edits, canvas pan/zoom, and chat messages. Each user has their own view of these.
+
+Edits still persist to the workflow as normal — if your teammate adds a new node, it appears in your canvas the next time the workflow data refreshes (typically within a second or two), not as a live stream. Treat collaboration as **presence awareness plus cursor sharing**, not simultaneous editing. If two collaborators edit the same node's settings at once, last-save-wins applies.
+
+### Requirements
+
+- The feature is **agentic editor only** — the guided editor does not surface presence.
+- Collaborators must be authenticated members of the organization that owns the workflow.
+- Read-only viewers count — people who can open the workflow appear on the canvas even if they cannot edit it.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Adding nodes" icon="plus" href="/workflows/adding-nodes">
+    Open the Add Node panel and pick from Nodes, Triggers, and Interface tabs.
+  </Card>
+  <Card title="Node types reference" icon="cubes" href="/workflows/node-types">
+    The full catalog of executable and control-flow nodes you can place.
+  </Card>
+  <Card title="Sticky notes & canvas colors" icon="note-sticky" href="/workflows/sticky-notes">
+    Annotate the canvas and customize its background.
+  </Card>
+  <Card title="Running a workflow" icon="play" href="/workflows/running">
+    Kick off a run from the canvas or chat, with inputs, batch mode, or a trigger.
+  </Card>
+</CardGroup>
