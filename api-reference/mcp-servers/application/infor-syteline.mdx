@@ -12,10 +12,50 @@ description: "SyteLine ERP"
 
 | Tool | Description |
 | --- | --- |
+| [`infor_syteline_batch_idorequest`](#infor_syteline_batch_idorequest) | Execute multiple IDO operations atomically |
 | [`infor_syteline_get_idoproperty_metadata`](#infor_syteline_get_idoproperty_metadata) | Get property metadata for an IDO |
 | [`infor_syteline_invoke_idomethod`](#infor_syteline_invoke_idomethod) | Invoke a custom IDO method |
 | [`infor_syteline_load_ido`](#infor_syteline_load_ido) | Load (query) records from an IDO |
 | [`infor_syteline_update_ido`](#infor_syteline_update_ido) | Create, update, or delete records in an IDO |
+
+---
+
+## infor_syteline_batch_idorequest
+
+Execute multiple IDO operations atomically
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Requests` | object[] | Yes | — | Array of IDO request objects. Each request specifies an operation (Load, Update, or Invoke) and its parameters. All requests are executed atomically. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "Requests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Array of IDO request objects. Each request specifies an operation (Load, Update, or Invoke) and its parameters. All requests are executed atomically."
+    }
+  },
+  "required": [
+    "PCID",
+    "Requests"
+  ]
+}
+```
+
+</Expandable>
 
 ---
 
@@ -63,6 +103,7 @@ Invoke a custom IDO method
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
+| `idoName` | string | Yes | — | The name of the IDO that defines the method (e.g., SLItems, SLCustomers, SLCos). Use the getIDOPropertyMetadata endpoint to discover available IDOs. |
 | `methodName` | string | Yes | — | The name of the IDO method to invoke. Methods are defined on specific IDOs and perform custom business logic. |
 | `body` | object | No | — | Method parameters as key-value pairs. The required parameters depend on the specific method being invoked. |
 
@@ -76,6 +117,10 @@ Invoke a custom IDO method
       "type": "string",
       "description": "Pink Connect ID for the authenticated connection"
     },
+    "idoName": {
+      "type": "string",
+      "description": "The name of the IDO that defines the method (e.g., SLItems, SLCustomers, SLCos). Use the getIDOPropertyMetadata endpoint to discover available IDOs."
+    },
     "methodName": {
       "type": "string",
       "description": "The name of the IDO method to invoke. Methods are defined on specific IDOs and perform custom business logic."
@@ -87,6 +132,7 @@ Invoke a custom IDO method
   },
   "required": [
     "PCID",
+    "idoName",
     "methodName"
   ]
 }
@@ -166,7 +212,7 @@ Create, update, or delete records in an IDO
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `idoName` | string | Yes | — | The name of the IDO to modify (e.g., SLItems, SLCustomers, SLCos). Use the getIDOPropertyMetadata endpoint to discover available properties and their types. |
-| `Changes` | object[] | No | — | Array of record changes to apply. Each item must include '_Action' ('I' for insert, 'U' for update, 'D' for delete) and the relevant property values. |
+| `Changes` | object[] | Yes | — | Array of record changes to apply. Each item must include '_Action' ('I' for insert, 'U' for update, 'D' for delete) and the relevant property values. |
 
 <Expandable title="inputSchema">
 
@@ -192,7 +238,8 @@ Create, update, or delete records in an IDO
   },
   "required": [
     "PCID",
-    "idoName"
+    "idoName",
+    "Changes"
   ]
 }
 ```
