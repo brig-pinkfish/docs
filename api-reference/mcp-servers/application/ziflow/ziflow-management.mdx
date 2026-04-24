@@ -1187,7 +1187,7 @@ Add guest
 | `company` | string | No | — | The company value |
 | `email` | string | Yes | — | The email value |
 | `first_name` | string | No | — | First Name |
-| `group` | any[] | No | — | The group value |
+| `group` | string[] | No | — | The group value |
 | `language` | string | No | — | Default value is pulled from account settings |
 | `last_name` | string | No | — | Last Name |
 | `phone` | string | No | — | The phone value |
@@ -1218,6 +1218,9 @@ Add guest
     },
     "group": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The group value"
     },
     "language": {
@@ -1294,13 +1297,13 @@ Add user
 | `company` | string | No | — | The company value |
 | `email` | string | Yes | — | The email value |
 | `first_name` | string | No | — | First Name |
-| `group` | any[] | No | — | The group value |
+| `group` | string[] | No | — | The group value |
 | `language` | string | No | — | Can be changed to: en, zh_cn, de, fr, ja, pt_br, es |
 | `last_name` | string | No | — | Last Name |
 | `password` | string | No | — | Must be provided if verified=true. Must be at least 8 characters, 1 number and 1 capital letter. Password change may be required from user dependent on Account Settings. |
 | `phone` | string | No | — | The phone value |
 | `proofing_defaults` | object | No | — | Proofing Defaults |
-| `roles` | any[] | No | — | The roles value |
+| `roles` | string[] | No | — | The roles value |
 | `timezone` | string | No | — | Valid time zone identifiers from IANA Time Zone Database |
 | `verified` | boolean | No | — | If true, "password" field is required and API key will be generated automatically (visible only to Admins). |
 
@@ -1328,6 +1331,9 @@ Add user
     },
     "group": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The group value"
     },
     "language": {
@@ -1374,6 +1380,16 @@ Add user
     },
     "roles": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "manager",
+          "billing",
+          "user",
+          "lite_user"
+        ]
+      },
       "description": "The roles value"
     },
     "timezone": {
@@ -1477,7 +1493,7 @@ Create new workflow template
 | `name` | string | No | — | The name value |
 | `owner_email` | string | No | — | Optional field to define template owner different than request's author. Only user with admin permissions can be a template owner. |
 | `permissions` | object | No | — | The permissions value |
-| `stages` | any[] | Yes | — | The stages value |
+| `stages` | object[] | Yes | — | The stages value |
 
 <Expandable title="inputSchema">
 
@@ -1561,6 +1577,9 @@ Create new workflow template
     },
     "stages": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The stages value"
     }
   },
@@ -1807,7 +1826,7 @@ Update an existing guest
 | `id` | string | Yes | — | Guest ID |
 | `company` | string | No | — | The company value |
 | `first_name` | string | No | — | First Name |
-| `group` | any[] | No | — | The group value |
+| `group` | string[] | No | — | The group value |
 | `language` | string | No | — | Can be changed to: en, zh_cn, de, fr, ja, pt_br, es |
 | `last_name` | string | No | — | Last Name |
 | `phone` | string | No | — | The phone value |
@@ -1838,6 +1857,9 @@ Update an existing guest
     },
     "group": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The group value"
     },
     "language": {
@@ -1906,13 +1928,13 @@ Update an existing user
 | `active` | boolean | No | — | The active value |
 | `company` | string | No | — | The company value |
 | `first_name` | string | No | — | First Name |
-| `group` | any[] | No | — | The group value |
+| `group` | string[] | No | — | The group value |
 | `language` | string | No | — | Can be changed to: en, zh_cn, de, fr, ja, pt_br, es |
 | `last_name` | string | No | — | Last Name |
 | `password` | string | No | — | Must be provided if "verified" changes to true. Must be at least 8 characters, 1 number and 1 capital letter. Password change may be required from user dependent on Account Settings. |
 | `phone` | string | No | — | The phone value |
 | `proofing_defaults` | object | No | — | Proofing Defaults |
-| `roles` | any[] | No | — | The roles value |
+| `roles` | string[] | No | — | The roles value |
 | `timezone` | string | No | — | Valid time zone identifiers from IANA Time Zone Database |
 | `verified` | boolean | No | — | Can only be changed from false to true |
 
@@ -1944,6 +1966,9 @@ Update an existing user
     },
     "group": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The group value"
     },
     "language": {
@@ -1990,6 +2015,16 @@ Update an existing user
     },
     "roles": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "manager",
+          "billing",
+          "user",
+          "lite_user"
+        ]
+      },
       "description": "The roles value"
     },
     "timezone": {
@@ -2026,7 +2061,7 @@ Update an existing template
 | `name` | string | No | — | The name value |
 | `owner_email` | string | No | — | Owner Email |
 | `permissions` | object | No | — | The permissions value |
-| `stages` | any[] | No | — | The stages value |
+| `stages` | object[] | No | — | The stages value |
 
 <Expandable title="inputSchema">
 
@@ -2118,6 +2153,9 @@ Update an existing template
     },
     "stages": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The stages value"
     }
   },

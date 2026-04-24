@@ -129,7 +129,7 @@ Create a sandbox
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 | `env` | object | No | — | Default environment variables for the sandbox. These are inherited by all commands unless overridden. |
 | `networkPolicy` | object | No | — | Network access policy for the sandbox.\n    Controls which external hosts the sandbox can communicate with.\n    Use \"allow-all\" mode to allow all traffic, \"deny-all\" to block all traffic or \"custom\" to provide specific rules. |
-| `ports` | any[] | No | — | List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed. |
+| `ports` | integer[] | No | — | List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed. |
 | `projectId` | string | No | — | The target project slug or ID in which the sandbox will be assigned to. |
 | `resources` | object | No | — | Resources to define the VM |
 | `runtime` | string | No | — | The runtime environment for the sandbox. Determines the pre-installed language runtimes and tools available. |
@@ -185,6 +185,9 @@ Create a sandbox
     },
     "ports": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed."
     },
     "projectId": {
@@ -246,7 +249,7 @@ Create a named sandbox
 | `name` | string | No | — | Name for the sandbox. Must be unique per project and URL-safe (alphanumeric, hyphens, underscores). |
 | `networkPolicy` | object | No | — | Network access policy for the sandbox.\n    Controls which external hosts the sandbox can communicate with.\n    Use \"allow-all\" mode to allow all traffic, \"deny-all\" to block all traffic or \"custom\" to provide specific rules. |
 | `persistent` | boolean | No | — | Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true. |
-| `ports` | any[] | No | — | List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed. |
+| `ports` | integer[] | No | — | List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed. |
 | `projectId` | string | No | — | The target project slug or ID in which the sandbox will be assigned to. |
 | `resources` | object | No | — | Resources to define the VM |
 | `runtime` | string | No | — | The runtime environment for the sandbox. Determines the pre-installed language runtimes and tools available. |
@@ -312,6 +315,9 @@ Create a named sandbox
     },
     "ports": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "List of ports to expose from the sandbox. Each port will be accessible via a unique URL. Maximum of 15 ports can be exposed."
     },
     "projectId": {
@@ -1315,7 +1321,7 @@ List sandboxes
 | `namePrefix` | string | No | — | Filter named sandboxes whose name starts with this prefix. Only valid when sortBy=name. |
 | `cursor` | string | No | — | Opaque pagination cursor from a previous response. |
 | `sortOrder` | string | No | — | Sort direction. Defaults to desc. |
-| `tags` | any[] | No | — | Filter sandboxes by tag. Format: \"key:value\". Only one tag filter is supported at a time. |
+| `tags` | string[] | No | — | Filter sandboxes by tag. Format: \"key:value\". Only one tag filter is supported at a time. |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 
@@ -1364,6 +1370,9 @@ List sandboxes
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter sandboxes by tag. Format: \\\"key:value\\\". Only one tag filter is supported at a time."
     },
     "teamId": {
@@ -1916,7 +1925,7 @@ Execute a command
 | `sandboxId` | string | Yes | — | The unique identifier of the sandbox in which to execute the command. |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `args` | any[] | No | — | Arguments to pass to the command. Each argument should be a separate array element. |
+| `args` | string[] | No | — | Arguments to pass to the command. Each argument should be a separate array element. |
 | `command` | string | Yes | — | The executable or shell command to run. This is the program name without arguments. |
 | `cwd` | string | No | — | The working directory in which to execute the command. Defaults to the sandbox home directory if not specified. |
 | `env` | object | No | — | Additional environment variables to set for this command. These are merged with the sandbox environment. |
@@ -1947,6 +1956,9 @@ Execute a command
     },
     "args": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Arguments to pass to the command. Each argument should be a separate array element."
     },
     "command": {
@@ -1993,7 +2005,7 @@ Execute a command
 | `sessionId` | string | Yes | — | The unique identifier of the session in which to execute the command. |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `args` | any[] | No | — | Arguments to pass to the command. Each argument should be a separate array element. |
+| `args` | string[] | No | — | Arguments to pass to the command. Each argument should be a separate array element. |
 | `command` | string | Yes | — | The executable or shell command to run. This is the program name without arguments. |
 | `cwd` | string | No | — | The working directory in which to execute the command. Defaults to the sandbox home directory if not specified. |
 | `env` | object | No | — | Additional environment variables to set for this command. These are merged with the sandbox environment. |
@@ -2024,6 +2036,9 @@ Execute a command
     },
     "args": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Arguments to pass to the command. Each argument should be a separate array element."
     },
     "command": {
@@ -2162,9 +2177,9 @@ Update network policy
 | `sandboxId` | string | Yes | — | The unique identifier of the sandbox to update the network policy for. |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `allowedCIDRs` | any[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions. |
-| `allowedDomains` | any[] | No | — | List of domain names the sandbox is allowed to connect to. Only applies when mode is \"custom\". Supports wildcard patterns (e.g., \"*.example.com\" matches all subdomains). |
-| `deniedCIDRs` | any[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules. |
+| `allowedCIDRs` | string[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions. |
+| `allowedDomains` | string[] | No | — | List of domain names the sandbox is allowed to connect to. Only applies when mode is \"custom\". Supports wildcard patterns (e.g., \"*.example.com\" matches all subdomains). |
+| `deniedCIDRs` | string[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules. |
 | `mode` | string | Yes | — | The network access policy mode. Use \"allow-all\" to permit all outbound traffic. Use \"deny-all\" to block all outbound traffic. Use \"custom\" to specify explicit allow/deny rules. |
 
 <Expandable title="inputSchema">
@@ -2191,14 +2206,23 @@ Update network policy
     },
     "allowedCIDRs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions."
     },
     "allowedDomains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of domain names the sandbox is allowed to connect to. Only applies when mode is \\\"custom\\\". Supports wildcard patterns (e.g., \\\"*.example.com\\\" matches all subdomains)."
     },
     "deniedCIDRs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules."
     },
     "mode": {
@@ -2362,9 +2386,9 @@ Update network policy
 | `sessionId` | string | Yes | — | The unique identifier of the session to update the network policy for. |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `allowedCIDRs` | any[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions. |
-| `allowedDomains` | any[] | No | — | List of domain names the sandbox is allowed to connect to. Only applies when mode is \"custom\". Supports wildcard patterns (e.g., \"*.example.com\" matches all subdomains). |
-| `deniedCIDRs` | any[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules. |
+| `allowedCIDRs` | string[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions. |
+| `allowedDomains` | string[] | No | — | List of domain names the sandbox is allowed to connect to. Only applies when mode is \"custom\". Supports wildcard patterns (e.g., \"*.example.com\" matches all subdomains). |
+| `deniedCIDRs` | string[] | No | — | List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules. |
 | `mode` | string | Yes | — | The network access policy mode. Use \"allow-all\" to permit all outbound traffic. Use \"deny-all\" to block all outbound traffic. Use \"custom\" to specify explicit allow/deny rules. |
 
 <Expandable title="inputSchema">
@@ -2391,14 +2415,23 @@ Update network policy
     },
     "allowedCIDRs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of IP address ranges (in CIDR notation) the sandbox is allowed to connect to. Traffic to these addresses bypasses domain-based restrictions."
     },
     "allowedDomains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of domain names the sandbox is allowed to connect to. Only applies when mode is \\\"custom\\\". Supports wildcard patterns (e.g., \\\"*.example.com\\\" matches all subdomains)."
     },
     "deniedCIDRs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of IP address ranges (in CIDR notation) the sandbox is blocked from connecting to. These rules take precedence over all allowed rules."
     },
     "mode": {

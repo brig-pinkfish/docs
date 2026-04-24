@@ -239,14 +239,14 @@ Audit log events
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
 | `startTime` | string | No | — | Earliest audit log event to retrieve (inclusive), in ISO 8601 date time format. Optional. Defaults to the beginning of the retention period, 180 days ago. |
 | `endTime` | string | No | — | Latest audit log event to retrieve (exclusive), in ISO 8601 date time format. Optional. Defaults to now. |
-| `originatingUserId` | any[] | No | — | Retrieve audit log events originating from the provided user ID or IDs (maximum 100). Optional. |
-| `eventType` | any[] | No | — | Retrieve audit log events falling under the provided event type or event types (maximum 100). Optional. |
-| `modelId` | any[] | No | — | Retrieve audit log events taking action on, or involving, the provided model ID or IDs (maximum 100). Optional. |
+| `originatingUserId` | string[] | No | — | Retrieve audit log events originating from the provided user ID or IDs (maximum 100). Optional. |
+| `eventType` | string[] | No | — | Retrieve audit log events falling under the provided event type or event types (maximum 100). Optional. |
+| `modelId` | string[] | No | — | Retrieve audit log events taking action on, or involving, the provided model ID or IDs (maximum 100). Optional. |
 | `pageSize` | number | No | — | The number of events per page. Maximum value of 1000; defaults to 10. |
 | `sortOrder` | string | No | — | Sort the events by timestamp in ascending or descending order. Defaults to descending. |
 | `previous` | string | No | — | If there are older items to retrieve, a **previous** is returned. Pass the **previous** from a prior call to retrieve the next-oldest page of items. You may pass the special value `null` to indicate "use the default behavior", which operates identically to omitting the **previous** parameter entirely. |
 | `next` | string | No | — | If there are newer items to retrieve, a **next** is returned. Pass the **next** from a prior call to retrieve the next-newest page of items. You may pass the special value `null` to indicate "use the default behavior", which operates identically to omitting the **next** parameter entirely. |
-| `category` | any[] | No | — | The category value |
+| `category` | string[] | No | — | The category value |
 
 <Expandable title="inputSchema">
 
@@ -272,14 +272,225 @@ Audit log events
     },
     "originatingUserId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Retrieve audit log events originating from the provided user ID or IDs (maximum 100). Optional."
     },
     "eventType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createBase",
+          "deleteBase",
+          "moveBase",
+          "duplicateBase",
+          "viewBase",
+          "updateBaseName",
+          "updateBaseGuideText",
+          "restoreBaseFromSnapshot",
+          "restoreBaseFromTrash",
+          "applyChangesFromSandbox",
+          "enableShare",
+          "disableShare",
+          "configureShare",
+          "regenerateShare",
+          "viewShare",
+          "downloadAttachment",
+          "addBaseInviteLink",
+          "removeBaseInviteLink",
+          "configureBaseInviteLink",
+          "changeBaseAiPermissions",
+          "createSandboxBase",
+          "inviteBaseCollaborator",
+          "addBaseCollaborator",
+          "changeBaseInvitePermission",
+          "changeBaseCollaboratorPermission",
+          "removeBaseCollaborator",
+          "uninviteBaseCollaborator",
+          "createCustomDomain",
+          "deleteCustomDomain",
+          "createGroup",
+          "deleteGroup",
+          "moveGroup",
+          "addGroupMember",
+          "changeGroupMemberRole",
+          "removeGroupMember",
+          "deleteGroupInvite",
+          "resendGroupInvite",
+          "inviteGroupMember",
+          "createRole",
+          "loginUser",
+          "claimUser",
+          "unclaimUser",
+          "createUser",
+          "deleteUser",
+          "provisionUser",
+          "deactivateUser",
+          "updateUserEmail",
+          "changePassword",
+          "updateUserProfilePicture",
+          "userAssignedLicense",
+          "userAssignedGridGlobalLicense",
+          "createServiceAccount",
+          "deleteServiceAccount",
+          "moveServiceAccount",
+          "acceptTermsOfUse",
+          "linkSsoIdentity",
+          "updateSsoIdentity",
+          "addTwoFactorAuthenticationStrategy",
+          "removeTwoFactorAuthenticationStrategy",
+          "regenerateTwoFactorAuthenticationBackupCodes",
+          "setDefaultTwoFactorAuthenticationStrategy",
+          "disableTwoFactorAuthentication",
+          "createOauthAccessToken",
+          "refreshOauthAccessToken",
+          "createSyncIntegrationSource",
+          "renameSyncIntegrationSource",
+          "reconnectSyncIntegrationSource",
+          "deleteSyncIntegrationSource",
+          "connectSyncIntegrationToTable",
+          "changeSyncIntegrationTableSource",
+          "disconnectSyncIntegrationFromTable",
+          "createPersonalAccessToken",
+          "grantEnterpriseAdminAccess",
+          "revokeEnterpriseAdminAccess",
+          "grantEnterpriseUpgraderAccess",
+          "revokeEnterpriseUpgraderAccess",
+          "updateEnterpriseName",
+          "deleteEnterpriseStripeCard",
+          "updateEnterpriseStripeCard",
+          "updateEnterprisePaymentMethod",
+          "updateEnterpriseInvoiceDetails",
+          "createOrgUnit",
+          "deleteOrgUnit",
+          "createEdiscoveryExport",
+          "updateSettingLock",
+          "updateOrgUnitConnection",
+          "updateMembershipCaptureType",
+          "updateEnterpriseTaxDetails",
+          "deleteEnterpriseTaxDetails",
+          "changeEnterpriseInviteRestrictions",
+          "changeEnterprisePortalInviteRestrictions",
+          "changeEnterpriseGlobalShareRestrictions",
+          "changeEnterpriseInterfaceOrgWideSharingRestrictions",
+          "changeEnterpriseGroupCreateRestrictions",
+          "changeEnterpriseIpAddressAccessRestrictions",
+          "changeEnterpriseExtensionConfigurationRestrictions",
+          "changeEnterpriseDataRetentionPolicy",
+          "changeEnterpriseAiRestrictionPolicy",
+          "changeEnterpriseMfaPolicy",
+          "changeEnterpriseLicenseUpgradeRequestConfig",
+          "changeDataTableInstallationRestrictions",
+          "changeEnterpriseColors",
+          "changeEnterpriseTermsOfUseOptions",
+          "changeEnterpriseDataExportControlRestrictions",
+          "changeEnterpriseSensitivityLabels",
+          "changeEnterpriseSensitivityLabelSetting",
+          "changeEnterpriseWorkspaceAppCreationRestrictions",
+          "addUserOrGroupToEnterpriseRestrictionAllowlist",
+          "removeUserOrGroupFromEnterpriseRestrictionAllowlist",
+          "applyDefaultEnterpriseSetting",
+          "createSsoIdentityProvider",
+          "updateSsoIdentityProvider",
+          "deleteSsoIdentityProvider",
+          "requestLicenseUpgrade",
+          "approveLicenseUpgradeRequest",
+          "denyLicenseUpgradeRequest",
+          "createManagedApp",
+          "createComponent",
+          "deleteManagedApp",
+          "deleteComponent",
+          "publishManagedApp",
+          "publishComponent",
+          "updateManagedAppName",
+          "updateComponentName",
+          "addManagedAppAudienceMember",
+          "addComponentAudienceMember",
+          "removeManagedAppAudienceMember",
+          "removeComponentAudienceMember",
+          "addManagedAppCollaborator",
+          "addComponentCollaborator",
+          "changeManagedAppCollaboratorPermission",
+          "changeComponentCollaboratorPermission",
+          "removeManagedAppCollaborator",
+          "removeComponentCollaborator",
+          "createPublishedDataset",
+          "changePublishedDatasetName",
+          "deletePublishedDataset",
+          "updatePublishedDatasetOwner",
+          "updatePublishedDatasetAudiences",
+          "updatePublishedDatasetVerificationStatus",
+          "deactivatePublishedDataset",
+          "reactivatePublishedDataset",
+          "createDataTable",
+          "updateDataTableSource",
+          "updateDataTableSingleSelectColumnChoices",
+          "deleteDataTable",
+          "createPublishedDatasetFromDataTable",
+          "updateDataTablePublishedDataSet",
+          "updateDataTablePublishedDataSetStatus",
+          "abortDataTableImportInProgress",
+          "moveDataTable",
+          "createWorkspace",
+          "deleteWorkspace",
+          "restoreWorkspaceFromTrash",
+          "moveWorkspace",
+          "changeWorkspaceSharingRestrictions",
+          "addWorkspaceInviteLink",
+          "configureWorkspaceInviteLink",
+          "removeWorkspaceInviteLink",
+          "updateWorkspaceName",
+          "changeWorkspaceAiPermissions",
+          "inviteWorkspaceCollaborator",
+          "addWorkspaceCollaborator",
+          "changeWorkspaceInvitePermission",
+          "changeWorkspaceCollaboratorPermission",
+          "removeWorkspaceCollaborator",
+          "uninviteWorkspaceCollaborator",
+          "viewInterface",
+          "deleteInterface",
+          "restoreInterfaceFromTrash",
+          "duplicateInterface",
+          "createInterface",
+          "updateInterfaceName",
+          "publishInterface",
+          "unpublishInterface",
+          "openRecordDetailsFromInterface",
+          "viewForm",
+          "publishForm",
+          "unpublishForm",
+          "configureFormSharingSettings",
+          "inviteInterfaceCollaborator",
+          "addInterfaceCollaborator",
+          "changeInterfaceInvitePermission",
+          "changeInterfaceCollaboratorPermission",
+          "removeInterfaceCollaborator",
+          "uninviteInterfaceCollaborator",
+          "configureInterfaceOrgWideSharing",
+          "createPortal",
+          "deletePortal",
+          "invitePortalCollaborator",
+          "addPortalCollaborator",
+          "changePortalInvitePermission",
+          "changePortalCollaboratorPermission",
+          "removePortalCollaborator",
+          "uninvitePortalCollaborator",
+          "downloadCSV",
+          "moderateAiContent",
+          "installSolution",
+          "updateSolutionVersion",
+          "updateAutomationSubscribers"
+        ]
+      },
       "description": "Retrieve audit log events falling under the provided event type or event types (maximum 100). Optional."
     },
     "modelId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Retrieve audit log events taking action on, or involving, the provided model ID or IDs (maximum 100). Optional."
     },
     "pageSize": {
@@ -304,6 +515,38 @@ Audit log events
     },
     "category": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "base",
+          "baseCollaboration",
+          "groups",
+          "role",
+          "share",
+          "user",
+          "twoFactorAuthentication",
+          "oauth",
+          "personalAccessToken",
+          "enterprise",
+          "enterpriseSettings",
+          "enterpriseLicenses",
+          "managedApps",
+          "components",
+          "publishedDataSets",
+          "dataTable",
+          "workspace",
+          "workspaceCollaboration",
+          "interface",
+          "standaloneForms",
+          "interfaceCollaboration",
+          "view",
+          "ai",
+          "solution",
+          "portal",
+          "workflow",
+          "customDomain"
+        ]
+      },
       "description": "The category value"
     }
   },
@@ -486,7 +729,7 @@ Create base
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `name` | string | Yes | — | The name for the new base. |
-| `tables` | any[] | Yes | — | A list of JSON objects representing the tables that will be created along with the base. |
+| `tables` | object[] | Yes | — | A list of JSON objects representing the tables that will be created along with the base. |
 | `workspaceId` | string | Yes | — | The workspace where the base will be created. |
 
 <Expandable title="inputSchema">
@@ -505,6 +748,9 @@ Create base
     },
     "tables": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of JSON objects representing the tables that will be created along with the base."
     },
     "workspaceId": {
@@ -800,7 +1046,7 @@ Create records
 | `baseId` | string | Yes | — | Base Id |
 | `tableIdOrName` | string | Yes | — | Table Id Or Name |
 | `fields` | object | No | — | Create **a single** record |
-| `records` | object | No | — | Create **multiple** records  Pass in multiple records to create multiple in one request |
+| `records` | object[] | No | — | Create **multiple** records  Pass in multiple records to create multiple in one request |
 | `returnFieldsByFieldId` | boolean | No | — | An optional boolean value that lets you return field objects keyed by the field id.  This defaults to `false`, which returns field objects where the key is the field name. |
 | `typecast` | boolean | No | — | The Airtable API will perform best-effort automatic data conversion from string values if the typecast parameter is passed in. Automatic conversion is disabled by default to ensure data integrity, but it may be helpful for integrating with 3rd party data sources. |
 
@@ -823,9 +1069,14 @@ Create records
       "description": "Table Id Or Name"
     },
     "fields": {
+      "type": "object",
       "description": "Create **a single** record"
     },
     "records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Create **multiple** records  Pass in multiple records to create multiple in one request"
     },
     "returnFieldsByFieldId": {
@@ -1308,7 +1559,7 @@ Delete multiple records
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
 | `tableIdOrName` | string | Yes | — | Table Id Or Name |
-| `records` | any[] | No | — | The recordIds of each record to be deleted. Up to 10 recordIds can be provided. |
+| `records` | string[] | No | — | The recordIds of each record to be deleted. Up to 10 recordIds can be provided. |
 
 <Expandable title="inputSchema">
 
@@ -1330,6 +1581,9 @@ Delete multiple records
     },
     "records": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The recordIds of each record to be deleted. Up to 10 recordIds can be provided."
     }
   },
@@ -1486,7 +1740,7 @@ Delete users by email
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `email` | any[] | No | — | The email value |
+| `email` | string[] | No | — | The email value |
 
 <Expandable title="inputSchema">
 
@@ -1504,6 +1758,9 @@ Delete users by email
     },
     "email": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The email value"
     }
   },
@@ -1779,7 +2036,7 @@ Get base collaborators
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
-| `include` | any[] | No | — | If specified, collaborators, interfaces, inviteLinks key, and/or packages will be included in the response object. Otherwise, they will be left out. |
+| `include` | string[] | No | — | If specified, collaborators, interfaces, inviteLinks key, and/or packages will be included in the response object. Otherwise, they will be left out. |
 
 <Expandable title="inputSchema">
 
@@ -1797,6 +2054,15 @@ Get base collaborators
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "collaborators",
+          "inviteLinks",
+          "interfaces",
+          "packages"
+        ]
+      },
       "description": "If specified, collaborators, interfaces, inviteLinks key, and/or packages will be included in the response object. Otherwise, they will be left out."
     }
   },
@@ -1820,7 +2086,7 @@ Get base schema
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
-| `include` | any[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
+| `include` | string[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
 
 <Expandable title="inputSchema">
 
@@ -1838,6 +2104,9 @@ Get base schema
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only)"
     }
   },
@@ -1903,7 +2172,7 @@ Get enterprise
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `include` | any[] | No | — | If specified, aggregated and/or descendants keys will be included in the response object. Otherwise, it will be left out. |
+| `include` | string[] | No | — | If specified, aggregated and/or descendants keys will be included in the response object. Otherwise, it will be left out. |
 
 <Expandable title="inputSchema">
 
@@ -1921,6 +2190,13 @@ Get enterprise
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "aggregated",
+          "descendants"
+        ]
+      },
       "description": "If specified, aggregated and/or descendants keys will be included in the response object. Otherwise, it will be left out."
     }
   },
@@ -1945,7 +2221,7 @@ Get interface
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
 | `pageBundleId` | string | Yes | — | Page Bundle Id |
-| `include` | any[] | No | — | Related resources to include |
+| `include` | string[] | No | — | Related resources to include |
 
 <Expandable title="inputSchema">
 
@@ -1967,6 +2243,13 @@ Get interface
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "collaborators",
+          "inviteLinks"
+        ]
+      },
       "description": "Related resources to include"
     }
   },
@@ -1993,7 +2276,7 @@ Get record
 | `baseId` | string | Yes | — | Base Id |
 | `tableIdOrName` | string | Yes | — | Table Id Or Name |
 | `recordId` | string | Yes | — | Record Id |
-| `cellFormat` | object | No | — | The format that should be used for cell values. Supported values are:   - `json:` cells will be formatted as JSON, depending on the field type.  - `string:` cells will be formatted as user-facing strings, regardless of the field type. The `timeZone` and `userLocale` parameters are required when using `string` as the `cellFormat`.  **Note:** You should not rely on the format of these strings, as it is subject to change.  The default is `json`. |
+| `cellFormat` | string | No | — | The format that should be used for cell values. Supported values are:   - `json:` cells will be formatted as JSON, depending on the field type.  - `string:` cells will be formatted as user-facing strings, regardless of the field type. The `timeZone` and `userLocale` parameters are required when using `string` as the `cellFormat`.  **Note:** You should not rely on the format of these strings, as it is subject to change.  The default is `json`. |
 | `returnFieldsByFieldId` | boolean | No | — | An optional boolean value that lets you return field objects where the key is the field id.  This defaults to `false`, which returns field objects where the key is the field name. |
 | `includeDateDependencyMetadata` | boolean | No | — | An optional boolean value that returns linked record cell values as objects instead of record IDs.  When `true`, all linked record fields return an array of objects with an `id` property. Linked record fields configured for date dependencies include an optional `dateDependencyMetadata` object with `dependencyType` and `buffer` fields (when date dependencies are configured in fixed mode). When `false` or unset, linked record fields return an array of record ID strings.  This defaults to `false`. |
 
@@ -2020,7 +2303,12 @@ Get record
       "description": "Record Id"
     },
     "cellFormat": {
-      "description": "The format that should be used for cell values. Supported values are:   - `json:` cells will be formatted as JSON, depending on the field type.  - `string:` cells will be formatted as user-facing strings, regardless of the field type. The `timeZone` and `userLocale` parameters are required when using `string` as the `cellFormat`.  **Note:** You should not rely on the format of these strings, as it is subject to change.  The default is `json`."
+      "type": "string",
+      "description": "The format that should be used for cell values. Supported values are:   - `json:` cells will be formatted as JSON, depending on the field type.  - `string:` cells will be formatted as user-facing strings, regardless of the field type. The `timeZone` and `userLocale` parameters are required when using `string` as the `cellFormat`.  **Note:** You should not rely on the format of these strings, as it is subject to change.  The default is `json`.",
+      "enum": [
+        "json",
+        "string"
+      ]
     },
     "returnFieldsByFieldId": {
       "type": "boolean",
@@ -2054,7 +2342,7 @@ Get user by id
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
 | `userId` | string | Yes | — | User Id |
-| `include` | any[] | No | — | If specified, collaborations, aggregated, and/or descendants keys will be included in the response object. Otherwise, they will be left out. |
+| `include` | string[] | No | — | If specified, collaborations, aggregated, and/or descendants keys will be included in the response object. Otherwise, they will be left out. |
 
 <Expandable title="inputSchema">
 
@@ -2076,6 +2364,14 @@ Get user by id
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "collaborations",
+          "aggregated",
+          "descendants"
+        ]
+      },
       "description": "If specified, collaborations, aggregated, and/or descendants keys will be included in the response object. Otherwise, they will be left out."
     }
   },
@@ -2100,7 +2396,7 @@ Get user group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `groupId` | string | Yes | — | Group Id |
-| `include` | any[] | No | — | If specified, collaborations key will be included in the response object. Otherwise it will be left out. You must be a group member or enterprise admin to view this information. |
+| `include` | string[] | No | — | If specified, collaborations key will be included in the response object. Otherwise it will be left out. You must be a group member or enterprise admin to view this information. |
 
 <Expandable title="inputSchema">
 
@@ -2118,6 +2414,9 @@ Get user group
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, collaborations key will be included in the response object. Otherwise it will be left out. You must be a group member or enterprise admin to view this information."
     }
   },
@@ -2166,9 +2465,9 @@ Get users by id or email
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `email` | any[] | No | — | Email addresses to search by. If the request does not have any userIds, you must include at least one email address. |
-| `id` | any[] | No | — | User Ids to search by. If the request does not have any email addresses, you must include at least one userId. |
-| `include` | any[] | No | — | Allows optionally including collaborations in response. |
+| `email` | string[] | No | — | Email addresses to search by. If the request does not have any userIds, you must include at least one email address. |
+| `id` | string[] | No | — | User Ids to search by. If the request does not have any email addresses, you must include at least one userId. |
+| `include` | string[] | No | — | Allows optionally including collaborations in response. |
 
 <Expandable title="inputSchema">
 
@@ -2186,14 +2485,28 @@ Get users by id or email
     },
     "email": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Email addresses to search by. If the request does not have any userIds, you must include at least one email address."
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "User Ids to search by. If the request does not have any email addresses, you must include at least one userId."
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "collaborations",
+          "aggregated",
+          "descendants"
+        ]
+      },
       "description": "Allows optionally including collaborations in response."
     }
   },
@@ -2218,7 +2531,7 @@ Get view metadata
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
 | `viewId` | string | Yes | — | View Id |
-| `include` | any[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
+| `include` | string[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
 
 <Expandable title="inputSchema">
 
@@ -2240,6 +2553,9 @@ Get view metadata
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only)"
     }
   },
@@ -2264,7 +2580,7 @@ Get workspace collaborators
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace Id |
-| `include` | any[] | No | — | If specified, collaborators or inviteLinks key will be included in the response object. Otherwise they will be left out. |
+| `include` | string[] | No | — | If specified, collaborators or inviteLinks key will be included in the response object. Otherwise they will be left out. |
 
 <Expandable title="inputSchema">
 
@@ -2282,6 +2598,13 @@ Get workspace collaborators
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "collaborators",
+          "inviteLinks"
+        ]
+      },
       "description": "If specified, collaborators or inviteLinks key will be included in the response object. Otherwise they will be left out."
     }
   },
@@ -2305,7 +2628,7 @@ Grant admin access
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `users` | any[] | Yes | — | The users value |
+| `users` | object[] | Yes | — | The users value |
 
 <Expandable title="inputSchema">
 
@@ -2323,6 +2646,9 @@ Grant admin access
     },
     "users": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The users value"
     }
   },
@@ -2627,13 +2953,13 @@ List records
 | `maxRecords` | number | No | — | The maximum total number of records that will be returned in your requests. If this value is larger than **pageSize** (which is 100 by default), you may have to load multiple pages to reach this total. |
 | `offset` | string | No | — | To fetch the next page of records, include offset from the previous request in the next request's parameters. |
 | `view` | object | No | — | The name or ID of a view in the table. If set, only the records in that view will be returned. The records will be sorted according to the order of the view unless the **sort** parameter is included, which overrides that order. Fields hidden in this view will be returned in the results. To only return a subset of fields, use the **fields** parameter. |
-| `sort` | object | No | — | A list of sort objects that specifies how the records will be ordered. Each sort object must have a **field** key specifying the name of the field to sort on, and an optional **direction** key that is either **"asc"** or **"desc"**. The default direction is **"asc"**.  The **sort** parameter overrides the sorting of the view specified in the **view** parameter. If neither the **sort** nor the **view** parameter is included, the order of records is arbitrary. |
+| `sort` | object[] | No | — | A list of sort objects that specifies how the records will be ordered. Each sort object must have a **field** key specifying the name of the field to sort on, and an optional **direction** key that is either **"asc"** or **"desc"**. The default direction is **"asc"**.  The **sort** parameter overrides the sorting of the view specified in the **view** parameter. If neither the **sort** nor the **view** parameter is included, the order of records is arbitrary. |
 | `filterByFormula` | string | No | — | A [formula](https://support.airtable.com/docs/formula-field-reference) used to filter records. The formula will be evaluated for each record, and if the result is not **0**, **false**, **""**, **NaN**, **[]**, or **#Error!** the record will be included in the response. We recommend testing your formula in the Formula field UI before using it in your API request.  If combined with the **view** parameter, only records in that view which satisfy the formula will be returned.  The formula must be encoded first before passing it as a value. You can use [this tool](https://codepen.io/airtable/full/MeXqOg) to not only encode the formula but also create the entire url you need.  Formulas can use field names, or field id's inside of the formula.  **Note** Airtable's API only accepts request with a URL shorter than 16,000 characters. Encoded formulas may cause your requests to exceed this limit. To fix this issue you can instead make a POST request to `/v0/&#123;baseId&#125;/&#123;tableIdOrName&#125;/listRecords` while passing the parameters within the body of the request instead of the query parameters. |
-| `cellFormat` | object | No | — | The format that should be used for cell values. Supported values are: - **json**: cells will be formatted as JSON, depending on the field type. - **string**: cells will be formatted as user-facing strings, regardless of the field type. The **timeZone** and **userLocale** parameters are required when using **string** as the **cellFormat**.  **Note**: You should not rely on the format of these strings, as it is subject to change.  The default is **json**. |
-| `fields` | object | No | — | Only data for fields whose names or IDs are in this list will be included in the result. If you don't need every field, you can use this parameter to reduce the amount of data transferred.  **Note** Airtable's API only accepts request with a URL shorter than 16,000 characters. Encoded formulas may cause your requests to exceed this limit. To fix this issue you can instead make a POST request to `/v0/&#123;baseId&#125;/&#123;tableIdOrName&#125;/listRecords` while passing the parameters within the body of the request instead of the query parameters. |
+| `cellFormat` | string | No | — | The format that should be used for cell values. Supported values are: - **json**: cells will be formatted as JSON, depending on the field type. - **string**: cells will be formatted as user-facing strings, regardless of the field type. The **timeZone** and **userLocale** parameters are required when using **string** as the **cellFormat**.  **Note**: You should not rely on the format of these strings, as it is subject to change.  The default is **json**. |
+| `fields` | string[] | No | — | Only data for fields whose names or IDs are in this list will be included in the result. If you don't need every field, you can use this parameter to reduce the amount of data transferred.  **Note** Airtable's API only accepts request with a URL shorter than 16,000 characters. Encoded formulas may cause your requests to exceed this limit. To fix this issue you can instead make a POST request to `/v0/&#123;baseId&#125;/&#123;tableIdOrName&#125;/listRecords` while passing the parameters within the body of the request instead of the query parameters. |
 | `returnFieldsByFieldId` | boolean | No | — | An optional boolean value that lets you return field objects where the key is the field id.  This defaults to **false**, which returns field objects where the key is the field name. |
 | `includeDateDependencyMetadata` | boolean | No | — | An optional boolean value that returns linked record cell values as objects instead of record IDs.  When `true`, all linked record fields return an array of objects with an `id` property. Linked record fields configured for date dependencies include an optional `dateDependencyMetadata` object with `dependencyType` and `buffer` fields (when date dependencies are configured in fixed mode). When `false` or unset, linked record fields return an array of record ID strings.  This defaults to `false`. |
-| `recordMetadata` | any[] | No | — | An optional field that, if specified, includes **commentCount** on each record returned. |
+| `recordMetadata` | string[] | No | — | An optional field that, if specified, includes **commentCount** on each record returned. |
 
 <Expandable title="inputSchema">
 
@@ -2676,6 +3002,10 @@ List records
       "description": "The name or ID of a view in the table. If set, only the records in that view will be returned. The records will be sorted according to the order of the view unless the **sort** parameter is included, which overrides that order. Fields hidden in this view will be returned in the results. To only return a subset of fields, use the **fields** parameter."
     },
     "sort": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of sort objects that specifies how the records will be ordered. Each sort object must have a **field** key specifying the name of the field to sort on, and an optional **direction** key that is either **\"asc\"** or **\"desc\"**. The default direction is **\"asc\"**.  The **sort** parameter overrides the sorting of the view specified in the **view** parameter. If neither the **sort** nor the **view** parameter is included, the order of records is arbitrary."
     },
     "filterByFormula": {
@@ -2683,9 +3013,18 @@ List records
       "description": "A [formula](https://support.airtable.com/docs/formula-field-reference) used to filter records. The formula will be evaluated for each record, and if the result is not **0**, **false**, **\"\"**, **NaN**, **[]**, or **#Error!** the record will be included in the response. We recommend testing your formula in the Formula field UI before using it in your API request.  If combined with the **view** parameter, only records in that view which satisfy the formula will be returned.  The formula must be encoded first before passing it as a value. You can use [this tool](https://codepen.io/airtable/full/MeXqOg) to not only encode the formula but also create the entire url you need.  Formulas can use field names, or field id's inside of the formula.  **Note** Airtable's API only accepts request with a URL shorter than 16,000 characters. Encoded formulas may cause your requests to exceed this limit. To fix this issue you can instead make a POST request to `/v0/{baseId}/{tableIdOrName}/listRecords` while passing the parameters within the body of the request instead of the query parameters."
     },
     "cellFormat": {
-      "description": "The format that should be used for cell values. Supported values are: - **json**: cells will be formatted as JSON, depending on the field type. - **string**: cells will be formatted as user-facing strings, regardless of the field type. The **timeZone** and **userLocale** parameters are required when using **string** as the **cellFormat**.  **Note**: You should not rely on the format of these strings, as it is subject to change.  The default is **json**."
+      "type": "string",
+      "description": "The format that should be used for cell values. Supported values are: - **json**: cells will be formatted as JSON, depending on the field type. - **string**: cells will be formatted as user-facing strings, regardless of the field type. The **timeZone** and **userLocale** parameters are required when using **string** as the **cellFormat**.  **Note**: You should not rely on the format of these strings, as it is subject to change.  The default is **json**.",
+      "enum": [
+        "json",
+        "string"
+      ]
     },
     "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Only data for fields whose names or IDs are in this list will be included in the result. If you don't need every field, you can use this parameter to reduce the amount of data transferred.  **Note** Airtable's API only accepts request with a URL shorter than 16,000 characters. Encoded formulas may cause your requests to exceed this limit. To fix this issue you can instead make a POST request to `/v0/{baseId}/{tableIdOrName}/listRecords` while passing the parameters within the body of the request instead of the query parameters."
     },
     "returnFieldsByFieldId": {
@@ -2698,6 +3037,9 @@ List records
     },
     "recordMetadata": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An optional field that, if specified, includes **commentCount** on each record returned."
     }
   },
@@ -2758,7 +3100,7 @@ List views
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `baseId` | string | Yes | — | Base Id |
-| `include` | any[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
+| `include` | string[] | No | — | If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only) |
 
 <Expandable title="inputSchema">
 
@@ -2776,6 +3118,9 @@ List views
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If specified, additional fields to include in the `views` object response; currently, this list only allows a single literal value `visibleFieldIds` (for views of type `grid` only)"
     }
   },
@@ -3099,7 +3444,7 @@ Manage user batched
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `users` | any[] | Yes | — | The users value |
+| `users` | object[] | Yes | — | The users value |
 
 <Expandable title="inputSchema">
 
@@ -3117,6 +3462,9 @@ Manage user batched
     },
     "users": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The users value"
     }
   },
@@ -3141,7 +3489,7 @@ Manage user membership
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `users` | any[] | Yes | — | The users value |
+| `users` | object[] | Yes | — | The users value |
 
 <Expandable title="inputSchema">
 
@@ -3159,6 +3507,9 @@ Manage user membership
     },
     "users": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The users value"
     }
   },
@@ -3236,7 +3587,7 @@ Move user groups
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `groupIds` | any[] | Yes | — | ID of the groups to be moved. Up to 100 groupIds can be provided. |
+| `groupIds` | string[] | Yes | — | ID of the groups to be moved. Up to 100 groupIds can be provided. |
 | `targetEnterpriseAccountId` | string | Yes | — | ID of the target enterprise account of the move. The target enterprise account must be in the same Hub-enabled organization as the source enterprise account, and you must have admin rights over the target enterprise account. |
 
 <Expandable title="inputSchema">
@@ -3255,6 +3606,9 @@ Move user groups
     },
     "groupIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "ID of the groups to be moved. Up to 100 groupIds can be provided."
     },
     "targetEnterpriseAccountId": {
@@ -3286,7 +3640,7 @@ Move workspaces
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
 | `replacementOwnerId` | string | No | — | If the target enterprise account has the invites settings restricted to org unit members, all non-member collaborators will be removed when the workspace are moved. If any workspace only has non-member owners, you must specify a replacementOwnerId to be added as the new owner of such workspaces. If no workspace has only non-member owners, replaceOwnerId is optional and will be ignored if provided. |
 | `targetEnterpriseAccountId` | string | Yes | — | ID of the target enterprise account of the move. The target enterprise account must be in the same Hub-enabled organization as the source enterprise account, and you must have admin rights over the target enterprise account. |
-| `workspaceIds` | any[] | Yes | — | ID of the workspaces to be moved. Up to 100 workspaceIds can be provided. |
+| `workspaceIds` | string[] | Yes | — | ID of the workspaces to be moved. Up to 100 workspaceIds can be provided. |
 
 <Expandable title="inputSchema">
 
@@ -3312,6 +3666,9 @@ Move workspaces
     },
     "workspaceIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "ID of the workspaces to be moved. Up to 100 workspaceIds can be provided."
     }
   },
@@ -3430,7 +3787,7 @@ Remove user from enterprise
 | `userId` | string | Yes | — | User Id |
 | `isDryRun` | boolean | No | — | Is Dry Run |
 | `removeFromDescendants` | boolean | No | — | If true, removes the user from descendant enterprise accounts as well. Only enterprise accounts with the Enterprise Hub feature enabled have descendant enterprise accounts. |
-| `replacementOwnerId` | object | No | — | If the user is the sole owner of any workspaces, you must specify a replacementOwnerId to be added as the new owner of such workspaces. If the user is not the sole owner of any workspaces, replacementOwnerId is optional and will be ignored if provided. |
+| `replacementOwnerId` | string | No | — | If the user is the sole owner of any workspaces, you must specify a replacementOwnerId to be added as the new owner of such workspaces. If the user is not the sole owner of any workspaces, replacementOwnerId is optional and will be ignored if provided. |
 
 <Expandable title="inputSchema">
 
@@ -3459,6 +3816,7 @@ Remove user from enterprise
       "description": "If true, removes the user from descendant enterprise accounts as well. Only enterprise accounts with the Enterprise Hub feature enabled have descendant enterprise accounts."
     },
     "replacementOwnerId": {
+      "type": "string",
       "description": "If the user is the sole owner of any workspaces, you must specify a replacementOwnerId to be added as the new owner of such workspaces. If the user is not the sole owner of any workspaces, replacementOwnerId is optional and will be ignored if provided."
     }
   },
@@ -3483,7 +3841,7 @@ Revoke admin access
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enterpriseAccountId` | string | Yes | — | Enterprise Account Id |
-| `users` | any[] | Yes | — | The users value |
+| `users` | object[] | Yes | — | The users value |
 
 <Expandable title="inputSchema">
 
@@ -3501,6 +3859,9 @@ Revoke admin access
     },
     "users": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The users value"
     }
   },
@@ -3758,7 +4119,7 @@ Update multiple records
 | `baseId` | string | Yes | — | Base Id |
 | `tableIdOrName` | string | Yes | — | Table Id Or Name |
 | `performUpsert` | object | No | — | Enables upsert behavior when set.  **fieldsToMergeOn** will be used as an external ID to match records for updates. For records where no match is found, a new Airtable record will be created. |
-| `records` | any[] | Yes | — | The records value |
+| `records` | object[] | Yes | — | The records value |
 | `returnFieldsByFieldId` | boolean | No | — | If set to `true`, records in the API response will key the **fields** object by field ID.  Defaults to `false` when unset, which returns **fields** objects keyed by field name. |
 | `typecast` | boolean | No | — | If set to `true`, Airtable will try to convert string values into the appropriate cell value. This conversion is only performed on a best-effort basis. To ensure your data's integrity, this should only be used when necessary.  Defaults to `false` when unset. |
 
@@ -3781,10 +4142,23 @@ Update multiple records
       "description": "Table Id Or Name"
     },
     "performUpsert": {
-      "description": "Enables upsert behavior when set.  **fieldsToMergeOn** will be used as an external ID to match records for updates. For records where no match is found, a new Airtable record will be created."
+      "type": "object",
+      "description": "Enables upsert behavior when set.  **fieldsToMergeOn** will be used as an external ID to match records for updates. For records where no match is found, a new Airtable record will be created.",
+      "properties": {
+        "fieldsToMergeOn": {
+          "type": "array",
+          "description": "An array with at least one and at most three field names or IDs. IDs must uniquely identify a single record. These cannot be computed fields (formulas, lookups, rollups), and must be one of the following types: number, text, long text, single select, multiple select, date."
+        }
+      },
+      "required": [
+        "fieldsToMergeOn"
+      ]
     },
     "records": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The records value"
     },
     "returnFieldsByFieldId": {
@@ -3926,6 +4300,7 @@ Update table
           "description": "Whether the date dependency settings are enabled."
         },
         "predecessorFieldId": {
+          "type": "string",
           "description": "If present, must be an editable linked record field pointing to the same table."
         },
         "reschedulingMode": {

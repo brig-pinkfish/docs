@@ -13,28 +13,21 @@ description: "Visual workflow builder, execution, triggers, and sub-workflow inv
 | Tool | Description |
 | --- | --- |
 | [`workflow_create`](#workflow_create) | Create a new workflow automation. Returns automationId and starterCode. Use only when no automationId exists in context (headless/API scenarios). If automationId already exists, use workflow_update directly instead. |
-| [`workflow_update`](#workflow_update) | Update workflow code only. Use code-edit format showing ONLY the sections being changed. Include 2-3 lines of actual unchanged code BEFORE and AFTER your changes for context, then use // ... existing code ... as placeholder to skip larger unchanged sections. If you added or changed WORKFLOW_RESOURCES, call workflow_bind_resources next, then verify with workflow_read(&#123; automationId, checkResources: true &#125;) before the first workflow_run. |
+| [`workflow_update`](#workflow_update) | Update workflow code only. Use code-edit format showing ONLY the sections being changed. Include 2-3 lines of actual unchanged code BEFORE and AFTER your changes for context, then use // ... existing code ... as placeholder to skip larger unchanged sections. If you added or changed WORKFLOW_RESOURCES, call workflow_bind_resources next, then verify with workflow_read(&#123; automationId, checkResources: true &#125;) before the first workflow_run.
+
+APPROVAL NODE: Type "approval" — control flow node (NO function registration). 3 output handles replace if-else: "notify" (runs before pause, send email with @node_approval.approvalUrl), "approved" (on approve), "denied" (on deny). Properties: "preamble" (reviewer message), "expirationDuration" (minutes, default 60). See approval skill for full examples. |
 | [`workflow_bind_resources`](#workflow_bind_resources) | Apply resource bindings for an existing workflow. Use this after workflow_update whenever you add, repair, or change WORKFLOW_RESOURCES bindings. Supported binding types include connection, collection, trigger, and agent. After binding, verify with workflow_read(&#123; automationId, checkResources: true &#125;) before the first workflow_run. Example: workflow_bind_resources(&#123; automationId: "...", bindings: &#123; salesConn: &#123; id: "pcid_123", resourceType: "connection" &#125; &#125; &#125;). The bindings parameter is REQUIRED — you must provide at least one binding. |
-| [`workflow_edit`](#workflow_edit) | **DEPRECATED — Use workflow_manual_edit instead.**
-**FOR FRONTEND USE ONLY - Agents should use workflow_update instead.**
-
-Legacy surgical workflow edits using parse→regenerate. Replaced by workflow_manual_edit which uses LLM+FastApply for more robust editing.
-
-Surgical workflow edits for frontend UI operations:
-- Adding/removing nodes from the UI palette
-- Rearranging edges via drag-drop  
-- Rebinding resources (changing connections)
-
-For MCP tool nodes: adds node + edge (no function needed).
-For code-block nodes: generates placeholder function automatically.
-
-Uses optimistic locking (expectedVersion) to detect conflicts when multiple users edit simultaneously. |
+| [`workflow_publish`](#workflow_publish) | Publish a new release of a workflow — the same operation as the web editor's Publish button. Returns the created releaseId, automationVersion (the draft version snapshotted at publish time), and publishedAt. Each call creates a new release even if the code has not changed. Does NOT share the workflow with the org; call workflow_share separately to make a published workflow runnable from Coworker chat. |
+| [`workflow_share`](#workflow_share) | Share (or unshare) a workflow. Default scope is "org" — grants the caller's selected organization READ on the workflow. Publishing alone does not make a workflow runnable from Coworker chat; the workflow must also be shared with the org. This tool only toggles the ACL; it does not publish. Call workflow_publish separately when you want the full "publish and make available in Coworker" flow. |
+| [`workflow_promote`](#workflow_promote) | Promote a workflow to the next stage in its promotion path. Copies the automation to the target org defined by the path. Returns the target automation ID, target org ID, and whether a new automation was created. |
+| [`workflow_promotion_paths_list`](#workflow_promotion_paths_list) | List all promotion paths visible to the current organization. Each path defines a sequence of stages (orgs) that a workflow moves through during promotion. |
+| [`workflow_promotion_paths_get`](#workflow_promotion_paths_get) | Get a single promotion path by ID, including its stages. |
 | [`workflow_manual_edit`](#workflow_manual_edit) | **FOR FRONTEND USE ONLY - Agents should use workflow_update instead.**
 
-LLM-powered workflow edits for frontend UI operations. Replaces workflow_edit with a more robust approach:
-- Accepts the same structured operations (addNodes, removeNodes, updateNodes, addEdges, removeEdges)
+LLM-powered workflow edits for frontend UI operations:
+- Accepts structured operations (addNodes, removeNodes, updateNodes, addEdges, removeEdges)
 - Uses an LLM to generate targeted code edits with FastApply merge
-- Eliminates fragile code parsing/regeneration
+- Avoids fragile code parsing/regeneration
 
 For MCP tool nodes: adds node + edge + generates function automatically.
 For code-block nodes: generates placeholder function automatically.
@@ -62,7 +55,7 @@ Uses optimistic locking (expectedVersion) to detect conflicts when multiple user
 
 **Node types in focused read:**
 - **code-block/mcp-tool nodes**: Returns code, inputSchema, outputSchema
-- **Control flow nodes** (router, merge, for-each, if-else, loop, while, parallel, try-catch, delay, race, sub-workflow): Returns full node properties (expression, routes, sources, body, etc.) - NO code since these are runtime primitives
+- **Control flow nodes** (router, merge, for-each, if-else, loop, while, parallel, delay, sub-workflow, hitl): Returns full node properties (expression, routes, sources, body, preamble, expirationDuration, approvalUrl, etc.) - NO code since these are runtime primitives
 - **trigger nodes**: Returns full node properties including outputSchema
 
 **With nodeIds (multi-node read):**
@@ -79,7 +72,10 @@ Uses optimistic locking (expectedVersion) to detect conflicts when multiple user
 - code: Full workflow code (WARNING: can be very large for complex workflows)
 
 **With checkResources (for binding):**
-- resources: Detailed binding status for each resource |
+- resources: Detailed binding status for each resource
+
+**With version (read a past revision):**
+- Pass `version` to read a historical step version instead of the current one. Every response already includes `stepVersion` at the top level, so you can decrement from there to walk back through history. On a version miss, the error lists available versions. `checkResources` and `addBetween` reflect current state and are ignored when `version` is set. |
 | [`workflow_run`](#workflow_run) | Execute workflow and return results. Runs entire workflow by default. Use runUntilNode to stop after a specific node completes. Long-running workflows are automatically handled by the async execution system. |
 | [`workflow_pin`](#workflow_pin) | Pin or unpin node outputs to reuse across workflow runs. Pinned nodes skip execution and use stored output from a previous run. Use this to avoid re-running expensive operations (LLM calls, API requests) during development. |
 | [`workflow_run_status`](#workflow_run_status) | Check the status of a workflow run and wait for completion. Automatically polls until the workflow completes or the async execution system handles long-running operations. Returns full results when complete. |
@@ -146,6 +142,8 @@ Create a new workflow automation. Returns automationId and starterCode. Use only
 ## workflow_update
 
 Update workflow code only. Use code-edit format showing ONLY the sections being changed. Include 2-3 lines of actual unchanged code BEFORE and AFTER your changes for context, then use // ... existing code ... as placeholder to skip larger unchanged sections. If you added or changed WORKFLOW_RESOURCES, call workflow_bind_resources next, then verify with workflow_read(&#123; automationId, checkResources: true &#125;) before the first workflow_run.
+
+APPROVAL NODE: Type "approval" — control flow node (NO function registration). 3 output handles replace if-else: "notify" (runs before pause, send email with @node_approval.approvalUrl), "approved" (on approve), "denied" (on deny). Properties: "preamble" (reviewer message), "expirationDuration" (minutes, default 60). See approval skill for full examples.
 
 **Parameters:**
 
@@ -350,36 +348,15 @@ Apply resource bindings for an existing workflow. Use this after workflow_update
 
 ---
 
-## workflow_edit
+## workflow_publish
 
-**DEPRECATED — Use workflow_manual_edit instead.**
-**FOR FRONTEND USE ONLY - Agents should use workflow_update instead.**
-
-Legacy surgical workflow edits using parse→regenerate. Replaced by workflow_manual_edit which uses LLM+FastApply for more robust editing.
-
-Surgical workflow edits for frontend UI operations:
-- Adding/removing nodes from the UI palette
-- Rearranging edges via drag-drop  
-- Rebinding resources (changing connections)
-
-For MCP tool nodes: adds node + edge (no function needed).
-For code-block nodes: generates placeholder function automatically.
-
-Uses optimistic locking (expectedVersion) to detect conflicts when multiple users edit simultaneously.
+Publish a new release of a workflow — the same operation as the web editor's Publish button. Returns the created releaseId, automationVersion (the draft version snapshotted at publish time), and publishedAt. Each call creates a new release even if the code has not changed. Does NOT share the workflow with the org; call workflow_share separately to make a published workflow runnable from Coworker chat.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `automationId` | string | Yes | — | Automation ID to edit |
-| `expectedVersion` | number | No | — | Expected automation version (from last read). If provided, fails if version changed. |
-| `addNodes` | any | No | — | Nodes to add |
-| `removeNodes` | string[] | No | — | Node IDs to remove (also removes edges and functions) |
-| `updateNodes` | object[] | No | — | Nodes to update |
-| `addEdges` | object[] | No | — | Edges to add |
-| `removeEdges` | object[] | No | — | Edges to remove |
-| `updateFunctions` | object[] | No | — | Node functions to update |
-| `updateResources` | any | No | — | Resources to update or rebind |
+| `automationId` | string | Yes | — | Automation ID to publish |
 
 <Expandable title="inputSchema">
 
@@ -389,111 +366,7 @@ Uses optimistic locking (expectedVersion) to detect conflicts when multiple user
   "properties": {
     "automationId": {
       "type": "string",
-      "description": "Automation ID to edit"
-    },
-    "expectedVersion": {
-      "type": "number",
-      "description": "Expected automation version (from last read). If provided, fails if version changed."
-    },
-    "addNodes": {
-      "type": "effects",
-      "description": "Nodes to add"
-    },
-    "removeNodes": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Node IDs to remove (also removes edges and functions)"
-    },
-    "updateNodes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "nodeId": {
-            "type": "string",
-            "description": "Node ID to update"
-          },
-          "updates": {
-            "type": "object",
-            "additionalProperties": true,
-            "description": "Partial node definition to merge"
-          }
-        }
-      },
-      "description": "Nodes to update"
-    },
-    "addEdges": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "description": "Source node ID"
-          },
-          "target": {
-            "type": "string",
-            "description": "Target node ID"
-          },
-          "condition": {
-            "type": "string",
-            "description": "Condition expression for this edge. Required for self-loop edges (same source and target) to prevent infinite execution."
-          },
-          "sourceHandle": {
-            "type": "string",
-            "description": "Visualization-only: source handle ID"
-          },
-          "targetHandle": {
-            "type": "string",
-            "description": "Visualization-only: target handle ID"
-          },
-          "synthetic": {
-            "type": "boolean",
-            "description": "Visualization-only: marks a UI-only/\"ghost\" edge. Defaults to false."
-          }
-        }
-      },
-      "description": "Edges to add"
-    },
-    "removeEdges": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "description": "Source node ID"
-          },
-          "target": {
-            "type": "string",
-            "description": "Target node ID"
-          }
-        }
-      },
-      "description": "Edges to remove"
-    },
-    "updateFunctions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "nodeId": {
-            "type": "string",
-            "description": "Node ID"
-          },
-          "code": {
-            "type": "string",
-            "description": "New function code (async function nodeId(params) { ... })"
-          }
-        }
-      },
-      "description": "Node functions to update"
-    },
-    "updateResources": {
-      "type": "effects",
-      "description": "Resources to update or rebind"
+      "description": "Automation ID to publish"
     }
   },
   "required": [
@@ -506,14 +379,146 @@ Uses optimistic locking (expectedVersion) to detect conflicts when multiple user
 
 ---
 
+## workflow_share
+
+Share (or unshare) a workflow. Default scope is "org" — grants the caller's selected organization READ on the workflow. Publishing alone does not make a workflow runnable from Coworker chat; the workflow must also be shared with the org. This tool only toggles the ACL; it does not publish. Call workflow_publish separately when you want the full "publish and make available in Coworker" flow.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `automationId` | string | Yes | — | Automation ID to share |
+| `shared` | boolean | Yes | — | true to grant READ access on the workflow at the given scope, false to remove that ACL |
+| `scope` | string | No | `"org"` | Sharing scope. Currently only "org" is supported (shares with the caller's X-Selected-Org). Defaults to "org". |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": {
+      "type": "string",
+      "description": "Automation ID to share"
+    },
+    "shared": {
+      "type": "boolean",
+      "description": "true to grant READ access on the workflow at the given scope, false to remove that ACL"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "org"
+      ],
+      "default": "org",
+      "description": "Sharing scope. Currently only \"org\" is supported (shares with the caller's X-Selected-Org). Defaults to \"org\"."
+    }
+  },
+  "required": [
+    "automationId",
+    "shared"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_promote
+
+Promote a workflow to the next stage in its promotion path. Copies the automation to the target org defined by the path. Returns the target automation ID, target org ID, and whether a new automation was created.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `automationId` | string | Yes | — | Automation ID to promote |
+| `pathId` | string | No | — | Promotion path ID. If omitted, uses the automation's default path. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "automationId": {
+      "type": "string",
+      "description": "Automation ID to promote"
+    },
+    "pathId": {
+      "type": "string",
+      "description": "Promotion path ID. If omitted, uses the automation's default path."
+    }
+  },
+  "required": [
+    "automationId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_promotion_paths_list
+
+List all promotion paths visible to the current organization. Each path defines a sequence of stages (orgs) that a workflow moves through during promotion.
+
+**Parameters:** None
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+</Expandable>
+
+---
+
+## workflow_promotion_paths_get
+
+Get a single promotion path by ID, including its stages.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `pathId` | string | Yes | — | Promotion path ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "pathId": {
+      "type": "string",
+      "description": "Promotion path ID"
+    }
+  },
+  "required": [
+    "pathId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## workflow_manual_edit
 
 **FOR FRONTEND USE ONLY - Agents should use workflow_update instead.**
 
-LLM-powered workflow edits for frontend UI operations. Replaces workflow_edit with a more robust approach:
-- Accepts the same structured operations (addNodes, removeNodes, updateNodes, addEdges, removeEdges)
+LLM-powered workflow edits for frontend UI operations:
+- Accepts structured operations (addNodes, removeNodes, updateNodes, addEdges, removeEdges)
 - Uses an LLM to generate targeted code edits with FastApply merge
-- Eliminates fragile code parsing/regeneration
+- Avoids fragile code parsing/regeneration
 
 For MCP tool nodes: adds node + edge + generates function automatically.
 For code-block nodes: generates placeholder function automatically.
@@ -683,7 +688,7 @@ Get workflow structure and optionally focused details for a specific node.
 
 **Node types in focused read:**
 - **code-block/mcp-tool nodes**: Returns code, inputSchema, outputSchema
-- **Control flow nodes** (router, merge, for-each, if-else, loop, while, parallel, try-catch, delay, race, sub-workflow): Returns full node properties (expression, routes, sources, body, etc.) - NO code since these are runtime primitives
+- **Control flow nodes** (router, merge, for-each, if-else, loop, while, parallel, delay, sub-workflow, hitl): Returns full node properties (expression, routes, sources, body, preamble, expirationDuration, approvalUrl, etc.) - NO code since these are runtime primitives
 - **trigger nodes**: Returns full node properties including outputSchema
 
 **With nodeIds (multi-node read):**
@@ -702,11 +707,15 @@ Get workflow structure and optionally focused details for a specific node.
 **With checkResources (for binding):**
 - resources: Detailed binding status for each resource
 
+**With version (read a past revision):**
+- Pass `version` to read a historical step version instead of the current one. Every response already includes `stepVersion` at the top level, so you can decrement from there to walk back through history. On a version miss, the error lists available versions. `checkResources` and `addBetween` reflect current state and are ignored when `version` is set.
+
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `automationId` | string | Yes | — | Automation ID to read |
+| `version` | number | No | — | Read a past step version instead of the current one. Omit for current. Response always includes stepVersion, so you can decrement to walk back through history. Ignored by checkResources and addBetween which always reflect current state. |
 | `nodeId` | string | No | — | Focused single-node read. Prefer this when inspecting one node. Omit nodeIds/search/includeCode unless you specifically need a different mode. For code-block/mcp-tool: returns code. For control flow nodes (router, merge, for-each, etc.): returns all node properties (no code). |
 | `nodeIds` | string[] | No | — | Focused multi-node read. Use this instead of includeCode when you only need a few nodes. Omit nodeId/search/includeCode unless you intentionally want a different mode. Returns focusedNodes map with &#123;code, inputSchema, outputSchema&#125; per node. |
 | `search` | string | No | — | Regex pattern to search across the full workflow code. Use this instead of includeCode when you are looking for a specific pattern. Omit nodeId/nodeIds/includeCode unless you intentionally need another mode. Returns matching lines with node attribution and context. |
@@ -725,6 +734,10 @@ Get workflow structure and optionally focused details for a specific node.
     "automationId": {
       "type": "string",
       "description": "Automation ID to read"
+    },
+    "version": {
+      "type": "number",
+      "description": "Read a past step version instead of the current one. Omit for current. Response always includes stepVersion, so you can decrement to walk back through history. Ignored by checkResources and addBetween which always reflect current state."
     },
     "nodeId": {
       "type": "string",

@@ -70,7 +70,7 @@ Add a new activity
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `attendees` | any[] | No | — | The attendees of the activity |
+| `attendees` | object[] | No | — | The attendees of the activity |
 | `busy` | boolean | No | — | Whether the activity marks the assignee as busy or not in their calendar |
 | `deal_id` | integer | No | — | The ID of the deal linked to the activity |
 | `done` | boolean | No | — | Whether the activity is marked as done or not |
@@ -82,7 +82,7 @@ Add a new activity
 | `note` | string | No | — | The note of the activity |
 | `org_id` | integer | No | — | The ID of the organization linked to the activity |
 | `owner_id` | integer | No | — | The ID of the user who owns the activity |
-| `participants` | any[] | No | — | The participants of the activity |
+| `participants` | object[] | No | — | The participants of the activity |
 | `person_id` | integer | No | — | The ID of the person linked to the activity |
 | `priority` | integer | No | — | The priority of the activity. Mappable to a specific string using activityFields API. |
 | `project_id` | integer | No | — | The ID of the project linked to the activity |
@@ -102,6 +102,9 @@ Add a new activity
     },
     "attendees": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The attendees of the activity"
     },
     "busy": {
@@ -192,6 +195,9 @@ Add a new activity
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The participants of the activity"
     },
     "person_id": {
@@ -287,7 +293,7 @@ Add a product
 | `is_linkable` | boolean | No | — | Whether this product can be added to a deal or not |
 | `name` | string | Yes | — | The name of the product. Cannot be an empty string |
 | `owner_id` | integer | No | — | The ID of the user who will be marked as the owner of this product. When omitted, the authorized user ID will be used |
-| `prices` | any[] | No | — | An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned. |
+| `prices` | object[] | No | — | An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned. |
 | `tax` | number | No | — | The tax percentage |
 | `unit` | string | No | — | The unit in which this product is sold |
 | `visible_to` | number | No | — | The visibility of the product. If omitted, the visibility will be set to the default visibility setting of this item type for the authorized user. Read more about visibility groups &lt;a href="https://support.pipedrive.com/en/article/visibility-groups" target="_blank" rel="noopener noreferrer"&gt;here&lt;/a&gt;.&lt;h4&gt;Light / Growth and Professional plans&lt;/h4&gt;&lt;table&gt;&lt;tr&gt;&lt;th style="width: 40px"&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`1`&lt;/td&gt;&lt;td&gt;Owner &amp; followers&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`3`&lt;/td&gt;&lt;td&gt;Entire company&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;h4&gt;Premium / Ultimate plan&lt;/h4&gt;&lt;table&gt;&lt;tr&gt;&lt;th style="width: 40px"&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`1`&lt;/td&gt;&lt;td&gt;Owner only&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`3`&lt;/td&gt;&lt;td&gt;Owner's visibility group&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`5`&lt;/td&gt;&lt;td&gt;Owner's visibility group and sub-groups&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`7`&lt;/td&gt;&lt;td&gt;Entire company&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; |
@@ -348,6 +354,9 @@ Add a product
     },
     "prices": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned."
     },
     "tax": {
@@ -384,7 +393,7 @@ Create one product field
 | --- | --- | --- | --- | --- |
 | `field_name` | string | Yes | — | Field name |
 | `field_type` | string | Yes | — | The type of the field&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`varchar`&lt;/td&gt;&lt;td&gt;Text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`varchar_auto`&lt;/td&gt;&lt;td&gt;Autocomplete text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`text`&lt;/td&gt;&lt;td&gt;Long text (up to 65k characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`double`&lt;/td&gt;&lt;td&gt;Numeric value&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`monetary`&lt;/td&gt;&lt;td&gt;Monetary field (has a numeric value and a currency value)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`date`&lt;/td&gt;&lt;td&gt;Date (format YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`set`&lt;/td&gt;&lt;td&gt;Options field with a possibility of having multiple chosen options&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`enum`&lt;/td&gt;&lt;td&gt;Options field with a single possible chosen option&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`user`&lt;/td&gt;&lt;td&gt;User field (contains a user ID of another Pipedrive user)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`org`&lt;/td&gt;&lt;td&gt;Organization field (contains an organization ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`people`&lt;/td&gt;&lt;td&gt;Person field (contains a person ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`phone`&lt;/td&gt;&lt;td&gt;Phone field (up to 255 numbers and/or characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`time`&lt;/td&gt;&lt;td&gt;Time field (format HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`timerange`&lt;/td&gt;&lt;td&gt;Time-range field (has a start time and end time value, both HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`daterange`&lt;/td&gt;&lt;td&gt;Date-range field (has a start date and end date value, both YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`address`&lt;/td&gt;&lt;td&gt;Address field&lt;/dd&gt;&lt;/table&gt; |
-| `options` | any[] | No | — | Field options (required for enum and set field types) |
+| `options` | object[] | No | — | Field options (required for enum and set field types) |
 | `ui_visibility` | object | No | — | UI visibility settings for the field. Controls where the field appears in the Pipedrive web UI. Note that products have a simpler visibility model than other entity types. |
 
 <Expandable title="inputSchema">
@@ -425,6 +434,9 @@ Create one product field
     },
     "options": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Field options (required for enum and set field types)"
     },
     "ui_visibility": {
@@ -463,7 +475,7 @@ Add product field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
+| `body` | object[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
 
 <Expandable title="inputSchema">
 
@@ -481,6 +493,9 @@ Add product field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to add. Each item must contain a label. At least one option is required."
     }
   },
@@ -548,7 +563,7 @@ Add a product variation
 | --- | --- | --- | --- | --- |
 | `id` | integer | Yes | — | The ID of the product |
 | `name` | string | Yes | — | The name of the product variation. The maximum length is 255 characters. |
-| `prices` | any[] | No | — | Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned. |
+| `prices` | object[] | No | — | Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned. |
 
 <Expandable title="inputSchema">
 
@@ -570,6 +585,9 @@ Add a product variation
     },
     "prices": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned."
     }
   },
@@ -795,7 +813,7 @@ Delete product field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -813,6 +831,9 @@ Delete product field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist."
     }
   },
@@ -2097,7 +2118,7 @@ Update an activity
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | integer | Yes | — | The ID of the activity |
-| `attendees` | any[] | No | — | The attendees of the activity |
+| `attendees` | object[] | No | — | The attendees of the activity |
 | `busy` | boolean | No | — | Whether the activity marks the assignee as busy or not in their calendar |
 | `deal_id` | integer | No | — | The ID of the deal linked to the activity |
 | `done` | boolean | No | — | Whether the activity is marked as done or not |
@@ -2109,7 +2130,7 @@ Update an activity
 | `note` | string | No | — | The note of the activity |
 | `org_id` | integer | No | — | The ID of the organization linked to the activity |
 | `owner_id` | integer | No | — | The ID of the user who owns the activity |
-| `participants` | any[] | No | — | The participants of the activity |
+| `participants` | object[] | No | — | The participants of the activity |
 | `person_id` | integer | No | — | The ID of the person linked to the activity |
 | `priority` | integer | No | — | The priority of the activity. Mappable to a specific string using activityFields API. |
 | `project_id` | integer | No | — | The ID of the project linked to the activity |
@@ -2133,6 +2154,9 @@ Update an activity
     },
     "attendees": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The attendees of the activity"
     },
     "busy": {
@@ -2223,6 +2247,9 @@ Update an activity
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The participants of the activity"
     },
     "person_id": {
@@ -2325,7 +2352,7 @@ Update a product
 | `is_linkable` | boolean | No | — | Whether this product can be added to a deal or not |
 | `name` | string | No | — | The name of the product. Cannot be an empty string |
 | `owner_id` | integer | No | — | The ID of the user who will be marked as the owner of this product. When omitted, the authorized user ID will be used |
-| `prices` | any[] | No | — | An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned. |
+| `prices` | object[] | No | — | An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned. |
 | `tax` | number | No | — | The tax percentage |
 | `unit` | string | No | — | The unit in which this product is sold |
 | `visible_to` | number | No | — | The visibility of the product. If omitted, the visibility will be set to the default visibility setting of this item type for the authorized user. Read more about visibility groups &lt;a href="https://support.pipedrive.com/en/article/visibility-groups" target="_blank" rel="noopener noreferrer"&gt;here&lt;/a&gt;.&lt;h4&gt;Light / Growth and Professional plans&lt;/h4&gt;&lt;table&gt;&lt;tr&gt;&lt;th style="width: 40px"&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`1`&lt;/td&gt;&lt;td&gt;Owner &amp; followers&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`3`&lt;/td&gt;&lt;td&gt;Entire company&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;h4&gt;Premium / Ultimate plan&lt;/h4&gt;&lt;table&gt;&lt;tr&gt;&lt;th style="width: 40px"&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`1`&lt;/td&gt;&lt;td&gt;Owner only&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`3`&lt;/td&gt;&lt;td&gt;Owner's visibility group&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`5`&lt;/td&gt;&lt;td&gt;Owner's visibility group and sub-groups&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`7`&lt;/td&gt;&lt;td&gt;Entire company&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; |
@@ -2390,6 +2417,9 @@ Update a product
     },
     "prices": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of objects, each containing: `currency` (string), `price` (number), `cost` (number, optional), `direct_cost` (number, optional). Note that there can only be one price per product per currency. When `prices` is omitted altogether, a default price of 0 and the user's default currency will be assigned."
     },
     "tax": {
@@ -2481,7 +2511,7 @@ Update product field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -2499,6 +2529,9 @@ Update product field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist."
     }
   },
@@ -2567,7 +2600,7 @@ Update a product variation
 | `id` | integer | Yes | — | The ID of the product |
 | `product_variation_id` | integer | Yes | — | The ID of the product variation |
 | `name` | string | No | — | The name of the product variation. The maximum length is 255 characters. |
-| `prices` | any[] | No | — | Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned. |
+| `prices` | object[] | No | — | Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned. |
 
 <Expandable title="inputSchema">
 
@@ -2593,6 +2626,9 @@ Update a product variation
     },
     "prices": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of objects, each containing: currency (string), price (number), cost (number, optional), direct_cost (number, optional), notes (string, optional). When prices is omitted altogether, a default price of 0, a default cost of 0, a default direct_cost of 0 and the user's default currency will be assigned."
     }
   },

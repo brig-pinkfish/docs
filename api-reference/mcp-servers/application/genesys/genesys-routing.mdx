@@ -753,7 +753,7 @@ Get the list of supported languages.
 | `pageNumber` | integer | No | — | Page number |
 | `sortOrder` | string | No | — | Ascending or descending sort order |
 | `name` | string | No | — | The name value |
-| `id` | any[] | No | — | The id value |
+| `id` | string[] | No | — | The id value |
 
 <Expandable title="inputSchema">
 
@@ -787,6 +787,9 @@ Get the list of supported languages.
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The id value"
     }
   },
@@ -904,7 +907,7 @@ Get details about this queue.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `queueId` | string | Yes | — | Queue ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -922,6 +925,12 @@ Get details about this queue.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "identityresolution"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -945,7 +954,7 @@ Get an assistant associated with a queue.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `queueId` | string | Yes | — | Queue ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `languageVariation` | string | No | — | Language variation |
 | `fallbackToPrimaryAssistant` | boolean | No | — | Fall back to primary assistant if specified variation is not found |
 
@@ -965,6 +974,13 @@ Get an assistant associated with a queue.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assistant",
+          "copilot"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "languageVariation": {
@@ -1174,13 +1190,13 @@ Get the members of this queue.
 | `pageNumber` | integer | No | — | Page number for pagination |
 | `pageSize` | integer | No | — | Max value is 100 |
 | `sortOrder` | string | No | — | Note: results are sorted by name. |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `name` | string | No | — | Filter by queue member name (contains-style search) |
-| `profileSkills` | any[] | No | — | Filter by profile skill (contains-style search) |
-| `skills` | any[] | No | — | Filter by skill (contains-style search) |
-| `languages` | any[] | No | — | Filter by language (contains-style search) |
-| `routingStatus` | any[] | No | — | Filter by routing status |
-| `presence` | any[] | No | — | Filter by presence |
+| `profileSkills` | string[] | No | — | Filter by profile skill (contains-style search) |
+| `skills` | string[] | No | — | Filter by skill (contains-style search) |
+| `languages` | string[] | No | — | Filter by language (contains-style search) |
+| `routingStatus` | string[] | No | — | Filter by routing status |
+| `presence` | string[] | No | — | Filter by presence |
 | `memberBy` | string | No | — | Filter by member type |
 | `joined` | boolean | No | — | Filter by joined status |
 
@@ -1216,6 +1232,36 @@ Get the members of this queue.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "name": {
@@ -1224,22 +1270,37 @@ Get the members of this queue.
     },
     "profileSkills": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by profile skill (contains-style search)"
     },
     "skills": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by skill (contains-style search)"
     },
     "languages": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by language (contains-style search)"
     },
     "routingStatus": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by routing status"
     },
     "presence": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by presence"
     },
     "memberBy": {
@@ -1333,12 +1394,12 @@ Get list of queues.
 | `pageSize` | integer | No | — | Page size |
 | `sortOrder` | string | No | — | Note: results are sorted by name. |
 | `name` | string | No | — | Include only queues with the given name (leading and trailing asterisks allowed) |
-| `id` | any[] | No | — | Include only queues with the specified ID(s) |
-| `divisionId` | any[] | No | — | Include only queues in the specified division ID(s) |
-| `peerId` | any[] | No | — | Include only queues with the specified peer ID(s) |
+| `id` | string[] | No | — | Include only queues with the specified ID(s) |
+| `divisionId` | string[] | No | — | Include only queues in the specified division ID(s) |
+| `peerId` | string[] | No | — | Include only queues with the specified peer ID(s) |
 | `cannedResponseLibraryId` | string | No | — | Include only queues explicitly associated with the specified canned response library ID |
 | `hasPeer` | boolean | No | — | Include only queues with a peer ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -1372,14 +1433,23 @@ Get list of queues.
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only queues with the specified ID(s)"
     },
     "divisionId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only queues in the specified division ID(s)"
     },
     "peerId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only queues with the specified peer ID(s)"
     },
     "cannedResponseLibraryId": {
@@ -1392,6 +1462,12 @@ Get list of queues.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "identityresolution"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -2497,7 +2573,7 @@ Get the list of routing skills.
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `name` | string | No | — | Filter for results that start with this value |
-| `id` | any[] | No | — | The id value |
+| `id` | string[] | No | — | The id value |
 
 <Expandable title="inputSchema">
 
@@ -2523,6 +2599,9 @@ Get the list of routing skills.
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The id value"
     }
   },
@@ -2584,7 +2663,7 @@ Get queues for user
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `joined` | boolean | No | — | Is joined to the queue |
-| `divisionId` | any[] | No | — | Division ID(s) |
+| `divisionId` | string[] | No | — | Division ID(s) |
 
 <Expandable title="inputSchema">
 
@@ -2614,6 +2693,9 @@ Get queues for user
     },
     "divisionId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Division ID(s)"
     }
   },
@@ -3025,8 +3107,8 @@ Get list of wrapup codes.
 | `sortBy` | string | No | — | Sort by |
 | `sortOrder` | string | No | — | Sort order |
 | `name` | string | No | — | Wrapup code's name ('Sort by' param is ignored unless this field is provided) |
-| `id` | any[] | No | — | Filter by wrapup code ID(s) |
-| `divisionId` | any[] | No | — | Filter by division ID(s) |
+| `id` | string[] | No | — | Filter by wrapup code ID(s) |
+| `divisionId` | string[] | No | — | Filter by division ID(s) |
 
 <Expandable title="inputSchema">
 
@@ -3068,10 +3150,16 @@ Get list of wrapup codes.
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by wrapup code ID(s)"
     },
     "divisionId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter by division ID(s)"
     }
   },
@@ -3097,8 +3185,8 @@ Update attributes of an in-queue conversation
 | `labelId` | string | No | — | Label requirement for the conversation.  To remove the label requirement (setting it to System Default Label), specify an empty string, i.e., "". |
 | `languageId` | string | No | — | Language requirement for the conversation.  To remove the language requirement, specify an empty string, i.e., "". |
 | `priority` | integer | No | — | Priority for the conversation.  Each point of priority is equivalent to one minute of time in queue.  Range:[-25000000, 25000000].  To reset, specify 0. |
-| `requestScoredAgents` | any[] | No | — | Request Scored Agents |
-| `skillIds` | any[] | No | — | Skill requirements for the conversation.  To remove all skill requirements, specify an empty list, i.e. []. |
+| `requestScoredAgents` | object[] | No | — | Request Scored Agents |
+| `skillIds` | string[] | No | — | Skill requirements for the conversation.  To remove all skill requirements, specify an empty list, i.e. []. |
 
 <Expandable title="inputSchema">
 
@@ -3128,10 +3216,16 @@ Update attributes of an in-queue conversation
     },
     "requestScoredAgents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request Scored Agents"
     },
     "skillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Skill requirements for the conversation.  To remove all skill requirements, specify an empty list, i.e. []."
     }
   },
@@ -3412,7 +3506,7 @@ Join or unjoin a set of up to 100 users for a queue
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `queueId` | string | Yes | — | Queue ID |
-| `body` | any[] | Yes | — | Queue Members |
+| `body` | object[] | Yes | — | Queue Members |
 
 <Expandable title="inputSchema">
 
@@ -3430,6 +3524,9 @@ Join or unjoin a set of up to 100 users for a queue
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Queue Members"
     }
   },
@@ -3605,7 +3702,7 @@ Update skill group definition
 | `memberCount` | integer | No | — | Estimated number of members in this group. It can take some time for the count to be updated after expressions are changed. |
 | `name` | string | Yes | — | The group name. |
 | `selfUri` | string | No | — | The URI for this object |
-| `skillConditions` | any[] | Yes | — | Conditions for this group |
+| `skillConditions` | object[] | Yes | — | Conditions for this group |
 | `status` | string | No | — | Group's filling status |
 
 <Expandable title="inputSchema">
@@ -3670,6 +3767,9 @@ Update skill group definition
     },
     "skillConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Conditions for this group"
     },
     "status": {
@@ -3729,7 +3829,7 @@ Join or unjoin a queue for a user
 | `lastAgentRoutingMode` | string | No | — | The Last Agent Routing Mode for the queue. |
 | `mediaSettings` | object | No | — | Media Settings |
 | `memberCount` | integer | No | — | The total number of members in the queue. |
-| `memberGroups` | any[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
+| `memberGroups` | object[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
 | `messageInQueueFlow` | object | No | — | Message In Queue Flow |
 | `modifiedBy` | string | No | — | The ID of the user that last modified the queue. |
 | `name` | string | No | — | The name value |
@@ -3738,7 +3838,7 @@ Join or unjoin a queue for a user
 | `outboundMessagingAddresses` | object | No | — | Outbound Messaging Addresses |
 | `peerId` | string | No | — | The ID of an associated external queue. |
 | `queueFlow` | object | No | — | Queue Flow |
-| `routingRules` | any[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
+| `routingRules` | object[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
 | `scoringMethod` | string | No | — | The Scoring Method for the queue. |
 | `selfUri` | string | No | — | The URI for this object |
 | `skillEvaluationMethod` | string | No | — | The skill evaluation method to use when routing conversations. |
@@ -4003,6 +4103,9 @@ Join or unjoin a queue for a user
     },
     "memberGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
     },
     "messageInQueueFlow": {
@@ -4105,6 +4208,9 @@ Join or unjoin a queue for a user
     },
     "routingRules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The routing rules for the queue, used for Preferred Agent Routing."
     },
     "scoringMethod": {
@@ -4176,8 +4282,8 @@ Join or unjoin a set of queues for a user
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `divisionId` | any[] | No | — | Division ID(s) |
-| `body` | any[] | Yes | — | User Queues |
+| `divisionId` | string[] | No | — | Division ID(s) |
+| `body` | object[] | Yes | — | User Queues |
 
 <Expandable title="inputSchema">
 
@@ -4195,10 +4301,16 @@ Join or unjoin a set of queues for a user
     },
     "divisionId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Division ID(s)"
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "User Queues"
     }
   },
@@ -4414,7 +4526,7 @@ Bulk add or delete up to 100 queue members
 | --- | --- | --- | --- | --- |
 | `queueId` | string | Yes | — | Queue ID |
 | `delete` | boolean | No | — | True to delete queue members |
-| `body` | any[] | Yes | — | Queue Members |
+| `body` | object[] | Yes | — | Queue Members |
 
 <Expandable title="inputSchema">
 
@@ -4436,6 +4548,9 @@ Bulk add or delete up to 100 queue members
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Queue Members"
     }
   },
@@ -4460,7 +4575,7 @@ Add up to 100 wrap-up codes to a queue
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `queueId` | string | Yes | — | Queue ID |
-| `body` | any[] | Yes | — | List of wrapup codes |
+| `body` | object[] | Yes | — | List of wrapup codes |
 
 <Expandable title="inputSchema">
 
@@ -4478,6 +4593,9 @@ Add up to 100 wrap-up codes to a queue
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of wrapup codes"
     }
   },
@@ -4526,7 +4644,7 @@ Create a queue
 | `lastAgentRoutingMode` | string | No | — | The Last Agent Routing Mode for the queue. |
 | `mediaSettings` | object | No | — | Media Settings |
 | `memberCount` | integer | No | — | The total number of members in the queue. |
-| `memberGroups` | any[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
+| `memberGroups` | object[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
 | `messageInQueueFlow` | object | No | — | Message In Queue Flow |
 | `modifiedBy` | string | No | — | The ID of the user that last modified the queue. |
 | `name` | string | Yes | — | The queue name |
@@ -4535,7 +4653,7 @@ Create a queue
 | `outboundMessagingAddresses` | object | No | — | Outbound Messaging Addresses |
 | `peerId` | string | No | — | The ID of an associated external queue. |
 | `queueFlow` | object | No | — | Queue Flow |
-| `routingRules` | any[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
+| `routingRules` | object[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
 | `scoringMethod` | string | No | — | The Scoring Method for the queue. |
 | `selfUri` | string | No | — | The URI for this object |
 | `skillEvaluationMethod` | string | No | — | The skill evaluation method to use when routing conversations. |
@@ -4793,6 +4911,9 @@ Create a queue
     },
     "memberGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
     },
     "messageInQueueFlow": {
@@ -4895,6 +5016,9 @@ Create a queue
     },
     "routingRules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The routing rules for the queue, used for Preferred Agent Routing."
     },
     "scoringMethod": {
@@ -4969,8 +5093,8 @@ Add or remove member divisions for this skill group.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `skillGroupId` | string | Yes | — | Skill Group ID |
-| `addDivisionIds` | any[] | No | — | Add Division Ids |
-| `removeDivisionIds` | any[] | No | — | Remove Division Ids |
+| `addDivisionIds` | string[] | No | — | Add Division Ids |
+| `removeDivisionIds` | string[] | No | — | Remove Division Ids |
 
 <Expandable title="inputSchema">
 
@@ -4988,10 +5112,16 @@ Add or remove member divisions for this skill group.
     },
     "addDivisionIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Add Division Ids"
     },
     "removeDivisionIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Remove Division Ids"
     }
   },
@@ -5020,10 +5150,10 @@ Create a skill group
 | `division` | object | No | — | The division value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `memberCount` | integer | No | — | Estimated number of members in this group. It can take some time for the count to be updated after expressions are changed. |
-| `memberDivisions` | any[] | No | — | Member divisions for this skill group |
+| `memberDivisions` | string[] | No | — | Member divisions for this skill group |
 | `name` | string | Yes | — | The group name. |
 | `selfUri` | string | No | — | The URI for this object |
-| `skillConditions` | any[] | Yes | — | Conditions for this group |
+| `skillConditions` | object[] | Yes | — | Conditions for this group |
 | `status` | string | No | — | Group's filling status |
 
 <Expandable title="inputSchema">
@@ -5076,6 +5206,9 @@ Create a skill group
     },
     "memberDivisions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Member divisions for this skill group"
     },
     "name": {
@@ -5088,6 +5221,9 @@ Create a skill group
     },
     "skillConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Conditions for this group"
     },
     "status": {
@@ -5413,7 +5549,7 @@ Update the user's Direct Routing Backup settings.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `agentWaitSeconds` | integer | No | — | Time (in seconds) that a Direct Routing interaction will wait for Direct Routing agent before going to selected backup. Valid range [60, 864000]. |
-| `backedUpUsers` | any[] | No | — | Set of users that this user is a backup for. |
+| `backedUpUsers` | string[] | No | — | Set of users that this user is a backup for. |
 | `queueId` | string | No | — | ID of queue to be used as backup. If queueId and userId are both specified, queue behaves as secondary backup. |
 | `userId` | string | No | — | ID of user to be used as backup. If queueId and userId are both specified, user behaves as primary backup. |
 | `waitForAgent` | boolean | No | — | Flag indicating if Direct Routing interactions should wait for Direct Routing agent or go immediately to selected backup. |
@@ -5434,6 +5570,9 @@ Update the user's Direct Routing Backup settings.
     },
     "backedUpUsers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Set of users that this user is a backup for."
     },
     "queueId": {
@@ -5540,7 +5679,7 @@ Update a queue
 | `lastAgentRoutingMode` | string | No | — | The Last Agent Routing Mode for the queue. |
 | `mediaSettings` | object | No | — | Media Settings |
 | `memberCount` | integer | No | — | The total number of members in the queue. |
-| `memberGroups` | any[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
+| `memberGroups` | object[] | No | — | The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes. |
 | `messageInQueueFlow` | object | No | — | Message In Queue Flow |
 | `modifiedBy` | string | No | — | The ID of the user that last modified the queue. |
 | `name` | string | Yes | — | The queue name |
@@ -5549,7 +5688,7 @@ Update a queue
 | `outboundMessagingAddresses` | object | No | — | Outbound Messaging Addresses |
 | `peerId` | string | No | — | The ID of an associated external queue. |
 | `queueFlow` | object | No | — | Queue Flow |
-| `routingRules` | any[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
+| `routingRules` | object[] | No | — | The routing rules for the queue, used for Preferred Agent Routing. |
 | `scoringMethod` | string | No | — | The Scoring Method for the queue. |
 | `selfUri` | string | No | — | The URI for this object |
 | `skillEvaluationMethod` | string | No | — | The skill evaluation method to use when routing conversations. |
@@ -5810,6 +5949,9 @@ Update a queue
     },
     "memberGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups of agents associated with the queue, if any.  Queue membership will update to match group membership changes."
     },
     "messageInQueueFlow": {
@@ -5912,6 +6054,9 @@ Update a queue
     },
     "routingRules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The routing rules for the queue, used for Preferred Agent Routing."
     },
     "scoringMethod": {
@@ -6086,7 +6231,7 @@ Update the user's Direct Routing Backup settings.
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
 | `agentWaitSeconds` | integer | No | — | Time (in seconds) that a Direct Routing interaction will wait for Direct Routing agent before going to selected backup. Valid range [60, 864000]. |
-| `backedUpUsers` | any[] | No | — | Set of users that this user is a backup for. |
+| `backedUpUsers` | string[] | No | — | Set of users that this user is a backup for. |
 | `queueId` | string | No | — | ID of queue to be used as backup. If queueId and userId are both specified, queue behaves as secondary backup. |
 | `waitForAgent` | boolean | No | — | Flag indicating if Direct Routing interactions should wait for Direct Routing agent or go immediately to selected backup. |
 
@@ -6110,6 +6255,9 @@ Update the user's Direct Routing Backup settings.
     },
     "backedUpUsers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Set of users that this user is a backup for."
     },
     "queueId": {
