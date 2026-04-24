@@ -399,14 +399,14 @@ Get appointments for users and optional date range
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userIds` | any[] | Yes | — | The user IDs for which to retrieve appointments |
+| `userIds` | string[] | Yes | — | The user IDs for which to retrieve appointments |
 | `interval` | string | No | — | Interval to filter data by. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `pageNumber` | integer | No | — | Page number |
 | `pageSize` | integer | No | — | Page size |
-| `statuses` | any[] | No | — | Appointment Statuses to filter by |
-| `facilitatorIds` | any[] | No | — | The facilitator IDs for which to retrieve appointments |
+| `statuses` | string[] | No | — | Appointment Statuses to filter by |
+| `facilitatorIds` | string[] | No | — | The facilitator IDs for which to retrieve appointments |
 | `sortOrder` | string | No | — | Sort (by due date) either Asc or Desc |
-| `relationships` | any[] | No | — | Relationships to filter by |
+| `relationships` | string[] | No | — | Relationships to filter by |
 | `completionInterval` | string | No | — | Appointment completion start and end to filter by. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `overdue` | string | No | — | Overdue status to filter by |
 | `intervalCondition` | string | No | — | Filter condition for interval |
@@ -423,6 +423,9 @@ Get appointments for users and optional date range
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The user IDs for which to retrieve appointments"
     },
     "interval": {
@@ -439,10 +442,22 @@ Get appointments for users and optional date range
     },
     "statuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Scheduled",
+          "InProgress",
+          "Completed",
+          "InvalidSchedule"
+        ]
+      },
       "description": "Appointment Statuses to filter by"
     },
     "facilitatorIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The facilitator IDs for which to retrieve appointments"
     },
     "sortOrder": {
@@ -455,6 +470,14 @@ Get appointments for users and optional date range
     },
     "relationships": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Creator",
+          "Facilitator",
+          "Attendee"
+        ]
+      },
       "description": "Relationships to filter by"
     },
     "completionInterval": {
@@ -501,10 +524,10 @@ Get my appointments for a given date range
 | `interval` | string | No | — | Interval to filter data by. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `pageNumber` | integer | No | — | Page number |
 | `pageSize` | integer | No | — | Page size |
-| `statuses` | any[] | No | — | Appointment Statuses to filter by |
-| `facilitatorIds` | any[] | No | — | The facilitator IDs for which to retrieve appointments |
+| `statuses` | string[] | No | — | Appointment Statuses to filter by |
+| `facilitatorIds` | string[] | No | — | The facilitator IDs for which to retrieve appointments |
 | `sortOrder` | string | No | — | Sort (by due date) either Asc or Desc |
-| `relationships` | any[] | No | — | Relationships to filter by |
+| `relationships` | string[] | No | — | Relationships to filter by |
 | `completionInterval` | string | No | — | Appointment completion start and end to filter by. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `overdue` | string | No | — | Overdue status to filter by |
 | `intervalCondition` | string | No | — | Filter condition for interval |
@@ -533,10 +556,22 @@ Get my appointments for a given date range
     },
     "statuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Scheduled",
+          "InProgress",
+          "Completed",
+          "InvalidSchedule"
+        ]
+      },
       "description": "Appointment Statuses to filter by"
     },
     "facilitatorIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The facilitator IDs for which to retrieve appointments"
     },
     "sortOrder": {
@@ -549,6 +584,14 @@ Get my appointments for a given date range
     },
     "relationships": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Creator",
+          "Facilitator",
+          "Attendee"
+        ]
+      },
       "description": "Relationships to filter by"
     },
     "completionInterval": {
@@ -592,7 +635,7 @@ Get Learning Assignment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assignmentId` | string | Yes | — | The ID of Learning Assignment |
-| `expand` | any[] | No | — | Fields to expand in response |
+| `expand` | string[] | No | — | Fields to expand in response |
 
 <Expandable title="inputSchema">
 
@@ -610,6 +653,17 @@ Get Learning Assignment
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "module",
+          "assessment",
+          "assessmentForm",
+          "module.coverArt",
+          "step",
+          "step.moduleStep"
+        ]
+      },
       "description": "Fields to expand in response"
     }
   },
@@ -636,7 +690,7 @@ Get Learning Assignment Step
 | `stepId` | string | Yes | — | The ID of Learning Assignment Step |
 | `shareableContentObjectId` | string | No | — | The ID of SCO to load |
 | `defaultShareableContentObject` | string | No | — | The default SCO to retrieve |
-| `expand` | any[] | No | — | Fields to expand in response |
+| `expand` | string[] | No | — | Fields to expand in response |
 
 <Expandable title="inputSchema">
 
@@ -671,6 +725,12 @@ Get Learning Assignment Step
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "moduleStep"
+        ]
+      },
       "description": "Fields to expand in response"
     }
   },
@@ -705,10 +765,10 @@ List of Learning module Assignments
 | `maxPercentageScore` | number | No | — | The maximum assessment score for an assignment (completed with assessment) to be included in the results (inclusive) |
 | `sortOrder` | string | No | — | Specifies result set sort order; if not specified, default sort order is descending (Desc) |
 | `sortBy` | string | No | — | Specifies which field to sort the results by, default sort is by recommendedCompletionDate |
-| `userId` | any[] | No | — | Specifies the list of user IDs to be queried, up to 100 user IDs. |
-| `types` | any[] | No | — | Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated |
-| `states` | any[] | No | — | Specifies the assignment states to filter by |
-| `expand` | any[] | No | — | Specifies the expand option for returning additional information |
+| `userId` | string[] | No | — | Specifies the list of user IDs to be queried, up to 100 user IDs. |
+| `types` | string[] | No | — | Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated |
+| `states` | string[] | No | — | Specifies the assignment states to filter by |
+| `expand` | string[] | No | — | Specifies the expand option for returning additional information |
 
 <Expandable title="inputSchema">
 
@@ -784,18 +844,47 @@ List of Learning module Assignments
     },
     "userId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Specifies the list of user IDs to be queried, up to 100 user IDs."
     },
     "types": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Informational",
+          "AssessedContent",
+          "Assessment",
+          "External",
+          "Native"
+        ]
+      },
       "description": "Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated"
     },
     "states": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Assigned",
+          "InProgress",
+          "Completed",
+          "NotCompleted",
+          "InvalidSchedule"
+        ]
+      },
       "description": "Specifies the assignment states to filter by"
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ModuleSummary"
+        ]
+      },
       "description": "Specifies the expand option for returning additional information"
     }
   },
@@ -828,9 +917,9 @@ List of Learning Assignments assigned to current user
 | `maxPercentageScore` | number | No | — | The maximum assessment score for an assignment (completed with assessment) to be included in the results (inclusive) |
 | `sortOrder` | string | No | — | Specifies result set sort order; if not specified, default sort order is descending (Desc) |
 | `sortBy` | string | No | — | Specifies which field to sort the results by, default sort is by recommendedCompletionDate |
-| `types` | any[] | No | — | Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated |
-| `states` | any[] | No | — | Specifies the assignment states to filter by |
-| `expand` | any[] | No | — | Specifies the expand option for returning additional information |
+| `types` | string[] | No | — | Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated |
+| `states` | string[] | No | — | Specifies the assignment states to filter by |
+| `expand` | string[] | No | — | Specifies the expand option for returning additional information |
 
 <Expandable title="inputSchema">
 
@@ -906,14 +995,40 @@ List of Learning Assignments assigned to current user
     },
     "types": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Informational",
+          "AssessedContent",
+          "Assessment",
+          "External",
+          "Native"
+        ]
+      },
       "description": "Specifies the module types to filter by. Informational, AssessedContent and Assessment are deprecated"
     },
     "states": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Assigned",
+          "InProgress",
+          "Completed",
+          "NotCompleted",
+          "InvalidSchedule"
+        ]
+      },
       "description": "Specifies the assignment states to filter by"
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ModuleSummary"
+        ]
+      },
       "description": "Specifies the expand option for returning additional information"
     }
   },
@@ -936,7 +1051,7 @@ Get a learning module
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `moduleId` | string | Yes | — | The ID of the learning module |
-| `expand` | any[] | No | — | Fields to expand in response(case insensitive) |
+| `expand` | string[] | No | — | Fields to expand in response(case insensitive) |
 
 <Expandable title="inputSchema">
 
@@ -954,6 +1069,13 @@ Get a learning module
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assessmentForm",
+          "coverArt"
+        ]
+      },
       "description": "Fields to expand in response(case insensitive)"
     }
   },
@@ -1092,7 +1214,7 @@ Get specific version of a published module
 | --- | --- | --- | --- | --- |
 | `moduleId` | string | Yes | — | The ID of the learning module |
 | `versionId` | string | Yes | — | The version of learning module |
-| `expand` | any[] | No | — | Fields to expand in response(case insensitive) |
+| `expand` | string[] | No | — | Fields to expand in response(case insensitive) |
 
 <Expandable title="inputSchema">
 
@@ -1114,6 +1236,13 @@ Get specific version of a published module
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assessmentForm",
+          "coverArt"
+        ]
+      },
       "description": "Fields to expand in response(case insensitive)"
     }
   },
@@ -1138,16 +1267,16 @@ Get all learning modules of an organization
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `isArchived` | boolean | No | — | Archive status |
-| `types` | any[] | No | — | Specifies the module types. Informational, AssessedContent and Assessment are deprecated |
+| `types` | string[] | No | — | Specifies the module types. Informational, AssessedContent and Assessment are deprecated |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `sortOrder` | string | No | — | Sort order |
 | `sortBy` | string | No | — | Sort by |
 | `searchTerm` | string | No | — | Search Term (searchable by name) |
-| `expand` | any[] | No | — | Fields to expand in response(case insensitive) |
+| `expand` | string[] | No | — | Fields to expand in response(case insensitive) |
 | `isPublished` | string | No | — | Specifies if only the Unpublished (isPublished is "False") or Published (isPublished is "True") modules are returned. If isPublished is "Any" or omitted, both types are returned |
-| `statuses` | any[] | No | — | Specifies the module statuses to filter by |
-| `externalIds` | any[] | No | — | Specifies the module external IDs to filter by. Only one ID is allowed |
+| `statuses` | string[] | No | — | Specifies the module statuses to filter by |
+| `externalIds` | string[] | No | — | Specifies the module external IDs to filter by. Only one ID is allowed |
 
 <Expandable title="inputSchema">
 
@@ -1165,6 +1294,16 @@ Get all learning modules of an organization
     },
     "types": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Informational",
+          "AssessedContent",
+          "Assessment",
+          "External",
+          "Native"
+        ]
+      },
       "description": "Specifies the module types. Informational, AssessedContent and Assessment are deprecated"
     },
     "pageSize": {
@@ -1199,6 +1338,13 @@ Get all learning modules of an organization
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "rule",
+          "summaryData"
+        ]
+      },
       "description": "Fields to expand in response(case insensitive)"
     },
     "isPublished": {
@@ -1212,10 +1358,21 @@ Get all learning modules of an organization
     },
     "statuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Unpublished",
+          "Published",
+          "Archived"
+        ]
+      },
       "description": "Specifies the module statuses to filter by"
     },
     "externalIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Specifies the module external IDs to filter by. Only one ID is allowed"
     }
   },
@@ -1237,13 +1394,13 @@ Get all learning modules of an organization including assignments for a specific
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userIds` | any[] | Yes | — | The IDs of the users to include |
+| `userIds` | string[] | Yes | — | The IDs of the users to include |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `searchTerm` | string | No | — | Search Term (searches by name and description) |
 | `overdue` | string | No | — | Specifies if only modules with overdue/not overdue (overdue is "True" or "False") assignments are returned. If overdue is "Any" or omitted, both are returned and can including modules that are unassigned. |
-| `assignmentStates` | any[] | No | — | Specifies the assignment states to return. |
-| `expand` | any[] | No | — | Fields to expand in response(case insensitive) |
+| `assignmentStates` | string[] | No | — | Specifies the assignment states to return. |
+| `expand` | string[] | No | — | Fields to expand in response(case insensitive) |
 
 <Expandable title="inputSchema">
 
@@ -1257,6 +1414,9 @@ Get all learning modules of an organization including assignments for a specific
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The IDs of the users to include"
     },
     "pageSize": {
@@ -1282,10 +1442,26 @@ Get all learning modules of an organization including assignments for a specific
     },
     "assignmentStates": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NotAssigned",
+          "Assigned",
+          "InProgress",
+          "Completed",
+          "InvalidSchedule"
+        ]
+      },
       "description": "Specifies the assignment states to return."
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "coverArt"
+        ]
+      },
       "description": "Fields to expand in response(case insensitive)"
     }
   },
@@ -1417,7 +1593,7 @@ Get an existing notification
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `notificationId` | string | Yes | — | The ID of the notification. |
-| `expand` | any[] | No | — | Indicates a field in the response which should be expanded. |
+| `expand` | string[] | No | — | Indicates a field in the response which should be expanded. |
 
 <Expandable title="inputSchema">
 
@@ -1435,6 +1611,12 @@ Get an existing notification
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "appointment"
+        ]
+      },
       "description": "Indicates a field in the response which should be expanded."
     }
   },
@@ -1459,7 +1641,7 @@ Retrieve the list of your notifications.
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | Page number |
 | `pageSize` | integer | No | — | Page size |
-| `expand` | any[] | No | — | Indicates a field in the response which should be expanded. |
+| `expand` | string[] | No | — | Indicates a field in the response which should be expanded. |
 
 <Expandable title="inputSchema">
 
@@ -1481,6 +1663,12 @@ Retrieve the list of your notifications.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "appointment"
+        ]
+      },
       "description": "Indicates a field in the response which should be expanded."
     }
   },
@@ -1540,11 +1728,11 @@ Update an existing appointment
 | --- | --- | --- | --- | --- |
 | `appointmentId` | string | Yes | — | The ID of the coaching appointment. |
 | `addToSchedule` | boolean | No | — | If True, adds the appointment to their schedule |
-| `conversationIds` | any[] | No | — | IDs of conversations associated with this coaching appointment. |
+| `conversationIds` | string[] | No | — | IDs of conversations associated with this coaching appointment. |
 | `dateStart` | string | No | — | The date/time the coaching appointment starts. Times will be rounded down to the minute. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | No | — | The description of coaching appointment. |
-| `documentIds` | any[] | No | — | IDs of documents associated with this coaching appointment. |
-| `externalLinks` | any[] | No | — | The list of external links related to the appointment |
+| `documentIds` | string[] | No | — | IDs of documents associated with this coaching appointment. |
+| `externalLinks` | string[] | No | — | The list of external links related to the appointment |
 | `lengthInMinutes` | integer | No | — | The duration of coaching appointment in minutes. |
 | `location` | string | No | — | The location of the appointment |
 | `name` | string | No | — | The name of coaching appointment. |
@@ -1572,6 +1760,9 @@ Update an existing appointment
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of conversations associated with this coaching appointment."
     },
     "dateStart": {
@@ -1584,10 +1775,16 @@ Update an existing appointment
     },
     "documentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of documents associated with this coaching appointment."
     },
     "externalLinks": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of external links related to the appointment"
     },
     "lengthInMinutes": {
@@ -1971,7 +2168,7 @@ Update Learning Assignment Step
 | `selfUri` | string | No | — | The URI for this object |
 | `shareableContentObject` | object | No | — | Learning assignment SCO (Shareable Content Object) |
 | `signedCookie` | object | No | — | Signed Cookie |
-| `structure` | any[] | No | — | The structure for any SCO associated with this step |
+| `structure` | object[] | No | — | The structure for any SCO associated with this step |
 | `successStatus` | string | No | — | The success status of this step |
 
 <Expandable title="inputSchema">
@@ -2150,6 +2347,9 @@ Update Learning Assignment Step
     },
     "structure": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The structure for any SCO associated with this step"
     },
     "successStatus": {
@@ -2546,12 +2746,12 @@ Create a new appointment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `addToSchedule` | boolean | No | — | If True, adds the appointment to their schedule |
-| `attendeeIds` | any[] | Yes | — | IDs of attendees in the coaching appointment. |
-| `conversationIds` | any[] | No | — | IDs of conversations associated with this coaching appointment. |
+| `attendeeIds` | string[] | Yes | — | IDs of attendees in the coaching appointment. |
+| `conversationIds` | string[] | No | — | IDs of conversations associated with this coaching appointment. |
 | `dateStart` | string | Yes | — | The date/time the coaching appointment starts. Times will be rounded down to the minute. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | Yes | — | The description of coaching appointment. |
-| `documentIds` | any[] | No | — | IDs of documents associated with this coaching appointment. |
-| `externalLinks` | any[] | No | — | The list of external links related to the appointment |
+| `documentIds` | string[] | No | — | IDs of documents associated with this coaching appointment. |
+| `externalLinks` | string[] | No | — | The list of external links related to the appointment |
 | `facilitatorId` | string | No | — | The facilitator ID of coaching appointment. |
 | `lengthInMinutes` | integer | Yes | — | The duration of coaching appointment in minutes. |
 | `location` | string | No | — | The location of the appointment |
@@ -2575,10 +2775,16 @@ Create a new appointment
     },
     "attendeeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of attendees in the coaching appointment."
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of conversations associated with this coaching appointment."
     },
     "dateStart": {
@@ -2591,10 +2797,16 @@ Create a new appointment
     },
     "documentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of documents associated with this coaching appointment."
     },
     "externalLinks": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of external links related to the appointment"
     },
     "facilitatorId": {
@@ -2669,9 +2881,9 @@ Retrieve aggregated appointment data
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `filter` | object | Yes | — | The filter value |
-| `groupBy` | any[] | No | — | An optional list of items by which to group the result data. |
+| `groupBy` | string[] | No | — | An optional list of items by which to group the result data. |
 | `interval` | string | Yes | — | Interval to aggregate across. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | No | — | A list of metrics to aggregate.  If omitted, all metrics are returned. |
+| `metrics` | string[] | No | — | A list of metrics to aggregate.  If omitted, all metrics are returned. |
 
 <Expandable title="inputSchema">
 
@@ -2703,6 +2915,12 @@ Retrieve aggregated appointment data
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "attendeeId"
+        ]
+      },
       "description": "An optional list of items by which to group the result data."
     },
     "interval": {
@@ -2711,6 +2929,17 @@ Retrieve aggregated appointment data
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nActivities",
+          "nPlannedActivities",
+          "nInProgressActivities",
+          "nCompleteActivities",
+          "nOverdueActivities",
+          "nInvalidScheduleActivities"
+        ]
+      },
       "description": "A list of metrics to aggregate.  If omitted, all metrics are returned."
     }
   },
@@ -2977,9 +3206,9 @@ Retrieve aggregated assignment data
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `filter` | object | Yes | — | The filter value |
-| `groupBy` | any[] | No | — | Specifies if the aggregated data is combined into a single set of metrics (groupBy is empty or not specified), or contains an element per attendeeId (groupBy is "attendeeId") |
+| `groupBy` | string[] | No | — | Specifies if the aggregated data is combined into a single set of metrics (groupBy is empty or not specified), or contains an element per attendeeId (groupBy is "attendeeId") |
 | `interval` | string | Yes | — | Specifies the range of due dates to be used for filtering. Milliseconds will be truncated. A maximum of 1 year can be specified in the range. End date is not inclusive. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | No | — | The list of metrics to be returned. If omitted, all metrics are returned. |
+| `metrics` | string[] | No | — | The list of metrics to be returned. If omitted, all metrics are returned. |
 
 <Expandable title="inputSchema">
 
@@ -3011,6 +3240,12 @@ Retrieve aggregated assignment data
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "attendeeId"
+        ]
+      },
       "description": "Specifies if the aggregated data is combined into a single set of metrics (groupBy is empty or not specified), or contains an element per attendeeId (groupBy is \"attendeeId\")"
     },
     "interval": {
@@ -3019,6 +3254,21 @@ Retrieve aggregated assignment data
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nActivities",
+          "nPlannedActivities",
+          "nInProgressActivities",
+          "nCompleteActivities",
+          "nOverdueActivities",
+          "nInvalidScheduleActivities",
+          "nPassedActivities",
+          "nFailedActivities",
+          "oActivityScore",
+          "nNotCompletedActivities"
+        ]
+      },
       "description": "The list of metrics to be returned. If omitted, all metrics are returned."
     }
   },
@@ -3140,7 +3390,7 @@ Create a new learning module
 | `enforceContentOrder` | boolean | No | — | If true, learning module content should be viewed one by one in order |
 | `excludedFromCatalog` | boolean | No | — | If true, learning module is excluded when retrieving modules for manual assignment |
 | `externalId` | string | No | — | The external ID of the learning module. Maximum length: 50 characters. |
-| `informSteps` | any[] | No | — | The list of inform steps in a learning module |
+| `informSteps` | object[] | No | — | The list of inform steps in a learning module |
 | `lengthInMinutes` | integer | No | — | The recommended time in minutes to complete the module |
 | `name` | string | Yes | — | The name of learning module |
 | `reviewAssessmentResults` | object | No | — | Review Assessment Results |
@@ -3247,6 +3497,9 @@ Create a new learning module
     },
     "informSteps": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of inform steps in a learning module"
     },
     "lengthInMinutes": {
@@ -3379,10 +3632,10 @@ Start job to retrieve slots where a learning activity can be scheduled.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `activityCodeId` | string | Yes | — | The Activity Code Id of the slots. |
-| `intervals` | any[] | Yes | — | The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
+| `intervals` | string[] | Yes | — | The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `lengthInMinutes` | integer | Yes | — | The length in minutes of the slots, in 15 minutes granularity. |
 | `slotsType` | string | Yes | — | The type of slots to fetch in the job. |
-| `userIds` | any[] | Yes | — | The user IDs to fetch the slots for. |
+| `userIds` | string[] | Yes | — | The user IDs to fetch the slots for. |
 
 <Expandable title="inputSchema">
 
@@ -3400,6 +3653,10 @@ Start job to retrieve slots where a learning activity can be scheduled.
     },
     "intervals": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "interval"
+      },
       "description": "The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
     },
     "lengthInMinutes": {
@@ -3415,6 +3672,9 @@ Start job to retrieve slots where a learning activity can be scheduled.
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The user IDs to fetch the slots for."
     }
   },
@@ -3444,7 +3704,7 @@ Get list of possible slots where a learning activity can be scheduled.
 | `interruptibleAssignmentId` | string | No | — | Assignment ID to exclude from consideration when determining blocked slots |
 | `interval` | string | Yes | — | Range of time to get slots for scheduling learning activities. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `lengthInMinutes` | integer | Yes | — | The duration of Learning Assignment to schedule in 15 minutes granularity |
-| `userIds` | any[] | Yes | — | The user IDs for which to fetch schedules. Must be only 1. |
+| `userIds` | string[] | Yes | — | The user IDs for which to fetch schedules. Must be only 1. |
 
 <Expandable title="inputSchema">
 
@@ -3470,6 +3730,9 @@ Get list of possible slots where a learning activity can be scheduled.
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The user IDs for which to fetch schedules. Must be only 1."
     }
   },
@@ -3531,9 +3794,9 @@ Start job to retrieve the slots where a coaching appointment can be scheduled.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `activityCodeId` | string | Yes | — | The Activity Code Id of the slots. |
-| `attendeeIds` | any[] | Yes | — | The attendee IDs to fetch the slots for. |
-| `facilitatorIds` | any[] | No | — | The facilitator IDs to fetch the slots for. |
-| `intervals` | any[] | Yes | — | The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
+| `attendeeIds` | string[] | Yes | — | The attendee IDs to fetch the slots for. |
+| `facilitatorIds` | string[] | No | — | The facilitator IDs to fetch the slots for. |
+| `intervals` | string[] | Yes | — | The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `lengthInMinutes` | integer | Yes | — | The length in minutes of the slots, in 15 minutes granularity. |
 | `slotsType` | string | Yes | — | The type of slots to fetch in the job. |
 
@@ -3553,14 +3816,24 @@ Start job to retrieve the slots where a coaching appointment can be scheduled.
     },
     "attendeeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The attendee IDs to fetch the slots for."
     },
     "facilitatorIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The facilitator IDs to fetch the slots for."
     },
     "intervals": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "interval"
+      },
       "description": "The intervals to fetch the slots for. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
     },
     "lengthInMinutes": {
@@ -3598,9 +3871,9 @@ Get list of possible slots where a coaching appointment can be scheduled.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `attendeeIds` | any[] | Yes | — | List of attendees to determine coaching appointment slots |
-| `facilitatorIds` | any[] | No | — | List of facilitators to determine coaching appointment slots |
-| `interruptibleAppointmentIds` | any[] | No | — | List of appointment ids to exclude from consideration when determining blocked slots |
+| `attendeeIds` | string[] | Yes | — | List of attendees to determine coaching appointment slots |
+| `facilitatorIds` | string[] | No | — | List of facilitators to determine coaching appointment slots |
+| `interruptibleAppointmentIds` | string[] | No | — | List of appointment ids to exclude from consideration when determining blocked slots |
 | `interval` | string | Yes | — | Range of time to get slots for scheduling coaching appointments. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `lengthInMinutes` | integer | Yes | — | The duration of coaching appointment to schedule in 15 minutes granularity up to maximum of 60 minutes |
 
@@ -3616,14 +3889,23 @@ Get list of possible slots where a coaching appointment can be scheduled.
     },
     "attendeeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of attendees to determine coaching appointment slots"
     },
     "facilitatorIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of facilitators to determine coaching appointment slots"
     },
     "interruptibleAppointmentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of appointment ids to exclude from consideration when determining blocked slots"
     },
     "interval": {
@@ -3665,7 +3947,7 @@ Update a learning module
 | `enforceContentOrder` | boolean | No | — | If true, learning module content should be viewed one by one in order |
 | `excludedFromCatalog` | boolean | No | — | If true, learning module is excluded when retrieving modules for manual assignment |
 | `externalId` | string | No | — | The external ID of the learning module. Maximum length: 50 characters. |
-| `informSteps` | any[] | No | — | The list of inform steps in a learning module |
+| `informSteps` | object[] | No | — | The list of inform steps in a learning module |
 | `lengthInMinutes` | integer | No | — | The recommended time in minutes to complete the module |
 | `name` | string | Yes | — | The name of learning module |
 | `reviewAssessmentResults` | object | No | — | Review Assessment Results |
@@ -3776,6 +4058,9 @@ Update a learning module
     },
     "informSteps": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of inform steps in a learning module"
     },
     "lengthInMinutes": {
@@ -3838,7 +4123,7 @@ Update a learning module preview
 | `assessmentForm` | object | No | — | Assessment Form |
 | `currentStep` | object | No | — | Learning module preview update request current step |
 | `state` | string | No | — | The assignment State |
-| `steps` | any[] | No | — | The assignment Steps |
+| `steps` | object[] | No | — | The assignment Steps |
 
 <Expandable title="inputSchema">
 
@@ -3962,6 +4247,9 @@ Update a learning module preview
     },
     "steps": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The assignment Steps"
     }
   },
@@ -3988,7 +4276,7 @@ Update a learning module rule
 | `assign` | boolean | No | — | Whether to assign the module to users or not |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `isActive` | boolean | Yes | — | If true, rule is active |
-| `parts` | any[] | Yes | — | The parts of a learning module rule |
+| `parts` | object[] | Yes | — | The parts of a learning module rule |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -4019,6 +4307,9 @@ Update a learning module rule
     },
     "parts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The parts of a learning module rule"
     },
     "selfUri": {

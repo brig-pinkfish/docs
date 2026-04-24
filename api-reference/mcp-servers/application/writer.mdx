@@ -97,7 +97,7 @@ Analyze images
 | --- | --- | --- | --- | --- |
 | `model` | string | Yes | — | The model to use for image analysis. |
 | `prompt` | string | Yes | — | The prompt to use for the image analysis. The prompt must include the name of each image variable, surrounded by double curly braces (`&#123;&#123;&#125;&#125;`). For example, `Describe the difference between the image &#123;&#123;image_1&#125;&#125; and the image &#123;&#123;image_2&#125;&#125;`. |
-| `variables` | any[] | Yes | — | The variables value |
+| `variables` | object[] | Yes | — | The variables value |
 
 <Expandable title="inputSchema">
 
@@ -122,6 +122,9 @@ Analyze images
     },
     "variables": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The variables value"
     }
   },
@@ -148,16 +151,16 @@ Chat completion
 | --- | --- | --- | --- | --- |
 | `logprobs` | boolean | No | — | Specifies whether to return log probabilities of the output tokens. |
 | `max_tokens` | integer | No | — | Defines the maximum number of tokens (words and characters) that the model can generate in the response. This can be adjusted to allow for longer or shorter responses as needed. The maximum value varies by model. See the [models overview](/home/models) for more information about the maximum number of tokens for each model. |
-| `messages` | any[] | Yes | — | An array of message objects that form the conversation history or context for the model to respond to. The array must contain at least one message. |
+| `messages` | object[] | Yes | — | An array of message objects that form the conversation history or context for the model to respond to. The array must contain at least one message. |
 | `model` | string | Yes | — | The [ID of the model](https://dev.writer.com/home/models) to use for creating the chat completion. Supports `palmyra-x5`, `palmyra-x4`, `palmyra-fin`, `palmyra-med`, `palmyra-creative`, and `palmyra-x-003-instruct`. |
 | `n` | integer | No | — | Specifies the number of completions (responses) to generate from the model in a single request. This parameter allows for generating multiple responses, offering a variety of potential replies from which to choose. |
 | `response_format` | object | No | — | The response format to use for the chat completion, available with `palmyra-x4` and `palmyra-x5`.  `text` is the default response format. [JSON Schema](https://json-schema.org/) is supported for structured responses. If you specify `json_schema`, you must also provide a `json_schema` object. |
-| `stop` | any[] | No | — | A token or sequence of tokens that, when generated, will cause the model to stop producing further content. This can be a single token or an array of tokens, acting as a signal to end the output. |
+| `stop` | string[] | No | — | A token or sequence of tokens that, when generated, will cause the model to stop producing further content. This can be a single token or an array of tokens, acting as a signal to end the output. |
 | `stream` | boolean | No | — | Indicates whether the response should be streamed incrementally as it is generated or only returned once fully complete. Streaming can be useful for providing real-time feedback in interactive applications. |
 | `stream_options` | object | No | — | Additional options for streaming. |
 | `temperature` | number | No | — | Controls the randomness or creativity of the model's responses. A higher temperature results in more varied and less predictable text, while a lower temperature produces more deterministic and conservative outputs. |
 | `tool_choice` | object | No | — | Configure how the model will call functions: - `auto`: allows the model to automatically choose the tool to use, or not call a tool - `none`: disables tool calling; the model will instead generate a message - `required`: requires the model to call one or more tools  You can also use a JSON object to force the model to call a specific tool. For example, `&#123;"type": "function", "function": &#123;"name": "get_current_weather"&#125;&#125;` requires the model to call the `get_current_weather` function, regardless of the prompt. |
-| `tools` | any[] | No | — | An array containing tool definitions for tools that the model can use to generate responses. The tool definitions use JSON schema. You can define your own functions or use one of the built-in `graph`, `llm`, `translation`, or `vision` tools. Note that you can only use one built-in tool type in the array (only one of `graph`, `llm`, `translation`, or `vision`). You can pass multiple [custom tools](https://dev.writer.com/home/tool-calling) of type `function` in the same request. |
+| `tools` | object[] | No | — | An array containing tool definitions for tools that the model can use to generate responses. The tool definitions use JSON schema. You can define your own functions or use one of the built-in `graph`, `llm`, `translation`, or `vision` tools. Note that you can only use one built-in tool type in the array (only one of `graph`, `llm`, `translation`, or `vision`). You can pass multiple [custom tools](https://dev.writer.com/home/tool-calling) of type `function` in the same request. |
 | `top_p` | number | No | — | Sets the threshold for "nucleus sampling," a technique to focus the model's token generation on the most likely subset of tokens. Only tokens with cumulative probability above this threshold are considered, controlling the trade-off between creativity and coherence. |
 
 <Expandable title="inputSchema">
@@ -180,6 +183,9 @@ Chat completion
     },
     "messages": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of message objects that form the conversation history or context for the model to respond to. The array must contain at least one message."
     },
     "model": {
@@ -209,6 +215,9 @@ Chat completion
     },
     "stop": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A token or sequence of tokens that, when generated, will cause the model to stop producing further content. This can be a single token or an array of tokens, acting as a signal to end the output."
     },
     "stream": {
@@ -237,6 +246,9 @@ Chat completion
     },
     "tools": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array containing tool definitions for tools that the model can use to generate responses. The tool definitions use JSON schema. You can define your own functions or use one of the built-in `graph`, `llm`, `translation`, or `vision` tools. Note that you can only use one built-in tool type in the array (only one of `graph`, `llm`, `translation`, or `vision`). You can pass multiple [custom tools](https://dev.writer.com/home/tool-calling) of type `function` in the same request."
     },
     "top_p": {
@@ -269,7 +281,7 @@ Text generation
 | `model` | string | Yes | — | The [ID of the model](https://dev.writer.com/home/models) to use for generating text. Supports `palmyra-x5`, `palmyra-x4`, `palmyra-fin`, `palmyra-med`, `palmyra-creative`, and `palmyra-x-003-instruct`. |
 | `prompt` | string | Yes | — | The input text that the model will process to generate a response. |
 | `random_seed` | integer | No | — | A seed used to initialize the random number generator for the model, ensuring reproducibility of the output when the same inputs are provided. |
-| `stop` | any[] | No | — | Specifies stopping conditions for the model's output generation. This can be an array of strings or a single string that the model will look for as a signal to stop generating further tokens. |
+| `stop` | string[] | No | — | Specifies stopping conditions for the model's output generation. This can be an array of strings or a single string that the model will look for as a signal to stop generating further tokens. |
 | `stream` | boolean | No | — | Determines whether the model's output should be streamed. If true, the output is generated and sent incrementally, which can be useful for real-time applications. |
 | `temperature` | number | No | — | Controls the randomness of the model's outputs. Higher values lead to more random outputs, while lower values make the model more deterministic. |
 | `top_p` | number | No | — | Used to control the nucleus sampling, where only the most probable tokens with a cumulative probability of top_p are considered for sampling, providing a way to fine-tune the randomness of predictions. |
@@ -306,6 +318,9 @@ Text generation
     },
     "stop": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Specifies stopping conditions for the model's output generation. This can be an array of strings or a single string that the model will look for as a signal to stop generating further tokens."
     },
     "stream": {
@@ -688,7 +703,7 @@ Retry failed files
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `file_ids` | any[] | Yes | — | The unique identifier of the files to retry. |
+| `file_ids` | string[] | Yes | — | The unique identifier of the files to retry. |
 
 <Expandable title="inputSchema">
 
@@ -702,6 +717,10 @@ Retry failed files
     },
     "file_ids": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "The unique identifier of the files to retry."
     }
   },
@@ -766,7 +785,7 @@ Generate from application (async)
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `application_id` | string | Yes | — | The ID of the no-code app for which to create a job. |
-| `inputs` | any[] | Yes | — | A list of input objects to generate content for. |
+| `inputs` | object[] | Yes | — | A list of input objects to generate content for. |
 
 <Expandable title="inputSchema">
 
@@ -784,6 +803,9 @@ Generate from application (async)
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of input objects to generate content for."
     }
   },
@@ -808,7 +830,7 @@ Generate from application
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `application_id` | string | Yes | — | The unique identifier of a [no-code agent](/no-code/introduction) in AI Studio. |
-| `inputs` | any[] | Yes | — | The inputs value |
+| `inputs` | object[] | Yes | — | The inputs value |
 | `stream` | boolean | No | — | Indicates whether the response should be streamed. Currently only supported for research assistant applications. |
 
 <Expandable title="inputSchema">
@@ -827,6 +849,9 @@ Generate from application
     },
     "inputs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The inputs value"
     },
     "stream": {
@@ -1151,7 +1176,7 @@ Question
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `graph_ids` | any[] | Yes | — | The unique identifiers of the Knowledge Graphs to query. |
+| `graph_ids` | string[] | Yes | — | The unique identifiers of the Knowledge Graphs to query. |
 | `query_config` | object | No | — | Configuration options for Knowledge Graph queries. |
 | `question` | string | Yes | — | The question to answer using the Knowledge Graph. |
 | `stream` | boolean | No | — | Determines whether the model's output should be streamed. If true, the output is generated and sent incrementally, which can be useful for real-time applications. |
@@ -1169,6 +1194,10 @@ Question
     },
     "graph_ids": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "The unique identifiers of the Knowledge Graphs to query."
     },
     "query_config": {
@@ -1396,7 +1425,7 @@ Associate graphs
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `application_id` | string | Yes | — | The ID of the no-code agent to update.  Only no-code agents with chat capabilities can have associated Knowledge Graphs. No-code agents with text generation and research capabilities do not support Knowledge Graphs. |
-| `graph_ids` | any[] | Yes | — | A list of Knowledge Graph IDs to associate with the application. Note that this will replace the existing list of Knowledge Graphs associated with the application, not add to it. |
+| `graph_ids` | string[] | Yes | — | A list of Knowledge Graph IDs to associate with the application. Note that this will replace the existing list of Knowledge Graphs associated with the application, not add to it. |
 
 <Expandable title="inputSchema">
 
@@ -1414,6 +1443,10 @@ Associate graphs
     },
     "graph_ids": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "A list of Knowledge Graph IDs to associate with the application. Note that this will replace the existing list of Knowledge Graphs associated with the application, not add to it."
     }
   },
@@ -1440,7 +1473,7 @@ Update graph
 | `graph_id` | string | Yes | — | The unique identifier of the Knowledge Graph. |
 | `description` | string | No | — | A description of the Knowledge Graph (max 255 characters). Omitting this field leaves the description unchanged. |
 | `name` | string | No | — | The name of the Knowledge Graph (max 255 characters). Omitting this field leaves the name unchanged. |
-| `urls` | any[] | No | — | An array of web connector URLs to update for this Knowledge Graph. You can only connect URLs to Knowledge Graphs with the type `web`. To clear the list of URLs, set this field to an empty array. |
+| `urls` | object[] | No | — | An array of web connector URLs to update for this Knowledge Graph. You can only connect URLs to Knowledge Graphs with the type `web`. To clear the list of URLs, set this field to an empty array. |
 
 <Expandable title="inputSchema">
 
@@ -1466,6 +1499,9 @@ Update graph
     },
     "urls": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of web connector URLs to update for this Knowledge Graph. You can only connect URLs to Knowledge Graphs with the type `web`. To clear the list of URLs, set this field to an empty array."
     }
   },
@@ -1491,9 +1527,9 @@ Web search
 | `chunks_per_source` | integer | No | — | Only applies when `search_depth` is `advanced`. Specifies how many text segments to extract from each source. Limited to 3 chunks maximum. |
 | `country` | string | No | — | Localizes search results to a specific country. Only applies to general topic searches. |
 | `days` | integer | No | — | For news topic searches, specifies how many days of news coverage to include. |
-| `exclude_domains` | any[] | No | — | Domains to exclude from the search. If unset, the search includes all domains. |
+| `exclude_domains` | string[] | No | — | Domains to exclude from the search. If unset, the search includes all domains. |
 | `include_answer` | boolean | No | — | Whether to include a generated answer to the query in the response. If `false`, only search results are returned. |
-| `include_domains` | any[] | No | — | Domains to include in the search. If unset, the search includes all domains. |
+| `include_domains` | string[] | No | — | Domains to include in the search. If unset, the search includes all domains. |
 | `include_raw_content` | object | No | — | Controls how raw content is included in search results:  - `text`: Returns plain text without formatting markup - `markdown`: Returns structured content with markdown formatting (headers, links, bold text) - `true`: Same as `markdown` - `false`: Raw content is not included (default if unset) |
 | `max_results` | integer | No | — | Limits the number of search results returned. Cannot exceed 20 sources. |
 | `query` | string | No | — | The search query. |
@@ -1694,6 +1730,9 @@ Web search
     },
     "exclude_domains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Domains to exclude from the search. If unset, the search includes all domains."
     },
     "include_answer": {
@@ -1702,6 +1741,9 @@ Web search
     },
     "include_domains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Domains to include in the search. If unset, the search includes all domains."
     },
     "include_raw_content": {

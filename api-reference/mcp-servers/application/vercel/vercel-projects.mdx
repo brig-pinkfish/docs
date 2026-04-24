@@ -294,7 +294,7 @@ Batch remove environment variables
 | `idOrName` | string | Yes | — | The unique project identifier or the project name |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `ids` | any[] | Yes | — | Array of environment variable IDs to delete |
+| `ids` | string[] | Yes | — | Array of environment variable IDs to delete |
 
 <Expandable title="inputSchema">
 
@@ -320,6 +320,9 @@ Batch remove environment variables
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Array of environment variable IDs to delete"
     }
   },
@@ -425,7 +428,7 @@ Create a new project
 | `enableAffectedProjectsDeployments` | boolean | No | — | Opt-in to skip deployments when there are no changes to the root directory and its dependencies |
 | `enablePreviewFeedback` | boolean | No | — | Opt-in to preview toolbar on the project level |
 | `enableProductionFeedback` | boolean | No | — | Opt-in to production toolbar on the project level |
-| `environmentVariables` | any[] | No | — | Collection of ENV Variables the Project will use |
+| `environmentVariables` | object[] | No | — | Collection of ENV Variables the Project will use |
 | `framework` | object | No | — | The framework that is being used for this project. When `null` is used no framework is selected |
 | `gitRepository` | object | No | — | The Git Repository that will be connected to the project. When this is defined, any pushes to the specified connected Git Repository will be automatically deployed |
 | `installCommand` | string | No | — | The install command for this project. When `null` is used this value will be automatically detected |
@@ -486,6 +489,9 @@ Create a new project
     },
     "environmentVariables": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Collection of ENV Variables the Project will use"
     },
     "framework": {
@@ -714,7 +720,7 @@ Create one or more environment variables
 | `upsert` | string | No | — | Allow override of environment variable if it already exists |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -744,6 +750,9 @@ Create one or more environment variables
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -825,9 +834,9 @@ Create one or more shared environment variables
 | --- | --- | --- | --- | --- |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `evs` | any[] | Yes | — | The evs value |
-| `projectId` | any[] | No | — | Associate a Shared Environment Variable to projects. |
-| `target` | any[] | No | — | The target environment of the Shared Environment Variable |
+| `evs` | object[] | Yes | — | The evs value |
+| `projectId` | string[] | No | — | Associate a Shared Environment Variable to projects. |
+| `target` | object[] | No | — | The target environment of the Shared Environment Variable |
 | `type` | string | No | — | The type of environment variable |
 
 <Expandable title="inputSchema">
@@ -850,14 +859,27 @@ Create one or more shared environment variables
     },
     "evs": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The evs value"
     },
     "projectId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Associate a Shared Environment Variable to projects."
     },
     "target": {
       "type": "array",
+      "items": {
+        "enum": [
+          "production",
+          "preview",
+          "development"
+        ]
+      },
       "description": "The target environment of the Shared Environment Variable"
     },
     "type": {
@@ -936,7 +958,7 @@ Delete one or more Env Var
 | --- | --- | --- | --- | --- |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `ids` | any[] | Yes | — | IDs of the Shared Environment Variables to delete |
+| `ids` | string[] | Yes | — | IDs of the Shared Environment Variables to delete |
 
 <Expandable title="inputSchema">
 
@@ -958,6 +980,9 @@ Delete one or more Env Var
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of the Shared Environment Variables to delete"
     }
   },
@@ -985,10 +1010,10 @@ Edit an environment variable
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 | `comment` | string | No | — | A comment to add context on what this env var is for |
-| `customEnvironmentIds` | any[] | No | — | The custom environments that the environment variable should be synced to |
+| `customEnvironmentIds` | string[] | No | — | The custom environments that the environment variable should be synced to |
 | `gitBranch` | string | No | — | If defined, the git branch of the environment variable (must have target=preview) |
 | `key` | string | No | — | The name of the environment variable |
-| `target` | any[] | No | — | The target environment of the environment variable |
+| `target` | object[] | No | — | The target environment of the environment variable |
 | `type` | string | No | — | The type of environment variable |
 | `value` | string | No | — | The value of the environment variable |
 
@@ -1024,6 +1049,9 @@ Edit an environment variable
     },
     "customEnvironmentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The custom environments that the environment variable should be synced to"
     },
     "gitBranch": {
@@ -1036,6 +1064,13 @@ Edit an environment variable
     },
     "target": {
       "type": "array",
+      "items": {
+        "enum": [
+          "production",
+          "preview",
+          "development"
+        ]
+      },
       "description": "The target environment of the environment variable"
     },
     "type": {
@@ -2616,11 +2651,11 @@ Update an existing project
 | `autoExposeSystemEnvs` | boolean | No | — | Auto Expose System Envs |
 | `buildCommand` | string | No | — | The build command for this project. When `null` is used this value will be automatically detected |
 | `commandForIgnoringBuildStep` | string | No | — | Command For Ignoring Build Step |
-| `connectConfigurations` | any[] | No | — | The list of connections from project environment to Secure Compute network |
+| `connectConfigurations` | object[] | No | — | The list of connections from project environment to Secure Compute network |
 | `customerSupportCodeVisibility` | boolean | No | — | Specifies whether customer support can see git source for a deployment |
 | `devCommand` | string | No | — | The dev command for this project. When `null` is used this value will be automatically detected |
 | `directoryListing` | boolean | No | — | Directory Listing |
-| `dismissedToasts` | any[] | No | — | An array of objects representing a Dismissed Toast in regards to a Project. Objects are either merged with existing toasts (on key match), or added to the `dimissedToasts` array.` |
+| `dismissedToasts` | object[] | No | — | An array of objects representing a Dismissed Toast in regards to a Project. Objects are either merged with existing toasts (on key match), or added to the `dimissedToasts` array.` |
 | `enableAffectedProjectsDeployments` | boolean | No | — | Opt-in to skip deployments when there are no changes to the root directory and its dependencies |
 | `enableExternalRewriteCaching` | boolean | No | — | Specifies whether external rewrite caching is enabled for this project. |
 | `enablePreviewFeedback` | boolean | No | — | Opt-in to preview toolbar on the project level |
@@ -2643,7 +2678,7 @@ Update an existing project
 | `rootDirectory` | string | No | — | The name of a directory or relative path to the source code of your project. When `null` is used it will default to the project root |
 | `serverlessFunctionRegion` | string | No | — | The region to deploy Serverless Functions in this project |
 | `serverlessFunctionZeroConfigFailover` | boolean | No | — | Specifies whether Zero Config Failover is enabled for this project. |
-| `skewProtectionAllowedDomains` | any[] | No | — | Cross-site domains allowed to fetch skew-protected assets (hostnames, optionally with leading wildcard like *.example.com). |
+| `skewProtectionAllowedDomains` | string[] | No | — | Cross-site domains allowed to fetch skew-protected assets (hostnames, optionally with leading wildcard like *.example.com). |
 | `skewProtectionBoundaryAt` | integer | No | — | Deployments created before this absolute datetime have Skew Protection disabled. Value is in milliseconds since epoch to match \"createdAt\" fields. |
 | `skewProtectionMaxAge` | integer | No | — | Deployments created before this rolling window have Skew Protection disabled. Value is in seconds to match \"revalidate\" fields. |
 | `skipGitConnectDuringLink` | boolean | No | — | Opts-out of the message prompting a CLI user to connect a Git repository in `vercel link`. |
@@ -2697,6 +2732,9 @@ Update an existing project
     },
     "connectConfigurations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of connections from project environment to Secure Compute network"
     },
     "customerSupportCodeVisibility": {
@@ -2713,6 +2751,9 @@ Update an existing project
     },
     "dismissedToasts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of objects representing a Dismissed Toast in regards to a Project. Objects are either merged with existing toasts (on key match), or added to the `dimissedToasts` array.`"
     },
     "enableAffectedProjectsDeployments": {
@@ -2958,6 +2999,9 @@ Update an existing project
     },
     "skewProtectionAllowedDomains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Cross-site domains allowed to fetch skew-protected assets (hostnames, optionally with leading wildcard like *.example.com)."
     },
     "skewProtectionBoundaryAt": {

@@ -37,6 +37,8 @@ description: "Klaviyo Marketing - manage campaigns, flows, email templates, and 
 | [`klaviyo_marketing_get_template`](#klaviyo_marketing_get_template) | Get Template |
 | [`klaviyo_marketing_get_templates`](#klaviyo_marketing_get_templates) | Get Templates |
 | [`klaviyo_marketing_query_campaign_values`](#klaviyo_marketing_query_campaign_values) | Query Campaign Values |
+| [`klaviyo_marketing_query_flow_series`](#klaviyo_marketing_query_flow_series) | Query Flow Series |
+| [`klaviyo_marketing_query_flow_values`](#klaviyo_marketing_query_flow_values) | Query Flow Values |
 | [`klaviyo_marketing_refresh_campaign_recipient_estimation`](#klaviyo_marketing_refresh_campaign_recipient_estimation) | Refresh Campaign Recipient Estimation |
 | [`klaviyo_marketing_render_template`](#klaviyo_marketing_render_template) | Render Template |
 | [`klaviyo_marketing_send_campaign`](#klaviyo_marketing_send_campaign) | Send Campaign |
@@ -56,7 +58,7 @@ Assign Template to Campaign Message
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -70,17 +72,19 @@ Assign Template to Campaign Message
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The message ID to be assigned to"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -110,7 +114,7 @@ Cancel Campaign Send
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of the currently sending campaign to cancel or revert |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -128,17 +132,19 @@ Cancel Campaign Send
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The ID of the currently sending campaign to cancel or revert"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -168,7 +174,7 @@ Clone Template
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -182,17 +188,19 @@ Clone Template
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The ID of template to be cloned"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -221,7 +229,7 @@ Create Campaign
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -235,13 +243,15 @@ Create Campaign
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -269,7 +279,7 @@ Create Campaign Clone
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -283,17 +293,19 @@ Create Campaign Clone
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The campaign ID to be cloned"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -322,8 +334,8 @@ Create Flow
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `additional-fields[flow]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'definition' |
-| `data` | object | Yes | — | data |
+| `additional-fields[flow]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'definition' |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -337,17 +349,25 @@ Create Flow
     },
     "additional-fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'definition'"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -375,7 +395,7 @@ Create Template
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -389,13 +409,15 @@ Create Template
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -531,8 +553,8 @@ Get Actions for Flow
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[flow-action]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[flow-action]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`&lt;br&gt;`action_type`: `any`, `equals`&lt;br&gt;`status`: `equals`&lt;br&gt;`created`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`updated`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 50. Min: 1. Max: 50. |
@@ -550,10 +572,159 @@ Get Actions for Flow
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[flow-action]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.data",
+          "definition.data.action_output_filter",
+          "definition.data.action_output_filter.condition_groups",
+          "definition.data.branches",
+          "definition.data.current_experiment",
+          "definition.data.current_experiment.allocations",
+          "definition.data.current_experiment.automatic_winner_selection_settings",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_date",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_statistical_certainty",
+          "definition.data.current_experiment.automatic_winner_selection_settings.enabled",
+          "definition.data.current_experiment.id",
+          "definition.data.current_experiment.name",
+          "definition.data.current_experiment.started",
+          "definition.data.current_experiment.variations",
+          "definition.data.current_experiment.winner_metric",
+          "definition.data.delay_until_time",
+          "definition.data.delay_until_weekdays",
+          "definition.data.experiment_status",
+          "definition.data.list_id",
+          "definition.data.main_action",
+          "definition.data.main_action.data",
+          "definition.data.main_action.data.message",
+          "definition.data.main_action.data.message.add_info_link",
+          "definition.data.main_action.data.message.add_opt_out_language",
+          "definition.data.main_action.data.message.add_org_prefix",
+          "definition.data.main_action.data.message.add_tracking_params",
+          "definition.data.main_action.data.message.additional_filters",
+          "definition.data.main_action.data.message.additional_filters.condition_groups",
+          "definition.data.main_action.data.message.android_link",
+          "definition.data.main_action.data.message.badge",
+          "definition.data.main_action.data.message.badge_options",
+          "definition.data.main_action.data.message.badge_options.badge_config",
+          "definition.data.main_action.data.message.badge_options.set_from_property",
+          "definition.data.main_action.data.message.badge_options.value",
+          "definition.data.main_action.data.message.bcc_email",
+          "definition.data.main_action.data.message.body",
+          "definition.data.main_action.data.message.cc_email",
+          "definition.data.main_action.data.message.conversion_metric_id",
+          "definition.data.main_action.data.message.custom_tracking_params",
+          "definition.data.main_action.data.message.dynamic_image",
+          "definition.data.main_action.data.message.from_email",
+          "definition.data.main_action.data.message.from_label",
+          "definition.data.main_action.data.message.id",
+          "definition.data.main_action.data.message.image_id",
+          "definition.data.main_action.data.message.include_contact_card",
+          "definition.data.main_action.data.message.ios_link",
+          "definition.data.main_action.data.message.kv_pairs",
+          "definition.data.main_action.data.message.name",
+          "definition.data.main_action.data.message.on_open",
+          "definition.data.main_action.data.message.preview_text",
+          "definition.data.main_action.data.message.push_type",
+          "definition.data.main_action.data.message.reply_to_email",
+          "definition.data.main_action.data.message.shorten_links",
+          "definition.data.main_action.data.message.smart_sending_enabled",
+          "definition.data.main_action.data.message.sms_quiet_hours_enabled",
+          "definition.data.main_action.data.message.sound",
+          "definition.data.main_action.data.message.subject_line",
+          "definition.data.main_action.data.message.template_id",
+          "definition.data.main_action.data.message.title",
+          "definition.data.main_action.data.message.transactional",
+          "definition.data.main_action.data.message.video_asset_id",
+          "definition.data.main_action.data.status",
+          "definition.data.main_action.id",
+          "definition.data.main_action.links",
+          "definition.data.main_action.links.next",
+          "definition.data.main_action.temporary_id",
+          "definition.data.main_action.type",
+          "definition.data.message",
+          "definition.data.message.add_info_link",
+          "definition.data.message.add_opt_out_language",
+          "definition.data.message.add_org_prefix",
+          "definition.data.message.add_tracking_params",
+          "definition.data.message.additional_filters",
+          "definition.data.message.additional_filters.condition_groups",
+          "definition.data.message.android_link",
+          "definition.data.message.badge",
+          "definition.data.message.badge_options",
+          "definition.data.message.badge_options.badge_config",
+          "definition.data.message.badge_options.set_from_property",
+          "definition.data.message.badge_options.value",
+          "definition.data.message.bcc_email",
+          "definition.data.message.body",
+          "definition.data.message.cc_email",
+          "definition.data.message.conversion_metric_id",
+          "definition.data.message.custom_tracking_params",
+          "definition.data.message.dynamic_image",
+          "definition.data.message.from_email",
+          "definition.data.message.from_label",
+          "definition.data.message.headers",
+          "definition.data.message.id",
+          "definition.data.message.image_id",
+          "definition.data.message.include_contact_card",
+          "definition.data.message.ios_link",
+          "definition.data.message.kv_pairs",
+          "definition.data.message.name",
+          "definition.data.message.on_open",
+          "definition.data.message.preview_text",
+          "definition.data.message.push_type",
+          "definition.data.message.reply_to_email",
+          "definition.data.message.shorten_links",
+          "definition.data.message.smart_sending_enabled",
+          "definition.data.message.sms_quiet_hours_enabled",
+          "definition.data.message.sound",
+          "definition.data.message.subject_line",
+          "definition.data.message.template_id",
+          "definition.data.message.title",
+          "definition.data.message.to_emails",
+          "definition.data.message.transactional",
+          "definition.data.message.url",
+          "definition.data.message.vendor_id",
+          "definition.data.message.video_asset_id",
+          "definition.data.name",
+          "definition.data.on_execution",
+          "definition.data.profile_filter",
+          "definition.data.profile_filter.condition_groups",
+          "definition.data.profile_operations",
+          "definition.data.secondary_value",
+          "definition.data.service_configuration",
+          "definition.data.service_configuration.event_key",
+          "definition.data.service_configuration.event_payload",
+          "definition.data.service_configuration.report_id",
+          "definition.data.service_configuration.service_method_type",
+          "definition.data.service_configuration.tracking_company_id",
+          "definition.data.status",
+          "definition.data.target_days",
+          "definition.data.target_time",
+          "definition.data.timezone",
+          "definition.data.trigger_filter",
+          "definition.data.trigger_filter.condition_groups",
+          "definition.data.trigger_id",
+          "definition.data.trigger_subtype",
+          "definition.data.trigger_type",
+          "definition.data.unit",
+          "definition.data.value",
+          "definition.id",
+          "definition.links",
+          "definition.links.next",
+          "definition.links.next_if_false",
+          "definition.links.next_if_true",
+          "definition.temporary_id",
+          "definition.type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -605,10 +776,10 @@ Get Campaign
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The campaign ID to be retrieved |
-| `fields[campaign-message]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[campaign]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `fields[campaign-message]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -626,18 +797,103 @@ Get Campaign
     },
     "fields[campaign-message]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "definition",
+          "definition.channel",
+          "definition.content",
+          "definition.content.bcc_email",
+          "definition.content.body",
+          "definition.content.cc_email",
+          "definition.content.dynamic_image",
+          "definition.content.from_email",
+          "definition.content.from_label",
+          "definition.content.media_url",
+          "definition.content.preview_text",
+          "definition.content.reply_to_email",
+          "definition.content.subject",
+          "definition.content.title",
+          "definition.kv_pairs",
+          "definition.label",
+          "definition.notification_type",
+          "definition.options",
+          "definition.options.badge",
+          "definition.options.badge.badge_options",
+          "definition.options.badge.badge_options.badge_config",
+          "definition.options.badge.badge_options.set_from_property",
+          "definition.options.badge.badge_options.value",
+          "definition.options.badge.display",
+          "definition.options.on_open",
+          "definition.options.on_open.android_deep_link",
+          "definition.options.on_open.ios_deep_link",
+          "definition.options.on_open.type",
+          "definition.options.play_sound",
+          "definition.render_options",
+          "definition.render_options.add_info_link",
+          "definition.render_options.add_opt_out_language",
+          "definition.render_options.add_org_prefix",
+          "definition.render_options.shorten_links",
+          "send_times",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[campaign]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "audiences",
+          "audiences.excluded",
+          "audiences.included",
+          "created_at",
+          "name",
+          "scheduled_at",
+          "send_options",
+          "send_options.use_smart_sending",
+          "send_strategy",
+          "send_strategy.date",
+          "send_strategy.datetime",
+          "send_strategy.method",
+          "send_strategy.options",
+          "send_strategy.options.is_local",
+          "send_strategy.options.send_past_recipients_immediately",
+          "send_strategy.throttle_percentage",
+          "send_time",
+          "status",
+          "tracking_options",
+          "tracking_options.add_tracking_params",
+          "tracking_options.custom_tracking_params",
+          "tracking_options.is_tracking_clicks",
+          "tracking_options.is_tracking_opens",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "campaign-messages",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -661,11 +917,11 @@ Get Campaign Message
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The message ID to be retrieved |
-| `fields[campaign-message]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[campaign]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[image]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[template]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `fields[campaign-message]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[image]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[template]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -683,22 +939,125 @@ Get Campaign Message
     },
     "fields[campaign-message]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "definition",
+          "definition.channel",
+          "definition.content",
+          "definition.content.bcc_email",
+          "definition.content.body",
+          "definition.content.cc_email",
+          "definition.content.dynamic_image",
+          "definition.content.from_email",
+          "definition.content.from_label",
+          "definition.content.media_url",
+          "definition.content.preview_text",
+          "definition.content.reply_to_email",
+          "definition.content.subject",
+          "definition.content.title",
+          "definition.kv_pairs",
+          "definition.label",
+          "definition.notification_type",
+          "definition.options",
+          "definition.options.badge",
+          "definition.options.badge.badge_options",
+          "definition.options.badge.badge_options.badge_config",
+          "definition.options.badge.badge_options.set_from_property",
+          "definition.options.badge.badge_options.value",
+          "definition.options.badge.display",
+          "definition.options.on_open",
+          "definition.options.on_open.android_deep_link",
+          "definition.options.on_open.ios_deep_link",
+          "definition.options.on_open.type",
+          "definition.options.play_sound",
+          "definition.render_options",
+          "definition.render_options.add_info_link",
+          "definition.render_options.add_opt_out_language",
+          "definition.render_options.add_org_prefix",
+          "definition.render_options.shorten_links",
+          "send_times",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[campaign]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "audiences",
+          "audiences.excluded",
+          "audiences.included",
+          "created_at",
+          "name",
+          "scheduled_at",
+          "send_options",
+          "send_options.use_smart_sending",
+          "send_strategy",
+          "send_strategy.date",
+          "send_strategy.datetime",
+          "send_strategy.method",
+          "send_strategy.options",
+          "send_strategy.options.is_local",
+          "send_strategy.options.send_past_recipients_immediately",
+          "send_strategy.throttle_percentage",
+          "send_time",
+          "status",
+          "tracking_options",
+          "tracking_options.add_tracking_params",
+          "tracking_options.custom_tracking_params",
+          "tracking_options.is_tracking_clicks",
+          "tracking_options.is_tracking_opens",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[image]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "format",
+          "hidden",
+          "image_url",
+          "name",
+          "size",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[template]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "amp",
+          "created",
+          "editor_type",
+          "html",
+          "name",
+          "text",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "campaign",
+          "image",
+          "template"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -722,7 +1081,7 @@ Get Campaign Recipient Estimation
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of the campaign for which to get the estimated number of recipients |
-| `fields[campaign-recipient-estimation]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign-recipient-estimation]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -740,6 +1099,12 @@ Get Campaign Recipient Estimation
     },
     "fields[campaign-recipient-estimation]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "estimated_recipient_count"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -763,7 +1128,7 @@ Get Campaign Send Job
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of the campaign to send |
-| `fields[campaign-send-job]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign-send-job]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -781,6 +1146,12 @@ Get Campaign Send Job
     },
     "fields[campaign-send-job]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "status"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -803,11 +1174,11 @@ Get Campaigns
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[campaign-message]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[campaign]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign-message]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | Yes | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`&lt;br&gt;`messages.channel`: `equals`&lt;br&gt;`name`: `contains`&lt;br&gt;`status`: `any`, `equals`&lt;br&gt;`archived`: `equals`&lt;br&gt;`created_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`scheduled_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`updated_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
 
@@ -823,14 +1194,92 @@ Get Campaigns
     },
     "fields[campaign-message]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "definition",
+          "definition.channel",
+          "definition.content",
+          "definition.content.bcc_email",
+          "definition.content.body",
+          "definition.content.cc_email",
+          "definition.content.dynamic_image",
+          "definition.content.from_email",
+          "definition.content.from_label",
+          "definition.content.media_url",
+          "definition.content.preview_text",
+          "definition.content.reply_to_email",
+          "definition.content.subject",
+          "definition.content.title",
+          "definition.kv_pairs",
+          "definition.label",
+          "definition.notification_type",
+          "definition.options",
+          "definition.options.badge",
+          "definition.options.badge.badge_options",
+          "definition.options.badge.badge_options.badge_config",
+          "definition.options.badge.badge_options.set_from_property",
+          "definition.options.badge.badge_options.value",
+          "definition.options.badge.display",
+          "definition.options.on_open",
+          "definition.options.on_open.android_deep_link",
+          "definition.options.on_open.ios_deep_link",
+          "definition.options.on_open.type",
+          "definition.options.play_sound",
+          "definition.render_options",
+          "definition.render_options.add_info_link",
+          "definition.render_options.add_opt_out_language",
+          "definition.render_options.add_org_prefix",
+          "definition.render_options.shorten_links",
+          "send_times",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[campaign]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "audiences",
+          "audiences.excluded",
+          "audiences.included",
+          "created_at",
+          "name",
+          "scheduled_at",
+          "send_options",
+          "send_options.use_smart_sending",
+          "send_strategy",
+          "send_strategy.date",
+          "send_strategy.datetime",
+          "send_strategy.method",
+          "send_strategy.options",
+          "send_strategy.options.is_local",
+          "send_strategy.options.send_past_recipients_immediately",
+          "send_strategy.throttle_percentage",
+          "send_time",
+          "status",
+          "tracking_options",
+          "tracking_options.add_tracking_params",
+          "tracking_options.custom_tracking_params",
+          "tracking_options.is_tracking_clicks",
+          "tracking_options.is_tracking_opens",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -839,6 +1288,13 @@ Get Campaigns
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "campaign-messages",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -881,12 +1337,12 @@ Get Flow
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `additional-fields[flow]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'definition' |
-| `fields[flow-action]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `id` | string | Yes | — | The id value |
+| `additional-fields[flow]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'definition' |
+| `fields[flow-action]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -900,26 +1356,214 @@ Get Flow
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "additional-fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'definition'"
     },
     "fields[flow-action]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.data",
+          "definition.data.action_output_filter",
+          "definition.data.action_output_filter.condition_groups",
+          "definition.data.branches",
+          "definition.data.current_experiment",
+          "definition.data.current_experiment.allocations",
+          "definition.data.current_experiment.automatic_winner_selection_settings",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_date",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_statistical_certainty",
+          "definition.data.current_experiment.automatic_winner_selection_settings.enabled",
+          "definition.data.current_experiment.id",
+          "definition.data.current_experiment.name",
+          "definition.data.current_experiment.started",
+          "definition.data.current_experiment.variations",
+          "definition.data.current_experiment.winner_metric",
+          "definition.data.delay_until_time",
+          "definition.data.delay_until_weekdays",
+          "definition.data.experiment_status",
+          "definition.data.list_id",
+          "definition.data.main_action",
+          "definition.data.main_action.data",
+          "definition.data.main_action.data.message",
+          "definition.data.main_action.data.message.add_info_link",
+          "definition.data.main_action.data.message.add_opt_out_language",
+          "definition.data.main_action.data.message.add_org_prefix",
+          "definition.data.main_action.data.message.add_tracking_params",
+          "definition.data.main_action.data.message.additional_filters",
+          "definition.data.main_action.data.message.additional_filters.condition_groups",
+          "definition.data.main_action.data.message.android_link",
+          "definition.data.main_action.data.message.badge",
+          "definition.data.main_action.data.message.badge_options",
+          "definition.data.main_action.data.message.badge_options.badge_config",
+          "definition.data.main_action.data.message.badge_options.set_from_property",
+          "definition.data.main_action.data.message.badge_options.value",
+          "definition.data.main_action.data.message.bcc_email",
+          "definition.data.main_action.data.message.body",
+          "definition.data.main_action.data.message.cc_email",
+          "definition.data.main_action.data.message.conversion_metric_id",
+          "definition.data.main_action.data.message.custom_tracking_params",
+          "definition.data.main_action.data.message.dynamic_image",
+          "definition.data.main_action.data.message.from_email",
+          "definition.data.main_action.data.message.from_label",
+          "definition.data.main_action.data.message.id",
+          "definition.data.main_action.data.message.image_id",
+          "definition.data.main_action.data.message.include_contact_card",
+          "definition.data.main_action.data.message.ios_link",
+          "definition.data.main_action.data.message.kv_pairs",
+          "definition.data.main_action.data.message.name",
+          "definition.data.main_action.data.message.on_open",
+          "definition.data.main_action.data.message.preview_text",
+          "definition.data.main_action.data.message.push_type",
+          "definition.data.main_action.data.message.reply_to_email",
+          "definition.data.main_action.data.message.shorten_links",
+          "definition.data.main_action.data.message.smart_sending_enabled",
+          "definition.data.main_action.data.message.sms_quiet_hours_enabled",
+          "definition.data.main_action.data.message.sound",
+          "definition.data.main_action.data.message.subject_line",
+          "definition.data.main_action.data.message.template_id",
+          "definition.data.main_action.data.message.title",
+          "definition.data.main_action.data.message.transactional",
+          "definition.data.main_action.data.message.video_asset_id",
+          "definition.data.main_action.data.status",
+          "definition.data.main_action.id",
+          "definition.data.main_action.links",
+          "definition.data.main_action.links.next",
+          "definition.data.main_action.temporary_id",
+          "definition.data.main_action.type",
+          "definition.data.message",
+          "definition.data.message.add_info_link",
+          "definition.data.message.add_opt_out_language",
+          "definition.data.message.add_org_prefix",
+          "definition.data.message.add_tracking_params",
+          "definition.data.message.additional_filters",
+          "definition.data.message.additional_filters.condition_groups",
+          "definition.data.message.android_link",
+          "definition.data.message.badge",
+          "definition.data.message.badge_options",
+          "definition.data.message.badge_options.badge_config",
+          "definition.data.message.badge_options.set_from_property",
+          "definition.data.message.badge_options.value",
+          "definition.data.message.bcc_email",
+          "definition.data.message.body",
+          "definition.data.message.cc_email",
+          "definition.data.message.conversion_metric_id",
+          "definition.data.message.custom_tracking_params",
+          "definition.data.message.dynamic_image",
+          "definition.data.message.from_email",
+          "definition.data.message.from_label",
+          "definition.data.message.headers",
+          "definition.data.message.id",
+          "definition.data.message.image_id",
+          "definition.data.message.include_contact_card",
+          "definition.data.message.ios_link",
+          "definition.data.message.kv_pairs",
+          "definition.data.message.name",
+          "definition.data.message.on_open",
+          "definition.data.message.preview_text",
+          "definition.data.message.push_type",
+          "definition.data.message.reply_to_email",
+          "definition.data.message.shorten_links",
+          "definition.data.message.smart_sending_enabled",
+          "definition.data.message.sms_quiet_hours_enabled",
+          "definition.data.message.sound",
+          "definition.data.message.subject_line",
+          "definition.data.message.template_id",
+          "definition.data.message.title",
+          "definition.data.message.to_emails",
+          "definition.data.message.transactional",
+          "definition.data.message.url",
+          "definition.data.message.vendor_id",
+          "definition.data.message.video_asset_id",
+          "definition.data.name",
+          "definition.data.on_execution",
+          "definition.data.profile_filter",
+          "definition.data.profile_filter.condition_groups",
+          "definition.data.profile_operations",
+          "definition.data.secondary_value",
+          "definition.data.service_configuration",
+          "definition.data.service_configuration.event_key",
+          "definition.data.service_configuration.event_payload",
+          "definition.data.service_configuration.report_id",
+          "definition.data.service_configuration.service_method_type",
+          "definition.data.service_configuration.tracking_company_id",
+          "definition.data.status",
+          "definition.data.target_days",
+          "definition.data.target_time",
+          "definition.data.timezone",
+          "definition.data.trigger_filter",
+          "definition.data.trigger_filter.condition_groups",
+          "definition.data.trigger_id",
+          "definition.data.trigger_subtype",
+          "definition.data.trigger_type",
+          "definition.data.unit",
+          "definition.data.value",
+          "definition.id",
+          "definition.links",
+          "definition.links.next",
+          "definition.links.next_if_false",
+          "definition.links.next_if_true",
+          "definition.temporary_id",
+          "definition.type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "definition",
+          "definition.actions",
+          "definition.entry_action_id",
+          "definition.profile_filter",
+          "definition.profile_filter.condition_groups",
+          "definition.reentry_criteria",
+          "definition.reentry_criteria.duration",
+          "definition.reentry_criteria.unit",
+          "definition.triggers",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-actions",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -942,11 +1586,11 @@ Get Flow Action
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[flow-action]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[flow-message]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `id` | string | Yes | — | The id value |
+| `fields[flow-action]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow-message]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -960,22 +1604,241 @@ Get Flow Action
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[flow-action]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.data",
+          "definition.data.action_output_filter",
+          "definition.data.action_output_filter.condition_groups",
+          "definition.data.branches",
+          "definition.data.current_experiment",
+          "definition.data.current_experiment.allocations",
+          "definition.data.current_experiment.automatic_winner_selection_settings",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_date",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_statistical_certainty",
+          "definition.data.current_experiment.automatic_winner_selection_settings.enabled",
+          "definition.data.current_experiment.id",
+          "definition.data.current_experiment.name",
+          "definition.data.current_experiment.started",
+          "definition.data.current_experiment.variations",
+          "definition.data.current_experiment.winner_metric",
+          "definition.data.delay_until_time",
+          "definition.data.delay_until_weekdays",
+          "definition.data.experiment_status",
+          "definition.data.list_id",
+          "definition.data.main_action",
+          "definition.data.main_action.data",
+          "definition.data.main_action.data.message",
+          "definition.data.main_action.data.message.add_info_link",
+          "definition.data.main_action.data.message.add_opt_out_language",
+          "definition.data.main_action.data.message.add_org_prefix",
+          "definition.data.main_action.data.message.add_tracking_params",
+          "definition.data.main_action.data.message.additional_filters",
+          "definition.data.main_action.data.message.additional_filters.condition_groups",
+          "definition.data.main_action.data.message.android_link",
+          "definition.data.main_action.data.message.badge",
+          "definition.data.main_action.data.message.badge_options",
+          "definition.data.main_action.data.message.badge_options.badge_config",
+          "definition.data.main_action.data.message.badge_options.set_from_property",
+          "definition.data.main_action.data.message.badge_options.value",
+          "definition.data.main_action.data.message.bcc_email",
+          "definition.data.main_action.data.message.body",
+          "definition.data.main_action.data.message.cc_email",
+          "definition.data.main_action.data.message.conversion_metric_id",
+          "definition.data.main_action.data.message.custom_tracking_params",
+          "definition.data.main_action.data.message.dynamic_image",
+          "definition.data.main_action.data.message.from_email",
+          "definition.data.main_action.data.message.from_label",
+          "definition.data.main_action.data.message.id",
+          "definition.data.main_action.data.message.image_id",
+          "definition.data.main_action.data.message.include_contact_card",
+          "definition.data.main_action.data.message.ios_link",
+          "definition.data.main_action.data.message.kv_pairs",
+          "definition.data.main_action.data.message.name",
+          "definition.data.main_action.data.message.on_open",
+          "definition.data.main_action.data.message.preview_text",
+          "definition.data.main_action.data.message.push_type",
+          "definition.data.main_action.data.message.reply_to_email",
+          "definition.data.main_action.data.message.shorten_links",
+          "definition.data.main_action.data.message.smart_sending_enabled",
+          "definition.data.main_action.data.message.sms_quiet_hours_enabled",
+          "definition.data.main_action.data.message.sound",
+          "definition.data.main_action.data.message.subject_line",
+          "definition.data.main_action.data.message.template_id",
+          "definition.data.main_action.data.message.title",
+          "definition.data.main_action.data.message.transactional",
+          "definition.data.main_action.data.message.video_asset_id",
+          "definition.data.main_action.data.status",
+          "definition.data.main_action.id",
+          "definition.data.main_action.links",
+          "definition.data.main_action.links.next",
+          "definition.data.main_action.temporary_id",
+          "definition.data.main_action.type",
+          "definition.data.message",
+          "definition.data.message.add_info_link",
+          "definition.data.message.add_opt_out_language",
+          "definition.data.message.add_org_prefix",
+          "definition.data.message.add_tracking_params",
+          "definition.data.message.additional_filters",
+          "definition.data.message.additional_filters.condition_groups",
+          "definition.data.message.android_link",
+          "definition.data.message.badge",
+          "definition.data.message.badge_options",
+          "definition.data.message.badge_options.badge_config",
+          "definition.data.message.badge_options.set_from_property",
+          "definition.data.message.badge_options.value",
+          "definition.data.message.bcc_email",
+          "definition.data.message.body",
+          "definition.data.message.cc_email",
+          "definition.data.message.conversion_metric_id",
+          "definition.data.message.custom_tracking_params",
+          "definition.data.message.dynamic_image",
+          "definition.data.message.from_email",
+          "definition.data.message.from_label",
+          "definition.data.message.headers",
+          "definition.data.message.id",
+          "definition.data.message.image_id",
+          "definition.data.message.include_contact_card",
+          "definition.data.message.ios_link",
+          "definition.data.message.kv_pairs",
+          "definition.data.message.name",
+          "definition.data.message.on_open",
+          "definition.data.message.preview_text",
+          "definition.data.message.push_type",
+          "definition.data.message.reply_to_email",
+          "definition.data.message.shorten_links",
+          "definition.data.message.smart_sending_enabled",
+          "definition.data.message.sms_quiet_hours_enabled",
+          "definition.data.message.sound",
+          "definition.data.message.subject_line",
+          "definition.data.message.template_id",
+          "definition.data.message.title",
+          "definition.data.message.to_emails",
+          "definition.data.message.transactional",
+          "definition.data.message.url",
+          "definition.data.message.vendor_id",
+          "definition.data.message.video_asset_id",
+          "definition.data.name",
+          "definition.data.on_execution",
+          "definition.data.profile_filter",
+          "definition.data.profile_filter.condition_groups",
+          "definition.data.profile_operations",
+          "definition.data.secondary_value",
+          "definition.data.service_configuration",
+          "definition.data.service_configuration.event_key",
+          "definition.data.service_configuration.event_payload",
+          "definition.data.service_configuration.report_id",
+          "definition.data.service_configuration.service_method_type",
+          "definition.data.service_configuration.tracking_company_id",
+          "definition.data.status",
+          "definition.data.target_days",
+          "definition.data.target_time",
+          "definition.data.timezone",
+          "definition.data.trigger_filter",
+          "definition.data.trigger_filter.condition_groups",
+          "definition.data.trigger_id",
+          "definition.data.trigger_subtype",
+          "definition.data.trigger_type",
+          "definition.data.unit",
+          "definition.data.value",
+          "definition.id",
+          "definition.links",
+          "definition.links.next",
+          "definition.links.next_if_false",
+          "definition.links.next_if_true",
+          "definition.temporary_id",
+          "definition.type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[flow-message]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "channel",
+          "created",
+          "definition",
+          "definition.add_info_link",
+          "definition.add_opt_out_language",
+          "definition.add_org_prefix",
+          "definition.add_tracking_params",
+          "definition.additional_filters",
+          "definition.additional_filters.condition_groups",
+          "definition.android_link",
+          "definition.badge",
+          "definition.badge_options",
+          "definition.badge_options.badge_config",
+          "definition.badge_options.set_from_property",
+          "definition.badge_options.value",
+          "definition.bcc_email",
+          "definition.body",
+          "definition.cc_email",
+          "definition.conversion_metric_id",
+          "definition.custom_tracking_params",
+          "definition.dynamic_image",
+          "definition.from_email",
+          "definition.from_label",
+          "definition.headers",
+          "definition.id",
+          "definition.image_id",
+          "definition.include_contact_card",
+          "definition.ios_link",
+          "definition.kv_pairs",
+          "definition.name",
+          "definition.on_open",
+          "definition.preview_text",
+          "definition.push_type",
+          "definition.reply_to_email",
+          "definition.shorten_links",
+          "definition.smart_sending_enabled",
+          "definition.sms_quiet_hours_enabled",
+          "definition.sound",
+          "definition.subject_line",
+          "definition.template_id",
+          "definition.title",
+          "definition.to_emails",
+          "definition.transactional",
+          "definition.url",
+          "definition.vendor_id",
+          "definition.video_asset_id",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow",
+          "flow-messages"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -998,11 +1861,11 @@ Get Flows
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[flow-action]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow-action]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`&lt;br&gt;`name`: `contains`, `ends-with`, `equals`, `starts-with`&lt;br&gt;`status`: `equals`&lt;br&gt;`archived`: `equals`&lt;br&gt;`created`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`updated`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`trigger_type`: `equals` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 50. Min: 1. Max: 50. |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -1019,14 +1882,180 @@ Get Flows
     },
     "fields[flow-action]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.data",
+          "definition.data.action_output_filter",
+          "definition.data.action_output_filter.condition_groups",
+          "definition.data.branches",
+          "definition.data.current_experiment",
+          "definition.data.current_experiment.allocations",
+          "definition.data.current_experiment.automatic_winner_selection_settings",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_date",
+          "definition.data.current_experiment.automatic_winner_selection_settings.automatic_end_statistical_certainty",
+          "definition.data.current_experiment.automatic_winner_selection_settings.enabled",
+          "definition.data.current_experiment.id",
+          "definition.data.current_experiment.name",
+          "definition.data.current_experiment.started",
+          "definition.data.current_experiment.variations",
+          "definition.data.current_experiment.winner_metric",
+          "definition.data.delay_until_time",
+          "definition.data.delay_until_weekdays",
+          "definition.data.experiment_status",
+          "definition.data.list_id",
+          "definition.data.main_action",
+          "definition.data.main_action.data",
+          "definition.data.main_action.data.message",
+          "definition.data.main_action.data.message.add_info_link",
+          "definition.data.main_action.data.message.add_opt_out_language",
+          "definition.data.main_action.data.message.add_org_prefix",
+          "definition.data.main_action.data.message.add_tracking_params",
+          "definition.data.main_action.data.message.additional_filters",
+          "definition.data.main_action.data.message.additional_filters.condition_groups",
+          "definition.data.main_action.data.message.android_link",
+          "definition.data.main_action.data.message.badge",
+          "definition.data.main_action.data.message.badge_options",
+          "definition.data.main_action.data.message.badge_options.badge_config",
+          "definition.data.main_action.data.message.badge_options.set_from_property",
+          "definition.data.main_action.data.message.badge_options.value",
+          "definition.data.main_action.data.message.bcc_email",
+          "definition.data.main_action.data.message.body",
+          "definition.data.main_action.data.message.cc_email",
+          "definition.data.main_action.data.message.conversion_metric_id",
+          "definition.data.main_action.data.message.custom_tracking_params",
+          "definition.data.main_action.data.message.dynamic_image",
+          "definition.data.main_action.data.message.from_email",
+          "definition.data.main_action.data.message.from_label",
+          "definition.data.main_action.data.message.id",
+          "definition.data.main_action.data.message.image_id",
+          "definition.data.main_action.data.message.include_contact_card",
+          "definition.data.main_action.data.message.ios_link",
+          "definition.data.main_action.data.message.kv_pairs",
+          "definition.data.main_action.data.message.name",
+          "definition.data.main_action.data.message.on_open",
+          "definition.data.main_action.data.message.preview_text",
+          "definition.data.main_action.data.message.push_type",
+          "definition.data.main_action.data.message.reply_to_email",
+          "definition.data.main_action.data.message.shorten_links",
+          "definition.data.main_action.data.message.smart_sending_enabled",
+          "definition.data.main_action.data.message.sms_quiet_hours_enabled",
+          "definition.data.main_action.data.message.sound",
+          "definition.data.main_action.data.message.subject_line",
+          "definition.data.main_action.data.message.template_id",
+          "definition.data.main_action.data.message.title",
+          "definition.data.main_action.data.message.transactional",
+          "definition.data.main_action.data.message.video_asset_id",
+          "definition.data.main_action.data.status",
+          "definition.data.main_action.id",
+          "definition.data.main_action.links",
+          "definition.data.main_action.links.next",
+          "definition.data.main_action.temporary_id",
+          "definition.data.main_action.type",
+          "definition.data.message",
+          "definition.data.message.add_info_link",
+          "definition.data.message.add_opt_out_language",
+          "definition.data.message.add_org_prefix",
+          "definition.data.message.add_tracking_params",
+          "definition.data.message.additional_filters",
+          "definition.data.message.additional_filters.condition_groups",
+          "definition.data.message.android_link",
+          "definition.data.message.badge",
+          "definition.data.message.badge_options",
+          "definition.data.message.badge_options.badge_config",
+          "definition.data.message.badge_options.set_from_property",
+          "definition.data.message.badge_options.value",
+          "definition.data.message.bcc_email",
+          "definition.data.message.body",
+          "definition.data.message.cc_email",
+          "definition.data.message.conversion_metric_id",
+          "definition.data.message.custom_tracking_params",
+          "definition.data.message.dynamic_image",
+          "definition.data.message.from_email",
+          "definition.data.message.from_label",
+          "definition.data.message.headers",
+          "definition.data.message.id",
+          "definition.data.message.image_id",
+          "definition.data.message.include_contact_card",
+          "definition.data.message.ios_link",
+          "definition.data.message.kv_pairs",
+          "definition.data.message.name",
+          "definition.data.message.on_open",
+          "definition.data.message.preview_text",
+          "definition.data.message.push_type",
+          "definition.data.message.reply_to_email",
+          "definition.data.message.shorten_links",
+          "definition.data.message.smart_sending_enabled",
+          "definition.data.message.sms_quiet_hours_enabled",
+          "definition.data.message.sound",
+          "definition.data.message.subject_line",
+          "definition.data.message.template_id",
+          "definition.data.message.title",
+          "definition.data.message.to_emails",
+          "definition.data.message.transactional",
+          "definition.data.message.url",
+          "definition.data.message.vendor_id",
+          "definition.data.message.video_asset_id",
+          "definition.data.name",
+          "definition.data.on_execution",
+          "definition.data.profile_filter",
+          "definition.data.profile_filter.condition_groups",
+          "definition.data.profile_operations",
+          "definition.data.secondary_value",
+          "definition.data.service_configuration",
+          "definition.data.service_configuration.event_key",
+          "definition.data.service_configuration.event_payload",
+          "definition.data.service_configuration.report_id",
+          "definition.data.service_configuration.service_method_type",
+          "definition.data.service_configuration.tracking_company_id",
+          "definition.data.status",
+          "definition.data.target_days",
+          "definition.data.target_time",
+          "definition.data.timezone",
+          "definition.data.trigger_filter",
+          "definition.data.trigger_filter.condition_groups",
+          "definition.data.trigger_id",
+          "definition.data.trigger_subtype",
+          "definition.data.trigger_type",
+          "definition.data.unit",
+          "definition.data.value",
+          "definition.id",
+          "definition.links",
+          "definition.links.next",
+          "definition.links.next_if_false",
+          "definition.links.next_if_true",
+          "definition.temporary_id",
+          "definition.type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1035,6 +2064,13 @@ Get Flows
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-actions",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -1082,12 +2118,12 @@ Get Messages for Campaign
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[campaign-message]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[campaign]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[image]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[template]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `id` | string | Yes | — | The id value |
+| `fields[campaign-message]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[campaign]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[image]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[template]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -1101,26 +2137,129 @@ Get Messages for Campaign
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[campaign-message]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "definition",
+          "definition.channel",
+          "definition.content",
+          "definition.content.bcc_email",
+          "definition.content.body",
+          "definition.content.cc_email",
+          "definition.content.dynamic_image",
+          "definition.content.from_email",
+          "definition.content.from_label",
+          "definition.content.media_url",
+          "definition.content.preview_text",
+          "definition.content.reply_to_email",
+          "definition.content.subject",
+          "definition.content.title",
+          "definition.kv_pairs",
+          "definition.label",
+          "definition.notification_type",
+          "definition.options",
+          "definition.options.badge",
+          "definition.options.badge.badge_options",
+          "definition.options.badge.badge_options.badge_config",
+          "definition.options.badge.badge_options.set_from_property",
+          "definition.options.badge.badge_options.value",
+          "definition.options.badge.display",
+          "definition.options.on_open",
+          "definition.options.on_open.android_deep_link",
+          "definition.options.on_open.ios_deep_link",
+          "definition.options.on_open.type",
+          "definition.options.play_sound",
+          "definition.render_options",
+          "definition.render_options.add_info_link",
+          "definition.render_options.add_opt_out_language",
+          "definition.render_options.add_org_prefix",
+          "definition.render_options.shorten_links",
+          "send_times",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[campaign]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "audiences",
+          "audiences.excluded",
+          "audiences.included",
+          "created_at",
+          "name",
+          "scheduled_at",
+          "send_options",
+          "send_options.use_smart_sending",
+          "send_strategy",
+          "send_strategy.date",
+          "send_strategy.datetime",
+          "send_strategy.method",
+          "send_strategy.options",
+          "send_strategy.options.is_local",
+          "send_strategy.options.send_past_recipients_immediately",
+          "send_strategy.throttle_percentage",
+          "send_time",
+          "status",
+          "tracking_options",
+          "tracking_options.add_tracking_params",
+          "tracking_options.custom_tracking_params",
+          "tracking_options.is_tracking_clicks",
+          "tracking_options.is_tracking_opens",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[image]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "format",
+          "hidden",
+          "image_url",
+          "name",
+          "size",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[template]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "amp",
+          "created",
+          "editor_type",
+          "html",
+          "name",
+          "text",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "campaign",
+          "image",
+          "template"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -1143,8 +2282,8 @@ Get Tags for Campaign
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1158,10 +2297,16 @@ Get Tags for Campaign
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1184,8 +2329,8 @@ Get Tags for Flow
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1199,10 +2344,16 @@ Get Tags for Flow
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1226,7 +2377,7 @@ Get Template
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of template |
-| `fields[template]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[template]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1244,6 +2395,18 @@ Get Template
     },
     "fields[template]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "amp",
+          "created",
+          "editor_type",
+          "html",
+          "name",
+          "text",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1266,7 +2429,7 @@ Get Templates
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[template]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[template]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`, `equals`&lt;br&gt;`name`: `any`, `contains`, `equals`&lt;br&gt;`created`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`updated`: `equals`, `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -1283,6 +2446,18 @@ Get Templates
     },
     "fields[template]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "amp",
+          "created",
+          "editor_type",
+          "html",
+          "name",
+          "text",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1327,7 +2502,7 @@ Query Campaign Values
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `page_cursor` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1345,13 +2520,125 @@ Query Campaign Values
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
+        }
+      },
+      "required": [
+        "type",
+        "attributes"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "data"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## klaviyo_marketing_query_flow_series
+
+Query Flow Series
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page_cursor` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
+| `data` | object | Yes | — | The data value |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page_cursor": {
+      "type": "string",
+      "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination"
+    },
+    "data": {
+      "type": "object",
+      "description": "The data value",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type value"
+        },
+        "attributes": {
+          "type": "object",
+          "description": "The attributes value"
+        }
+      },
+      "required": [
+        "type",
+        "attributes"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "data"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## klaviyo_marketing_query_flow_values
+
+Query Flow Values
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page_cursor` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
+| `data` | object | Yes | — | The data value |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page_cursor": {
+      "type": "string",
+      "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination"
+    },
+    "data": {
+      "type": "object",
+      "description": "The data value",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type value"
+        },
+        "attributes": {
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1379,7 +2666,7 @@ Refresh Campaign Recipient Estimation
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1393,10 +2680,11 @@ Refresh Campaign Recipient Estimation
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
@@ -1428,7 +2716,7 @@ Render Template
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1442,17 +2730,19 @@ Render Template
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The ID of template"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1481,7 +2771,7 @@ Send Campaign
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1495,10 +2785,11 @@ Send Campaign
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
@@ -1531,7 +2822,7 @@ Update Campaign
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The campaign ID to be retrieved |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1549,17 +2840,19 @@ Update Campaign
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The campaign ID to be retrieved"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1590,7 +2883,7 @@ Update Campaign Message
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The message ID to be retrieved |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1608,20 +2901,23 @@ Update Campaign Message
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The message ID to be retrieved"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -1652,7 +2948,7 @@ Update Flow Status
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | ID of the Flow to update. Ex: XVTP5Q |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1670,17 +2966,19 @@ Update Flow Status
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "ID of the Flow to update. Ex: XVTP5Q"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1710,8 +3008,8 @@ Update Flow Action
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `data` | object | Yes | — | data |
+| `id` | string | Yes | — | The id value |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1725,20 +3023,23 @@ Update Flow Action
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
-          "type": "string"
+          "type": "string",
+          "description": "The id value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1769,7 +3070,7 @@ Update Template
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of template |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1787,17 +3088,19 @@ Update Template
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The ID of template"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [

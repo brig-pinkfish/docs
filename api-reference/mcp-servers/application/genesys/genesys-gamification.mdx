@@ -447,7 +447,7 @@ Get a List of Contests (Admin)
 | `pageSize` | integer | No | — | Number of results per page |
 | `dateStart` | string | No | — | Start date for the query. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `dateEnd` | string | No | — | End date for the query. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `status` | any[] | No | — | The status value |
+| `status` | string[] | No | — | The status value |
 | `sortBy` | string | No | — | Sort By |
 | `sortOrder` | string | No | — | Sort Order |
 
@@ -479,6 +479,17 @@ Get a List of Contests (Admin)
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Upcoming",
+          "Ongoing",
+          "Pending",
+          "RecentlyCompleted",
+          "Completed",
+          "Cancelled"
+        ]
+      },
       "description": "The status value"
     },
     "sortBy": {
@@ -525,7 +536,7 @@ Get a List of Contests (Agent/Supervisor)
 | `pageSize` | integer | No | — | Number of results per page |
 | `dateStart` | string | No | — | Start date for the query. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `dateEnd` | string | No | — | End date for the query. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `status` | any[] | No | — | The status value |
+| `status` | string[] | No | — | The status value |
 | `sortBy` | string | No | — | Sort By |
 | `sortOrder` | string | No | — | Sort Order |
 | `view` | string | No | — | The view value |
@@ -558,6 +569,17 @@ Get a List of Contests (Agent/Supervisor)
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Upcoming",
+          "Ongoing",
+          "Pending",
+          "RecentlyCompleted",
+          "Completed",
+          "Cancelled"
+        ]
+      },
       "description": "The status value"
     },
     "sortBy": {
@@ -1872,7 +1894,7 @@ All gamified metrics for a given performance profile
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `profileId` | string | Yes | — | Performance Profile Id |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `workday` | string | No | — | The objective query workday. If not specified, then it retrieves the current objective. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `metricIds` | string | No | — | List of metric ids to filter the response (Optional, comma-separated). |
 
@@ -1892,6 +1914,12 @@ All gamified metrics for a given performance profile
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "objective"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "workday": {
@@ -2065,7 +2093,7 @@ Workday performance metrics of the requesting user
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workday` | string | Yes | — | Target querying workday. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -2083,6 +2111,12 @@ Workday performance metrics of the requesting user
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "objective"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -2524,7 +2558,7 @@ Workday performance metrics for a user
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User Id |
 | `workday` | string | Yes | — | Target querying workday. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -2546,6 +2580,12 @@ Workday performance metrics for a user
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "objective"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -3171,9 +3211,9 @@ Finalize a Contest by Id
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `contestId` | string | Yes | — | The ID of the contest |
-| `disqualifiedAgents` | any[] | No | — | The Contest finalization disqualified agents |
+| `disqualifiedAgents` | object[] | No | — | The Contest finalization disqualified agents |
 | `status` | string | Yes | — | The Contest finalization status |
-| `winners` | any[] | No | — | The Contest finalization winners |
+| `winners` | object[] | No | — | The Contest finalization winners |
 
 <Expandable title="inputSchema">
 
@@ -3191,6 +3231,9 @@ Finalize a Contest by Id
     },
     "disqualifiedAgents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest finalization disqualified agents"
     },
     "status": {
@@ -3203,6 +3246,9 @@ Finalize a Contest by Id
     },
     "winners": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest finalization winners"
     }
   },
@@ -3295,9 +3341,9 @@ Creates a Contest
 | `description` | string | Yes | — | The Contest description |
 | `division` | object | No | — | The division value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `metrics` | any[] | Yes | — | The Contest's Metrics |
-| `participantIds` | any[] | Yes | — | The Contest's participants |
-| `prizes` | any[] | Yes | — | The Contest Prizes |
+| `metrics` | object[] | Yes | — | The Contest's Metrics |
+| `participantIds` | string[] | Yes | — | The Contest's participants |
+| `prizes` | object[] | Yes | — | The Contest Prizes |
 | `profileId` | string | Yes | — | The Contest profile |
 | `selfUri` | string | No | — | The URI for this object |
 | `title` | string | Yes | — | The Contest title |
@@ -3366,14 +3412,23 @@ Creates a Contest
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest's Metrics"
     },
     "participantIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Contest's participants"
     },
     "prizes": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest Prizes"
     },
     "profileId": {
@@ -3497,7 +3552,7 @@ Write External Metric Data
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `items` | any[] | Yes | — | A list of external metric data items. A maximum of 100 items are allowed. |
+| `items` | object[] | Yes | — | A list of external metric data items. A maximum of 100 items are allowed. |
 
 <Expandable title="inputSchema">
 
@@ -3511,6 +3566,9 @@ Write External Metric Data
     },
     "items": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of external metric data items. A maximum of 100 items are allowed."
     }
   },
@@ -3682,8 +3740,8 @@ Assign members to a given performance profile
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `profileId` | string | Yes | — | Profile Id |
-| `membersToAssign` | any[] | Yes | — | List of user ids to assign to a performance profile |
-| `membersToRemove` | any[] | Yes | — | List of user ids to remove from a performance profile |
+| `membersToAssign` | string[] | Yes | — | List of user ids to assign to a performance profile |
+| `membersToRemove` | string[] | Yes | — | List of user ids to remove from a performance profile |
 
 <Expandable title="inputSchema">
 
@@ -3701,10 +3759,16 @@ Assign members to a given performance profile
     },
     "membersToAssign": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of user ids to assign to a performance profile"
     },
     "membersToRemove": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of user ids to remove from a performance profile"
     }
   },
@@ -3730,7 +3794,7 @@ Validate member assignment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `profileId` | string | Yes | — | Profile Id |
-| `membersToAssign` | any[] | Yes | — | List of user ids to assign to a performance profile |
+| `membersToAssign` | string[] | Yes | — | List of user ids to assign to a performance profile |
 
 <Expandable title="inputSchema">
 
@@ -3748,6 +3812,9 @@ Validate member assignment
     },
     "membersToAssign": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of user ids to assign to a performance profile"
     }
   },
@@ -3951,9 +4018,9 @@ Create a new custom performance profile
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `maxLeaderboardRankSize` | integer | Yes | — | The maximum rank size for the leaderboard. This counts the number of ranks can be retrieved in a leaderboard queries |
 | `memberCount` | integer | No | — | The number of members in this performance profile |
-| `metricOrders` | any[] | No | — | Order of the associated metrics. The list should contain valid ids for metrics |
+| `metricOrders` | string[] | No | — | Order of the associated metrics. The list should contain valid ids for metrics |
 | `name` | string | Yes | — | A name for this performance profile |
-| `reportingIntervals` | any[] | Yes | — | The reporting interval periods for this performance profile |
+| `reportingIntervals` | object[] | Yes | — | The reporting interval periods for this performance profile |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -4014,6 +4081,9 @@ Create a new custom performance profile
     },
     "metricOrders": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Order of the associated metrics. The list should contain valid ids for metrics"
     },
     "name": {
@@ -4022,6 +4092,9 @@ Create a new custom performance profile
     },
     "reportingIntervals": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The reporting interval periods for this performance profile"
     },
     "selfUri": {
@@ -4152,9 +4225,9 @@ Update a Contest by Id
 | `description` | string | Yes | — | The Contest description |
 | `division` | object | No | — | The division value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `metrics` | any[] | Yes | — | The Contest's Metrics |
-| `participantIds` | any[] | Yes | — | The Contest's participants |
-| `prizes` | any[] | Yes | — | The Contest Prizes |
+| `metrics` | object[] | Yes | — | The Contest's Metrics |
+| `participantIds` | string[] | Yes | — | The Contest's participants |
+| `prizes` | object[] | Yes | — | The Contest Prizes |
 | `profileId` | string | Yes | — | The Contest profile |
 | `selfUri` | string | No | — | The URI for this object |
 | `title` | string | Yes | — | The Contest title |
@@ -4227,14 +4300,23 @@ Update a Contest by Id
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest's Metrics"
     },
     "participantIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Contest's participants"
     },
     "prizes": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The Contest Prizes"
     },
     "profileId": {
@@ -4297,9 +4379,9 @@ Updates a performance profile
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `maxLeaderboardRankSize` | integer | No | — | The maximum rank size for the leaderboard. This counts the number of ranks can be retrieved in a leaderboard queries |
 | `memberCount` | integer | No | — | The number of members in this performance profile |
-| `metricOrders` | any[] | Yes | — | Order of the associated metrics. The list should contain valid ids for metrics |
+| `metricOrders` | string[] | Yes | — | Order of the associated metrics. The list should contain valid ids for metrics |
 | `name` | string | Yes | — | A name for this performance profile |
-| `reportingIntervals` | any[] | No | — | The reporting interval periods for this performance profile |
+| `reportingIntervals` | object[] | No | — | The reporting interval periods for this performance profile |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -4360,6 +4442,9 @@ Updates a performance profile
     },
     "metricOrders": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Order of the associated metrics. The list should contain valid ids for metrics"
     },
     "name": {
@@ -4368,6 +4453,9 @@ Updates a performance profile
     },
     "reportingIntervals": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The reporting interval periods for this performance profile"
     },
     "selfUri": {

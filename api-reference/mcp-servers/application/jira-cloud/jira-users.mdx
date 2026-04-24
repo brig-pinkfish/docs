@@ -42,8 +42,8 @@ Find users assignable to issues
 | `maxResults` | integer | No | — | The maximum number of items to return. This operation may return less than the maximum number of items even if more are available. The operation fetches users up to the maximum and then, from the fetched users, returns only the users that can be assigned to the issue. |
 | `actionDescriptorId` | integer | No | — | The ID of the transition. |
 | `recommend` | boolean | No | — | The recommend value |
-| `accountType` | any[] | No | — | Account Type |
-| `appType` | any[] | No | — | App Type |
+| `accountType` | string[] | No | — | Account Type |
+| `appType` | string[] | No | — | App Type |
 
 <Expandable title="inputSchema">
 
@@ -101,10 +101,16 @@ Find users assignable to issues
     },
     "accountType": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Account Type"
     },
     "appType": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "App Type"
     }
   },
@@ -190,8 +196,8 @@ Find users and groups
 | `maxResults` | integer | No | — | The maximum number of items to return in each list. |
 | `showAvatar` | boolean | No | — | Whether the user avatar should be returned. If an invalid value is provided, the default value is used. |
 | `fieldId` | string | No | — | The custom field ID of the field this request is for. |
-| `projectId` | any[] | No | — | The ID of a project that returned users and groups must have permission to view. To include multiple projects, provide an ampersand-separated list. For example, `projectId=10000&projectId=10001`. This parameter is only used when `fieldId` is present. |
-| `issueTypeId` | any[] | No | — | The ID of an issue type that returned users and groups must have permission to view. To include multiple issue types, provide an ampersand-separated list. For example, `issueTypeId=10000&issueTypeId=10001`. Special values, such as `-1` (all standard issue types) and `-2` (all subtask issue types), are supported. This parameter is only used when `fieldId` is present. |
+| `projectId` | string[] | No | — | The ID of a project that returned users and groups must have permission to view. To include multiple projects, provide an ampersand-separated list. For example, `projectId=10000&projectId=10001`. This parameter is only used when `fieldId` is present. |
+| `issueTypeId` | string[] | No | — | The ID of an issue type that returned users and groups must have permission to view. To include multiple issue types, provide an ampersand-separated list. For example, `issueTypeId=10000&issueTypeId=10001`. Special values, such as `-1` (all standard issue types) and `-2` (all subtask issue types), are supported. This parameter is only used when `fieldId` is present. |
 | `avatarSize` | string | No | — | The size of the avatar to return. If an invalid value is provided, the default value is used. |
 | `caseInsensitive` | boolean | No | — | Whether the search for groups should be case insensitive. |
 | `excludeConnectAddons` | boolean | No | — | Whether Connect app users and groups should be excluded from the search results. If an invalid value is provided, the default value is used. |
@@ -224,10 +230,16 @@ Find users and groups
     },
     "projectId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ID of a project that returned users and groups must have permission to view. To include multiple projects, provide an ampersand-separated list. For example, `projectId=10000&projectId=10001`. This parameter is only used when `fieldId` is present."
     },
     "issueTypeId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ID of an issue type that returned users and groups must have permission to view. To include multiple issue types, provide an ampersand-separated list. For example, `issueTypeId=10000&issueTypeId=10001`. Special values, such as `-1` (all standard issue types) and `-2` (all subtask issue types), are supported. This parameter is only used when `fieldId` is present."
     },
     "avatarSize": {
@@ -288,8 +300,8 @@ Find users for picker
 | `query` | string | Yes | — | A query string that is matched against user attributes, such as `displayName`, and `emailAddress`, to find relevant users. The string can match the prefix of the attribute's value. For example, *query=john* matches a user with a `displayName` of *John Smith* and a user with an `emailAddress` of *johnson@example.com*. |
 | `maxResults` | integer | No | — | The maximum number of items to return. The total number of matched users is returned in `total`. |
 | `showAvatar` | boolean | No | — | Include the URI to the user's avatar. |
-| `exclude` | any[] | No | — | This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. |
-| `excludeAccountIds` | any[] | No | — | A list of account IDs to exclude from the search results. This parameter accepts a comma-separated list. Multiple account IDs can also be provided using an ampersand-separated list. For example, `excludeAccountIds=5b10a2844c20165700ede21g,5b10a0effa615349cb016cd8&excludeAccountIds=5b10ac8d82e05b22cc7d4ef5`. Cannot be provided with `exclude`. |
+| `exclude` | string[] | No | — | This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. |
+| `excludeAccountIds` | string[] | No | — | A list of account IDs to exclude from the search results. This parameter accepts a comma-separated list. Multiple account IDs can also be provided using an ampersand-separated list. For example, `excludeAccountIds=5b10a2844c20165700ede21g,5b10a0effa615349cb016cd8&excludeAccountIds=5b10ac8d82e05b22cc7d4ef5`. Cannot be provided with `exclude`. |
 | `avatarSize` | string | No | — | Avatar Size |
 | `excludeConnectUsers` | boolean | No | — | Exclude Connect Users |
 
@@ -317,10 +329,16 @@ Find users for picker
     },
     "exclude": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
     },
     "excludeAccountIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of account IDs to exclude from the search results. This parameter accepts a comma-separated list. Multiple account IDs can also be provided using an ampersand-separated list. For example, `excludeAccountIds=5b10a2844c20165700ede21g,5b10a0effa615349cb016cd8&excludeAccountIds=5b10ac8d82e05b22cc7d4ef5`. Cannot be provided with `exclude`."
     },
     "avatarSize": {
@@ -352,8 +370,8 @@ Get bulk permissions
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `accountId` | string | No | — | The account ID of a user. |
-| `globalPermissions` | any[] | No | — | Global permissions to look up. |
-| `projectPermissions` | any[] | No | — | Project permissions with associated projects and issues to look up. |
+| `globalPermissions` | string[] | No | — | Global permissions to look up. |
+| `projectPermissions` | object[] | No | — | Project permissions with associated projects and issues to look up. |
 
 <Expandable title="inputSchema">
 
@@ -371,10 +389,16 @@ Get bulk permissions
     },
     "globalPermissions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Global permissions to look up."
     },
     "projectPermissions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Project permissions with associated projects and issues to look up."
     }
   },

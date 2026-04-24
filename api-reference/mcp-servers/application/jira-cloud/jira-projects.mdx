@@ -160,7 +160,7 @@ Create version
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `approvers` | any[] | No | — | If the expand option `approvers` is used, returns a list containing the approvers for this version. |
+| `approvers` | object[] | No | — | If the expand option `approvers` is used, returns a list containing the approvers for this version. |
 | `archived` | boolean | No | — | Indicates that the version is archived. Optional when creating or updating a version. |
 | `description` | string | No | — | The description of the version. Optional when creating or updating a version. The maximum size is 16,384 bytes. |
 | `driver` | string | No | — | The Atlassian account ID of the version driver. Optional when creating or updating a version. If the expand option `driver` is used, returns the Atlassian account ID of the driver. |
@@ -169,7 +169,7 @@ Create version
 | `issuesStatusForFixVersion` | object | No | — | If the expand option `issuesstatus` is used, returns the count of issues in this version for each of the status categories *to do*, *in progress*, *done*, and *unmapped*. The *unmapped* property contains a count of issues with a status other than *to do*, *in progress*, and *done*. |
 | `moveUnfixedIssuesTo` | string | No | — | The URL of the self link to the version to which all unfixed issues are moved when a version is released. Not applicable when creating a version. Optional when updating a version. |
 | `name` | string | No | — | The unique name of the version. Required when creating a version. Optional when updating a version. The maximum length is 255 characters. |
-| `operations` | any[] | No | — | If the expand option `operations` is used, returns the list of operations available for this version. |
+| `operations` | object[] | No | — | If the expand option `operations` is used, returns the list of operations available for this version. |
 | `overdue` | boolean | No | — | Indicates that the version is overdue. |
 | `project` | string | No | — | Deprecated. Use `projectId`. |
 | `projectId` | integer | No | — | The ID of the project to which this version is attached. Required when creating a version. Not applicable when updating a version. |
@@ -192,6 +192,9 @@ Create version
     },
     "approvers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "If the expand option `approvers` is used, returns a list containing the approvers for this version."
     },
     "archived": {
@@ -227,6 +230,9 @@ Create version
     },
     "operations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "If the expand option `operations` is used, returns the list of operations available for this version."
     },
     "overdue": {
@@ -310,9 +316,9 @@ Get gadgets
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `dashboardId` | integer | Yes | — | The ID of the dashboard. |
-| `moduleKey` | any[] | No | — | The list of gadgets module keys. To include multiple module keys, separate module keys with ampersand: `moduleKey=key:one&moduleKey=key:two`. |
-| `uri` | any[] | No | — | The list of gadgets URIs. To include multiple URIs, separate URIs with ampersand: `uri=/rest/example/uri/1&uri=/rest/example/uri/2`. |
-| `gadgetId` | any[] | No | — | The list of gadgets IDs. To include multiple IDs, separate IDs with ampersand: `gadgetId=10000&gadgetId=10001`. |
+| `moduleKey` | string[] | No | — | The list of gadgets module keys. To include multiple module keys, separate module keys with ampersand: `moduleKey=key:one&moduleKey=key:two`. |
+| `uri` | string[] | No | — | The list of gadgets URIs. To include multiple URIs, separate URIs with ampersand: `uri=/rest/example/uri/1&uri=/rest/example/uri/2`. |
+| `gadgetId` | integer[] | No | — | The list of gadgets IDs. To include multiple IDs, separate IDs with ampersand: `gadgetId=10000&gadgetId=10001`. |
 
 <Expandable title="inputSchema">
 
@@ -330,14 +336,24 @@ Get gadgets
     },
     "moduleKey": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of gadgets module keys. To include multiple module keys, separate module keys with ampersand: `moduleKey=key:one&moduleKey=key:two`."
     },
     "uri": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of gadgets URIs. To include multiple URIs, separate URIs with ampersand: `uri=/rest/example/uri/1&uri=/rest/example/uri/2`."
     },
     "gadgetId": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
       "description": "The list of gadgets IDs. To include multiple IDs, separate IDs with ampersand: `gadgetId=10000&gadgetId=10001`."
     }
   },
@@ -605,7 +621,7 @@ Get project
 | --- | --- | --- | --- | --- |
 | `projectIdOrKey` | string | Yes | — | The project ID or project key (case sensitive). |
 | `expand` | string | No | — | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Note that the project description, issue types, and project lead are included in all responses by default. Expand options include:   *  `description` The project description.  *  `issueTypes` The issue types associated with the project.  *  `lead` The project lead.  *  `projectKeys` All project keys associated with the project.  *  `issueTypeHierarchy` The project issue type hierarchy. |
-| `properties` | any[] | No | — | A list of project properties to return for the project. This parameter accepts a comma-separated list. |
+| `properties` | string[] | No | — | A list of project properties to return for the project. This parameter accepts a comma-separated list. |
 
 <Expandable title="inputSchema">
 
@@ -627,6 +643,9 @@ Get project
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of project properties to return for the project. This parameter accepts a comma-separated list."
     }
   },
@@ -779,7 +798,7 @@ Get recent projects
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `expand` | string | No | — | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expanded options include:   *  `description` Returns the project description.  *  `projectKeys` Returns all project keys associated with a project.  *  `lead` Returns information about the project lead.  *  `issueTypes` Returns all issue types associated with the project.  *  `url` Returns the URL associated with the project.  *  `permissions` Returns the permissions associated with the project.  *  `insight` EXPERIMENTAL. Returns the insight details of total issue count and last issue update time for the project.  *  `*` Returns the project with all available expand options. |
-| `properties` | any[] | No | — | EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list. Invalid property names are ignored. |
+| `properties` | object[] | No | — | EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list. Invalid property names are ignored. |
 
 <Expandable title="inputSchema">
 
@@ -797,6 +816,9 @@ Get recent projects
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list. Invalid property names are ignored."
     }
   },
@@ -948,15 +970,15 @@ Get projects paginated
 | `startAt` | integer | No | — | The index of the first item to return in a page of results (page offset). |
 | `maxResults` | integer | No | — | The maximum number of items to return per page. Must be less than or equal to 100. If a value greater than 100 is provided, the `maxResults` parameter will default to 100. |
 | `orderBy` | string | No | — | [Order](#ordering) the results by a field.   *  `category` Sorts by project category. A complete list of category IDs is found using [Get all project categories](#api-rest-api-3-projectCategory-get).  *  `issueCount` Sorts by the total number of issues in each project.  *  `key` Sorts by project key.  *  `lastIssueUpdatedTime` Sorts by the last issue update time.  *  `name` Sorts by project name.  *  `owner` Sorts by project lead.  *  `archivedDate` EXPERIMENTAL. Sorts by project archived date.  *  `deletedDate` EXPERIMENTAL. Sorts by project deleted date. |
-| `id` | any[] | No | — | The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Up to 50 project IDs can be provided. |
-| `keys` | any[] | No | — | The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, `keys=PA&keys=PB`. Up to 50 project keys can be provided. |
+| `id` | integer[] | No | — | The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Up to 50 project IDs can be provided. |
+| `keys` | string[] | No | — | The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, `keys=PA&keys=PB`. Up to 50 project keys can be provided. |
 | `query` | string | No | — | Filter the results using a literal string. Projects with a matching `key` or `name` are returned (case insensitive). |
 | `typeKey` | string | No | — | Orders results by the [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes). This parameter accepts a comma-separated list. Valid values are `business`, `service_desk`, and `software`. |
 | `categoryId` | integer | No | — | The ID of the project's category. A complete list of category IDs is found using the [Get all project categories](#api-rest-api-3-projectCategory-get) operation. |
 | `action` | string | No | — | Filter results by projects for which the user can:   *  `view` the project, meaning that they have one of the following permissions:           *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.      *  *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.      *  *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).  *  `browse` the project, meaning that they have the *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.  *  `edit` the project, meaning that they have one of the following permissions:           *  *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.      *  *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).  *  `create` the project, meaning that they have the *Create issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project in which the issue is created. |
 | `expand` | string | No | — | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expanded options include:   *  `description` Returns the project description.  *  `projectKeys` Returns all project keys associated with a project.  *  `lead` Returns information about the project lead.  *  `issueTypes` Returns all issue types associated with the project.  *  `url` Returns the URL associated with the project.  *  `insight` EXPERIMENTAL. Returns the insight details of total issue count and last issue update time for the project. |
-| `status` | any[] | No | — | EXPERIMENTAL. Filter results by project status:   *  `live` Search live projects.  *  `archived` Search archived projects.  *  `deleted` Search deleted projects, those in the recycle bin. |
-| `properties` | any[] | No | — | EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list. |
+| `status` | string[] | No | — | EXPERIMENTAL. Filter results by project status:   *  `live` Search live projects.  *  `archived` Search archived projects.  *  `deleted` Search deleted projects, those in the recycle bin. |
+| `properties` | object[] | No | — | EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list. |
 | `propertyQuery` | string | No | — | EXPERIMENTAL. A query string used to search properties. The query string cannot be specified using a JSON object. For example, to search for the value of `nested` from `&#123;"something":&#123;"nested":1,"other":2&#125;&#125;` use `[thepropertykey].something.nested=1`. Note that the propertyQuery key is enclosed in square brackets to enable searching where the propertyQuery key includes dot (.) or equals (=) characters. Note that `thepropertykey` is only returned when included in `properties`. |
 
 <Expandable title="inputSchema">
@@ -1009,10 +1031,17 @@ Get projects paginated
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
       "description": "The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Up to 50 project IDs can be provided."
     },
     "keys": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, `keys=PA&keys=PB`. Up to 50 project keys can be provided."
     },
     "query": {
@@ -1043,10 +1072,21 @@ Get projects paginated
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "live",
+          "archived",
+          "deleted"
+        ]
+      },
       "description": "EXPERIMENTAL. Filter results by project status:   *  `live` Search live projects.  *  `archived` Search archived projects.  *  `deleted` Search deleted projects, those in the recycle bin."
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list."
     },
     "propertyQuery": {

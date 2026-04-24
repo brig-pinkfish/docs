@@ -45,7 +45,7 @@ Create Chapter
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `project_id` | string | Yes | — | The ID of the Studio project. |
-| `from_url` | object | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
+| `from_url` | string | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
 | `name` | string | Yes | — | The name of the chapter, used for identification only. |
 
 <Expandable title="inputSchema">
@@ -63,6 +63,7 @@ Create Chapter
       "description": "The ID of the Studio project."
     },
     "from_url": {
+      "type": "string",
       "description": "An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank."
     },
     "name": {
@@ -91,33 +92,33 @@ Create Studio Project
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `acx_volume_normalization` | boolean | No | — | [Deprecated] When the Studio project is downloaded, should the returned audio have postprocessing in order to make it compliant with audiobook normalized volume requirements |
-| `apply_text_normalization` | object | No | — | This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English. |
-| `author` | object | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
-| `auto_assign_voices` | object | No | — | [Alpha Feature] Whether automatically assign voices to phrases in the create Project. |
+| `apply_text_normalization` | string | No | — | This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English. |
+| `author` | string | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `auto_assign_voices` | boolean | No | — | [Alpha Feature] Whether automatically assign voices to phrases in the create Project. |
 | `auto_convert` | boolean | No | — | Whether to auto convert the Studio project to audio or not. |
-| `callback_url` | object | No | — | A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "success",         project_snapshot_id: "22m00Tcm4TlvDq8ikMAT",         error_details: None,       &#125;     &#125;     2. When project conversion failed:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "error",         project_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125;      3. When chapter was converted successfully:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "success",         chapter_snapshot_id: "23m00Tcm4TlvDq8ikMAV",         error_details: None,       &#125;     &#125;     4. When chapter conversion failed:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "error",         chapter_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125; |
-| `content_type` | object | No | — | An optional content type of the Studio project. |
-| `create_publishing_read` | object | No | — | If true, creates a corresponding read for direct publishing in draft state |
-| `default_model_id` | object | No | — | The ID of the model to be used for this Studio project, you can query GET /v1/models to list all available models. |
-| `default_paragraph_voice_id` | object | No | — | The voice_id that corresponds to the default voice used for new paragraphs. |
-| `default_title_voice_id` | object | No | — | The voice_id that corresponds to the default voice used for new titles. |
-| `description` | object | No | — | An optional description of the Studio project. |
-| `fiction` | object | No | — | An optional specification of whether the content of this Studio project is fiction. |
+| `callback_url` | string | No | — | A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "success",         project_snapshot_id: "22m00Tcm4TlvDq8ikMAT",         error_details: None,       &#125;     &#125;     2. When project conversion failed:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "error",         project_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125;      3. When chapter was converted successfully:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "success",         chapter_snapshot_id: "23m00Tcm4TlvDq8ikMAV",         error_details: None,       &#125;     &#125;     4. When chapter conversion failed:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "error",         chapter_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125; |
+| `content_type` | string | No | — | An optional content type of the Studio project. |
+| `create_publishing_read` | boolean | No | — | If true, creates a corresponding read for direct publishing in draft state |
+| `default_model_id` | string | No | — | The ID of the model to be used for this Studio project, you can query GET /v1/models to list all available models. |
+| `default_paragraph_voice_id` | string | No | — | The voice_id that corresponds to the default voice used for new paragraphs. |
+| `default_title_voice_id` | string | No | — | The voice_id that corresponds to the default voice used for new titles. |
+| `description` | string | No | — | An optional description of the Studio project. |
+| `fiction` | string | No | — | An optional specification of whether the content of this Studio project is fiction. |
 | `from_content_json` | string | No | — | An optional content to initialize the Studio project with. If this is set, 'from_url' and 'from_document' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank.      Example:     [&#123;"name": "Chapter A", "blocks": [&#123;"sub_type": "p", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "A", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "B", "type": "tts_node"&#125;]&#125;, &#123;"sub_type": "h1", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "C", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "D", "type": "tts_node"&#125;]&#125;]&#125;, &#123;"name": "Chapter B", "blocks": [&#123;"sub_type": "p", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "E", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "F", "type": "tts_node"&#125;]&#125;, &#123;"sub_type": "h2", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "G", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "H", "type": "tts_node"&#125;]&#125;]&#125;] |
-| `from_document` | object | No | — | An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
-| `from_url` | object | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
-| `genres` | any[] | No | — | An optional list of genres associated with the Studio project. |
-| `isbn_number` | object | No | — | An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download. |
-| `language` | object | No | — | An optional language of the Studio project. Two-letter language code (ISO 639-1). |
-| `mature_content` | object | No | — | An optional specification of whether this Studio project contains mature content. |
+| `from_document` | string | No | — | An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
+| `from_url` | string | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
+| `genres` | string[] | No | — | An optional list of genres associated with the Studio project. |
+| `isbn_number` | string | No | — | An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `language` | string | No | — | An optional language of the Studio project. Two-letter language code (ISO 639-1). |
+| `mature_content` | boolean | No | — | An optional specification of whether this Studio project contains mature content. |
 | `name` | string | Yes | — | The name of the Studio project, used for identification only. |
-| `original_publication_date` | object | No | — | An optional original publication date of the Studio project, in the format YYYY-MM-DD or YYYY. |
-| `pronunciation_dictionary_locators` | any[] | No | — | A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"Vmd4Zor6fplcA7WrINey\",\"version_id\":\"hRPaxjlTdR7wFMhV4w0b\"&#125;"' --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"JzWtcGQMJ6bnlWwyMo7e\",\"version_id\":\"lbmwxiLu4q6txYxgdZqn\"&#125;"'. |
+| `original_publication_date` | string | No | — | An optional original publication date of the Studio project, in the format YYYY-MM-DD or YYYY. |
+| `pronunciation_dictionary_locators` | string[] | No | — | A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"Vmd4Zor6fplcA7WrINey\",\"version_id\":\"hRPaxjlTdR7wFMhV4w0b\"&#125;"' --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"JzWtcGQMJ6bnlWwyMo7e\",\"version_id\":\"lbmwxiLu4q6txYxgdZqn\"&#125;"'. |
 | `quality_preset` | string | No | — | Output quality of the generated audio. Must be one of: 'standard' - standard output format, 128kbps with 44.1kHz sample rate. 'high' - high quality output format, 192kbps with 44.1kHz sample rate and major improvements on our side. 'ultra' - ultra quality output format, 192kbps with 44.1kHz sample rate and highest improvements on our side. 'ultra_lossless' - ultra quality output format, 705.6kbps with 44.1kHz sample rate and highest improvements on our side in a fully lossless format. |
-| `source_type` | object | No | — | The type of Studio project to create. |
-| `target_audience` | object | No | — | An optional target audience of the Studio project. |
-| `title` | object | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
-| `voice_settings` | any[] | No | — | Optional voice settings overrides for the project, encoded as a list of JSON strings.      Example:     ["&#123;\"voice_id\": \"21m00Tcm4TlvDq8ikWAM\", \"stability\": 0.7, \"similarity_boost\": 0.8, \"style\": 0.5, \"speed\": 1.0, \"use_speaker_boost\": true&#125;"] |
+| `source_type` | string | No | — | The type of Studio project to create. |
+| `target_audience` | string | No | — | An optional target audience of the Studio project. |
+| `title` | string | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `voice_settings` | string[] | No | — | Optional voice settings overrides for the project, encoded as a list of JSON strings.      Example:     ["&#123;\"voice_id\": \"21m00Tcm4TlvDq8ikWAM\", \"stability\": 0.7, \"similarity_boost\": 0.8, \"style\": 0.5, \"speed\": 1.0, \"use_speaker_boost\": true&#125;"] |
 | `volume_normalization` | boolean | No | — | When the Studio project is downloaded, should the returned audio have postprocessing in order to make it compliant with audiobook normalized volume requirements |
 
 <Expandable title="inputSchema">
@@ -135,12 +136,21 @@ Create Studio Project
       "description": "[Deprecated] When the Studio project is downloaded, should the returned audio have postprocessing in order to make it compliant with audiobook normalized volume requirements"
     },
     "apply_text_normalization": {
-      "description": "This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English."
+      "type": "string",
+      "description": "This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English.",
+      "enum": [
+        "auto",
+        "on",
+        "off",
+        "apply_english"
+      ]
     },
     "author": {
+      "type": "string",
       "description": "An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "auto_assign_voices": {
+      "type": "boolean",
       "description": "[Alpha Feature] Whether automatically assign voices to phrases in the create Project."
     },
     "auto_convert": {
@@ -148,50 +158,70 @@ Create Studio Project
       "description": "Whether to auto convert the Studio project to audio or not."
     },
     "callback_url": {
+      "type": "string",
       "description": "A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     {       type: \"project_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         conversion_status: \"success\",         project_snapshot_id: \"22m00Tcm4TlvDq8ikMAT\",         error_details: None,       }     }     2. When project conversion failed:     {       type: \"project_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         conversion_status: \"error\",         project_snapshot_id: None,         error_details: \"Error details if conversion failed\"       }     }      3. When chapter was converted successfully:     {       type: \"chapter_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         chapter_id: \"22m00Tcm4TlvDq8ikMAT\",         conversion_status: \"success\",         chapter_snapshot_id: \"23m00Tcm4TlvDq8ikMAV\",         error_details: None,       }     }     4. When chapter conversion failed:     {       type: \"chapter_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         chapter_id: \"22m00Tcm4TlvDq8ikMAT\",         conversion_status: \"error\",         chapter_snapshot_id: None,         error_details: \"Error details if conversion failed\"       }     }"
     },
     "content_type": {
+      "type": "string",
       "description": "An optional content type of the Studio project."
     },
     "create_publishing_read": {
+      "type": "boolean",
       "description": "If true, creates a corresponding read for direct publishing in draft state"
     },
     "default_model_id": {
+      "type": "string",
       "description": "The ID of the model to be used for this Studio project, you can query GET /v1/models to list all available models."
     },
     "default_paragraph_voice_id": {
+      "type": "string",
       "description": "The voice_id that corresponds to the default voice used for new paragraphs."
     },
     "default_title_voice_id": {
+      "type": "string",
       "description": "The voice_id that corresponds to the default voice used for new titles."
     },
     "description": {
+      "type": "string",
       "description": "An optional description of the Studio project."
     },
     "fiction": {
-      "description": "An optional specification of whether the content of this Studio project is fiction."
+      "type": "string",
+      "description": "An optional specification of whether the content of this Studio project is fiction.",
+      "enum": [
+        "fiction",
+        "non-fiction"
+      ]
     },
     "from_content_json": {
       "type": "string",
       "description": "An optional content to initialize the Studio project with. If this is set, 'from_url' and 'from_document' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank.      Example:     [{\"name\": \"Chapter A\", \"blocks\": [{\"sub_type\": \"p\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"A\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"B\", \"type\": \"tts_node\"}]}, {\"sub_type\": \"h1\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"C\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"D\", \"type\": \"tts_node\"}]}]}, {\"name\": \"Chapter B\", \"blocks\": [{\"sub_type\": \"p\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"E\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"F\", \"type\": \"tts_node\"}]}, {\"sub_type\": \"h2\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"G\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"H\", \"type\": \"tts_node\"}]}]}]"
     },
     "from_document": {
+      "type": "string",
       "description": "An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank."
     },
     "from_url": {
+      "type": "string",
       "description": "An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank."
     },
     "genres": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An optional list of genres associated with the Studio project."
     },
     "isbn_number": {
+      "type": "string",
       "description": "An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "language": {
+      "type": "string",
       "description": "An optional language of the Studio project. Two-letter language code (ISO 639-1)."
     },
     "mature_content": {
+      "type": "boolean",
       "description": "An optional specification of whether this Studio project contains mature content."
     },
     "name": {
@@ -199,10 +229,14 @@ Create Studio Project
       "description": "The name of the Studio project, used for identification only."
     },
     "original_publication_date": {
+      "type": "string",
       "description": "An optional original publication date of the Studio project, in the format YYYY-MM-DD or YYYY."
     },
     "pronunciation_dictionary_locators": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators=\"{\\\"pronunciation_dictionary_id\\\":\\\"Vmd4Zor6fplcA7WrINey\\\",\\\"version_id\\\":\\\"hRPaxjlTdR7wFMhV4w0b\\\"}\"' --form 'pronunciation_dictionary_locators=\"{\\\"pronunciation_dictionary_id\\\":\\\"JzWtcGQMJ6bnlWwyMo7e\\\",\\\"version_id\\\":\\\"lbmwxiLu4q6txYxgdZqn\\\"}\"'."
     },
     "quality_preset": {
@@ -216,16 +250,36 @@ Create Studio Project
       ]
     },
     "source_type": {
-      "description": "The type of Studio project to create."
+      "type": "string",
+      "description": "The type of Studio project to create.",
+      "enum": [
+        "blank",
+        "book",
+        "article",
+        "genfm",
+        "video",
+        "screenplay"
+      ]
     },
     "target_audience": {
-      "description": "An optional target audience of the Studio project."
+      "type": "string",
+      "description": "An optional target audience of the Studio project.",
+      "enum": [
+        "children",
+        "young adult",
+        "adult",
+        "all ages"
+      ]
     },
     "title": {
+      "type": "string",
       "description": "An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "voice_settings": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional voice settings overrides for the project, encoded as a list of JSON strings.      Example:     [\"{\\\"voice_id\\\": \\\"21m00Tcm4TlvDq8ikWAM\\\", \\\"stability\\\": 0.7, \\\"similarity_boost\\\": 0.8, \\\"style\\\": 0.5, \\\"speed\\\": 1.0, \\\"use_speaker_boost\\\": true}\"]"
     },
     "volume_normalization": {
@@ -288,25 +342,25 @@ Dub A Video Or An Audio File
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `background_audio_file` | object | No | — | For use only with csv input |
-| `csv_file` | object | No | — | CSV file containing transcription/translation metadata |
-| `csv_fps` | object | No | — | Frames per second to use when parsing a CSV file for dubbing. If not provided, FPS will be inferred from timecodes. |
+| `background_audio_file` | string | No | — | For use only with csv input |
+| `csv_file` | string | No | — | CSV file containing transcription/translation metadata |
+| `csv_fps` | number | No | — | Frames per second to use when parsing a CSV file for dubbing. If not provided, FPS will be inferred from timecodes. |
 | `disable_voice_cloning` | boolean | No | — | Instead of using a voice clone in dubbing, use a similar voice from the ElevenLabs Voice Library. Voices used from the library will contribute towards a workspace's custom voices limit, and if there aren't enough available slots the dub will fail. Using this feature requires the caller to have the 'add_voice_from_voice_library' permission on their workspace to access new voices. |
 | `drop_background_audio` | boolean | No | — | An advanced setting. Whether to drop background audio from the final dub. This can improve dub quality where it's known that audio shouldn't have a background track such as for speeches or monologues. |
 | `dubbing_studio` | boolean | No | — | Whether to prepare dub for edits in dubbing studio or edits as a dubbing resource. |
-| `end_time` | object | No | — | End time of the source video/audio file. |
-| `file` | object | No | — | A list of file paths to audio recordings intended for voice cloning |
-| `foreground_audio_file` | object | No | — | For use only with csv input |
+| `end_time` | integer | No | — | End time of the source video/audio file. |
+| `file` | string | No | — | A list of file paths to audio recordings intended for voice cloning |
+| `foreground_audio_file` | string | No | — | For use only with csv input |
 | `highest_resolution` | boolean | No | — | Whether to use the highest resolution available. |
 | `mode` | string | No | — | The mode in which to run this Dubbing job. Defaults to automatic, use manual if specifically providing a CSV transcript to use. Note that manual mode is experimental and production use is strongly discouraged. |
-| `name` | object | No | — | Name of the dubbing project. |
+| `name` | string | No | — | Name of the dubbing project. |
 | `num_speakers` | integer | No | — | Number of speakers to use for the dubbing. Set to 0 to automatically detect the number of speakers |
 | `source_lang` | string | No | — | Source language. Expects a valid iso639-1 or iso639-3 language code. |
-| `source_url` | object | No | — | URL of the source video/audio file. |
-| `start_time` | object | No | — | Start time of the source video/audio file. |
-| `target_accent` | object | No | — | [Experimental] An accent to apply when selecting voices from the library and to use to inform translation of the dialect to prefer. |
-| `target_lang` | object | No | — | The Target language to dub the content into. Expects a valid iso639-1 or iso639-3 language code. |
-| `use_profanity_filter` | object | No | — | [BETA] Whether transcripts should have profanities censored with the words '[censored]' |
+| `source_url` | string | No | — | URL of the source video/audio file. |
+| `start_time` | integer | No | — | Start time of the source video/audio file. |
+| `target_accent` | string | No | — | [Experimental] An accent to apply when selecting voices from the library and to use to inform translation of the dialect to prefer. |
+| `target_lang` | string | No | — | The Target language to dub the content into. Expects a valid iso639-1 or iso639-3 language code. |
+| `use_profanity_filter` | boolean | No | — | [BETA] Whether transcripts should have profanities censored with the words '[censored]' |
 | `watermark` | boolean | No | — | Whether to apply watermark to the output video. |
 
 <Expandable title="inputSchema">
@@ -320,12 +374,15 @@ Dub A Video Or An Audio File
       "description": "Pink Connect ID for the authenticated connection"
     },
     "background_audio_file": {
+      "type": "string",
       "description": "For use only with csv input"
     },
     "csv_file": {
+      "type": "string",
       "description": "CSV file containing transcription/translation metadata"
     },
     "csv_fps": {
+      "type": "number",
       "description": "Frames per second to use when parsing a CSV file for dubbing. If not provided, FPS will be inferred from timecodes."
     },
     "disable_voice_cloning": {
@@ -341,12 +398,15 @@ Dub A Video Or An Audio File
       "description": "Whether to prepare dub for edits in dubbing studio or edits as a dubbing resource."
     },
     "end_time": {
+      "type": "integer",
       "description": "End time of the source video/audio file."
     },
     "file": {
+      "type": "string",
       "description": "A list of file paths to audio recordings intended for voice cloning"
     },
     "foreground_audio_file": {
+      "type": "string",
       "description": "For use only with csv input"
     },
     "highest_resolution": {
@@ -362,6 +422,7 @@ Dub A Video Or An Audio File
       ]
     },
     "name": {
+      "type": "string",
       "description": "Name of the dubbing project."
     },
     "num_speakers": {
@@ -373,18 +434,23 @@ Dub A Video Or An Audio File
       "description": "Source language. Expects a valid iso639-1 or iso639-3 language code."
     },
     "source_url": {
+      "type": "string",
       "description": "URL of the source video/audio file."
     },
     "start_time": {
+      "type": "integer",
       "description": "Start time of the source video/audio file."
     },
     "target_accent": {
+      "type": "string",
       "description": "[Experimental] An accent to apply when selecting voices from the library and to use to inform translation of the dialect to prefer."
     },
     "target_lang": {
+      "type": "string",
       "description": "The Target language to dub the content into. Expects a valid iso639-1 or iso639-3 language code."
     },
     "use_profanity_filter": {
+      "type": "boolean",
       "description": "[BETA] Whether transcripts should have profanities censored with the words '[censored]'"
     },
     "watermark": {
@@ -410,16 +476,16 @@ Create Podcast
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `apply_text_normalization` | object | No | — | This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English. |
-| `callback_url` | object | No | — | A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "success",         project_snapshot_id: "22m00Tcm4TlvDq8ikMAT",         error_details: None,       &#125;     &#125;     2. When project conversion failed:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "error",         project_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125;      3. When chapter was converted successfully:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "success",         chapter_snapshot_id: "23m00Tcm4TlvDq8ikMAV",         error_details: None,       &#125;     &#125;     4. When chapter conversion failed:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "error",         chapter_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125; |
+| `apply_text_normalization` | string | No | — | This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English. |
+| `callback_url` | string | No | — | A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "success",         project_snapshot_id: "22m00Tcm4TlvDq8ikMAT",         error_details: None,       &#125;     &#125;     2. When project conversion failed:     &#123;       type: "project_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         conversion_status: "error",         project_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125;      3. When chapter was converted successfully:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "success",         chapter_snapshot_id: "23m00Tcm4TlvDq8ikMAV",         error_details: None,       &#125;     &#125;     4. When chapter conversion failed:     &#123;       type: "chapter_conversion_status",       event_timestamp: 1234567890,       data: &#123;         request_id: "1234567890",         project_id: "21m00Tcm4TlvDq8ikWAM",         chapter_id: "22m00Tcm4TlvDq8ikMAT",         conversion_status: "error",         chapter_snapshot_id: None,         error_details: "Error details if conversion failed"       &#125;     &#125; |
 | `duration_scale` | string | No | — | Duration of the generated podcast. Must be one of: short - produces podcasts shorter than 3 minutes. default - produces podcasts roughly between 3-7 minutes. long - produces podcasts longer than 7 minutes. |
-| `highlights` | object | No | — | A brief summary or highlights of the Studio project's content, providing key points or themes. This should be between 10 and 70 characters. |
-| `instructions_prompt` | object | No | — | Additional instructions prompt for the podcast generation used to adjust the podcast's style and tone. |
-| `intro` | object | No | — | The intro text that will always be added to the beginning of the podcast. |
-| `language` | object | No | — | An optional language of the Studio project. Two-letter language code (ISO 639-1). |
+| `highlights` | string[] | No | — | A brief summary or highlights of the Studio project's content, providing key points or themes. This should be between 10 and 70 characters. |
+| `instructions_prompt` | string | No | — | Additional instructions prompt for the podcast generation used to adjust the podcast's style and tone. |
+| `intro` | string | No | — | The intro text that will always be added to the beginning of the podcast. |
+| `language` | string | No | — | An optional language of the Studio project. Two-letter language code (ISO 639-1). |
 | `mode` | object | Yes | — | The type of podcast to generate. Can be 'conversation', an interaction between two voices, or 'bulletin', a monologue. |
 | `model_id` | string | Yes | — | The ID of the model to be used for this Studio project, you can query GET /v1/models to list all available models. |
-| `outro` | object | No | — | The outro text that will always be added to the end of the podcast. |
+| `outro` | string | No | — | The outro text that will always be added to the end of the podcast. |
 | `quality_preset` | string | No | — | Output quality of the generated audio. Must be one of: 'standard' - standard output format, 128kbps with 44.1kHz sample rate. 'high' - high quality output format, 192kbps with 44.1kHz sample rate and major improvements on our side. 'ultra' - ultra quality output format, 192kbps with 44.1kHz sample rate and highest improvements on our side. 'ultra_lossless' - ultra quality output format, 705.6kbps with 44.1kHz sample rate and highest improvements on our side in a fully lossless format. |
 | `source` | object | Yes | — | The source content for the Podcast. |
 
@@ -434,9 +500,17 @@ Create Podcast
       "description": "Pink Connect ID for the authenticated connection"
     },
     "apply_text_normalization": {
-      "description": "This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English."
+      "type": "string",
+      "description": "This parameter controls text normalization with four modes: 'auto', 'on', 'apply_english' and 'off'.     When set to 'auto', the system will automatically decide whether to apply text normalization     (e.g., spelling out numbers). With 'on', text normalization will always be applied, while     with 'off', it will be skipped. 'apply_english' is the same as 'on' but will assume that text is in English.",
+      "enum": [
+        "auto",
+        "on",
+        "off",
+        "apply_english"
+      ]
     },
     "callback_url": {
+      "type": "string",
       "description": "A url that will be called by our service when the Studio project is converted. Request will contain a json blob containing the status of the conversion     Messages:     1. When project was converted successfully:     {       type: \"project_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         conversion_status: \"success\",         project_snapshot_id: \"22m00Tcm4TlvDq8ikMAT\",         error_details: None,       }     }     2. When project conversion failed:     {       type: \"project_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         conversion_status: \"error\",         project_snapshot_id: None,         error_details: \"Error details if conversion failed\"       }     }      3. When chapter was converted successfully:     {       type: \"chapter_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         chapter_id: \"22m00Tcm4TlvDq8ikMAT\",         conversion_status: \"success\",         chapter_snapshot_id: \"23m00Tcm4TlvDq8ikMAV\",         error_details: None,       }     }     4. When chapter conversion failed:     {       type: \"chapter_conversion_status\",       event_timestamp: 1234567890,       data: {         request_id: \"1234567890\",         project_id: \"21m00Tcm4TlvDq8ikWAM\",         chapter_id: \"22m00Tcm4TlvDq8ikMAT\",         conversion_status: \"error\",         chapter_snapshot_id: None,         error_details: \"Error details if conversion failed\"       }     }"
     },
     "duration_scale": {
@@ -449,15 +523,22 @@ Create Podcast
       ]
     },
     "highlights": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A brief summary or highlights of the Studio project's content, providing key points or themes. This should be between 10 and 70 characters."
     },
     "instructions_prompt": {
+      "type": "string",
       "description": "Additional instructions prompt for the podcast generation used to adjust the podcast's style and tone."
     },
     "intro": {
+      "type": "string",
       "description": "The intro text that will always be added to the beginning of the podcast."
     },
     "language": {
+      "type": "string",
       "description": "An optional language of the Studio project. Two-letter language code (ISO 639-1)."
     },
     "mode": {
@@ -468,6 +549,7 @@ Create Podcast
       "description": "The ID of the model to be used for this Studio project, you can query GET /v1/models to list all available models."
     },
     "outro": {
+      "type": "string",
       "description": "The outro text that will always be added to the end of the podcast."
     },
     "quality_preset": {
@@ -623,7 +705,7 @@ Update Chapter
 | `project_id` | string | Yes | — | The ID of the Studio project. |
 | `chapter_id` | string | Yes | — | The ID of the chapter. |
 | `content` | object | No | — | The chapter content to use. |
-| `name` | object | No | — | The name of the chapter, used for identification only. |
+| `name` | string | No | — | The name of the chapter, used for identification only. |
 
 <Expandable title="inputSchema">
 
@@ -644,9 +726,20 @@ Update Chapter
       "description": "The ID of the chapter."
     },
     "content": {
-      "description": "The chapter content to use."
+      "type": "object",
+      "description": "The chapter content to use.",
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "description": "The blocks value"
+        }
+      },
+      "required": [
+        "blocks"
+      ]
     },
     "name": {
+      "type": "string",
       "description": "The name of the chapter, used for identification only."
     }
   },
@@ -671,12 +764,12 @@ Update Studio Project
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `project_id` | string | Yes | — | The ID of the Studio project. |
-| `author` | object | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `author` | string | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
 | `default_paragraph_voice_id` | string | Yes | — | The voice_id that corresponds to the default voice used for new paragraphs. |
 | `default_title_voice_id` | string | Yes | — | The voice_id that corresponds to the default voice used for new titles. |
-| `isbn_number` | object | No | — | An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `isbn_number` | string | No | — | An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download. |
 | `name` | string | Yes | — | The name of the Studio project, used for identification only. |
-| `title` | object | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
+| `title` | string | No | — | An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download. |
 | `volume_normalization` | boolean | No | — | When the Studio project is downloaded, should the returned audio have postprocessing in order to make it compliant with audiobook normalized volume requirements |
 
 <Expandable title="inputSchema">
@@ -694,6 +787,7 @@ Update Studio Project
       "description": "The ID of the Studio project."
     },
     "author": {
+      "type": "string",
       "description": "An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "default_paragraph_voice_id": {
@@ -705,6 +799,7 @@ Update Studio Project
       "description": "The voice_id that corresponds to the default voice used for new titles."
     },
     "isbn_number": {
+      "type": "string",
       "description": "An optional ISBN number of the Studio project you want to create, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "name": {
@@ -712,6 +807,7 @@ Update Studio Project
       "description": "The name of the Studio project, used for identification only."
     },
     "title": {
+      "type": "string",
       "description": "An optional name of the author of the Studio project, this will be added as metadata to the mp3 file on Studio project or chapter download."
     },
     "volume_normalization": {
@@ -744,8 +840,8 @@ Update Studio Project Content
 | `project_id` | string | Yes | — | The ID of the Studio project. |
 | `auto_convert` | boolean | No | — | Whether to auto convert the Studio project to audio or not. |
 | `from_content_json` | string | No | — | An optional content to initialize the Studio project with. If this is set, 'from_url' and 'from_document' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank.      Example:     [&#123;"name": "Chapter A", "blocks": [&#123;"sub_type": "p", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "A", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "B", "type": "tts_node"&#125;]&#125;, &#123;"sub_type": "h1", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "C", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "D", "type": "tts_node"&#125;]&#125;]&#125;, &#123;"name": "Chapter B", "blocks": [&#123;"sub_type": "p", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "E", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "F", "type": "tts_node"&#125;]&#125;, &#123;"sub_type": "h2", "nodes": [&#123;"voice_id": "6lCwbsX1yVjD49QmpkT0", "text": "G", "type": "tts_node"&#125;, &#123;"voice_id": "6lCwbsX1yVjD49QmpkT1", "text": "H", "type": "tts_node"&#125;]&#125;]&#125;] |
-| `from_document` | object | No | — | An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
-| `from_url` | object | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
+| `from_document` | string | No | — | An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
+| `from_url` | string | No | — | An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank. |
 
 <Expandable title="inputSchema">
 
@@ -770,9 +866,11 @@ Update Studio Project Content
       "description": "An optional content to initialize the Studio project with. If this is set, 'from_url' and 'from_document' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank.      Example:     [{\"name\": \"Chapter A\", \"blocks\": [{\"sub_type\": \"p\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"A\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"B\", \"type\": \"tts_node\"}]}, {\"sub_type\": \"h1\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"C\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"D\", \"type\": \"tts_node\"}]}]}, {\"name\": \"Chapter B\", \"blocks\": [{\"sub_type\": \"p\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"E\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"F\", \"type\": \"tts_node\"}]}, {\"sub_type\": \"h2\", \"nodes\": [{\"voice_id\": \"6lCwbsX1yVjD49QmpkT0\", \"text\": \"G\", \"type\": \"tts_node\"}, {\"voice_id\": \"6lCwbsX1yVjD49QmpkT1\", \"text\": \"H\", \"type\": \"tts_node\"}]}]}]"
     },
     "from_document": {
+      "type": "string",
       "description": "An optional .epub, .pdf, .txt or similar file can be provided. If provided, we will initialize the Studio project with its content. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank."
     },
     "from_url": {
+      "type": "string",
       "description": "An optional URL from which we will extract content to initialize the Studio project. If this is set, 'from_url' and 'from_content' must be null. If neither 'from_url', 'from_document', 'from_content' are provided we will initialize the Studio project as blank."
     }
   },
@@ -1005,7 +1103,7 @@ Get Studio Project
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `project_id` | string | Yes | — | The ID of the Studio project. |
-| `share_id` | object | No | — | The share ID of the project |
+| `share_id` | string | No | — | The share ID of the project |
 
 <Expandable title="inputSchema">
 
@@ -1022,6 +1120,7 @@ Get Studio Project
       "description": "The ID of the Studio project."
     },
     "share_id": {
+      "type": "string",
       "description": "The share ID of the project"
     }
   },
@@ -1105,7 +1204,7 @@ List Dubs
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `cursor` | object | No | — | Used for fetching next page. Cursor is returned in the response. |
+| `cursor` | string | No | — | Used for fetching next page. Cursor is returned in the response. |
 | `page_size` | integer | No | — | How many dubs to return at maximum. Can not exceed 200, defaults to 100. |
 | `dubbing_status` | string | No | — | What state the dub is currently in. |
 | `filter_by_creator` | string | No | — | Filters who created the resources being listed, whether it was the user running the request or someone else that shared the resource with them. |
@@ -1123,6 +1222,7 @@ List Dubs
       "description": "Pink Connect ID for the authenticated connection"
     },
     "cursor": {
+      "type": "string",
       "description": "Used for fetching next page. Cursor is returned in the response."
     },
     "page_size": {
@@ -1180,7 +1280,7 @@ Create Pronunciation Dictionaries
 | --- | --- | --- | --- | --- |
 | `project_id` | string | Yes | — | The ID of the Studio project. |
 | `invalidate_affected_text` | boolean | No | — | This will automatically mark text in this project for reconversion when the new dictionary applies or the old one no longer does. |
-| `pronunciation_dictionary_locators` | any[] | Yes | — | A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"Vmd4Zor6fplcA7WrINey\",\"version_id\":\"hRPaxjlTdR7wFMhV4w0b\"&#125;"' --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"JzWtcGQMJ6bnlWwyMo7e\",\"version_id\":\"lbmwxiLu4q6txYxgdZqn\"&#125;"'. |
+| `pronunciation_dictionary_locators` | object[] | Yes | — | A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"Vmd4Zor6fplcA7WrINey\",\"version_id\":\"hRPaxjlTdR7wFMhV4w0b\"&#125;"' --form 'pronunciation_dictionary_locators="&#123;\"pronunciation_dictionary_id\":\"JzWtcGQMJ6bnlWwyMo7e\",\"version_id\":\"lbmwxiLu4q6txYxgdZqn\"&#125;"'. |
 
 <Expandable title="inputSchema">
 
@@ -1202,6 +1302,9 @@ Create Pronunciation Dictionaries
     },
     "pronunciation_dictionary_locators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of pronunciation dictionary locators (pronunciation_dictionary_id, version_id) encoded as a list of JSON strings for pronunciation dictionaries to be applied to the text. A list of json encoded strings is required as adding projects may occur through formData as opposed to jsonBody. To specify multiple dictionaries use multiple --form lines in your curl, such as --form 'pronunciation_dictionary_locators=\"{\\\"pronunciation_dictionary_id\\\":\\\"Vmd4Zor6fplcA7WrINey\\\",\\\"version_id\\\":\\\"hRPaxjlTdR7wFMhV4w0b\\\"}\"' --form 'pronunciation_dictionary_locators=\"{\\\"pronunciation_dictionary_id\\\":\\\"JzWtcGQMJ6bnlWwyMo7e\\\",\\\"version_id\\\":\\\"lbmwxiLu4q6txYxgdZqn\\\"}\"'."
     }
   },
