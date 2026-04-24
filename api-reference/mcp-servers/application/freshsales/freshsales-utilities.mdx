@@ -12,11 +12,21 @@ description: "Freshsales Utilities"
 
 | Tool | Description |
 | --- | --- |
+| [`freshsales_utilities_clone_custom_module_record`](#freshsales_utilities_clone_custom_module_record) | Clone a custom module record |
+| [`freshsales_utilities_create_custom_field`](#freshsales_utilities_create_custom_field) | Create a custom field on a module |
+| [`freshsales_utilities_create_custom_module`](#freshsales_utilities_create_custom_module) | Create a custom module definition |
+| [`freshsales_utilities_create_custom_module_record`](#freshsales_utilities_create_custom_module_record) | Create a record in a custom module |
+| [`freshsales_utilities_delete_custom_module`](#freshsales_utilities_delete_custom_module) | Delete a custom module definition |
+| [`freshsales_utilities_delete_custom_module_record`](#freshsales_utilities_delete_custom_module_record) | Delete a custom module record |
+| [`freshsales_utilities_forget_custom_module_record`](#freshsales_utilities_forget_custom_module_record) | Permanently delete (forget) a custom module record |
+| [`freshsales_utilities_get_custom_module_record`](#freshsales_utilities_get_custom_module_record) | Get a custom module record by ID |
 | [`freshsales_utilities_get_job_status`](#freshsales_utilities_get_job_status) | Get the status of an async job |
 | [`freshsales_utilities_list_business_types`](#freshsales_utilities_list_business_types) | List business types |
 | [`freshsales_utilities_list_campaigns`](#freshsales_utilities_list_campaigns) | List campaigns |
 | [`freshsales_utilities_list_contact_statuses`](#freshsales_utilities_list_contact_statuses) | List contact statuses |
 | [`freshsales_utilities_list_currencies`](#freshsales_utilities_list_currencies) | List configured currencies |
+| [`freshsales_utilities_list_custom_module_records_by_view`](#freshsales_utilities_list_custom_module_records_by_view) | List custom module records in a view |
+| [`freshsales_utilities_list_custom_modules`](#freshsales_utilities_list_custom_modules) | List all custom module definitions |
 | [`freshsales_utilities_list_deal_payment_statuses`](#freshsales_utilities_list_deal_payment_statuses) | List deal payment statuses |
 | [`freshsales_utilities_list_deal_reasons`](#freshsales_utilities_list_deal_reasons) | List deal (won/lost) reasons |
 | [`freshsales_utilities_list_deal_stages`](#freshsales_utilities_list_deal_stages) | List deal stages |
@@ -26,12 +36,350 @@ description: "Freshsales Utilities"
 | [`freshsales_utilities_list_industry_types`](#freshsales_utilities_list_industry_types) | List industry types |
 | [`freshsales_utilities_list_lead_sources`](#freshsales_utilities_list_lead_sources) | List lead sources |
 | [`freshsales_utilities_list_lifecycle_stages`](#freshsales_utilities_list_lifecycle_stages) | List lifecycle stages |
+| [`freshsales_utilities_list_module_fields`](#freshsales_utilities_list_module_fields) | List field definitions for a module |
 | [`freshsales_utilities_list_owners`](#freshsales_utilities_list_owners) | List available owners |
 | [`freshsales_utilities_list_sales_activity_outcomes`](#freshsales_utilities_list_sales_activity_outcomes) | List sales activity outcomes |
 | [`freshsales_utilities_list_sales_activity_types`](#freshsales_utilities_list_sales_activity_types) | List sales activity types |
 | [`freshsales_utilities_list_territories`](#freshsales_utilities_list_territories) | List territories |
 | [`freshsales_utilities_lookup`](#freshsales_utilities_lookup) | Look up records by a specific field value |
 | [`freshsales_utilities_search`](#freshsales_utilities_search) | Full-text search across CRM entities |
+| [`freshsales_utilities_update_custom_module`](#freshsales_utilities_update_custom_module) | Update a custom module definition |
+| [`freshsales_utilities_update_custom_module_record`](#freshsales_utilities_update_custom_module_record) | Update a custom module record |
+
+---
+
+## freshsales_utilities_clone_custom_module_record
+
+Clone a custom module record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `id` | integer | Yes | — | Numeric ID of the record to clone. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the record to clone."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_create_custom_field
+
+Create a custom field on a module
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityType` | string | Yes | — | The entity type to add the field to (e.g., 'contacts', 'sales_accounts', 'deals', or a custom module API name). |
+| `formId` | integer | Yes | — | Numeric ID of the form to add the field to. Use `listModuleFields` to discover form IDs. |
+| `field` | object | Yes | — | Field definition. Common keys: name (required), label (required), type (required — e.g., 'text', 'number', 'dropdown', 'date', 'checkbox'), required (boolean), choices (array, for dropdown fields). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityType": {
+      "type": "string",
+      "description": "The entity type to add the field to (e.g., 'contacts', 'sales_accounts', 'deals', or a custom module API name)."
+    },
+    "formId": {
+      "type": "integer",
+      "description": "Numeric ID of the form to add the field to. Use `listModuleFields` to discover form IDs."
+    },
+    "field": {
+      "type": "object",
+      "description": "Field definition. Common keys: name (required), label (required), type (required — e.g., 'text', 'number', 'dropdown', 'date', 'checkbox'), required (boolean), choices (array, for dropdown fields)."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityType",
+    "formId",
+    "field"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_create_custom_module
+
+Create a custom module definition
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `module_customization` | object | Yes | — | Module definition fields. Common keys: name (required), label, label_in_plural, icon_name, description. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "module_customization": {
+      "type": "object",
+      "description": "Module definition fields. Common keys: name (required), label, label_in_plural, icon_name, description."
+    }
+  },
+  "required": [
+    "PCID",
+    "module_customization"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_create_custom_module_record
+
+Create a record in a custom module
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module (e.g., 'cm_vehicles'). Use `listCustomModules` to discover available names. |
+| `custom_module` | object | Yes | — | Record fields. Keys depend on the custom module's field definitions (e.g., cf_make, cf_model, cf_year). Use `listModuleFields` to discover available fields. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module (e.g., 'cm_vehicles'). Use `listCustomModules` to discover available names."
+    },
+    "custom_module": {
+      "type": "object",
+      "description": "Record fields. Keys depend on the custom module's field definitions (e.g., cf_make, cf_model, cf_year). Use `listModuleFields` to discover available fields."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "custom_module"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_delete_custom_module
+
+Delete a custom module definition
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | integer | Yes | — | Numeric ID of the custom module definition to delete. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the custom module definition to delete."
+    }
+  },
+  "required": [
+    "PCID",
+    "id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_delete_custom_module_record
+
+Delete a custom module record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `id` | integer | Yes | — | Numeric ID of the record to delete. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the record to delete."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_forget_custom_module_record
+
+Permanently delete (forget) a custom module record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `id` | integer | Yes | — | Numeric ID of the record to permanently delete. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the record to permanently delete."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_get_custom_module_record
+
+Get a custom module record by ID
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `id` | integer | Yes | — | Numeric ID of the record. |
+| `include` | string | No | — | Comma-separated list of associated resources to side-load. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the record."
+    },
+    "include": {
+      "type": "string",
+      "description": "Comma-separated list of associated resources to side-load."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "id"
+  ]
+}
+```
+
+</Expandable>
 
 ---
 
@@ -149,6 +497,92 @@ List contact statuses
 ## freshsales_utilities_list_currencies
 
 List configured currencies
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_list_custom_module_records_by_view
+
+List custom module records in a view
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `viewId` | integer | Yes | — | The numeric ID of the saved view/filter. |
+| `page` | integer | No | — | Page number for paginated results (default 1). |
+| `sort` | string | No | — | Field name to sort the result set by. |
+| `sort_type` | string | No | — | Sort direction. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "viewId": {
+      "type": "integer",
+      "description": "The numeric ID of the saved view/filter."
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number for paginated results (default 1)."
+    },
+    "sort": {
+      "type": "string",
+      "description": "Field name to sort the result set by."
+    },
+    "sort_type": {
+      "type": "string",
+      "description": "Sort direction.",
+      "enum": [
+        "asc",
+        "desc"
+      ]
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "viewId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_list_custom_modules
+
+List all custom module definitions
 
 <Expandable title="inputSchema">
 
@@ -407,6 +841,42 @@ List lifecycle stages
 
 ---
 
+## freshsales_utilities_list_module_fields
+
+List field definitions for a module
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityType` | string | Yes | — | The entity type (e.g., 'contacts', 'sales_accounts', 'deals', or a custom module API name). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityType": {
+      "type": "string",
+      "description": "The entity type (e.g., 'contacts', 'sales_accounts', 'deals', or a custom module API name)."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityType"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## freshsales_utilities_list_owners
 
 List available owners
@@ -589,6 +1059,96 @@ Full-text search across CRM entities
     "PCID",
     "q",
     "include"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_update_custom_module
+
+Update a custom module definition
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | integer | Yes | — | Numeric ID of the custom module definition. |
+| `module_customization` | object | Yes | — | Partial module definition fields to update. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the custom module definition."
+    },
+    "module_customization": {
+      "type": "object",
+      "description": "Partial module definition fields to update."
+    }
+  },
+  "required": [
+    "PCID",
+    "id",
+    "module_customization"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_utilities_update_custom_module_record
+
+Update a custom module record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entityName` | string | Yes | — | The API name of the custom module. |
+| `id` | integer | Yes | — | Numeric ID of the record to update. |
+| `custom_module` | object | Yes | — | Partial record fields to update. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "entityName": {
+      "type": "string",
+      "description": "The API name of the custom module."
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the record to update."
+    },
+    "custom_module": {
+      "type": "object",
+      "description": "Partial record fields to update."
+    }
+  },
+  "required": [
+    "PCID",
+    "entityName",
+    "id",
+    "custom_module"
   ]
 }
 ```

@@ -13,6 +13,8 @@ description: "Freshsales Activities"
 | Tool | Description |
 | --- | --- |
 | [`freshsales_activities_create_appointment`](#freshsales_activities_create_appointment) | Create an appointment |
+| [`freshsales_activities_create_document_link`](#freshsales_activities_create_document_link) | Attach a URL link to a CRM record |
+| [`freshsales_activities_create_file`](#freshsales_activities_create_file) | Attach a file to a CRM record |
 | [`freshsales_activities_create_note`](#freshsales_activities_create_note) | Create a note |
 | [`freshsales_activities_create_sales_activity`](#freshsales_activities_create_sales_activity) | Create a sales activity |
 | [`freshsales_activities_create_task`](#freshsales_activities_create_task) | Create a task |
@@ -24,6 +26,7 @@ description: "Freshsales Activities"
 | [`freshsales_activities_get_sales_activity`](#freshsales_activities_get_sales_activity) | Get a sales activity by ID |
 | [`freshsales_activities_get_task`](#freshsales_activities_get_task) | Get a task by ID |
 | [`freshsales_activities_list_appointments`](#freshsales_activities_list_appointments) | List appointments |
+| [`freshsales_activities_list_contact_document_associations`](#freshsales_activities_list_contact_document_associations) | List files and links for a contact |
 | [`freshsales_activities_list_sales_activities`](#freshsales_activities_list_sales_activities) | List sales activities |
 | [`freshsales_activities_list_sales_activity_fields`](#freshsales_activities_list_sales_activity_fields) | List sales activity field definitions |
 | [`freshsales_activities_list_tasks`](#freshsales_activities_list_tasks) | List tasks |
@@ -63,6 +66,78 @@ Create an appointment
   "required": [
     "PCID",
     "appointment"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_activities_create_document_link
+
+Attach a URL link to a CRM record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `document_link` | object | Yes | — | Link fields. Common keys: url (required), targetable_type ('Contact', 'SalesAccount', or 'Deal'), targetable_id (integer — ID of the record to attach to), name (optional display name). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "document_link": {
+      "type": "object",
+      "description": "Link fields. Common keys: url (required), targetable_type ('Contact', 'SalesAccount', or 'Deal'), targetable_id (integer — ID of the record to attach to), name (optional display name)."
+    }
+  },
+  "required": [
+    "PCID",
+    "document_link"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_activities_create_file
+
+Attach a file to a CRM record
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `document` | object | Yes | — | File fields. Common keys: name (required), url (required — the file URL), targetable_type ('Contact', 'SalesAccount', or 'Deal'), targetable_id (integer — ID of the record to attach to). |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "document": {
+      "type": "object",
+      "description": "File fields. Common keys: name (required), url (required — the file URL), targetable_type ('Contact', 'SalesAccount', or 'Deal'), targetable_id (integer — ID of the record to attach to)."
+    }
+  },
+  "required": [
+    "PCID",
+    "document"
   ]
 }
 ```
@@ -473,6 +548,42 @@ List appointments
   },
   "required": [
     "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshsales_activities_list_contact_document_associations
+
+List files and links for a contact
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | integer | Yes | — | Numeric ID of the contact. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "id": {
+      "type": "integer",
+      "description": "Numeric ID of the contact."
+    }
+  },
+  "required": [
+    "PCID",
+    "id"
   ]
 }
 ```
