@@ -52,9 +52,9 @@ Create a new ad group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `AdGroupName` | string | Yes | — | Display name of the ad group |
-| `AssociatedBidLists` | any[] | No | — | Bid lists associated with this ad group |
+| `AssociatedBidLists` | object[] | No | — | Bid lists associated with this ad group |
 | `CampaignId` | string | Yes | — | ID of the campaign this ad group belongs to |
-| `CreativeIds` | any[] | No | — | Creative IDs to associate with this ad group |
+| `CreativeIds` | string[] | No | — | Creative IDs to associate with this ad group |
 | `Description` | string | No | — | Optional description |
 | `IndustryCategoryId` | integer | No | — | Industry category ID |
 | `IsEnabled` | boolean | No | — | Whether the ad group is enabled |
@@ -76,6 +76,9 @@ Create a new ad group
     },
     "AssociatedBidLists": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Bid lists associated with this ad group"
     },
     "CampaignId": {
@@ -84,6 +87,9 @@ Create a new ad group
     },
     "CreativeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Creative IDs to associate with this ad group"
     },
     "Description": {
@@ -332,7 +338,7 @@ Create a new campaign
 | --- | --- | --- | --- | --- |
 | `AdvertiserId` | string | Yes | — | ID of the advertiser that owns this campaign |
 | `Budget` | object | Yes | — | The budget value |
-| `CampaignConversionReportingColumns` | any[] | No | — | Conversion reporting column IDs to associate |
+| `CampaignConversionReportingColumns` | string[] | No | — | Conversion reporting column IDs to associate |
 | `CampaignName` | string | Yes | — | Display name of the campaign |
 | `DailyBudget` | object | No | — | Daily Budget |
 | `Description` | string | No | — | Optional campaign description |
@@ -372,6 +378,9 @@ Create a new campaign
     },
     "CampaignConversionReportingColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Conversion reporting column IDs to associate"
     },
     "CampaignName": {
@@ -520,7 +529,7 @@ Create a new creative
 | `IsHTTPS` | boolean | No | — | Whether the creative serves over HTTPS |
 | `LandingPageUrl` | string | No | — | Click-through URL |
 | `Tag` | string | No | — | The ad tag or creative markup |
-| `ThirdPartyTags` | any[] | No | — | Third-party tracking tags |
+| `ThirdPartyTags` | object[] | No | — | Third-party tracking tags |
 
 <Expandable title="inputSchema">
 
@@ -580,6 +589,9 @@ Create a new creative
     },
     "ThirdPartyTags": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Third-party tracking tags"
     }
   },
@@ -967,7 +979,7 @@ Query ad groups by campaign ID
 | `CampaignId` | string | Yes | — | ID of the campaign to query ad groups for |
 | `PageSize` | integer | No | — | Number of results per page |
 | `PageStartIndex` | integer | No | — | Page Start Index |
-| `SearchTerms` | any[] | No | — | Optional search terms to filter ad groups by name |
+| `SearchTerms` | string[] | No | — | Optional search terms to filter ad groups by name |
 
 <Expandable title="inputSchema">
 
@@ -993,6 +1005,9 @@ Query ad groups by campaign ID
     },
     "SearchTerms": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional search terms to filter ad groups by name"
     }
   },
@@ -1018,7 +1033,7 @@ Query advertisers by partner ID
 | `PageSize` | integer | No | — | Number of results per page |
 | `PageStartIndex` | integer | No | — | Zero-based index of the first result to return |
 | `PartnerId` | string | Yes | — | ID of the partner to query advertisers for |
-| `SearchTerms` | any[] | No | — | Optional search terms to filter advertisers by name |
+| `SearchTerms` | string[] | No | — | Optional search terms to filter advertisers by name |
 
 <Expandable title="inputSchema">
 
@@ -1044,6 +1059,9 @@ Query advertisers by partner ID
     },
     "SearchTerms": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional search terms to filter advertisers by name"
     }
   },
@@ -1069,7 +1087,7 @@ Query campaigns by advertiser ID
 | `AdvertiserId` | string | Yes | — | ID of the advertiser to query campaigns for |
 | `PageSize` | integer | No | — | Number of results per page |
 | `PageStartIndex` | integer | No | — | Page Start Index |
-| `SearchTerms` | any[] | No | — | Optional search terms to filter campaigns by name |
+| `SearchTerms` | string[] | No | — | Optional search terms to filter campaigns by name |
 
 <Expandable title="inputSchema">
 
@@ -1095,6 +1113,9 @@ Query campaigns by advertiser ID
     },
     "SearchTerms": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional search terms to filter campaigns by name"
     }
   },
@@ -1120,7 +1141,7 @@ Query creatives by advertiser ID
 | `AdvertiserId` | string | Yes | — | ID of the advertiser to query creatives for |
 | `PageSize` | integer | No | — | Number of results per page |
 | `PageStartIndex` | integer | No | — | Page Start Index |
-| `SearchTerms` | any[] | No | — | Optional search terms to filter by name |
+| `SearchTerms` | string[] | No | — | Optional search terms to filter by name |
 
 <Expandable title="inputSchema">
 
@@ -1146,6 +1167,9 @@ Query creatives by advertiser ID
     },
     "SearchTerms": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional search terms to filter by name"
     }
   },
@@ -1170,8 +1194,8 @@ Update an existing ad group
 | --- | --- | --- | --- | --- |
 | `AdGroupId` | string | Yes | — | ID of the ad group to update |
 | `AdGroupName` | string | No | — | Ad Group Name |
-| `AssociatedBidLists` | any[] | No | — | Associated Bid Lists |
-| `CreativeIds` | any[] | No | — | Creative Ids |
+| `AssociatedBidLists` | object[] | No | — | Associated Bid Lists |
+| `CreativeIds` | string[] | No | — | Creative Ids |
 | `Description` | string | No | — | The description value |
 | `IndustryCategoryId` | integer | No | — | Industry Category Id |
 | `IsEnabled` | boolean | No | — | Is Enabled |
@@ -1197,10 +1221,16 @@ Update an existing ad group
     },
     "AssociatedBidLists": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Associated Bid Lists"
     },
     "CreativeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Creative Ids"
     },
     "Description": {
@@ -1580,7 +1610,7 @@ Update an existing creative
 | `IsHTTPS` | boolean | No | — | Is HTTPS |
 | `LandingPageUrl` | string | No | — | Landing Page Url |
 | `Tag` | string | No | — | The tag value |
-| `ThirdPartyTags` | any[] | No | — | Third Party Tags |
+| `ThirdPartyTags` | object[] | No | — | Third Party Tags |
 
 <Expandable title="inputSchema">
 
@@ -1640,6 +1670,9 @@ Update an existing creative
     },
     "ThirdPartyTags": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Third Party Tags"
     }
   },

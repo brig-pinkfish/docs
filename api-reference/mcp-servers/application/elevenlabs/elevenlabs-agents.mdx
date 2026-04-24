@@ -49,9 +49,9 @@ Create Agent
 | --- | --- | --- | --- | --- |
 | `enable_versioning` | boolean | No | — | Enable versioning for the agent |
 | `conversation_config` | object | Yes | — | Conversation Config |
-| `name` | object | No | — | A name to make the agent easier to find |
+| `name` | string | No | — | A name to make the agent easier to find |
 | `platform_settings` | object | No | — | Platform settings for the agent are all settings that aren't related to the conversation orchestration and content. |
-| `tags` | object | No | — | Tags to help classify and filter the agent |
+| `tags` | string[] | No | — | Tags to help classify and filter the agent |
 | `workflow` | object | No | — | The workflow value |
 
 <Expandable title="inputSchema">
@@ -103,12 +103,72 @@ Create Agent
       }
     },
     "name": {
+      "type": "string",
       "description": "A name to make the agent easier to find"
     },
     "platform_settings": {
-      "description": "Platform settings for the agent are all settings that aren't related to the conversation orchestration and content."
+      "type": "object",
+      "description": "Platform settings for the agent are all settings that aren't related to the conversation orchestration and content.",
+      "properties": {
+        "evaluation": {
+          "type": "object",
+          "description": "Settings to evaluate an agent's performance. Agents are evaluated against a set of criteria, with success being defined as meeting some combination of those criteria."
+        },
+        "widget": {
+          "type": "object",
+          "description": "The widget value"
+        },
+        "data_collection": {
+          "type": "object",
+          "description": "Data collection settings"
+        },
+        "data_collection_scopes": {
+          "type": "object",
+          "description": "Scope per data collection item ID. Missing keys default to conversation scope."
+        },
+        "overrides": {
+          "type": "object",
+          "description": "The overrides value"
+        },
+        "workspace_overrides": {
+          "type": "object",
+          "description": "Workspace Overrides"
+        },
+        "testing": {
+          "type": "object",
+          "description": "Settings for agent testing configuration."
+        },
+        "archived": {
+          "type": "boolean",
+          "description": "Whether the agent is archived"
+        },
+        "guardrails": {
+          "type": "object",
+          "description": "The guardrails value"
+        },
+        "summary_language": {
+          "type": "string",
+          "description": "Language for all conversation analysis outputs (summaries, titles, evaluation rationales, data collection rationales). If not set, the language will be inferred from the conversation. Must be one of the supported conversation languages."
+        },
+        "auth": {
+          "type": "object",
+          "description": "The auth value"
+        },
+        "call_limits": {
+          "type": "object",
+          "description": "Call Limits"
+        },
+        "privacy": {
+          "type": "object",
+          "description": "The privacy value"
+        }
+      }
     },
     "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Tags to help classify and filter the agent"
     },
     "workflow": {
@@ -184,8 +244,8 @@ Create Text Document
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `name` | object | No | — | A custom, human-readable name for the document. |
-| `parent_folder_id` | object | No | — | If set, the created document or folder will be placed inside the given folder. |
+| `name` | string | No | — | A custom, human-readable name for the document. |
+| `parent_folder_id` | string | No | — | If set, the created document or folder will be placed inside the given folder. |
 | `text` | string | Yes | — | Text content to be added to the knowledge base. |
 
 <Expandable title="inputSchema">
@@ -199,9 +259,11 @@ Create Text Document
       "description": "Pink Connect ID for the authenticated connection"
     },
     "name": {
+      "type": "string",
       "description": "A custom, human-readable name for the document."
     },
     "parent_folder_id": {
+      "type": "string",
       "description": "If set, the created document or folder will be placed inside the given folder."
     },
     "text": {
@@ -378,7 +440,7 @@ Duplicate Agent
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `agent_id` | string | Yes | — | The id of an agent. This is returned on agent creation. |
-| `name` | object | No | — | A name to make the agent easier to find |
+| `name` | string | No | — | A name to make the agent easier to find |
 
 <Expandable title="inputSchema">
 
@@ -395,6 +457,7 @@ Duplicate Agent
       "description": "The id of an agent. This is returned on agent creation."
     },
     "name": {
+      "type": "string",
       "description": "A name to make the agent easier to find"
     }
   },
@@ -454,8 +517,8 @@ Get Agent
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `agent_id` | string | Yes | — | The id of an agent. This is returned on agent creation. |
-| `version_id` | object | No | — | The ID of the agent version to use |
-| `branch_id` | object | No | — | The ID of the branch to use |
+| `version_id` | string | No | — | The ID of the agent version to use |
+| `branch_id` | string | No | — | The ID of the branch to use |
 
 <Expandable title="inputSchema">
 
@@ -472,9 +535,11 @@ Get Agent
       "description": "The id of an agent. This is returned on agent creation."
     },
     "version_id": {
+      "type": "string",
       "description": "The ID of the agent version to use"
     },
     "branch_id": {
+      "type": "string",
       "description": "The ID of the branch to use"
     }
   },
@@ -497,7 +562,7 @@ Get Agent Summaries
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `agent_ids` | any[] | Yes | — | List of agent IDs to fetch summaries for |
+| `agent_ids` | string[] | Yes | — | List of agent IDs to fetch summaries for |
 
 <Expandable title="inputSchema">
 
@@ -511,6 +576,9 @@ Get Agent Summaries
     },
     "agent_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of agent IDs to fetch summaries for"
     }
   },
@@ -534,7 +602,7 @@ Get Agent Widget Config
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `agent_id` | string | Yes | — | The id of an agent. This is returned on agent creation. |
-| `conversation_signature` | object | No | — | An expiring token that enables a websocket conversation to start. These can be generated for an agent using the /v1/convai/conversation/get-signed-url endpoint |
+| `conversation_signature` | string | No | — | An expiring token that enables a websocket conversation to start. These can be generated for an agent using the /v1/convai/conversation/get-signed-url endpoint |
 
 <Expandable title="inputSchema">
 
@@ -551,6 +619,7 @@ Get Agent Widget Config
       "description": "The id of an agent. This is returned on agent creation."
     },
     "conversation_signature": {
+      "type": "string",
       "description": "An expiring token that enables a websocket conversation to start. These can be generated for an agent using the /v1/convai/conversation/get-signed-url endpoint"
     }
   },
@@ -574,13 +643,13 @@ List Agents
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `page_size` | integer | No | — | How many Agents to return at maximum. Can not exceed 100, defaults to 30. |
-| `search` | object | No | — | Search by agents name. |
-| `archived` | object | No | — | Filter agents by archived status |
+| `search` | string | No | — | Search by agents name. |
+| `archived` | boolean | No | — | Filter agents by archived status |
 | `show_only_owned_agents` | boolean | No | — | If set to true, the endpoint will omit any agents that were shared with you by someone else and include only the ones you own. Deprecated: use created_by_user_id instead. |
-| `created_by_user_id` | object | No | — | Filter agents by creator user ID. When set, only agents created by this user are returned. Takes precedence over show_only_owned_agents. Use '@me' to refer to the authenticated user. |
+| `created_by_user_id` | string | No | — | Filter agents by creator user ID. When set, only agents created by this user are returned. Takes precedence over show_only_owned_agents. Use '@me' to refer to the authenticated user. |
 | `sort_direction` | string | No | — | The direction to sort the results |
-| `sort_by` | object | No | — | The field to sort the results by |
-| `cursor` | object | No | — | Used for fetching next page. Cursor is returned in the response. |
+| `sort_by` | string | No | — | The field to sort the results by |
+| `cursor` | string | No | — | Used for fetching next page. Cursor is returned in the response. |
 
 <Expandable title="inputSchema">
 
@@ -597,9 +666,11 @@ List Agents
       "description": "How many Agents to return at maximum. Can not exceed 100, defaults to 30."
     },
     "search": {
+      "type": "string",
       "description": "Search by agents name."
     },
     "archived": {
+      "type": "boolean",
       "description": "Filter agents by archived status"
     },
     "show_only_owned_agents": {
@@ -607,6 +678,7 @@ List Agents
       "description": "If set to true, the endpoint will omit any agents that were shared with you by someone else and include only the ones you own. Deprecated: use created_by_user_id instead."
     },
     "created_by_user_id": {
+      "type": "string",
       "description": "Filter agents by creator user ID. When set, only agents created by this user are returned. Takes precedence over show_only_owned_agents. Use '@me' to refer to the authenticated user."
     },
     "sort_direction": {
@@ -618,9 +690,16 @@ List Agents
       ]
     },
     "sort_by": {
-      "description": "The field to sort the results by"
+      "type": "string",
+      "description": "The field to sort the results by",
+      "enum": [
+        "name",
+        "created_at",
+        "call_count_7d"
+      ]
     },
     "cursor": {
+      "type": "string",
       "description": "Used for fetching next page. Cursor is returned in the response."
     }
   },
@@ -678,28 +757,28 @@ Get Conversations
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `cursor` | object | No | — | Used for fetching next page. Cursor is returned in the response. |
-| `agent_id` | object | No | — | The id of the agent you're taking the action on. |
-| `call_successful` | object | No | — | The result of the success evaluation |
-| `call_start_before_unix` | object | No | — | Unix timestamp (in seconds) to filter conversations up to this start date. |
-| `call_start_after_unix` | object | No | — | Unix timestamp (in seconds) to filter conversations after to this start date. |
-| `call_duration_min_secs` | object | No | — | Minimum call duration in seconds. |
-| `call_duration_max_secs` | object | No | — | Maximum call duration in seconds. |
-| `rating_max` | object | No | — | Maximum overall rating (1-5). |
-| `rating_min` | object | No | — | Minimum overall rating (1-5). |
-| `has_feedback_comment` | object | No | — | Filter conversations with user feedback comments. |
-| `user_id` | object | No | — | Filter conversations by the user ID who initiated them. |
-| `evaluation_params` | object | No | — | Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success |
-| `data_collection_params` | object | No | — | Data collection filters. Repeat param. Format: id:op:value where op is one of eq\|neq\|gt\|gte\|lt\|lte\|in\|exists\|missing. For in, pipe-delimit values. |
-| `tool_names` | object | No | — | Filter conversations by tool names used during the call. |
-| `tool_names_successful` | object | No | — | Filter conversations by tool names that had successful calls. |
-| `tool_names_errored` | object | No | — | Filter conversations by tool names that had errored calls. |
-| `main_languages` | object | No | — | Filter conversations by detected main language (language code). |
+| `cursor` | string | No | — | Used for fetching next page. Cursor is returned in the response. |
+| `agent_id` | string | No | — | The id of the agent you're taking the action on. |
+| `call_successful` | string | No | — | The result of the success evaluation |
+| `call_start_before_unix` | integer | No | — | Unix timestamp (in seconds) to filter conversations up to this start date. |
+| `call_start_after_unix` | integer | No | — | Unix timestamp (in seconds) to filter conversations after to this start date. |
+| `call_duration_min_secs` | integer | No | — | Minimum call duration in seconds. |
+| `call_duration_max_secs` | integer | No | — | Maximum call duration in seconds. |
+| `rating_max` | integer | No | — | Maximum overall rating (1-5). |
+| `rating_min` | integer | No | — | Minimum overall rating (1-5). |
+| `has_feedback_comment` | boolean | No | — | Filter conversations with user feedback comments. |
+| `user_id` | string | No | — | Filter conversations by the user ID who initiated them. |
+| `evaluation_params` | string[] | No | — | Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success |
+| `data_collection_params` | string[] | No | — | Data collection filters. Repeat param. Format: id:op:value where op is one of eq\|neq\|gt\|gte\|lt\|lte\|in\|exists\|missing. For in, pipe-delimit values. |
+| `tool_names` | string[] | No | — | Filter conversations by tool names used during the call. |
+| `tool_names_successful` | string[] | No | — | Filter conversations by tool names that had successful calls. |
+| `tool_names_errored` | string[] | No | — | Filter conversations by tool names that had errored calls. |
+| `main_languages` | string[] | No | — | Filter conversations by detected main language (language code). |
 | `page_size` | integer | No | — | How many conversations to return at maximum. Can not exceed 100, defaults to 30. |
 | `summary_mode` | string | No | — | Whether to include transcript summaries in the response. |
-| `search` | object | No | — | Full-text or fuzzy search over transcript messages |
-| `conversation_initiation_source` | object | No | — | Conversation Initiation Source |
-| `branch_id` | object | No | — | Filter conversations by branch ID. |
+| `search` | string | No | — | Full-text or fuzzy search over transcript messages |
+| `conversation_initiation_source` | string | No | — | Enum representing the possible sources for conversation initiation. |
+| `branch_id` | string | No | — | Filter conversations by branch ID. |
 
 <Expandable title="inputSchema">
 
@@ -712,54 +791,94 @@ Get Conversations
       "description": "Pink Connect ID for the authenticated connection"
     },
     "cursor": {
+      "type": "string",
       "description": "Used for fetching next page. Cursor is returned in the response."
     },
     "agent_id": {
+      "type": "string",
       "description": "The id of the agent you're taking the action on."
     },
     "call_successful": {
-      "description": "The result of the success evaluation"
+      "type": "string",
+      "description": "The result of the success evaluation",
+      "enum": [
+        "success",
+        "failure",
+        "unknown"
+      ]
     },
     "call_start_before_unix": {
+      "type": "integer",
       "description": "Unix timestamp (in seconds) to filter conversations up to this start date."
     },
     "call_start_after_unix": {
+      "type": "integer",
       "description": "Unix timestamp (in seconds) to filter conversations after to this start date."
     },
     "call_duration_min_secs": {
+      "type": "integer",
       "description": "Minimum call duration in seconds."
     },
     "call_duration_max_secs": {
+      "type": "integer",
       "description": "Maximum call duration in seconds."
     },
     "rating_max": {
+      "type": "integer",
       "description": "Maximum overall rating (1-5)."
     },
     "rating_min": {
+      "type": "integer",
       "description": "Minimum overall rating (1-5)."
     },
     "has_feedback_comment": {
+      "type": "boolean",
       "description": "Filter conversations with user feedback comments."
     },
     "user_id": {
+      "type": "string",
       "description": "Filter conversations by the user ID who initiated them."
     },
     "evaluation_params": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success"
     },
     "data_collection_params": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Data collection filters. Repeat param. Format: id:op:value where op is one of eq|neq|gt|gte|lt|lte|in|exists|missing. For in, pipe-delimit values."
     },
     "tool_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names used during the call."
     },
     "tool_names_successful": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names that had successful calls."
     },
     "tool_names_errored": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names that had errored calls."
     },
     "main_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by detected main language (language code)."
     },
     "page_size": {
@@ -775,12 +894,34 @@ Get Conversations
       ]
     },
     "search": {
+      "type": "string",
       "description": "Full-text or fuzzy search over transcript messages"
     },
     "conversation_initiation_source": {
-      "description": "Conversation Initiation Source"
+      "type": "string",
+      "description": "Enum representing the possible sources for conversation initiation.",
+      "enum": [
+        "unknown",
+        "android_sdk",
+        "node_js_sdk",
+        "react_native_sdk",
+        "react_sdk",
+        "js_sdk",
+        "python_sdk",
+        "widget",
+        "sip_trunk",
+        "twilio",
+        "genesys",
+        "swift_sdk",
+        "whatsapp",
+        "flutter_sdk",
+        "zendesk_integration",
+        "slack_integration",
+        "template_preview"
+      ]
     },
     "branch_id": {
+      "type": "string",
       "description": "Filter conversations by branch ID."
     }
   },
@@ -880,16 +1021,16 @@ Get Knowledge Base List
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `page_size` | integer | No | — | How many documents to return at maximum. Can not exceed 100, defaults to 30. |
-| `search` | object | No | — | If specified, the endpoint returns only such knowledge base documents whose names start with this string. |
+| `search` | string | No | — | If specified, the endpoint returns only such knowledge base documents whose names start with this string. |
 | `show_only_owned_documents` | boolean | No | — | If set to true, the endpoint will return only documents owned by you (and not shared from somebody else). Deprecated: use created_by_user_id instead. |
-| `created_by_user_id` | object | No | — | Filter documents by creator user ID. When set, only documents created by this user are returned. Takes precedence over show_only_owned_documents. Use '@me' to refer to the authenticated user. |
-| `types` | object | No | — | If present, the endpoint will return only documents of the given types. |
-| `parent_folder_id` | object | No | — | If set, the endpoint will return only documents that are direct children of the given folder. |
-| `ancestor_folder_id` | object | No | — | If set, the endpoint will return only documents that are descendants of the given folder. |
+| `created_by_user_id` | string | No | — | Filter documents by creator user ID. When set, only documents created by this user are returned. Takes precedence over show_only_owned_documents. Use '@me' to refer to the authenticated user. |
+| `types` | string[] | No | — | If present, the endpoint will return only documents of the given types. |
+| `parent_folder_id` | string | No | — | If set, the endpoint will return only documents that are direct children of the given folder. |
+| `ancestor_folder_id` | string | No | — | If set, the endpoint will return only documents that are descendants of the given folder. |
 | `folders_first` | boolean | No | — | Whether folders should be returned first in the list of documents. |
 | `sort_direction` | string | No | — | The direction to sort the results |
-| `sort_by` | object | No | — | The field to sort the results by |
-| `cursor` | object | No | — | Used for fetching next page. Cursor is returned in the response. |
+| `sort_by` | string | No | — | The field to sort the results by |
+| `cursor` | string | No | — | Used for fetching next page. Cursor is returned in the response. |
 
 <Expandable title="inputSchema">
 
@@ -906,6 +1047,7 @@ Get Knowledge Base List
       "description": "How many documents to return at maximum. Can not exceed 100, defaults to 30."
     },
     "search": {
+      "type": "string",
       "description": "If specified, the endpoint returns only such knowledge base documents whose names start with this string."
     },
     "show_only_owned_documents": {
@@ -913,15 +1055,28 @@ Get Knowledge Base List
       "description": "If set to true, the endpoint will return only documents owned by you (and not shared from somebody else). Deprecated: use created_by_user_id instead."
     },
     "created_by_user_id": {
+      "type": "string",
       "description": "Filter documents by creator user ID. When set, only documents created by this user are returned. Takes precedence over show_only_owned_documents. Use '@me' to refer to the authenticated user."
     },
     "types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "file",
+          "url",
+          "text",
+          "folder"
+        ]
+      },
       "description": "If present, the endpoint will return only documents of the given types."
     },
     "parent_folder_id": {
+      "type": "string",
       "description": "If set, the endpoint will return only documents that are direct children of the given folder."
     },
     "ancestor_folder_id": {
+      "type": "string",
       "description": "If set, the endpoint will return only documents that are descendants of the given folder."
     },
     "folders_first": {
@@ -937,9 +1092,17 @@ Get Knowledge Base List
       ]
     },
     "sort_by": {
-      "description": "The field to sort the results by"
+      "type": "string",
+      "description": "The field to sort the results by",
+      "enum": [
+        "name",
+        "created_at",
+        "updated_at",
+        "size"
+      ]
     },
     "cursor": {
+      "type": "string",
       "description": "Used for fetching next page. Cursor is returned in the response."
     }
   },
@@ -1024,12 +1187,12 @@ Patches An Agent Settings
 | --- | --- | --- | --- | --- |
 | `agent_id` | string | Yes | — | The id of an agent. This is returned on agent creation. |
 | `enable_versioning_if_not_enabled` | boolean | No | — | Enable versioning for the agent, if not already enabled |
-| `branch_id` | object | No | — | The ID of the branch to use |
+| `branch_id` | string | No | — | The ID of the branch to use |
 | `conversation_config` | object | No | — | Conversation configuration for an agent |
-| `name` | object | No | — | A name to make the agent easier to find |
+| `name` | string | No | — | A name to make the agent easier to find |
 | `platform_settings` | object | No | — | Platform settings for the agent are all settings that aren't related to the conversation orchestration and content. |
-| `tags` | object | No | — | Tags to help classify and filter the agent |
-| `version_description` | object | No | — | Description for this version when publishing changes (only applicable for versioned agents) |
+| `tags` | string[] | No | — | Tags to help classify and filter the agent |
+| `version_description` | string | No | — | Description for this version when publishing changes (only applicable for versioned agents) |
 | `workflow` | object | No | — | The workflow value |
 
 <Expandable title="inputSchema">
@@ -1051,21 +1214,30 @@ Patches An Agent Settings
       "description": "Enable versioning for the agent, if not already enabled"
     },
     "branch_id": {
+      "type": "string",
       "description": "The ID of the branch to use"
     },
     "conversation_config": {
+      "type": "object",
       "description": "Conversation configuration for an agent"
     },
     "name": {
+      "type": "string",
       "description": "A name to make the agent easier to find"
     },
     "platform_settings": {
+      "type": "object",
       "description": "Platform settings for the agent are all settings that aren't related to the conversation orchestration and content."
     },
     "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Tags to help classify and filter the agent"
     },
     "version_description": {
+      "type": "string",
       "description": "Description for this version when publishing changes (only applicable for versioned agents)"
     },
     "workflow": {
@@ -1107,7 +1279,7 @@ Send Conversation Feedback
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversation_id` | string | Yes | — | The id of the conversation you're taking the action on. |
-| `feedback` | object | No | — | Either 'like' or 'dislike' to indicate the feedback for the conversation. |
+| `feedback` | string | No | — | Either 'like' or 'dislike' to indicate the feedback for the conversation. |
 
 <Expandable title="inputSchema">
 
@@ -1124,7 +1296,12 @@ Send Conversation Feedback
       "description": "The id of the conversation you're taking the action on."
     },
     "feedback": {
-      "description": "Either 'like' or 'dislike' to indicate the feedback for the conversation."
+      "type": "string",
+      "description": "Either 'like' or 'dislike' to indicate the feedback for the conversation.",
+      "enum": [
+        "like",
+        "dislike"
+      ]
     }
   },
   "required": [
@@ -1183,28 +1360,28 @@ Text Search Conversation Messages
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `text_query` | string | Yes | — | The search query text for full-text and fuzzy matching |
-| `agent_id` | object | No | — | The id of the agent you're taking the action on. |
-| `call_successful` | object | No | — | The result of the success evaluation |
-| `call_start_before_unix` | object | No | — | Unix timestamp (in seconds) to filter conversations up to this start date. |
-| `call_start_after_unix` | object | No | — | Unix timestamp (in seconds) to filter conversations after to this start date. |
-| `call_duration_min_secs` | object | No | — | Minimum call duration in seconds. |
-| `call_duration_max_secs` | object | No | — | Maximum call duration in seconds. |
-| `rating_max` | object | No | — | Maximum overall rating (1-5). |
-| `rating_min` | object | No | — | Minimum overall rating (1-5). |
-| `has_feedback_comment` | object | No | — | Filter conversations with user feedback comments. |
-| `user_id` | object | No | — | Filter conversations by the user ID who initiated them. |
-| `evaluation_params` | object | No | — | Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success |
-| `data_collection_params` | object | No | — | Data collection filters. Repeat param. Format: id:op:value where op is one of eq\|neq\|gt\|gte\|lt\|lte\|in\|exists\|missing. For in, pipe-delimit values. |
-| `tool_names` | object | No | — | Filter conversations by tool names used during the call. |
-| `tool_names_successful` | object | No | — | Filter conversations by tool names that had successful calls. |
-| `tool_names_errored` | object | No | — | Filter conversations by tool names that had errored calls. |
-| `main_languages` | object | No | — | Filter conversations by detected main language (language code). |
+| `agent_id` | string | No | — | The id of the agent you're taking the action on. |
+| `call_successful` | string | No | — | The result of the success evaluation |
+| `call_start_before_unix` | integer | No | — | Unix timestamp (in seconds) to filter conversations up to this start date. |
+| `call_start_after_unix` | integer | No | — | Unix timestamp (in seconds) to filter conversations after to this start date. |
+| `call_duration_min_secs` | integer | No | — | Minimum call duration in seconds. |
+| `call_duration_max_secs` | integer | No | — | Maximum call duration in seconds. |
+| `rating_max` | integer | No | — | Maximum overall rating (1-5). |
+| `rating_min` | integer | No | — | Minimum overall rating (1-5). |
+| `has_feedback_comment` | boolean | No | — | Filter conversations with user feedback comments. |
+| `user_id` | string | No | — | Filter conversations by the user ID who initiated them. |
+| `evaluation_params` | string[] | No | — | Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success |
+| `data_collection_params` | string[] | No | — | Data collection filters. Repeat param. Format: id:op:value where op is one of eq\|neq\|gt\|gte\|lt\|lte\|in\|exists\|missing. For in, pipe-delimit values. |
+| `tool_names` | string[] | No | — | Filter conversations by tool names used during the call. |
+| `tool_names_successful` | string[] | No | — | Filter conversations by tool names that had successful calls. |
+| `tool_names_errored` | string[] | No | — | Filter conversations by tool names that had errored calls. |
+| `main_languages` | string[] | No | — | Filter conversations by detected main language (language code). |
 | `page_size` | integer | No | — | Number of results per page. Max 50. |
 | `summary_mode` | string | No | — | Whether to include transcript summaries in the response. |
-| `conversation_initiation_source` | object | No | — | Conversation Initiation Source |
-| `branch_id` | object | No | — | Filter conversations by branch ID. |
+| `conversation_initiation_source` | string | No | — | Enum representing the possible sources for conversation initiation. |
+| `branch_id` | string | No | — | Filter conversations by branch ID. |
 | `sort_by` | string | No | — | Sort order for search results. 'search_score' sorts by search score, 'created_at' sorts by conversation start time. |
-| `cursor` | object | No | — | Used for fetching next page. Cursor is returned in the response. |
+| `cursor` | string | No | — | Used for fetching next page. Cursor is returned in the response. |
 
 <Expandable title="inputSchema">
 
@@ -1221,51 +1398,90 @@ Text Search Conversation Messages
       "description": "The search query text for full-text and fuzzy matching"
     },
     "agent_id": {
+      "type": "string",
       "description": "The id of the agent you're taking the action on."
     },
     "call_successful": {
-      "description": "The result of the success evaluation"
+      "type": "string",
+      "description": "The result of the success evaluation",
+      "enum": [
+        "success",
+        "failure",
+        "unknown"
+      ]
     },
     "call_start_before_unix": {
+      "type": "integer",
       "description": "Unix timestamp (in seconds) to filter conversations up to this start date."
     },
     "call_start_after_unix": {
+      "type": "integer",
       "description": "Unix timestamp (in seconds) to filter conversations after to this start date."
     },
     "call_duration_min_secs": {
+      "type": "integer",
       "description": "Minimum call duration in seconds."
     },
     "call_duration_max_secs": {
+      "type": "integer",
       "description": "Maximum call duration in seconds."
     },
     "rating_max": {
+      "type": "integer",
       "description": "Maximum overall rating (1-5)."
     },
     "rating_min": {
+      "type": "integer",
       "description": "Minimum overall rating (1-5)."
     },
     "has_feedback_comment": {
+      "type": "boolean",
       "description": "Filter conversations with user feedback comments."
     },
     "user_id": {
+      "type": "string",
       "description": "Filter conversations by the user ID who initiated them."
     },
     "evaluation_params": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Evaluation filters. Repeat param. Format: criteria_id:result. Example: eval=value_framing:success"
     },
     "data_collection_params": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Data collection filters. Repeat param. Format: id:op:value where op is one of eq|neq|gt|gte|lt|lte|in|exists|missing. For in, pipe-delimit values."
     },
     "tool_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names used during the call."
     },
     "tool_names_successful": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names that had successful calls."
     },
     "tool_names_errored": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by tool names that had errored calls."
     },
     "main_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter conversations by detected main language (language code)."
     },
     "page_size": {
@@ -1281,9 +1497,30 @@ Text Search Conversation Messages
       ]
     },
     "conversation_initiation_source": {
-      "description": "Conversation Initiation Source"
+      "type": "string",
+      "description": "Enum representing the possible sources for conversation initiation.",
+      "enum": [
+        "unknown",
+        "android_sdk",
+        "node_js_sdk",
+        "react_native_sdk",
+        "react_sdk",
+        "js_sdk",
+        "python_sdk",
+        "widget",
+        "sip_trunk",
+        "twilio",
+        "genesys",
+        "swift_sdk",
+        "whatsapp",
+        "flutter_sdk",
+        "zendesk_integration",
+        "slack_integration",
+        "template_preview"
+      ]
     },
     "branch_id": {
+      "type": "string",
       "description": "Filter conversations by branch ID."
     },
     "sort_by": {
@@ -1295,6 +1532,7 @@ Text Search Conversation Messages
       ]
     },
     "cursor": {
+      "type": "string",
       "description": "Used for fetching next page. Cursor is returned in the response."
     }
   },

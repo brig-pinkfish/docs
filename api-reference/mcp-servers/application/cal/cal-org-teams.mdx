@@ -50,12 +50,12 @@ Create a phone call
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `eventTypeId` | number | Yes | — | eventTypeId |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
+| `eventTypeId` | number | Yes | — | Event Type Id |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
 | `beginMessage` | string | No | — | Begin message |
 | `calApiKey` | string | Yes | — | CAL API Key |
-| `enabled` | object | Yes | — | Enabled status |
+| `enabled` | boolean | Yes | — | Enabled status |
 | `generalPrompt` | string | No | — | General prompt |
 | `guestCompany` | string | No | — | Guest company |
 | `guestEmail` | string | No | — | Guest email |
@@ -77,15 +77,15 @@ Create a phone call
     },
     "eventTypeId": {
       "type": "number",
-      "description": "eventTypeId"
+      "description": "Event Type Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "beginMessage": {
       "type": "string",
@@ -96,7 +96,7 @@ Create a phone call
       "description": "CAL API Key"
     },
     "enabled": {
-      "type": "object",
+      "type": "boolean",
       "description": "Enabled status"
     },
     "generalPrompt": {
@@ -162,8 +162,8 @@ Create an event type
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `orgId` | number | Yes | — | Org Id |
 | `afterEventBuffer` | number | No | — | Extra time automatically blocked on your calendar after a meeting ends. This gives you time to wrap up, add notes, or decompress before your next commitment. |
 | `allowReschedulingCancelledBookings` | boolean | No | — | When enabled, users will be able to create a new booking when trying to reschedule a cancelled booking. |
 | `allowReschedulingPastBookings` | boolean | No | — | Enabling this option allows for past events to be rescheduled. |
@@ -177,40 +177,40 @@ Create an event type
 | `bookingRequiresAuthentication` | boolean | No | — | Boolean to require authentication for booking this event type via api. If true, only authenticated users who are the event-type owner or org/team admin/owner can book this event type. |
 | `bookingWindow` | object | No | — | Limit how far in the future this event can be booked |
 | `calVideoSettings` | object | No | — | Cal video settings for the event type. Platform customers can't manage this property because currently we have no way of determining if managed user is a host or an attendee. |
-| `color` | object | No | — | color |
+| `color` | object | No | — | The color value |
 | `confirmationPolicy` | object | No | — | Specify how the booking needs to be manually confirmed before it is pushed to the integrations and a confirmation mail is sent. |
 | `customName` | string | No | — | Customizable event name with valid variables:       &#123;Event type title&#125;, &#123;Organiser&#125;, &#123;Scheduler&#125;, &#123;Location&#125;, &#123;Organiser first name&#125;,       &#123;Scheduler first name&#125;, &#123;Scheduler last name&#125;, &#123;Event duration&#125;, &#123;LOCATION&#125;,       &#123;HOST/ATTENDEE&#125;, &#123;HOST&#125;, &#123;ATTENDEE&#125;, &#123;USER&#125; |
-| `description` | string | No | — | description |
-| `destinationCalendar` | object | No | — | destinationCalendar |
+| `description` | string | No | — | The description value |
+| `destinationCalendar` | object | No | — | Destination Calendar |
 | `disableCancelling` | object | No | — | Settings for disabling cancelling of this event type. |
 | `disableGuests` | boolean | No | — | If true, person booking this event can't add guests via their emails. |
 | `disableRescheduling` | object | No | — | Settings for disabling rescheduling of this event type. Can be always disabled or disabled when less than X minutes before the meeting. |
 | `emailSettings` | object | No | — | Email settings for this event type - only available for organization team event types. |
-| `hidden` | boolean | No | — | hidden |
-| `hideCalendarEventDetails` | boolean | No | — | hideCalendarEventDetails |
-| `hideCalendarNotes` | boolean | No | — | hideCalendarNotes |
+| `hidden` | boolean | No | — | The hidden value |
+| `hideCalendarEventDetails` | boolean | No | — | Hide Calendar Event Details |
+| `hideCalendarNotes` | boolean | No | — | Hide Calendar Notes |
 | `hideOrganizerEmail` | boolean | No | — | Boolean to Hide organizer's email address from the booking screen, email notifications, and calendar events |
-| `hosts` | any[] | No | — | Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both |
+| `hosts` | object[] | No | — | Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both |
 | `interfaceLanguage` | string | No | — | Set preferred language for the booking interface. Use empty string for visitor's browser language (default). |
-| `lengthInMinutes` | number | Yes | — | lengthInMinutes |
-| `lengthInMinutesOptions` | any[] | No | — | If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`. |
+| `lengthInMinutes` | number | Yes | — | Length In Minutes |
+| `lengthInMinutesOptions` | string[] | No | — | If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`. |
 | `locations` | any[] | No | — | Locations where the event will take place. If not provided, cal video link will be used as the location. Note: Setting a location to a conferencing app does not install the app - the app must already be installed. Via API, only Google Meet (google-meet), Microsoft Teams (office365-video), and Zoom (zoom) can be installed. Cal Video (cal-video) is installed by default. All other conferencing apps must be connected via the Cal.com web app and are not available for Platform plan customers. You can only set an event type location to an app that has already been installed or connected. |
-| `lockTimeZoneToggleOnBookingPage` | boolean | No | — | lockTimeZoneToggleOnBookingPage |
+| `lockTimeZoneToggleOnBookingPage` | boolean | No | — | Lock Time Zone Toggle On Booking Page |
 | `minimumBookingNotice` | number | No | — | Minimum number of minutes before the event that a booking can be made. |
 | `offsetStart` | number | No | — | Offset timeslots shown to bookers by a specified number of minutes |
 | `onlyShowFirstAvailableSlot` | boolean | No | — | This will limit your availability for this event type to one slot per day, scheduled at the earliest available time. |
 | `recurrence` | object | No | — | Create a recurring event type. |
-| `requiresBookerEmailVerification` | boolean | No | — | requiresBookerEmailVerification |
+| `requiresBookerEmailVerification` | boolean | No | — | Requires Booker Email Verification |
 | `rescheduleWithSameRoundRobinHost` | boolean | No | — | Rescheduled events will be assigned to the same host as initially scheduled. |
 | `scheduleId` | number | No | — | If you want that this event has different schedule than user's default one you can specify it here. |
 | `schedulingType` | string | Yes | — | The scheduling type for the team event - collective, roundRobin or managed. |
 | `seats` | object | No | — | Create an event type with multiple seats. |
 | `showOptimizedSlots` | boolean | No | — | Arrange time slots to optimize availability. |
 | `slotInterval` | number | No | — | Number representing length of each slot when event is booked. By default it equal length of the event type.       If event length is 60 minutes then we would have slots 9AM, 10AM, 11AM etc. but if it was changed to 30 minutes then       we would have slots 9AM, 9:30AM, 10AM, 10:30AM etc. as the available times to book the 60 minute event. |
-| `slug` | string | Yes | — | slug |
+| `slug` | string | Yes | — | The slug value |
 | `successRedirectUrl` | string | No | — | A valid URL where the booker will redirect to, once the booking is completed successfully |
-| `title` | string | Yes | — | title |
-| `useDestinationCalendarEmail` | boolean | No | — | useDestinationCalendarEmail |
+| `title` | string | Yes | — | The title value |
+| `useDestinationCalendarEmail` | boolean | No | — | Use Destination Calendar Email |
 
 <Expandable title="inputSchema">
 
@@ -224,11 +224,11 @@ Create an event type
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "afterEventBuffer": {
       "type": "number",
@@ -278,7 +278,7 @@ Create an event type
     },
     "color": {
       "type": "object",
-      "description": "color",
+      "description": "The color value",
       "properties": {
         "lightThemeHex": {
           "type": "string",
@@ -303,11 +303,11 @@ Create an event type
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "destinationCalendar": {
       "type": "object",
-      "description": "destinationCalendar",
+      "description": "Destination Calendar",
       "properties": {
         "integration": {
           "type": "string",
@@ -338,15 +338,15 @@ Create an event type
     },
     "hidden": {
       "type": "boolean",
-      "description": "hidden"
+      "description": "The hidden value"
     },
     "hideCalendarEventDetails": {
       "type": "boolean",
-      "description": "hideCalendarEventDetails"
+      "description": "Hide Calendar Event Details"
     },
     "hideCalendarNotes": {
       "type": "boolean",
-      "description": "hideCalendarNotes"
+      "description": "Hide Calendar Notes"
     },
     "hideOrganizerEmail": {
       "type": "boolean",
@@ -354,6 +354,9 @@ Create an event type
     },
     "hosts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both"
     },
     "interfaceLanguage": {
@@ -402,10 +405,13 @@ Create an event type
     },
     "lengthInMinutes": {
       "type": "number",
-      "description": "lengthInMinutes"
+      "description": "Length In Minutes"
     },
     "lengthInMinutesOptions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`."
     },
     "locations": {
@@ -414,7 +420,7 @@ Create an event type
     },
     "lockTimeZoneToggleOnBookingPage": {
       "type": "boolean",
-      "description": "lockTimeZoneToggleOnBookingPage"
+      "description": "Lock Time Zone Toggle On Booking Page"
     },
     "minimumBookingNotice": {
       "type": "number",
@@ -433,7 +439,7 @@ Create an event type
     },
     "requiresBookerEmailVerification": {
       "type": "boolean",
-      "description": "requiresBookerEmailVerification"
+      "description": "Requires Booker Email Verification"
     },
     "rescheduleWithSameRoundRobinHost": {
       "type": "boolean",
@@ -465,7 +471,7 @@ Create an event type
     },
     "slug": {
       "type": "string",
-      "description": "slug"
+      "description": "The slug value"
     },
     "successRedirectUrl": {
       "type": "string",
@@ -473,11 +479,11 @@ Create an event type
     },
     "title": {
       "type": "string",
-      "description": "title"
+      "description": "The title value"
     },
     "useDestinationCalendarEmail": {
       "type": "boolean",
-      "description": "useDestinationCalendarEmail"
+      "description": "Use Destination Calendar Email"
     }
   },
   "required": [
@@ -504,9 +510,9 @@ Delete a team event type
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
-| `eventTypeId` | number | Yes | — | eventTypeId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `eventTypeId` | number | Yes | — | Event Type Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -520,15 +526,15 @@ Delete a team event type
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "eventTypeId": {
       "type": "number",
-      "description": "eventTypeId"
+      "description": "Event Type Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -552,9 +558,9 @@ Get an event type
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
-| `eventTypeId` | number | Yes | — | eventTypeId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `eventTypeId` | number | Yes | — | Event Type Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -568,15 +574,15 @@ Get an event type
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "eventTypeId": {
       "type": "number",
-      "description": "eventTypeId"
+      "description": "Event Type Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -600,11 +606,11 @@ Get team event types
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
+| `teamId` | number | Yes | — | Team Id |
 | `eventSlug` | string | No | — | Slug of team event type to return. |
 | `hostsLimit` | number | No | — | Specifies the maximum number of hosts to include in the response. This limit helps optimize performance. If not provided, all Hosts will be fetched. |
 | `sortCreatedAt` | string | No | — | Sort event types by creation date. When not provided, no explicit ordering is applied. |
-| `orgId` | number | Yes | — | orgId |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -618,7 +624,7 @@ Get team event types
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "eventSlug": {
       "type": "string",
@@ -638,7 +644,7 @@ Get team event types
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -661,7 +667,7 @@ Get all team event types
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
+| `orgId` | number | Yes | — | Org Id |
 | `take` | number | No | — | Maximum number of items to return |
 | `skip` | number | No | — | Number of items to skip |
 | `sortCreatedAt` | string | No | — | Sort event types by creation date. When not provided, no explicit ordering is applied. |
@@ -678,7 +684,7 @@ Get all team event types
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "take": {
       "type": "number",
@@ -716,9 +722,9 @@ Update a team event type
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
-| `eventTypeId` | number | Yes | — | eventTypeId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `eventTypeId` | number | Yes | — | Event Type Id |
+| `orgId` | number | Yes | — | Org Id |
 | `afterEventBuffer` | number | No | — | Extra time automatically blocked on your calendar after a meeting ends. This gives you time to wrap up, add notes, or decompress before your next commitment. |
 | `allowReschedulingCancelledBookings` | boolean | No | — | When enabled, users will be able to create a new booking when trying to reschedule a cancelled booking. |
 | `allowReschedulingPastBookings` | boolean | No | — | Enabling this option allows for past events to be rescheduled. |
@@ -732,40 +738,40 @@ Update a team event type
 | `bookingRequiresAuthentication` | boolean | No | — | Boolean to require authentication for booking this event type via api. If true, only authenticated users who are the event-type owner or org/team admin/owner can book this event type. |
 | `bookingWindow` | object | No | — | Limit how far in the future this event can be booked |
 | `calVideoSettings` | object | No | — | Cal video settings for the event type |
-| `color` | object | No | — | color |
+| `color` | object | No | — | The color value |
 | `confirmationPolicy` | object | No | — | Specify how the booking needs to be manually confirmed before it is pushed to the integrations and a confirmation mail is sent. |
 | `customName` | string | No | — | Customizable event name with valid variables:       &#123;Event type title&#125;, &#123;Organiser&#125;, &#123;Scheduler&#125;, &#123;Location&#125;, &#123;Organiser first name&#125;,       &#123;Scheduler first name&#125;, &#123;Scheduler last name&#125;, &#123;Event duration&#125;, &#123;LOCATION&#125;,       &#123;HOST/ATTENDEE&#125;, &#123;HOST&#125;, &#123;ATTENDEE&#125;, &#123;USER&#125; |
-| `description` | string | No | — | description |
-| `destinationCalendar` | object | No | — | destinationCalendar |
+| `description` | string | No | — | The description value |
+| `destinationCalendar` | object | No | — | Destination Calendar |
 | `disableCancelling` | object | No | — | Settings for disabling cancelling of this event type. |
 | `disableGuests` | boolean | No | — | If true, person booking this event can't add guests via their emails. |
 | `disableRescheduling` | object | No | — | Settings for disabling rescheduling of this event type. Can be always disabled or disabled when less than X minutes before the meeting. |
 | `emailSettings` | object | No | — | Email settings for this event type. Only available for organization team event types. |
-| `hidden` | boolean | No | — | hidden |
-| `hideCalendarEventDetails` | boolean | No | — | hideCalendarEventDetails |
-| `hideCalendarNotes` | boolean | No | — | hideCalendarNotes |
+| `hidden` | boolean | No | — | The hidden value |
+| `hideCalendarEventDetails` | boolean | No | — | Hide Calendar Event Details |
+| `hideCalendarNotes` | boolean | No | — | Hide Calendar Notes |
 | `hideOrganizerEmail` | boolean | No | — | Boolean to Hide organizer's email address from the booking screen, email notifications, and calendar events |
-| `hosts` | any[] | No | — | Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both |
+| `hosts` | object[] | No | — | Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both |
 | `interfaceLanguage` | string | No | — | Set preferred language for the booking interface. Use empty string for visitor's browser language (default). |
-| `lengthInMinutes` | number | No | — | lengthInMinutes |
-| `lengthInMinutesOptions` | any[] | No | — | If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`. |
+| `lengthInMinutes` | number | No | — | Length In Minutes |
+| `lengthInMinutesOptions` | string[] | No | — | If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`. |
 | `locations` | any[] | No | — | Locations where the event will take place. If not provided, cal video link will be used as the location. Note: Setting a location to a conferencing app does not install the app - the app must already be installed. Via API, only Google Meet (google-meet), Microsoft Teams (office365-video), and Zoom (zoom) can be installed. Cal Video (cal-video) is installed by default. All other conferencing apps must be connected via the Cal.com web app and are not available for Platform plan customers. You can only set an event type location to an app that has already been installed or connected. |
-| `lockTimeZoneToggleOnBookingPage` | boolean | No | — | lockTimeZoneToggleOnBookingPage |
+| `lockTimeZoneToggleOnBookingPage` | boolean | No | — | Lock Time Zone Toggle On Booking Page |
 | `minimumBookingNotice` | number | No | — | Minimum number of minutes before the event that a booking can be made. |
 | `offsetStart` | number | No | — | Offset timeslots shown to bookers by a specified number of minutes |
 | `onlyShowFirstAvailableSlot` | boolean | No | — | This will limit your availability for this event type to one slot per day, scheduled at the earliest available time. |
 | `recurrence` | object | No | — | Create a recurring event type. |
-| `requiresBookerEmailVerification` | boolean | No | — | requiresBookerEmailVerification |
+| `requiresBookerEmailVerification` | boolean | No | — | Requires Booker Email Verification |
 | `rescheduleWithSameRoundRobinHost` | boolean | No | — | Rescheduled events will be assigned to the same host as initially scheduled. |
 | `scheduleId` | number | No | — | If you want that this event has different schedule than user's default one you can specify it here. |
 | `schedulingType` | string | No | — | The scheduling type for the team event - collective or roundRobin. ❗If you change scheduling type you must also provide `hosts` or `assignAllTeamMembers` in the request body, otherwise the event type will have no hosts - this is required because       in case of collective event type all hosts are mandatory but in case of round robin some or non can be mandatory so we can't predict how you want the hosts to be setup which is why you must provide that information.  If you want to convert round robin or collective into managed or managed into round robin or collective then you will have to create a new team event type and delete old one. |
 | `seats` | object | No | — | Create an event type with multiple seats. |
 | `showOptimizedSlots` | boolean | No | — | Arrange time slots to optimize availability. |
 | `slotInterval` | number | No | — | Number representing length of each slot when event is booked. By default it equal length of the event type.       If event length is 60 minutes then we would have slots 9AM, 10AM, 11AM etc. but if it was changed to 30 minutes then       we would have slots 9AM, 9:30AM, 10AM, 10:30AM etc. as the available times to book the 60 minute event. |
-| `slug` | string | No | — | slug |
+| `slug` | string | No | — | The slug value |
 | `successRedirectUrl` | string | No | — | A valid URL where the booker will redirect to, once the booking is completed successfully |
-| `title` | string | No | — | title |
-| `useDestinationCalendarEmail` | boolean | No | — | useDestinationCalendarEmail |
+| `title` | string | No | — | The title value |
+| `useDestinationCalendarEmail` | boolean | No | — | Use Destination Calendar Email |
 
 <Expandable title="inputSchema">
 
@@ -779,15 +785,15 @@ Update a team event type
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "eventTypeId": {
       "type": "number",
-      "description": "eventTypeId"
+      "description": "Event Type Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "afterEventBuffer": {
       "type": "number",
@@ -837,7 +843,7 @@ Update a team event type
     },
     "color": {
       "type": "object",
-      "description": "color",
+      "description": "The color value",
       "properties": {
         "lightThemeHex": {
           "type": "string",
@@ -862,11 +868,11 @@ Update a team event type
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "destinationCalendar": {
       "type": "object",
-      "description": "destinationCalendar",
+      "description": "Destination Calendar",
       "properties": {
         "integration": {
           "type": "string",
@@ -897,15 +903,15 @@ Update a team event type
     },
     "hidden": {
       "type": "boolean",
-      "description": "hidden"
+      "description": "The hidden value"
     },
     "hideCalendarEventDetails": {
       "type": "boolean",
-      "description": "hideCalendarEventDetails"
+      "description": "Hide Calendar Event Details"
     },
     "hideCalendarNotes": {
       "type": "boolean",
-      "description": "hideCalendarNotes"
+      "description": "Hide Calendar Notes"
     },
     "hideOrganizerEmail": {
       "type": "boolean",
@@ -913,6 +919,9 @@ Update a team event type
     },
     "hosts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Hosts contain specific team members you want to assign to this event type, but if you want to assign all team members, use `assignAllTeamMembers: true` instead and omit this field. For platform customers the hosts can include userIds only of managed users. Provide either hosts or assignAllTeamMembers but not both"
     },
     "interfaceLanguage": {
@@ -961,10 +970,13 @@ Update a team event type
     },
     "lengthInMinutes": {
       "type": "number",
-      "description": "lengthInMinutes"
+      "description": "Length In Minutes"
     },
     "lengthInMinutesOptions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "If you want that user can choose between different lengths of the event you can specify them here. Must include the provided `lengthInMinutes`."
     },
     "locations": {
@@ -973,7 +985,7 @@ Update a team event type
     },
     "lockTimeZoneToggleOnBookingPage": {
       "type": "boolean",
-      "description": "lockTimeZoneToggleOnBookingPage"
+      "description": "Lock Time Zone Toggle On Booking Page"
     },
     "minimumBookingNotice": {
       "type": "number",
@@ -992,7 +1004,7 @@ Update a team event type
     },
     "requiresBookerEmailVerification": {
       "type": "boolean",
-      "description": "requiresBookerEmailVerification"
+      "description": "Requires Booker Email Verification"
     },
     "rescheduleWithSameRoundRobinHost": {
       "type": "boolean",
@@ -1023,7 +1035,7 @@ Update a team event type
     },
     "slug": {
       "type": "string",
-      "description": "slug"
+      "description": "The slug value"
     },
     "successRedirectUrl": {
       "type": "string",
@@ -1031,11 +1043,11 @@ Update a team event type
     },
     "title": {
       "type": "string",
-      "description": "title"
+      "description": "The title value"
     },
     "useDestinationCalendarEmail": {
       "type": "boolean",
-      "description": "useDestinationCalendarEmail"
+      "description": "Use Destination Calendar Email"
     }
   },
   "required": [
@@ -1059,12 +1071,12 @@ Create a schedule
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | number | Yes | — | userId |
-| `orgId` | number | Yes | — | orgId |
-| `availability` | any[] | No | — | Each object contains days and times when the user is available. If not passed, the default availability is Monday to Friday from 09:00 to 17:00. |
+| `userId` | number | Yes | — | User Id |
+| `orgId` | number | Yes | — | Org Id |
+| `availability` | object[] | No | — | Each object contains days and times when the user is available. If not passed, the default availability is Monday to Friday from 09:00 to 17:00. |
 | `isDefault` | boolean | Yes | — | Each user should have 1 default schedule. If you specified `timeZone` when creating managed user, then the default schedule will be created with that timezone.     Default schedule means that if an event type is not tied to a specific schedule then the default schedule is used. |
-| `name` | string | Yes | — | name |
-| `overrides` | any[] | No | — | Need to change availability for a specific date? Add an override. |
+| `name` | string | Yes | — | The name value |
+| `overrides` | object[] | No | — | Need to change availability for a specific date? Add an override. |
 | `timeZone` | string | Yes | — | Timezone is used to calculate available times when an event using the schedule is booked. |
 
 <Expandable title="inputSchema">
@@ -1079,14 +1091,17 @@ Create a schedule
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "availability": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Each object contains days and times when the user is available. If not passed, the default availability is Monday to Friday from 09:00 to 17:00."
     },
     "isDefault": {
@@ -1095,10 +1110,13 @@ Create a schedule
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "overrides": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Need to change availability for a specific date? Add an override."
     },
     "timeZone": {
@@ -1129,9 +1147,9 @@ Delete a schedule
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | number | Yes | — | userId |
-| `scheduleId` | number | Yes | — | scheduleId |
-| `orgId` | number | Yes | — | orgId |
+| `userId` | number | Yes | — | User Id |
+| `scheduleId` | number | Yes | — | Schedule Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -1145,15 +1163,15 @@ Delete a schedule
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "scheduleId": {
       "type": "number",
-      "description": "scheduleId"
+      "description": "Schedule Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -1177,7 +1195,7 @@ Get all schedules
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
+| `orgId` | number | Yes | — | Org Id |
 | `take` | number | No | — | Maximum number of items to return |
 | `skip` | number | No | — | Number of items to skip |
 
@@ -1193,7 +1211,7 @@ Get all schedules
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "take": {
       "type": "number",
@@ -1223,9 +1241,9 @@ Get a schedule
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | number | Yes | — | userId |
-| `scheduleId` | number | Yes | — | scheduleId |
-| `orgId` | number | Yes | — | orgId |
+| `userId` | number | Yes | — | User Id |
+| `scheduleId` | number | Yes | — | Schedule Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -1239,15 +1257,15 @@ Get a schedule
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "scheduleId": {
       "type": "number",
-      "description": "scheduleId"
+      "description": "Schedule Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -1271,8 +1289,8 @@ Get all schedules
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | number | Yes | — | userId |
-| `orgId` | number | Yes | — | orgId |
+| `userId` | number | Yes | — | User Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -1286,11 +1304,11 @@ Get all schedules
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -1313,14 +1331,14 @@ Update a schedule
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | number | Yes | — | userId |
-| `scheduleId` | number | Yes | — | scheduleId |
-| `orgId` | number | Yes | — | orgId |
-| `availability` | any[] | No | — | availability |
-| `isDefault` | boolean | No | — | isDefault |
-| `name` | string | No | — | name |
-| `overrides` | any[] | No | — | overrides |
-| `timeZone` | string | No | — | timeZone |
+| `userId` | number | Yes | — | User Id |
+| `scheduleId` | number | Yes | — | Schedule Id |
+| `orgId` | number | Yes | — | Org Id |
+| `availability` | object[] | No | — | The availability value |
+| `isDefault` | boolean | No | — | Is Default |
+| `name` | string | No | — | The name value |
+| `overrides` | object[] | No | — | The overrides value |
+| `timeZone` | string | No | — | Timezone identifier |
 
 <Expandable title="inputSchema">
 
@@ -1334,35 +1352,41 @@ Update a schedule
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "scheduleId": {
       "type": "number",
-      "description": "scheduleId"
+      "description": "Schedule Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "availability": {
       "type": "array",
-      "description": "availability"
+      "items": {
+        "type": "object"
+      },
+      "description": "The availability value"
     },
     "isDefault": {
       "type": "boolean",
-      "description": "isDefault"
+      "description": "Is Default"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "overrides": {
       "type": "array",
-      "description": "overrides"
+      "items": {
+        "type": "object"
+      },
+      "description": "The overrides value"
     },
     "timeZone": {
       "type": "string",
-      "description": "timeZone"
+      "description": "Timezone identifier"
     }
   },
   "required": [
@@ -1386,7 +1410,7 @@ Get organization team bookings
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `status` | any[] | No | — | Filter bookings by status. If you want to filter by multiple statuses, separate them with a comma. |
+| `status` | string[] | No | — | Filter bookings by status. If you want to filter by multiple statuses, separate them with a comma. |
 | `attendeeEmail` | string | No | — | Filter bookings by the attendee's email address. |
 | `attendeeName` | string | No | — | Filter bookings by the attendee's name. |
 | `bookingUid` | string | No | — | Filter bookings by the booking Uid. |
@@ -1399,8 +1423,8 @@ Get organization team bookings
 | `sortCreated` | string | No | — | Sort results by their creation time (when booking was made) in ascending or descending order. |
 | `take` | number | No | — | The number of items to return |
 | `skip` | number | No | — | The number of items to skip |
-| `teamId` | number | Yes | — | teamId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -1414,6 +1438,16 @@ Get organization team bookings
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "upcoming",
+          "recurring",
+          "past",
+          "cancelled",
+          "unconfirmed"
+        ]
+      },
       "description": "Filter bookings by status. If you want to filter by multiple statuses, separate them with a comma."
     },
     "attendeeEmail": {
@@ -1478,11 +1512,11 @@ Get organization team bookings
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -1505,26 +1539,26 @@ Create a team
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `appIconLogo` | string | No | — | appIconLogo |
-| `appLogo` | string | No | — | appLogo |
+| `orgId` | number | Yes | — | Org Id |
+| `appIconLogo` | string | No | — | App Icon Logo |
+| `appLogo` | string | No | — | App Logo |
 | `autoAcceptCreator` | boolean | No | — | If you are a platform customer, don't pass 'false', because then team creator won't be able to create team event types. |
 | `bannerUrl` | string | No | — | URL of the teams banner image which is shown on booker |
-| `bio` | string | No | — | bio |
-| `brandColor` | string | No | — | brandColor |
-| `calVideoLogo` | string | No | — | calVideoLogo |
-| `darkBrandColor` | string | No | — | darkBrandColor |
-| `hideBookATeamMember` | boolean | No | — | hideBookATeamMember |
-| `hideBranding` | boolean | No | — | hideBranding |
-| `isPrivate` | boolean | No | — | isPrivate |
+| `bio` | string | No | — | The bio value |
+| `brandColor` | string | No | — | Brand Color |
+| `calVideoLogo` | string | No | — | Cal Video Logo |
+| `darkBrandColor` | string | No | — | Dark Brand Color |
+| `hideBookATeamMember` | boolean | No | — | Hide Book A Team Member |
+| `hideBranding` | boolean | No | — | Hide Branding |
+| `isPrivate` | boolean | No | — | Is Private |
 | `logoUrl` | string | No | — | URL of the teams logo image |
 | `metadata` | object | No | — | You can store any additional data you want here. Metadata must have at most 50 keys, each key up to 40 characters. Values can be strings (up to 500 characters), numbers, or booleans. |
 | `name` | string | Yes | — | Name of the team |
 | `slug` | string | No | — | Team slug in kebab-case - if not provided will be generated automatically based on name. |
-| `theme` | string | No | — | theme |
-| `timeFormat` | number | No | — | timeFormat |
+| `theme` | string | No | — | The theme value |
+| `timeFormat` | number | No | — | Time Format |
 | `timeZone` | string | No | — | Timezone is used to create teams's default schedule from Monday to Friday from 9AM to 5PM. It will default to Europe/London if not passed. |
-| `weekStart` | string | No | — | weekStart |
+| `weekStart` | string | No | — | Week Start |
 
 <Expandable title="inputSchema">
 
@@ -1538,15 +1572,15 @@ Create a team
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "appIconLogo": {
       "type": "string",
-      "description": "appIconLogo"
+      "description": "App Icon Logo"
     },
     "appLogo": {
       "type": "string",
-      "description": "appLogo"
+      "description": "App Logo"
     },
     "autoAcceptCreator": {
       "type": "boolean",
@@ -1558,31 +1592,31 @@ Create a team
     },
     "bio": {
       "type": "string",
-      "description": "bio"
+      "description": "The bio value"
     },
     "brandColor": {
       "type": "string",
-      "description": "brandColor"
+      "description": "Brand Color"
     },
     "calVideoLogo": {
       "type": "string",
-      "description": "calVideoLogo"
+      "description": "Cal Video Logo"
     },
     "darkBrandColor": {
       "type": "string",
-      "description": "darkBrandColor"
+      "description": "Dark Brand Color"
     },
     "hideBookATeamMember": {
       "type": "boolean",
-      "description": "hideBookATeamMember"
+      "description": "Hide Book A Team Member"
     },
     "hideBranding": {
       "type": "boolean",
-      "description": "hideBranding"
+      "description": "Hide Branding"
     },
     "isPrivate": {
       "type": "boolean",
-      "description": "isPrivate"
+      "description": "Is Private"
     },
     "logoUrl": {
       "type": "string",
@@ -1602,11 +1636,11 @@ Create a team
     },
     "theme": {
       "type": "string",
-      "description": "theme"
+      "description": "The theme value"
     },
     "timeFormat": {
       "type": "number",
-      "description": "timeFormat"
+      "description": "Time Format"
     },
     "timeZone": {
       "type": "string",
@@ -1614,7 +1648,7 @@ Create a team
     },
     "weekStart": {
       "type": "string",
-      "description": "weekStart"
+      "description": "Week Start"
     }
   },
   "required": [
@@ -1637,8 +1671,8 @@ Delete a team
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
 
 <Expandable title="inputSchema">
 
@@ -1652,11 +1686,11 @@ Delete a team
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     }
   },
   "required": [
@@ -1679,7 +1713,7 @@ Get all teams
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
+| `orgId` | number | Yes | — | Org Id |
 | `take` | number | No | — | Maximum number of items to return |
 | `skip` | number | No | — | Number of items to skip |
 
@@ -1695,7 +1729,7 @@ Get all teams
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "take": {
       "type": "number",
@@ -1725,7 +1759,7 @@ Get teams membership for user
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
+| `orgId` | number | Yes | — | Org Id |
 | `take` | number | No | — | Maximum number of items to return |
 | `skip` | number | No | — | Number of items to skip |
 
@@ -1741,7 +1775,7 @@ Get teams membership for user
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "take": {
       "type": "number",
@@ -1771,8 +1805,8 @@ Get a team
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `teamId` | number | Yes | — | teamId |
-| `orgId` | number | Yes | — | orgId |
+| `teamId` | number | Yes | — | Team Id |
+| `orgId` | number | Yes | — | Org Id |
 
 <Expandable title="inputSchema">
 
@@ -1786,11 +1820,11 @@ Get a team
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     }
   },
   "required": [
@@ -1813,28 +1847,28 @@ Update a team
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `appIconLogo` | string | No | — | appIconLogo |
-| `appLogo` | string | No | — | appLogo |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `appIconLogo` | string | No | — | App Icon Logo |
+| `appLogo` | string | No | — | App Logo |
 | `bannerUrl` | string | No | — | URL of the teams banner image which is shown on booker |
-| `bio` | string | No | — | bio |
-| `bookingLimits` | string | No | — | bookingLimits |
-| `brandColor` | string | No | — | brandColor |
-| `calVideoLogo` | string | No | — | calVideoLogo |
-| `darkBrandColor` | string | No | — | darkBrandColor |
-| `hideBookATeamMember` | boolean | No | — | hideBookATeamMember |
-| `hideBranding` | boolean | No | — | hideBranding |
-| `includeManagedEventsInLimits` | boolean | No | — | includeManagedEventsInLimits |
-| `isPrivate` | boolean | No | — | isPrivate |
+| `bio` | string | No | — | The bio value |
+| `bookingLimits` | string | No | — | Booking Limits |
+| `brandColor` | string | No | — | Brand Color |
+| `calVideoLogo` | string | No | — | Cal Video Logo |
+| `darkBrandColor` | string | No | — | Dark Brand Color |
+| `hideBookATeamMember` | boolean | No | — | Hide Book A Team Member |
+| `hideBranding` | boolean | No | — | Hide Branding |
+| `includeManagedEventsInLimits` | boolean | No | — | Include Managed Events In Limits |
+| `isPrivate` | boolean | No | — | Is Private |
 | `logoUrl` | string | No | — | URL of the teams logo image |
 | `metadata` | object | No | — | You can store any additional data you want here. Metadata must have at most 50 keys, each key up to 40 characters. Values can be strings (up to 500 characters), numbers, or booleans. |
 | `name` | string | No | — | Name of the team |
 | `slug` | string | No | — | Team slug |
-| `theme` | string | No | — | theme |
-| `timeFormat` | number | No | — | timeFormat |
+| `theme` | string | No | — | The theme value |
+| `timeFormat` | number | No | — | Time Format |
 | `timeZone` | string | No | — | Timezone is used to create teams's default schedule from Monday to Friday from 9AM to 5PM. It will default to Europe/London if not passed. |
-| `weekStart` | string | No | — | weekStart |
+| `weekStart` | string | No | — | Week Start |
 
 <Expandable title="inputSchema">
 
@@ -1848,19 +1882,19 @@ Update a team
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "appIconLogo": {
       "type": "string",
-      "description": "appIconLogo"
+      "description": "App Icon Logo"
     },
     "appLogo": {
       "type": "string",
-      "description": "appLogo"
+      "description": "App Logo"
     },
     "bannerUrl": {
       "type": "string",
@@ -1868,39 +1902,39 @@ Update a team
     },
     "bio": {
       "type": "string",
-      "description": "bio"
+      "description": "The bio value"
     },
     "bookingLimits": {
       "type": "string",
-      "description": "bookingLimits"
+      "description": "Booking Limits"
     },
     "brandColor": {
       "type": "string",
-      "description": "brandColor"
+      "description": "Brand Color"
     },
     "calVideoLogo": {
       "type": "string",
-      "description": "calVideoLogo"
+      "description": "Cal Video Logo"
     },
     "darkBrandColor": {
       "type": "string",
-      "description": "darkBrandColor"
+      "description": "Dark Brand Color"
     },
     "hideBookATeamMember": {
       "type": "boolean",
-      "description": "hideBookATeamMember"
+      "description": "Hide Book A Team Member"
     },
     "hideBranding": {
       "type": "boolean",
-      "description": "hideBranding"
+      "description": "Hide Branding"
     },
     "includeManagedEventsInLimits": {
       "type": "boolean",
-      "description": "includeManagedEventsInLimits"
+      "description": "Include Managed Events In Limits"
     },
     "isPrivate": {
       "type": "boolean",
-      "description": "isPrivate"
+      "description": "Is Private"
     },
     "logoUrl": {
       "type": "string",
@@ -1920,11 +1954,11 @@ Update a team
     },
     "theme": {
       "type": "string",
-      "description": "theme"
+      "description": "The theme value"
     },
     "timeFormat": {
       "type": "number",
-      "description": "timeFormat"
+      "description": "Time Format"
     },
     "timeZone": {
       "type": "string",
@@ -1932,7 +1966,7 @@ Update a team
     },
     "weekStart": {
       "type": "string",
-      "description": "weekStart"
+      "description": "Week Start"
     }
   },
   "required": [
@@ -1955,12 +1989,12 @@ Create a membership
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `accepted` | boolean | No | — | accepted |
-| `disableImpersonation` | boolean | No | — | disableImpersonation |
-| `role` | string | Yes | — | role |
-| `userId` | number | Yes | — | userId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `accepted` | boolean | No | — | The accepted value |
+| `disableImpersonation` | boolean | No | — | Disable Impersonation |
+| `role` | string | Yes | — | The role value |
+| `userId` | number | Yes | — | User Id |
 
 <Expandable title="inputSchema">
 
@@ -1974,23 +2008,23 @@ Create a membership
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "accepted": {
       "type": "boolean",
-      "description": "accepted"
+      "description": "The accepted value"
     },
     "disableImpersonation": {
       "type": "boolean",
-      "description": "disableImpersonation"
+      "description": "Disable Impersonation"
     },
     "role": {
       "type": "string",
-      "description": "role",
+      "description": "The role value",
       "enum": [
         "MEMBER",
         "OWNER",
@@ -1999,7 +2033,7 @@ Create a membership
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     }
   },
   "required": [
@@ -2024,9 +2058,9 @@ Delete a membership
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `membershipId` | number | Yes | — | membershipId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `membershipId` | number | Yes | — | Membership Id |
 
 <Expandable title="inputSchema">
 
@@ -2040,15 +2074,15 @@ Delete a membership
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "membershipId": {
       "type": "number",
-      "description": "membershipId"
+      "description": "Membership Id"
     }
   },
   "required": [
@@ -2072,8 +2106,8 @@ Get all memberships
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
 | `take` | number | No | — | Maximum number of items to return |
 | `skip` | number | No | — | Number of items to skip |
 
@@ -2089,11 +2123,11 @@ Get all memberships
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "take": {
       "type": "number",
@@ -2124,9 +2158,9 @@ Get a membership
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `membershipId` | number | Yes | — | membershipId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `membershipId` | number | Yes | — | Membership Id |
 
 <Expandable title="inputSchema">
 
@@ -2140,15 +2174,15 @@ Get a membership
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "membershipId": {
       "type": "number",
-      "description": "membershipId"
+      "description": "Membership Id"
     }
   },
   "required": [
@@ -2172,12 +2206,12 @@ Update a membership
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `membershipId` | number | Yes | — | membershipId |
-| `accepted` | boolean | No | — | accepted |
-| `disableImpersonation` | boolean | No | — | disableImpersonation |
-| `role` | string | No | — | role |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `membershipId` | number | Yes | — | Membership Id |
+| `accepted` | boolean | No | — | The accepted value |
+| `disableImpersonation` | boolean | No | — | Disable Impersonation |
+| `role` | string | No | — | The role value |
 
 <Expandable title="inputSchema">
 
@@ -2191,27 +2225,27 @@ Update a membership
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "membershipId": {
       "type": "number",
-      "description": "membershipId"
+      "description": "Membership Id"
     },
     "accepted": {
       "type": "boolean",
-      "description": "accepted"
+      "description": "The accepted value"
     },
     "disableImpersonation": {
       "type": "boolean",
-      "description": "disableImpersonation"
+      "description": "Disable Impersonation"
     },
     "role": {
       "type": "string",
-      "description": "role",
+      "description": "The role value",
       "enum": [
         "MEMBER",
         "OWNER",
@@ -2240,9 +2274,9 @@ Get organization team routing form responses
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `routingFormId` | string | Yes | — | routingFormId |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
+| `routingFormId` | string | Yes | — | Routing Form Id |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
 | `skip` | number | No | — | Number of responses to skip |
 | `take` | number | No | — | Number of responses to take |
 | `sortCreatedAt` | string | No | — | Sort by creation time |
@@ -2265,15 +2299,15 @@ Get organization team routing form responses
     },
     "routingFormId": {
       "type": "string",
-      "description": "routingFormId"
+      "description": "Routing Form Id"
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "skip": {
       "type": "number",
@@ -2341,9 +2375,9 @@ Get schedules of a team member
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `orgId` | number | Yes | — | orgId |
-| `teamId` | number | Yes | — | teamId |
-| `userId` | number | Yes | — | userId |
+| `orgId` | number | Yes | — | Org Id |
+| `teamId` | number | Yes | — | Team Id |
+| `userId` | number | Yes | — | User Id |
 | `eventTypeId` | number | No | — | Filter schedules by event type ID |
 
 <Expandable title="inputSchema">
@@ -2358,15 +2392,15 @@ Get schedules of a team member
     },
     "orgId": {
       "type": "number",
-      "description": "orgId"
+      "description": "Org Id"
     },
     "teamId": {
       "type": "number",
-      "description": "teamId"
+      "description": "Team Id"
     },
     "userId": {
       "type": "number",
-      "description": "userId"
+      "description": "User Id"
     },
     "eventTypeId": {
       "type": "number",

@@ -57,7 +57,7 @@ Add excluded domains
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `domains` | any[] | Yes | — | Array of domain names to exclude (max 10000). |
+| `domains` | string[] | Yes | — | Array of domain names to exclude (max 10000). |
 | `list_id` | integer | No | — | Optional list ID to add domains to. If not provided, domains are added as global exclusions. |
 
 <Expandable title="inputSchema">
@@ -72,6 +72,9 @@ Add excluded domains
     },
     "domains": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Array of domain names to exclude (max 10000)."
     },
     "list_id": {
@@ -98,10 +101,10 @@ Create a monitor
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `engagement_types` | any[] | No | — | Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`. |
+| `engagement_types` | string[] | No | — | Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`. |
 | `enrichment_level` | string | No | — | Contact enrichment level. Accepted values: `email`, `email_phone`. |
 | `icp_filters` | object | No | — | Optional ICP filter criteria to narrow signal matching. |
-| `keywords` | any[] | No | — | Keywords to track (required for keyword_mention and post_engagement without post_url, max 5). |
+| `keywords` | string[] | No | — | Keywords to track (required for keyword_mention and post_engagement without post_url, max 5). |
 | `lead_list_id` | integer | No | — | ID of a lead list to automatically add matched contacts to. |
 | `name` | string | Yes | — | The monitor name. |
 | `post_url` | string | No | — | LinkedIn post URL to monitor engagement on (for post_engagement type). |
@@ -120,6 +123,9 @@ Create a monitor
     },
     "engagement_types": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`."
     },
     "enrichment_level": {
@@ -154,6 +160,9 @@ Create a monitor
     },
     "keywords": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Keywords to track (required for keyword_mention and post_engagement without post_url, max 5)."
     },
     "lead_list_id": {
@@ -383,7 +392,7 @@ Find employees
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `count` | integer | No | — | Number of contacts to return (max 5). Default 1. |
-| `job_titles` | any[] | Yes | — | target job titles (max 10) |
+| `job_titles` | string[] | Yes | — | target job titles (max 10) |
 | `website` | string | Yes | — | company website |
 
 <Expandable title="inputSchema">
@@ -402,6 +411,9 @@ Find employees
     },
     "job_titles": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "target job titles (max 10)"
     },
     "website": {
@@ -471,7 +483,7 @@ Find from domain
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `domain` | string | Yes | — | Email domain |
-| `roles` | any[] | Yes | — | Target roles related to the given domain (max 3 roles) |
+| `roles` | string[] | Yes | — | Target roles related to the given domain (max 3 roles) |
 | `webhook_url` | string | No | — | Webhook URL that will receive the result as callback. If submitted, search will happen in the background and notify this URL upon completion. |
 
 <Expandable title="inputSchema">
@@ -490,6 +502,9 @@ Find from domain
     },
     "roles": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Target roles related to the given domain (max 3 roles)"
     },
     "webhook_url": {
@@ -1171,7 +1186,7 @@ Remove excluded domains
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ids` | any[] | Yes | — | Array of domain IDs to delete. |
+| `ids` | integer[] | Yes | — | Array of domain IDs to delete. |
 
 <Expandable title="inputSchema">
 
@@ -1185,6 +1200,9 @@ Remove excluded domains
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "Array of domain IDs to delete."
     }
   },
@@ -1291,7 +1309,7 @@ Search lookalike companies
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `exclusion_list_ids` | any[] | No | — | IDs of exclusion lists to filter out already-known companies. |
+| `exclusion_list_ids` | integer[] | No | — | IDs of exclusion lists to filter out already-known companies. |
 | `limit` | integer | No | — | Maximum number of companies to return (default: 100, max: 10000). |
 | `same_country` | boolean | No | — | Only return companies in the same country as the seed (default: false). |
 | `same_size` | boolean | No | — | Only return companies in the same size range as the seed (default: false). |
@@ -1309,6 +1327,9 @@ Search lookalike companies
     },
     "exclusion_list_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "IDs of exclusion lists to filter out already-known companies."
     },
     "limit": {
@@ -1396,10 +1417,10 @@ Update a monitor
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | integer | Yes | — | The ID of the monitor. |
-| `engagement_types` | any[] | No | — | Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`. |
+| `engagement_types` | string[] | No | — | Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`. |
 | `enrichment_level` | string | No | — | Contact enrichment level. Accepted values: `email`, `email_phone`. |
 | `icp_filters` | object | No | — | Optional ICP filter criteria. |
-| `keywords` | any[] | No | — | Keywords to track (required for keyword_mention, nullable otherwise, max 5). |
+| `keywords` | string[] | No | — | Keywords to track (required for keyword_mention, nullable otherwise, max 5). |
 | `lead_list_id` | integer | No | — | ID of a lead list to automatically add matched contacts to. |
 | `name` | string | Yes | — | The monitor name. |
 | `webhook_url` | string | No | — | Optional HTTPS URL to receive webhook notifications. |
@@ -1420,6 +1441,9 @@ Update a monitor
     },
     "engagement_types": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Engagement types to track (required for post_engagement). Accepted values: `like`, `comment`."
     },
     "enrichment_level": {
@@ -1454,6 +1478,9 @@ Update a monitor
     },
     "keywords": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Keywords to track (required for keyword_mention, nullable otherwise, max 5)."
     },
     "lead_list_id": {

@@ -474,7 +474,7 @@ Create a check
 | `name` | string | Yes | — | The name value |
 | `requires` | string | Yes | — | The requires value |
 | `source` | object | No | — | The source value |
-| `targets` | any[] | No | — | The targets value |
+| `targets` | string[] | No | — | The targets value |
 | `timeout` | number | No | — | The timeout value |
 
 <Expandable title="inputSchema">
@@ -533,6 +533,9 @@ Create a check
     },
     "targets": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The targets value"
     },
     "timeout": {
@@ -980,7 +983,7 @@ List deployments
 | `from` | number | No | — | Gets the deployment created after this Date timestamp. (default: current time) |
 | `limit` | number | No | — | Maximum number of deployments to list from a request. |
 | `projectId` | string | No | — | Filter deployments from the given ID or name. |
-| `projectIds` | any[] | No | — | Filter deployments from the given project IDs. Cannot be used when projectId is specified. |
+| `projectIds` | string[] | No | — | Filter deployments from the given project IDs. Cannot be used when projectId is specified. |
 | `target` | string | No | — | Filter deployments based on the environment. |
 | `to` | number | No | — | Gets the deployment created before this Date timestamp. (default: current time) |
 | `users` | string | No | — | Filter out deployments based on users who have created the deployment. |
@@ -1021,6 +1024,9 @@ List deployments
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter deployments from the given project IDs. Cannot be used when projectId is specified."
     },
     "target": {
@@ -1592,7 +1598,7 @@ Update deployment integration action
 | `integrationConfigurationId` | string | Yes | — | Integration Configuration Id |
 | `resourceId` | string | Yes | — | Resource Id |
 | `action` | string | Yes | — | The action value |
-| `outcomes` | any[] | No | — | The outcomes value |
+| `outcomes` | object[] | No | — | The outcomes value |
 | `status` | string | No | — | The status value |
 | `statusText` | string | No | — | Status Text |
 | `statusUrl` | string | No | — | Status Url |
@@ -1625,6 +1631,9 @@ Update deployment integration action
     },
     "outcomes": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The outcomes value"
     },
     "status": {
@@ -1675,7 +1684,7 @@ Update a check
 | `isRerequestable` | boolean | No | — | Is Rerequestable |
 | `name` | string | No | — | The name value |
 | `requires` | string | No | — | The requires value |
-| `targets` | any[] | No | — | The targets value |
+| `targets` | string[] | No | — | The targets value |
 | `timeout` | number | No | — | The timeout value |
 
 <Expandable title="inputSchema">
@@ -1733,6 +1742,9 @@ Update a check
     },
     "targets": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The targets value"
     },
     "timeout": {
@@ -1763,6 +1775,7 @@ Update the rolling release settings for the project
 | `idOrName` | string | Yes | — | Project ID or project name (URL-encoded) |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
+| `rollingRelease` | object | Yes | — | The rolling release configuration to apply. Set to null to disable rolling releases. |
 
 <Expandable title="inputSchema">
 
@@ -1785,11 +1798,30 @@ Update the rolling release settings for the project
     "slug": {
       "type": "string",
       "description": "The Team slug to perform the request on behalf of."
+    },
+    "rollingRelease": {
+      "type": "object",
+      "description": "The rolling release configuration to apply. Set to null to disable rolling releases.",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "The environment that the release targets, currently only supports production. Adding in case we want to configure with alias groups or custom environments."
+        },
+        "stages": {
+          "type": "array",
+          "description": "An array of all the stages required during a deployment release. Each stage defines a target percentage and advancement rules. The final stage must always have targetPercentage: 100."
+        },
+        "canaryResponseHeader": {
+          "type": "boolean",
+          "description": "Whether the request served by a canary deployment should return a header indicating a canary was served. Defaults to `false` when omitted."
+        }
+      }
     }
   },
   "required": [
     "PCID",
-    "idOrName"
+    "idOrName",
+    "rollingRelease"
   ]
 }
 ```

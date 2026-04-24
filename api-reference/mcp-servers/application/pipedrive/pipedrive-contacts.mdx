@@ -63,7 +63,7 @@ Add a new organization
 | `add_time` | string | No | — | The creation date and time of the organization |
 | `address` | object | No | — | The address of the organization |
 | `custom_fields` | object | No | — | An object where each key represents a custom field. All custom fields are referenced as randomly generated 40-character hashes |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the organization |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the organization |
 | `name` | string | Yes | — | The name of the organization |
 | `owner_id` | integer | No | — | The ID of the user who owns the organization |
 | `update_time` | string | No | — | The last updated date and time of the organization |
@@ -135,6 +135,9 @@ Add a new organization
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the organization"
     },
     "name": {
@@ -176,7 +179,7 @@ Create one organization field
 | `field_name` | string | Yes | — | Field name |
 | `field_type` | string | Yes | — | The type of the field&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`varchar`&lt;/td&gt;&lt;td&gt;Text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`varchar_auto`&lt;/td&gt;&lt;td&gt;Autocomplete text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`text`&lt;/td&gt;&lt;td&gt;Long text (up to 65k characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`double`&lt;/td&gt;&lt;td&gt;Numeric value&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`monetary`&lt;/td&gt;&lt;td&gt;Monetary field (has a numeric value and a currency value)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`date`&lt;/td&gt;&lt;td&gt;Date (format YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`set`&lt;/td&gt;&lt;td&gt;Options field with a possibility of having multiple chosen options&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`enum`&lt;/td&gt;&lt;td&gt;Options field with a single possible chosen option&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`user`&lt;/td&gt;&lt;td&gt;User field (contains a user ID of another Pipedrive user)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`org`&lt;/td&gt;&lt;td&gt;Organization field (contains an organization ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`people`&lt;/td&gt;&lt;td&gt;Person field (contains a person ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`phone`&lt;/td&gt;&lt;td&gt;Phone field (up to 255 numbers and/or characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`time`&lt;/td&gt;&lt;td&gt;Time field (format HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`timerange`&lt;/td&gt;&lt;td&gt;Time-range field (has a start time and end time value, both HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`daterange`&lt;/td&gt;&lt;td&gt;Date-range field (has a start date and end date value, both YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`address`&lt;/td&gt;&lt;td&gt;Address field&lt;/dd&gt;&lt;/table&gt; |
 | `important_fields` | object | No | — | Configuration for highlighting the field at specific stages. |
-| `options` | any[] | No | — | Field options (required for enum and set field types) |
+| `options` | object[] | No | — | Field options (required for enum and set field types) |
 | `required_fields` | object | No | — | Required fields configuration for marking the field as mandatory when interacted with in the Pipedrive web UI. |
 | `ui_visibility` | object | No | — | UI visibility settings for the field. Controls where the field appears in the Pipedrive web UI. |
 
@@ -232,6 +235,9 @@ Create one organization field
     },
     "options": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Field options (required for enum and set field types)"
     },
     "required_fields": {
@@ -288,7 +294,7 @@ Add organization field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
+| `body` | object[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
 
 <Expandable title="inputSchema">
 
@@ -306,6 +312,9 @@ Add organization field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to add. Each item must contain a label. At least one option is required."
     }
   },
@@ -373,13 +382,13 @@ Add a new person
 | --- | --- | --- | --- | --- |
 | `add_time` | string | No | — | The creation date and time of the person |
 | `custom_fields` | object | No | — | An object where each key represents a custom field. All custom fields are referenced as randomly generated 40-character hashes |
-| `emails` | any[] | No | — | The emails of the person |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the person |
+| `emails` | object[] | No | — | The emails of the person |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the person |
 | `marketing_status` | string | No | — | If the person does not have a valid email address, then the marketing status is **not set** and `no_consent` is returned for the `marketing_status` value when the new person is created. If the change is forbidden, the status will remain unchanged for every call that tries to modify the marketing status. Please be aware that it is only allowed **once** to change the marketing status from an old status to a new one.&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`no_consent`&lt;/td&gt;&lt;td&gt;The customer has not given consent to receive any marketing communications&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`unsubscribed`&lt;/td&gt;&lt;td&gt;The customers have unsubscribed from ALL marketing communications&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`subscribed`&lt;/td&gt;&lt;td&gt;The customers are subscribed and are counted towards marketing caps&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`archived`&lt;/td&gt;&lt;td&gt;The customers with `subscribed` status can be moved to `archived` to save consent, but they are not paid for&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; |
 | `name` | string | Yes | — | The name of the person |
 | `org_id` | integer | No | — | The ID of the organization linked to the person |
 | `owner_id` | integer | No | — | The ID of the user who owns the person |
-| `phones` | any[] | No | — | The phones of the person |
+| `phones` | object[] | No | — | The phones of the person |
 | `update_time` | string | No | — | The last updated date and time of the person |
 | `visible_to` | integer | No | — | The visibility of the person |
 
@@ -403,10 +412,16 @@ Add a new person
     },
     "emails": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The emails of the person"
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the person"
     },
     "marketing_status": {
@@ -433,6 +448,9 @@ Add a new person
     },
     "phones": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The phones of the person"
     },
     "update_time": {
@@ -466,7 +484,7 @@ Create one person field
 | `field_name` | string | Yes | — | Field name |
 | `field_type` | string | Yes | — | The type of the field&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`varchar`&lt;/td&gt;&lt;td&gt;Text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`varchar_auto`&lt;/td&gt;&lt;td&gt;Autocomplete text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`text`&lt;/td&gt;&lt;td&gt;Long text (up to 65k characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`double`&lt;/td&gt;&lt;td&gt;Numeric value&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`monetary`&lt;/td&gt;&lt;td&gt;Monetary field (has a numeric value and a currency value)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`date`&lt;/td&gt;&lt;td&gt;Date (format YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`set`&lt;/td&gt;&lt;td&gt;Options field with a possibility of having multiple chosen options&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`enum`&lt;/td&gt;&lt;td&gt;Options field with a single possible chosen option&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`user`&lt;/td&gt;&lt;td&gt;User field (contains a user ID of another Pipedrive user)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`org`&lt;/td&gt;&lt;td&gt;Organization field (contains an organization ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`people`&lt;/td&gt;&lt;td&gt;Person field (contains a person ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`phone`&lt;/td&gt;&lt;td&gt;Phone field (up to 255 numbers and/or characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`time`&lt;/td&gt;&lt;td&gt;Time field (format HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`timerange`&lt;/td&gt;&lt;td&gt;Time-range field (has a start time and end time value, both HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`daterange`&lt;/td&gt;&lt;td&gt;Date-range field (has a start date and end date value, both YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`address`&lt;/td&gt;&lt;td&gt;Address field&lt;/dd&gt;&lt;/table&gt; |
 | `important_fields` | object | No | — | Configuration for highlighting the field at specific stages. |
-| `options` | any[] | No | — | Field options (required for enum and set field types) |
+| `options` | object[] | No | — | Field options (required for enum and set field types) |
 | `required_fields` | object | No | — | Required fields configuration for marking the field as mandatory when interacted with in the Pipedrive web UI. |
 | `ui_visibility` | object | No | — | UI visibility settings for the field. Controls where the field appears in the Pipedrive web UI. |
 
@@ -522,6 +540,9 @@ Create one person field
     },
     "options": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Field options (required for enum and set field types)"
     },
     "required_fields": {
@@ -574,7 +595,7 @@ Add person field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
+| `body` | object[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
 
 <Expandable title="inputSchema">
 
@@ -592,6 +613,9 @@ Add person field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to add. Each item must contain a label. At least one option is required."
     }
   },
@@ -730,7 +754,7 @@ Delete organization field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -748,6 +772,9 @@ Delete organization field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist."
     }
   },
@@ -886,7 +913,7 @@ Delete person field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -904,6 +931,9 @@ Delete person field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist."
     }
   },
@@ -1777,7 +1807,7 @@ Update a organization
 | `add_time` | string | No | — | The creation date and time of the organization |
 | `address` | object | No | — | The address of the organization |
 | `custom_fields` | object | No | — | An object where each key represents a custom field. All custom fields are referenced as randomly generated 40-character hashes |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the organization |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the organization |
 | `name` | string | No | — | The name of the organization |
 | `owner_id` | integer | No | — | The ID of the user who owns the organization |
 | `update_time` | string | No | — | The last updated date and time of the organization |
@@ -1853,6 +1883,9 @@ Update a organization
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the organization"
     },
     "name": {
@@ -1987,7 +2020,7 @@ Update organization field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -2005,6 +2038,9 @@ Update organization field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist."
     }
   },
@@ -2031,13 +2067,13 @@ Update a person
 | `id` | integer | Yes | — | The ID of the person |
 | `add_time` | string | No | — | The creation date and time of the person |
 | `custom_fields` | object | No | — | An object where each key represents a custom field. All custom fields are referenced as randomly generated 40-character hashes |
-| `emails` | any[] | No | — | The emails of the person |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the person |
+| `emails` | object[] | No | — | The emails of the person |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the person |
 | `marketing_status` | string | No | — | If the person does not have a valid email address, then the marketing status is **not set** and `no_consent` is returned for the `marketing_status` value when the new person is created. If the change is forbidden, the status will remain unchanged for every call that tries to modify the marketing status. Please be aware that it is only allowed **once** to change the marketing status from an old status to a new one.&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`no_consent`&lt;/td&gt;&lt;td&gt;The customer has not given consent to receive any marketing communications&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`unsubscribed`&lt;/td&gt;&lt;td&gt;The customers have unsubscribed from ALL marketing communications&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`subscribed`&lt;/td&gt;&lt;td&gt;The customers are subscribed and are counted towards marketing caps&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`archived`&lt;/td&gt;&lt;td&gt;The customers with `subscribed` status can be moved to `archived` to save consent, but they are not paid for&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; |
 | `name` | string | No | — | The name of the person |
 | `org_id` | integer | No | — | The ID of the organization linked to the person |
 | `owner_id` | integer | No | — | The ID of the user who owns the person |
-| `phones` | any[] | No | — | The phones of the person |
+| `phones` | object[] | No | — | The phones of the person |
 | `update_time` | string | No | — | The last updated date and time of the person |
 | `visible_to` | integer | No | — | The visibility of the person |
 
@@ -2065,10 +2101,16 @@ Update a person
     },
     "emails": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The emails of the person"
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the person"
     },
     "marketing_status": {
@@ -2095,6 +2137,9 @@ Update a person
     },
     "phones": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The phones of the person"
     },
     "update_time": {
@@ -2212,7 +2257,7 @@ Update person field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -2230,6 +2275,9 @@ Update person field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist."
     }
   },
