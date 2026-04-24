@@ -380,7 +380,7 @@ Gets multiple conversations by id
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | any[] | No | — | Comma-separated conversation ids |
+| `id` | string[] | No | — | Comma-separated conversation ids |
 
 <Expandable title="inputSchema">
 
@@ -394,6 +394,9 @@ Gets multiple conversations by id
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Comma-separated conversation ids"
     }
   },
@@ -870,7 +873,7 @@ Get call history
 | `pageSize` | integer | No | — | Page size, maximum 50 |
 | `pageNumber` | integer | No | — | Page number |
 | `interval` | string | No | — | Interval string; format is ISO-8601. Separate start and end times with forward slash '/' |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -896,6 +899,16 @@ Get call history
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "externalorganization",
+          "externalcontact",
+          "user",
+          "queue",
+          "group"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1976,16 +1989,16 @@ Update a conversation by setting its recording state, merging in other conversat
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -2013,10 +2026,16 @@ Update a conversation by setting its recording state, merging in other conversat
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -2045,10 +2064,16 @@ Update a conversation by setting its recording state, merging in other conversat
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -2117,7 +2142,7 @@ Update a conversation by merging in other conversations to create a conference
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. |
 
 <Expandable title="inputSchema">
 
@@ -2135,6 +2160,9 @@ Update a conversation by merging in other conversations to create a conference
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference."
     }
   },
@@ -2667,16 +2695,16 @@ Update a conversation by disconnecting all of the participants
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -2704,10 +2732,16 @@ Update a conversation by disconnecting all of the participants
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -2736,10 +2770,16 @@ Update a conversation by disconnecting all of the participants
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -3121,7 +3161,7 @@ Update a scheduled callback
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `agentId` | string | Yes | — | The agentId. |
-| `callbackNumbers` | any[] | No | — | The callbackNumbers |
+| `callbackNumbers` | string[] | No | — | The callbackNumbers |
 | `callbackScheduledTime` | string | No | — | The scheduled date-time for the callback. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `conversationId` | string | Yes | — | The conversationId. |
 | `countryCode` | string | No | — | The countryCode |
@@ -3144,6 +3184,9 @@ Update a scheduled callback
     },
     "callbackNumbers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The callbackNumbers"
     },
     "callbackScheduledTime": {
@@ -3189,7 +3232,7 @@ Update a single custom attributes record by amending the data with only the prov
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | conversation ID |
 | `customAttributes` | object | Yes | — | The map of attribute values. |
-| `divisions` | any[] | No | — | The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update. |
+| `divisions` | string[] | No | — | The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update. |
 | `id` | string | Yes | — | Unique identifier for the Custom Attributes record. IDs are created by users. |
 | `version` | integer | No | — | The latest version of the Custom Attributes record. Optional for concurrency check. |
 
@@ -3213,6 +3256,9 @@ Update a single custom attributes record by amending the data with only the prov
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update."
     },
     "id": {
@@ -3631,8 +3677,8 @@ Query for conversation activity observations
 | `pageSize` | integer | No | — | The desired page size |
 | `pageNumber` | integer | No | — | The desired page number |
 | `filter` | object | No | — | The filter value |
-| `groupBy` | any[] | Yes | — | Dimension(s) to group by |
-| `metrics` | any[] | Yes | — | List of requested metrics |
+| `groupBy` | string[] | Yes | — | Dimension(s) to group by |
+| `metrics` | object[] | Yes | — | List of requested metrics |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 
 <Expandable title="inputSchema">
@@ -3676,10 +3722,40 @@ Query for conversation activity observations
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "activeRouting",
+          "addressFrom",
+          "addressTo",
+          "agentScore",
+          "ani",
+          "conversationId",
+          "convertedFrom",
+          "convertedTo",
+          "direction",
+          "dnis",
+          "mediaType",
+          "participantName",
+          "queueId",
+          "requestedLanguageId",
+          "requestedRouting",
+          "requestedRoutingSkillId",
+          "routingPriority",
+          "scoredAgentId",
+          "sessionId",
+          "teamId",
+          "usedRouting",
+          "userId"
+        ]
+      },
       "description": "Dimension(s) to group by"
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of requested metrics"
     },
     "order": {
@@ -3716,14 +3792,14 @@ Query for conversation aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -3773,6 +3849,94 @@ Query for conversation aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "activeRouting",
+          "activeSkillId",
+          "addressFrom",
+          "addressTo",
+          "agentAssistantId",
+          "agentBullseyeRing",
+          "agentOwned",
+          "agentRank",
+          "agentScore",
+          "ani",
+          "assignerId",
+          "authenticated",
+          "conversationId",
+          "conversationInitiator",
+          "convertedFrom",
+          "convertedTo",
+          "customerParticipation",
+          "deliveryStatus",
+          "destinationAddress",
+          "direction",
+          "disconnectType",
+          "divisionId",
+          "dnis",
+          "edgeId",
+          "eligibleAgentCount",
+          "errorCode",
+          "extendedDeliveryStatus",
+          "externalContactId",
+          "externalMediaCount",
+          "externalOrganizationId",
+          "externalTag",
+          "firstQueue",
+          "flaggedReason",
+          "flowInType",
+          "flowOutType",
+          "groupId",
+          "interactionType",
+          "journeyActionId",
+          "journeyActionMapId",
+          "journeyActionMapVersion",
+          "journeyCustomerId",
+          "journeyCustomerIdType",
+          "journeyCustomerSessionId",
+          "journeyCustomerSessionIdType",
+          "knowledgeBaseId",
+          "mediaCount",
+          "mediaType",
+          "messageType",
+          "originatingDirection",
+          "originatingSocialMediaPublic",
+          "outboundCampaignId",
+          "outboundContactId",
+          "outboundContactListId",
+          "participantName",
+          "peerId",
+          "proposedAgentId",
+          "provider",
+          "purpose",
+          "queueId",
+          "remote",
+          "removedSkillId",
+          "requestedLanguageId",
+          "requestedRouting",
+          "requestedRoutingSkillId",
+          "roomId",
+          "routingPriority",
+          "routingRing",
+          "routingRule",
+          "routingRuleType",
+          "scoredAgentId",
+          "selectedAgentId",
+          "selectedAgentRank",
+          "selfServed",
+          "sessionDnis",
+          "sessionId",
+          "skillExpressionId",
+          "stationId",
+          "teamId",
+          "usedRouting",
+          "userId",
+          "videoPresent",
+          "waitingInteractionCount",
+          "wrapUpCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3785,6 +3949,81 @@ Query for conversation aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nBlindTransferred",
+          "nBotInteractions",
+          "nCallbackAttempts",
+          "nCallbackScheduled",
+          "nCobrowseSessions",
+          "nConnected",
+          "nConsult",
+          "nConsultTransferred",
+          "nConversations",
+          "nError",
+          "nOffered",
+          "nOutbound",
+          "nOutboundAbandoned",
+          "nOutboundAttempted",
+          "nOutboundConnected",
+          "nOverSla",
+          "nStateTransitionError",
+          "nTakeover",
+          "nTransferred",
+          "oAudioMessageCount",
+          "oExternalAudioMessageCount",
+          "oExternalMediaCount",
+          "oMediaCount",
+          "oMessageCount",
+          "oMessageSegmentCount",
+          "oMessageTurn",
+          "oServiceLevel",
+          "oServiceTarget",
+          "tAbandon",
+          "tAcd",
+          "tActiveCallback",
+          "tActiveCallbackComplete",
+          "tAcw",
+          "tAgentResponseTime",
+          "tAgentVideoConnected",
+          "tAlert",
+          "tAnswered",
+          "tAverageAgentResponseTime",
+          "tAverageCustomerResponseTime",
+          "tBarging",
+          "tCallbackAbandon",
+          "tCallbackConnect",
+          "tCallbackNotReached",
+          "tCoaching",
+          "tCoachingComplete",
+          "tConnected",
+          "tContacting",
+          "tDialing",
+          "tFirstConnect",
+          "tFirstDial",
+          "tFirstEngagement",
+          "tFirstResponse",
+          "tFlowOut",
+          "tHandle",
+          "tHeld",
+          "tHeldComplete",
+          "tIvr",
+          "tMonitoring",
+          "tMonitoringComplete",
+          "tNotResponding",
+          "tPark",
+          "tParkComplete",
+          "tScreenMonitoring",
+          "tShortAbandon",
+          "tSnippetRecord",
+          "tTalk",
+          "tTalkComplete",
+          "tUserResponseTime",
+          "tVoicemail",
+          "tWait"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -3820,6 +4059,9 @@ Query for conversation aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3843,16 +4085,16 @@ Query for conversation details
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `aggregations` | any[] | No | — | Include faceted search and aggregate roll-ups describing your search results. This does not function as a filter, but rather, summary data about the data matching your filters |
-| `conversationFilters` | any[] | No | — | Filters that target conversation-level data |
-| `evaluationFilters` | any[] | No | — | Filters that target evaluations |
+| `aggregations` | object[] | No | — | Include faceted search and aggregate roll-ups describing your search results. This does not function as a filter, but rather, summary data about the data matching your filters |
+| `conversationFilters` | object[] | No | — | Filters that target conversation-level data |
+| `evaluationFilters` | object[] | No | — | Filters that target evaluations |
 | `interval` | string | Yes | — | Specifies the date and time range of data being queried. Results will only include conversations that started on a day touched by the interval. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 | `orderBy` | string | No | — | Specify which data element within the result set to use for sorting. The options  to use as a basis for sorting the results: conversationStart, segmentStart, and segmentEnd. If not specified, the default is conversationStart |
 | `paging` | object | No | — | The paging value |
-| `resolutionFilters` | any[] | No | — | Filters that target resolutions |
-| `segmentFilters` | any[] | No | — | Filters that target individual segments within a conversation |
-| `surveyFilters` | any[] | No | — | Filters that target surveys |
+| `resolutionFilters` | object[] | No | — | Filters that target resolutions |
+| `segmentFilters` | object[] | No | — | Filters that target individual segments within a conversation |
+| `surveyFilters` | object[] | No | — | Filters that target surveys |
 
 <Expandable title="inputSchema">
 
@@ -3866,14 +4108,23 @@ Query for conversation details
     },
     "aggregations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Include faceted search and aggregate roll-ups describing your search results. This does not function as a filter, but rather, summary data about the data matching your filters"
     },
     "conversationFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target conversation-level data"
     },
     "evaluationFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target evaluations"
     },
     "interval": {
@@ -3919,14 +4170,23 @@ Query for conversation details
     },
     "resolutionFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target resolutions"
     },
     "segmentFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target individual segments within a conversation"
     },
     "surveyFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target surveys"
     }
   },
@@ -4090,7 +4350,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -4144,6 +4404,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -4572,16 +4835,16 @@ Add participants to a conversation
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -4609,10 +4872,16 @@ Add participants to a conversation
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -4641,10 +4910,16 @@ Add participants to a conversation
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -4715,16 +4990,16 @@ Add participants to a conversation on behalf of a user
 | `conversationId` | string | Yes | — | Conversation Id |
 | `userId` | string | Yes | — | User Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -4756,10 +5031,16 @@ Add participants to a conversation on behalf of a user
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -4788,10 +5069,16 @@ Add participants to a conversation on behalf of a user
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -4870,7 +5157,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -4924,6 +5211,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -5029,7 +5319,7 @@ Create a Callback
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `callbackNumbers` | any[] | Yes | — | A list of phone numbers for the callback. |
+| `callbackNumbers` | string[] | Yes | — | A list of phone numbers for the callback. |
 | `callbackScheduledTime` | string | No | — | The scheduled date-time for the callback as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss.SSSZ |
 | `callbackUserName` | string | No | — | The name of the party to be called back. |
 | `callerId` | string | No | — | The phone number displayed to recipients when a phone call is placed as part of the callback. Must conform to the E.164 format. May be overridden by other settings in the system such as external trunk settings. Telco support for "callerId" varies. |
@@ -5053,6 +5343,9 @@ Create a Callback
     },
     "callbackNumbers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of phone numbers for the callback."
     },
     "callbackScheduledTime": {
@@ -5158,14 +5451,14 @@ Create a call conversation
 | `callFromQueueId` | string | No | — | The queue ID to call on behalf of. |
 | `callQueueId` | string | No | — | The queue ID to call. |
 | `callUserId` | string | No | — | The user ID to call. |
-| `conversationIds` | any[] | No | — | The list of existing call conversations to merge into a new ad-hoc conference. |
+| `conversationIds` | string[] | No | — | The list of existing call conversations to merge into a new ad-hoc conference. |
 | `externalContactId` | string | No | — | The external contact with which to associate the call. |
 | `label` | string | No | — | An optional label that categorizes the conversation.  Max-utilization settings can be configured at a per-label level |
 | `languageId` | string | No | — | The language skill ID to use for routing this call (if calling a queue). |
-| `participants` | any[] | No | — | The list of participants to call to create a new ad-hoc conference. |
+| `participants` | object[] | No | — | The list of participants to call to create a new ad-hoc conference. |
 | `phoneNumber` | string | No | — | The phone number to dial. |
 | `priority` | integer | No | — | The priority to assign to this call (if calling a queue). |
-| `routingSkillsIds` | any[] | No | — | The skill ID's to use for routing this call (if calling a queue). |
+| `routingSkillsIds` | string[] | No | — | The skill ID's to use for routing this call (if calling a queue). |
 | `uuiData` | string | No | — | User to User Information (UUI) data managed by SIP session application. |
 
 <Expandable title="inputSchema">
@@ -5204,6 +5497,9 @@ Create a call conversation
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of existing call conversations to merge into a new ad-hoc conference."
     },
     "externalContactId": {
@@ -5220,6 +5516,9 @@ Create a call conversation
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of participants to call to create a new ad-hoc conference."
     },
     "phoneNumber": {
@@ -5232,6 +5531,9 @@ Create a call conversation
     },
     "routingSkillsIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The skill ID's to use for routing this call (if calling a queue)."
     },
     "uuiData": {
@@ -5264,14 +5566,14 @@ Create a call conversation on behalf of a user
 | `callFromQueueId` | string | No | — | The queue ID to call on behalf of. |
 | `callQueueId` | string | No | — | The queue ID to call. |
 | `callUserId` | string | No | — | The user ID to call. |
-| `conversationIds` | any[] | No | — | The list of existing call conversations to merge into a new ad-hoc conference. |
+| `conversationIds` | string[] | No | — | The list of existing call conversations to merge into a new ad-hoc conference. |
 | `externalContactId` | string | No | — | The external contact with which to associate the call. |
 | `label` | string | No | — | An optional label that categorizes the conversation.  Max-utilization settings can be configured at a per-label level |
 | `languageId` | string | No | — | The language skill ID to use for routing this call (if calling a queue). |
-| `participants` | any[] | No | — | The list of participants to call to create a new ad-hoc conference. |
+| `participants` | object[] | No | — | The list of participants to call to create a new ad-hoc conference. |
 | `phoneNumber` | string | No | — | The phone number to dial. |
 | `priority` | integer | No | — | The priority to assign to this call (if calling a queue). |
-| `routingSkillsIds` | any[] | No | — | The skill ID's to use for routing this call (if calling a queue). |
+| `routingSkillsIds` | string[] | No | — | The skill ID's to use for routing this call (if calling a queue). |
 | `uuiData` | string | No | — | User to User Information (UUI) data managed by SIP session application. |
 
 <Expandable title="inputSchema">
@@ -5314,6 +5616,9 @@ Create a call conversation on behalf of a user
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of existing call conversations to merge into a new ad-hoc conference."
     },
     "externalContactId": {
@@ -5330,6 +5635,9 @@ Create a call conversation on behalf of a user
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of participants to call to create a new ad-hoc conference."
     },
     "phoneNumber": {
@@ -5342,6 +5650,9 @@ Create a call conversation on behalf of a user
     },
     "routingSkillsIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The skill ID's to use for routing this call (if calling a queue)."
     },
     "uuiData": {
@@ -5599,7 +5910,7 @@ API invoked to capture an agent action.
 | `communicationId` | string | Yes | — | Communication ID |
 | `agentChecklistId` | string | Yes | — | Agent Checklist ID |
 | `afterCallWork` | boolean | No | — | Boolean flag to indicate if the agent action is in ACW stage. |
-| `checklistItems` | any[] | Yes | — | The list of checklist items and the agent action taken on each one of them. |
+| `checklistItems` | object[] | Yes | — | The list of checklist items and the agent action taken on each one of them. |
 
 <Expandable title="inputSchema">
 
@@ -5629,6 +5940,9 @@ API invoked to capture an agent action.
     },
     "checklistItems": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of checklist items and the agent action taken on each one of them."
     }
   },
@@ -5657,7 +5971,7 @@ Create inference job
 | `conversationId` | string | Yes | — | Conversation ID |
 | `communicationId` | string | Yes | — | Communication ID |
 | `agentChecklistId` | string | Yes | — | Agent Checklist ID |
-| `conversationContext` | any[] | Yes | — | List of conversations on which checklist evaluation is to be done. |
+| `conversationContext` | object[] | Yes | — | List of conversations on which checklist evaluation is to be done. |
 
 <Expandable title="inputSchema">
 
@@ -5683,6 +5997,9 @@ Create inference job
     },
     "conversationContext": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of conversations on which checklist evaluation is to be done."
     }
   },
@@ -5842,7 +6159,7 @@ Create a new callback for the specified participant on the conversation.
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | conversation ID |
 | `participantId` | string | Yes | — | participant ID |
-| `callbackNumbers` | any[] | Yes | — | A list of phone numbers for the callback. |
+| `callbackNumbers` | string[] | Yes | — | A list of phone numbers for the callback. |
 | `callbackScheduledTime` | string | No | — | The scheduled date-time for the callback as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss.SSSZ |
 | `callbackUserName` | string | No | — | The name of the party to be called back. |
 | `callerId` | string | No | — | The phone number displayed to recipients when a phone call is placed as part of the callback. Must conform to the E.164 format. May be overridden by other settings in the system such as external trunk settings. Telco support for "callerId" varies. |
@@ -5874,6 +6191,9 @@ Create a new callback for the specified participant on the conversation.
     },
     "callbackNumbers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of phone numbers for the callback."
     },
     "callbackScheduledTime": {
@@ -6690,10 +7010,10 @@ Search resources.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Expand your search with bulk lookups |
+| `expand` | string[] | No | — | Expand your search with bulk lookups |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -6709,6 +7029,9 @@ Search resources.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Expand your search with bulk lookups"
     },
     "pageNumber": {
@@ -6721,6 +7044,9 @@ Search resources.
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -6756,9 +7082,9 @@ Search conversations
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `cursor` | string | No | — | Pagination cursor from a previous response |
-| `query` | any[] | No | — | Search query string |
-| `returnFields` | any[] | No | — | Return Fields |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `returnFields` | string[] | No | — | Return Fields |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -6778,14 +7104,23 @@ Search conversations
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "returnFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Return Fields"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -6822,7 +7157,7 @@ Create or update a single custom attributes record. Updating replaces all data w
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | conversation ID |
 | `customAttributes` | object | Yes | — | The map of attribute values. |
-| `divisions` | any[] | No | — | The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update. |
+| `divisions` | string[] | No | — | The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update. |
 | `id` | string | Yes | — | Unique identifier for the Custom Attributes record. IDs are created by users. |
 | `schemaId` | string | No | — | The id of the schema that dictates which attributes can be included. Required for create, cannot be updated. |
 | `version` | integer | No | — | The latest version of the Custom Attributes record. Optional for concurrency check on update. |
@@ -6847,6 +7182,9 @@ Create or update a single custom attributes record. Updating replaces all data w
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of division ids. Use [] if divisions aren't used (Unassigned Division). Omitting or setting to [] clears existing values on update."
     },
     "id": {

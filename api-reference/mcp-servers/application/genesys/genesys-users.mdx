@@ -646,7 +646,7 @@ Get group members, includes individuals, owners, and dynamically included people
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `sortOrder` | string | No | — | Ascending or descending sort order |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -680,6 +680,36 @@ Get group members, includes individuals, owners, and dynamically included people
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -704,8 +734,8 @@ Get a group list
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `id` | any[] | No | — | The id value |
-| `jabberId` | any[] | No | — | A list of jabberIds to fetch by bulk (cannot be used with the "id" parameter) |
+| `id` | string[] | No | — | The id value |
+| `jabberId` | string[] | No | — | A list of jabberIds to fetch by bulk (cannot be used with the "id" parameter) |
 | `sortOrder` | string | No | — | Ascending or descending sort order |
 
 <Expandable title="inputSchema">
@@ -728,10 +758,16 @@ Get a group list
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The id value"
     },
     "jabberId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of jabberIds to fetch by bulk (cannot be used with the \"id\" parameter)"
     },
     "sortOrder": {
@@ -762,7 +798,7 @@ Search groups using the q64 value returned from a previous search
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -780,6 +816,9 @@ Search groups using the q64 value returned from a previous search
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -803,7 +842,7 @@ Search locations using the q64 value returned from a previous search
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 
 <Expandable title="inputSchema">
 
@@ -821,6 +860,13 @@ Search locations using the q64 value returned from a previous search
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "images",
+          "addressVerificationDetails"
+        ]
+      },
       "description": "Provides more details about a specified resource"
     }
   },
@@ -843,9 +889,9 @@ Get current user details.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `integrationPresenceSource` | string | No | — | Get your presence for a given integration. This parameter will only be used when presence is provided as an "expand". |
-| `userCustomAttributeSchemaIds` | any[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 100 |
+| `userCustomAttributeSchemaIds` | string[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 100 |
 
 <Expandable title="inputSchema">
 
@@ -859,6 +905,55 @@ Get current user details.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent",
+          "date",
+          "geolocationsettings",
+          "organization",
+          "presencedefinitions",
+          "divisionedpresencedefinitions",
+          "locationdefinitions",
+          "orgauthorization",
+          "orgproducts",
+          "favorites",
+          "superiors",
+          "directreports",
+          "adjacents",
+          "routingskills",
+          "routinglanguages",
+          "fieldconfigs",
+          "token",
+          "trustors",
+          "logCapture",
+          "autoanswersettings"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "integrationPresenceSource": {
@@ -872,6 +967,9 @@ Get current user details.
     },
     "userCustomAttributeSchemaIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an \"expand\". The maximum number of schemaIds that can be requested is 100"
     }
   },
@@ -962,7 +1060,7 @@ Get a list of Presence Definitions
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `deactivated` | string | No | — | Deactivated query can be TRUE or FALSE |
-| `divisionId` | any[] | No | — | One or more division IDs. If nothing is provided, the definitions associated withthe list of divisions that the user has access to will be returned. |
+| `divisionId` | string[] | No | — | One or more division IDs. If nothing is provided, the definitions associated withthe list of divisions that the user has access to will be returned. |
 | `localeCode` | string | No | — | The locale code to fetch for the presence definition. Use ALL to fetch everything. |
 
 <Expandable title="inputSchema">
@@ -981,6 +1079,9 @@ Get a list of Presence Definitions
     },
     "divisionId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "One or more division IDs. If nothing is provided, the definitions associated withthe list of divisions that the user has access to will be returned."
     },
     "localeCode": {
@@ -1217,7 +1318,7 @@ Search users using the q64 value returned from a previous search
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 | `integrationPresenceSource` | string | No | — | Integration Presence Source |
 
 <Expandable title="inputSchema">
@@ -1236,6 +1337,9 @@ Search users using the q64 value returned from a previous search
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Related resources to expand inline"
     },
     "integrationPresenceSource": {
@@ -1268,7 +1372,7 @@ Suggest resources using the q64 value returned from a previous suggest query.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 | `profile` | boolean | No | — | The profile value |
 
 <Expandable title="inputSchema">
@@ -1287,6 +1391,45 @@ Suggest resources using the q64 value returned from a previous suggest query.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent",
+          "callerUser.routingStatus",
+          "callerUser.primaryPresence",
+          "callerUser.conversationSummary",
+          "callerUser.outOfOffice",
+          "callerUser.geolocation",
+          "conversations",
+          "transcription",
+          "images",
+          "addressVerificationDetails"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     },
     "profile": {
@@ -1500,7 +1643,7 @@ Search sites using the q64 value returned from a previous search
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -1518,6 +1661,9 @@ Search sites using the q64 value returned from a previous search
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -1541,9 +1687,9 @@ Get user.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead. |
 | `integrationPresenceSource` | string | No | — | Gets an integration presence for a user instead of their default. |
-| `userCustomAttributeSchemaIds` | any[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 100 |
+| `userCustomAttributeSchemaIds` | string[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 100 |
 | `state` | string | No | — | Search for a user with this state |
 
 <Expandable title="inputSchema">
@@ -1562,6 +1708,36 @@ Get user.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead."
     },
     "integrationPresenceSource": {
@@ -1575,6 +1751,9 @@ Get user.
     },
     "userCustomAttributeSchemaIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an \"expand\". The maximum number of schemaIds that can be requested is 100"
     },
     "state": {
@@ -1642,7 +1821,7 @@ Get direct reports
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -1660,6 +1839,36 @@ Get direct reports
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -2185,7 +2394,7 @@ Get superiors
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -2203,6 +2412,36 @@ Get superiors
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -2273,12 +2512,12 @@ Get the list of available users.
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `id` | any[] | No | — | A list of user IDs to fetch by bulk |
-| `jabberId` | any[] | No | — | A list of jabberIds to fetch by bulk (cannot be used with the "id" parameter) |
+| `id` | string[] | No | — | A list of user IDs to fetch by bulk |
+| `jabberId` | string[] | No | — | A list of jabberIds to fetch by bulk (cannot be used with the "id" parameter) |
 | `sortOrder` | string | No | — | Ascending or descending sort order |
-| `expand` | any[] | No | — | Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead. |
 | `integrationPresenceSource` | string | No | — | Gets an integration presence for users instead of their defaults. This parameter will only be used when presence is provided as an "expand". When using this parameter the maximum number of users that can be returned is 100. |
-| `userCustomAttributeSchemaIds` | any[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 5 |
+| `userCustomAttributeSchemaIds` | string[] | No | — | Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an "expand". The maximum number of schemaIds that can be requested is 5 |
 | `state` | string | No | — | Only list users of this state |
 
 <Expandable title="inputSchema">
@@ -2301,10 +2540,16 @@ Get the list of available users.
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of user IDs to fetch by bulk"
     },
     "jabberId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of jabberIds to fetch by bulk (cannot be used with the \"id\" parameter)"
     },
     "sortOrder": {
@@ -2317,6 +2562,36 @@ Get the list of available users.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routingStatus",
+          "presence",
+          "integrationPresence",
+          "conversationSummary",
+          "outOfOffice",
+          "geolocation",
+          "station",
+          "authorization",
+          "lasttokenissued",
+          "authorization.unusedRoles",
+          "team",
+          "workPlanBidRanks",
+          "externalContactsSettings",
+          "groups",
+          "customAttributes",
+          "profileSkills",
+          "certifications",
+          "locations",
+          "skills",
+          "languages",
+          "languagePreference",
+          "employerInfo",
+          "biography",
+          "dateLastLogin",
+          "dateWelcomeSent"
+        ]
+      },
       "description": "Which fields, if any, to expand. Note, expand parameters are resolved with a best effort approach and not guaranteed to be returned. If requested expand information is absolutely required, it's recommended to use specific API requests instead."
     },
     "integrationPresenceSource": {
@@ -2330,6 +2605,9 @@ Get the list of available users.
     },
     "userCustomAttributeSchemaIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Gets custom user attribute values for given schemas set for user. This parameter will only be used when customAttributes is provided as an \"expand\". The maximum number of schemaIds that can be requested is 5"
     },
     "state": {
@@ -2442,7 +2720,7 @@ Search voicemails using the q64 value returned from a previous search
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `q64` | string | Yes | — | The q64 value |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -2460,6 +2738,9 @@ Search voicemails using the q64 value returned from a previous search
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -2575,22 +2856,22 @@ Update user
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
 | `acdAutoAnswer` | boolean | No | — | The value that denotes if acdAutoAnswer is set on the user |
-| `addresses` | any[] | No | — | Email address, phone number, and/or extension for this user. One entry is allowed per media type |
+| `addresses` | object[] | No | — | Email address, phone number, and/or extension for this user. One entry is allowed per media type |
 | `biography` | object | No | — | The biography value |
-| `certifications` | any[] | No | — | The certifications value |
+| `certifications` | string[] | No | — | The certifications value |
 | `chat` | object | No | — | The chat value |
 | `department` | string | No | — | The department value |
 | `email` | string | No | — | The email value |
 | `employerInfo` | object | No | — | Employer Info |
-| `groups` | any[] | No | — | The groups the user is a member of |
+| `groups` | object[] | No | — | The groups the user is a member of |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `images` | any[] | No | — | The images value |
-| `locations` | any[] | No | — | The user placement at each site location. |
+| `images` | object[] | No | — | The images value |
+| `locations` | object[] | No | — | The user placement at each site location. |
 | `manager` | string | No | — | The manager value |
 | `name` | string | No | — | The name value |
 | `preferredName` | string | No | — | Preferred full name of agent |
-| `primaryContactInfo` | any[] | No | — | The address(s) used for primary contact. Updates to the corresponding address in the addresses list will be reflected here. |
-| `profileSkills` | any[] | No | — | Profile skills possessed by the user |
+| `primaryContactInfo` | object[] | No | — | The address(s) used for primary contact. Updates to the corresponding address in the addresses list will be reflected here. |
+| `profileSkills` | string[] | No | — | Profile skills possessed by the user |
 | `selfUri` | string | No | — | The URI for this object |
 | `state` | string | No | — | The state of the user. This property can be used to restore a deleted user or transition between active and inactive. If specified, it is the only modifiable field. |
 | `title` | string | No | — | The title value |
@@ -2617,6 +2898,9 @@ Update user
     },
     "addresses": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Email address, phone number, and/or extension for this user. One entry is allowed per media type"
     },
     "biography": {
@@ -2647,6 +2931,9 @@ Update user
     },
     "certifications": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The certifications value"
     },
     "chat": {
@@ -2691,6 +2978,9 @@ Update user
     },
     "groups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups the user is a member of"
     },
     "id": {
@@ -2699,10 +2989,16 @@ Update user
     },
     "images": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The images value"
     },
     "locations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The user placement at each site location."
     },
     "manager": {
@@ -2719,10 +3015,16 @@ Update user
     },
     "primaryContactInfo": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The address(s) used for primary contact. Updates to the corresponding address in the addresses list will be reflected here."
     },
     "profileSkills": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Profile skills possessed by the user"
     },
     "selfUri": {
@@ -2772,7 +3074,7 @@ Patch a user's CallForwarding
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `calls` | any[] | No | — | An ordered list of CallRoutes to be executed when CallForwarding is enabled |
+| `calls` | object[] | No | — | An ordered list of CallRoutes to be executed when CallForwarding is enabled |
 | `enabled` | boolean | No | — | Whether or not CallForwarding is enabled |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
@@ -2798,6 +3100,9 @@ Patch a user's CallForwarding
     },
     "calls": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An ordered list of CallRoutes to be executed when CallForwarding is enabled"
     },
     "enabled": {
@@ -3024,7 +3329,7 @@ Patch a user's Geolocation
 | `country` | string | No | — | The country value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `latitude` | number | No | — | The latitude value |
-| `locations` | any[] | No | — | The locations value |
+| `locations` | object[] | No | — | The locations value |
 | `longitude` | number | No | — | The longitude value |
 | `name` | string | No | — | The name value |
 | `primary` | boolean | No | — | A boolean used to tell whether or not to set this geolocation client as the primary on a PATCH |
@@ -3068,6 +3373,9 @@ Patch a user's Geolocation
     },
     "locations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The locations value"
     },
     "longitude": {
@@ -3346,8 +3654,8 @@ Search gkn documentation
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -3371,10 +3679,16 @@ Search gkn documentation
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -3411,8 +3725,8 @@ Search documentation
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -3436,10 +3750,16 @@ Search documentation
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -3475,7 +3795,7 @@ Add members
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `groupId` | string | Yes | — | Group ID |
-| `memberIds` | any[] | Yes | — | A list of the ids of the members to add. A maximum of 50 members are allowed per request. |
+| `memberIds` | string[] | Yes | — | A list of the ids of the members to add. A maximum of 50 members are allowed per request. |
 | `version` | integer | No | — | The current group version. |
 
 <Expandable title="inputSchema">
@@ -3494,6 +3814,9 @@ Add members
     },
     "memberIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of the ids of the members to add. A maximum of 50 members are allowed per request."
     },
     "version": {
@@ -3521,16 +3844,16 @@ Create a group
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `addresses` | any[] | No | — | The addresses value |
+| `addresses` | object[] | No | — | The addresses value |
 | `callsEnabled` | boolean | No | — | Allow calls to be placed to this group. |
 | `dateModified` | string | No | — | Last modified date/time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | No | — | The description value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `images` | any[] | No | — | The images value |
+| `images` | object[] | No | — | The images value |
 | `includeOwners` | boolean | No | — | Allow owners to be included as members of the group |
 | `memberCount` | integer | No | — | Number of members. |
 | `name` | string | Yes | — | The group name. |
-| `ownerIds` | any[] | No | — | Owners of the group |
+| `ownerIds` | string[] | No | — | Owners of the group |
 | `rolesEnabled` | boolean | No | — | Allow roles to be assigned to this group |
 | `rulesVisible` | boolean | Yes | — | Are membership rules visible to the person requesting to view the group |
 | `selfUri` | string | No | — | The URI for this object |
@@ -3551,6 +3874,9 @@ Create a group
     },
     "addresses": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The addresses value"
     },
     "callsEnabled": {
@@ -3571,6 +3897,9 @@ Create a group
     },
     "images": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The images value"
     },
     "includeOwners": {
@@ -3587,6 +3916,9 @@ Create a group
     },
     "ownerIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Owners of the group"
     },
     "rolesEnabled": {
@@ -3656,8 +3988,8 @@ Search groups
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -3681,10 +4013,16 @@ Search groups
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -3719,11 +4057,11 @@ Search locations
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -3739,6 +4077,9 @@ Search locations
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "pageNumber": {
@@ -3751,10 +4092,16 @@ Search locations
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4027,12 +4374,12 @@ Search users
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enforcePermissions` | boolean | No | — | This property only applies to api/v2/user/search; when set to true add additional search criteria to filter users by: directory:user:view |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 | `integrationPresenceSource` | string | No | — | Gets an integration presence for users instead of their defaults. This parameter will only be used when presence is provided as an "expand". When using this parameter the maximum number of users that can be returned is 100. |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -4052,6 +4399,9 @@ Search users
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "integrationPresenceSource": {
@@ -4073,10 +4423,16 @@ Search users
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4112,9 +4468,9 @@ Suggest resources.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `profile` | boolean | No | — | The profile value |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
-| `query` | any[] | Yes | — | Suggest query |
-| `types` | any[] | Yes | — | Resource domain type to search |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
+| `query` | object[] | Yes | — | Suggest query |
+| `types` | string[] | Yes | — | Resource domain type to search |
 
 <Expandable title="inputSchema">
 
@@ -4132,14 +4488,23 @@ Suggest resources.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Suggest query"
     },
     "types": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Resource domain type to search"
     }
   },
@@ -4164,12 +4529,12 @@ Search users assigned to teams
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `enforcePermissions` | boolean | No | — | This property only applies to api/v2/user/search; when set to true add additional search criteria to filter users by: directory:user:view |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 | `integrationPresenceSource` | string | No | — | Gets an integration presence for users instead of their defaults. This parameter will only be used when presence is provided as an "expand". When using this parameter the maximum number of users that can be returned is 100. |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -4189,6 +4554,9 @@ Search users assigned to teams
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "integrationPresenceSource": {
@@ -4210,10 +4578,16 @@ Search users assigned to teams
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4250,12 +4624,12 @@ Search resources.
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | The search criteria |
-| `returnFields` | any[] | No | — | Return Fields |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | The search criteria |
+| `returnFields` | string[] | No | — | Return Fields |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
-| `types` | any[] | Yes | — | Resource domain type to search |
+| `types` | string[] | Yes | — | Resource domain type to search |
 
 <Expandable title="inputSchema">
 
@@ -4277,14 +4651,23 @@ Search resources.
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The search criteria"
     },
     "returnFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Return Fields"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4302,6 +4685,9 @@ Search resources.
     },
     "types": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Resource domain type to search"
     }
   },
@@ -4325,7 +4711,7 @@ Add team members
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `teamId` | string | Yes | — | Team ID |
-| `memberIds` | any[] | Yes | — | A list of the ids of the members to add or remove |
+| `memberIds` | string[] | Yes | — | A list of the ids of the members to add or remove |
 
 <Expandable title="inputSchema">
 
@@ -4343,6 +4729,9 @@ Add team members
     },
     "memberIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of the ids of the members to add or remove"
     }
   },
@@ -4453,8 +4842,8 @@ Search resources.
 | --- | --- | --- | --- | --- |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | Yes | — | Team Search Criteria |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | Yes | — | Team Search Criteria |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -4478,10 +4867,16 @@ Search resources.
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Team Search Criteria"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4517,11 +4912,11 @@ Search sites
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -4537,6 +4932,9 @@ Search sites
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "pageNumber": {
@@ -4549,10 +4947,16 @@ Search sites
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4587,7 +4991,7 @@ Create user
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `addresses` | any[] | No | — | Email addresses and phone numbers for this user |
+| `addresses` | object[] | No | — | Email addresses and phone numbers for this user |
 | `department` | string | No | — | The department value |
 | `divisionId` | string | Yes | — | The division to which this user will belong |
 | `email` | string | Yes | — | User's email and username |
@@ -4608,6 +5012,9 @@ Create user
     },
     "addresses": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Email addresses and phone numbers for this user"
     },
     "department": {
@@ -4750,11 +5157,11 @@ Search voicemails
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Provides more details about a specified resource |
+| `expand` | string[] | No | — | Provides more details about a specified resource |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page |
-| `query` | any[] | No | — | Search query string |
-| `sort` | any[] | No | — | Multi-value sort order, list of multiple sort values |
+| `query` | object[] | No | — | Search query string |
+| `sort` | object[] | No | — | Multi-value sort order, list of multiple sort values |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -4770,6 +5177,9 @@ Search voicemails
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Provides more details about a specified resource"
     },
     "pageNumber": {
@@ -4782,10 +5192,16 @@ Search voicemails
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Multi-value sort order, list of multiple sort values"
     },
     "sortBy": {
@@ -4821,14 +5237,14 @@ Update group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `groupId` | string | Yes | — | Group ID |
-| `addresses` | any[] | No | — | The addresses value |
+| `addresses` | object[] | No | — | The addresses value |
 | `callsEnabled` | boolean | No | — | Allow calls to be placed to this group. |
 | `description` | string | No | — | The description value |
 | `id` | string | No | — | The globally unique identifier for the object. |
-| `images` | any[] | No | — | The images value |
+| `images` | object[] | No | — | The images value |
 | `includeOwners` | boolean | No | — | Allow owners to be included as members of the group |
 | `name` | string | No | — | The group name. |
-| `ownerIds` | any[] | No | — | Owners of the group |
+| `ownerIds` | string[] | No | — | Owners of the group |
 | `rolesEnabled` | boolean | No | — | Allow roles to be assigned to this group |
 | `rulesVisible` | boolean | No | — | Are membership rules visible to the person requesting to view the group |
 | `selfUri` | string | No | — | The URI for this object |
@@ -4852,6 +5268,9 @@ Update group
     },
     "addresses": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The addresses value"
     },
     "callsEnabled": {
@@ -4868,6 +5287,9 @@ Update group
     },
     "images": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The images value"
     },
     "includeOwners": {
@@ -4880,6 +5302,9 @@ Update group
     },
     "ownerIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Owners of the group"
     },
     "rolesEnabled": {
@@ -5242,7 +5667,7 @@ Update a user's CallForwarding
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `calls` | any[] | No | — | An ordered list of CallRoutes to be executed when CallForwarding is enabled |
+| `calls` | object[] | No | — | An ordered list of CallRoutes to be executed when CallForwarding is enabled |
 | `enabled` | boolean | No | — | Whether or not CallForwarding is enabled |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
@@ -5268,6 +5693,9 @@ Update a user's CallForwarding
     },
     "calls": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An ordered list of CallRoutes to be executed when CallForwarding is enabled"
     },
     "enabled": {
@@ -5726,7 +6154,7 @@ Update profile skills for a user
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `userId` | string | Yes | — | User ID |
-| `body` | any[] | Yes | — | Skills |
+| `body` | string[] | Yes | — | Skills |
 
 <Expandable title="inputSchema">
 
@@ -5744,6 +6172,9 @@ Update profile skills for a user
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Skills"
     }
   },
@@ -5768,7 +6199,7 @@ Sets the user's roles
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `subjectId` | string | Yes | — | User ID |
-| `body` | any[] | Yes | — | List of roles |
+| `body` | string[] | Yes | — | List of roles |
 
 <Expandable title="inputSchema">
 
@@ -5786,6 +6217,9 @@ Sets the user's roles
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of roles"
     }
   },
