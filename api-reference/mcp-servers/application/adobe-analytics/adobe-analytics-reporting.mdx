@@ -45,23 +45,23 @@ Create a new Calculated Metric
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
-| `categories` | any[] | No | — | categories |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
+| `categories` | string[] | No | — | The categories value |
 | `created` | string | No | — | Calculated metric creation date |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `polarity` | string | No | — | Set metric polarity, which indicates whether it's good or bad if a given metric goes up. Default=positive |
 | `precision` | integer | No | — | Number of decimal places to include in calculated metric result |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `siteTitle` | string | No | — | siteTitle |
-| `tags` | any[] | No | — | tags |
-| `type` | string | No | — | type |
+| `siteTitle` | string | No | — | Site Title |
+| `tags` | object[] | No | — | The tags value |
+| `type` | string | No | — | The type value |
 
 <Expandable title="inputSchema">
 
@@ -75,10 +75,23 @@ Create a new Calculated Metric
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "definition",
+          "compatibility",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional calculated metric metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -93,7 +106,10 @@ Create a new Calculated Metric
     },
     "categories": {
       "type": "array",
-      "description": "categories"
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories value"
     },
     "created": {
       "type": "string",
@@ -101,11 +117,11 @@ Create a new Calculated Metric
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "id": {
       "type": "string",
@@ -113,15 +129,15 @@ Create a new Calculated Metric
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -162,15 +178,18 @@ Create a new Calculated Metric
     },
     "siteTitle": {
       "type": "string",
-      "description": "siteTitle"
+      "description": "Site Title"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "CURRENCY",
         "TIME",
@@ -198,7 +217,7 @@ Deletion of Calculated Metrics by Id
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The calculated metric ID to be deleted |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -216,7 +235,7 @@ Deletion of Calculated Metrics by Id
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -239,7 +258,7 @@ Retrieve a calculated metric function by id
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The function ID to retrieve |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -257,7 +276,7 @@ Retrieve a calculated metric function by id
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -279,7 +298,7 @@ Retrieve calculated metric functions
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -293,7 +312,7 @@ Retrieve calculated metric functions
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -315,22 +334,22 @@ Update an existing calculated metric
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Calculated Metric ID to be updated |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
-| `categories` | any[] | No | — | categories |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
+| `categories` | string[] | No | — | The categories value |
 | `created` | string | No | — | Calculated metric creation date |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `polarity` | string | No | — | Set metric polarity, which indicates whether it's good or bad if a given metric goes up. Default=positive |
 | `precision` | integer | No | — | Number of decimal places to include in calculated metric result |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `siteTitle` | string | No | — | siteTitle |
-| `tags` | any[] | No | — | tags |
-| `type` | string | No | — | type |
+| `siteTitle` | string | No | — | Site Title |
+| `tags` | object[] | No | — | The tags value |
+| `type` | string | No | — | The type value |
 
 <Expandable title="inputSchema">
 
@@ -348,10 +367,23 @@ Update an existing calculated metric
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "definition",
+          "compatibility",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional calculated metric metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -366,7 +398,10 @@ Update an existing calculated metric
     },
     "categories": {
       "type": "array",
-      "description": "categories"
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories value"
     },
     "created": {
       "type": "string",
@@ -374,23 +409,23 @@ Update an existing calculated metric
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -431,15 +466,18 @@ Update an existing calculated metric
     },
     "siteTitle": {
       "type": "string",
-      "description": "siteTitle"
+      "description": "Site Title"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "CURRENCY",
         "TIME",
@@ -467,23 +505,23 @@ Validate a calculated metric definition
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `migrating` | boolean | No | — | Include migration functions in validation |
-| `categories` | any[] | No | — | categories |
+| `categories` | string[] | No | — | The categories value |
 | `created` | string | No | — | Calculated metric creation date |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `polarity` | string | No | — | Set metric polarity, which indicates whether it's good or bad if a given metric goes up. Default=positive |
 | `precision` | integer | No | — | Number of decimal places to include in calculated metric result |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `siteTitle` | string | No | — | siteTitle |
-| `tags` | any[] | No | — | tags |
-| `type` | string | No | — | type |
+| `siteTitle` | string | No | — | Site Title |
+| `tags` | object[] | No | — | The tags value |
+| `type` | string | No | — | The type value |
 
 <Expandable title="inputSchema">
 
@@ -497,7 +535,7 @@ Validate a calculated metric definition
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "migrating": {
       "type": "boolean",
@@ -505,7 +543,10 @@ Validate a calculated metric definition
     },
     "categories": {
       "type": "array",
-      "description": "categories"
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories value"
     },
     "created": {
       "type": "string",
@@ -513,11 +554,11 @@ Validate a calculated metric definition
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "id": {
       "type": "string",
@@ -525,15 +566,15 @@ Validate a calculated metric definition
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -574,15 +615,18 @@ Validate a calculated metric definition
     },
     "siteTitle": {
       "type": "string",
-      "description": "siteTitle"
+      "description": "Site Title"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "CURRENCY",
         "TIME",
@@ -612,7 +656,7 @@ Returns a dimension for the given report suite
 | `dimensionId` | string | Yes | — | The dimension ID. For example a valid id is a value like 'evar1' |
 | `rsid` | string | Yes | — | The report suite ID. |
 | `locale` | string | No | — | The locale to use for returning system named dimensions. |
-| `expansion` | any[] | No | — | Add extra metadata to items (comma-delimited list) |
+| `expansion` | string[] | No | — | Add extra metadata to items (comma-delimited list) |
 
 <Expandable title="inputSchema">
 
@@ -638,6 +682,15 @@ Returns a dimension for the given report suite
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tags",
+          "shares",
+          "allowedForReporting",
+          "categories"
+        ]
+      },
       "description": "Add extra metadata to items (comma-delimited list)",
       "enum": [
         "tags",
@@ -668,11 +721,11 @@ Returns a list of dimensions for a given report suite.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `rsid` | string | Yes | — | A Report Suite ID |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `segmentable` | boolean | No | — | Only include dimensions that are valid within a segment. |
 | `reportable` | boolean | No | — | Only include dimensions that are valid within a report. |
 | `classifiable` | boolean | No | — | Only include classifiable dimensions. |
-| `expansion` | any[] | No | — | Add extra metadata to items (comma-delimited list) |
+| `expansion` | string[] | No | — | Add extra metadata to items (comma-delimited list) |
 
 <Expandable title="inputSchema">
 
@@ -690,7 +743,7 @@ Returns a list of dimensions for a given report suite.
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "segmentable": {
       "type": "boolean",
@@ -715,6 +768,15 @@ Returns a list of dimensions for a given report suite.
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tags",
+          "shares",
+          "allowedForReporting",
+          "categories"
+        ]
+      },
       "description": "Add extra metadata to items (comma-delimited list)",
       "enum": [
         "tags",
@@ -747,7 +809,7 @@ Retrieves report suites that match the given filters.
 | `rsidContains` | string | No | — | Filter list to only include suites whose rsid contains rsidContains. |
 | `limit` | integer | No | — | Number of results per page |
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
-| `expansion` | any[] | No | — | Comma-delimited list of additional metadata fields to include on response. |
+| `expansion` | string[] | No | — | Comma-delimited list of additional metadata fields to include on response. |
 
 <Expandable title="inputSchema">
 
@@ -777,6 +839,16 @@ Retrieves report suites that match the given filters.
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name",
+          "parentRsid",
+          "currency",
+          "calendarType",
+          "timezoneZoneinfo"
+        ]
+      },
       "description": "Comma-delimited list of additional metadata fields to include on response.",
       "enum": [
         "name",
@@ -809,7 +881,7 @@ Retrieve many calculated metrics
 | `ownerId` | integer | No | — | Filter list to only include calculated metrics owned by the specified loginId |
 | `filterByIds` | string | No | — | Filter list to only include calculated metrics in the specified list (comma-delimited list of IDs) (this is the same as calculatedMetricFilter, and is overwritten by calculatedMetricFilter |
 | `toBeUsedInRsid` | string | No | — | The report suite where the calculated metric intended to be used.  This report suite will be used to determine things like compatibility and permissions.  If it is not specified then the permissions will be calculated based on the union of all metrics authorized in all groups the user belongs to.  If the compatibility expansion is specified and toBeUsedInRsid is not then the compatibility returned is based off the compatibility from the last time the calculated metric was saved. |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `name` | string | No | — | Filter list to only include calculated metrics that contains the Name |
 | `tagNames` | string | No | — | Filter list to only include calculated metrics that contains one of the tags |
 | `favorite` | boolean | No | — | Filter list to only include calculated metrics that are favorites |
@@ -818,8 +890,8 @@ Retrieve many calculated metrics
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
 | `sortDirection` | string | No | — | Sort direction (ASC or DESC) |
 | `sortProperty` | string | No | — | Property to sort by (name, modified_date, id is currently allowed) |
-| `expansion` | any[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
-| `includeType` | any[] | No | — | Include additional calculated metrics not owned by user. The "all" option takes precedence over "shared" |
+| `expansion` | string[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
+| `includeType` | string[] | No | — | Include additional calculated metrics not owned by user. The "all" option takes precedence over "shared" |
 
 <Expandable title="inputSchema">
 
@@ -849,7 +921,7 @@ Retrieve many calculated metrics
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "name": {
       "type": "string",
@@ -885,6 +957,19 @@ Retrieve many calculated metrics
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "definition",
+          "compatibility",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional calculated metric metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -899,6 +984,14 @@ Retrieve many calculated metrics
     },
     "includeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "all",
+          "shared",
+          "templates"
+        ]
+      },
       "description": "Include additional calculated metrics not owned by user. The \"all\" option takes precedence over \"shared\"",
       "enum": [
         "all",
@@ -926,7 +1019,7 @@ Retrieves report suite by id
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `rsid` | string | Yes | — | The rsid of the suite to return |
-| `expansion` | any[] | No | — | Comma-delimited list of additional metadata fields to include on response. |
+| `expansion` | string[] | No | — | Comma-delimited list of additional metadata fields to include on response. |
 
 <Expandable title="inputSchema">
 
@@ -944,6 +1037,16 @@ Retrieves report suite by id
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name",
+          "parentRsid",
+          "currency",
+          "calendarType",
+          "timezoneZoneinfo"
+        ]
+      },
       "description": "Comma-delimited list of additional metadata fields to include on response.",
       "enum": [
         "name",
@@ -974,8 +1077,8 @@ Retrieve a single calculated metric by id
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The calculated metric ID to retrieve |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional calculated metric metadata fields to include on response. |
 
 <Expandable title="inputSchema">
 
@@ -993,10 +1096,23 @@ Retrieve a single calculated metric by id
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "definition",
+          "compatibility",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional calculated metric metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -1032,7 +1148,7 @@ Returns a metric for the given report suite
 | `id` | string | Yes | — | The id of the metric for which to retrieve info. Note ids are values like pageviews, not metrics/pageviews |
 | `rsid` | string | Yes | — | ID of desired report suite ie. myrsid |
 | `locale` | string | No | — | Locale that system named metrics should be returned in |
-| `expansion` | any[] | No | — | Add extra metadata to items (comma-delimited list) |
+| `expansion` | string[] | No | — | Add extra metadata to items (comma-delimited list) |
 
 <Expandable title="inputSchema">
 
@@ -1058,6 +1174,15 @@ Returns a metric for the given report suite
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tags",
+          "shares",
+          "allowedForReporting",
+          "categories"
+        ]
+      },
       "description": "Add extra metadata to items (comma-delimited list)",
       "enum": [
         "tags",
@@ -1090,7 +1215,7 @@ Returns a list of metrics for the given report suite
 | `rsid` | string | Yes | — | ID of desired report suite ie. myrsid |
 | `locale` | string | No | — | Locale that system named metrics should be returned in |
 | `segmentable` | boolean | No | — | Filter the metrics by if they are valid in a segment. |
-| `expansion` | any[] | No | — | Add extra metadata to items (comma-delimited list) |
+| `expansion` | string[] | No | — | Add extra metadata to items (comma-delimited list) |
 
 <Expandable title="inputSchema">
 
@@ -1116,6 +1241,15 @@ Returns a list of metrics for the given report suite
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tags",
+          "shares",
+          "allowedForReporting",
+          "categories"
+        ]
+      },
       "description": "Add extra metadata to items (comma-delimited list)",
       "enum": [
         "tags",
@@ -1144,16 +1278,16 @@ Runs a report for the request in the post body
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `anchorDate` | string | No | — | anchorDate |
-| `dimension` | string | No | — | dimension |
-| `globalFilters` | any[] | No | — | globalFilters |
-| `locale` | object | No | — | locale |
-| `metricContainer` | object | No | — | metricContainer |
-| `rowContainer` | object | No | — | rowContainer |
-| `rsid` | string | No | — | rsid |
-| `search` | object | No | — | search |
-| `settings` | object | No | — | settings |
-| `statistics` | object | No | — | statistics |
+| `anchorDate` | string | No | — | Anchor Date |
+| `dimension` | string | No | — | The dimension value |
+| `globalFilters` | object[] | No | — | Global Filters |
+| `locale` | object | No | — | Locale or language code |
+| `metricContainer` | object | No | — | Metric Container |
+| `rowContainer` | object | No | — | Row Container |
+| `rsid` | string | No | — | The rsid value |
+| `search` | object | No | — | The search value |
+| `settings` | object | No | — | The settings value |
+| `statistics` | object | No | — | The statistics value |
 
 <Expandable title="inputSchema">
 
@@ -1167,155 +1301,192 @@ Runs a report for the request in the post body
     },
     "anchorDate": {
       "type": "string",
-      "description": "anchorDate"
+      "description": "Anchor Date"
     },
     "dimension": {
       "type": "string",
-      "description": "dimension"
+      "description": "The dimension value"
     },
     "globalFilters": {
       "type": "array",
-      "description": "globalFilters"
+      "items": {
+        "type": "object"
+      },
+      "description": "Global Filters"
     },
     "locale": {
       "type": "object",
-      "description": "locale",
+      "description": "Locale or language code",
       "properties": {
         "language": {
-          "type": "string"
+          "type": "string",
+          "description": "The language value"
         },
         "script": {
-          "type": "string"
+          "type": "string",
+          "description": "The script value"
         },
         "country": {
-          "type": "string"
+          "type": "string",
+          "description": "The country value"
         },
         "variant": {
-          "type": "string"
+          "type": "string",
+          "description": "The variant value"
         },
         "extensionKeys": {
-          "type": "array"
+          "type": "array",
+          "description": "Extension Keys"
         },
         "unicodeLocaleAttributes": {
-          "type": "array"
+          "type": "array",
+          "description": "Unicode Locale Attributes"
         },
         "unicodeLocaleKeys": {
-          "type": "array"
+          "type": "array",
+          "description": "Unicode Locale Keys"
         },
         "iso3Language": {
-          "type": "string"
+          "type": "string",
+          "description": "Iso3 Language"
         },
         "iso3Country": {
-          "type": "string"
+          "type": "string",
+          "description": "Iso3 Country"
         },
         "displayLanguage": {
-          "type": "string"
+          "type": "string",
+          "description": "Display Language"
         },
         "displayScript": {
-          "type": "string"
+          "type": "string",
+          "description": "Display Script"
         },
         "displayCountry": {
-          "type": "string"
+          "type": "string",
+          "description": "Display Country"
         },
         "displayVariant": {
-          "type": "string"
+          "type": "string",
+          "description": "Display Variant"
         },
         "displayName": {
-          "type": "string"
+          "type": "string",
+          "description": "Display Name"
         }
       }
     },
     "metricContainer": {
       "type": "object",
-      "description": "metricContainer",
+      "description": "Metric Container",
       "properties": {
         "metricFilters": {
-          "type": "array"
+          "type": "array",
+          "description": "Metric Filters"
         },
         "metrics": {
-          "type": "array"
+          "type": "array",
+          "description": "The metrics value"
         }
       }
     },
     "rowContainer": {
       "type": "object",
-      "description": "rowContainer",
+      "description": "Row Container",
       "properties": {
         "rowFilters": {
-          "type": "array"
+          "type": "array",
+          "description": "Row Filters"
         },
         "rows": {
-          "type": "array"
+          "type": "array",
+          "description": "The rows value"
         }
       }
     },
     "rsid": {
       "type": "string",
-      "description": "rsid"
+      "description": "The rsid value"
     },
     "search": {
       "type": "object",
-      "description": "search",
+      "description": "The search value",
       "properties": {
         "clause": {
-          "type": "string"
+          "type": "string",
+          "description": "The clause value"
         },
         "excludeItemIds": {
-          "type": "array"
+          "type": "array",
+          "description": "Exclude Item Ids"
         },
         "itemIds": {
-          "type": "array"
+          "type": "array",
+          "description": "Item Ids"
         },
         "includeSearchTotal": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Include Search Total"
         },
         "empty": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "The empty value"
         }
       }
     },
     "settings": {
       "type": "object",
-      "description": "settings",
+      "description": "The settings value",
       "properties": {
         "limit": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Maximum number of results to return"
         },
         "page": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Page number for pagination"
         },
         "dimensionSort": {
-          "type": "string"
+          "type": "string",
+          "description": "Dimension Sort"
         },
         "countRepeatInstances": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Count Repeat Instances"
         },
         "reflectRequest": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Reflect Request"
         },
         "includeAnomalyDetection": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Include Anomaly Detection"
         },
         "includePercentChange": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Include Percent Change"
         },
         "includeLatLong": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Include Lat Long"
         },
         "nonesBehavior": {
-          "type": "string"
+          "type": "string",
+          "description": "Nones Behavior"
         }
       }
     },
     "statistics": {
       "type": "object",
-      "description": "statistics",
+      "description": "The statistics value",
       "properties": {
         "functions": {
-          "type": "array"
+          "type": "array",
+          "description": "The functions value"
         },
         "ignoreZeroes": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Ignore Zeroes"
         }
       }
     }
@@ -1440,21 +1611,21 @@ Creates Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
-| `categories` | any[] | No | — | categories |
-| `compatibility` | object | No | — | compatibility |
-| `created` | string | No | — | created |
-| `definition` | object | No | — | definition |
-| `definitionLastModified` | string | No | — | definitionLastModified |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
+| `categories` | string[] | No | — | The categories value |
+| `compatibility` | object | No | — | The compatibility value |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `definitionLastModified` | string | No | — | Definition Last Modified |
 | `description` | string | No | — | A description of the segment. |
-| `modified` | string | No | — | modified |
+| `modified` | string | No | — | The modified value |
 | `name` | string | No | — | A name for the segment. |
-| `owner` | object | No | — | owner |
+| `owner` | object | No | — | The owner value |
 | `reportSuiteName` | string | No | — | The friendly name for the report suite id. |
 | `rsid` | string | No | — | The report suite id. |
 | `siteTitle` | string | No | — | A name for the report suite.  This is deprecated and should use the report suite name instead. |
-| `tags` | any[] | No | — | All existing tags associated with the segment. |
+| `tags` | object[] | No | — | All existing tags associated with the segment. |
 
 <Expandable title="inputSchema">
 
@@ -1468,10 +1639,25 @@ Creates Segment
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "compatibility",
+          "definition",
+          "publishingStatus",
+          "definitionLastModified",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional segment metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -1488,54 +1674,66 @@ Creates Segment
     },
     "categories": {
       "type": "array",
-      "description": "categories"
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories value"
     },
     "compatibility": {
       "type": "object",
-      "description": "compatibility",
+      "description": "The compatibility value",
       "properties": {
         "valid": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "The valid value"
         },
         "message": {
-          "type": "string"
+          "type": "string",
+          "description": "The message value"
         },
         "validator_version": {
-          "type": "string"
+          "type": "string",
+          "description": "Validator Version"
         },
         "supported_products": {
-          "type": "array"
+          "type": "array",
+          "description": "Supported Products"
         },
         "supported_schema": {
-          "type": "array"
+          "type": "array",
+          "description": "Supported Schema"
         },
         "supported_features": {
-          "type": "array"
+          "type": "array",
+          "description": "Supported Features"
         }
       }
     },
     "created": {
       "type": "string",
-      "description": "created"
+      "description": "The created value"
     },
     "definition": {
       "type": "object",
-      "description": "definition",
+      "description": "The definition value",
       "properties": {
         "container": {
-          "type": "object"
+          "type": "object",
+          "description": "The container value"
         },
         "func": {
-          "type": "string"
+          "type": "string",
+          "description": "The func value"
         },
         "version": {
-          "type": "array"
+          "type": "array",
+          "description": "The version value"
         }
       }
     },
     "definitionLastModified": {
       "type": "string",
-      "description": "definitionLastModified"
+      "description": "Definition Last Modified"
     },
     "description": {
       "type": "string",
@@ -1543,7 +1741,7 @@ Creates Segment
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
@@ -1551,7 +1749,7 @@ Creates Segment
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -1584,6 +1782,9 @@ Creates Segment
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "All existing tags associated with the segment."
     }
   },
@@ -1606,7 +1807,7 @@ Delete Segment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The segment ID to be deleted |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -1624,7 +1825,7 @@ Delete Segment
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -1647,8 +1848,8 @@ Get a Single Segment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The segment ID to retrieve |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
 
 <Expandable title="inputSchema">
 
@@ -1666,10 +1867,25 @@ Get a Single Segment
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "compatibility",
+          "definition",
+          "publishingStatus",
+          "definitionLastModified",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional segment metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -1706,7 +1922,7 @@ Retrieve All Segments
 | --- | --- | --- | --- | --- |
 | `rsids` | string | No | — | Filter list to only include segments tied to specified RSID list (comma-delimited) |
 | `segmentFilter` | string | No | — | Filter list to only include segments in the specified list (comma-delimited list of IDs) |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `name` | string | No | — | Filter list to only include segments that contains the Name |
 | `tagNames` | string | No | — | Filter list to only include segments that contains one of the tags |
 | `filterByPublishedSegments` | string | No | — | Filter list to only include segments where the published field is set to one of the allowable values (all, true, false). |
@@ -1714,8 +1930,8 @@ Retrieve All Segments
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
 | `sortDirection` | string | No | — | Sort direction (ASC or DESC |
 | `sortProperty` | string | No | — | Property to sort by (name, modified_date, id is currently allowed) |
-| `expansion` | any[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
-| `includeType` | any[] | No | — | Include additional segments not owned by user. The "all" option takes precedence over "shared" |
+| `expansion` | string[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
+| `includeType` | string[] | No | — | Include additional segments not owned by user. The "all" option takes precedence over "shared" |
 
 <Expandable title="inputSchema">
 
@@ -1737,7 +1953,7 @@ Retrieve All Segments
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "name": {
       "type": "string",
@@ -1774,6 +1990,21 @@ Retrieve All Segments
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "compatibility",
+          "definition",
+          "publishingStatus",
+          "definitionLastModified",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional segment metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -1790,6 +2021,14 @@ Retrieve All Segments
     },
     "includeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "shared",
+          "all",
+          "templates"
+        ]
+      },
       "description": "Include additional segments not owned by user. The \"all\" option takes precedence over \"shared\"",
       "enum": [
         "shared",
@@ -1817,8 +2056,8 @@ Update a Segment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Segment ID to be updated |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional segment metadata fields to include on response. |
 | `body` | object | No | — | JSON-formatted Object containing key/value pairs to be updated. |
 
 <Expandable title="inputSchema">
@@ -1837,10 +2076,25 @@ Update a Segment
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "ownerFullName",
+          "modified",
+          "tags",
+          "shares",
+          "compatibility",
+          "definition",
+          "publishingStatus",
+          "definitionLastModified",
+          "categories"
+        ]
+      },
       "description": "Comma-delimited list of additional segment metadata fields to include on response.",
       "enum": [
         "reportSuiteName",
@@ -1880,7 +2134,18 @@ Validate a Segment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `rsid` | string | Yes | — | RSID to run the report against |
-| `body` | string | Yes | — | Segment definition |
+| `categories` | string[] | No | — | The categories value |
+| `compatibility` | object | No | — | The compatibility value |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `definitionLastModified` | string | No | — | Definition Last Modified |
+| `description` | string | No | — | A description of the segment. |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | A name for the segment. |
+| `owner` | object | No | — | The owner value |
+| `reportSuiteName` | string | No | — | The friendly name for the report suite id. |
+| `siteTitle` | string | No | — | A name for the report suite.  This is deprecated and should use the report suite name instead. |
+| `tags` | object[] | No | — | All existing tags associated with the segment. |
 
 <Expandable title="inputSchema">
 
@@ -1896,15 +2161,121 @@ Validate a Segment
       "type": "string",
       "description": "RSID to run the report against"
     },
-    "body": {
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories value"
+    },
+    "compatibility": {
+      "type": "object",
+      "description": "The compatibility value",
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "description": "The valid value"
+        },
+        "message": {
+          "type": "string",
+          "description": "The message value"
+        },
+        "validator_version": {
+          "type": "string",
+          "description": "Validator Version"
+        },
+        "supported_products": {
+          "type": "array",
+          "description": "Supported Products"
+        },
+        "supported_schema": {
+          "type": "array",
+          "description": "Supported Schema"
+        },
+        "supported_features": {
+          "type": "array",
+          "description": "Supported Features"
+        }
+      }
+    },
+    "created": {
       "type": "string",
-      "description": "Segment definition"
+      "description": "The created value"
+    },
+    "definition": {
+      "type": "object",
+      "description": "The definition value",
+      "properties": {
+        "container": {
+          "type": "object",
+          "description": "The container value"
+        },
+        "func": {
+          "type": "string",
+          "description": "The func value"
+        },
+        "version": {
+          "type": "array",
+          "description": "The version value"
+        }
+      }
+    },
+    "definitionLastModified": {
+      "type": "string",
+      "description": "Definition Last Modified"
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the segment."
+    },
+    "modified": {
+      "type": "string",
+      "description": "The modified value"
+    },
+    "name": {
+      "type": "string",
+      "description": "A name for the segment."
+    },
+    "owner": {
+      "type": "object",
+      "description": "The owner value",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "the login id of the owner"
+        },
+        "name": {
+          "type": "string",
+          "description": "the friendly full login name of the owner, included when the expansion parameter ownerFullName is true"
+        },
+        "login": {
+          "type": "string",
+          "description": "the friendly full login name of the owner, included when the expansion parameter ownerFullName is true"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "reportSuiteName": {
+      "type": "string",
+      "description": "The friendly name for the report suite id."
+    },
+    "siteTitle": {
+      "type": "string",
+      "description": "A name for the report suite.  This is deprecated and should use the report suite name instead."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "All existing tags associated with the segment."
     }
   },
   "required": [
     "PCID",
-    "rsid",
-    "body"
+    "rsid"
   ]
 }
 ```

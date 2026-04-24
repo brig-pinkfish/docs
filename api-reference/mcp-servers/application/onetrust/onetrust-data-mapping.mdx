@@ -66,7 +66,7 @@ Create Control Implementation
 | --- | --- | --- | --- | --- |
 | `type` | string | Yes | — | The type of inventory to add controls to |
 | `inventoryId` | string | Yes | — | The unique identifier of an inventory record. This value can be obtained using the [Get List of Inventories](/onetrust/reference/getinventorylist) API. |
-| `controlIds` | any[] | Yes | — | Set of control IDs to be implemented for the given inventory entity |
+| `controlIds` | string[] | Yes | — | Set of control IDs to be implemented for the given inventory entity |
 | `status` | string | No | — | Implementation status of the controls being added to the inventory. If not provided, defaults to 'Pending' |
 
 <Expandable title="inputSchema">
@@ -95,6 +95,10 @@ Create Control Implementation
     },
     "controlIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Set of control IDs to be implemented for the given inventory entity"
     },
     "status": {
@@ -680,11 +684,11 @@ Create Data Element
 | --- | --- | --- | --- | --- |
 | `generator` | string | No | — | Optional generator parameter |
 | `assignToAllSubjects` | boolean | No | — | Flag indicating whether to assign the data element to all subjects |
-| `categories` | any[] | Yes | — | List of data categories to associate with the data element |
-| `classifications` | any[] | No | — | List of data classifications to associate with the data element |
+| `categories` | object[] | Yes | — | List of data categories to associate with the data element |
+| `classifications` | object[] | No | — | List of data classifications to associate with the data element |
 | `description` | string | No | — | Description of the personal data entity |
 | `status` | string | No | — | Status of the personal data entity |
-| `subjects` | any[] | No | — | List of data subjects to associate with the data element |
+| `subjects` | object[] | No | — | List of data subjects to associate with the data element |
 | `tagId` | string | No | — | ID of the associated tag |
 | `termId` | string | No | — | ID of the associated term |
 | `value` | string | Yes | — | Name of the personal data entity |
@@ -709,10 +713,16 @@ Create Data Element
     },
     "categories": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of data categories to associate with the data element"
     },
     "classifications": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of data classifications to associate with the data element"
     },
     "description": {
@@ -730,6 +740,9 @@ Create Data Element
     },
     "subjects": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of data subjects to associate with the data element"
     },
     "tagId": {
@@ -896,7 +909,7 @@ Link Inventory
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API. |
 | `entityType` | string | No | — | Entity type parameter |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -924,6 +937,9 @@ Link Inventory
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -1118,7 +1134,7 @@ Delete Inventory Link
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API. |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1136,6 +1152,9 @@ Delete Inventory Link
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -1612,7 +1631,7 @@ Get List of Inventories by Criteria
 | `markForDelete` | boolean | No | — | Flag to include soft-deleted inventories. |
 | `page` | integer | No | — | Results page to be retrieved (0..N) |
 | `size` | integer | No | — | Number of records per page (1..50) |
-| `filters` | any[] | No | — | A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND. |
+| `filters` | object[] | No | — | A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND. |
 
 <Expandable title="inputSchema">
 
@@ -1648,6 +1667,9 @@ Get List of Inventories by Criteria
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND."
     }
   },
@@ -1887,7 +1909,7 @@ Add Asset Inventory as Child to Parent Inventory
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `parentInventoryId` | string | Yes | — | The unique identifier of the parent asset inventory |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1905,6 +1927,10 @@ Add Asset Inventory as Child to Parent Inventory
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Request body"
     }
   },
@@ -1929,7 +1955,7 @@ Add Legal Entity Inventory as Child to Parent Inventory
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `parentInventoryId` | string | Yes | — | The unique identifier of the parent legal entity inventory |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1947,6 +1973,10 @@ Add Legal Entity Inventory as Child to Parent Inventory
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Request body"
     }
   },
@@ -1971,7 +2001,7 @@ Add Processing Activity Inventory as Child to Parent Inventory
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `parentInventoryId` | string | Yes | — | The unique identifier of the parent processing activity inventory |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1989,6 +2019,10 @@ Add Processing Activity Inventory as Child to Parent Inventory
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Request body"
     }
   },
@@ -2378,7 +2412,7 @@ Update Inventory by ID
 | `schemaName` | string | Yes | — | The `name` property of the schema. |
 | `id` | string | Yes | — | The unique identifier of an inventory record. |
 | `primaryEntity` | boolean | No | — | Flag to indicate if this is a primary entity update. |
-| `inventoryIds` | any[] | No | — | List of inventory record UUIDs to be updated. |
+| `inventoryIds` | string[] | No | — | List of inventory record UUIDs to be updated. |
 | `inventoryRequest` | object | No | — | Inventory Request |
 
 <Expandable title="inputSchema">
@@ -2411,6 +2445,10 @@ Update Inventory by ID
     },
     "inventoryIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of inventory record UUIDs to be updated."
     },
     "inventoryRequest": {
@@ -2440,7 +2478,7 @@ Link Inventory
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The unique identifier of an inventory record |
 | `entityType` | string | No | — | Entity type parameter |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -2468,6 +2506,9 @@ Link Inventory
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
