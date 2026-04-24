@@ -45,7 +45,7 @@ Create Catalog Category
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -59,16 +59,19 @@ Create Catalog Category
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -96,7 +99,7 @@ Create Catalog Item
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -110,16 +113,19 @@ Create Catalog Item
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -147,7 +153,7 @@ Create Catalog Variant
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -161,16 +167,19 @@ Create Catalog Variant
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -199,7 +208,7 @@ Create Coupon
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -213,13 +222,15 @@ Create Coupon
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -391,7 +402,7 @@ Get Catalog Categories
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[catalog-category]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-category]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`ids`: `any`&lt;br&gt;`item.id`: `equals`&lt;br&gt;`name`: `contains` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -408,6 +419,14 @@ Get Catalog Categories
     },
     "fields[catalog-category]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "external_id",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -446,7 +465,7 @@ Get Catalog Category
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog category ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `fields[catalog-category]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-category]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -464,6 +483,14 @@ Get Catalog Category
     },
     "fields[catalog-category]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "external_id",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -487,7 +514,7 @@ Get Coupon
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The internal id of a Coupon is equivalent to its external id stored within an integration. |
-| `fields[coupon]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[coupon]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -505,6 +532,14 @@ Get Coupon
     },
     "fields[coupon]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "description",
+          "external_id",
+          "monitor_configuration"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -527,7 +562,7 @@ Get Coupons
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[coupon]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[coupon]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 
 <Expandable title="inputSchema">
@@ -542,6 +577,14 @@ Get Coupons
     },
     "fields[coupon]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "description",
+          "external_id",
+          "monitor_configuration"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "page[cursor]": {
@@ -568,7 +611,7 @@ Get Image
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The ID of the image |
-| `fields[image]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[image]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -586,6 +629,17 @@ Get Image
     },
     "fields[image]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "format",
+          "hidden",
+          "image_url",
+          "name",
+          "size",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -608,7 +662,7 @@ Get Images
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[image]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[image]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`, `equals`&lt;br&gt;`updated_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`format`: `any`, `equals`&lt;br&gt;`name`: `any`, `contains`, `ends-with`, `equals`, `starts-with`&lt;br&gt;`size`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`hidden`: `any`, `equals` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 20. Min: 1. Max: 100. |
@@ -626,6 +680,17 @@ Get Images
     },
     "fields[image]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "format",
+          "hidden",
+          "image_url",
+          "name",
+          "size",
+          "updated_at"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -676,9 +741,9 @@ Get Catalog Item
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog item ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `fields[catalog-item]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[catalog-variant]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `fields[catalog-item]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-variant]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -696,14 +761,57 @@ Get Catalog Item
     },
     "fields[catalog-item]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "price",
+          "published",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[catalog-variant]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "inventory_policy",
+          "inventory_quantity",
+          "price",
+          "published",
+          "sku",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "variants"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -726,10 +834,10 @@ Get Catalog Items
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[catalog-item]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[catalog-variant]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-item]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-variant]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`ids`: `any`&lt;br&gt;`category.id`: `equals`&lt;br&gt;`title`: `contains`&lt;br&gt;`published`: `equals` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
 
@@ -745,10 +853,47 @@ Get Catalog Items
     },
     "fields[catalog-item]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "price",
+          "published",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[catalog-variant]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "inventory_policy",
+          "inventory_quantity",
+          "price",
+          "published",
+          "sku",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -757,6 +902,12 @@ Get Catalog Items
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "variants"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -791,7 +942,7 @@ Get Catalog Variant
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog variant ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `fields[catalog-variant]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-variant]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -809,6 +960,26 @@ Get Catalog Variant
     },
     "fields[catalog-variant]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "inventory_policy",
+          "inventory_quantity",
+          "price",
+          "published",
+          "sku",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -831,7 +1002,7 @@ Get Catalog Variants
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[catalog-variant]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[catalog-variant]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`ids`: `any`&lt;br&gt;`item.id`: `equals`&lt;br&gt;`sku`: `equals`&lt;br&gt;`title`: `contains`&lt;br&gt;`published`: `equals` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -848,6 +1019,26 @@ Get Catalog Variants
     },
     "fields[catalog-variant]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "custom_metadata",
+          "description",
+          "external_id",
+          "image_full_url",
+          "image_thumbnail_url",
+          "images",
+          "inventory_policy",
+          "inventory_quantity",
+          "price",
+          "published",
+          "sku",
+          "title",
+          "updated",
+          "url"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -886,7 +1077,7 @@ Update Catalog Category
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog category ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -904,20 +1095,23 @@ Update Catalog Category
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The catalog category ID is a compound ID (string), with format: `{integration}:::{catalog}:::{external_id}`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -948,7 +1142,7 @@ Update Catalog Item
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog item ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -966,20 +1160,23 @@ Update Catalog Item
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The catalog item ID is a compound ID (string), with format: `{integration}:::{catalog}:::{external_id}`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -1010,7 +1207,7 @@ Update Catalog Variant
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The catalog variant ID is a compound ID (string), with format: `&#123;integration&#125;:::&#123;catalog&#125;:::&#123;external_id&#125;`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`. |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1028,17 +1225,19 @@ Update Catalog Variant
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The catalog variant ID is a compound ID (string), with format: `{integration}:::{catalog}:::{external_id}`. Currently, the only supported integration type is `$custom`, and the only supported catalog is `$default`."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1069,7 +1268,7 @@ Update Coupon
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | The internal id of a Coupon is equivalent to its external id stored within an integration. |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1087,17 +1286,19 @@ Update Coupon
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The internal id of a Coupon is equivalent to its external id stored within an integration."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [

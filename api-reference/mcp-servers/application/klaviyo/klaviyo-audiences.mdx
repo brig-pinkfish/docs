@@ -39,8 +39,6 @@ description: "Klaviyo Audiences - manage profiles, lists, segments, events, and 
 | [`klaviyo_audiences_get_tags_for_list`](#klaviyo_audiences_get_tags_for_list) | Get Tags for List |
 | [`klaviyo_audiences_get_tags_for_segment`](#klaviyo_audiences_get_tags_for_segment) | Get Tags for Segment |
 | [`klaviyo_audiences_merge_profiles`](#klaviyo_audiences_merge_profiles) | Merge Profiles |
-| [`klaviyo_audiences_query_flow_series`](#klaviyo_audiences_query_flow_series) | Query Flow Series |
-| [`klaviyo_audiences_query_flow_values`](#klaviyo_audiences_query_flow_values) | Query Flow Values |
 | [`klaviyo_audiences_query_metric_aggregates`](#klaviyo_audiences_query_metric_aggregates) | Query Metric Aggregates |
 | [`klaviyo_audiences_query_segment_values`](#klaviyo_audiences_query_segment_values) | Query Segment Values |
 | [`klaviyo_audiences_remove_profiles_from_list`](#klaviyo_audiences_remove_profiles_from_list) | Remove Profiles from List |
@@ -58,8 +56,8 @@ Add Profiles to List
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `data` | any[] | Yes | — | data |
+| `id` | string | Yes | — | The id value |
+| `data` | object[] | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -73,11 +71,14 @@ Add Profiles to List
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "data": {
       "type": "array",
-      "description": "data"
+      "items": {
+        "type": "object"
+      },
+      "description": "The data value"
     }
   },
   "required": [
@@ -100,7 +101,7 @@ Bulk Subscribe Profiles
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -114,16 +115,19 @@ Bulk Subscribe Profiles
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -151,7 +155,7 @@ Bulk Unsubscribe Profiles
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -165,16 +169,19 @@ Bulk Unsubscribe Profiles
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
@@ -202,7 +209,7 @@ Create Event
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -216,13 +223,15 @@ Create Event
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -250,7 +259,7 @@ Create List
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -264,13 +273,15 @@ Create List
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -298,8 +309,8 @@ Create or Update Profile
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `data` | object | Yes | — | data |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -313,24 +324,34 @@ Create or Update Profile
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "Primary key that uniquely identifies this profile. Generated by Klaviyo."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "meta": {
-          "type": "object"
+          "type": "object",
+          "description": "The meta value"
         }
       },
       "required": [
@@ -358,8 +379,8 @@ Create Profile
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `data` | object | Yes | — | data |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -373,17 +394,26 @@ Create Profile
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -411,7 +441,7 @@ Create Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -425,13 +455,15 @@ Create Segment
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -495,7 +527,7 @@ Delete Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
+| `id` | string | Yes | — | The id value |
 
 <Expandable title="inputSchema">
 
@@ -509,7 +541,7 @@ Delete Segment
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     }
   },
   "required": [
@@ -532,10 +564,10 @@ Get Event
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | ID of the event |
-| `fields[event]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[metric]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `fields[event]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[metric]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -553,18 +585,73 @@ Get Event
     },
     "fields[event]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "datetime",
+          "event_properties",
+          "timestamp",
+          "uuid"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[metric]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "integration",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "properties",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "attributions",
+          "metric",
+          "profile"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -587,11 +674,11 @@ Get Events
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[event]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[metric]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[event]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[metric]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`metric_id`: `equals`&lt;br&gt;`profile_id`: `equals`&lt;br&gt;`profile`: `has`&lt;br&gt;`datetime`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`timestamp`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 200. Min: 1. Max: 1000. |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -608,14 +695,61 @@ Get Events
     },
     "fields[event]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "datetime",
+          "event_properties",
+          "timestamp",
+          "uuid"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[metric]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "integration",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "properties",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -624,6 +758,14 @@ Get Events
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "attributions",
+          "metric",
+          "profile"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -664,11 +806,11 @@ Get List
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this list. Generated by Klaviyo. |
-| `additional-fields[list]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'profile_count' |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[list]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `additional-fields[list]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'profile_count' |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[list]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -686,22 +828,62 @@ Get List
     },
     "additional-fields[list]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "profile_count"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'profile_count'"
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[list]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "name",
+          "opt_in_process",
+          "profile_count",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -724,11 +906,11 @@ Get Lists
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[list]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[list]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`name`: `any`, `equals`&lt;br&gt;`id`: `any`, `equals`&lt;br&gt;`created`: `greater-than`&lt;br&gt;`updated`: `greater-than` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
 
@@ -744,14 +926,40 @@ Get Lists
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[list]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "name",
+          "opt_in_process",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -760,6 +968,13 @@ Get Lists
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -799,8 +1014,8 @@ Get Lists for Profile
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[list]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[list]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -814,10 +1029,19 @@ Get Lists for Profile
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[list]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "name",
+          "opt_in_process",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -841,9 +1065,9 @@ Get Metric
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Metric ID |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[metric]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[metric]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -861,14 +1085,40 @@ Get Metric
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[metric]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "integration",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -891,10 +1141,10 @@ Get Metrics
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[metric]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[metric]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`integration.name`: `equals`&lt;br&gt;`integration.category`: `equals` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 
 <Expandable title="inputSchema">
@@ -909,10 +1159,30 @@ Get Metrics
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[metric]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "integration",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -921,6 +1191,12 @@ Get Metrics
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -946,13 +1222,13 @@ Get Profile
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `fields[list]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[push-token]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[segment]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `id` | string | Yes | — | The id value |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `fields[list]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[push-token]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[segment]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -966,30 +1242,193 @@ Get Profile
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "fields[list]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "name",
+          "opt_in_process",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "predictive_analytics",
+          "predictive_analytics.average_days_between_orders",
+          "predictive_analytics.average_order_value",
+          "predictive_analytics.churn_probability",
+          "predictive_analytics.expected_date_of_next_order",
+          "predictive_analytics.historic_clv",
+          "predictive_analytics.historic_number_of_orders",
+          "predictive_analytics.predicted_clv",
+          "predictive_analytics.predicted_number_of_orders",
+          "predictive_analytics.ranked_channel_affinity",
+          "predictive_analytics.total_clv",
+          "properties",
+          "subscriptions",
+          "subscriptions.email",
+          "subscriptions.email.marketing",
+          "subscriptions.email.marketing.can_receive_email_marketing",
+          "subscriptions.email.marketing.consent",
+          "subscriptions.email.marketing.consent_timestamp",
+          "subscriptions.email.marketing.custom_method_detail",
+          "subscriptions.email.marketing.double_optin",
+          "subscriptions.email.marketing.last_updated",
+          "subscriptions.email.marketing.list_suppressions",
+          "subscriptions.email.marketing.method",
+          "subscriptions.email.marketing.method_detail",
+          "subscriptions.email.marketing.suppression",
+          "subscriptions.mobile_push",
+          "subscriptions.mobile_push.marketing",
+          "subscriptions.mobile_push.marketing.can_receive_push_marketing",
+          "subscriptions.mobile_push.marketing.consent",
+          "subscriptions.mobile_push.marketing.consent_timestamp",
+          "subscriptions.sms",
+          "subscriptions.sms.marketing",
+          "subscriptions.sms.marketing.can_receive_sms_marketing",
+          "subscriptions.sms.marketing.consent",
+          "subscriptions.sms.marketing.consent_timestamp",
+          "subscriptions.sms.marketing.last_updated",
+          "subscriptions.sms.marketing.method",
+          "subscriptions.sms.marketing.method_detail",
+          "subscriptions.sms.transactional",
+          "subscriptions.sms.transactional.can_receive_sms_transactional",
+          "subscriptions.sms.transactional.consent",
+          "subscriptions.sms.transactional.consent_timestamp",
+          "subscriptions.sms.transactional.last_updated",
+          "subscriptions.sms.transactional.method",
+          "subscriptions.sms.transactional.method_detail",
+          "subscriptions.whatsapp",
+          "subscriptions.whatsapp.conversational",
+          "subscriptions.whatsapp.conversational.can_receive",
+          "subscriptions.whatsapp.conversational.consent",
+          "subscriptions.whatsapp.conversational.consent_timestamp",
+          "subscriptions.whatsapp.conversational.created_timestamp",
+          "subscriptions.whatsapp.conversational.last_updated",
+          "subscriptions.whatsapp.conversational.metadata",
+          "subscriptions.whatsapp.conversational.phone_number",
+          "subscriptions.whatsapp.conversational.valid_until",
+          "subscriptions.whatsapp.marketing",
+          "subscriptions.whatsapp.marketing.can_receive",
+          "subscriptions.whatsapp.marketing.consent",
+          "subscriptions.whatsapp.marketing.consent_timestamp",
+          "subscriptions.whatsapp.marketing.created_timestamp",
+          "subscriptions.whatsapp.marketing.last_updated",
+          "subscriptions.whatsapp.marketing.metadata",
+          "subscriptions.whatsapp.marketing.phone_number",
+          "subscriptions.whatsapp.marketing.valid_until",
+          "subscriptions.whatsapp.transactional",
+          "subscriptions.whatsapp.transactional.can_receive",
+          "subscriptions.whatsapp.transactional.consent",
+          "subscriptions.whatsapp.transactional.consent_timestamp",
+          "subscriptions.whatsapp.transactional.created_timestamp",
+          "subscriptions.whatsapp.transactional.last_updated",
+          "subscriptions.whatsapp.transactional.metadata",
+          "subscriptions.whatsapp.transactional.phone_number",
+          "subscriptions.whatsapp.transactional.valid_until",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[push-token]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "background",
+          "created",
+          "enablement_status",
+          "metadata",
+          "metadata.app_build",
+          "metadata.app_id",
+          "metadata.app_name",
+          "metadata.app_version",
+          "metadata.device_id",
+          "metadata.device_model",
+          "metadata.environment",
+          "metadata.klaviyo_sdk",
+          "metadata.manufacturer",
+          "metadata.os_name",
+          "metadata.os_version",
+          "metadata.sdk_version",
+          "platform",
+          "recorded_date",
+          "token",
+          "vendor"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[segment]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.condition_groups",
+          "is_active",
+          "is_processing",
+          "is_starred",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "lists",
+          "push-tokens",
+          "segments"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -1012,11 +1451,11 @@ Get Profiles
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[push-token]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[push-token]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`id`: `any`, `equals`&lt;br&gt;`email`: `any`, `equals`&lt;br&gt;`phone_number`: `any`, `equals`&lt;br&gt;`external_id`: `any`, `equals`&lt;br&gt;`_kx`: `equals`&lt;br&gt;`created`: `greater-than`, `less-than`&lt;br&gt;`updated`: `greater-than`, `less-than`&lt;br&gt;`subscriptions.email.marketing.list_suppressions.reason`: `equals`&lt;br&gt;`subscriptions.email.marketing.list_suppressions.timestamp`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than`&lt;br&gt;`subscriptions.email.marketing.list_suppressions.list_id`: `equals`&lt;br&gt;`subscriptions.email.marketing.suppression.reason`: `equals`&lt;br&gt;`subscriptions.email.marketing.suppression.timestamp`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 20. Min: 1. Max: 100. |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
@@ -1033,14 +1472,147 @@ Get Profiles
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "predictive_analytics",
+          "predictive_analytics.average_days_between_orders",
+          "predictive_analytics.average_order_value",
+          "predictive_analytics.churn_probability",
+          "predictive_analytics.expected_date_of_next_order",
+          "predictive_analytics.historic_clv",
+          "predictive_analytics.historic_number_of_orders",
+          "predictive_analytics.predicted_clv",
+          "predictive_analytics.predicted_number_of_orders",
+          "predictive_analytics.ranked_channel_affinity",
+          "predictive_analytics.total_clv",
+          "properties",
+          "subscriptions",
+          "subscriptions.email",
+          "subscriptions.email.marketing",
+          "subscriptions.email.marketing.can_receive_email_marketing",
+          "subscriptions.email.marketing.consent",
+          "subscriptions.email.marketing.consent_timestamp",
+          "subscriptions.email.marketing.custom_method_detail",
+          "subscriptions.email.marketing.double_optin",
+          "subscriptions.email.marketing.last_updated",
+          "subscriptions.email.marketing.list_suppressions",
+          "subscriptions.email.marketing.method",
+          "subscriptions.email.marketing.method_detail",
+          "subscriptions.email.marketing.suppression",
+          "subscriptions.mobile_push",
+          "subscriptions.mobile_push.marketing",
+          "subscriptions.mobile_push.marketing.can_receive_push_marketing",
+          "subscriptions.mobile_push.marketing.consent",
+          "subscriptions.mobile_push.marketing.consent_timestamp",
+          "subscriptions.sms",
+          "subscriptions.sms.marketing",
+          "subscriptions.sms.marketing.can_receive_sms_marketing",
+          "subscriptions.sms.marketing.consent",
+          "subscriptions.sms.marketing.consent_timestamp",
+          "subscriptions.sms.marketing.last_updated",
+          "subscriptions.sms.marketing.method",
+          "subscriptions.sms.marketing.method_detail",
+          "subscriptions.sms.transactional",
+          "subscriptions.sms.transactional.can_receive_sms_transactional",
+          "subscriptions.sms.transactional.consent",
+          "subscriptions.sms.transactional.consent_timestamp",
+          "subscriptions.sms.transactional.last_updated",
+          "subscriptions.sms.transactional.method",
+          "subscriptions.sms.transactional.method_detail",
+          "subscriptions.whatsapp",
+          "subscriptions.whatsapp.conversational",
+          "subscriptions.whatsapp.conversational.can_receive",
+          "subscriptions.whatsapp.conversational.consent",
+          "subscriptions.whatsapp.conversational.consent_timestamp",
+          "subscriptions.whatsapp.conversational.created_timestamp",
+          "subscriptions.whatsapp.conversational.last_updated",
+          "subscriptions.whatsapp.conversational.metadata",
+          "subscriptions.whatsapp.conversational.phone_number",
+          "subscriptions.whatsapp.conversational.valid_until",
+          "subscriptions.whatsapp.marketing",
+          "subscriptions.whatsapp.marketing.can_receive",
+          "subscriptions.whatsapp.marketing.consent",
+          "subscriptions.whatsapp.marketing.consent_timestamp",
+          "subscriptions.whatsapp.marketing.created_timestamp",
+          "subscriptions.whatsapp.marketing.last_updated",
+          "subscriptions.whatsapp.marketing.metadata",
+          "subscriptions.whatsapp.marketing.phone_number",
+          "subscriptions.whatsapp.marketing.valid_until",
+          "subscriptions.whatsapp.transactional",
+          "subscriptions.whatsapp.transactional.can_receive",
+          "subscriptions.whatsapp.transactional.consent",
+          "subscriptions.whatsapp.transactional.consent_timestamp",
+          "subscriptions.whatsapp.transactional.created_timestamp",
+          "subscriptions.whatsapp.transactional.last_updated",
+          "subscriptions.whatsapp.transactional.metadata",
+          "subscriptions.whatsapp.transactional.phone_number",
+          "subscriptions.whatsapp.transactional.valid_until",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[push-token]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "background",
+          "created",
+          "enablement_status",
+          "metadata",
+          "metadata.app_build",
+          "metadata.app_id",
+          "metadata.app_name",
+          "metadata.app_version",
+          "metadata.device_id",
+          "metadata.device_model",
+          "metadata.environment",
+          "metadata.klaviyo_sdk",
+          "metadata.manufacturer",
+          "metadata.os_name",
+          "metadata.os_version",
+          "metadata.sdk_version",
+          "platform",
+          "recorded_date",
+          "token",
+          "vendor"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1049,6 +1621,12 @@ Get Profiles
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "push-tokens"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -1097,8 +1675,8 @@ Get Profiles for List
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this list. Generated by Klaviyo. |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`email`: `any`, `equals`&lt;br&gt;`phone_number`: `any`, `equals`&lt;br&gt;`push_token`: `any`, `equals`&lt;br&gt;`_kx`: `equals`&lt;br&gt;`joined_group_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 20. Min: 1. Max: 100. |
@@ -1120,10 +1698,119 @@ Get Profiles for List
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "joined_group_at",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "predictive_analytics",
+          "predictive_analytics.average_days_between_orders",
+          "predictive_analytics.average_order_value",
+          "predictive_analytics.churn_probability",
+          "predictive_analytics.expected_date_of_next_order",
+          "predictive_analytics.historic_clv",
+          "predictive_analytics.historic_number_of_orders",
+          "predictive_analytics.predicted_clv",
+          "predictive_analytics.predicted_number_of_orders",
+          "predictive_analytics.ranked_channel_affinity",
+          "predictive_analytics.total_clv",
+          "properties",
+          "subscriptions",
+          "subscriptions.email",
+          "subscriptions.email.marketing",
+          "subscriptions.email.marketing.can_receive_email_marketing",
+          "subscriptions.email.marketing.consent",
+          "subscriptions.email.marketing.consent_timestamp",
+          "subscriptions.email.marketing.custom_method_detail",
+          "subscriptions.email.marketing.double_optin",
+          "subscriptions.email.marketing.last_updated",
+          "subscriptions.email.marketing.list_suppressions",
+          "subscriptions.email.marketing.method",
+          "subscriptions.email.marketing.method_detail",
+          "subscriptions.email.marketing.suppression",
+          "subscriptions.mobile_push",
+          "subscriptions.mobile_push.marketing",
+          "subscriptions.mobile_push.marketing.can_receive_push_marketing",
+          "subscriptions.mobile_push.marketing.consent",
+          "subscriptions.mobile_push.marketing.consent_timestamp",
+          "subscriptions.sms",
+          "subscriptions.sms.marketing",
+          "subscriptions.sms.marketing.can_receive_sms_marketing",
+          "subscriptions.sms.marketing.consent",
+          "subscriptions.sms.marketing.consent_timestamp",
+          "subscriptions.sms.marketing.last_updated",
+          "subscriptions.sms.marketing.method",
+          "subscriptions.sms.marketing.method_detail",
+          "subscriptions.sms.transactional",
+          "subscriptions.sms.transactional.can_receive_sms_transactional",
+          "subscriptions.sms.transactional.consent",
+          "subscriptions.sms.transactional.consent_timestamp",
+          "subscriptions.sms.transactional.last_updated",
+          "subscriptions.sms.transactional.method",
+          "subscriptions.sms.transactional.method_detail",
+          "subscriptions.whatsapp",
+          "subscriptions.whatsapp.conversational",
+          "subscriptions.whatsapp.conversational.can_receive",
+          "subscriptions.whatsapp.conversational.consent",
+          "subscriptions.whatsapp.conversational.consent_timestamp",
+          "subscriptions.whatsapp.conversational.created_timestamp",
+          "subscriptions.whatsapp.conversational.last_updated",
+          "subscriptions.whatsapp.conversational.metadata",
+          "subscriptions.whatsapp.conversational.phone_number",
+          "subscriptions.whatsapp.conversational.valid_until",
+          "subscriptions.whatsapp.marketing",
+          "subscriptions.whatsapp.marketing.can_receive",
+          "subscriptions.whatsapp.marketing.consent",
+          "subscriptions.whatsapp.marketing.consent_timestamp",
+          "subscriptions.whatsapp.marketing.created_timestamp",
+          "subscriptions.whatsapp.marketing.last_updated",
+          "subscriptions.whatsapp.marketing.metadata",
+          "subscriptions.whatsapp.marketing.phone_number",
+          "subscriptions.whatsapp.marketing.valid_until",
+          "subscriptions.whatsapp.transactional",
+          "subscriptions.whatsapp.transactional.can_receive",
+          "subscriptions.whatsapp.transactional.consent",
+          "subscriptions.whatsapp.transactional.consent_timestamp",
+          "subscriptions.whatsapp.transactional.created_timestamp",
+          "subscriptions.whatsapp.transactional.last_updated",
+          "subscriptions.whatsapp.transactional.metadata",
+          "subscriptions.whatsapp.transactional.phone_number",
+          "subscriptions.whatsapp.transactional.valid_until",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1167,8 +1854,8 @@ Get Profiles for Segment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this segment. Generated by Klaviyo. |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `fields[profile]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `fields[profile]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`profile_id`: `any`, `equals`&lt;br&gt;`email`: `any`, `equals`&lt;br&gt;`phone_number`: `any`, `equals`&lt;br&gt;`push_token`: `any`, `equals`&lt;br&gt;`_kx`: `equals`&lt;br&gt;`joined_group_at`: `greater-or-equal`, `greater-than`, `less-or-equal`, `less-than` |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `page[size]` | integer | No | — | Default: 20. Min: 1. Max: 100. |
@@ -1190,10 +1877,119 @@ Get Profiles for Segment
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "email",
+          "external_id",
+          "first_name",
+          "image",
+          "joined_group_at",
+          "last_event_date",
+          "last_name",
+          "locale",
+          "location",
+          "location.address1",
+          "location.address2",
+          "location.city",
+          "location.country",
+          "location.ip",
+          "location.latitude",
+          "location.longitude",
+          "location.region",
+          "location.timezone",
+          "location.zip",
+          "organization",
+          "phone_number",
+          "predictive_analytics",
+          "predictive_analytics.average_days_between_orders",
+          "predictive_analytics.average_order_value",
+          "predictive_analytics.churn_probability",
+          "predictive_analytics.expected_date_of_next_order",
+          "predictive_analytics.historic_clv",
+          "predictive_analytics.historic_number_of_orders",
+          "predictive_analytics.predicted_clv",
+          "predictive_analytics.predicted_number_of_orders",
+          "predictive_analytics.ranked_channel_affinity",
+          "predictive_analytics.total_clv",
+          "properties",
+          "subscriptions",
+          "subscriptions.email",
+          "subscriptions.email.marketing",
+          "subscriptions.email.marketing.can_receive_email_marketing",
+          "subscriptions.email.marketing.consent",
+          "subscriptions.email.marketing.consent_timestamp",
+          "subscriptions.email.marketing.custom_method_detail",
+          "subscriptions.email.marketing.double_optin",
+          "subscriptions.email.marketing.last_updated",
+          "subscriptions.email.marketing.list_suppressions",
+          "subscriptions.email.marketing.method",
+          "subscriptions.email.marketing.method_detail",
+          "subscriptions.email.marketing.suppression",
+          "subscriptions.mobile_push",
+          "subscriptions.mobile_push.marketing",
+          "subscriptions.mobile_push.marketing.can_receive_push_marketing",
+          "subscriptions.mobile_push.marketing.consent",
+          "subscriptions.mobile_push.marketing.consent_timestamp",
+          "subscriptions.sms",
+          "subscriptions.sms.marketing",
+          "subscriptions.sms.marketing.can_receive_sms_marketing",
+          "subscriptions.sms.marketing.consent",
+          "subscriptions.sms.marketing.consent_timestamp",
+          "subscriptions.sms.marketing.last_updated",
+          "subscriptions.sms.marketing.method",
+          "subscriptions.sms.marketing.method_detail",
+          "subscriptions.sms.transactional",
+          "subscriptions.sms.transactional.can_receive_sms_transactional",
+          "subscriptions.sms.transactional.consent",
+          "subscriptions.sms.transactional.consent_timestamp",
+          "subscriptions.sms.transactional.last_updated",
+          "subscriptions.sms.transactional.method",
+          "subscriptions.sms.transactional.method_detail",
+          "subscriptions.whatsapp",
+          "subscriptions.whatsapp.conversational",
+          "subscriptions.whatsapp.conversational.can_receive",
+          "subscriptions.whatsapp.conversational.consent",
+          "subscriptions.whatsapp.conversational.consent_timestamp",
+          "subscriptions.whatsapp.conversational.created_timestamp",
+          "subscriptions.whatsapp.conversational.last_updated",
+          "subscriptions.whatsapp.conversational.metadata",
+          "subscriptions.whatsapp.conversational.phone_number",
+          "subscriptions.whatsapp.conversational.valid_until",
+          "subscriptions.whatsapp.marketing",
+          "subscriptions.whatsapp.marketing.can_receive",
+          "subscriptions.whatsapp.marketing.consent",
+          "subscriptions.whatsapp.marketing.consent_timestamp",
+          "subscriptions.whatsapp.marketing.created_timestamp",
+          "subscriptions.whatsapp.marketing.last_updated",
+          "subscriptions.whatsapp.marketing.metadata",
+          "subscriptions.whatsapp.marketing.phone_number",
+          "subscriptions.whatsapp.marketing.valid_until",
+          "subscriptions.whatsapp.transactional",
+          "subscriptions.whatsapp.transactional.can_receive",
+          "subscriptions.whatsapp.transactional.consent",
+          "subscriptions.whatsapp.transactional.consent_timestamp",
+          "subscriptions.whatsapp.transactional.created_timestamp",
+          "subscriptions.whatsapp.transactional.last_updated",
+          "subscriptions.whatsapp.transactional.metadata",
+          "subscriptions.whatsapp.transactional.phone_number",
+          "subscriptions.whatsapp.transactional.valid_until",
+          "title",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1236,12 +2032,12 @@ Get Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `additional-fields[segment]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'profile_count' |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[segment]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `id` | string | Yes | — | The id value |
+| `additional-fields[segment]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'profile_count' |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[segment]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 
 <Expandable title="inputSchema">
 
@@ -1255,26 +2051,70 @@ Get Segment
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "additional-fields[segment]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "profile_count"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'profile_count'"
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[segment]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.condition_groups",
+          "is_active",
+          "is_processing",
+          "is_starred",
+          "name",
+          "profile_count",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     }
   },
@@ -1297,11 +2137,11 @@ Get Segments
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `fields[flow]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[segment]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[flow]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[segment]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 | `filter` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#filtering&lt;br&gt;Allowed field(s)/operator(s):&lt;br&gt;`name`: `any`, `equals`&lt;br&gt;`id`: `any`, `equals`&lt;br&gt;`created`: `greater-than`&lt;br&gt;`updated`: `greater-than`&lt;br&gt;`is_active`: `any`, `equals`&lt;br&gt;`is_starred`: `equals` |
-| `include` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
+| `include` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships |
 | `page[cursor]` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
 | `sort` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sorting |
 
@@ -1317,14 +2157,44 @@ Get Segments
     },
     "fields[flow]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "archived",
+          "created",
+          "name",
+          "status",
+          "trigger_type",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[segment]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.condition_groups",
+          "is_active",
+          "is_processing",
+          "is_starred",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     },
     "filter": {
@@ -1333,6 +2203,13 @@ Get Segments
     },
     "include": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "flow-triggers",
+          "tags"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#relationships"
     },
     "page[cursor]": {
@@ -1372,8 +2249,8 @@ Get Segments for Profile
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[segment]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[segment]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1387,10 +2264,23 @@ Get Segments for Profile
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[segment]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "created",
+          "definition",
+          "definition.condition_groups",
+          "is_active",
+          "is_processing",
+          "is_starred",
+          "name",
+          "updated"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1414,7 +2304,7 @@ Get Tags for List
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this list. Generated by Klaviyo. |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1432,6 +2322,12 @@ Get Tags for List
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1454,8 +2350,8 @@ Get Tags for Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `fields[tag]` | any[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
+| `id` | string | Yes | — | The id value |
+| `fields[tag]` | string[] | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets |
 
 <Expandable title="inputSchema">
 
@@ -1469,10 +2365,16 @@ Get Tags for Segment
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "fields[tag]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name"
+        ]
+      },
       "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#sparse-fieldsets"
     }
   },
@@ -1495,7 +2397,7 @@ Merge Profiles
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1509,129 +2411,25 @@ Merge Profiles
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "The ID of the destination profile to merge into"
         },
         "relationships": {
-          "type": "object"
+          "type": "object",
+          "description": "The relationships value"
         }
       },
       "required": [
         "type",
         "id",
         "relationships"
-      ]
-    }
-  },
-  "required": [
-    "PCID",
-    "data"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## klaviyo_audiences_query_flow_series
-
-Query Flow Series
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `page_cursor` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
-| `data` | object | Yes | — | data |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "page_cursor": {
-      "type": "string",
-      "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination"
-    },
-    "data": {
-      "type": "object",
-      "description": "data",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "attributes": {
-          "type": "object"
-        }
-      },
-      "required": [
-        "type",
-        "attributes"
-      ]
-    }
-  },
-  "required": [
-    "PCID",
-    "data"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## klaviyo_audiences_query_flow_values
-
-Query Flow Values
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `page_cursor` | string | No | — | For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination |
-| `data` | object | Yes | — | data |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "page_cursor": {
-      "type": "string",
-      "description": "For more information please visit https://developers.klaviyo.com/en/v2026-01-15/reference/api-overview#pagination"
-    },
-    "data": {
-      "type": "object",
-      "description": "data",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "attributes": {
-          "type": "object"
-        }
-      },
-      "required": [
-        "type",
-        "attributes"
       ]
     }
   },
@@ -1654,7 +2452,7 @@ Query Metric Aggregates
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1668,13 +2466,15 @@ Query Metric Aggregates
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1702,7 +2502,7 @@ Query Segment Values
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1716,13 +2516,15 @@ Query Segment Values
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1750,8 +2552,8 @@ Remove Profiles from List
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `data` | any[] | Yes | — | data |
+| `id` | string | Yes | — | The id value |
+| `data` | object[] | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1765,11 +2567,14 @@ Remove Profiles from List
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "data": {
       "type": "array",
-      "description": "data"
+      "items": {
+        "type": "object"
+      },
+      "description": "The data value"
     }
   },
   "required": [
@@ -1793,7 +2598,7 @@ Update List
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this list. Generated by Klaviyo. |
-| `data` | object | Yes | — | data |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1811,17 +2616,19 @@ Update List
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "Primary key that uniquely identifies this list. Generated by Klaviyo."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [
@@ -1852,8 +2659,8 @@ Update Profile
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | Primary key that uniquely identifies this profile. Generated by Klaviyo. |
-| `additional-fields[profile]` | any[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
-| `data` | object | Yes | — | data |
+| `additional-fields[profile]` | string[] | No | — | Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics' |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1871,24 +2678,34 @@ Update Profile
     },
     "additional-fields[profile]": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "subscriptions",
+          "predictive_analytics"
+        ]
+      },
       "description": "Request additional fields not included by default in the response. Supported values: 'subscriptions', 'predictive_analytics'"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
           "type": "string",
           "description": "Primary key that uniquely identifies this profile. Generated by Klaviyo."
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         },
         "meta": {
-          "type": "object"
+          "type": "object",
+          "description": "The meta value"
         }
       },
       "required": [
@@ -1918,8 +2735,8 @@ Update Segment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `id` | string | Yes | — | id |
-| `data` | object | Yes | — | data |
+| `id` | string | Yes | — | The id value |
+| `data` | object | Yes | — | The data value |
 
 <Expandable title="inputSchema">
 
@@ -1933,20 +2750,23 @@ Update Segment
     },
     "id": {
       "type": "string",
-      "description": "id"
+      "description": "The id value"
     },
     "data": {
       "type": "object",
-      "description": "data",
+      "description": "The data value",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "description": "The type value"
         },
         "id": {
-          "type": "string"
+          "type": "string",
+          "description": "The id value"
         },
         "attributes": {
-          "type": "object"
+          "type": "object",
+          "description": "The attributes value"
         }
       },
       "required": [

@@ -53,19 +53,19 @@ Creates configuration for a DateRange.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
-| `created` | string | No | — | created |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `siteTitle` | string | No | — | siteTitle |
-| `tags` | any[] | No | — | tags |
+| `siteTitle` | string | No | — | Site Title |
+| `tags` | object[] | No | — | The tags value |
 
 <Expandable title="inputSchema">
 
@@ -79,10 +79,19 @@ Creates configuration for a DateRange.
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition",
+          "ownerFullName",
+          "modified",
+          "tags"
+        ]
+      },
       "description": "Comma-delimited list of additional date range metadata fields to include on response.",
       "enum": [
         "definition",
@@ -93,15 +102,15 @@ Creates configuration for a DateRange.
     },
     "created": {
       "type": "string",
-      "description": "created"
+      "description": "The created value"
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "id": {
       "type": "string",
@@ -109,15 +118,15 @@ Creates configuration for a DateRange.
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -146,11 +155,14 @@ Creates configuration for a DateRange.
     },
     "siteTitle": {
       "type": "string",
-      "description": "siteTitle"
+      "description": "Site Title"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     }
   },
   "required": [
@@ -537,8 +549,8 @@ Retrieves configuration for a DateRange.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `dateRangeId` | string | Yes | — | The DateRange id for which to retrieve information |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
 
 <Expandable title="inputSchema">
 
@@ -556,10 +568,19 @@ Retrieves configuration for a DateRange.
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition",
+          "ownerFullName",
+          "modified",
+          "tags"
+        ]
+      },
       "description": "Comma-delimited list of additional date range metadata fields to include on response.",
       "enum": [
         "definition",
@@ -588,12 +609,12 @@ Returns a list of dateranges for the user
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `filterByIds` | string | No | — | Filter list to only include date ranges in the specified list (comma-delimited list of IDs) |
 | `limit` | integer | No | — | Number of results per page |
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
-| `expansion` | any[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
-| `includeType` | any[] | No | — | Include additional date ranges not owned by user. The "all" option takes precedence over "shared" |
+| `expansion` | string[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
+| `includeType` | string[] | No | — | Include additional date ranges not owned by user. The "all" option takes precedence over "shared" |
 
 <Expandable title="inputSchema">
 
@@ -607,7 +628,7 @@ Returns a list of dateranges for the user
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "filterByIds": {
       "type": "string",
@@ -623,6 +644,15 @@ Returns a list of dateranges for the user
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition",
+          "ownerFullName",
+          "modified",
+          "tags"
+        ]
+      },
       "description": "Comma-delimited list of additional date range metadata fields to include on response.",
       "enum": [
         "definition",
@@ -633,6 +663,14 @@ Returns a list of dateranges for the user
     },
     "includeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "all",
+          "shared",
+          "templates"
+        ]
+      },
       "description": "Include additional date ranges not owned by user. The \"all\" option takes precedence over \"shared\"",
       "enum": [
         "all",
@@ -864,23 +902,23 @@ Creates a single project.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expansion` | any[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
-| `locale` | string | No | — | Locale |
-| `accessLevel` | string | No | — | accessLevel |
-| `created` | string | No | — | created |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
-| `externalReferences` | object | No | — | externalReferences |
+| `expansion` | string[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `accessLevel` | string | No | — | Access Level |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
+| `externalReferences` | object | No | — | External References |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `shares` | any[] | No | — | shares |
-| `tags` | any[] | No | — | tags |
-| `type` | string | No | — | type |
-| `versionNotes` | string | No | — | versionNotes |
+| `shares` | object[] | No | — | The shares value |
+| `tags` | object[] | No | — | The tags value |
+| `type` | string | No | — | The type value |
+| `versionNotes` | string | No | — | Version Notes |
 
 <Expandable title="inputSchema">
 
@@ -894,31 +932,43 @@ Creates a single project.
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "shares",
+          "tags",
+          "accessLevel",
+          "modified",
+          "externalReferences",
+          "definition"
+        ]
+      },
       "description": "Comma-delimited list of additional project metadata fields to include on response."
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "accessLevel": {
       "type": "string",
-      "description": "accessLevel"
+      "description": "Access Level"
     },
     "created": {
       "type": "string",
-      "description": "created"
+      "description": "The created value"
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "externalReferences": {
       "type": "object",
-      "description": "externalReferences"
+      "description": "External References"
     },
     "id": {
       "type": "string",
@@ -926,15 +976,15 @@ Creates a single project.
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -963,15 +1013,21 @@ Creates a single project.
     },
     "shares": {
       "type": "array",
-      "description": "shares"
+      "items": {
+        "type": "object"
+      },
+      "description": "The shares value"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "project",
         "mobileScorecard"
@@ -979,7 +1035,7 @@ Creates a single project.
     },
     "versionNotes": {
       "type": "string",
-      "description": "versionNotes"
+      "description": "Version Notes"
     }
   },
   "required": [
@@ -1001,7 +1057,7 @@ deletes a project.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The Project id for which to retrieve information |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -1019,7 +1075,7 @@ deletes a project.
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -1042,8 +1098,8 @@ Retrieves configuration for a Project.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The Project id for which to retrieve information |
-| `expansion` | any[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
-| `locale` | string | No | — | Locale |
+| `expansion` | string[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
 
 <Expandable title="inputSchema">
 
@@ -1061,11 +1117,23 @@ Retrieves configuration for a Project.
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "shares",
+          "tags",
+          "accessLevel",
+          "modified",
+          "externalReferences",
+          "definition"
+        ]
+      },
       "description": "Comma-delimited list of additional project metadata fields to include on response."
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     }
   },
   "required": [
@@ -1087,10 +1155,10 @@ Returns a list of projects for the user
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `includeType` | any[] | No | — | Include additional projects not owned by user. The "all" option takes precedence over "shared". If neither guided, or project is included, both types are returned |
-| `expansion` | any[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
+| `includeType` | string[] | No | — | Include additional projects not owned by user. The "all" option takes precedence over "shared". If neither guided, or project is included, both types are returned |
+| `expansion` | string[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
 | `filterByIds` | string | No | — | Filter list to only include projects in the specified list (comma-delimited list of IDs) |
-| `locale` | string | No | — | Locale |
+| `locale` | string | No | — | Locale or language code |
 | `pagination` | string | No | — | return paginated results |
 | `ownerId` | integer | No | — | Filter list to only include projects owned by the specified loginId |
 | `limit` | integer | No | — | Number of results per page |
@@ -1108,10 +1176,29 @@ Returns a list of projects for the user
     },
     "includeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "all",
+          "shared"
+        ]
+      },
       "description": "Include additional projects not owned by user. The \"all\" option takes precedence over \"shared\". If neither guided, or project is included, both types are returned"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "shares",
+          "tags",
+          "accessLevel",
+          "modified",
+          "externalReferences",
+          "definition"
+        ]
+      },
       "description": "Comma-delimited list of additional project metadata fields to include on response."
     },
     "filterByIds": {
@@ -1120,7 +1207,7 @@ Returns a list of projects for the user
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "pagination": {
       "type": "string",
@@ -1162,23 +1249,23 @@ Updates configuration for a project.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The Project id for which to retrieve information |
-| `expansion` | any[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
-| `locale` | string | No | — | Locale |
-| `accessLevel` | string | No | — | accessLevel |
-| `created` | string | No | — | created |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
-| `externalReferences` | object | No | — | externalReferences |
+| `expansion` | string[] | No | — | Comma-delimited list of additional project metadata fields to include on response. |
+| `locale` | string | No | — | Locale or language code |
+| `accessLevel` | string | No | — | Access Level |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
+| `externalReferences` | object | No | — | External References |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `shares` | any[] | No | — | shares |
-| `tags` | any[] | No | — | tags |
-| `type` | string | No | — | type |
-| `versionNotes` | string | No | — | versionNotes |
+| `shares` | object[] | No | — | The shares value |
+| `tags` | object[] | No | — | The tags value |
+| `type` | string | No | — | The type value |
+| `versionNotes` | string | No | — | Version Notes |
 
 <Expandable title="inputSchema">
 
@@ -1196,31 +1283,43 @@ Updates configuration for a project.
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reportSuiteName",
+          "shares",
+          "tags",
+          "accessLevel",
+          "modified",
+          "externalReferences",
+          "definition"
+        ]
+      },
       "description": "Comma-delimited list of additional project metadata fields to include on response."
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "accessLevel": {
       "type": "string",
-      "description": "accessLevel"
+      "description": "Access Level"
     },
     "created": {
       "type": "string",
-      "description": "created"
+      "description": "The created value"
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "externalReferences": {
       "type": "object",
-      "description": "externalReferences"
+      "description": "External References"
     },
     "id": {
       "type": "string",
@@ -1228,15 +1327,15 @@ Updates configuration for a project.
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -1265,15 +1364,21 @@ Updates configuration for a project.
     },
     "shares": {
       "type": "array",
-      "description": "shares"
+      "items": {
+        "type": "object"
+      },
+      "description": "The shares value"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     },
     "type": {
       "type": "string",
-      "description": "type",
+      "description": "The type value",
       "enum": [
         "project",
         "mobileScorecard"
@@ -1281,7 +1386,7 @@ Updates configuration for a project.
     },
     "versionNotes": {
       "type": "string",
-      "description": "versionNotes"
+      "description": "Version Notes"
     }
   },
   "required": [
@@ -1303,8 +1408,8 @@ Validates a Project definition
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `locale` | string | No | — | Locale |
-| `project` | object | No | — | project |
+| `locale` | string | No | — | Locale or language code |
+| `project` | object | No | — | The project value |
 
 <Expandable title="inputSchema">
 
@@ -1318,11 +1423,11 @@ Validates a Project definition
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "project": {
       "type": "object",
-      "description": "project"
+      "description": "The project value"
     }
   },
   "required": [
@@ -1408,7 +1513,7 @@ Tag a component with one or many tags at once. WARNING: Authoritative; deletes/o
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | No | — | JSON-formatted object containing key-value pairs that conform to the schema |
+| `body` | object[] | No | — | JSON-formatted object containing key-value pairs that conform to the schema |
 
 <Expandable title="inputSchema">
 
@@ -1422,6 +1527,9 @@ Tag a component with one or many tags at once. WARNING: Authoritative; deletes/o
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "JSON-formatted object containing key-value pairs that conform to the schema"
     }
   },
@@ -1443,7 +1551,7 @@ Saves the given tag(s) for the current user's company
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | No | — | JSON-formatted array of Tag objects containing key-value pairs |
+| `body` | object[] | No | — | JSON-formatted array of Tag objects containing key-value pairs |
 
 <Expandable title="inputSchema">
 
@@ -1457,6 +1565,9 @@ Saves the given tag(s) for the current user's company
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "JSON-formatted array of Tag objects containing key-value pairs"
     }
   },
@@ -1480,8 +1591,8 @@ search for shares for several components at once
 | --- | --- | --- | --- | --- |
 | `limit` | integer | No | — | Number of results per page |
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
-| `componentIds` | any[] | No | — | componentIds |
-| `componentType` | string | No | — | componentType |
+| `componentIds` | string[] | No | — | Component Ids |
+| `componentType` | string | No | — | Component Type |
 
 <Expandable title="inputSchema">
 
@@ -1503,11 +1614,14 @@ search for shares for several components at once
     },
     "componentIds": {
       "type": "array",
-      "description": "componentIds"
+      "items": {
+        "type": "string"
+      },
+      "description": "Component Ids"
     },
     "componentType": {
       "type": "string",
-      "description": "componentType"
+      "description": "Component Type"
     }
   },
   "required": [
@@ -1530,8 +1644,8 @@ search for tags for several components at once
 | --- | --- | --- | --- | --- |
 | `limit` | integer | No | — | Number of results per page |
 | `page` | integer | No | — | Page number (base 0 - first page is "0") |
-| `componentIds` | any[] | No | — | componentIds |
-| `componentType` | string | No | — | componentType |
+| `componentIds` | string[] | No | — | Component Ids |
+| `componentType` | string | No | — | Component Type |
 
 <Expandable title="inputSchema">
 
@@ -1553,11 +1667,14 @@ search for tags for several components at once
     },
     "componentIds": {
       "type": "array",
-      "description": "componentIds"
+      "items": {
+        "type": "string"
+      },
+      "description": "Component Ids"
     },
     "componentType": {
       "type": "string",
-      "description": "componentType"
+      "description": "Component Type"
     }
   },
   "required": [
@@ -1615,19 +1732,19 @@ Updates configuration for a DateRange.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `dateRangeId` | string | Yes | — | The DateRange id for which to retrieve information |
-| `locale` | string | No | — | Locale |
-| `expansion` | any[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
-| `created` | string | No | — | created |
-| `definition` | object | No | — | definition |
-| `description` | string | No | — | description |
+| `locale` | string | No | — | Locale or language code |
+| `expansion` | string[] | No | — | Comma-delimited list of additional date range metadata fields to include on response. |
+| `created` | string | No | — | The created value |
+| `definition` | object | No | — | The definition value |
+| `description` | string | No | — | The description value |
 | `id` | string | No | — | System generated id |
-| `modified` | string | No | — | modified |
-| `name` | string | No | — | name |
-| `owner` | object | No | — | owner |
+| `modified` | string | No | — | The modified value |
+| `name` | string | No | — | The name value |
+| `owner` | object | No | — | The owner value |
 | `reportSuiteName` | string | No | — | The report suite name for which the component was created/updated |
 | `rsid` | string | No | — | The report suite id for which the component was created/updated |
-| `siteTitle` | string | No | — | siteTitle |
-| `tags` | any[] | No | — | tags |
+| `siteTitle` | string | No | — | Site Title |
+| `tags` | object[] | No | — | The tags value |
 
 <Expandable title="inputSchema">
 
@@ -1645,10 +1762,19 @@ Updates configuration for a DateRange.
     },
     "locale": {
       "type": "string",
-      "description": "Locale"
+      "description": "Locale or language code"
     },
     "expansion": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "definition",
+          "ownerFullName",
+          "modified",
+          "tags"
+        ]
+      },
       "description": "Comma-delimited list of additional date range metadata fields to include on response.",
       "enum": [
         "definition",
@@ -1659,15 +1785,15 @@ Updates configuration for a DateRange.
     },
     "created": {
       "type": "string",
-      "description": "created"
+      "description": "The created value"
     },
     "definition": {
       "type": "object",
-      "description": "definition"
+      "description": "The definition value"
     },
     "description": {
       "type": "string",
-      "description": "description"
+      "description": "The description value"
     },
     "id": {
       "type": "string",
@@ -1675,15 +1801,15 @@ Updates configuration for a DateRange.
     },
     "modified": {
       "type": "string",
-      "description": "modified"
+      "description": "The modified value"
     },
     "name": {
       "type": "string",
-      "description": "name"
+      "description": "The name value"
     },
     "owner": {
       "type": "object",
-      "description": "owner",
+      "description": "The owner value",
       "properties": {
         "id": {
           "type": "integer",
@@ -1712,11 +1838,14 @@ Updates configuration for a DateRange.
     },
     "siteTitle": {
       "type": "string",
-      "description": "siteTitle"
+      "description": "Site Title"
     },
     "tags": {
       "type": "array",
-      "description": "tags"
+      "items": {
+        "type": "object"
+      },
+      "description": "The tags value"
     }
   },
   "required": [
@@ -1738,9 +1867,9 @@ Share components with users. WARNING: Authoritative; deletes/overwrites all pre-
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `componentId` | string | No | — | componentId |
-| `componentType` | string | No | — | componentType |
-| `shares` | any[] | No | — | shares |
+| `componentId` | string | No | — | Component Id |
+| `componentType` | string | No | — | Component Type |
+| `shares` | object[] | No | — | The shares value |
 
 <Expandable title="inputSchema">
 
@@ -1754,15 +1883,18 @@ Share components with users. WARNING: Authoritative; deletes/overwrites all pre-
     },
     "componentId": {
       "type": "string",
-      "description": "componentId"
+      "description": "Component Id"
     },
     "componentType": {
       "type": "string",
-      "description": "componentType"
+      "description": "Component Type"
     },
     "shares": {
       "type": "array",
-      "description": "shares"
+      "items": {
+        "type": "object"
+      },
+      "description": "The shares value"
     }
   },
   "required": [

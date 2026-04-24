@@ -14,7 +14,6 @@ description: "SAP SuccessFactors Onboarding"
 | --- | --- |
 | [`sap_successfactors_onboarding_create_create_onboardee`](#sap_successfactors_onboarding_create_create_onboardee) | This function import enables you to create an onboarding external user record in the system with information collected from your external Applicant Tracking System (ATS). It also enables you to perform preliminary checks to understand if the onboardee is a new hire or a rehire and take actions as necessary. |
 | [`sap_successfactors_onboarding_create_initiate_onboarding_for_user`](#sap_successfactors_onboarding_create_initiate_onboarding_for_user) | After an external user record is created and Employee Central data is added to the record, you can use this funtion import to initiate onboarding process from an external Application Tracking System. It modifies the ONB2Process and ONB2ProcessTrigger MDF objects. All Employee Central entities (PerPerson, EmpJob, EmpEmployment) should be upserted prior to this call. |
-| [`sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys`](#sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys) | Mass Initiate Onboarding Journeys |
 | [`sap_successfactors_onboarding_get_assigned_compliance_form`](#sap_successfactors_onboarding_get_assigned_compliance_form) | Get entity from AssignedComplianceForm by key |
 | [`sap_successfactors_onboarding_get_compliance_document_flow`](#sap_successfactors_onboarding_get_compliance_document_flow) | Get entity from ComplianceDocumentFlow by key |
 | [`sap_successfactors_onboarding_get_compliance_form_data`](#sap_successfactors_onboarding_get_compliance_form_data) | Get entity from ComplianceFormData by key |
@@ -27,10 +26,6 @@ description: "SAP SuccessFactors Onboarding"
 | [`sap_successfactors_onboarding_list_compliance_form_signature`](#sap_successfactors_onboarding_list_compliance_form_signature) | This entity stores the Compliance form signature assigned to the new hire. |
 | [`sap_successfactors_onboarding_list_compliance_process`](#sap_successfactors_onboarding_list_compliance_process) | This entity represents the compliance workflow assigned to a new hire. |
 | [`sap_successfactors_onboarding_list_compliance_process_task`](#sap_successfactors_onboarding_list_compliance_process_task) | This entity allows you to store the start time, end time, and the status of a particular compliance task. |
-| [`sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id`](#sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id) | Get the Onboarding journey |
-| [`sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id`](#sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id) | Gets custom task information by task ID. |
-| [`sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys`](#sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys) | Resource to mass cancel onboarding journeys |
-| [`sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id`](#sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id) | API to update custom task status. |
 
 ---
 
@@ -84,41 +79,6 @@ After an external user record is created and Employee Central data is added to t
 
 ---
 
-## sap_successfactors_onboarding_create_onboarding_newhire_v1_journeys
-
-Mass Initiate Onboarding Journeys
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `newHireCreateJourneyRequests` | any[] | No | — | Array of Onboarding Journey |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "newHireCreateJourneyRequests": {
-      "type": "array",
-      "description": "Array of Onboarding Journey"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
 ## sap_successfactors_onboarding_get_assigned_compliance_form
 
 Get entity from AssignedComplianceForm by key
@@ -128,8 +88,8 @@ Get entity from AssignedComplianceForm by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | key: id |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -147,10 +107,40 @@ Get entity from AssignedComplianceForm by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bpeUserTaskId",
+          "complianceFormName",
+          "createdBy",
+          "createdDateTime",
+          "dueDate",
+          "form",
+          "id",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "order",
+          "participantType",
+          "preRequisiteFormNames",
+          "process",
+          "rank",
+          "responsibleUser",
+          "status",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -174,8 +164,8 @@ Get entity from ComplianceDocumentFlow by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `documentFlowCode` | string | Yes | — | key: documentFlowCode |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -193,10 +183,35 @@ Get entity from ComplianceDocumentFlow by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdDateTime",
+          "declinedBy",
+          "declinedDocuments",
+          "declinedReason",
+          "docFlowBpeUserTaskId",
+          "documentFlowCode",
+          "documentFlowStatus",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "process",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -220,8 +235,8 @@ Get entity from ComplianceFormData by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `externalCode` | string | Yes | — | key: externalCode |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -239,10 +254,39 @@ Get entity from ComplianceFormData by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdDateTime",
+          "documentAttachmentId",
+          "documentFlow",
+          "envelopeId",
+          "externalCode",
+          "form",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "pdfId",
+          "pdfLocaleMetadata",
+          "process",
+          "sensitiveDataIncluded",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "documentFlowNav",
+          "formSignatures",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -267,7 +311,7 @@ Get entity from ComplianceFormSignature by key
 | --- | --- | --- | --- | --- |
 | `ComplianceFormData_externalCode` | string | Yes | — | key: ComplianceFormData_externalCode |
 | `externalCode` | string | Yes | — | key: externalCode |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -289,6 +333,22 @@ Get entity from ComplianceFormSignature by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ComplianceFormData_externalCode",
+          "createdBy",
+          "createdDateTime",
+          "externalCode",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "signatureStatus",
+          "signatureUser",
+          "signatureUserFullName",
+          "signatureUserRole"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -313,8 +373,8 @@ Get entity from ComplianceProcess by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `processId` | string | Yes | — | key: processId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -332,10 +392,42 @@ Get entity from ComplianceProcess by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "complianceMasterId",
+          "correctDataTriggered",
+          "createdBy",
+          "createdDateTime",
+          "eVerifyData",
+          "i9UserData",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "onboardingProcess",
+          "processId",
+          "processInitiatorId",
+          "processInitiatorType",
+          "processStatus",
+          "processType",
+          "startDate",
+          "user"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "onboardingProcessNav",
+          "processTasks",
+          "toDocumentFlow",
+          "toFormData"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -359,8 +451,8 @@ Get entity from ComplianceProcessTask by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `taskId` | string | Yes | — | key: taskId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -378,10 +470,37 @@ Get entity from ComplianceProcessTask by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "completedBy",
+          "createdBy",
+          "createdDateTime",
+          "dueDate",
+          "endDate",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "process",
+          "startDate",
+          "status",
+          "subjectUser",
+          "taskId",
+          "type"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -409,9 +528,9 @@ This entity contains the compliance forms assigned to new hires.
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -445,14 +564,85 @@ This entity contains the compliance forms assigned to new hires.
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bpeUserTaskId",
+          "bpeUserTaskId desc",
+          "complianceFormName",
+          "complianceFormName desc",
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "dueDate",
+          "dueDate desc",
+          "form",
+          "form desc",
+          "id",
+          "id desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "order",
+          "order desc",
+          "participantType",
+          "participantType desc",
+          "preRequisiteFormNames",
+          "preRequisiteFormNames desc",
+          "process",
+          "process desc",
+          "rank",
+          "rank desc",
+          "responsibleUser",
+          "responsibleUser desc",
+          "status",
+          "status desc",
+          "subjectUser",
+          "subjectUser desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bpeUserTaskId",
+          "complianceFormName",
+          "createdBy",
+          "createdDateTime",
+          "dueDate",
+          "form",
+          "id",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "order",
+          "participantType",
+          "preRequisiteFormNames",
+          "process",
+          "rank",
+          "responsibleUser",
+          "status",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -479,9 +669,9 @@ This entity stores the Compliance document flow assigned to the new hire.
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -515,14 +705,70 @@ This entity stores the Compliance document flow assigned to the new hire.
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "declinedBy",
+          "declinedBy desc",
+          "declinedDocuments",
+          "declinedDocuments desc",
+          "declinedReason",
+          "declinedReason desc",
+          "docFlowBpeUserTaskId",
+          "docFlowBpeUserTaskId desc",
+          "documentFlowCode",
+          "documentFlowCode desc",
+          "documentFlowStatus",
+          "documentFlowStatus desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "process",
+          "process desc",
+          "subjectUser",
+          "subjectUser desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdDateTime",
+          "declinedBy",
+          "declinedDocuments",
+          "declinedReason",
+          "docFlowBpeUserTaskId",
+          "documentFlowCode",
+          "documentFlowStatus",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "process",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -549,9 +795,9 @@ This entity stores the compliance form data for the new hire.
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -585,14 +831,78 @@ This entity stores the compliance form data for the new hire.
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "documentAttachmentId",
+          "documentAttachmentId desc",
+          "documentFlow",
+          "documentFlow desc",
+          "envelopeId",
+          "envelopeId desc",
+          "externalCode",
+          "externalCode desc",
+          "form",
+          "form desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "pdfId",
+          "pdfId desc",
+          "pdfLocaleMetadata",
+          "pdfLocaleMetadata desc",
+          "process",
+          "process desc",
+          "sensitiveDataIncluded",
+          "sensitiveDataIncluded desc",
+          "subjectUser",
+          "subjectUser desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "createdBy",
+          "createdDateTime",
+          "documentAttachmentId",
+          "documentFlow",
+          "envelopeId",
+          "externalCode",
+          "form",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "pdfId",
+          "pdfLocaleMetadata",
+          "process",
+          "sensitiveDataIncluded",
+          "subjectUser"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "documentFlowNav",
+          "formSignatures",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -619,8 +929,8 @@ This entity stores the Compliance form signature assigned to the new hire.
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -654,10 +964,53 @@ This entity stores the Compliance form signature assigned to the new hire.
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ComplianceFormData_externalCode",
+          "ComplianceFormData_externalCode desc",
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "externalCode",
+          "externalCode desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "signatureStatus",
+          "signatureStatus desc",
+          "signatureUser",
+          "signatureUser desc",
+          "signatureUserFullName",
+          "signatureUserFullName desc",
+          "signatureUserRole",
+          "signatureUserRole desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ComplianceFormData_externalCode",
+          "createdBy",
+          "createdDateTime",
+          "externalCode",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "signatureStatus",
+          "signatureUser",
+          "signatureUserFullName",
+          "signatureUserRole"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -684,9 +1037,9 @@ This entity represents the compliance workflow assigned to a new hire.
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -720,14 +1073,85 @@ This entity represents the compliance workflow assigned to a new hire.
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "complianceMasterId",
+          "complianceMasterId desc",
+          "correctDataTriggered",
+          "correctDataTriggered desc",
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "eVerifyData",
+          "eVerifyData desc",
+          "i9UserData",
+          "i9UserData desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "onboardingProcess",
+          "onboardingProcess desc",
+          "processId",
+          "processId desc",
+          "processInitiatorId",
+          "processInitiatorId desc",
+          "processInitiatorType",
+          "processInitiatorType desc",
+          "processStatus",
+          "processStatus desc",
+          "processType",
+          "processType desc",
+          "startDate",
+          "startDate desc",
+          "user",
+          "user desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "complianceMasterId",
+          "correctDataTriggered",
+          "createdBy",
+          "createdDateTime",
+          "eVerifyData",
+          "i9UserData",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "onboardingProcess",
+          "processId",
+          "processInitiatorId",
+          "processInitiatorType",
+          "processStatus",
+          "processType",
+          "startDate",
+          "user"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "onboardingProcessNav",
+          "processTasks",
+          "toDocumentFlow",
+          "toFormData"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
@@ -754,9 +1178,9 @@ This entity allows you to store the start time, end time, and the status of a pa
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/) |
 
 <Expandable title="inputSchema">
 
@@ -790,167 +1214,81 @@ This entity allows you to store the start time, end time, and the status of a pa
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "category desc",
+          "completedBy",
+          "completedBy desc",
+          "createdBy",
+          "createdBy desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "dueDate",
+          "dueDate desc",
+          "endDate",
+          "endDate desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "mdfSystemRecordStatus",
+          "mdfSystemRecordStatus desc",
+          "process",
+          "process desc",
+          "startDate",
+          "startDate desc",
+          "status",
+          "status desc",
+          "subjectUser",
+          "subjectUser desc",
+          "taskId",
+          "taskId desc",
+          "type",
+          "type desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "category",
+          "completedBy",
+          "createdBy",
+          "createdDateTime",
+          "dueDate",
+          "endDate",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "mdfSystemRecordStatus",
+          "process",
+          "startDate",
+          "status",
+          "subjectUser",
+          "taskId",
+          "type"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "processNav"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](https://www.odata.org/documentation/odata-version-2-0/uri-conventions/)"
     }
   },
   "required": [
     "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## sap_successfactors_onboarding_list_onboarding_newhire_v1_journeys_journey_id
-
-Get the Onboarding journey
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `journeyId` | string | Yes | — | Journey Id |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "journeyId": {
-      "type": "string",
-      "description": "Journey Id"
-    }
-  },
-  "required": [
-    "PCID",
-    "journeyId"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## sap_successfactors_onboarding_list_rest_onboarding_customtasks_v2_custom_tasks_task_data_id
-
-Gets custom task information by task ID.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `taskDataId` | string | Yes | — | id of Custom Task |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "taskDataId": {
-      "type": "string",
-      "description": "id of Custom Task"
-    }
-  },
-  "required": [
-    "PCID",
-    "taskDataId"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## sap_successfactors_onboarding_update_onboarding_newhire_v1_journeys
-
-Resource to mass cancel onboarding journeys
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `newHireUpdateJourneyRequests` | any[] | No | — | New Hire Update Journey Requests |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "newHireUpdateJourneyRequests": {
-      "type": "array",
-      "description": "New Hire Update Journey Requests"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## sap_successfactors_onboarding_update_rest_onboarding_customtasks_v2_custom_tasks_task_data_id
-
-API to update custom task status.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `taskDataId` | string | Yes | — | id of Custom Task |
-| `status` | string | No | — | Status of task. Valid Values OPEN, COMPLETED |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "Pink Connect ID for the authenticated connection"
-    },
-    "taskDataId": {
-      "type": "string",
-      "description": "id of Custom Task"
-    },
-    "status": {
-      "type": "string",
-      "description": "Status of task. Valid Values OPEN, COMPLETED"
-    }
-  },
-  "required": [
-    "PCID",
-    "taskDataId"
   ]
 }
 ```

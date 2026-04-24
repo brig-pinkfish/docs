@@ -1011,7 +1011,7 @@ Get a list of Integrations
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `expand` | any[] | No | — | Expand instructions for the return value. |
+| `expand` | string[] | No | — | Expand instructions for the return value. |
 | `supportedContent.id` | string | No | — | Filter integrations returned based on the supported content ID |
 | `messagingSetting.id` | string | No | — | Filter integrations returned based on the setting ID |
 
@@ -1035,6 +1035,14 @@ Get a list of Integrations
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "supportedContent",
+          "messagingSetting",
+          "identityresolution"
+        ]
+      },
       "description": "Expand instructions for the return value."
     },
     "supportedContent.id": {
@@ -1208,16 +1216,16 @@ Update a conversation by disconnecting all of the participants
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -1245,10 +1253,16 @@ Update a conversation by disconnecting all of the participants
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -1277,10 +1291,16 @@ Update a conversation by disconnecting all of the participants
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -1839,16 +1859,16 @@ Update a conversation by disconnecting all of the participants
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
 | `address` | string | No | — | The address of the conversation as seen from an external participant. For phone calls this will be the DNIS for inbound calls and the ANI for outbound calls. For other media types this will be the address of the destination participant for inbound and the address of the initiating participant for outbound. |
-| `conversationIds` | any[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
-| `divisions` | any[] | No | — | Identifiers of divisions associated with this conversation |
+| `conversationIds` | string[] | No | — | A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference. |
+| `divisions` | object[] | No | — | Identifiers of divisions associated with this conversation |
 | `endTime` | string | No | — | The time when the conversation ended. This will be the time when the last participant left the conversation, or null when the conversation is still active. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `externalTag` | string | No | — | The external tag associated with the conversation. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inactivityTimeout` | string | No | — | The time in the future, after which this conversation would be considered inactive. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `maxParticipants` | integer | No | — | If this is a conference conversation, then this field indicates the maximum number of participants allowed to participant in the conference. |
 | `name` | string | No | — | The name value |
-| `participants` | any[] | Yes | — | The list of all participants in the conversation. |
-| `recentTransfers` | any[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
+| `participants` | object[] | Yes | — | The list of all participants in the conversation. |
+| `recentTransfers` | object[] | No | — | The list of the most recent 20 transfer commands applied to this conversation. |
 | `recordingState` | string | No | — | On update, 'paused' initiates a secure pause, 'active' resumes any paused recordings; otherwise indicates state of conversation recording. |
 | `securePause` | boolean | No | — | True when the recording of this conversation is in secure pause status. |
 | `selfUri` | string | No | — | The URI for this object |
@@ -1876,10 +1896,16 @@ Update a conversation by disconnecting all of the participants
     },
     "conversationIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of conversations to merge into this conversation to create a conference. This field is null except when being used to create a conference."
     },
     "divisions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Identifiers of divisions associated with this conversation"
     },
     "endTime": {
@@ -1908,10 +1934,16 @@ Update a conversation by disconnecting all of the participants
     },
     "participants": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of all participants in the conversation."
     },
     "recentTransfers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the most recent 20 transfer commands applied to this conversation."
     },
     "recordingState": {
@@ -2301,7 +2333,7 @@ Send an email to an external conversation. An external conversation is one where
 | `priority` | integer | No | — | The priority to assign to the conversation for routing. |
 | `provider` | string | Yes | — | The name of the provider that is sourcing the email such as Oracle, Salesforce, etc. |
 | `queueId` | string | No | — | The ID of the queue to use for routing the email conversation. This field is mutually exclusive with flowId |
-| `skillIds` | any[] | No | — | The list of skill ID's to use for routing. |
+| `skillIds` | string[] | No | — | The list of skill ID's to use for routing. |
 | `subject` | string | No | — | The subject of the email |
 | `toAddress` | string | No | — | The email address of the recipient of the email. |
 | `toName` | string | No | — | The name of the recipient of the email. |
@@ -2354,6 +2386,9 @@ Send an email to an external conversation. An external conversation is one where
     },
     "skillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of skill ID's to use for routing."
     },
     "subject": {
@@ -2390,9 +2425,9 @@ Send an email reply
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
-| `attachments` | any[] | No | — | The attachments of the email message. |
-| `bcc` | any[] | No | — | The recipients that were blind copied on the email message. |
-| `cc` | any[] | No | — | The recipients that were copied on the email message. |
+| `attachments` | object[] | No | — | The attachments of the email message. |
+| `bcc` | object[] | No | — | The recipients that were blind copied on the email message. |
+| `cc` | object[] | No | — | The recipients that were copied on the email message. |
 | `draftType` | string | No | — | The type of draft that need to be treated. |
 | `emailSizeBytes` | integer | No | — | Indicates an estimation of the size of the current email as a whole, in its final, ready to be sent form. |
 | `from` | object | Yes | — | The from value |
@@ -2407,7 +2442,7 @@ Send an email reply
 | `subject` | string | No | — | The subject of the email message. |
 | `textBody` | string | Yes | — | The text body of the email message. |
 | `time` | string | No | — | The time when the message was received or sent. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `to` | any[] | Yes | — | The recipients of the email message. |
+| `to` | object[] | Yes | — | The recipients of the email message. |
 
 <Expandable title="inputSchema">
 
@@ -2425,14 +2460,23 @@ Send an email reply
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The attachments of the email message."
     },
     "bcc": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients that were blind copied on the email message."
     },
     "cc": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients that were copied on the email message."
     },
     "draftType": {
@@ -2523,6 +2567,9 @@ Send an email reply
     },
     "to": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients of the email message."
     }
   },
@@ -2549,7 +2596,7 @@ Copy attachments from an email message to the current draft.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
-| `attachments` | any[] | Yes | — | A list of attachments that will be copied from the source message to the current draft |
+| `attachments` | object[] | Yes | — | A list of attachments that will be copied from the source message to the current draft |
 | `sourceMessage` | object | Yes | — | Source Message |
 
 <Expandable title="inputSchema">
@@ -2568,6 +2615,9 @@ Copy attachments from an email message to the current draft.
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of attachments that will be copied from the source message to the current draft"
     },
     "sourceMessage": {
@@ -2620,7 +2670,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -2674,6 +2724,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -2826,7 +2879,7 @@ Create an email conversation
 | `priority` | integer | No | — | The priority to assign to the conversation for routing. |
 | `provider` | string | Yes | — | The name of the provider that is sourcing the emails. The Provider "PureCloud Email" is reserved for native emails. |
 | `queueId` | string | No | — | The ID of the queue to use for routing the email conversation. This field is mutually exclusive with flowId |
-| `skillIds` | any[] | No | — | The list of skill ID's to use for routing. |
+| `skillIds` | string[] | No | — | The list of skill ID's to use for routing. |
 | `subject` | string | No | — | The subject of the email |
 | `textBody` | string | No | — | A text body content of the email. |
 | `toAddress` | string | No | — | The email address of the recipient of the email. |
@@ -2893,6 +2946,9 @@ Create an email conversation
     },
     "skillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of skill ID's to use for routing."
     },
     "subject": {
@@ -2942,7 +2998,7 @@ Create an email conversation, per API
 | `senderType` | string | Yes | — | The type of email domain used to send the agentless message. |
 | `subject` | string | No | — | The subject of the message. |
 | `textBody` | string | No | — | The Content of the message, in plain text. |
-| `toAddresses` | any[] | Yes | — | The recipient of the message. We currently support one recipient only. |
+| `toAddresses` | object[] | Yes | — | The recipient of the message. We currently support one recipient only. |
 
 <Expandable title="inputSchema">
 
@@ -3007,6 +3063,9 @@ Create an email conversation, per API
     },
     "toAddresses": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipient of the message. We currently support one recipient only."
     }
   },
@@ -3031,7 +3090,7 @@ Create Fax Conversation
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `addresses` | any[] | Yes | — | A list of outbound fax dialing addresses. E.g. +13175555555 or 3175555555 |
+| `addresses` | string[] | Yes | — | A list of outbound fax dialing addresses. E.g. +13175555555 or 3175555555 |
 | `contentType` | string | No | — | The content type that is going to be uploaded. If Content Management document is used for faxing, contentType will be ignored |
 | `coverSheet` | object | No | — | Cover Sheet |
 | `documentId` | string | No | — | DocumentId of Content Management artifact. If Content Management document is not used for faxing, documentId should be null |
@@ -3053,6 +3112,9 @@ Create Fax Conversation
     },
     "addresses": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of outbound fax dialing addresses. E.g. +13175555555 or 3175555555"
     },
     "contentType": {
@@ -3180,7 +3242,7 @@ Send message
 | `conversationId` | string | Yes | — | Conversation Id |
 | `communicationId` | string | Yes | — | Communication Id |
 | `useNormalizedMessage` | boolean | No | — | If true, response removes deprecated fields (textBody, media) |
-| `mediaIds` | any[] | No | — | The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage. |
+| `mediaIds` | string[] | No | — | The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage. |
 | `messagingTemplate` | object | No | — | Messaging Template |
 | `textBody` | string | Yes | — | The body of the text message.  Maximum character counts are: SMS - 765 characters, other channels - 2000 characters. |
 
@@ -3208,6 +3270,9 @@ Send message
     },
     "mediaIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage."
     },
     "messagingTemplate": {
@@ -3328,7 +3393,7 @@ Send a social media message
 | `conversationId` | string | Yes | — | Conversation Id |
 | `communicationId` | string | Yes | — | Communication Id |
 | `inReplyToMessageId` | string | Yes | — | The ID of the message to which this request is replying. |
-| `mediaIds` | any[] | No | — | The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage. |
+| `mediaIds` | string[] | No | — | The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage. |
 | `textBody` | string | No | — | The body of the text message.  Maximum character count is 2000 characters. |
 
 <Expandable title="inputSchema">
@@ -3355,6 +3420,9 @@ Send a social media message
     },
     "mediaIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The media ids associated with the text message. See https://developer.genesys.cloud/api/rest/v2/conversations/messaging-media-upload for example usage."
     },
     "textBody": {
@@ -3451,7 +3519,7 @@ Send an inbound Open Event Message
 | --- | --- | --- | --- | --- |
 | `integrationId` | string | Yes | — | Integration Id |
 | `channel` | object | Yes | — | Open Channel-specific information that describes the message and the message channel/provider. |
-| `events` | any[] | Yes | — | List of event elements. |
+| `events` | object[] | Yes | — | List of event elements. |
 
 <Expandable title="inputSchema">
 
@@ -3487,6 +3555,9 @@ Send an inbound Open Event Message
     },
     "events": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of event elements."
     }
   },
@@ -3514,7 +3585,7 @@ Send inbound Open Message
 | `integrationId` | string | Yes | — | Integration Id |
 | `prefetchConversationId` | boolean | No | — | Indicates whether or not to prefetch conversationId |
 | `channel` | object | Yes | — | Open Channel-specific information that describes the message and the message channel/provider, with additional message information |
-| `content` | any[] | No | — | List of content elements. |
+| `content` | object[] | No | — | List of content elements. |
 | `metadata` | object | No | — | Additional metadata about this message to capture non-channel specific data. |
 | `text` | string | No | — | Message text. |
 
@@ -3564,6 +3635,9 @@ Send inbound Open Message
     },
     "content": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of content elements."
     },
     "metadata": {
@@ -3599,7 +3673,7 @@ Send an inbound Open Receipt Message
 | `channel` | object | Yes | — | Open Channel-specific information that describes the message and the message channel/provider. |
 | `id` | string | Yes | — | The original unique message Id generated by the messaging platform, that this receipt message is referencing. |
 | `isFinalReceipt` | boolean | No | — | Indicates if this is the last message receipt for this message, or if another message receipt can be expected. |
-| `reasons` | any[] | No | — | List of reasons for a message receipt that indicates the message has failed. Only used with Failed status. |
+| `reasons` | object[] | No | — | List of reasons for a message receipt that indicates the message has failed. Only used with Failed status. |
 | `status` | string | Yes | — | Message receipt status. |
 
 <Expandable title="inputSchema">
@@ -3644,6 +3718,9 @@ Send an inbound Open Receipt Message
     },
     "reasons": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of reasons for a message receipt that indicates the message has failed. Only used with Failed status."
     },
     "status": {
@@ -3789,7 +3866,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -3843,6 +3920,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -4167,7 +4247,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -4221,6 +4301,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -4255,7 +4338,7 @@ Apply wrap-up for this conversation communication
 | `name` | string | No | — | The user configured wrap up code name. |
 | `notes` | string | No | — | Text entered by the agent to describe the call or disposition. |
 | `provisional` | boolean | No | — | Indicates if this is a pending save and should not require a code to be specified.  This allows someone to save some temporary wrapup that will be used later. |
-| `tags` | any[] | No | — | List of tags selected by the agent to describe the call or disposition. |
+| `tags` | string[] | No | — | List of tags selected by the agent to describe the call or disposition. |
 
 <Expandable title="inputSchema">
 
@@ -4309,6 +4392,9 @@ Apply wrap-up for this conversation communication
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags selected by the agent to describe the call or disposition."
     }
   },
@@ -4380,9 +4466,9 @@ Update conversation draft reply
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
-| `attachments` | any[] | No | — | The attachments of the email message. |
-| `bcc` | any[] | No | — | The recipients that were blind copied on the email message. |
-| `cc` | any[] | No | — | The recipients that were copied on the email message. |
+| `attachments` | object[] | No | — | The attachments of the email message. |
+| `bcc` | object[] | No | — | The recipients that were blind copied on the email message. |
+| `cc` | object[] | No | — | The recipients that were copied on the email message. |
 | `draftType` | string | No | — | The type of draft that need to be treated. |
 | `emailSizeBytes` | integer | No | — | Indicates an estimation of the size of the current email as a whole, in its final, ready to be sent form. |
 | `from` | object | Yes | — | The from value |
@@ -4397,7 +4483,7 @@ Update conversation draft reply
 | `subject` | string | No | — | The subject of the email message. |
 | `textBody` | string | Yes | — | The text body of the email message. |
 | `time` | string | No | — | The time when the message was received or sent. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `to` | any[] | Yes | — | The recipients of the email message. |
+| `to` | object[] | Yes | — | The recipients of the email message. |
 
 <Expandable title="inputSchema">
 
@@ -4415,14 +4501,23 @@ Update conversation draft reply
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The attachments of the email message."
     },
     "bcc": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients that were blind copied on the email message."
     },
     "cc": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients that were copied on the email message."
     },
     "draftType": {
@@ -4513,6 +4608,9 @@ Update conversation draft reply
     },
     "to": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The recipients of the email message."
     }
   },

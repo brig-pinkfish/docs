@@ -77,11 +77,11 @@ Creates a new Batch Prediction job
 | `deploymentId` | string | No | — | ID of deployment which is used in job for processing predictions dataset |
 | `disableRowLevelErrorHandling` | boolean | Yes | — | Skip row by row error handling |
 | `explanationAlgorithm` | string | No | — | Which algorithm will be used to calculate prediction explanations |
-| `explanationClassNames` | any[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
+| `explanationClassNames` | string[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `explanationNumTopClasses` | integer | No | — | Sets the number of most probable (top predicted) classes for which corresponding explanations are returned in each row. This setting is mutually exclusive with classNames. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `includePredictionStatus` | boolean | Yes | — | Include prediction status column in the output |
 | `includeProbabilities` | boolean | Yes | — | Include probabilities for all classes |
-| `includeProbabilitiesClasses` | any[] | Yes | — | Include only probabilities for these specific class names. |
+| `includeProbabilitiesClasses` | string[] | Yes | — | Include only probabilities for these specific class names. |
 | `intakeSettings` | object | Yes | — | The intake option configured for this job |
 | `maxExplanations` | integer | Yes | — | Number of explanations requested. Will be ordered by strength. |
 | `modelId` | string | No | — | ID of leaderboard model which is used in job for processing predictions dataset |
@@ -89,7 +89,7 @@ Creates a new Batch Prediction job
 | `monitoringBatchPrefix` | string | No | — | Name of the batch to create with this job |
 | `numConcurrent` | integer | No | — | Number of simultaneous requests to run against the prediction instance |
 | `outputSettings` | object | No | — | The output option configured for this job |
-| `passthroughColumns` | any[] | No | — | Pass through columns from the original dataset |
+| `passthroughColumns` | string[] | No | — | Pass through columns from the original dataset |
 | `passthroughColumnsSet` | string | No | — | Pass through all columns from the original dataset |
 | `pinnedModelId` | string | No | — | Specify a model ID used for scoring |
 | `predictionInstance` | object | No | — | Override the default prediction instance from the deployment when scoring this job. |
@@ -169,6 +169,9 @@ Creates a new Batch Prediction job
     },
     "explanationClassNames": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1."
     },
     "explanationNumTopClasses": {
@@ -185,6 +188,9 @@ Creates a new Batch Prediction job
     },
     "includeProbabilitiesClasses": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only probabilities for these specific class names."
     },
     "intakeSettings": {
@@ -215,6 +221,9 @@ Creates a new Batch Prediction job
     },
     "passthroughColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Pass through columns from the original dataset"
     },
     "passthroughColumnsSet": {
@@ -347,8 +356,8 @@ List batch prediction jobs
 | --- | --- | --- | --- | --- |
 | `offset` | integer | Yes | — | This many results will be skipped |
 | `limit` | integer | Yes | — | At most this many results are returned |
-| `status` | any[] | No | — | Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses. |
-| `source` | any[] | No | — | Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources. |
+| `status` | string[] | No | — | Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses. |
+| `source` | string[] | No | — | Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources. |
 | `deploymentId` | string | No | — | Includes only jobs for this particular deployment |
 | `modelId` | string | No | — | ID of leaderboard model which is used in job for processing predictions dataset |
 | `jobId` | string | No | — | Includes only job by specific id |
@@ -358,9 +367,9 @@ List batch prediction jobs
 | `startDateTime` | string | No | — | ISO-formatted datetime of the earliest time the job was added (inclusive). For example "2008-08-24T12:00:00Z". Will ignore cutoffHours if set. |
 | `endDateTime` | string | No | — | ISO-formatted datetime of the latest time the job was added (inclusive). For example "2008-08-24T12:00:00Z". |
 | `batchPredictionJobDefinitionId` | string | No | — | Includes only jobs for this particular definition |
-| `hostname` | any[] | No | — | Includes only jobs for this particular prediction instance hostname |
-| `intakeType` | any[] | No | — | Includes only jobs for these particular intakes type |
-| `outputType` | any[] | No | — | Includes only jobs for these particular outputs type |
+| `hostname` | string[] | No | — | Includes only jobs for this particular prediction instance hostname |
+| `intakeType` | string[] | No | — | Includes only jobs for these particular intakes type |
+| `outputType` | string[] | No | — | Includes only jobs for these particular outputs type |
 
 <Expandable title="inputSchema">
 
@@ -382,10 +391,59 @@ List batch prediction jobs
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "INITIALIZING",
+          "RUNNING",
+          "COMPLETED",
+          "ABORTED",
+          "FAILED"
+        ]
+      },
       "description": "Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses."
     },
     "source": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "other",
+          "api_client_r",
+          "api_client_python",
+          "integration_snippet_requests",
+          "integration_snippet_api_client",
+          "integration_snippet_standalone_python",
+          "integration_snippet_standalone_powershell",
+          "ui_make_prediction",
+          "ui_leaderboard_make_prediction",
+          "ui_uxr_make_prediction",
+          "integration_job",
+          "scheduled_from_job_definition",
+          "manual_run_from_job_definition",
+          "model_package_insights",
+          "portable_batch_predictions",
+          "data_pipelines",
+          "challenger_replay",
+          "-other",
+          "-api_client_r",
+          "-api_client_python",
+          "-integration_snippet_requests",
+          "-integration_snippet_api_client",
+          "-integration_snippet_standalone_python",
+          "-integration_snippet_standalone_powershell",
+          "-ui_make_prediction",
+          "-ui_leaderboard_make_prediction",
+          "-ui_uxr_make_prediction",
+          "-integration_job",
+          "-scheduled_from_job_definition",
+          "-manual_run_from_job_definition",
+          "-model_package_insights",
+          "-portable_batch_predictions",
+          "-data_pipelines",
+          "-challenger_replay"
+        ]
+      },
       "description": "Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources."
     },
     "deploymentId": {
@@ -432,14 +490,57 @@ List batch prediction jobs
     },
     "hostname": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Includes only jobs for this particular prediction instance hostname"
     },
     "intakeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "local_file",
+          "azure",
+          "bigquery",
+          "dataStage",
+          "databricks",
+          "dataset",
+          "datasphere",
+          "dss",
+          "gcp",
+          "http",
+          "jdbc",
+          "localFile",
+          "recipe",
+          "s3",
+          "snowflake",
+          "synapse",
+          "trino"
+        ]
+      },
       "description": "Includes only jobs for these particular intakes type"
     },
     "outputType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "local_file",
+          "azure",
+          "bigquery",
+          "databricks",
+          "datasphere",
+          "gcp",
+          "http",
+          "jdbc",
+          "localFile",
+          "s3",
+          "snowflake",
+          "synapse",
+          "trino"
+        ]
+      },
       "description": "Includes only jobs for these particular outputs type"
     }
   },
@@ -506,7 +607,7 @@ Update a Batch Prediction job
 | `hidden` | boolean | No | — | Hides or unhides the job from the job list |
 | `jobIntakeSize` | integer | No | — | Number of bytes in the intake dataset for this job |
 | `jobOutputSize` | integer | No | — | Number of bytes in the output dataset for this job |
-| `logs` | any[] | No | — | The job log. |
+| `logs` | string[] | No | — | The job log. |
 | `scoredRows` | integer | No | — | Number of rows that have been used in prediction computation |
 | `skippedRows` | integer | No | — | Number of rows that have been skipped during scoring. May contain non-zero value only in time-series predictions case if provided dataset contains more than required historical rows. |
 | `started` | string | No | — | Time when job scoring begin |
@@ -552,6 +653,9 @@ Update a Batch Prediction job
     },
     "logs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The job log."
     },
     "scoredRows": {
@@ -869,8 +973,8 @@ List batch jobs
 | --- | --- | --- | --- | --- |
 | `offset` | integer | Yes | — | This many results will be skipped |
 | `limit` | integer | Yes | — | At most this many results are returned |
-| `status` | any[] | No | — | Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses. |
-| `source` | any[] | No | — | Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources. |
+| `status` | string[] | No | — | Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses. |
+| `source` | string[] | No | — | Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources. |
 | `deploymentId` | string | No | — | Includes only jobs for this particular deployment |
 | `modelId` | string | No | — | ID of leaderboard model which is used in job for processing predictions dataset |
 | `jobId` | string | No | — | Includes only job by specific id |
@@ -880,10 +984,10 @@ List batch jobs
 | `startDateTime` | string | No | — | ISO-formatted datetime of the earliest time the job was added (inclusive). For example "2008-08-24T12:00:00Z". Will ignore cutoffHours if set. |
 | `endDateTime` | string | No | — | ISO-formatted datetime of the latest time the job was added (inclusive). For example "2008-08-24T12:00:00Z". |
 | `batchPredictionJobDefinitionId` | string | No | — | Includes only jobs for this particular definition |
-| `hostname` | any[] | No | — | Includes only jobs for this particular prediction instance hostname |
-| `batchJobType` | any[] | No | — | Includes only jobs that have the batch job type that matches this flag. Repeat the parameter for filtering on multiple types. |
-| `intakeType` | any[] | No | — | Includes only jobs for these particular intakes type |
-| `outputType` | any[] | No | — | Includes only jobs for these particular outputs type |
+| `hostname` | string[] | No | — | Includes only jobs for this particular prediction instance hostname |
+| `batchJobType` | string[] | No | — | Includes only jobs that have the batch job type that matches this flag. Repeat the parameter for filtering on multiple types. |
+| `intakeType` | string[] | No | — | Includes only jobs for these particular intakes type |
+| `outputType` | string[] | No | — | Includes only jobs for these particular outputs type |
 
 <Expandable title="inputSchema">
 
@@ -905,10 +1009,59 @@ List batch jobs
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "INITIALIZING",
+          "RUNNING",
+          "COMPLETED",
+          "ABORTED",
+          "FAILED"
+        ]
+      },
       "description": "Includes only jobs that have the status value that matches this flag. Repeat the parameter for filtering on multiple statuses."
     },
     "source": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "other",
+          "api_client_r",
+          "api_client_python",
+          "integration_snippet_requests",
+          "integration_snippet_api_client",
+          "integration_snippet_standalone_python",
+          "integration_snippet_standalone_powershell",
+          "ui_make_prediction",
+          "ui_leaderboard_make_prediction",
+          "ui_uxr_make_prediction",
+          "integration_job",
+          "scheduled_from_job_definition",
+          "manual_run_from_job_definition",
+          "model_package_insights",
+          "portable_batch_predictions",
+          "data_pipelines",
+          "challenger_replay",
+          "-other",
+          "-api_client_r",
+          "-api_client_python",
+          "-integration_snippet_requests",
+          "-integration_snippet_api_client",
+          "-integration_snippet_standalone_python",
+          "-integration_snippet_standalone_powershell",
+          "-ui_make_prediction",
+          "-ui_leaderboard_make_prediction",
+          "-ui_uxr_make_prediction",
+          "-integration_job",
+          "-scheduled_from_job_definition",
+          "-manual_run_from_job_definition",
+          "-model_package_insights",
+          "-portable_batch_predictions",
+          "-data_pipelines",
+          "-challenger_replay"
+        ]
+      },
       "description": "Includes only jobs that have the source value that matches this flag. Repeat the parameter for filtering on multiple statuses.Prefix values with a dash (`-`) to exclude those sources."
     },
     "deploymentId": {
@@ -955,18 +1108,68 @@ List batch jobs
     },
     "hostname": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Includes only jobs for this particular prediction instance hostname"
     },
     "batchJobType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "monitoring",
+          "prediction"
+        ]
+      },
       "description": "Includes only jobs that have the batch job type that matches this flag. Repeat the parameter for filtering on multiple types."
     },
     "intakeType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "local_file",
+          "azure",
+          "bigquery",
+          "dataStage",
+          "databricks",
+          "dataset",
+          "datasphere",
+          "dss",
+          "gcp",
+          "http",
+          "jdbc",
+          "localFile",
+          "recipe",
+          "s3",
+          "snowflake",
+          "synapse",
+          "trino"
+        ]
+      },
       "description": "Includes only jobs for these particular intakes type"
     },
     "outputType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "local_file",
+          "azure",
+          "bigquery",
+          "databricks",
+          "datasphere",
+          "gcp",
+          "http",
+          "jdbc",
+          "localFile",
+          "s3",
+          "snowflake",
+          "synapse",
+          "trino"
+        ]
+      },
       "description": "Includes only jobs for these particular outputs type"
     }
   },
@@ -1035,11 +1238,11 @@ Creates a new Batch Prediction job definition
 | `disableRowLevelErrorHandling` | boolean | Yes | — | Skip row by row error handling |
 | `enabled` | boolean | No | — | If this job definition is enabled as a scheduled job. Optional if no schedule is supplied. |
 | `explanationAlgorithm` | string | No | — | Which algorithm will be used to calculate prediction explanations |
-| `explanationClassNames` | any[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
+| `explanationClassNames` | string[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `explanationNumTopClasses` | integer | No | — | Sets the number of most probable (top predicted) classes for which corresponding explanations are returned in each row. This setting is mutually exclusive with classNames. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `includePredictionStatus` | boolean | Yes | — | Include prediction status column in the output |
 | `includeProbabilities` | boolean | Yes | — | Include probabilities for all classes |
-| `includeProbabilitiesClasses` | any[] | Yes | — | Include only probabilities for these specific class names. |
+| `includeProbabilitiesClasses` | string[] | Yes | — | Include only probabilities for these specific class names. |
 | `intakeSettings` | object | Yes | — | The intake option configured for this job |
 | `maxExplanations` | integer | Yes | — | Number of explanations requested. Will be ordered by strength. |
 | `modelId` | string | No | — | ID of leaderboard model which is used in job for processing predictions dataset |
@@ -1048,7 +1251,7 @@ Creates a new Batch Prediction job definition
 | `name` | string | No | — | A human-readable name for the definition, must be unique across organisations, if left out the backend will generate one for you. |
 | `numConcurrent` | integer | No | — | Number of simultaneous requests to run against the prediction instance |
 | `outputSettings` | object | No | — | The output option configured for this job |
-| `passthroughColumns` | any[] | No | — | Pass through columns from the original dataset |
+| `passthroughColumns` | string[] | No | — | Pass through columns from the original dataset |
 | `passthroughColumnsSet` | string | No | — | Pass through all columns from the original dataset |
 | `pinnedModelId` | string | No | — | Specify a model ID used for scoring |
 | `predictionInstance` | object | No | — | Override the default prediction instance from the deployment when scoring this job. |
@@ -1133,6 +1336,9 @@ Creates a new Batch Prediction job definition
     },
     "explanationClassNames": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1."
     },
     "explanationNumTopClasses": {
@@ -1149,6 +1355,9 @@ Creates a new Batch Prediction job definition
     },
     "includeProbabilitiesClasses": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only probabilities for these specific class names."
     },
     "intakeSettings": {
@@ -1183,6 +1392,9 @@ Creates a new Batch Prediction job definition
     },
     "passthroughColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Pass through columns from the original dataset"
     },
     "passthroughColumnsSet": {
@@ -1409,11 +1621,11 @@ Update Batch Prediction job definition
 | `disableRowLevelErrorHandling` | boolean | No | — | Skip row by row error handling |
 | `enabled` | boolean | No | — | If this job definition is enabled as a scheduled job. Optional if no schedule is supplied. |
 | `explanationAlgorithm` | string | No | — | Which algorithm will be used to calculate prediction explanations |
-| `explanationClassNames` | any[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
+| `explanationClassNames` | string[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `explanationNumTopClasses` | integer | No | — | Sets the number of most probable (top predicted) classes for which corresponding explanations are returned in each row. This setting is mutually exclusive with classNames. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `includePredictionStatus` | boolean | No | — | Include prediction status column in the output |
 | `includeProbabilities` | boolean | No | — | Include probabilities for all classes |
-| `includeProbabilitiesClasses` | any[] | No | — | Include only probabilities for these specific class names. |
+| `includeProbabilitiesClasses` | string[] | No | — | Include only probabilities for these specific class names. |
 | `intakeSettings` | object | No | — | The intake option configured for this job |
 | `maxExplanations` | integer | No | — | Number of explanations requested. Will be ordered by strength. |
 | `modelId` | string | No | — | ID of leaderboard model which is used in job for processing predictions dataset |
@@ -1422,7 +1634,7 @@ Update Batch Prediction job definition
 | `name` | string | No | — | A human-readable name for the definition, must be unique across organisations, if left out the backend will generate one for you. |
 | `numConcurrent` | integer | No | — | Number of simultaneous requests to run against the prediction instance |
 | `outputSettings` | object | No | — | The output option configured for this job |
-| `passthroughColumns` | any[] | No | — | Pass through columns from the original dataset |
+| `passthroughColumns` | string[] | No | — | Pass through columns from the original dataset |
 | `passthroughColumnsSet` | string | No | — | Pass through all columns from the original dataset |
 | `pinnedModelId` | string | No | — | Specify a model ID used for scoring |
 | `predictionInstance` | object | No | — | Override the default prediction instance from the deployment when scoring this job. |
@@ -1511,6 +1723,9 @@ Update Batch Prediction job definition
     },
     "explanationClassNames": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1."
     },
     "explanationNumTopClasses": {
@@ -1527,6 +1742,9 @@ Update Batch Prediction job definition
     },
     "includeProbabilitiesClasses": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Include only probabilities for these specific class names."
     },
     "intakeSettings": {
@@ -1561,6 +1779,9 @@ Update Batch Prediction job definition
     },
     "passthroughColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Pass through columns from the original dataset"
     },
     "passthroughColumnsSet": {
@@ -2534,7 +2755,7 @@ Create a new PredictionExplanations object (and its accompanying PredictionExpla
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
-| `classNames` | any[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
+| `classNames` | string[] | No | — | Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1. |
 | `datasetId` | string | Yes | — | The dataset ID. |
 | `maxExplanations` | integer | No | — | The maximum number of prediction explanations to supply per row of the dataset. |
 | `modelId` | string | Yes | — | The model ID. |
@@ -2558,6 +2779,9 @@ Create a new PredictionExplanations object (and its accompanying PredictionExpla
     },
     "classNames": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Sets a list of selected class names for which corresponding explanations are returned in each row. This setting is mutually exclusive with numTopClasses. If neither parameter is specified, the default setting is numTopClasses=1."
     },
     "datasetId": {
