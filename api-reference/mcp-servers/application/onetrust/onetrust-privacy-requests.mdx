@@ -61,7 +61,7 @@ Add Comment to Request
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `requestQueueRefId` | string | Yes | — | Request queue reference Id |
-| `attachments` | any[] | No | — | The attachments value |
+| `attachments` | object[] | No | — | The attachments value |
 | `comment` | string | Yes | — | Comment if any. |
 | `internalComment` | boolean | Yes | — | Comments on the request can be internal or public. This flag determines if the comment is internal or public. |
 | `isInternalComment` | boolean | No | — | Is Internal Comment |
@@ -83,6 +83,9 @@ Add Comment to Request
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The attachments value"
     },
     "comment": {
@@ -243,7 +246,7 @@ Delete Requests
 | `EndDateRange` | object | No | — | End Date Range |
 | `ModifiedDateRange` | object | No | — | Modified Date Range |
 | `Organization` | string | No | — | Filter requests by Organization. Only requests in this organization will be deleted. |
-| `RequestIDs` | any[] | No | — | An array of 10-character Unique IDs of the Request(s) to be deleted. |
+| `RequestIDs` | string[] | No | — | An array of 10-character Unique IDs of the Request(s) to be deleted. |
 | `RequestType` | string | No | — | Filter requests by Request Type. Only requests with the Request Type will be deleted. |
 | `Status` | string | No | — | Filter requests by the Stage name. Only requests in this stage will be deleted. |
 | `SubjectType` | string | No | — | Filter requests by Subject Type. Only requests with the Subject Type will be deleted. |
@@ -316,6 +319,9 @@ Delete Requests
     },
     "RequestIDs": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array of 10-character Unique IDs of the Request(s) to be deleted."
     },
     "RequestType": {
@@ -359,7 +365,7 @@ Complete Subtask
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `subtaskID` | string | Yes | — | Sub-Task UUID |
-| `attachments` | any[] | No | — | List of attachments for the subtask |
+| `attachments` | object[] | No | — | List of attachments for the subtask |
 | `comment` | string | Yes | — | Comment for the subtask completion. Longer comments may impact system performance. |
 | `markAsComplete` | boolean | No | — | Whether to mark the subtask as complete |
 | `resolutionId` | string | No | — | Resolution ID for the subtask |
@@ -380,6 +386,9 @@ Complete Subtask
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of attachments for the subtask"
     },
     "comment": {
@@ -417,15 +426,15 @@ Create Request
 | --- | --- | --- | --- | --- |
 | `templateId` | string | Yes | — | Every request is created against a webform template. The template ID is the GUID corresponding to a particular webform. This can be obtained from the url by navigating to the webform. e.g. in this url, 'https://trial.onetrust.com/app/#/pia/dsar/webform/manage/6519ffd5-fe6b-4804-8dfc-1c2ae2da212d', '6519ffd5-fe6b-4804-8dfc-1c2ae2da212d' is the templateId. |
 | `additionalData` | object | No | — | Additional fields in key value format, required for request processing. These could be webform or non webform fields |
-| `attachments` | any[] | No | — | File attachment details for request. |
+| `attachments` | object[] | No | — | File attachment details for request. |
 | `email` | string | No | — | Email address of the respondent. |
 | `firstName` | string | No | — | First name of the respondent. |
 | `language` | string | No | — | The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc. |
 | `lastName` | string | No | — | Last name of the respondent. |
 | `multiselectFields` | object | No | — | Multiselect Fields |
 | `requestTraceId` | string | No | — | Unique trace id for request. This can be used to avoid creating duplicate request. |
-| `requestTypes` | any[] | No | — | Respondents privacy request type. This should match with the webform request type. |
-| `subjectTypes` | any[] | No | — | Respondents subject type or relation ship with tenant. This should match with the webform subject type. |
+| `requestTypes` | string[] | No | — | Respondents privacy request type. This should match with the webform request type. |
+| `subjectTypes` | string[] | No | — | Respondents subject type or relation ship with tenant. This should match with the webform subject type. |
 
 <Expandable title="inputSchema">
 
@@ -447,6 +456,9 @@ Create Request
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "File attachment details for request."
     },
     "email": {
@@ -475,10 +487,16 @@ Create Request
     },
     "requestTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Respondents privacy request type. This should match with the webform request type."
     },
     "subjectTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Respondents subject type or relation ship with tenant. This should match with the webform subject type."
     }
   },
@@ -625,7 +643,7 @@ Create Verification Method
 | `description` | string | No | — | A detailed description of how the verification method was applied. |
 | `id` | string | No | — | The unique identifier for this verification method. |
 | `lastModifiedDate` | string | No | — | The timestamp when this verification method was last modified. |
-| `verificationComments` | any[] | No | — | A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request. |
+| `verificationComments` | object[] | No | — | A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request. |
 | `verificationMethodName` | string | No | — | The name of the verification method used to verify the data subject's identity. |
 | `verificationStatus` | string | No | — | The current status of the verification process. |
 | `verificationType` | string | No | — | The type of verification process used. |
@@ -670,6 +688,9 @@ Create Verification Method
     },
     "verificationComments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request."
     },
     "verificationMethodName": {
@@ -715,10 +736,10 @@ Add Targeted Data Discovery Results Summary to Request
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `requestQueueRefId` | string | Yes | — | Request queue reference Id |
-| `attachments` | any[] | No | — | Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary. |
+| `attachments` | object[] | No | — | Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary. |
 | `results` | object | No | — | Dataset that includes list of data groups with nested name-value-pairs to capture structured data. |
 | `system` | string | Yes | — | Name or identifier of the system from which this data is sourced. This will be displayed on the Results Summary. |
-| `unstructuredResults` | any[] | No | — | Unstructured Results |
+| `unstructuredResults` | object[] | No | — | Unstructured Results |
 
 <Expandable title="inputSchema">
 
@@ -736,6 +757,9 @@ Add Targeted Data Discovery Results Summary to Request
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary."
     },
     "results": {
@@ -748,6 +772,9 @@ Add Targeted Data Discovery Results Summary to Request
     },
     "unstructuredResults": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Unstructured Results"
     }
   },
@@ -1012,7 +1039,7 @@ Get List of Subtasks by Criteria
 | `page` | integer | No | — | Results page you want to retrieve. Page number starts with 0 (0..N) |
 | `size` | integer | No | — | Number of records per page. Maximum page size allowed is 500 |
 | `sort` | string | No | — | Sorting criteria in the format: property(,asc\|desc). Default sort order is subTaskId ascending. |
-| `currentRequestStage` | any[] | No | — | Filter subtasks by current request stage. Accepted values include: All default and custom request stages are supported. |
+| `currentRequestStage` | string[] | No | — | Filter subtasks by current request stage. Accepted values include: All default and custom request stages are supported. |
 | `IncludeChildOrgs` | boolean | No | — | By default set to true if omitted. On true Subtasks of Child Organizations of the given Organization will be included.On False Subtasks of the given Organization will be included. Effective only if 'organization' value is provided. |
 | `language` | string | No | — | Specifies the language code for localized field values in the response. Translations will be provided for this language if available. |
 | `OpenRequests` | boolean | No | — | When set to true, only subtasks belonging to open requests will be included in the results. If false or omitted, subtasks from both open and closed requests will be returned. |
@@ -1021,10 +1048,10 @@ Get List of Subtasks by Criteria
 | `RequestDeadline` | object | No | — | Request Deadline |
 | `RequestType` | string | No | — | Filter subtasks by Request Type. Only subtasks belonging to requests with this Request Type will be retrieved. |
 | `SubjectType` | string | No | — | Filter subtasks by Subject Type. Only subtasks belonging to requests with this Subject Type will be retrieved. |
-| `subtaskCreatedStage` | any[] | No | — | Filter subtasks by subtask created stage. Accepted values include: All default and custom request stages are supported. |
+| `subtaskCreatedStage` | string[] | No | — | Filter subtasks by subtask created stage. Accepted values include: All default and custom request stages are supported. |
 | `SubtaskDateCreated` | object | No | — | Subtask Date Created |
 | `SubtaskDateUpdated` | object | No | — | Subtask Date Updated |
-| `SubtaskStatus` | any[] | No | — | Subtask Status |
+| `SubtaskStatus` | object[] | No | — | Subtask Status |
 | `SubtaskType` | string | No | — | Filter subtasks by type - either 'manual' for user-created subtasks or 'system' for automated system subtasks. |
 | `SystemName` | string | No | — | Filter subtasks by integration system name. Only system subtasks associated with this system will be returned. |
 
@@ -1076,6 +1103,9 @@ Get List of Subtasks by Criteria
     },
     "currentRequestStage": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter subtasks by current request stage. Accepted values include: All default and custom request stages are supported."
     },
     "IncludeChildOrgs": {
@@ -1132,6 +1162,9 @@ Get List of Subtasks by Criteria
     },
     "subtaskCreatedStage": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter subtasks by subtask created stage. Accepted values include: All default and custom request stages are supported."
     },
     "SubtaskDateCreated": {
@@ -1164,6 +1197,21 @@ Get List of Subtasks by Criteria
     },
     "SubtaskStatus": {
       "type": "array",
+      "items": {
+        "enum": [
+          "Open",
+          "Not Run",
+          "Assigned",
+          "Unassigned",
+          "In Progress",
+          "Processing",
+          "Ready for Review",
+          "Completed",
+          "Failed",
+          "Deleted",
+          "Rejected"
+        ]
+      },
       "description": "Subtask Status"
     },
     "SubtaskType": {
@@ -1618,8 +1666,8 @@ Link Requests
 | --- | --- | --- | --- | --- |
 | `requestQueueRefId` | string | Yes | — | Request Reference ID |
 | `comment` | string | No | — | A comment to accompany the current action of linking/ unlinking requests |
-| `LinkRequests` | any[] | No | — | Link Requests |
-| `UnlinkRequests` | any[] | No | — | Unlink Requests |
+| `LinkRequests` | string[] | No | — | Link Requests |
+| `UnlinkRequests` | string[] | No | — | Unlink Requests |
 
 <Expandable title="inputSchema">
 
@@ -1641,10 +1689,16 @@ Link Requests
     },
     "LinkRequests": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Link Requests"
     },
     "UnlinkRequests": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Unlink Requests"
     }
   },
@@ -1994,10 +2048,10 @@ Add Data Points to Targeted Data Discovery Results Summary
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `requestQueueRefId` | string | Yes | — | Request queue reference Id |
-| `attachments` | any[] | No | — | Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary. |
+| `attachments` | object[] | No | — | Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary. |
 | `results` | object | No | — | Dataset that includes list of data groups with nested name-value-pairs to capture structured data. |
 | `system` | string | Yes | — | Name or identifier of the system from which this data is sourced. This will be displayed on the Results Summary. |
-| `unstructuredResults` | any[] | No | — | Unstructured Results |
+| `unstructuredResults` | object[] | No | — | Unstructured Results |
 
 <Expandable title="inputSchema">
 
@@ -2015,6 +2069,9 @@ Add Data Points to Targeted Data Discovery Results Summary
     },
     "attachments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary."
     },
     "results": {
@@ -2027,6 +2084,9 @@ Add Data Points to Targeted Data Discovery Results Summary
     },
     "unstructuredResults": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Unstructured Results"
     }
   },
@@ -2323,7 +2383,7 @@ Update Verification Method
 | `description` | string | No | — | A detailed description of how the verification method was applied. |
 | `id` | string | No | — | The unique identifier for this verification method. |
 | `lastModifiedDate` | string | No | — | The timestamp when this verification method was last modified. |
-| `verificationComments` | any[] | No | — | A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request. |
+| `verificationComments` | object[] | No | — | A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request. |
 | `verificationMethodName` | string | No | — | The name of the verification method used to verify the data subject's identity. |
 | `verificationStatus` | string | No | — | The current status of the verification process. |
 | `verificationType` | string | No | — | The type of verification process used. |
@@ -2368,6 +2428,9 @@ Update Verification Method
     },
     "verificationComments": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of comments and attachments associated with this verification method. This field is only populated when includeComments is set to true in the request."
     },
     "verificationMethodName": {

@@ -571,11 +571,11 @@ Query for action aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -625,6 +625,19 @@ Query for action aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "actionCategory",
+          "actionId",
+          "actionName",
+          "correlationId",
+          "errorType",
+          "integrationId",
+          "integrationName",
+          "responseStatus"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -633,6 +646,12 @@ Query for action aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tTotalExecution"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -641,6 +660,9 @@ Query for action aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -668,14 +690,14 @@ Query for agent copilot aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -725,6 +747,35 @@ Query for agent copilot aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agentAssistantId",
+          "cannedResponseId",
+          "cannedResponseLibraryId",
+          "chunkCount",
+          "conversationId",
+          "engagementType",
+          "externalContactId",
+          "feedbackRating",
+          "hasAnswerHighlight",
+          "hasGeneratedAnswer",
+          "knowledgeBaseDocumentId",
+          "knowledgeBaseDocumentVersionId",
+          "mediaType",
+          "messageId",
+          "queueId",
+          "scriptId",
+          "scriptPageId",
+          "searchId",
+          "state",
+          "suggestionId",
+          "suggestionType",
+          "triggerType",
+          "userId",
+          "utteranceId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -737,6 +788,17 @@ Query for agent copilot aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nCannedResponseSuggestions",
+          "nDistinctSuggestions",
+          "nKnowledgeAnswerSuggestions",
+          "nKnowledgeArticleSuggestions",
+          "nKnowledgeSearchSuggestions",
+          "nScriptSuggestions"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -772,6 +834,9 @@ Query for agent copilot aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -795,7 +860,7 @@ Count agents by different groupings
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `groupBy` | any[] | No | — | Include to choose which groupings to count by and return. If not included it will return only counts grouped by segmentType |
+| `groupBy` | string[] | No | — | Include to choose which groupings to count by and return. If not included it will return only counts grouped by segmentType |
 | `sessionFilter` | object | No | — | Session Filter |
 | `userFilter` | object | No | — | User Filter |
 
@@ -811,6 +876,15 @@ Count agents by different groupings
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "segmentType",
+          "presence",
+          "routingStatus",
+          "isOutOfOffice"
+        ]
+      },
       "description": "Include to choose which groupings to count by and return. If not included it will return only counts grouped by segmentType"
     },
     "sessionFilter": {
@@ -1622,14 +1696,14 @@ Query for bot aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -1679,6 +1753,39 @@ Query for bot aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "askActionId",
+          "askActionResult",
+          "askActionType",
+          "botFinalIntent",
+          "botFlowSubType",
+          "botFlowType",
+          "botId",
+          "botIntent",
+          "botName",
+          "botProduct",
+          "botProvider",
+          "botRecognitionFailureReason",
+          "botResult",
+          "botSessionId",
+          "botSlot",
+          "botSlotMechanism",
+          "botVersion",
+          "conversationId",
+          "externalContactId",
+          "intermediateIntentName",
+          "knowledgeBaseId",
+          "languageCode",
+          "lastActionId",
+          "lastInputActionId",
+          "mediaType",
+          "messageType",
+          "previewMode",
+          "selfServed"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -1691,6 +1798,24 @@ Query for bot aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nBotSessionTurns",
+          "nBotSessions",
+          "oBotIntent",
+          "oBotSessionCollection",
+          "oBotSessionCollectionSelfServed",
+          "oBotSessionQuery",
+          "oBotSessionQuerySelfServed",
+          "oBotSessionTurn",
+          "oBotSlot",
+          "tBotDisconnect",
+          "tBotExit",
+          "tBotRecognitionFailure",
+          "tBotSession"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -1726,6 +1851,9 @@ Query for bot aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -1750,7 +1878,7 @@ Index conversation properties
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `conversationId` | string | Yes | — | Conversation Id |
-| `properties` | any[] | Yes | — | The list of properties to index |
+| `properties` | object[] | Yes | — | The list of properties to index |
 | `sessionId` | string | Yes | — | Attach properties to a segment in the indicated session |
 | `targetDate` | string | Yes | — | Attach properties to a segment covering a specific point in time. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 
@@ -1770,6 +1898,9 @@ Index conversation properties
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of properties to index"
     },
     "sessionId": {
@@ -1803,16 +1934,16 @@ Query for conversation details asynchronously
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `conversationFilters` | any[] | No | — | Filters that target conversation-level data |
-| `evaluationFilters` | any[] | No | — | Filters that target evaluations |
+| `conversationFilters` | object[] | No | — | Filters that target conversation-level data |
+| `evaluationFilters` | object[] | No | — | Filters that target evaluations |
 | `interval` | string | Yes | — | Specifies the date and time range of data being queried. Results will include all conversations that had activity during the interval. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | Specify number of results to be returned |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 | `orderBy` | string | No | — | Specify which data element within the result set to use for sorting. The options  to use as a basis for sorting the results: conversationStart, segmentStart, and segmentEnd. If not specified, the default is conversationStart |
-| `resolutionFilters` | any[] | No | — | Filters that target resolutions |
-| `segmentFilters` | any[] | No | — | Filters that target individual segments within a conversation |
+| `resolutionFilters` | object[] | No | — | Filters that target resolutions |
+| `segmentFilters` | object[] | No | — | Filters that target individual segments within a conversation |
 | `startOfDayIntervalMatching` | boolean | No | — | Add a filter to only include conversations that started after the beginning of the interval start date (UTC) |
-| `surveyFilters` | any[] | No | — | Filters that target surveys |
+| `surveyFilters` | object[] | No | — | Filters that target surveys |
 
 <Expandable title="inputSchema">
 
@@ -1826,10 +1957,16 @@ Query for conversation details asynchronously
     },
     "conversationFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target conversation-level data"
     },
     "evaluationFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target evaluations"
     },
     "interval": {
@@ -1861,10 +1998,16 @@ Query for conversation details asynchronously
     },
     "resolutionFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target resolutions"
     },
     "segmentFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target individual segments within a conversation"
     },
     "startOfDayIntervalMatching": {
@@ -1873,6 +2016,9 @@ Query for conversation details asynchronously
     },
     "surveyFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target surveys"
     }
   },
@@ -1899,11 +2045,11 @@ Query for evaluation aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -1956,6 +2102,28 @@ Query for evaluation aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assigneeApplicable",
+          "assigneeId",
+          "calibrationId",
+          "contextId",
+          "conversationId",
+          "divisionId",
+          "evaluationContextId",
+          "evaluationId",
+          "evaluatorId",
+          "formId",
+          "mediaType",
+          "queueId",
+          "released",
+          "rescored",
+          "systemSubmitted",
+          "teamId",
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -1964,6 +2132,16 @@ Query for evaluation aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nEvaluations",
+          "nEvaluationsDeleted",
+          "nEvaluationsRescored",
+          "oTotalCriticalScore",
+          "oTotalScore"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -1972,6 +2150,9 @@ Query for evaluation aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -1999,11 +2180,11 @@ Query for flow execution aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2053,6 +2234,15 @@ Query for flow execution aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "divisionId",
+          "flowId",
+          "flowObjectId",
+          "flowVersion"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2061,6 +2251,12 @@ Query for flow execution aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nFlowExecutions"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -2069,6 +2265,9 @@ Query for flow execution aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2095,8 +2294,8 @@ Query for flow activity observations
 | `pageSize` | integer | No | — | The desired page size |
 | `pageNumber` | integer | No | — | The desired page number |
 | `filter` | object | No | — | The filter value |
-| `groupBy` | any[] | Yes | — | Dimension(s) to group by |
-| `metrics` | any[] | Yes | — | List of requested metrics |
+| `groupBy` | string[] | Yes | — | Dimension(s) to group by |
+| `metrics` | object[] | Yes | — | List of requested metrics |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 
 <Expandable title="inputSchema">
@@ -2140,10 +2339,42 @@ Query for flow activity observations
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "activeRouting",
+          "addressFrom",
+          "addressTo",
+          "agentScore",
+          "ani",
+          "conversationId",
+          "convertedFrom",
+          "convertedTo",
+          "direction",
+          "dnis",
+          "flowId",
+          "flowType",
+          "mediaType",
+          "participantName",
+          "queueId",
+          "requestedLanguageId",
+          "requestedRouting",
+          "requestedRoutingSkillId",
+          "routingPriority",
+          "scoredAgentId",
+          "sessionId",
+          "teamId",
+          "usedRouting",
+          "userId"
+        ]
+      },
       "description": "Dimension(s) to group by"
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of requested metrics"
     },
     "order": {
@@ -2180,11 +2411,11 @@ Query for flow aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2234,6 +2465,111 @@ Query for flow aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "activeRouting",
+          "activeSkillId",
+          "addressFrom",
+          "addressTo",
+          "agentAssistantId",
+          "agentBullseyeRing",
+          "agentOwned",
+          "agentRank",
+          "agentScore",
+          "ani",
+          "assignerId",
+          "authenticated",
+          "conversationId",
+          "conversationInitiator",
+          "convertedFrom",
+          "convertedTo",
+          "customerParticipation",
+          "deliveryStatus",
+          "destinationAddress",
+          "direction",
+          "disconnectType",
+          "divisionId",
+          "dnis",
+          "edgeId",
+          "eligibleAgentCount",
+          "endingLanguage",
+          "entryReason",
+          "entryType",
+          "errorCode",
+          "exitReason",
+          "extendedDeliveryStatus",
+          "externalContactId",
+          "externalMediaCount",
+          "externalOrganizationId",
+          "externalTag",
+          "firstQueue",
+          "flaggedReason",
+          "flowId",
+          "flowInType",
+          "flowMilestoneId",
+          "flowName",
+          "flowOutType",
+          "flowOutcome",
+          "flowOutcomeId",
+          "flowOutcomeValue",
+          "flowSubType",
+          "flowType",
+          "flowVersion",
+          "groupId",
+          "interactionType",
+          "journeyActionId",
+          "journeyActionMapId",
+          "journeyActionMapVersion",
+          "journeyCustomerId",
+          "journeyCustomerIdType",
+          "journeyCustomerSessionId",
+          "journeyCustomerSessionIdType",
+          "knowledgeBaseId",
+          "mediaCount",
+          "mediaType",
+          "messageType",
+          "originatingDirection",
+          "outboundCampaignId",
+          "outboundContactId",
+          "outboundContactListId",
+          "participantName",
+          "peerId",
+          "proposedAgentId",
+          "provider",
+          "purpose",
+          "queueId",
+          "recognitionFailureReason",
+          "remote",
+          "removedSkillId",
+          "requestedLanguageId",
+          "requestedRouting",
+          "requestedRoutingSkillId",
+          "roomId",
+          "routingPriority",
+          "routingRing",
+          "routingRule",
+          "routingRuleType",
+          "scoredAgentId",
+          "selectedAgentId",
+          "selectedAgentRank",
+          "selfServed",
+          "sessionDnis",
+          "sessionId",
+          "skillExpressionId",
+          "startingLanguage",
+          "stationId",
+          "teamId",
+          "transferTargetAddress",
+          "transferTargetName",
+          "transferType",
+          "usedRouting",
+          "userId",
+          "videoPresent",
+          "waitingInteractionCount",
+          "wrapUpCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2242,6 +2578,20 @@ Query for flow aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nFlow",
+          "nFlowMilestone",
+          "nFlowOutcome",
+          "nFlowOutcomeFailed",
+          "oFlowMilestone",
+          "tFlow",
+          "tFlowDisconnect",
+          "tFlowExit",
+          "tFlowOutcome"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -2250,6 +2600,9 @@ Query for flow aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2273,9 +2626,9 @@ Query for flow observations
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `detailMetrics` | any[] | No | — | Metrics for which to include additional detailed observations |
+| `detailMetrics` | string[] | No | — | Metrics for which to include additional detailed observations |
 | `filter` | object | Yes | — | The filter value |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 
 <Expandable title="inputSchema">
 
@@ -2289,6 +2642,12 @@ Query for flow observations
     },
     "detailMetrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oFlow"
+        ]
+      },
       "description": "Metrics for which to include additional detailed observations"
     },
     "filter": {
@@ -2314,6 +2673,12 @@ Query for flow observations
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oFlow"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     }
   },
@@ -2341,11 +2706,11 @@ Query for journey aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2395,6 +2760,51 @@ Query for journey aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "containsAllCondition",
+          "containsAnyCondition",
+          "endsWithCondition",
+          "equalCondition",
+          "journeyActionId",
+          "journeyActionMapId",
+          "journeyActionMapVersion",
+          "journeyActionMediaType",
+          "journeyActionTargetId",
+          "journeyActionTemplateId",
+          "journeyBlockingActionMapId",
+          "journeyBlockingEmergencyScheduleGroupId",
+          "journeyBlockingReason",
+          "journeyBlockingScheduleGroupId",
+          "journeyDeviceCategory",
+          "journeyDeviceType",
+          "journeyFrequencyCapReason",
+          "journeyIpGeolocationCountry",
+          "journeyOutcomeId",
+          "journeySegmentAssignmentState",
+          "journeySegmentId",
+          "journeySessionId",
+          "journeySessionSegmentId",
+          "journeySessionType",
+          "notContainsAllCondition",
+          "notContainsAnyCondition",
+          "notEqualCondition",
+          "startsWithCondition",
+          "touchpointActionMapId",
+          "touchpointAgentId",
+          "touchpointAttributionScope",
+          "touchpointChannelMessageType",
+          "touchpointChannelPlatform",
+          "touchpointChannelType",
+          "touchpointConversationId",
+          "touchpointInteractionType",
+          "touchpointQueueId",
+          "touchpointRequestedRouting",
+          "touchpointUsedRouting",
+          "touchpointWrapupCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2403,6 +2813,33 @@ Query for journey aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nDistinctJourneyActions",
+          "nDistinctJourneySessions",
+          "nJourneyActionsBlocked",
+          "nJourneyOutcomesAchieved",
+          "nJourneyOutcomesAttributed",
+          "nJourneySegmentsAssigned",
+          "nJourneySessions",
+          "nWebActionsAbandoned",
+          "nWebActionsAccepted",
+          "nWebActionsEngaged",
+          "nWebActionsErrored",
+          "nWebActionsFrequencyCapReached",
+          "nWebActionsIgnored",
+          "nWebActionsOffered",
+          "nWebActionsOfferedOutsideSchedule",
+          "nWebActionsQualified",
+          "nWebActionsQualifiedOutsideSchedule",
+          "nWebActionsRejected",
+          "nWebActionsStarted",
+          "nWebActionsTimedout",
+          "oJourneyOutcomeTouchpointValue",
+          "oJourneyOutcomeValue"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -2411,6 +2848,9 @@ Query for journey aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2438,14 +2878,14 @@ Query for knowledge aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2495,6 +2935,48 @@ Query for knowledge aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agentAssistantId",
+          "answerGenerationEnabled",
+          "appDeploymentId",
+          "appType",
+          "botFlowId",
+          "conversationChannelType",
+          "conversationId",
+          "documentEngagementType",
+          "externalContactId",
+          "feedbackCategory",
+          "feedbackId",
+          "feedbackRating",
+          "feedbackRatingType",
+          "feedbackRatingValue",
+          "feedbackReason",
+          "feedbackType",
+          "hasComment",
+          "hasRetrievedReferences",
+          "hasSearch",
+          "knowledgeBaseDocumentId",
+          "knowledgeBaseDocumentVariationId",
+          "knowledgeBaseDocumentVersionId",
+          "knowledgeBaseId",
+          "knowledgeSettingId",
+          "languageCode",
+          "mediaType",
+          "messageType",
+          "presentedDocumentsCount",
+          "queryType",
+          "queryTypeV3",
+          "queueId",
+          "searchId",
+          "searchQuery",
+          "selfServed",
+          "sessionId",
+          "surfacingMethod",
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2507,6 +2989,26 @@ Query for knowledge aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nDistinctKnowledgeSessions",
+          "nKnowledgeDocumentCopied",
+          "nKnowledgeDocumentFeedback",
+          "nKnowledgeDocumentPresented",
+          "nKnowledgeDocumentSurfaced",
+          "nKnowledgeDocumentViewed",
+          "nKnowledgeSearch",
+          "nKnowledgeSearchAnswered",
+          "nKnowledgeSearchFeedback",
+          "nKnowledgeSearchUnanswered",
+          "nKnowledgeSessions",
+          "nKnowledgeV3Search",
+          "oKnowledgeDocumentQuery",
+          "oKnowledgeDocumentQuerySelfServed",
+          "oKnowledgeSearch"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -2542,6 +3044,9 @@ Query for knowledge aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2565,9 +3070,9 @@ Query for queue observations
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `detailMetrics` | any[] | No | — | Metrics for which to include additional detailed observations |
+| `detailMetrics` | string[] | No | — | Metrics for which to include additional detailed observations |
 | `filter` | object | Yes | — | The filter value |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 
 <Expandable title="inputSchema">
 
@@ -2581,6 +3086,20 @@ Query for queue observations
     },
     "detailMetrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oActiveUsers",
+          "oAlerting",
+          "oInteracting",
+          "oMemberUsers",
+          "oOffQueueUsers",
+          "oOnQueueUsers",
+          "oUserPresences",
+          "oUserRoutingStatuses",
+          "oWaiting"
+        ]
+      },
       "description": "Metrics for which to include additional detailed observations"
     },
     "filter": {
@@ -2606,6 +3125,22 @@ Query for queue observations
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oActiveUsers",
+          "oAlerting",
+          "oInteracting",
+          "oLongestInteracting",
+          "oLongestWaiting",
+          "oMemberUsers",
+          "oOffQueueUsers",
+          "oOnQueueUsers",
+          "oUserPresences",
+          "oUserRoutingStatuses",
+          "oWaiting"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     }
   },
@@ -2633,11 +3168,11 @@ Query for limits rate limit aggregates. Data populated when limits reach 90% of 
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2687,6 +3222,18 @@ Query for limits rate limit aggregates. Data populated when limits reach 90% of 
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "correlationId",
+          "entityId",
+          "limitName",
+          "max",
+          "namespace",
+          "timeUnit",
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2695,6 +3242,12 @@ Query for limits rate limit aggregates. Data populated when limits reach 90% of 
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oRateLimitRecorded"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -2703,6 +3256,9 @@ Query for limits rate limit aggregates. Data populated when limits reach 90% of 
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2730,11 +3286,11 @@ Query for resolution aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2785,6 +3341,18 @@ Query for resolution aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "conversationId",
+          "externalContactId",
+          "mediaType",
+          "queueId",
+          "requestedRouting",
+          "usedRouting",
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2793,6 +3361,12 @@ Query for resolution aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nNextContactAvoided"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -2801,6 +3375,9 @@ Query for resolution aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -2827,8 +3404,8 @@ Query for user activity observations
 | `pageSize` | integer | No | — | The desired page size |
 | `pageNumber` | integer | No | — | The desired page number |
 | `filter` | object | No | — | The filter value |
-| `groupBy` | any[] | Yes | — | Dimension(s) to group by |
-| `metrics` | any[] | Yes | — | List of requested metrics |
+| `groupBy` | string[] | Yes | — | Dimension(s) to group by |
+| `metrics` | object[] | Yes | — | List of requested metrics |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 
 <Expandable title="inputSchema">
@@ -2872,10 +3449,19 @@ Query for user activity observations
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "queueId"
+        ]
+      },
       "description": "Dimension(s) to group by"
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of requested metrics"
     },
     "order": {
@@ -2912,14 +3498,14 @@ Query for summary aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -2969,6 +3555,30 @@ Query for summary aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "conversationId",
+          "copied",
+          "editedField",
+          "errorType",
+          "language",
+          "mediaType",
+          "messageType",
+          "presented",
+          "queueId",
+          "summaryGenerated",
+          "summaryId",
+          "summaryRating",
+          "triggerSourceId",
+          "triggerSourceOutcome",
+          "triggerSourceType",
+          "userId",
+          "wrapUpCodeRating",
+          "wrapUpCodeSuggestionSelected",
+          "wrapupCodesGenerated"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -2981,6 +3591,14 @@ Query for summary aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nConversationSummaries",
+          "nConversationSummaryEngagements",
+          "tConversationSummary"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -3016,6 +3634,9 @@ Query for summary aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3043,11 +3664,11 @@ Query for survey aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -3098,6 +3719,34 @@ Query for survey aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "conversationId",
+          "divisionId",
+          "externalContactId",
+          "mediaType",
+          "queueId",
+          "requestedLanguageId",
+          "requestedRoutingSkillId",
+          "surveyAnswerId",
+          "surveyErrorReason",
+          "surveyFormContextId",
+          "surveyFormId",
+          "surveyFormName",
+          "surveyId",
+          "surveyPartialResponse",
+          "surveyPreviousStatus",
+          "surveyPromoterScore",
+          "surveyQuestionGroupId",
+          "surveyQuestionId",
+          "surveyStatus",
+          "surveyType",
+          "teamId",
+          "userId",
+          "wrapUpCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3106,6 +3755,30 @@ Query for survey aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nSurveyErrors",
+          "nSurveyFullResponses",
+          "nSurveyNpsDetractors",
+          "nSurveyNpsPromoters",
+          "nSurveyNpsResponses",
+          "nSurveyPartialResponses",
+          "nSurveyQuestionGroupResponses",
+          "nSurveyQuestionResponses",
+          "nSurveyResponses",
+          "nSurveysAbandoned",
+          "nSurveysDeleted",
+          "nSurveysExpired",
+          "nSurveysSent",
+          "nSurveysStarted",
+          "nVoiceSurveys",
+          "nWebSurveys",
+          "oSurveyQuestionGroupScore",
+          "oSurveyQuestionScore",
+          "oSurveyTotalScore"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -3114,6 +3787,9 @@ Query for survey aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3141,11 +3817,11 @@ Query for task management aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -3195,6 +3871,28 @@ Query for task management aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assigneeId",
+          "caseId",
+          "divisionId",
+          "externalTag",
+          "queueId",
+          "reporterId",
+          "requestedLanguageId",
+          "requestedRouting",
+          "requestedRoutingSkillId",
+          "statusCategory",
+          "statusId",
+          "typeId",
+          "usedRouting",
+          "userId",
+          "workbinId",
+          "workitemId",
+          "wrapUpCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3203,6 +3901,43 @@ Query for task management aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nWorkitemsAcdCancelled",
+          "nWorkitemsAcdExpired",
+          "nWorkitemsAcdStarted",
+          "nWorkitemsAgentTransferred",
+          "nWorkitemsCreated",
+          "nWorkitemsDeclined",
+          "nWorkitemsDeleted",
+          "nWorkitemsDisconnected",
+          "nWorkitemsOffered",
+          "nWorkitemsOverSla",
+          "nWorkitemsPurged",
+          "nWorkitemsQueueTransferred",
+          "nWorkitemsStatusChanged",
+          "nWorkitemsTerminated",
+          "nWorkitemsTimedout",
+          "nWorkitemsTransferred",
+          "nWorkitemsWrapupAdded",
+          "nWorkitemsWrapupRemoved",
+          "oWorkitemsServiceLevel",
+          "tWorkitemsAgentFocusComplete",
+          "tWorkitemsAlert",
+          "tWorkitemsAnswered",
+          "tWorkitemsDirectAnswered",
+          "tWorkitemsFocus",
+          "tWorkitemsFocusComplete",
+          "tWorkitemsHandled",
+          "tWorkitemsHeld",
+          "tWorkitemsHeldComplete",
+          "tWorkitemsNotResponding",
+          "tWorkitemsParked",
+          "tWorkitemsQueueAnswered",
+          "tWorkitemsStatus"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -3211,6 +3946,9 @@ Query for task management aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3237,8 +3975,8 @@ Query for team activity observations
 | `pageSize` | integer | No | — | The desired page size |
 | `pageNumber` | integer | No | — | The desired page number |
 | `filter` | object | No | — | The filter value |
-| `groupBy` | any[] | Yes | — | Dimension(s) to group by |
-| `metrics` | any[] | Yes | — | List of requested metrics |
+| `groupBy` | string[] | Yes | — | Dimension(s) to group by |
+| `metrics` | object[] | Yes | — | List of requested metrics |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 
 <Expandable title="inputSchema">
@@ -3282,10 +4020,19 @@ Query for team activity observations
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "teamId"
+        ]
+      },
       "description": "Dimension(s) to group by"
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of requested metrics"
     },
     "order": {
@@ -3322,14 +4069,14 @@ Query for transcript aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | How many results you want in an ordered list. Only applicable for topN/bottomN query type. |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `queryType` | string | No | — | Query type to use. Use groupBy for all matching results, and topN/bottomN for N results ordered by the sortMetric. Default is groupBy. |
 | `sortMetric` | object | No | — | Sort Metric |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -3379,6 +4126,29 @@ Query for transcript aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "addressFrom",
+          "addressTo",
+          "ani",
+          "categoryId",
+          "channel",
+          "conversationId",
+          "direction",
+          "divisionId",
+          "dnis",
+          "flowId",
+          "flowVersion",
+          "mediaType",
+          "messageType",
+          "queueId",
+          "teamId",
+          "topicId",
+          "userId",
+          "wrapUpCode"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3391,6 +4161,22 @@ Query for transcript aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nSpeechTextAnalyzedConversations",
+          "nTopicCommunications",
+          "oCustomerSentiment",
+          "oOverTalkSpeechInstances",
+          "oSentimentScore",
+          "tAgentSpeech",
+          "tCustomerSpeech",
+          "tOtherAudio",
+          "tOverTalkSpeech",
+          "tSilence",
+          "tTotalSpeechAndSilence"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "queryType": {
@@ -3426,6 +4212,9 @@ Query for transcript aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3452,8 +4241,8 @@ Query for user activity observations
 | `pageSize` | integer | No | — | The desired page size |
 | `pageNumber` | integer | No | — | The desired page number |
 | `filter` | object | No | — | The filter value |
-| `groupBy` | any[] | Yes | — | Dimension(s) to group by |
-| `metrics` | any[] | Yes | — | List of requested metrics |
+| `groupBy` | string[] | Yes | — | Dimension(s) to group by |
+| `metrics` | object[] | Yes | — | List of requested metrics |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 
 <Expandable title="inputSchema">
@@ -3497,10 +4286,19 @@ Query for user activity observations
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "userId"
+        ]
+      },
       "description": "Dimension(s) to group by"
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of requested metrics"
     },
     "order": {
@@ -3537,11 +4335,11 @@ Query for user aggregates
 | `filter` | object | No | — | The filter value |
 | `flattenMultivaluedDimensions` | boolean | No | — | Flattens any multivalued dimensions used in response groups (e.g. ['a','b','c']-&gt;'a,b,c') |
 | `granularity` | string | No | — | Granularity aggregates metrics into subpartitions within the time interval specified. The default granularity is the same duration as the interval. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
-| `views` | any[] | No | — | Custom derived metric views |
+| `views` | object[] | No | — | Custom derived metric views |
 
 <Expandable title="inputSchema">
 
@@ -3591,6 +4389,12 @@ Query for user aggregates
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3599,6 +4403,14 @@ Query for user aggregates
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tAgentRoutingStatus",
+          "tOrganizationPresence",
+          "tSystemPresence"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -3607,6 +4419,9 @@ Query for user aggregates
     },
     "views": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Custom derived metric views"
     }
   },
@@ -3633,9 +4448,9 @@ Query for user details asynchronously
 | `interval` | string | Yes | — | Specifies the date and time range of data being queried. Conversations MUST have started within this time range to potentially be included within the result set. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `limit` | integer | No | — | Specify number of results to be returned |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
-| `presenceFilters` | any[] | No | — | Filters that target system and organization presence-level data |
-| `routingStatusFilters` | any[] | No | — | Filters that target agent routing status-level data |
-| `userFilters` | any[] | No | — | Filters that target the users to retrieve data for |
+| `presenceFilters` | object[] | No | — | Filters that target system and organization presence-level data |
+| `routingStatusFilters` | object[] | No | — | Filters that target agent routing status-level data |
+| `userFilters` | object[] | No | — | Filters that target the users to retrieve data for |
 
 <Expandable title="inputSchema">
 
@@ -3666,14 +4481,23 @@ Query for user details asynchronously
     },
     "presenceFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target system and organization presence-level data"
     },
     "routingStatusFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target agent routing status-level data"
     },
     "userFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target the users to retrieve data for"
     }
   },
@@ -3699,11 +4523,11 @@ Query for user details
 | `interval` | string | Yes | — | Specifies the date and time range of data being queried. Conversations MUST have started within this time range to potentially be included within the result set. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `order` | string | No | — | Sort the result set in ascending/descending order. Default is ascending |
 | `paging` | object | No | — | The paging value |
-| `presenceAggregations` | any[] | No | — | Include faceted search and aggregate roll-ups of presence data in your search results. This does not function as a filter, but rather, summary data about the presence results matching your filters |
-| `presenceFilters` | any[] | No | — | Filters that target system and organization presence-level data |
-| `routingStatusAggregations` | any[] | No | — | Include faceted search and aggregate roll-ups of agent routing status data in your search results. This does not function as a filter, but rather, summary data about the agent routing status results matching your filters |
-| `routingStatusFilters` | any[] | No | — | Filters that target agent routing status-level data |
-| `userFilters` | any[] | No | — | Filters that target the users to retrieve data for |
+| `presenceAggregations` | object[] | No | — | Include faceted search and aggregate roll-ups of presence data in your search results. This does not function as a filter, but rather, summary data about the presence results matching your filters |
+| `presenceFilters` | object[] | No | — | Filters that target system and organization presence-level data |
+| `routingStatusAggregations` | object[] | No | — | Include faceted search and aggregate roll-ups of agent routing status data in your search results. This does not function as a filter, but rather, summary data about the agent routing status results matching your filters |
+| `routingStatusFilters` | object[] | No | — | Filters that target agent routing status-level data |
+| `userFilters` | object[] | No | — | Filters that target the users to retrieve data for |
 
 <Expandable title="inputSchema">
 
@@ -3748,22 +4572,37 @@ Query for user details
     },
     "presenceAggregations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Include faceted search and aggregate roll-ups of presence data in your search results. This does not function as a filter, but rather, summary data about the presence results matching your filters"
     },
     "presenceFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target system and organization presence-level data"
     },
     "routingStatusAggregations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Include faceted search and aggregate roll-ups of agent routing status data in your search results. This does not function as a filter, but rather, summary data about the agent routing status results matching your filters"
     },
     "routingStatusFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target agent routing status-level data"
     },
     "userFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filters that target the users to retrieve data for"
     }
   },
@@ -3786,9 +4625,9 @@ Query for user observations
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `detailMetrics` | any[] | No | — | Metrics for which to include additional detailed observations |
+| `detailMetrics` | string[] | No | — | Metrics for which to include additional detailed observations |
 | `filter` | object | Yes | — | The filter value |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 
 <Expandable title="inputSchema">
 
@@ -3802,6 +4641,13 @@ Query for user observations
     },
     "detailMetrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oActiveQueues",
+          "oMemberQueues"
+        ]
+      },
       "description": "Metrics for which to include additional detailed observations"
     },
     "filter": {
@@ -3827,6 +4673,13 @@ Query for user observations
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "oActiveQueues",
+          "oMemberQueues"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     }
   },
