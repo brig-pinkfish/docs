@@ -235,8 +235,8 @@ List custom model deployments.
 | --- | --- | --- | --- | --- |
 | `offset` | integer | Yes | — | This many results will be skipped. |
 | `limit` | integer | Yes | — | At most this many results are returned. |
-| `customModelIds` | any[] | No | — | List of ID's of the custom model which model deployments will be retrieved. |
-| `environmentIds` | any[] | No | — | List of ID's of the execution environment which model deployments will be retrieved. |
+| `customModelIds` | string[] | No | — | List of ID's of the custom model which model deployments will be retrieved. |
+| `environmentIds` | string[] | No | — | List of ID's of the execution environment which model deployments will be retrieved. |
 
 <Expandable title="inputSchema">
 
@@ -258,10 +258,16 @@ List custom model deployments.
     },
     "customModelIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of ID's of the custom model which model deployments will be retrieved."
     },
     "environmentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of ID's of the execution environment which model deployments will be retrieved."
     }
   },
@@ -442,7 +448,7 @@ Erase deleted deployments
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `action` | string | Yes | — | Action to perform on these deleted deployments. |
-| `deploymentIds` | any[] | Yes | — | ID of a list of deleted deployments to perform action on. |
+| `deploymentIds` | string[] | Yes | — | ID of a list of deleted deployments to perform action on. |
 
 <Expandable title="inputSchema">
 
@@ -463,6 +469,9 @@ Erase deleted deployments
     },
     "deploymentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "ID of a list of deleted deployments to perform action on."
     }
   },
@@ -537,26 +546,26 @@ List deployments
 | `limit` | integer | Yes | — | The number of deployments (greater than zero, max 100) to return. Defaults to 20. |
 | `orderBy` | string | No | — | The order to sort the deployments.Defaults to order by deployment last prediction timestamp in descending order. |
 | `search` | string | No | — | Case insensitive search against deployment's label and description. |
-| `serviceHealth` | any[] | No | — | Filters deployments by their service health status. |
-| `modelHealth` | any[] | No | — | Filters deployments by their model health status. |
-| `accuracyHealth` | any[] | No | — | Filters deployments by their accuracy health status. |
+| `serviceHealth` | string[] | No | — | Filters deployments by their service health status. |
+| `modelHealth` | string[] | No | — | Filters deployments by their model health status. |
+| `accuracyHealth` | string[] | No | — | Filters deployments by their accuracy health status. |
 | `role` | string | No | — | Filter deployments to only those that the authenticated user has the specified role for. |
-| `status` | any[] | No | — | Filters deployments by their status |
-| `importance` | any[] | No | — | Filters deployments by their importance |
+| `status` | string[] | No | — | Filters deployments by their status |
+| `importance` | string[] | No | — | Filters deployments by their importance |
 | `lastPredictionTimestampStart` | string | No | — | Only include deployments that have had a prediction request on or after the specified timestamp. |
 | `lastPredictionTimestampEnd` | string | No | — | Only include deployments that have had a prediction request before the specified timestamp. |
 | `predictionUsageDailyAvgGreaterThan` | integer | No | — | only include deployments that have had more than the specified number of predictions per day on average over the past week. |
 | `predictionUsageDailyAvgLessThan` | integer | No | — | Only include deployments that have had fewer than the specified number of predictions per day on average over the past week. |
-| `defaultPredictionServerId` | any[] | No | — | Filter deployments to those whose default prediction server has the specified id. |
-| `buildEnvironmentType` | any[] | No | — | Filter deployments based on the type of their current model's build environment type. |
-| `executionEnvironmentType` | any[] | No | — | Filter deployments based on the type of their execution environment. |
-| `predictionEnvironmentPlatform` | any[] | No | — | Filter deployments based on prediction environment platform |
+| `defaultPredictionServerId` | string[] | No | — | Filter deployments to those whose default prediction server has the specified id. |
+| `buildEnvironmentType` | string[] | No | — | Filter deployments based on the type of their current model's build environment type. |
+| `executionEnvironmentType` | string[] | No | — | Filter deployments based on the type of their execution environment. |
+| `predictionEnvironmentPlatform` | string[] | No | — | Filter deployments based on prediction environment platform |
 | `createdByMe` | string | No | — | Filter deployments to those created by the current user. |
 | `createdBy` | string | No | — | Filters deployments by those created by the given user. |
 | `championModelExecutionType` | string | No | — | Filter deployments by the execution type of the champion model. |
 | `championModelTargetType` | string | No | — | Filter deployments by the target type of the champion model. Example: Binary |
-| `tagKeys` | any[] | No | — | List of tag keys to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned. |
-| `tagValues` | any[] | No | — | List of tag values to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned. |
+| `tagKeys` | string[] | No | — | List of tag keys to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned. |
+| `tagValues` | string[] | No | — | List of tag values to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned. |
 | `isA2AAgent` | string | No | — | Filter deployments by whether the deployment is an A2A agent. When true, returns only deployments that are A2A agents. When false, returns only deployments that are not A2A agents. |
 
 <Expandable title="inputSchema">
@@ -615,14 +624,47 @@ List deployments
     },
     "serviceHealth": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "failing",
+          "not_started",
+          "passing",
+          "unavailable",
+          "unknown",
+          "warning"
+        ]
+      },
       "description": "Filters deployments by their service health status."
     },
     "modelHealth": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "failing",
+          "not_started",
+          "passing",
+          "unavailable",
+          "unknown",
+          "warning"
+        ]
+      },
       "description": "Filters deployments by their model health status."
     },
     "accuracyHealth": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "failing",
+          "not_started",
+          "passing",
+          "unavailable",
+          "unknown",
+          "warning"
+        ]
+      },
       "description": "Filters deployments by their accuracy health status."
     },
     "role": {
@@ -635,10 +677,31 @@ List deployments
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "active",
+          "archived",
+          "errored",
+          "inactive",
+          "launching",
+          "replacingModel",
+          "stopping"
+        ]
+      },
       "description": "Filters deployments by their status"
     },
     "importance": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "CRITICAL",
+          "HIGH",
+          "MODERATE",
+          "LOW"
+        ]
+      },
       "description": "Filters deployments by their importance"
     },
     "lastPredictionTimestampStart": {
@@ -659,18 +722,55 @@ List deployments
     },
     "defaultPredictionServerId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Filter deployments to those whose default prediction server has the specified id."
     },
     "buildEnvironmentType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DataRobot",
+          "Python",
+          "R",
+          "Java",
+          "Julia",
+          "Legacy",
+          "Other"
+        ]
+      },
       "description": "Filter deployments based on the type of their current model's build environment type."
     },
     "executionEnvironmentType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "datarobot",
+          "external"
+        ]
+      },
       "description": "Filter deployments based on the type of their execution environment."
     },
     "predictionEnvironmentPlatform": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "aws",
+          "gcp",
+          "azure",
+          "onPremise",
+          "datarobot",
+          "datarobotServerless",
+          "openShift",
+          "other",
+          "snowflake",
+          "sapAiCore"
+        ]
+      },
       "description": "Filter deployments based on prediction environment platform"
     },
     "createdByMe": {
@@ -702,10 +802,16 @@ List deployments
     },
     "tagKeys": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tag keys to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned."
     },
     "tagValues": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tag values to filter for. If multiple values are specified, deployments with tags that match any of the values will be returned."
     },
     "isA2AAgent": {
@@ -891,7 +997,7 @@ Grant access or update roles for users on this execution environment.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `environmentId` | string | Yes | — | The ID of the environment. |
-| `data` | any[] | Yes | — | List of sharing roles to update. |
+| `data` | object[] | Yes | — | List of sharing roles to update. |
 
 <Expandable title="inputSchema">
 
@@ -909,6 +1015,9 @@ Grant access or update roles for users on this execution environment.
     },
     "data": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of sharing roles to update."
     }
   },
@@ -1101,7 +1210,7 @@ Create deployment from model package
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `additionalMetadata` | any[] | No | — | Key/Value pair list, with additional metadata |
+| `additionalMetadata` | object[] | No | — | Key/Value pair list, with additional metadata |
 | `defaultPredictionServerId` | string | No | — | ID of the default prediction server for deployment. Required for DataRobot Cloud for non-external models, must be omitted for Enterprise installations. |
 | `description` | string | Yes | — | A description for the deployment. |
 | `importance` | string | No | — | Importance of the deployment. Defaults to LOW when MLOps is enabled, must not be provided when MLOps disabled. |
@@ -1124,6 +1233,9 @@ Create deployment from model package
     },
     "additionalMetadata": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Key/Value pair list, with additional metadata"
     },
     "defaultPredictionServerId": {
@@ -1811,7 +1923,7 @@ Update the secondary datasets configuration for the deployed model.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `deploymentId` | string | Yes | — | Unique identifier of the deployment. |
-| `credentialsIds` | any[] | No | — | The list of credentials used by the secondary datasets. |
+| `credentialsIds` | object[] | No | — | The list of credentials used by the secondary datasets. |
 | `secondaryDatasetConfigId` | string | Yes | — | ID of the secondary datasets configuration to be used at the time of prediction. |
 
 <Expandable title="inputSchema">
@@ -1830,6 +1942,9 @@ Update the secondary datasets configuration for the deployed model.
     },
     "credentialsIds": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of credentials used by the secondary datasets."
     },
     "secondaryDatasetConfigId": {

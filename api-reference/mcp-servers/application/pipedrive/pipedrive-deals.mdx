@@ -69,7 +69,7 @@ Add a new deal
 | `expected_close_date` | string | No | — | The expected close date of the deal |
 | `is_archived` | boolean | No | — | Whether the deal is archived or not |
 | `is_deleted` | boolean | No | — | Whether the deal is deleted or not |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the deal |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the deal |
 | `lost_reason` | string | No | — | The reason for losing the deal. Can only be set if deal status is lost. |
 | `lost_time` | string | No | — | The date and time of changing the deal status as lost. Can only be set if deal status is lost. |
 | `org_id` | integer | No | — | The ID of the organization linked to the deal |
@@ -124,6 +124,9 @@ Add a new deal
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the deal"
     },
     "lost_reason": {
@@ -202,7 +205,7 @@ Create one deal field
 | `field_name` | string | Yes | — | Field name |
 | `field_type` | string | Yes | — | The type of the field&lt;table&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;`varchar`&lt;/td&gt;&lt;td&gt;Text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`varchar_auto`&lt;/td&gt;&lt;td&gt;Autocomplete text (up to 255 characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`text`&lt;/td&gt;&lt;td&gt;Long text (up to 65k characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`double`&lt;/td&gt;&lt;td&gt;Numeric value&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`monetary`&lt;/td&gt;&lt;td&gt;Monetary field (has a numeric value and a currency value)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`date`&lt;/td&gt;&lt;td&gt;Date (format YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`set`&lt;/td&gt;&lt;td&gt;Options field with a possibility of having multiple chosen options&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`enum`&lt;/td&gt;&lt;td&gt;Options field with a single possible chosen option&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`user`&lt;/td&gt;&lt;td&gt;User field (contains a user ID of another Pipedrive user)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`org`&lt;/td&gt;&lt;td&gt;Organization field (contains an organization ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`people`&lt;/td&gt;&lt;td&gt;Person field (contains a person ID which is stored on the same account)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`phone`&lt;/td&gt;&lt;td&gt;Phone field (up to 255 numbers and/or characters)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`time`&lt;/td&gt;&lt;td&gt;Time field (format HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`timerange`&lt;/td&gt;&lt;td&gt;Time-range field (has a start time and end time value, both HH:MM:SS)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`daterange`&lt;/td&gt;&lt;td&gt;Date-range field (has a start date and end date value, both YYYY-MM-DD)&lt;/td&gt;&lt;tr&gt;&lt;td&gt;`address`&lt;/td&gt;&lt;td&gt;Address field&lt;/dd&gt;&lt;/table&gt; |
 | `important_fields` | object | No | — | Configuration for highlighting the field at specific stages. |
-| `options` | any[] | No | — | Field options (required for enum and set field types) |
+| `options` | object[] | No | — | Field options (required for enum and set field types) |
 | `required_fields` | object | No | — | Required fields configuration for marking the field as mandatory when interacted with in the Pipedrive web UI. |
 | `ui_visibility` | object | No | — | UI visibility settings for the field. Controls where the field appears in the Pipedrive web UI. |
 
@@ -262,6 +265,9 @@ Create one deal field
     },
     "options": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Field options (required for enum and set field types)"
     },
     "required_fields": {
@@ -326,7 +332,7 @@ Add deal field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
+| `body` | object[] | Yes | — | Array of options to add. Each item must contain a label. At least one option is required. |
 
 <Expandable title="inputSchema">
 
@@ -344,6 +350,9 @@ Add deal field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to add. Each item must contain a label. At least one option is required."
     }
   },
@@ -769,7 +778,7 @@ Delete deal field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -787,6 +796,9 @@ Delete deal field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of option IDs to delete. Each item must contain an ID of the option to delete. At least one option ID is required. The entire request fails if any option does not exist."
     }
   },
@@ -1596,7 +1608,7 @@ List installments added to a list of deals
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `deal_ids` | any[] | Yes | — | An array of integers with the IDs of the deals for which the attached installments will be returned. A maximum of 100 deal IDs can be provided. |
+| `deal_ids` | integer[] | Yes | — | An array of integers with the IDs of the deals for which the attached installments will be returned. A maximum of 100 deal IDs can be provided. |
 | `cursor` | string | No | — | For pagination, the marker (an opaque string value) representing the first item on the next page |
 | `limit` | integer | No | — | For pagination, the limit of entries to be returned. If not provided, 100 items will be returned. Please note that a maximum value of 500 is allowed. |
 | `sort_by` | string | No | — | The field to sort by. Supported fields: `id`, `billing_date`, `deal_id`. |
@@ -1614,6 +1626,9 @@ List installments added to a list of deals
     },
     "deal_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "An array of integers with the IDs of the deals for which the attached installments will be returned. A maximum of 100 deal IDs can be provided."
     },
     "cursor": {
@@ -1703,7 +1718,7 @@ Get deal products of several deals
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `deal_ids` | any[] | Yes | — | An array of integers with the IDs of the deals for which the attached products will be returned. A maximum of 100 deal IDs can be provided. |
+| `deal_ids` | integer[] | Yes | — | An array of integers with the IDs of the deals for which the attached products will be returned. A maximum of 100 deal IDs can be provided. |
 | `cursor` | string | No | — | For pagination, the marker (an opaque string value) representing the first item on the next page |
 | `limit` | integer | No | — | For pagination, the limit of entries to be returned. If not provided, 100 items will be returned. Please note that a maximum value of 500 is allowed. |
 | `sort_by` | string | No | — | The field to sort by. Supported fields: `id`, `deal_id`, `add_time`, `update_time`, `order_nr`. |
@@ -1721,6 +1736,9 @@ Get deal products of several deals
     },
     "deal_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "An array of integers with the IDs of the deals for which the attached products will be returned. A maximum of 100 deal IDs can be provided."
     },
     "cursor": {
@@ -2103,7 +2121,7 @@ Update a deal
 | `expected_close_date` | string | No | — | The expected close date of the deal |
 | `is_archived` | boolean | No | — | Whether the deal is archived or not |
 | `is_deleted` | boolean | No | — | Whether the deal is deleted or not |
-| `label_ids` | any[] | No | — | The IDs of labels assigned to the deal |
+| `label_ids` | integer[] | No | — | The IDs of labels assigned to the deal |
 | `lost_reason` | string | No | — | The reason for losing the deal. Can only be set if deal status is lost. |
 | `lost_time` | string | No | — | The date and time of changing the deal status as lost. Can only be set if deal status is lost. |
 | `org_id` | integer | No | — | The ID of the organization linked to the deal |
@@ -2162,6 +2180,9 @@ Update a deal
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "The IDs of labels assigned to the deal"
     },
     "lost_reason": {
@@ -2340,7 +2361,7 @@ Update deal field options in bulk
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `field_code` | string | Yes | — | The unique code identifying the field |
-| `body` | any[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
+| `body` | object[] | Yes | — | Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist. |
 
 <Expandable title="inputSchema">
 
@@ -2358,6 +2379,9 @@ Update deal field options in bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of options to update. Each item must contain an ID and the updated label. At least one option is required. The entire request fails if any option does not exist."
     }
   },
