@@ -1309,7 +1309,7 @@ Add new entity to JobApplication
 | `stateOther` | string | No | — | State Other |
 | `status` | string | No | — | The status value |
 | `statusComments` | string | No | — | Status Comments |
-| `timeToHire` | object | No | — | Time To Hire |
+| `timeToHire` | number | No | — | Time To Hire |
 | `title` | string | No | — | The title value |
 | `usersSysId` | string | No | — | Users Sys Id |
 | `visaNum` | string | No | — | Visa Num |
@@ -1823,6 +1823,7 @@ Add new entity to JobApplication
       "description": "Status Comments"
     },
     "timeToHire": {
+      "type": "number",
       "description": "Time To Hire"
     },
     "title": {
@@ -1932,6 +1933,7 @@ Add new entity to JobApplicationInterview
       "description": "Interview Overall Assessment",
       "properties": {
         "averageRating": {
+          "type": "number",
           "description": "Average Rating"
         },
         "comments": {
@@ -3082,9 +3084,9 @@ Add new entity to related std_position_objlist
 | `externalCode` | string | No | — | External Code |
 | `fieldName` | string | No | — | Field Name |
 | `isPrimary` | boolean | No | — | Is Primary |
-| `jobReqId` | object | No | — | Job Req Id |
-| `jobReqMultiSelectId` | object | No | — | Job Req Multi Select Id |
-| `parentFieldValue` | object | No | — | Parent Field Value |
+| `jobReqId` | integer | No | — | Job Req Id |
+| `jobReqMultiSelectId` | integer | No | — | Job Req Multi Select Id |
+| `parentFieldValue` | integer | No | — | Parent Field Value |
 | `value` | object | No | — | Circular schema reference: #/components/schemas/SFOData.JobReqGOPosition |
 
 <Expandable title="inputSchema">
@@ -3110,12 +3112,15 @@ Add new entity to related std_position_objlist
       "description": "Is Primary"
     },
     "jobReqId": {
+      "type": "integer",
       "description": "Job Req Id"
     },
     "jobReqMultiSelectId": {
+      "type": "integer",
       "description": "Job Req Multi Select Id"
     },
     "parentFieldValue": {
+      "type": "integer",
       "description": "Parent Field Value"
     },
     "value": {
@@ -3501,8 +3506,8 @@ Get entity from Candidate by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `candidateId` | integer | Yes | — | key: candidateId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3520,10 +3525,62 @@ Get entity from Candidate by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address2",
+          "agreeToPrivacyStatement",
+          "anonymized",
+          "anonymizedDateTime",
+          "candidateId",
+          "candidateLocale",
+          "cellPhone",
+          "city",
+          "contactEmail",
+          "country",
+          "creationDateTime",
+          "currentTitle",
+          "dataPrivacyId",
+          "dateofAvailability",
+          "externalCandidate",
+          "firstName",
+          "homePhone",
+          "lastLoginDateTime",
+          "lastModifiedDateTime",
+          "lastName",
+          "middleName",
+          "partnerMemberId",
+          "partnerSource",
+          "password",
+          "primaryEmail",
+          "privacyAcceptDateTime",
+          "publicIntranet",
+          "shareProfile",
+          "usersSysId",
+          "visibilityOption",
+          "zip"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidateProfileExtension",
+          "certificates",
+          "education",
+          "insideWorkExperience",
+          "languages",
+          "outsideWorkExperience",
+          "tags",
+          "talentPool",
+          "talentPoolcorp"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3547,8 +3604,8 @@ Get entity from CandidateBackground_Education by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `backgroundElementId` | integer | Yes | — | key: backgroundElementId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3566,10 +3623,40 @@ Get entity from CandidateBackground_Education by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "candidateId",
+          "degree",
+          "degreeDate",
+          "endDate",
+          "lastModifiedDateTime",
+          "major",
+          "presentStudent",
+          "school",
+          "schoolAddress",
+          "schoolCity",
+          "schoolCountry",
+          "schoolPhone",
+          "schoolState",
+          "schoolType",
+          "schoolZip",
+          "startDate"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3593,8 +3680,8 @@ Get entity from CandidateBackground_InsideWorkExperience by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `backgroundElementId` | integer | Yes | — | key: backgroundElementId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3612,10 +3699,30 @@ Get entity from CandidateBackground_InsideWorkExperience by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "candidateId",
+          "department",
+          "endDate",
+          "lastModifiedDateTime",
+          "startDate",
+          "title"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3639,8 +3746,8 @@ Get entity from CandidateBackground_OutsideWorkExperience by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `backgroundElementId` | integer | Yes | — | key: backgroundElementId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3658,10 +3765,40 @@ Get entity from CandidateBackground_OutsideWorkExperience by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "businessType",
+          "candidateId",
+          "employer",
+          "employerAddress",
+          "employerCity",
+          "employerContact",
+          "employerCountry",
+          "employerEmail",
+          "employerPhone",
+          "employerState",
+          "employerZip",
+          "endDate",
+          "lastModifiedDateTime",
+          "presentEmployer",
+          "startDate",
+          "startTitle"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3685,8 +3822,8 @@ Get entity from JobApplication by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `applicationId` | integer | Yes | — | key: applicationId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3704,10 +3841,141 @@ Get entity from JobApplication by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address2",
+          "agencyInfo",
+          "anonymizedDate",
+          "anonymizedFlag",
+          "appLocale",
+          "appStatusSetItemId",
+          "applicationId",
+          "applicationTemplateId",
+          "averageRating",
+          "baseSalary",
+          "candConversionProcessed",
+          "candJust",
+          "candTypeWhenHired",
+          "candidateId",
+          "cellPhone",
+          "city",
+          "confnumber",
+          "contactEmail",
+          "conviction_details",
+          "country",
+          "countryCode",
+          "criminalconvictionlabel",
+          "crimincalconvictioninstructions",
+          "currentLocation",
+          "currentTitle",
+          "cust_refCheckFirstName",
+          "cust_refCheckLastName",
+          "cust_refCheckOrg1",
+          "cust_refCheckPhone1",
+          "cust_refCheckTitle1",
+          "dataSource",
+          "dateAvail",
+          "dateOfBirth",
+          "duplicateProfile",
+          "exportedOn",
+          "extTitle",
+          "firstName",
+          "formerEmployee",
+          "gender",
+          "haveyoubeenconvicted",
+          "hireDate",
+          "hiredOn",
+          "homePhone",
+          "inductionAdd",
+          "inductionDate",
+          "initials",
+          "instrAppReturn",
+          "instrCandApproval",
+          "instrCandAssess",
+          "instrCandFields",
+          "instrCandScreen",
+          "instrWotc",
+          "instr_AdditionalDocuments",
+          "instr_AppAdditionalInfo",
+          "instr_AppAdvice",
+          "instr_CandAppDetails",
+          "instr_CandPersInfo",
+          "instr_EEOinstructions",
+          "instr_EEOlable",
+          "instrubkgrndChkAttachment",
+          "jobAppGuid",
+          "jobCode",
+          "jobRateOfPay",
+          "jobReqId",
+          "jobStartDate",
+          "jobofferdate",
+          "knownAs",
+          "lastModifiedBy",
+          "lastModifiedByProxy",
+          "lastModifiedDateTime",
+          "lastName",
+          "medDate",
+          "medLoc",
+          "medTime",
+          "middleName",
+          "nonApplicantStatus",
+          "owner",
+          "ownershpDate",
+          "phoneScreenDate",
+          "phoneScreenDetails",
+          "pleaseselect",
+          "posTitle",
+          "profileUpdated",
+          "psychTestDte",
+          "psychTestTme",
+          "rating",
+          "reasonableaccomodation",
+          "reference",
+          "referenceComments",
+          "referredBy",
+          "resumeUploadDate",
+          "screendate",
+          "snapShotDate",
+          "source",
+          "sourceLabel",
+          "ssn",
+          "startDate",
+          "stateOther",
+          "status",
+          "statusComments",
+          "timeToHire",
+          "title",
+          "usersSysId",
+          "visaNum",
+          "voluntaryselfID",
+          "whyask",
+          "wotcFormsURL",
+          "wotcId",
+          "wotcScreeningURL",
+          "wotcStatus",
+          "yesanswer",
+          "zip"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "jobAppStatus",
+          "jobApplicationAssessmentOrder",
+          "jobApplicationAssessmentOrder_1",
+          "jobApplicationComments",
+          "jobApplicationOnboardingData",
+          "jobApplicationQuestionResponse",
+          "jobApplicationStatusAuditTrail"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3731,8 +3999,8 @@ Get entity from JobApplicationInterview by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `applicationInterviewId` | integer | Yes | — | key: applicationInterviewId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3750,10 +4018,33 @@ Get entity from JobApplicationInterview by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "applicationInterviewId",
+          "candSlotMapId",
+          "endDate",
+          "isTimeSet",
+          "notes",
+          "recruitEventStaffId",
+          "source",
+          "startDate",
+          "status",
+          "templateType"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "interviewOverallAssessment"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3777,8 +4068,8 @@ Get entity from JobOffer by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `offerApprovalId` | integer | Yes | — | key: offerApprovalId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3796,10 +4087,63 @@ Get entity from JobOffer by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "annual_FB",
+          "annual_PF",
+          "annual_SA",
+          "annual_cashPay",
+          "annual_gratuity",
+          "annual_retirals",
+          "anonymizedDate",
+          "anonymizedFlag",
+          "applicationId",
+          "candJust",
+          "candidateName",
+          "commission",
+          "createdBy",
+          "createdDate",
+          "currency",
+          "currentLocation",
+          "formDataId",
+          "formTemplateId",
+          "initialComment",
+          "internalStatus",
+          "jobRateOfPay",
+          "lastModifiedBy",
+          "lastModifiedDate",
+          "location",
+          "monthly_FB",
+          "monthly_PF",
+          "monthly_SA",
+          "monthly_cashPay",
+          "monthly_gratuity",
+          "monthly_retirals",
+          "monthly_salary",
+          "offerApprovalId",
+          "redefineTemplateApprovers",
+          "salaryBase",
+          "stockPackage",
+          "targetBonusAmount",
+          "tempDate",
+          "templateId",
+          "total_earnings",
+          "total_fixed_pay",
+          "version"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "approvers"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3823,7 +4167,7 @@ Get entity from JobReqQuestion by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `questionId` | integer | Yes | — | key: questionId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
 
 <Expandable title="inputSchema">
 
@@ -3841,6 +4185,16 @@ Get entity from JobReqQuestion by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "questionCategory",
+          "questionId",
+          "questionName",
+          "questionSource",
+          "questionType"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     }
   },
@@ -3864,8 +4218,8 @@ Get entity from JobRequisition by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `jobReqId` | integer | Yes | — | key: jobReqId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3883,10 +4237,154 @@ Get entity from JobRequisition by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "accommodation_cost",
+          "age",
+          "agency_fee",
+          "annual_FB",
+          "annual_PF",
+          "annual_SA",
+          "annual_cashPay",
+          "annual_gratuity",
+          "annual_retirals",
+          "appTemplateId",
+          "assessRatingScaleName",
+          "candidateProgress",
+          "city",
+          "classificationTime",
+          "classificationType",
+          "closedDateTime",
+          "comment",
+          "commentEquip",
+          "commission",
+          "corporatePosting",
+          "costCenterId",
+          "costOfHire",
+          "country",
+          "createdDateTime",
+          "currency",
+          "customString10",
+          "customString3",
+          "customString4",
+          "customString8",
+          "defaultLanguage",
+          "deleted",
+          "department",
+          "division",
+          "erpAmount",
+          "facility",
+          "formDataId",
+          "formDueDate",
+          "function",
+          "hiringManagerNote",
+          "industry",
+          "instrCostHire",
+          "instrERS",
+          "instrEquest",
+          "instrEquipment",
+          "instrInterview",
+          "instrInvolvedParties",
+          "instrManagernote",
+          "instrOverallComments",
+          "instrPD",
+          "instrReq",
+          "instrReqDates",
+          "instrReqDetails",
+          "instrReqJustify",
+          "instrReqRequire",
+          "instrSalary",
+          "instr_rec_cost",
+          "internalStatus",
+          "intranetPosting",
+          "isDraft",
+          "jobCode",
+          "jobReqGUId",
+          "jobReqId",
+          "jobRole",
+          "jobStartDate",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "lastModifiedProxyUserId",
+          "legentity",
+          "location",
+          "misc_cost",
+          "monthly_FB",
+          "monthly_PF",
+          "monthly_SA",
+          "monthly_cashPay",
+          "monthly_gratuity",
+          "monthly_retirals",
+          "monthly_salary",
+          "numberOpenings",
+          "openingsFilled",
+          "otherBonus",
+          "otherCompensation",
+          "otherEquip",
+          "othrComms",
+          "overallScaleName",
+          "positionNumber",
+          "postalcode",
+          "ratedApplicantCount",
+          "recruitJust",
+          "replforwhom",
+          "restorehiringManagerTeamAdminDefaults",
+          "restorerecruiterTeamAdminDefaults",
+          "restoresourcerTeamAdminDefaults",
+          "restorevpOfStaffingTeamAdminDefaults",
+          "reverseScale",
+          "salRateType",
+          "salaryBase",
+          "salaryComment",
+          "salaryMax",
+          "salaryMin",
+          "stateProvince",
+          "statusSetId",
+          "stockPackage",
+          "targetBonusAmount",
+          "tempDate",
+          "templateId",
+          "templateType",
+          "timeToFill",
+          "total_earnings",
+          "total_fixed_pay",
+          "total_hire_cost",
+          "travel_cost",
+          "workHours"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "approver",
+          "coordinator",
+          "currentOwner",
+          "hiringManager",
+          "hiringManagerTeam",
+          "hiringManagerTeamGroup",
+          "jobReqLocale",
+          "jobReqPostings",
+          "jobReqScreeningQuestions",
+          "originator",
+          "questions",
+          "recruiter",
+          "recruiterTeam",
+          "recruiterTeamGroup",
+          "secondRecruiter",
+          "sourcer",
+          "sourcerTeam",
+          "sourcerTeamGroup",
+          "vpOfStaffing",
+          "vpOfStaffingTeam",
+          "vpOfStaffingTeamGroup"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3914,9 +4412,9 @@ Get entities from related std_position_objlist
 | `$skip` | integer | No | — | Skip the first n items, see [OData Paging - Skip](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374631) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -3950,14 +4448,49 @@ Get entities from related std_position_objlist
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "externalCode",
+          "externalCode desc",
+          "fieldName",
+          "fieldName desc",
+          "isPrimary",
+          "isPrimary desc",
+          "jobReqId",
+          "jobReqId desc",
+          "jobReqMultiSelectId",
+          "jobReqMultiSelectId desc",
+          "parentFieldValue",
+          "parentFieldValue desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "externalCode",
+          "fieldName",
+          "isPrimary",
+          "jobReqId",
+          "jobReqMultiSelectId",
+          "parentFieldValue"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "value"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -3981,7 +4514,7 @@ Get entity from OfferLetter by key
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `offerLetterId` | integer | Yes | — | key: offerLetterId |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
 
 <Expandable title="inputSchema">
 
@@ -3999,6 +4532,48 @@ Get entity from OfferLetter by key
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "body",
+          "bodyLocale",
+          "bodyTemplateId",
+          "bonusPayoutFreq",
+          "candResponseComments",
+          "candResponseDate",
+          "comments",
+          "countryCode",
+          "countryName",
+          "createDate",
+          "createdBy",
+          "currencyCode",
+          "jobStartDate",
+          "jobTitle",
+          "lastModifiedBy",
+          "lastModifiedDate",
+          "locale",
+          "localeCode",
+          "mailboxes",
+          "offerExpirationDate",
+          "offerLetter",
+          "offerLetterId",
+          "offerSentDate",
+          "overtimeRate",
+          "salaryRate",
+          "salaryRateType",
+          "sendMode",
+          "status",
+          "stockGrant",
+          "stockOption",
+          "subject",
+          "targetBonusAmount",
+          "targetBonusPercent",
+          "templateId",
+          "templateName",
+          "tokens"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     }
   },
@@ -4068,9 +4643,9 @@ Get entities from Candidate
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4104,14 +4679,135 @@ Get entities from Candidate
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address desc",
+          "address2",
+          "address2 desc",
+          "agreeToPrivacyStatement",
+          "agreeToPrivacyStatement desc",
+          "anonymized",
+          "anonymized desc",
+          "anonymizedDateTime",
+          "anonymizedDateTime desc",
+          "candidateId",
+          "candidateId desc",
+          "candidateLocale",
+          "candidateLocale desc",
+          "cellPhone",
+          "cellPhone desc",
+          "city",
+          "city desc",
+          "contactEmail",
+          "contactEmail desc",
+          "country",
+          "country desc",
+          "creationDateTime",
+          "creationDateTime desc",
+          "currentTitle",
+          "currentTitle desc",
+          "dataPrivacyId",
+          "dataPrivacyId desc",
+          "dateofAvailability",
+          "dateofAvailability desc",
+          "externalCandidate",
+          "externalCandidate desc",
+          "firstName",
+          "firstName desc",
+          "homePhone",
+          "homePhone desc",
+          "lastLoginDateTime",
+          "lastLoginDateTime desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "lastName",
+          "lastName desc",
+          "middleName",
+          "middleName desc",
+          "partnerMemberId",
+          "partnerMemberId desc",
+          "partnerSource",
+          "partnerSource desc",
+          "password",
+          "password desc",
+          "primaryEmail",
+          "primaryEmail desc",
+          "privacyAcceptDateTime",
+          "privacyAcceptDateTime desc",
+          "publicIntranet",
+          "publicIntranet desc",
+          "shareProfile",
+          "shareProfile desc",
+          "usersSysId",
+          "usersSysId desc",
+          "visibilityOption",
+          "visibilityOption desc",
+          "zip",
+          "zip desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address2",
+          "agreeToPrivacyStatement",
+          "anonymized",
+          "anonymizedDateTime",
+          "candidateId",
+          "candidateLocale",
+          "cellPhone",
+          "city",
+          "contactEmail",
+          "country",
+          "creationDateTime",
+          "currentTitle",
+          "dataPrivacyId",
+          "dateofAvailability",
+          "externalCandidate",
+          "firstName",
+          "homePhone",
+          "lastLoginDateTime",
+          "lastModifiedDateTime",
+          "lastName",
+          "middleName",
+          "partnerMemberId",
+          "partnerSource",
+          "password",
+          "primaryEmail",
+          "privacyAcceptDateTime",
+          "publicIntranet",
+          "shareProfile",
+          "usersSysId",
+          "visibilityOption",
+          "zip"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidateProfileExtension",
+          "certificates",
+          "education",
+          "insideWorkExperience",
+          "languages",
+          "outsideWorkExperience",
+          "tags",
+          "talentPool",
+          "talentPoolcorp"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4138,9 +4834,9 @@ Get entities from CandidateBackground_Education
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4174,14 +4870,85 @@ Get entities from CandidateBackground_Education
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "backgroundElementId desc",
+          "bgOrderPos",
+          "bgOrderPos desc",
+          "candidateId",
+          "candidateId desc",
+          "degree",
+          "degree desc",
+          "degreeDate",
+          "degreeDate desc",
+          "endDate",
+          "endDate desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "major",
+          "major desc",
+          "presentStudent",
+          "presentStudent desc",
+          "school",
+          "school desc",
+          "schoolAddress",
+          "schoolAddress desc",
+          "schoolCity",
+          "schoolCity desc",
+          "schoolCountry",
+          "schoolCountry desc",
+          "schoolPhone",
+          "schoolPhone desc",
+          "schoolState",
+          "schoolState desc",
+          "schoolType",
+          "schoolType desc",
+          "schoolZip",
+          "schoolZip desc",
+          "startDate",
+          "startDate desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "candidateId",
+          "degree",
+          "degreeDate",
+          "endDate",
+          "lastModifiedDateTime",
+          "major",
+          "presentStudent",
+          "school",
+          "schoolAddress",
+          "schoolCity",
+          "schoolCountry",
+          "schoolPhone",
+          "schoolState",
+          "schoolType",
+          "schoolZip",
+          "startDate"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4208,9 +4975,9 @@ Get entities from CandidateBackground_InsideWorkExperience
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4244,14 +5011,55 @@ Get entities from CandidateBackground_InsideWorkExperience
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "backgroundElementId desc",
+          "bgOrderPos",
+          "bgOrderPos desc",
+          "candidateId",
+          "candidateId desc",
+          "department",
+          "department desc",
+          "endDate",
+          "endDate desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "startDate",
+          "startDate desc",
+          "title",
+          "title desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "candidateId",
+          "department",
+          "endDate",
+          "lastModifiedDateTime",
+          "startDate",
+          "title"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4278,9 +5086,9 @@ Get entities from CandidateBackground_OutsideWorkExperience
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4314,14 +5122,85 @@ Get entities from CandidateBackground_OutsideWorkExperience
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "backgroundElementId desc",
+          "bgOrderPos",
+          "bgOrderPos desc",
+          "businessType",
+          "businessType desc",
+          "candidateId",
+          "candidateId desc",
+          "employer",
+          "employer desc",
+          "employerAddress",
+          "employerAddress desc",
+          "employerCity",
+          "employerCity desc",
+          "employerContact",
+          "employerContact desc",
+          "employerCountry",
+          "employerCountry desc",
+          "employerEmail",
+          "employerEmail desc",
+          "employerPhone",
+          "employerPhone desc",
+          "employerState",
+          "employerState desc",
+          "employerZip",
+          "employerZip desc",
+          "endDate",
+          "endDate desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "presentEmployer",
+          "presentEmployer desc",
+          "startDate",
+          "startDate desc",
+          "startTitle",
+          "startTitle desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "backgroundElementId",
+          "bgOrderPos",
+          "businessType",
+          "candidateId",
+          "employer",
+          "employerAddress",
+          "employerCity",
+          "employerContact",
+          "employerCountry",
+          "employerEmail",
+          "employerPhone",
+          "employerState",
+          "employerZip",
+          "endDate",
+          "lastModifiedDateTime",
+          "presentEmployer",
+          "startDate",
+          "startTitle"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "candidate"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4390,9 +5269,9 @@ Get entities from JobApplication
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4426,14 +5305,376 @@ Get entities from JobApplication
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address desc",
+          "address2",
+          "address2 desc",
+          "agencyInfo",
+          "agencyInfo desc",
+          "anonymizedDate",
+          "anonymizedDate desc",
+          "anonymizedFlag",
+          "anonymizedFlag desc",
+          "appLocale",
+          "appLocale desc",
+          "appStatusSetItemId",
+          "appStatusSetItemId desc",
+          "applicationId",
+          "applicationId desc",
+          "applicationTemplateId",
+          "applicationTemplateId desc",
+          "averageRating",
+          "averageRating desc",
+          "baseSalary",
+          "baseSalary desc",
+          "candConversionProcessed",
+          "candConversionProcessed desc",
+          "candJust",
+          "candJust desc",
+          "candTypeWhenHired",
+          "candTypeWhenHired desc",
+          "candidateId",
+          "candidateId desc",
+          "cellPhone",
+          "cellPhone desc",
+          "city",
+          "city desc",
+          "confnumber",
+          "confnumber desc",
+          "contactEmail",
+          "contactEmail desc",
+          "conviction_details",
+          "conviction_details desc",
+          "country",
+          "country desc",
+          "countryCode",
+          "countryCode desc",
+          "criminalconvictionlabel",
+          "criminalconvictionlabel desc",
+          "crimincalconvictioninstructions",
+          "crimincalconvictioninstructions desc",
+          "currentLocation",
+          "currentLocation desc",
+          "currentTitle",
+          "currentTitle desc",
+          "cust_refCheckFirstName",
+          "cust_refCheckFirstName desc",
+          "cust_refCheckLastName",
+          "cust_refCheckLastName desc",
+          "cust_refCheckOrg1",
+          "cust_refCheckOrg1 desc",
+          "cust_refCheckPhone1",
+          "cust_refCheckPhone1 desc",
+          "cust_refCheckTitle1",
+          "cust_refCheckTitle1 desc",
+          "dataSource",
+          "dataSource desc",
+          "dateAvail",
+          "dateAvail desc",
+          "dateOfBirth",
+          "dateOfBirth desc",
+          "duplicateProfile",
+          "duplicateProfile desc",
+          "exportedOn",
+          "exportedOn desc",
+          "extTitle",
+          "extTitle desc",
+          "firstName",
+          "firstName desc",
+          "formerEmployee",
+          "formerEmployee desc",
+          "gender",
+          "gender desc",
+          "haveyoubeenconvicted",
+          "haveyoubeenconvicted desc",
+          "hireDate",
+          "hireDate desc",
+          "hiredOn",
+          "hiredOn desc",
+          "homePhone",
+          "homePhone desc",
+          "inductionAdd",
+          "inductionAdd desc",
+          "inductionDate",
+          "inductionDate desc",
+          "initials",
+          "initials desc",
+          "instrAppReturn",
+          "instrAppReturn desc",
+          "instrCandApproval",
+          "instrCandApproval desc",
+          "instrCandAssess",
+          "instrCandAssess desc",
+          "instrCandFields",
+          "instrCandFields desc",
+          "instrCandScreen",
+          "instrCandScreen desc",
+          "instrWotc",
+          "instrWotc desc",
+          "instr_AdditionalDocuments",
+          "instr_AdditionalDocuments desc",
+          "instr_AppAdditionalInfo",
+          "instr_AppAdditionalInfo desc",
+          "instr_AppAdvice",
+          "instr_AppAdvice desc",
+          "instr_CandAppDetails",
+          "instr_CandAppDetails desc",
+          "instr_CandPersInfo",
+          "instr_CandPersInfo desc",
+          "instr_EEOinstructions",
+          "instr_EEOinstructions desc",
+          "instr_EEOlable",
+          "instr_EEOlable desc",
+          "instrubkgrndChkAttachment",
+          "instrubkgrndChkAttachment desc",
+          "jobAppGuid",
+          "jobAppGuid desc",
+          "jobCode",
+          "jobCode desc",
+          "jobRateOfPay",
+          "jobRateOfPay desc",
+          "jobReqId",
+          "jobReqId desc",
+          "jobStartDate",
+          "jobStartDate desc",
+          "jobofferdate",
+          "jobofferdate desc",
+          "knownAs",
+          "knownAs desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedByProxy",
+          "lastModifiedByProxy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "lastName",
+          "lastName desc",
+          "medDate",
+          "medDate desc",
+          "medLoc",
+          "medLoc desc",
+          "medTime",
+          "medTime desc",
+          "middleName",
+          "middleName desc",
+          "nonApplicantStatus",
+          "nonApplicantStatus desc",
+          "owner",
+          "owner desc",
+          "ownershpDate",
+          "ownershpDate desc",
+          "phoneScreenDate",
+          "phoneScreenDate desc",
+          "phoneScreenDetails",
+          "phoneScreenDetails desc",
+          "pleaseselect",
+          "pleaseselect desc",
+          "posTitle",
+          "posTitle desc",
+          "profileUpdated",
+          "profileUpdated desc",
+          "psychTestDte",
+          "psychTestDte desc",
+          "psychTestTme",
+          "psychTestTme desc",
+          "rating",
+          "rating desc",
+          "reasonableaccomodation",
+          "reasonableaccomodation desc",
+          "reference",
+          "reference desc",
+          "referenceComments",
+          "referenceComments desc",
+          "referredBy",
+          "referredBy desc",
+          "resumeUploadDate",
+          "resumeUploadDate desc",
+          "screendate",
+          "screendate desc",
+          "snapShotDate",
+          "snapShotDate desc",
+          "source",
+          "source desc",
+          "sourceLabel",
+          "sourceLabel desc",
+          "ssn",
+          "ssn desc",
+          "startDate",
+          "startDate desc",
+          "stateOther",
+          "stateOther desc",
+          "status",
+          "status desc",
+          "statusComments",
+          "statusComments desc",
+          "timeToHire",
+          "timeToHire desc",
+          "title",
+          "title desc",
+          "usersSysId",
+          "usersSysId desc",
+          "visaNum",
+          "visaNum desc",
+          "voluntaryselfID",
+          "voluntaryselfID desc",
+          "whyask",
+          "whyask desc",
+          "wotcFormsURL",
+          "wotcFormsURL desc",
+          "wotcId",
+          "wotcId desc",
+          "wotcScreeningURL",
+          "wotcScreeningURL desc",
+          "wotcStatus",
+          "wotcStatus desc",
+          "yesanswer",
+          "yesanswer desc",
+          "zip",
+          "zip desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "address",
+          "address2",
+          "agencyInfo",
+          "anonymizedDate",
+          "anonymizedFlag",
+          "appLocale",
+          "appStatusSetItemId",
+          "applicationId",
+          "applicationTemplateId",
+          "averageRating",
+          "baseSalary",
+          "candConversionProcessed",
+          "candJust",
+          "candTypeWhenHired",
+          "candidateId",
+          "cellPhone",
+          "city",
+          "confnumber",
+          "contactEmail",
+          "conviction_details",
+          "country",
+          "countryCode",
+          "criminalconvictionlabel",
+          "crimincalconvictioninstructions",
+          "currentLocation",
+          "currentTitle",
+          "cust_refCheckFirstName",
+          "cust_refCheckLastName",
+          "cust_refCheckOrg1",
+          "cust_refCheckPhone1",
+          "cust_refCheckTitle1",
+          "dataSource",
+          "dateAvail",
+          "dateOfBirth",
+          "duplicateProfile",
+          "exportedOn",
+          "extTitle",
+          "firstName",
+          "formerEmployee",
+          "gender",
+          "haveyoubeenconvicted",
+          "hireDate",
+          "hiredOn",
+          "homePhone",
+          "inductionAdd",
+          "inductionDate",
+          "initials",
+          "instrAppReturn",
+          "instrCandApproval",
+          "instrCandAssess",
+          "instrCandFields",
+          "instrCandScreen",
+          "instrWotc",
+          "instr_AdditionalDocuments",
+          "instr_AppAdditionalInfo",
+          "instr_AppAdvice",
+          "instr_CandAppDetails",
+          "instr_CandPersInfo",
+          "instr_EEOinstructions",
+          "instr_EEOlable",
+          "instrubkgrndChkAttachment",
+          "jobAppGuid",
+          "jobCode",
+          "jobRateOfPay",
+          "jobReqId",
+          "jobStartDate",
+          "jobofferdate",
+          "knownAs",
+          "lastModifiedBy",
+          "lastModifiedByProxy",
+          "lastModifiedDateTime",
+          "lastName",
+          "medDate",
+          "medLoc",
+          "medTime",
+          "middleName",
+          "nonApplicantStatus",
+          "owner",
+          "ownershpDate",
+          "phoneScreenDate",
+          "phoneScreenDetails",
+          "pleaseselect",
+          "posTitle",
+          "profileUpdated",
+          "psychTestDte",
+          "psychTestTme",
+          "rating",
+          "reasonableaccomodation",
+          "reference",
+          "referenceComments",
+          "referredBy",
+          "resumeUploadDate",
+          "screendate",
+          "snapShotDate",
+          "source",
+          "sourceLabel",
+          "ssn",
+          "startDate",
+          "stateOther",
+          "status",
+          "statusComments",
+          "timeToHire",
+          "title",
+          "usersSysId",
+          "visaNum",
+          "voluntaryselfID",
+          "whyask",
+          "wotcFormsURL",
+          "wotcId",
+          "wotcScreeningURL",
+          "wotcStatus",
+          "yesanswer",
+          "zip"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "jobAppStatus",
+          "jobApplicationAssessmentOrder",
+          "jobApplicationAssessmentOrder_1",
+          "jobApplicationComments",
+          "jobApplicationOnboardingData",
+          "jobApplicationQuestionResponse",
+          "jobApplicationStatusAuditTrail"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4460,9 +5701,9 @@ Get entities from JobApplicationInterview
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4496,14 +5737,64 @@ Get entities from JobApplicationInterview
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "applicationId desc",
+          "applicationInterviewId",
+          "applicationInterviewId desc",
+          "candSlotMapId",
+          "candSlotMapId desc",
+          "endDate",
+          "endDate desc",
+          "isTimeSet",
+          "isTimeSet desc",
+          "notes",
+          "notes desc",
+          "recruitEventStaffId",
+          "recruitEventStaffId desc",
+          "source",
+          "source desc",
+          "startDate",
+          "startDate desc",
+          "status",
+          "status desc",
+          "templateType",
+          "templateType desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "applicationInterviewId",
+          "candSlotMapId",
+          "endDate",
+          "isTimeSet",
+          "notes",
+          "recruitEventStaffId",
+          "source",
+          "startDate",
+          "status",
+          "templateType"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "interviewOverallAssessment"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4530,9 +5821,9 @@ Get entities from JobOffer
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4566,14 +5857,154 @@ Get entities from JobOffer
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "annual_FB",
+          "annual_FB desc",
+          "annual_PF",
+          "annual_PF desc",
+          "annual_SA",
+          "annual_SA desc",
+          "annual_cashPay",
+          "annual_cashPay desc",
+          "annual_gratuity",
+          "annual_gratuity desc",
+          "annual_retirals",
+          "annual_retirals desc",
+          "anonymizedDate",
+          "anonymizedDate desc",
+          "anonymizedFlag",
+          "anonymizedFlag desc",
+          "applicationId",
+          "applicationId desc",
+          "candJust",
+          "candJust desc",
+          "candidateName",
+          "candidateName desc",
+          "commission",
+          "commission desc",
+          "createdBy",
+          "createdBy desc",
+          "createdDate",
+          "createdDate desc",
+          "currency",
+          "currency desc",
+          "currentLocation",
+          "currentLocation desc",
+          "formDataId",
+          "formDataId desc",
+          "formTemplateId",
+          "formTemplateId desc",
+          "initialComment",
+          "initialComment desc",
+          "internalStatus",
+          "internalStatus desc",
+          "jobRateOfPay",
+          "jobRateOfPay desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDate",
+          "lastModifiedDate desc",
+          "location",
+          "location desc",
+          "monthly_FB",
+          "monthly_FB desc",
+          "monthly_PF",
+          "monthly_PF desc",
+          "monthly_SA",
+          "monthly_SA desc",
+          "monthly_cashPay",
+          "monthly_cashPay desc",
+          "monthly_gratuity",
+          "monthly_gratuity desc",
+          "monthly_retirals",
+          "monthly_retirals desc",
+          "monthly_salary",
+          "monthly_salary desc",
+          "offerApprovalId",
+          "offerApprovalId desc",
+          "redefineTemplateApprovers",
+          "redefineTemplateApprovers desc",
+          "salaryBase",
+          "salaryBase desc",
+          "stockPackage",
+          "stockPackage desc",
+          "targetBonusAmount",
+          "targetBonusAmount desc",
+          "tempDate",
+          "tempDate desc",
+          "templateId",
+          "templateId desc",
+          "total_earnings",
+          "total_earnings desc",
+          "total_fixed_pay",
+          "total_fixed_pay desc",
+          "version",
+          "version desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "annual_FB",
+          "annual_PF",
+          "annual_SA",
+          "annual_cashPay",
+          "annual_gratuity",
+          "annual_retirals",
+          "anonymizedDate",
+          "anonymizedFlag",
+          "applicationId",
+          "candJust",
+          "candidateName",
+          "commission",
+          "createdBy",
+          "createdDate",
+          "currency",
+          "currentLocation",
+          "formDataId",
+          "formTemplateId",
+          "initialComment",
+          "internalStatus",
+          "jobRateOfPay",
+          "lastModifiedBy",
+          "lastModifiedDate",
+          "location",
+          "monthly_FB",
+          "monthly_PF",
+          "monthly_SA",
+          "monthly_cashPay",
+          "monthly_gratuity",
+          "monthly_retirals",
+          "monthly_salary",
+          "offerApprovalId",
+          "redefineTemplateApprovers",
+          "salaryBase",
+          "stockPackage",
+          "targetBonusAmount",
+          "tempDate",
+          "templateId",
+          "total_earnings",
+          "total_fixed_pay",
+          "version"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "approvers"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4600,8 +6031,8 @@ Get entities from JobReqQuestion
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
 
 <Expandable title="inputSchema">
 
@@ -4635,10 +6066,35 @@ Get entities from JobReqQuestion
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "questionCategory",
+          "questionCategory desc",
+          "questionId",
+          "questionId desc",
+          "questionName",
+          "questionName desc",
+          "questionSource",
+          "questionSource desc",
+          "questionType",
+          "questionType desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "questionCategory",
+          "questionId",
+          "questionName",
+          "questionSource",
+          "questionType"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     }
   },
@@ -4665,9 +6121,9 @@ Get entities from JobRequisition
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
-| `$expand` | any[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$expand` | string[] | No | — | Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621) |
 
 <Expandable title="inputSchema">
 
@@ -4701,14 +6157,387 @@ Get entities from JobRequisition
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "accommodation_cost",
+          "accommodation_cost desc",
+          "age",
+          "age desc",
+          "agency_fee",
+          "agency_fee desc",
+          "annual_FB",
+          "annual_FB desc",
+          "annual_PF",
+          "annual_PF desc",
+          "annual_SA",
+          "annual_SA desc",
+          "annual_cashPay",
+          "annual_cashPay desc",
+          "annual_gratuity",
+          "annual_gratuity desc",
+          "annual_retirals",
+          "annual_retirals desc",
+          "appTemplateId",
+          "appTemplateId desc",
+          "assessRatingScaleName",
+          "assessRatingScaleName desc",
+          "candidateProgress",
+          "candidateProgress desc",
+          "city",
+          "city desc",
+          "classificationTime",
+          "classificationTime desc",
+          "classificationType",
+          "classificationType desc",
+          "closedDateTime",
+          "closedDateTime desc",
+          "comment",
+          "comment desc",
+          "commentEquip",
+          "commentEquip desc",
+          "commission",
+          "commission desc",
+          "corporatePosting",
+          "corporatePosting desc",
+          "costCenterId",
+          "costCenterId desc",
+          "costOfHire",
+          "costOfHire desc",
+          "country",
+          "country desc",
+          "createdDateTime",
+          "createdDateTime desc",
+          "currency",
+          "currency desc",
+          "customString10",
+          "customString10 desc",
+          "customString3",
+          "customString3 desc",
+          "customString4",
+          "customString4 desc",
+          "customString8",
+          "customString8 desc",
+          "defaultLanguage",
+          "defaultLanguage desc",
+          "deleted",
+          "deleted desc",
+          "department",
+          "department desc",
+          "division",
+          "division desc",
+          "erpAmount",
+          "erpAmount desc",
+          "facility",
+          "facility desc",
+          "formDataId",
+          "formDataId desc",
+          "formDueDate",
+          "formDueDate desc",
+          "function",
+          "function desc",
+          "hiringManagerNote",
+          "hiringManagerNote desc",
+          "industry",
+          "industry desc",
+          "instrCostHire",
+          "instrCostHire desc",
+          "instrERS",
+          "instrERS desc",
+          "instrEquest",
+          "instrEquest desc",
+          "instrEquipment",
+          "instrEquipment desc",
+          "instrInterview",
+          "instrInterview desc",
+          "instrInvolvedParties",
+          "instrInvolvedParties desc",
+          "instrManagernote",
+          "instrManagernote desc",
+          "instrOverallComments",
+          "instrOverallComments desc",
+          "instrPD",
+          "instrPD desc",
+          "instrReq",
+          "instrReq desc",
+          "instrReqDates",
+          "instrReqDates desc",
+          "instrReqDetails",
+          "instrReqDetails desc",
+          "instrReqJustify",
+          "instrReqJustify desc",
+          "instrReqRequire",
+          "instrReqRequire desc",
+          "instrSalary",
+          "instrSalary desc",
+          "instr_rec_cost",
+          "instr_rec_cost desc",
+          "internalStatus",
+          "internalStatus desc",
+          "intranetPosting",
+          "intranetPosting desc",
+          "isDraft",
+          "isDraft desc",
+          "jobCode",
+          "jobCode desc",
+          "jobReqGUId",
+          "jobReqGUId desc",
+          "jobReqId",
+          "jobReqId desc",
+          "jobRole",
+          "jobRole desc",
+          "jobStartDate",
+          "jobStartDate desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDateTime",
+          "lastModifiedDateTime desc",
+          "lastModifiedProxyUserId",
+          "lastModifiedProxyUserId desc",
+          "legentity",
+          "legentity desc",
+          "location",
+          "location desc",
+          "misc_cost",
+          "misc_cost desc",
+          "monthly_FB",
+          "monthly_FB desc",
+          "monthly_PF",
+          "monthly_PF desc",
+          "monthly_SA",
+          "monthly_SA desc",
+          "monthly_cashPay",
+          "monthly_cashPay desc",
+          "monthly_gratuity",
+          "monthly_gratuity desc",
+          "monthly_retirals",
+          "monthly_retirals desc",
+          "monthly_salary",
+          "monthly_salary desc",
+          "numberOpenings",
+          "numberOpenings desc",
+          "openingsFilled",
+          "openingsFilled desc",
+          "otherBonus",
+          "otherBonus desc",
+          "otherCompensation",
+          "otherCompensation desc",
+          "otherEquip",
+          "otherEquip desc",
+          "othrComms",
+          "othrComms desc",
+          "overallScaleName",
+          "overallScaleName desc",
+          "positionNumber",
+          "positionNumber desc",
+          "postalcode",
+          "postalcode desc",
+          "ratedApplicantCount",
+          "ratedApplicantCount desc",
+          "recruitJust",
+          "recruitJust desc",
+          "replforwhom",
+          "replforwhom desc",
+          "restorehiringManagerTeamAdminDefaults",
+          "restorehiringManagerTeamAdminDefaults desc",
+          "restorerecruiterTeamAdminDefaults",
+          "restorerecruiterTeamAdminDefaults desc",
+          "restoresourcerTeamAdminDefaults",
+          "restoresourcerTeamAdminDefaults desc",
+          "restorevpOfStaffingTeamAdminDefaults",
+          "restorevpOfStaffingTeamAdminDefaults desc",
+          "reverseScale",
+          "reverseScale desc",
+          "salRateType",
+          "salRateType desc",
+          "salaryBase",
+          "salaryBase desc",
+          "salaryComment",
+          "salaryComment desc",
+          "salaryMax",
+          "salaryMax desc",
+          "salaryMin",
+          "salaryMin desc",
+          "stateProvince",
+          "stateProvince desc",
+          "statusSetId",
+          "statusSetId desc",
+          "stockPackage",
+          "stockPackage desc",
+          "targetBonusAmount",
+          "targetBonusAmount desc",
+          "tempDate",
+          "tempDate desc",
+          "templateId",
+          "templateId desc",
+          "templateType",
+          "templateType desc",
+          "timeToFill",
+          "timeToFill desc",
+          "total_earnings",
+          "total_earnings desc",
+          "total_fixed_pay",
+          "total_fixed_pay desc",
+          "total_hire_cost",
+          "total_hire_cost desc",
+          "travel_cost",
+          "travel_cost desc",
+          "workHours",
+          "workHours desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "accommodation_cost",
+          "age",
+          "agency_fee",
+          "annual_FB",
+          "annual_PF",
+          "annual_SA",
+          "annual_cashPay",
+          "annual_gratuity",
+          "annual_retirals",
+          "appTemplateId",
+          "assessRatingScaleName",
+          "candidateProgress",
+          "city",
+          "classificationTime",
+          "classificationType",
+          "closedDateTime",
+          "comment",
+          "commentEquip",
+          "commission",
+          "corporatePosting",
+          "costCenterId",
+          "costOfHire",
+          "country",
+          "createdDateTime",
+          "currency",
+          "customString10",
+          "customString3",
+          "customString4",
+          "customString8",
+          "defaultLanguage",
+          "deleted",
+          "department",
+          "division",
+          "erpAmount",
+          "facility",
+          "formDataId",
+          "formDueDate",
+          "function",
+          "hiringManagerNote",
+          "industry",
+          "instrCostHire",
+          "instrERS",
+          "instrEquest",
+          "instrEquipment",
+          "instrInterview",
+          "instrInvolvedParties",
+          "instrManagernote",
+          "instrOverallComments",
+          "instrPD",
+          "instrReq",
+          "instrReqDates",
+          "instrReqDetails",
+          "instrReqJustify",
+          "instrReqRequire",
+          "instrSalary",
+          "instr_rec_cost",
+          "internalStatus",
+          "intranetPosting",
+          "isDraft",
+          "jobCode",
+          "jobReqGUId",
+          "jobReqId",
+          "jobRole",
+          "jobStartDate",
+          "lastModifiedBy",
+          "lastModifiedDateTime",
+          "lastModifiedProxyUserId",
+          "legentity",
+          "location",
+          "misc_cost",
+          "monthly_FB",
+          "monthly_PF",
+          "monthly_SA",
+          "monthly_cashPay",
+          "monthly_gratuity",
+          "monthly_retirals",
+          "monthly_salary",
+          "numberOpenings",
+          "openingsFilled",
+          "otherBonus",
+          "otherCompensation",
+          "otherEquip",
+          "othrComms",
+          "overallScaleName",
+          "positionNumber",
+          "postalcode",
+          "ratedApplicantCount",
+          "recruitJust",
+          "replforwhom",
+          "restorehiringManagerTeamAdminDefaults",
+          "restorerecruiterTeamAdminDefaults",
+          "restoresourcerTeamAdminDefaults",
+          "restorevpOfStaffingTeamAdminDefaults",
+          "reverseScale",
+          "salRateType",
+          "salaryBase",
+          "salaryComment",
+          "salaryMax",
+          "salaryMin",
+          "stateProvince",
+          "statusSetId",
+          "stockPackage",
+          "targetBonusAmount",
+          "tempDate",
+          "templateId",
+          "templateType",
+          "timeToFill",
+          "total_earnings",
+          "total_fixed_pay",
+          "total_hire_cost",
+          "travel_cost",
+          "workHours"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     },
     "$expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "*",
+          "approver",
+          "coordinator",
+          "currentOwner",
+          "hiringManager",
+          "hiringManagerTeam",
+          "hiringManagerTeamGroup",
+          "jobReqLocale",
+          "jobReqPostings",
+          "jobReqScreeningQuestions",
+          "originator",
+          "questions",
+          "recruiter",
+          "recruiterTeam",
+          "recruiterTeamGroup",
+          "secondRecruiter",
+          "sourcer",
+          "sourcerTeam",
+          "sourcerTeamGroup",
+          "vpOfStaffing",
+          "vpOfStaffingTeam",
+          "vpOfStaffingTeamGroup"
+        ]
+      },
       "description": "Expand related entities, see [OData Expand](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374621)"
     }
   },
@@ -4735,8 +6564,8 @@ Get entities from OfferLetter
 | `$search` | string | No | — | Search items by search phrases, see [OData Searching](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374633) |
 | `$filter` | string | No | — | Filter items by property values, see [OData Filtering](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374625) |
 | `$count` | boolean | No | — | Include count of items, see [OData Count](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374632) |
-| `$orderby` | any[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
-| `$select` | any[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
+| `$orderby` | string[] | No | — | Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629) |
+| `$select` | string[] | No | — | Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620) |
 
 <Expandable title="inputSchema">
 
@@ -4770,10 +6599,131 @@ Get entities from OfferLetter
     },
     "$orderby": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "applicationId desc",
+          "body",
+          "body desc",
+          "bodyLocale",
+          "bodyLocale desc",
+          "bodyTemplateId",
+          "bodyTemplateId desc",
+          "bonusPayoutFreq",
+          "bonusPayoutFreq desc",
+          "candResponseComments",
+          "candResponseComments desc",
+          "candResponseDate",
+          "candResponseDate desc",
+          "comments",
+          "comments desc",
+          "countryCode",
+          "countryCode desc",
+          "countryName",
+          "countryName desc",
+          "createDate",
+          "createDate desc",
+          "createdBy",
+          "createdBy desc",
+          "currencyCode",
+          "currencyCode desc",
+          "jobStartDate",
+          "jobStartDate desc",
+          "jobTitle",
+          "jobTitle desc",
+          "lastModifiedBy",
+          "lastModifiedBy desc",
+          "lastModifiedDate",
+          "lastModifiedDate desc",
+          "locale",
+          "locale desc",
+          "localeCode",
+          "localeCode desc",
+          "mailboxes",
+          "mailboxes desc",
+          "offerExpirationDate",
+          "offerExpirationDate desc",
+          "offerLetter",
+          "offerLetter desc",
+          "offerLetterId",
+          "offerLetterId desc",
+          "offerSentDate",
+          "offerSentDate desc",
+          "overtimeRate",
+          "overtimeRate desc",
+          "salaryRate",
+          "salaryRate desc",
+          "salaryRateType",
+          "salaryRateType desc",
+          "sendMode",
+          "sendMode desc",
+          "status",
+          "status desc",
+          "stockGrant",
+          "stockGrant desc",
+          "stockOption",
+          "stockOption desc",
+          "subject",
+          "subject desc",
+          "targetBonusAmount",
+          "targetBonusAmount desc",
+          "targetBonusPercent",
+          "targetBonusPercent desc",
+          "templateId",
+          "templateId desc",
+          "templateName",
+          "templateName desc",
+          "tokens",
+          "tokens desc"
+        ]
+      },
       "description": "Order items by property values, see [OData Sorting](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374629)"
     },
     "$select": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "applicationId",
+          "body",
+          "bodyLocale",
+          "bodyTemplateId",
+          "bonusPayoutFreq",
+          "candResponseComments",
+          "candResponseDate",
+          "comments",
+          "countryCode",
+          "countryName",
+          "createDate",
+          "createdBy",
+          "currencyCode",
+          "jobStartDate",
+          "jobTitle",
+          "lastModifiedBy",
+          "lastModifiedDate",
+          "locale",
+          "localeCode",
+          "mailboxes",
+          "offerExpirationDate",
+          "offerLetter",
+          "offerLetterId",
+          "offerSentDate",
+          "overtimeRate",
+          "salaryRate",
+          "salaryRateType",
+          "sendMode",
+          "status",
+          "stockGrant",
+          "stockOption",
+          "subject",
+          "targetBonusAmount",
+          "targetBonusPercent",
+          "templateId",
+          "templateName",
+          "tokens"
+        ]
+      },
       "description": "Select properties to be returned, see [OData Select](http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc445374620)"
     }
   },
@@ -6039,7 +7989,7 @@ Update entity in JobApplication
 | `stateOther` | string | No | — | State Other |
 | `status` | string | No | — | The status value |
 | `statusComments` | string | No | — | Status Comments |
-| `timeToHire` | object | No | — | Time To Hire |
+| `timeToHire` | number | No | — | Time To Hire |
 | `title` | string | No | — | The title value |
 | `usersSysId` | string | No | — | Users Sys Id |
 | `visaNum` | string | No | — | Visa Num |
@@ -6553,6 +8503,7 @@ Update entity in JobApplication
       "description": "Status Comments"
     },
     "timeToHire": {
+      "type": "number",
       "description": "Time To Hire"
     },
     "title": {
@@ -6663,6 +8614,7 @@ Update entity in JobApplicationInterview
       "description": "Interview Overall Assessment",
       "properties": {
         "averageRating": {
+          "type": "number",
           "description": "Average Rating"
         },
         "comments": {

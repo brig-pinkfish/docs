@@ -54,7 +54,7 @@ Query information about an artifact
 | --- | --- | --- | --- | --- |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `hashes` | any[] | Yes | — | artifact hashes |
+| `hashes` | string[] | Yes | — | artifact hashes |
 
 <Expandable title="inputSchema">
 
@@ -76,6 +76,9 @@ Query information about an artifact
     },
     "hashes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "artifact hashes"
     }
   },
@@ -171,13 +174,13 @@ Creates a Configurable Log Drain (deprecated)
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 | `deliveryFormat` | object | Yes | — | The delivery log format |
-| `environments` | any[] | No | — | The environments value |
+| `environments` | string[] | No | — | The environments value |
 | `headers` | object | No | — | Headers to be sent together with the request |
 | `name` | string | No | — | The custom name of this log drain. |
-| `projectIds` | any[] | No | — | Project Ids |
+| `projectIds` | string[] | No | — | Project Ids |
 | `samplingRate` | number | No | — | The sampling rate for this log drain. It should be a percentage rate between 0 and 100. With max 2 decimal points |
 | `secret` | string | No | — | Custom secret of log drain |
-| `sources` | any[] | Yes | — | The sources value |
+| `sources` | string[] | Yes | — | The sources value |
 | `url` | string | Yes | — | The log drain url |
 
 <Expandable title="inputSchema">
@@ -207,6 +210,13 @@ Creates a Configurable Log Drain (deprecated)
     },
     "environments": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "preview",
+          "production"
+        ]
+      },
       "description": "The environments value"
     },
     "headers": {
@@ -219,6 +229,9 @@ Creates a Configurable Log Drain (deprecated)
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Project Ids"
     },
     "samplingRate": {
@@ -231,6 +244,17 @@ Creates a Configurable Log Drain (deprecated)
     },
     "sources": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "static",
+          "lambda",
+          "build",
+          "edge",
+          "external",
+          "firewall"
+        ]
+      },
       "description": "The sources value"
     },
     "url": {
@@ -264,12 +288,12 @@ Create a new Drain
 | `delivery` | object | No | — | The delivery value |
 | `filter` | object | No | — | The filter value |
 | `name` | string | Yes | — | The name value |
-| `projectIds` | any[] | No | — | Project Ids |
+| `projectIds` | string[] | No | — | Project Ids |
 | `projects` | string | Yes | — | The projects value |
-| `sampling` | any[] | No | — | The sampling value |
+| `sampling` | object[] | No | — | The sampling value |
 | `schemas` | object | Yes | — | The schemas value |
 | `source` | object | No | — | The source value |
-| `transforms` | any[] | No | — | The transforms value |
+| `transforms` | object[] | No | — | The transforms value |
 
 <Expandable title="inputSchema">
 
@@ -302,6 +326,9 @@ Create a new Drain
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Project Ids"
     },
     "projects": {
@@ -314,6 +341,9 @@ Create a new Drain
     },
     "sampling": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The sampling value"
     },
     "schemas": {
@@ -326,6 +356,9 @@ Create a new Drain
     },
     "transforms": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The transforms value"
     }
   },
@@ -353,12 +386,12 @@ Creates a new Integration Log Drain (deprecated)
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 | `deliveryFormat` | object | No | — | The delivery log format |
-| `environments` | any[] | No | — | The environments value |
+| `environments` | string[] | No | — | The environments value |
 | `headers` | object | No | — | Headers to be sent together with the request |
 | `name` | string | Yes | — | The name of the log drain |
-| `projectIds` | any[] | No | — | Project Ids |
+| `projectIds` | string[] | No | — | Project Ids |
 | `secret` | string | No | — | A secret to sign log drain notification headers so a consumer can verify their authenticity |
-| `sources` | any[] | No | — | The sources value |
+| `sources` | string[] | No | — | The sources value |
 | `url` | string | Yes | — | The url where you will receive logs. The protocol must be `https://` or `http://` when type is `json` and `ndjson`. |
 
 <Expandable title="inputSchema">
@@ -388,6 +421,13 @@ Creates a new Integration Log Drain (deprecated)
     },
     "environments": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "preview",
+          "production"
+        ]
+      },
       "description": "The environments value"
     },
     "headers": {
@@ -400,6 +440,9 @@ Creates a new Integration Log Drain (deprecated)
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Project Ids"
     },
     "secret": {
@@ -408,6 +451,17 @@ Creates a new Integration Log Drain (deprecated)
     },
     "sources": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "static",
+          "lambda",
+          "build",
+          "edge",
+          "external",
+          "firewall"
+        ]
+      },
       "description": "The sources value"
     },
     "url": {
@@ -437,8 +491,8 @@ Creates a webhook
 | --- | --- | --- | --- | --- |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `events` | any[] | Yes | — | The events value |
-| `projectIds` | any[] | No | — | Project Ids |
+| `events` | string[] | Yes | — | The events value |
+| `projectIds` | string[] | No | — | Project Ids |
 | `url` | string | Yes | — | The url value |
 
 <Expandable title="inputSchema">
@@ -461,10 +515,126 @@ Creates a webhook
     },
     "events": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "budget.reached",
+          "domain.created",
+          "domain.dns.records.changed",
+          "domain.transfer-in.started",
+          "domain.transfer-in.completed",
+          "domain.transfer-in.failed",
+          "domain.certificate.add",
+          "domain.certificate.add.failed",
+          "domain.certificate.renew",
+          "domain.certificate.renew.failed",
+          "domain.certificate.deleted",
+          "domain.renewal",
+          "domain.renewal.failed",
+          "domain.auto-renew.changed",
+          "deployment.created",
+          "deployment.cleanup",
+          "deployment.error",
+          "deployment.canceled",
+          "deployment.succeeded",
+          "deployment.ready",
+          "deployment.check-rerequested",
+          "deployment.promoted",
+          "deployment.rollback",
+          "deployment.integration.action.start",
+          "deployment.integration.action.cancel",
+          "deployment.integration.action.cleanup",
+          "deployment.checkrun.start",
+          "deployment.checkrun.cancel",
+          "edge-config.created",
+          "edge-config.deleted",
+          "edge-config.items.updated",
+          "firewall.attack",
+          "firewall.system-rule-anomaly",
+          "firewall.custom-rule-anomaly",
+          "alerts.triggered",
+          "integration-configuration.permission-upgraded",
+          "integration-configuration.removed",
+          "integration-configuration.scope-change-confirmed",
+          "integration-configuration.transferred",
+          "integration-resource.project-connected",
+          "integration-resource.project-disconnected",
+          "project.created",
+          "project.removed",
+          "project.renamed",
+          "project.env-variable.created",
+          "project.env-variable.updated",
+          "project.env-variable.deleted",
+          "project.domain.created",
+          "project.domain.updated",
+          "project.domain.deleted",
+          "project.domain.verified",
+          "project.domain.unverified",
+          "project.domain.moved",
+          "project.rolling-release.started",
+          "project.rolling-release.aborted",
+          "project.rolling-release.completed",
+          "project.rolling-release.approved",
+          "deployment.checks.failed",
+          "deployment.checks.succeeded",
+          "deployment-checks-completed",
+          "deployment-ready",
+          "deployment-prepared",
+          "deployment-error",
+          "deployment-check-rerequested",
+          "deployment-canceled",
+          "project-created",
+          "project-removed",
+          "domain-created",
+          "deployment",
+          "integration-configuration-permission-updated",
+          "integration-configuration-removed",
+          "integration-configuration-scope-change-confirmed",
+          "marketplace.member.changed",
+          "marketplace.invoice.created",
+          "marketplace.invoice.paid",
+          "marketplace.invoice.notpaid",
+          "marketplace.invoice.overdue",
+          "marketplace.invoice.refunded",
+          "ai-gateway.balance-depleted",
+          "ai-gateway.auto-reload.limit-reached",
+          "observability.anomaly",
+          "observability.anomaly-error",
+          "observability.usage-anomaly",
+          "observability.error-anomaly",
+          "botid.anomaly",
+          "flag.created",
+          "flag.updated",
+          "flag.deleted",
+          "flag.segment.created",
+          "flag.segment.updated",
+          "flag.segment.deleted",
+          "test-webhook",
+          "message.created",
+          "message.updated",
+          "message.deleted",
+          "thread.resolved",
+          "thread.unresolved",
+          "message.reaction-added",
+          "message.reaction-removed",
+          "message.mentioned",
+          "comment.created",
+          "comment.updated",
+          "comment.deleted",
+          "comment.resolved",
+          "comment.unresolved",
+          "comment.reaction-added",
+          "comment.reaction-removed",
+          "comment.mentioned"
+        ]
+      },
       "description": "The events value"
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Project Ids"
     },
     "url": {
@@ -1236,7 +1406,7 @@ Record an artifacts cache usage event
 | --- | --- | --- | --- | --- |
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
-| `body` | any[] | Yes | — | Request body |
+| `body` | object[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1258,6 +1428,9 @@ Record an artifacts cache usage event
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -1378,13 +1551,13 @@ Update an existing Drain
 | `delivery` | object | No | — | The delivery value |
 | `filter` | object | No | — | The filter value |
 | `name` | string | No | — | The name value |
-| `projectIds` | any[] | No | — | Project Ids |
+| `projectIds` | string[] | No | — | Project Ids |
 | `projects` | string | No | — | The projects value |
-| `sampling` | any[] | No | — | The sampling value |
+| `sampling` | object[] | No | — | The sampling value |
 | `schemas` | object | No | — | The schemas value |
 | `source` | object | No | — | The source value |
 | `status` | string | No | — | The status value |
-| `transforms` | any[] | No | — | The transforms value |
+| `transforms` | object[] | No | — | The transforms value |
 
 <Expandable title="inputSchema">
 
@@ -1421,6 +1594,9 @@ Update an existing Drain
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Project Ids"
     },
     "projects": {
@@ -1433,6 +1609,9 @@ Update an existing Drain
     },
     "sampling": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The sampling value"
     },
     "schemas": {
@@ -1453,6 +1632,9 @@ Update an existing Drain
     },
     "transforms": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The transforms value"
     }
   },
@@ -1531,7 +1713,7 @@ Configures Static IPs for a project
 | `teamId` | string | No | — | The Team identifier to perform the request on behalf of. |
 | `slug` | string | No | — | The Team slug to perform the request on behalf of. |
 | `builds` | boolean | No | — | Whether to use Static IPs for builds. |
-| `regions` | any[] | No | — | The regions value |
+| `regions` | string[] | No | — | The regions value |
 
 <Expandable title="inputSchema">
 
@@ -1561,6 +1743,9 @@ Configures Static IPs for a project
     },
     "regions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The regions value"
     }
   },
