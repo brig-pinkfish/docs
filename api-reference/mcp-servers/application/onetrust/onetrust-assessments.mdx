@@ -50,7 +50,7 @@ Link Assessments
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `fromId` | string | Yes | — | The unique ID of the source assessment to create the link from |
-| `toIds` | any[] | Yes | — | To Ids |
+| `toIds` | string[] | Yes | — | To Ids |
 
 <Expandable title="inputSchema">
 
@@ -68,6 +68,10 @@ Link Assessments
     },
     "toIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "To Ids"
     }
   },
@@ -92,7 +96,7 @@ Update Assessment Tags
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assessmentId` | string | Yes | — | UUID of the assessment to update tags for |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -110,6 +114,9 @@ Update Assessment Tags
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Request body"
     }
   },
@@ -133,7 +140,7 @@ Archive Assessment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -147,6 +154,10 @@ Archive Assessment
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Request body"
     }
   },
@@ -171,32 +182,32 @@ Launch Assessment
 | --- | --- | --- | --- | --- |
 | `approverId` | string | No | — | Approver identifier of the assessment (deprecated, use approvers list instead) |
 | `approverName` | string | No | — | Approver name of the assessment (deprecated, use approvers list instead) |
-| `approverOnlySectionRespondents` | any[] | No | — | List of respondents for approver-only sections |
-| `approvers` | any[] | No | — | List of approvers for the assessment |
-| `attachmentRequests` | any[] | No | — | List of assessment attachment request |
+| `approverOnlySectionRespondents` | object[] | No | — | List of respondents for approver-only sections |
+| `approvers` | object[] | No | — | List of approvers for the assessment |
+| `attachmentRequests` | object[] | No | — | List of assessment attachment request |
 | `checkForInFlightAssessments` | boolean | No | — | Whether to check if any in-flight (status &lt; COMPLETED) assessments exist with the same templateRootVersionId |
-| `controlImplementationDetails` | any[] | No | — | Populated when Control Implementations are selected as Primary for Assessment |
+| `controlImplementationDetails` | object[] | No | — | Populated when Control Implementations are selected as Primary for Assessment |
 | `creationSource` | string | No | — | Source of assessment creation |
 | `deadline` | string | No | — | Deadline to complete the assessment (format: YYYY-MM-DDTHH:MM:SS.FFFZ) |
 | `defaultTemplateDeadlineReminder` | boolean | No | — | Default Template Deadline Reminder |
 | `description` | string | No | — | Description of the assessment |
 | `duplicateNotAllowed` | boolean | No | — | Duplicate Not Allowed |
 | `engagementLink` | object | No | — | Engagement Link |
-| `entityLabels` | any[] | No | — | List of entity attribute labels for the assessment |
+| `entityLabels` | object[] | No | — | List of entity attribute labels for the assessment |
 | `incidentDetails` | object | No | — | Incident Details |
 | `inventoryDetails` | object | No | — | Inventory Details |
-| `labels` | any[] | No | — | List of labels to attach to the assessment |
+| `labels` | string[] | No | — | List of labels to attach to the assessment |
 | `name` | string | Yes | — | Name of the assessment |
 | `orgGroupId` | string | No | — | Organization group identifier to which the assessment should belong |
 | `orgGroupName` | string | No | — | Organization group name to which the assessment should belong |
-| `primaryEntityDetails` | any[] | No | — | Populated when Business Object needs to be selected as Primary for Assessment (except Inventory, Incident, Control Implementations and Engagements) |
+| `primaryEntityDetails` | object[] | No | — | Populated when Business Object needs to be selected as Primary for Assessment (except Inventory, Incident, Control Implementations and Engagements) |
 | `primaryRecordTypeReference` | string | No | — | Type of primary record when primaryEntityDetails are populated |
 | `reminder` | integer | No | — | Number of days before the deadline when the reminder should be sent to the respondent |
-| `reminderSchedules` | any[] | No | — | Reminder Schedules |
+| `reminderSchedules` | object[] | No | — | Reminder Schedules |
 | `respondentCreationType` | string | No | — | Type of user creation for respondents |
-| `respondents` | any[] | Yes | — | List of respondents. A minimum of one respondent must be assigned to the assessment |
+| `respondents` | object[] | Yes | — | List of respondents. A minimum of one respondent must be assigned to the assessment |
 | `ruleId` | string | No | — | Identifier of the rule that triggered this assessment creation |
-| `tags` | any[] | No | — | List of tag identifiers to attach to the assessment during creation |
+| `tags` | string[] | No | — | List of tag identifiers to attach to the assessment during creation |
 | `templateId` | string | No | — | Template identifier for which the assessment has to be created (mandatory if templateRootVersionId is not provided) |
 | `templateRootVersionId` | string | No | — | Template root version identifier for which the assessment has to be created |
 | `triggeredByAssessmentId` | string | No | — | Identifier of the assessment that triggered this assessment creation |
@@ -224,14 +235,23 @@ Launch Assessment
     },
     "approverOnlySectionRespondents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of respondents for approver-only sections"
     },
     "approvers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of approvers for the assessment"
     },
     "attachmentRequests": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of assessment attachment request"
     },
     "checkForInFlightAssessments": {
@@ -240,6 +260,9 @@ Launch Assessment
     },
     "controlImplementationDetails": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Populated when Control Implementations are selected as Primary for Assessment"
     },
     "creationSource": {
@@ -294,6 +317,9 @@ Launch Assessment
     },
     "entityLabels": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of entity attribute labels for the assessment"
     },
     "incidentDetails": {
@@ -348,6 +374,9 @@ Launch Assessment
     },
     "labels": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of labels to attach to the assessment"
     },
     "name": {
@@ -364,6 +393,9 @@ Launch Assessment
     },
     "primaryEntityDetails": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Populated when Business Object needs to be selected as Primary for Assessment (except Inventory, Incident, Control Implementations and Engagements)"
     },
     "primaryRecordTypeReference": {
@@ -376,6 +408,9 @@ Launch Assessment
     },
     "reminderSchedules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Reminder Schedules"
     },
     "respondentCreationType": {
@@ -388,6 +423,9 @@ Launch Assessment
     },
     "respondents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of respondents. A minimum of one respondent must be assigned to the assessment"
     },
     "ruleId": {
@@ -396,6 +434,9 @@ Launch Assessment
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tag identifiers to attach to the assessment during creation"
     },
     "templateId": {
@@ -447,7 +488,7 @@ Launch Assessments in Bulk
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | Yes | — | List of assessment creation details including template, respondents, and metadata |
+| `body` | object[] | Yes | — | List of assessment creation details including template, respondents, and metadata |
 
 <Expandable title="inputSchema">
 
@@ -461,6 +502,9 @@ Launch Assessments in Bulk
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of assessment creation details including template, respondents, and metadata"
     }
   },
@@ -485,7 +529,7 @@ Create Assessment Task
 | --- | --- | --- | --- | --- |
 | `assessmentId` | string | Yes | — | The unique ID of the assessment in which to create the task. |
 | `assigneeId` | string | No | — | The UUID of the user assigned to the task |
-| `collaborators` | any[] | No | — | The collaborators value |
+| `collaborators` | object[] | No | — | The collaborators value |
 | `deadline` | string | No | — | The date by which the task must be completed |
 | `description` | string | No | — | Description of the task |
 | `taskName` | string | Yes | — | Name of the task |
@@ -510,6 +554,9 @@ Create Assessment Task
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The collaborators value"
     },
     "deadline": {
@@ -663,8 +710,8 @@ Get List of Assessments
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `templateTypes` | any[] | No | — | List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
-| `assessmentStatuses` | any[] | No | — | List of assessment statuses to filter by |
+| `templateTypes` | string[] | No | — | List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
+| `assessmentStatuses` | string[] | No | — | List of assessment statuses to filter by |
 | `assessmentArchivalState` | string | No | — | Filter by archival state |
 | `page` | integer | No | — | Results page to be retrieved (0..N). Example- '?page=1 |
 | `size` | integer | No | — | Number of records per page (1…N). |
@@ -682,10 +729,36 @@ Get List of Assessments
     },
     "templateTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PIA",
+          "VENDOR",
+          "ITRM",
+          "CONTROL",
+          "INCIDENT",
+          "EXCHANGE",
+          "ESG",
+          "DISCLOSURE",
+          "DISCLOSURE_YOY",
+          "ERM",
+          "TPDD",
+          "AIGOVERNANCE"
+        ]
+      },
       "description": "List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance)"
     },
     "assessmentStatuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NOT_STARTED",
+          "IN_PROGRESS",
+          "UNDER_REVIEW",
+          "COMPLETED"
+        ]
+      },
       "description": "List of assessment statuses to filter by"
     },
     "assessmentArchivalState": {
@@ -748,7 +821,7 @@ Get List of Templates
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `template-types` | any[] | No | — | The array of template types to filter by when retrieving published templates. |
+| `template-types` | string[] | No | — | The array of template types to filter by when retrieving published templates. |
 
 <Expandable title="inputSchema">
 
@@ -762,6 +835,19 @@ Get List of Templates
     },
     "template-types": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "CONTROL",
+          "DISCLOSURE",
+          "ESG",
+          "EXCHANGE",
+          "INCIDENT",
+          "ITRM",
+          "PIA",
+          "VENDOR"
+        ]
+      },
       "description": "The array of template types to filter by when retrieving published templates."
     }
   },
@@ -809,7 +895,7 @@ Get List of Assessment Results
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `filterValue` | string | No | — | Filter to apply when retrieving assessment results. Use ACTIVE_EXCLUDING_INTERNAL to exclude internal results. |
-| `templateTypes` | any[] | No | — | List of template types to filter assessment results by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
+| `templateTypes` | string[] | No | — | List of template types to filter assessment results by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
 | `includeMasterResults` | boolean | No | — | Flag to include master results |
 
 <Expandable title="inputSchema">
@@ -831,6 +917,23 @@ Get List of Assessment Results
     },
     "templateTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PIA",
+          "VENDOR",
+          "ITRM",
+          "CONTROL",
+          "INCIDENT",
+          "EXCHANGE",
+          "ESG",
+          "DISCLOSURE",
+          "DISCLOSURE_YOY",
+          "ERM",
+          "TPDD",
+          "AIGOVERNANCE"
+        ]
+      },
       "description": "List of template types to filter assessment results by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance)"
     },
     "includeMasterResults": {
@@ -858,7 +961,7 @@ Get List of Linked Assessments
 | --- | --- | --- | --- | --- |
 | `id` | string | Yes | — | UUID of the reference object |
 | `referenceType` | string | Yes | — | Type of reference object |
-| `linkTypes` | any[] | No | — | Types of links to filter by |
+| `linkTypes` | string[] | No | — | Types of links to filter by |
 | `page` | integer | No | — | Results page to be retrieved (0..N) |
 | `size` | integer | No | — | Number of records per page (1…N) |
 | `sort` | string | No | — | Sorting criteria in the format: property(,asc\|desc). Default sort order is ascending. Multiple sort criteria are supported. |
@@ -891,6 +994,14 @@ Get List of Linked Assessments
     },
     "linkTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PRIMARY",
+          "AUTO",
+          "MANUAL"
+        ]
+      },
       "description": "Types of links to filter by"
     },
     "page": {
@@ -971,16 +1082,16 @@ Get List of Assessments by Criteria
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `templateTypes` | any[] | No | — | List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
-| `assessmentStatuses` | any[] | No | — | List of assessment statuses to filter assessments by |
+| `templateTypes` | string[] | No | — | List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance) |
+| `assessmentStatuses` | string[] | No | — | List of assessment statuses to filter assessments by |
 | `assessmentArchivalState` | string | No | — | Filter assessments by their archival state. Use ALL to include both archived and non-archived assessments, ARCHIVED to include only archived assessments, or NON_ARCHIVED to include only non-archived assessments. |
 | `page` | integer | No | — | Results page to be retrieved (0..N). Example- '?page=1 |
 | `size` | integer | No | — | Number of records per page (1…N). |
 | `sort` | string | No | — | Sorting criteria in the format: property(,asc\|desc). Default sort order is ascending. Multiple sort criteria are supported. |
 | `adminOnlyView` | boolean | No | — | Loads admin view |
 | `assessmentListViewType` | string | Yes | — | Load assessments for corresponding view types |
-| `filterCriteria` | any[] | No | — | List of reminder schedules to trigger notifications to configured users (respondents or approvers) |
-| `visibleColumns` | any[] | Yes | — | Visible Columns |
+| `filterCriteria` | object[] | No | — | List of reminder schedules to trigger notifications to configured users (respondents or approvers) |
+| `visibleColumns` | string[] | Yes | — | Visible Columns |
 
 <Expandable title="inputSchema">
 
@@ -994,10 +1105,36 @@ Get List of Assessments by Criteria
     },
     "templateTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PIA",
+          "VENDOR",
+          "ITRM",
+          "CONTROL",
+          "INCIDENT",
+          "EXCHANGE",
+          "ESG",
+          "DISCLOSURE",
+          "DISCLOSURE_YOY",
+          "ERM",
+          "TPDD",
+          "AIGOVERNANCE"
+        ]
+      },
       "description": "List of template types to filter assessments by. Available options:  - **PIA** (PIA & DPIA Automation) - **VENDOR** (Third-Party Risk Management) - **ITRM** (IT & Security Risk Management) - **CONTROL** (Risk and Controls) - **INCIDENT** (Incident Management) - **EXCHANGE** (Third-Party Risk Exchange) - **ESG** (ESG Program Reporting) - **DISCLOSURE** (Disclosure Management) - **DISCLOSURE_YOY** (Year Over Year Disclosures) - **ERM** (Enterprise Risk Management) - **TPDD** (Third-Party Due Diligence) - **AIGOVERNANCE** (AI Governance)"
     },
     "assessmentStatuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NOT_STARTED",
+          "IN_PROGRESS",
+          "UNDER_REVIEW",
+          "COMPLETED"
+        ]
+      },
       "description": "List of assessment statuses to filter assessments by"
     },
     "assessmentArchivalState": {
@@ -1066,10 +1203,16 @@ Get List of Assessments by Criteria
     },
     "filterCriteria": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of reminder schedules to trigger notifications to configured users (respondents or approvers)"
     },
     "visibleColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Visible Columns"
     }
   },
@@ -1182,7 +1325,7 @@ Reassess Assessment
 | `deadline` | string | No | — | Deadline (date) to complete the assessment |
 | `linkRisks` | boolean | No | — | Any risk rules created based on the template risk rules for the original assessment will be linked to the newly created assessment upon submission. |
 | `reminder` | integer | No | — | Use this field to input the number of days before the deadline to send a automatic notification to the respondent. Deadline must be set for this field to be enabled. |
-| `reminderSchedules` | any[] | No | — | Reminder Schedules |
+| `reminderSchedules` | object[] | No | — | Reminder Schedules |
 
 <Expandable title="inputSchema">
 
@@ -1266,6 +1409,9 @@ Reassess Assessment
     },
     "reminderSchedules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Reminder Schedules"
     }
   },
@@ -1289,10 +1435,10 @@ Reassign Assessment
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assessmentId` | string | Yes | — | UUID of the assessment to reassign |
-| `approvers` | any[] | No | — | The user(s) that will override the current approvers if any are added |
+| `approvers` | object[] | No | — | The user(s) that will override the current approvers if any are added |
 | `orgGroupId` | string | No | — | The ID of the organization that the assessment should be reassigned to |
 | `respondentCreationType` | string | No | — | If adding new users that don't already exist, this is the type of user they will be created as |
-| `respondents` | any[] | No | — | The user(s) that will override the current respondents if any are added |
+| `respondents` | object[] | No | — | The user(s) that will override the current respondents if any are added |
 
 <Expandable title="inputSchema">
 
@@ -1310,6 +1456,9 @@ Reassign Assessment
     },
     "approvers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The user(s) that will override the current approvers if any are added"
     },
     "orgGroupId": {
@@ -1326,6 +1475,9 @@ Reassign Assessment
     },
     "respondents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The user(s) that will override the current respondents if any are added"
     }
   },
@@ -1392,7 +1544,7 @@ Send Back Assessment
 | `id` | string | Yes | — | Unique identifier of the assessment to send back to the In Progress stage |
 | `editAllResponses` | boolean | No | — | Use this field to all respondents to edit any question response when an assessment is sent back. |
 | `emailComment` | string | No | — | Comment to be put in notification email. |
-| `reopenSectionIds` | any[] | No | — | Reopen Section Ids |
+| `reopenSectionIds` | string[] | No | — | Reopen Section Ids |
 | `resetApproverReviews` | boolean | No | — | When an assessment is sent back, the approver’s vote is either retained or removed depending on the setting. |
 | `sendBulkInfoRequestEmail` | boolean | No | — | Use this field to send notifications at the same time to the users to get more information on several questions. |
 
@@ -1420,6 +1572,10 @@ Send Back Assessment
     },
     "reopenSectionIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Reopen Section Ids"
     },
     "resetApproverReviews": {
@@ -1486,7 +1642,7 @@ Unarchive Assessment
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | Yes | — | Request body |
+| `body` | string[] | Yes | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -1500,6 +1656,10 @@ Unarchive Assessment
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Request body"
     }
   },
@@ -1579,7 +1739,7 @@ Set Primary Record
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assessmentId` | string | Yes | — | UUID of the assessment to update primary record for |
-| `primaryRecordIds` | any[] | Yes | — | The unique UUIDs of the primary records |
+| `primaryRecordIds` | string[] | Yes | — | The unique UUIDs of the primary records |
 | `primaryRecordType` | string | Yes | — | Type of Inventory record to be updated. |
 
 <Expandable title="inputSchema">
@@ -1598,6 +1758,10 @@ Set Primary Record
     },
     "primaryRecordIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "The unique UUIDs of the primary records"
     },
     "primaryRecordType": {

@@ -461,12 +461,12 @@ Gets a list of Agent Activities
 | `pageSize` | integer | No | — | The total page size requested |
 | `pageNumber` | integer | No | — | The page number requested |
 | `sortBy` | string | No | — | variable name requested to sort by |
-| `expand` | any[] | No | — | variable name requested by expand list |
+| `expand` | string[] | No | — | variable name requested by expand list |
 | `nextPage` | string | No | — | next page token |
 | `previousPage` | string | No | — | Previous page token |
 | `startTime` | string | No | — | Start time of agent activity based on assigned date. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `endTime` | string | No | — | End time of agent activity based on assigned date. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `agentUserId` | any[] | No | — | user id of agent requested |
+| `agentUserId` | string[] | No | — | user id of agent requested |
 | `evaluatorUserId` | string | No | — | user id of the evaluator |
 | `name` | string | No | — | The name value |
 | `group` | string | No | — | group id |
@@ -498,6 +498,9 @@ Gets a list of Agent Activities
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "variable name requested by expand list"
     },
     "nextPage": {
@@ -518,6 +521,9 @@ Gets a list of Agent Activities
     },
     "agentUserId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "user id of agent requested"
     },
     "evaluatorUserId": {
@@ -689,7 +695,7 @@ Get results of audit query
 | `transactionId` | string | Yes | — | Transaction ID |
 | `cursor` | string | No | — | Indicates where to resume query results (not required for first page) |
 | `pageSize` | integer | No | — | Page size |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -715,6 +721,12 @@ Get results of audit query
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "user"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     }
   },
@@ -739,7 +751,7 @@ Queries Evaluations and returns a paged list
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | The total page size requested |
 | `pageNumber` | integer | No | — | The page number requested |
-| `expand` | any[] | No | — | variable name requested by expand list |
+| `expand` | string[] | No | — | variable name requested by expand list |
 | `previousPage` | string | No | — | Previous page token |
 | `conversationId` | string | No | — | conversationId specified |
 | `agentUserId` | string | No | — | user id of the agent |
@@ -750,7 +762,7 @@ Queries Evaluations and returns a paged list
 | `startTime` | string | No | — | start time of the evaluation query |
 | `endTime` | string | No | — | end time of the evaluation query |
 | `formContextId` | string | No | — | shared id between form versions |
-| `evaluationState` | any[] | No | — | Evaluation State |
+| `evaluationState` | string[] | No | — | Evaluation State |
 | `isReleased` | boolean | No | — | the evaluation has been released |
 | `agentHasRead` | boolean | No | — | agent has the evaluation |
 | `expandAnswerTotalScores` | boolean | No | — | get the total scores for evaluations. NOTE: The answers will only be populated if this parameter is set to true in the request. |
@@ -778,6 +790,9 @@ Queries Evaluations and returns a paged list
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "variable name requested by expand list"
     },
     "previousPage": {
@@ -822,6 +837,9 @@ Queries Evaluations and returns a paged list
     },
     "evaluationState": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Evaluation State"
     },
     "isReleased": {
@@ -870,13 +888,13 @@ Get an evaluator activity. To ensure optimal performance and prevent timeouts wh
 | `pageSize` | integer | No | — | The total page size requested |
 | `pageNumber` | integer | No | — | The page number requested |
 | `sortBy` | string | No | — | variable name requested to sort by |
-| `expand` | any[] | No | — | variable name requested by expand list |
+| `expand` | string[] | No | — | variable name requested by expand list |
 | `nextPage` | string | No | — | next page token |
 | `previousPage` | string | No | — | Previous page token |
 | `startTime` | string | No | — | The start time specified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `endTime` | string | No | — | The end time specified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `name` | string | No | — | Evaluator name |
-| `permission` | any[] | No | — | permission strings |
+| `permission` | string[] | No | — | permission strings |
 | `group` | string | No | — | group id |
 | `agentTeamId` | string | No | — | team id of agents to be considered |
 
@@ -904,6 +922,9 @@ Get an evaluator activity. To ensure optimal performance and prevent timeouts wh
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "variable name requested by expand list"
     },
     "nextPage": {
@@ -928,6 +949,9 @@ Get an evaluator activity. To ensure optimal performance and prevent timeouts wh
     },
     "permission": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "permission strings"
     },
     "group": {
@@ -1896,7 +1920,7 @@ Get a workitem
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workitemId` | string | Yes | — | Workitem ID |
-| `expands` | any[] | No | — | Which fields to expand. Comma separated if more than one. |
+| `expands` | string[] | No | — | Which fields to expand. Comma separated if more than one. |
 
 <Expandable title="inputSchema">
 
@@ -1914,6 +1938,16 @@ Get a workitem
     },
     "expands": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "type",
+          "workbin",
+          "status",
+          "queue",
+          "assignee"
+        ]
+      },
       "description": "Which fields to expand. Comma separated if more than one."
     }
   },
@@ -2221,7 +2255,7 @@ Get a worktype
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `worktypeId` | string | Yes | — | Worktype id |
-| `expands` | any[] | No | — | Which fields, if any, to expand. |
+| `expands` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -2239,6 +2273,17 @@ Get a worktype
     },
     "expands": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "defaultQueue",
+          "defaultSkills",
+          "defaultLanguage",
+          "schema",
+          "flow",
+          "defaultScript"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -2265,7 +2310,7 @@ Get a listing of a worktype's attribute change history
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
 | `pageSize` | integer | No | — | Limit the number of entities to return. It is not guaranteed that the requested number of entities will be filled in a single request. If an `after` key is returned as part of the response it is possible that more entities that match the filter criteria exist. Maximum of 200. |
 | `sortOrder` | string | No | — | Ascending or descending sort order |
-| `fields` | any[] | No | — | Comma-separated list of fields. The response will contain only versions created as a result of changes to these fields. |
+| `fields` | string[] | No | — | Comma-separated list of fields. The response will contain only versions created as a result of changes to these fields. |
 
 <Expandable title="inputSchema">
 
@@ -2299,6 +2344,23 @@ Get a listing of a worktype's attribute change history
     },
     "fields": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "name",
+          "serviceLevelTarget",
+          "defaultWorkbinId",
+          "defaultDueDurationSeconds",
+          "defaultExpirationSeconds",
+          "defaultPriority",
+          "defaultLanguageId",
+          "defaultSkillIds",
+          "defaultQueueId",
+          "assignmentEnabled",
+          "defaultStatusId",
+          "statuses"
+        ]
+      },
       "description": "Comma-separated list of fields. The response will contain only versions created as a result of changes to these fields."
     }
   },
@@ -2507,7 +2569,7 @@ Disable a particular version of a survey form and invalidates any invitations th
 | `name` | string | Yes | — | The survey form name |
 | `published` | boolean | No | — | Is this form published |
 | `publishedVersions` | object | No | — | Published Versions |
-| `questionGroups` | any[] | No | — | A list of question groups |
+| `questionGroups` | object[] | No | — | A list of question groups |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -2608,6 +2670,9 @@ Disable a particular version of a survey form and invalidates any invitations th
     },
     "questionGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of question groups"
     },
     "selfUri": {
@@ -2915,12 +2980,12 @@ Update the attributes of a workitem
 | `externalTag` | string | No | — | The external tag of the Workitem. |
 | `languageId` | string | No | — | The ID of language of the Workitem. Must be a valid UUID. |
 | `name` | string | No | — | The name of the Workitem. Valid length between 3 and 256 characters. |
-| `preferredAgentIds` | any[] | No | — | The preferred agent IDs of the Workitem. Must be valid UUIDs. |
+| `preferredAgentIds` | string[] | No | — | The preferred agent IDs of the Workitem. Must be valid UUIDs. |
 | `priority` | integer | No | — | The priority of the Workitem. The valid range is between -25,000,000 and 25,000,000. |
 | `queueId` | string | No | — | The ID of the Workitems queue. Must be a valid UUID. |
-| `scoredAgents` | any[] | No | — | A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents. |
+| `scoredAgents` | object[] | No | — | A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents. |
 | `scriptId` | string | No | — | The ID of the Workitems script. Must be a valid UUID. |
-| `skillIds` | any[] | No | — | The skill IDs of the Workitem. Must be valid UUIDs. |
+| `skillIds` | string[] | No | — | The skill IDs of the Workitem. Must be valid UUIDs. |
 | `statusId` | string | No | — | The ID of the Status of the Workitem. |
 | `ttl` | integer | No | — | The epoch timestamp in seconds specifying the time to live for the Workitem. Can not be greater than 365 days from the current time. |
 | `utilizationLabelId` | string | No | — | The ID of the utilization label of the Workitem. Must be a valid UUID. |
@@ -3017,6 +3082,9 @@ Update the attributes of a workitem
     },
     "preferredAgentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The preferred agent IDs of the Workitem. Must be valid UUIDs."
     },
     "priority": {
@@ -3029,6 +3097,9 @@ Update the attributes of a workitem
     },
     "scoredAgents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents."
     },
     "scriptId": {
@@ -3037,6 +3108,9 @@ Update the attributes of a workitem
     },
     "skillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The skill IDs of the Workitem. Must be valid UUIDs."
     },
     "statusId": {
@@ -3236,7 +3310,7 @@ Update the attributes of a worktype
 | `defaultPriority` | integer | No | — | The default priority for Workitems created from the Worktype. The valid range is between -25,000,000 and 25,000,000. |
 | `defaultQueueId` | string | No | — | The ID of the default queue for Workitems created from the Worktype. Must be a valid UUID. |
 | `defaultScriptId` | string | No | — | The default script for Workitems created from the Worktype. Must be a valid UUID. |
-| `defaultSkillIds` | any[] | No | — | The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs |
+| `defaultSkillIds` | string[] | No | — | The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs |
 | `defaultStatusId` | string | No | — | The ID of the default status for Workitems created from the Worktype. Must be a valid UUID. |
 | `defaultTtlSeconds` | integer | No | — | The default time to time to live in seconds for Workitems created from the Worktype. The valid range is between 1 and 365 days. |
 | `defaultWorkbinId` | string | No | — | The ID of the default Workbin for Workitems created from the Worktype. |
@@ -3296,6 +3370,9 @@ Update the attributes of a worktype
     },
     "defaultSkillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs"
     },
     "defaultStatusId": {
@@ -3369,7 +3446,7 @@ Update the attributes of a status
 | `autoTerminateWorkitem` | boolean | No | — | Terminate workitem on selection of status. Applicable only for statuses in the Closed category. |
 | `defaultDestinationStatusId` | string | No | — | Default destination status to which this Status will transition to if auto status transition enabled. |
 | `description` | string | No | — | The description of the Status. Maximum length of 512 characters. |
-| `destinationStatusIds` | any[] | No | — | A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations. |
+| `destinationStatusIds` | string[] | No | — | A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations. |
 | `name` | string | No | — | The name of the Status. Valid length between 3 and 256 characters. |
 | `statusTransitionDelaySeconds` | integer | No | — | Delay in seconds for auto status transition. Required if defaultDestinationStatusId is provided. |
 | `statusTransitionTime` | string | No | — | Time is represented as an ISO-8601 string without a timezone. For example: HH:mm:ss.SSS |
@@ -3406,6 +3483,9 @@ Update the attributes of a status
     },
     "destinationStatusIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations."
     },
     "name": {
@@ -3730,9 +3810,9 @@ Create audit query execution
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filters` | any[] | Yes | — | List of filters for the query. |
+| `filters` | object[] | Yes | — | List of filters for the query. |
 | `interval` | string | Yes | — | Date and time range of data to query. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `sort` | any[] | No | — | Sort parameter for the query. |
+| `sort` | object[] | No | — | Sort parameter for the query. |
 
 <Expandable title="inputSchema">
 
@@ -3746,6 +3826,9 @@ Create audit query execution
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of filters for the query."
     },
     "interval": {
@@ -3754,6 +3837,9 @@ Create audit query execution
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Sort parameter for the query."
     }
   },
@@ -3779,9 +3865,9 @@ Query for evaluation aggregates for the current user
 | --- | --- | --- | --- | --- |
 | `alternateTimeDimension` | string | No | — | Dimension to use as the alternative timestamp for data in the aggregate.  Choosing "eventTime" uses the actual time of the data event. |
 | `contextId` | string | No | — | Evaluation context Id |
-| `groupBy` | any[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
+| `groupBy` | string[] | No | — | Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group. |
 | `interval` | string | Yes | — | Behaves like one clause in a SQL WHERE. Specifies the date and time range of data being queried. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
-| `metrics` | any[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
+| `metrics` | string[] | Yes | — | Behaves like a SQL SELECT clause. Only named metrics will be retrieved. |
 | `timeZone` | string | No | — | Time zone context used to calculate response intervals (this allows resolving DST changes). The interval offset is used even when timeZone is specified. Default is UTC. Time zones are represented as a string of the zone name as found in the IANA time zone database. For example: UTC, Etc/UTC, or Europe/London |
 
 <Expandable title="inputSchema">
@@ -3810,6 +3896,28 @@ Query for evaluation aggregates for the current user
     },
     "groupBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "assigneeApplicable",
+          "assigneeId",
+          "calibrationId",
+          "contextId",
+          "conversationId",
+          "divisionId",
+          "evaluationContextId",
+          "evaluationId",
+          "evaluatorId",
+          "formId",
+          "mediaType",
+          "queueId",
+          "released",
+          "rescored",
+          "systemSubmitted",
+          "teamId",
+          "userId"
+        ]
+      },
       "description": "Behaves like a SQL GROUPBY. Allows for multiple levels of grouping as a list of dimensions. Partitions resulting aggregate computations into distinct named subgroups rather than across the entire result set as if it were one group."
     },
     "interval": {
@@ -3818,6 +3926,16 @@ Query for evaluation aggregates for the current user
     },
     "metrics": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nEvaluations",
+          "nEvaluationsDeleted",
+          "nEvaluationsRescored",
+          "oTotalCriticalScore",
+          "oTotalScore"
+        ]
+      },
       "description": "Behaves like a SQL SELECT clause. Only named metrics will be retrieved."
     },
     "timeZone": {
@@ -3985,10 +4103,10 @@ Search evaluations based along specified criteria
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `aggregations` | any[] | No | — | Aggregations to compute on the search results |
+| `aggregations` | object[] | No | — | Aggregations to compute on the search results |
 | `pageNumber` | integer | Yes | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page. For aggregation requests, must be omitted or 0. |
-| `query` | any[] | Yes | — | Search query string |
+| `query` | object[] | Yes | — | Search query string |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by. Include with sortOrder. |
 | `sortOrder` | string | No | — | The sort order for results. Include with sortBy. |
 | `systemSubmitted` | boolean | No | — | Filter for automated evaluations submitted by virtual supervisor. Defaults to false. |
@@ -4005,6 +4123,9 @@ Search evaluations based along specified criteria
     },
     "aggregations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Aggregations to compute on the search results"
     },
     "pageNumber": {
@@ -4017,6 +4138,9 @@ Search evaluations based along specified criteria
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Search query string"
     },
     "sortBy": {
@@ -4072,7 +4196,7 @@ Create an evaluation form.
 | `name` | string | Yes | — | The evaluation form name |
 | `published` | boolean | No | — | The published value |
 | `publishedVersions` | object | No | — | Published Versions |
-| `questionGroups` | any[] | Yes | — | A list of question groups |
+| `questionGroups` | object[] | Yes | — | A list of question groups |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -4201,6 +4325,9 @@ Create an evaluation form.
     },
     "questionGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of question groups"
     },
     "selfUri": {
@@ -4238,7 +4365,7 @@ Create a survey form.
 | `name` | string | Yes | — | The survey form name |
 | `published` | boolean | No | — | Is this form published |
 | `publishedVersions` | object | No | — | Published Versions |
-| `questionGroups` | any[] | No | — | A list of question groups |
+| `questionGroups` | object[] | No | — | A list of question groups |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -4335,6 +4462,9 @@ Create a survey form.
     },
     "questionGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of question groups"
     },
     "selfUri": {
@@ -5146,8 +5276,8 @@ Query for workbins
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
-| `attributes` | any[] | No | — | List of entity attributes to be retrieved in the result. |
-| `filters` | any[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'id', 'name', 'description', 'divisionId', 'dateCreated', 'dateModified', 'modifiedBy' |
+| `attributes` | string[] | No | — | List of entity attributes to be retrieved in the result. |
+| `filters` | object[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'id', 'name', 'description', 'divisionId', 'dateCreated', 'dateModified', 'modifiedBy' |
 | `pageSize` | integer | No | — | Limit the number of entities to return. It is not guaranteed that the requested number of entities will be filled in a single request. If an `after` key is returned as part of the response it is possible that more entities that match the filter criteria exist. Maximum of 200. |
 | `select` | string | No | — | Specify the value 'Count' for this parameter in order to return only the record count. |
 | `sort` | object | No | — | Sort order for results |
@@ -5168,10 +5298,16 @@ Query for workbins
     },
     "attributes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of entity attributes to be retrieved in the result."
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of filter objects to be used in the search. Valid filter names are: 'id', 'name', 'description', 'divisionId', 'dateCreated', 'dateModified', 'modifiedBy'"
     },
     "pageSize": {
@@ -5343,12 +5479,12 @@ Create a workitem
 | `externalTag` | string | No | — | The external tag of the Workitem. |
 | `languageId` | string | No | — | The ID of language of the Workitem. Must be a valid UUID. |
 | `name` | string | Yes | — | The name of the Workitem. Valid length between 3 and 256 characters. |
-| `preferredAgentIds` | any[] | No | — | The preferred agent IDs of the Workitem. Must be valid UUIDs. |
+| `preferredAgentIds` | string[] | No | — | The preferred agent IDs of the Workitem. Must be valid UUIDs. |
 | `priority` | integer | No | — | The priority of the Workitem. The valid range is between -25,000,000 and 25,000,000. |
 | `queueId` | string | No | — | The ID of the Workitems queue. Must be a valid UUID. |
-| `scoredAgents` | any[] | No | — | A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents. |
+| `scoredAgents` | object[] | No | — | A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents. |
 | `scriptId` | string | No | — | The ID of the Workitems script. Must be a valid UUID. |
-| `skillIds` | any[] | No | — | The skill IDs of the Workitem. Must be valid UUIDs. |
+| `skillIds` | string[] | No | — | The skill IDs of the Workitem. Must be valid UUIDs. |
 | `statusId` | string | No | — | The ID of the Status of the Workitem. |
 | `ttl` | integer | No | — | The epoch timestamp in seconds specifying the time to live for the Workitem. Can not be greater than 365 days from the current time. |
 | `typeId` | string | Yes | — | The ID of the Worktype of the Workitem. |
@@ -5412,6 +5548,9 @@ Create a workitem
     },
     "preferredAgentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The preferred agent IDs of the Workitem. Must be valid UUIDs."
     },
     "priority": {
@@ -5424,6 +5563,9 @@ Create a workitem
     },
     "scoredAgents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of scored agents for the Workitem. A workitem can have a maximum of 20 scored agents."
     },
     "scriptId": {
@@ -5432,6 +5574,9 @@ Create a workitem
     },
     "skillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The skill IDs of the Workitem. Must be valid UUIDs."
     },
     "statusId": {
@@ -5480,9 +5625,9 @@ Query for workitems
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
-| `attributes` | any[] | No | — | List of entity attributes to be retrieved in the result. |
-| `expands` | any[] | No | — | List of entity attributes to be expanded in the result. |
-| `filters` | any[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'workbinId', 'typeId, 'assigneeId', 'id', 'name', 'description', 'languageId', 'priority', 'dateCreated', 'dateModified', 'dateDue', 'dateExpires', 'durationInSeconds', 'ttl', 'statusId', 'statusCategory', 'dateClosed', 'externalContactId', 'reporterId', 'queueId', 'externalTag', 'modifiedBy', 'assignmentState', 'divisionId', 'customFields.&lt;custom field name&gt;' |
+| `attributes` | string[] | No | — | List of entity attributes to be retrieved in the result. |
+| `expands` | string[] | No | — | List of entity attributes to be expanded in the result. |
+| `filters` | object[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'workbinId', 'typeId, 'assigneeId', 'id', 'name', 'description', 'languageId', 'priority', 'dateCreated', 'dateModified', 'dateDue', 'dateExpires', 'durationInSeconds', 'ttl', 'statusId', 'statusCategory', 'dateClosed', 'externalContactId', 'reporterId', 'queueId', 'externalTag', 'modifiedBy', 'assignmentState', 'divisionId', 'customFields.&lt;custom field name&gt;' |
 | `pageSize` | integer | No | — | Limit the number of entities to return. It is not guaranteed that the requested number of entities will be filled in a single request. If an `after` key is returned as part of the response it is possible that more entities that match the filter criteria exist. Maximum of 200. |
 | `select` | string | No | — | Specify the value 'Count' for this parameter in order to return only the record count. |
 | `sort` | object | No | — | Sort order for results |
@@ -5503,14 +5648,33 @@ Query for workitems
     },
     "attributes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of entity attributes to be retrieved in the result."
     },
     "expands": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "type",
+          "workbin",
+          "status",
+          "assignee",
+          "reporter",
+          "queue",
+          "case",
+          "externalContact"
+        ]
+      },
       "description": "List of entity attributes to be expanded in the result."
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of filter objects to be used in the search. Valid filter names are: 'workbinId', 'typeId, 'assigneeId', 'id', 'name', 'description', 'languageId', 'priority', 'dateCreated', 'dateModified', 'dateDue', 'dateExpires', 'durationInSeconds', 'ttl', 'statusId', 'statusCategory', 'dateClosed', 'externalContactId', 'reporterId', 'queueId', 'externalTag', 'modifiedBy', 'assignmentState', 'divisionId', 'customFields.<custom field name>'"
     },
     "pageSize": {
@@ -5563,7 +5727,7 @@ Add a status to a worktype
 | `category` | string | Yes | — | The Category of the Status. |
 | `defaultDestinationStatusId` | string | No | — | Default destination status to which this Status will transition to if auto status transition enabled. |
 | `description` | string | No | — | The description of the Status. Maximum length of 512 characters. |
-| `destinationStatusIds` | any[] | No | — | A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations. |
+| `destinationStatusIds` | string[] | No | — | A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations. |
 | `name` | string | Yes | — | The name of the Status. Valid length between 3 and 256 characters. |
 | `statusTransitionDelaySeconds` | integer | No | — | Delay in seconds for auto status transition. Required if defaultDestinationStatusId is provided. |
 | `statusTransitionTime` | string | No | — | Time is represented as an ISO-8601 string without a timezone. For example: HH:mm:ss.SSS |
@@ -5607,6 +5771,9 @@ Add a status to a worktype
     },
     "destinationStatusIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of destination Statuses where a Workitem with this Status can transition to. If the list is empty Workitems with this Status can transition to all other Statuses defined on the Worktype. A Status can have a maximum of 24 destinations."
     },
     "name": {
@@ -5651,7 +5818,7 @@ Create a worktype
 | `defaultPriority` | integer | No | — | The default priority for Workitems created from the Worktype. The valid range is between -25,000,000 and 25,000,000. |
 | `defaultQueueId` | string | No | — | The ID of the default queue for Workitems created from the Worktype. Must be a valid UUID. |
 | `defaultScriptId` | string | No | — | The default script for Workitems created from the Worktype. Must be a valid UUID. |
-| `defaultSkillIds` | any[] | No | — | The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs |
+| `defaultSkillIds` | string[] | No | — | The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs |
 | `defaultTtlSeconds` | integer | No | — | The default time to time to live in seconds for Workitems created from the Worktype. The valid range is between 1 and 365 days. |
 | `defaultWorkbinId` | string | Yes | — | The ID of the default Workbin for Workitems created from the Worktype. |
 | `description` | string | No | — | The description of the Worktype. Maximum length of 512 characters. |
@@ -5708,6 +5875,9 @@ Create a worktype
     },
     "defaultSkillIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The IDs of the default skills for Workitems created from the Worktype. Must be valid UUIDs. Maximum of 20 IDs"
     },
     "defaultTtlSeconds": {
@@ -5782,8 +5952,8 @@ Query for worktypes
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `after` | string | No | — | The cursor that points to the end of the set of entities that has been returned. |
-| `attributes` | any[] | No | — | List of entity attributes to be retrieved in the result. |
-| `filters` | any[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'divisionId', 'id', 'name', 'description', 'defaultWorkbinId', 'defaultDurationSeconds', 'defaultExpirationSeconds', 'defaultDueDurationSeconds', 'defaultPriority', 'defaultLanguageId', 'defaultTtlSeconds', 'assignmentEnabled', 'defaultQueueId', 'schemaId', 'schemaVersion', 'dateCreated', 'dateModified', 'modifiedBy' |
+| `attributes` | string[] | No | — | List of entity attributes to be retrieved in the result. |
+| `filters` | object[] | Yes | — | List of filter objects to be used in the search. Valid filter names are: 'divisionId', 'id', 'name', 'description', 'defaultWorkbinId', 'defaultDurationSeconds', 'defaultExpirationSeconds', 'defaultDueDurationSeconds', 'defaultPriority', 'defaultLanguageId', 'defaultTtlSeconds', 'assignmentEnabled', 'defaultQueueId', 'schemaId', 'schemaVersion', 'dateCreated', 'dateModified', 'modifiedBy' |
 | `pageSize` | integer | No | — | Limit the number of entities to return. It is not guaranteed that the requested number of entities will be filled in a single request. If an `after` key is returned as part of the response it is possible that more entities that match the filter criteria exist. Maximum of 200. |
 | `select` | string | No | — | Specify the value 'Count' for this parameter in order to return only the record count. |
 | `sort` | object | No | — | Sort order for results |
@@ -5804,10 +5974,16 @@ Query for worktypes
     },
     "attributes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of entity attributes to be retrieved in the result."
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of filter objects to be used in the search. Valid filter names are: 'divisionId', 'id', 'name', 'description', 'defaultWorkbinId', 'defaultDurationSeconds', 'defaultExpirationSeconds', 'defaultDueDurationSeconds', 'defaultPriority', 'defaultLanguageId', 'defaultTtlSeconds', 'assignmentEnabled', 'defaultQueueId', 'schemaId', 'schemaVersion', 'dateCreated', 'dateModified', 'modifiedBy'"
     },
     "pageSize": {
@@ -5867,7 +6043,7 @@ Update an evaluation
 | `assignedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `assignee` | object | No | — | The assignee value |
 | `assigneeApplicable` | boolean | No | — | Indicates whether an assignee is applicable for the evaluation. Set to false when assignee is not applicable. |
-| `authorizedActions` | any[] | No | — | List of user authorized actions on evaluation. Possible values: assign, edit, editScore, editAgentSignoff, delete, release, viewAudit |
+| `authorizedActions` | string[] | No | — | List of user authorized actions on evaluation. Possible values: assign, edit, editScore, editAgentSignoff, delete, release, viewAudit |
 | `calibration` | object | No | — | The calibration value |
 | `changedDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `conversation` | object | No | — | The conversation value |
@@ -5875,14 +6051,14 @@ Update an evaluation
 | `conversationEndDate` | string | No | — | End date of conversation if it had completed before evaluation creation. Null if created before the conversation ended. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `createdDate` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateAssigneeChanged` | string | No | — | Date when the assignee was last changed. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `divisionIds` | any[] | No | — | Evaluation is assigned in the following division(s). |
+| `divisionIds` | string[] | No | — | Evaluation is assigned in the following division(s). |
 | `evaluationForm` | object | No | — | Evaluation Form |
 | `evaluationSource` | object | No | — | Evaluation Source |
 | `evaluator` | object | No | — | The evaluator value |
 | `hasAssistanceFailed` | boolean | No | — | Is true when evaluation assistance didn't execute successfully |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `isScoringIndex` | boolean | No | — | Is Scoring Index |
-| `mediaType` | any[] | No | — | List of different communication types used in conversation. |
+| `mediaType` | string[] | No | — | List of different communication types used in conversation. |
 | `name` | string | No | — | The name value |
 | `neverRelease` | boolean | No | — | Signifies if the evaluation is never to be released. This cannot be set true if release date is also set. |
 | `queue` | object | No | — | The queue value |
@@ -6375,6 +6551,9 @@ Update an evaluation
     },
     "authorizedActions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of user authorized actions on evaluation. Possible values: assign, edit, editScore, editAgentSignoff, delete, release, viewAudit"
     },
     "calibration": {
@@ -6483,6 +6662,9 @@ Update an evaluation
     },
     "divisionIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Evaluation is assigned in the following division(s)."
     },
     "evaluationForm": {
@@ -6744,6 +6926,22 @@ Update an evaluation
     },
     "mediaType": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "CALL",
+          "CALLBACK",
+          "CHAT",
+          "COBROWSE",
+          "EMAIL",
+          "MESSAGE",
+          "INTERNAL_MESSAGE",
+          "SCREEN_MONITORING",
+          "SOCIAL_EXPRESSION",
+          "VIDEO",
+          "SCREENSHARE"
+        ]
+      },
       "description": "List of different communication types used in conversation."
     },
     "name": {
@@ -7002,7 +7200,7 @@ Update an evaluation form.
 | `name` | string | Yes | — | The evaluation form name |
 | `published` | boolean | No | — | The published value |
 | `publishedVersions` | object | No | — | Published Versions |
-| `questionGroups` | any[] | Yes | — | A list of question groups |
+| `questionGroups` | object[] | Yes | — | A list of question groups |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -7135,6 +7333,9 @@ Update an evaluation form.
     },
     "questionGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of question groups"
     },
     "selfUri": {
@@ -7174,7 +7375,7 @@ Update a survey form.
 | `name` | string | Yes | — | The survey form name |
 | `published` | boolean | No | — | Is this form published |
 | `publishedVersions` | object | No | — | Published Versions |
-| `questionGroups` | any[] | No | — | A list of question groups |
+| `questionGroups` | object[] | No | — | A list of question groups |
 | `selfUri` | string | No | — | The URI for this object |
 
 <Expandable title="inputSchema">
@@ -7275,6 +7476,9 @@ Update a survey form.
     },
     "questionGroups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of question groups"
     },
     "selfUri": {

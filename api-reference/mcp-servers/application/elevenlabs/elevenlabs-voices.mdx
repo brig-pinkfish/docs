@@ -98,8 +98,8 @@ Add Voice
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `description` | object | No | — | A description of the voice. |
-| `files` | any[] | Yes | — | A list of file paths to audio recordings intended for voice cloning. |
+| `description` | string | No | — | A description of the voice. |
+| `files` | string[] | Yes | — | A list of file paths to audio recordings intended for voice cloning. |
 | `labels` | object | No | — | Labels for the voice. Keys can be language, accent, gender, or age. |
 | `name` | string | Yes | — | The name that identifies this voice. This will be displayed in the dropdown of the website. |
 | `remove_background_noise` | boolean | No | — | If set will remove background noise for voice samples using our audio isolation model. If the samples do not include background noise, it can make the quality worse. |
@@ -115,10 +115,15 @@ Add Voice
       "description": "Pink Connect ID for the authenticated connection"
     },
     "description": {
+      "type": "string",
       "description": "A description of the voice."
     },
     "files": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "binary"
+      },
       "description": "A list of file paths to audio recordings intended for voice cloning."
     },
     "labels": {
@@ -155,7 +160,7 @@ Create A New Voice From Voice Preview
 | --- | --- | --- | --- | --- |
 | `generated_voice_id` | string | Yes | — | The generated_voice_id to create, call POST /v1/text-to-voice/create-previews and fetch the generated_voice_id from the response header if don't have one yet. |
 | `labels` | object | No | — | Optional, metadata to add to the created voice. Defaults to None. |
-| `played_not_selected_voice_ids` | object | No | — | List of voice ids that the user has played but not selected. Used for RLHF. |
+| `played_not_selected_voice_ids` | string[] | No | — | List of voice ids that the user has played but not selected. Used for RLHF. |
 | `voice_description` | string | Yes | — | Description to use for the created voice. |
 | `voice_name` | string | Yes | — | Name to use for the created voice. |
 
@@ -174,9 +179,14 @@ Create A New Voice From Voice Preview
       "description": "The generated_voice_id to create, call POST /v1/text-to-voice/create-previews and fetch the generated_voice_id from the response header if don't have one yet."
     },
     "labels": {
+      "type": "object",
       "description": "Optional, metadata to add to the created voice. Defaults to None."
     },
     "played_not_selected_voice_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of voice ids that the user has played but not selected. Used for RLHF."
     },
     "voice_description": {
@@ -288,8 +298,8 @@ Edit Voice
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
-| `description` | object | No | — | A description of the voice. |
-| `files` | any[] | No | — | Audio files to add to the voice |
+| `description` | string | No | — | A description of the voice. |
+| `files` | string[] | No | — | Audio files to add to the voice |
 | `labels` | object | No | — | Labels for the voice. Keys can be language, accent, gender, or age. |
 | `name` | string | Yes | — | The name that identifies this voice. This will be displayed in the dropdown of the website. |
 | `remove_background_noise` | boolean | No | — | If set will remove background noise for voice samples using our audio isolation model. If the samples do not include background noise, it can make the quality worse. |
@@ -309,10 +319,15 @@ Edit Voice
       "description": "Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices."
     },
     "description": {
+      "type": "string",
       "description": "A description of the voice."
     },
     "files": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "binary"
+      },
       "description": "Audio files to add to the voice"
     },
     "labels": {
@@ -348,11 +363,11 @@ Edit Voice Settings
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `voice_id` | string | Yes | — | Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. |
-| `similarity_boost` | object | No | — | Determines how closely the AI should adhere to the original voice when attempting to replicate it. |
-| `speed` | object | No | — | Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up. |
-| `stability` | object | No | — | Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion. |
-| `style` | object | No | — | Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0. |
-| `use_speaker_boost` | object | No | — | This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency. |
+| `similarity_boost` | number | No | — | Determines how closely the AI should adhere to the original voice when attempting to replicate it. |
+| `speed` | number | No | — | Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up. |
+| `stability` | number | No | — | Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion. |
+| `style` | number | No | — | Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0. |
+| `use_speaker_boost` | boolean | No | — | This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency. |
 
 <Expandable title="inputSchema">
 
@@ -369,18 +384,23 @@ Edit Voice Settings
       "description": "Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices."
     },
     "similarity_boost": {
+      "type": "number",
       "description": "Determines how closely the AI should adhere to the original voice when attempting to replicate it."
     },
     "speed": {
+      "type": "number",
       "description": "Adjusts the speed of the voice. A value of 1.0 is the default speed, while values less than 1.0 slow down the speech, and values greater than 1.0 speed it up."
     },
     "stability": {
+      "type": "number",
       "description": "Determines how stable the voice is and the randomness between each generation. Lower values introduce broader emotional range for the voice. Higher values can result in a monotonous voice with limited emotion."
     },
     "style": {
+      "type": "number",
       "description": "Determines the style exaggeration of the voice. This setting attempts to amplify the style of the original speaker. It does consume additional computational resources and might increase latency if set to anything other than 0."
     },
     "use_speaker_boost": {
+      "type": "boolean",
       "description": "This setting boosts the similarity to the original speaker. Using this setting requires a slightly higher computational load, which in turn increases latency."
     }
   },
@@ -446,22 +466,22 @@ Get Voices
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `page_size` | integer | No | — | How many shared voices to return at maximum. Can not exceed 100, defaults to 30. |
-| `category` | object | No | — | Voice category used for filtering |
-| `gender` | object | No | — | Gender used for filtering |
-| `age` | object | No | — | Age used for filtering |
-| `accent` | object | No | — | Accent used for filtering |
-| `language` | object | No | — | Language used for filtering |
-| `locale` | object | No | — | Locale used for filtering |
-| `search` | object | No | — | Search term used for filtering |
-| `use_cases` | object | No | — | Use-case used for filtering |
-| `descriptives` | object | No | — | Search term used for filtering |
+| `category` | string | No | — | Voice category used for filtering |
+| `gender` | string | No | — | Gender used for filtering |
+| `age` | string | No | — | Age used for filtering |
+| `accent` | string | No | — | Accent used for filtering |
+| `language` | string | No | — | Language used for filtering |
+| `locale` | string | No | — | Locale used for filtering |
+| `search` | string | No | — | Search term used for filtering |
+| `use_cases` | string[] | No | — | Use-case used for filtering |
+| `descriptives` | string[] | No | — | Search term used for filtering |
 | `featured` | boolean | No | — | Filter featured voices |
-| `min_notice_period_days` | object | No | — | Filter voices with a minimum notice period of the given number of days. |
-| `include_custom_rates` | object | No | — | Include/exclude voices with custom rates |
-| `include_live_moderated` | object | No | — | Include/exclude voices that are live moderated |
+| `min_notice_period_days` | integer | No | — | Filter voices with a minimum notice period of the given number of days. |
+| `include_custom_rates` | boolean | No | — | Include/exclude voices with custom rates |
+| `include_live_moderated` | boolean | No | — | Include/exclude voices that are live moderated |
 | `reader_app_enabled` | boolean | No | — | Filter voices that are enabled for the reader app |
-| `owner_id` | object | No | — | Filter voices by public owner ID |
-| `sort` | object | No | — | Sort criteria |
+| `owner_id` | string | No | — | Filter voices by public owner ID |
+| `sort` | string | No | — | Sort criteria |
 | `page` | integer | No | — | Page number for pagination |
 
 <Expandable title="inputSchema">
@@ -479,6 +499,7 @@ Get Voices
       "description": "How many shared voices to return at maximum. Can not exceed 100, defaults to 30."
     },
     "category": {
+      "type": "string",
       "description": "Voice category used for filtering",
       "enum": [
         "professional",
@@ -487,27 +508,41 @@ Get Voices
       ]
     },
     "gender": {
+      "type": "string",
       "description": "Gender used for filtering"
     },
     "age": {
+      "type": "string",
       "description": "Age used for filtering"
     },
     "accent": {
+      "type": "string",
       "description": "Accent used for filtering"
     },
     "language": {
+      "type": "string",
       "description": "Language used for filtering"
     },
     "locale": {
+      "type": "string",
       "description": "Locale used for filtering"
     },
     "search": {
+      "type": "string",
       "description": "Search term used for filtering"
     },
     "use_cases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Use-case used for filtering"
     },
     "descriptives": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Search term used for filtering"
     },
     "featured": {
@@ -515,12 +550,15 @@ Get Voices
       "description": "Filter featured voices"
     },
     "min_notice_period_days": {
+      "type": "integer",
       "description": "Filter voices with a minimum notice period of the given number of days."
     },
     "include_custom_rates": {
+      "type": "boolean",
       "description": "Include/exclude voices with custom rates"
     },
     "include_live_moderated": {
+      "type": "boolean",
       "description": "Include/exclude voices that are live moderated"
     },
     "reader_app_enabled": {
@@ -528,9 +566,11 @@ Get Voices
       "description": "Filter voices that are enabled for the reader app"
     },
     "owner_id": {
+      "type": "string",
       "description": "Filter voices by public owner ID"
     },
     "sort": {
+      "type": "string",
       "description": "Sort criteria"
     },
     "page": {
@@ -582,8 +622,8 @@ Get Similar Library Voices
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `audio_file` | string | No | — | Audio File |
-| `similarity_threshold` | object | No | — | Threshold for voice similarity between provided sample and library voices. Values range from 0 to 2. The smaller the value the more similar voices will be returned. |
-| `top_k` | object | No | — | Number of most similar voices to return. If similarity_threshold is provided, less than this number of voices may be returned. Values range from 1 to 100. |
+| `similarity_threshold` | number | No | — | Threshold for voice similarity between provided sample and library voices. Values range from 0 to 2. The smaller the value the more similar voices will be returned. |
+| `top_k` | integer | No | — | Number of most similar voices to return. If similarity_threshold is provided, less than this number of voices may be returned. Values range from 1 to 100. |
 
 <Expandable title="inputSchema">
 
@@ -600,9 +640,11 @@ Get Similar Library Voices
       "description": "Audio File"
     },
     "similarity_threshold": {
+      "type": "number",
       "description": "Threshold for voice similarity between provided sample and library voices. Values range from 0 to 2. The smaller the value the more similar voices will be returned."
     },
     "top_k": {
+      "type": "integer",
       "description": "Number of most similar voices to return. If similarity_threshold is provided, less than this number of voices may be returned. Values range from 1 to 100."
     }
   },
@@ -674,17 +716,17 @@ Get Voices V2
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `next_page_token` | object | No | — | The next page token to use for pagination. Returned from the previous request. Use this in combination with the has_more flag for reliable pagination. |
+| `next_page_token` | string | No | — | The next page token to use for pagination. Returned from the previous request. Use this in combination with the has_more flag for reliable pagination. |
 | `page_size` | integer | No | — | How many voices to return at maximum. Can not exceed 100, defaults to 10. Page 0 may include more voices due to default voices being included. |
-| `search` | object | No | — | Search term to filter voices by. Searches in name, description, labels, category. |
-| `sort` | object | No | — | Which field to sort by, one of 'created_at_unix' or 'name'. 'created_at_unix' may not be available for older voices. |
-| `sort_direction` | object | No | — | Which direction to sort the voices in. 'asc' or 'desc'. |
-| `voice_type` | object | No | — | Type of the voice to filter by. One of 'personal', 'community', 'default', 'workspace', 'non-default', 'saved'. 'non-default' is equal to all but 'default'. 'saved' is equal to non-default, but includes default voices if they have been added to a collection. |
-| `category` | object | No | — | Category of the voice to filter by. One of 'premade', 'cloned', 'generated', 'professional' |
-| `fine_tuning_state` | object | No | — | State of the voice's fine tuning to filter by. Applicable only to professional voices clones. One of 'draft', 'not_verified', 'not_started', 'queued', 'fine_tuning', 'fine_tuned', 'failed', 'delayed' |
-| `collection_id` | object | No | — | Collection ID to filter voices by. |
+| `search` | string | No | — | Search term to filter voices by. Searches in name, description, labels, category. |
+| `sort` | string | No | — | Which field to sort by, one of 'created_at_unix' or 'name'. 'created_at_unix' may not be available for older voices. |
+| `sort_direction` | string | No | — | Which direction to sort the voices in. 'asc' or 'desc'. |
+| `voice_type` | string | No | — | Type of the voice to filter by. One of 'personal', 'community', 'default', 'workspace', 'non-default', 'saved'. 'non-default' is equal to all but 'default'. 'saved' is equal to non-default, but includes default voices if they have been added to a collection. |
+| `category` | string | No | — | Category of the voice to filter by. One of 'premade', 'cloned', 'generated', 'professional' |
+| `fine_tuning_state` | string | No | — | State of the voice's fine tuning to filter by. Applicable only to professional voices clones. One of 'draft', 'not_verified', 'not_started', 'queued', 'fine_tuning', 'fine_tuned', 'failed', 'delayed' |
+| `collection_id` | string | No | — | Collection ID to filter voices by. |
 | `include_total_count` | boolean | No | — | Whether to include the total count of voices found in the response. NOTE: The total_count value is a live snapshot and may change between requests as users create, modify, or delete voices. For pagination, rely on the has_more flag instead. Only enable this when you actually need the total count (e.g., for display purposes), as it incurs a performance cost. |
-| `voice_ids` | object | No | — | Voice IDs to lookup by. Maximum 100 voice IDs. |
+| `voice_ids` | string[] | No | — | Voice IDs to lookup by. Maximum 100 voice IDs. |
 
 <Expandable title="inputSchema">
 
@@ -697,6 +739,7 @@ Get Voices V2
       "description": "Pink Connect ID for the authenticated connection"
     },
     "next_page_token": {
+      "type": "string",
       "description": "The next page token to use for pagination. Returned from the previous request. Use this in combination with the has_more flag for reliable pagination."
     },
     "page_size": {
@@ -704,24 +747,31 @@ Get Voices V2
       "description": "How many voices to return at maximum. Can not exceed 100, defaults to 10. Page 0 may include more voices due to default voices being included."
     },
     "search": {
+      "type": "string",
       "description": "Search term to filter voices by. Searches in name, description, labels, category."
     },
     "sort": {
+      "type": "string",
       "description": "Which field to sort by, one of 'created_at_unix' or 'name'. 'created_at_unix' may not be available for older voices."
     },
     "sort_direction": {
+      "type": "string",
       "description": "Which direction to sort the voices in. 'asc' or 'desc'."
     },
     "voice_type": {
+      "type": "string",
       "description": "Type of the voice to filter by. One of 'personal', 'community', 'default', 'workspace', 'non-default', 'saved'. 'non-default' is equal to all but 'default'. 'saved' is equal to non-default, but includes default voices if they have been added to a collection."
     },
     "category": {
+      "type": "string",
       "description": "Category of the voice to filter by. One of 'premade', 'cloned', 'generated', 'professional'"
     },
     "fine_tuning_state": {
+      "type": "string",
       "description": "State of the voice's fine tuning to filter by. Applicable only to professional voices clones. One of 'draft', 'not_verified', 'not_started', 'queued', 'fine_tuning', 'fine_tuned', 'failed', 'delayed'"
     },
     "collection_id": {
+      "type": "string",
       "description": "Collection ID to filter voices by."
     },
     "include_total_count": {
@@ -729,6 +779,10 @@ Get Voices V2
       "description": "Whether to include the total count of voices found in the response. NOTE: The total_count value is a live snapshot and may change between requests as users create, modify, or delete voices. For pagination, rely on the has_more flag instead. Only enable this when you actually need the total count (e.g., for display purposes), as it incurs a performance cost."
     },
     "voice_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Voice IDs to lookup by. Maximum 100 voice IDs."
     }
   },
@@ -852,7 +906,7 @@ List Voices
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `show_legacy` | object | No | — | If set to true, legacy premade voices will be included in responses from /v1/voices |
+| `show_legacy` | boolean | No | — | If set to true, legacy premade voices will be included in responses from /v1/voices |
 
 <Expandable title="inputSchema">
 
@@ -865,6 +919,7 @@ List Voices
       "description": "Pink Connect ID for the authenticated connection"
     },
     "show_legacy": {
+      "type": "boolean",
       "description": "If set to true, legacy premade voices will be included in responses from /v1/voices"
     }
   },
@@ -891,9 +946,9 @@ Generate A Voice Preview From Description
 | `guidance_scale` | number | No | — | Controls how closely the AI follows the prompt. Lower numbers give the AI more freedom to be creative, while higher numbers force it to stick more to the prompt. High numbers can cause voice to sound artificial or robotic. We recommend to use longer, more detailed prompts at lower Guidance Scale. |
 | `loudness` | number | No | — | Controls the volume level of the generated voice. -1 is quietest, 1 is loudest, 0 corresponds to roughly -24 LUFS. |
 | `quality` | number | No | — | Higher quality results in better voice output but less variety. |
-| `seed` | object | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
+| `seed` | integer | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
 | `should_enhance` | boolean | No | — | Whether to enhance the voice description using AI to add more detail and improve voice generation quality. When enabled, the system will automatically expand simple prompts into more detailed voice descriptions. Defaults to False |
-| `text` | object | No | — | Text to generate, text length has to be between 100 and 1000. |
+| `text` | string | No | — | Text to generate, text length has to be between 100 and 1000. |
 | `voice_description` | string | Yes | — | Description to use for the created voice. |
 
 <Expandable title="inputSchema">
@@ -950,6 +1005,7 @@ Generate A Voice Preview From Description
       "description": "Higher quality results in better voice output but less variety."
     },
     "seed": {
+      "type": "integer",
       "description": "Random number that controls the voice generation. Same seed with same inputs produces same voice."
     },
     "should_enhance": {
@@ -957,6 +1013,7 @@ Generate A Voice Preview From Description
       "description": "Whether to enhance the voice description using AI to add more detail and improve voice generation quality. When enabled, the system will automatically expand simple prompts into more detailed voice descriptions. Defaults to False"
     },
     "text": {
+      "type": "string",
       "description": "Text to generate, text length has to be between 100 and 1000."
     },
     "voice_description": {
@@ -988,15 +1045,15 @@ Design A Voice.
 | `guidance_scale` | number | No | — | Controls how closely the AI follows the prompt. Lower numbers give the AI more freedom to be creative, while higher numbers force it to stick more to the prompt. High numbers can cause voice to sound artificial or robotic. We recommend to use longer, more detailed prompts at lower Guidance Scale. |
 | `loudness` | number | No | — | Controls the volume level of the generated voice. -1 is quietest, 1 is loudest, 0 corresponds to roughly -24 LUFS. |
 | `model_id` | string | No | — | Model to use for the voice generation. Possible values: eleven_multilingual_ttv_v2, eleven_ttv_v3. |
-| `prompt_strength` | object | No | — | Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model. |
-| `quality` | object | No | — | Higher quality results in better voice output but less variety. |
-| `reference_audio_base64` | object | No | — | Reference audio to use for the voice generation. The audio should be base64 encoded. Only supported when using the  eleven_ttv_v3 model. |
-| `remixing_session_id` | object | No | — | The remixing session id. |
-| `remixing_session_iteration_id` | object | No | — | The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created. |
-| `seed` | object | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
+| `prompt_strength` | number | No | — | Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model. |
+| `quality` | number | No | — | Higher quality results in better voice output but less variety. |
+| `reference_audio_base64` | string | No | — | Reference audio to use for the voice generation. The audio should be base64 encoded. Only supported when using the  eleven_ttv_v3 model. |
+| `remixing_session_id` | string | No | — | The remixing session id. |
+| `remixing_session_iteration_id` | string | No | — | The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created. |
+| `seed` | integer | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
 | `should_enhance` | boolean | No | — | Whether to enhance the voice description using AI to add more detail and improve voice generation quality. When enabled, the system will automatically expand simple prompts into more detailed voice descriptions. Defaults to False |
 | `stream_previews` | boolean | No | — | Determines whether the Text to Voice previews should be included in the response. If true, only the generated IDs will be returned which can then be streamed via the /v1/text-to-voice/:generated_voice_id/stream endpoint. |
-| `text` | object | No | — | Text to generate, text length has to be between 100 and 1000. |
+| `text` | string | No | — | Text to generate, text length has to be between 100 and 1000. |
 | `voice_description` | string | Yes | — | Description to use for the created voice. |
 
 <Expandable title="inputSchema">
@@ -1057,21 +1114,27 @@ Design A Voice.
       ]
     },
     "prompt_strength": {
+      "type": "number",
       "description": "Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model."
     },
     "quality": {
+      "type": "number",
       "description": "Higher quality results in better voice output but less variety."
     },
     "reference_audio_base64": {
+      "type": "string",
       "description": "Reference audio to use for the voice generation. The audio should be base64 encoded. Only supported when using the  eleven_ttv_v3 model."
     },
     "remixing_session_id": {
+      "type": "string",
       "description": "The remixing session id."
     },
     "remixing_session_iteration_id": {
+      "type": "string",
       "description": "The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created."
     },
     "seed": {
+      "type": "integer",
       "description": "Random number that controls the voice generation. Same seed with same inputs produces same voice."
     },
     "should_enhance": {
@@ -1083,6 +1146,7 @@ Design A Voice.
       "description": "Determines whether the Text to Voice previews should be included in the response. If true, only the generated IDs will be returned which can then be streamed via the /v1/text-to-voice/:generated_voice_id/stream endpoint."
     },
     "text": {
+      "type": "string",
       "description": "Text to generate, text length has to be between 100 and 1000."
     },
     "voice_description": {
@@ -1150,12 +1214,12 @@ Remix A Voice.
 | `auto_generate_text` | boolean | No | — | Whether to automatically generate a text suitable for the voice description. |
 | `guidance_scale` | number | No | — | Controls how closely the AI follows the prompt. Lower numbers give the AI more freedom to be creative, while higher numbers force it to stick more to the prompt. High numbers can cause voice to sound artificial or robotic. We recommend to use longer, more detailed prompts at lower Guidance Scale. |
 | `loudness` | number | No | — | Controls the volume level of the generated voice. -1 is quietest, 1 is loudest, 0 corresponds to roughly -24 LUFS. |
-| `prompt_strength` | object | No | — | Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model. |
-| `remixing_session_id` | object | No | — | The remixing session id. |
-| `remixing_session_iteration_id` | object | No | — | The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created. |
-| `seed` | object | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
+| `prompt_strength` | number | No | — | Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model. |
+| `remixing_session_id` | string | No | — | The remixing session id. |
+| `remixing_session_iteration_id` | string | No | — | The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created. |
+| `seed` | integer | No | — | Random number that controls the voice generation. Same seed with same inputs produces same voice. |
 | `stream_previews` | boolean | No | — | Determines whether the Text to Voice previews should be included in the response. If true, only the generated IDs will be returned which can then be streamed via the /v1/text-to-voice/:generated_voice_id/stream endpoint. |
-| `text` | object | No | — | Text to generate, text length has to be between 100 and 1000. |
+| `text` | string | No | — | Text to generate, text length has to be between 100 and 1000. |
 | `voice_description` | string | Yes | — | Description of the changes to make to the voice. |
 
 <Expandable title="inputSchema">
@@ -1212,15 +1276,19 @@ Remix A Voice.
       "description": "Controls the volume level of the generated voice. -1 is quietest, 1 is loudest, 0 corresponds to roughly -24 LUFS."
     },
     "prompt_strength": {
+      "type": "number",
       "description": "Controls the balance of prompt versus reference audio when generating voice samples. 0 means almost no prompt influence, 1 means almost no reference audio influence. Only supported when using the eleven_ttv_v3 model."
     },
     "remixing_session_id": {
+      "type": "string",
       "description": "The remixing session id."
     },
     "remixing_session_iteration_id": {
+      "type": "string",
       "description": "The id of the remixing session iteration where these generations should be attached to. If not provided, a new iteration will be created."
     },
     "seed": {
+      "type": "integer",
       "description": "Random number that controls the voice generation. Same seed with same inputs produces same voice."
     },
     "stream_previews": {
@@ -1228,6 +1296,7 @@ Remix A Voice.
       "description": "Determines whether the Text to Voice previews should be included in the response. If true, only the generated IDs will be returned which can then be streamed via the /v1/text-to-voice/:generated_voice_id/stream endpoint."
     },
     "text": {
+      "type": "string",
       "description": "Text to generate, text length has to be between 100 and 1000."
     },
     "voice_description": {

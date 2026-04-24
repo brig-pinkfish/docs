@@ -308,7 +308,7 @@ Create Tags
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `accountId` | string | Yes | — | Unique identifier for the account |
-| `tags` | any[] | Yes | — | List of tags to create |
+| `tags` | object[] | Yes | — | List of tags to create |
 
 <Expandable title="inputSchema">
 
@@ -326,6 +326,9 @@ Create Tags
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of tags to create"
     }
   },
@@ -819,7 +822,7 @@ Patch Metadata
 | `accountId` | string | Yes | — | Unique identifier for the specific team |
 | `assetCatalogId` | integer | Yes | — | Unique identifier for the specific workspace |
 | `assetId` | integer | Yes | — | Unique identifier for the specific asset |
-| `operations` | any[] | Yes | — | The operations value |
+| `operations` | object[] | Yes | — | The operations value |
 
 <Expandable title="inputSchema">
 
@@ -845,6 +848,9 @@ Patch Metadata
     },
     "operations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The operations value"
     }
   },
@@ -873,7 +879,7 @@ Project - Patch Metadata
 | `accountId` | string | Yes | — | Unique identifier for the specific team |
 | `projectId` | integer | Yes | — | Unique identifier for the specific project |
 | `assetId` | integer | Yes | — | Unique identifier for the specific asset |
-| `operations` | any[] | Yes | — | The operations value |
+| `operations` | object[] | Yes | — | The operations value |
 
 <Expandable title="inputSchema">
 
@@ -899,6 +905,9 @@ Project - Patch Metadata
     },
     "operations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The operations value"
     }
   },
@@ -926,7 +935,7 @@ Patch Tag
 | --- | --- | --- | --- | --- |
 | `accountId` | string | Yes | — | Unique identifier for the account |
 | `tagId` | integer | Yes | — | Unique identifier for the tag |
-| `operations` | any[] | No | — | The operations value |
+| `operations` | object[] | No | — | The operations value |
 
 <Expandable title="inputSchema">
 
@@ -948,6 +957,9 @@ Patch Tag
     },
     "operations": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The operations value"
     }
   },
@@ -1102,17 +1114,17 @@ Search Assets
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `accountId` | string | Yes | — | Unique identifier for the specific team |
-| `assetSubTypes` | any[] | No | — | List of asset sub-types to filter the search results. |
+| `assetSubTypes` | string[] | No | — | List of asset sub-types to filter the search results. |
 | `assetType` | string | No | — | Asset Type |
-| `collections` | any[] | No | — | List of collection IDs to filter the search results. |
+| `collections` | string[] | No | — | List of collection IDs to filter the search results. |
 | `cursor` | string | No | — | Cursor for pagination. |
 | `limit` | integer | No | — | Maximum number of results to return |
-| `mediaTypes` | any[] | No | — | Media types to filter the search results. Defaults to [DEFAULT] is not specified any |
+| `mediaTypes` | string[] | No | — | Media types to filter the search results. Defaults to [DEFAULT] is not specified any |
 | `query` | string | No | — | Natural language search query. When provided the search honors the query, if not provided anything; all assets match. |
-| `referencedBy` | any[] | No | — | List of entity types that reference the assets. Currently PRODUCT is only supported. |
+| `referencedBy` | string[] | No | — | List of entity types that reference the assets. Currently PRODUCT is only supported. |
 | `relevance` | number | No | — | The relevance value |
 | `searchScope` | string | No | — | Scope of the search. Defaults to ORG if not provided. |
-| `tags` | any[] | No | — | List of tags to filter the search results. |
+| `tags` | string[] | No | — | List of tags to filter the search results. |
 | `thumbnailProperties` | object | No | — | Properties for generating thumbnails in the search results. |
 | `workspaceId` | string | No | — | Project Id or Asset librarary Id |
 
@@ -1132,6 +1144,19 @@ Search Assets
     },
     "assetSubTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "IMAGE",
+          "GENERATED_IMAGE",
+          "DOCUMENT",
+          "URL",
+          "FILE",
+          "VIDEO",
+          "VIDEO_SCRIPT",
+          "VIDEO_EXPORT"
+        ]
+      },
       "description": "List of asset sub-types to filter the search results."
     },
     "assetType": {
@@ -1149,6 +1174,9 @@ Search Assets
     },
     "collections": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of collection IDs to filter the search results."
     },
     "cursor": {
@@ -1161,6 +1189,13 @@ Search Assets
     },
     "mediaTypes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "GRAPHIC_SVG",
+          "DEFAULT"
+        ]
+      },
       "description": "Media types to filter the search results. Defaults to [DEFAULT] is not specified any"
     },
     "query": {
@@ -1169,6 +1204,12 @@ Search Assets
     },
     "referencedBy": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PRODUCT"
+        ]
+      },
       "description": "List of entity types that reference the assets. Currently PRODUCT is only supported."
     },
     "relevance": {
@@ -1185,6 +1226,9 @@ Search Assets
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of tags to filter the search results."
     },
     "thumbnailProperties": {
