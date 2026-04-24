@@ -300,7 +300,7 @@ Get the list of Speech and Text Analytics categories
 | `name` | string | No | — | The category name filter applied to the listing |
 | `sortOrder` | string | No | — | The sort order for the listing |
 | `sortBy` | string | No | — | The field to sort by for the listing |
-| `ids` | any[] | No | — | Comma separated Category IDs to filter by. Cannot be used with other filters. Maximum of 25 IDs allowed. |
+| `ids` | string[] | No | — | Comma separated Category IDs to filter by. Cannot be used with other filters. Maximum of 25 IDs allowed. |
 
 <Expandable title="inputSchema">
 
@@ -342,6 +342,9 @@ Get the list of Speech and Text Analytics categories
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Comma separated Category IDs to filter by. Cannot be used with other filters. Maximum of 25 IDs allowed."
     }
   },
@@ -1056,7 +1059,7 @@ Get the list of program AI Insights settings for the organization
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | The page size for the listing. The max that will be returned is 100. |
 | `pageNumber` | integer | No | — | The page number for the listing |
-| `programIds` | any[] | No | — | Comma separated Program IDs to filter by. Maximum of 50 IDs allowed. |
+| `programIds` | string[] | No | — | Comma separated Program IDs to filter by. Maximum of 50 IDs allowed. |
 
 <Expandable title="inputSchema">
 
@@ -1078,6 +1081,9 @@ Get the list of program AI Insights settings for the organization
     },
     "programIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Comma separated Program IDs to filter by. Maximum of 50 IDs allowed."
     }
   },
@@ -1326,8 +1332,8 @@ Get the list of Speech & Text Analytics topics
 | `pageNumber` | integer | No | — | The page number for the listing |
 | `state` | string | No | — | Topic state. Defaults to latest |
 | `name` | string | No | — | Case insensitive partial name to filter by |
-| `ids` | any[] | No | — | Comma separated Topic IDs to filter by. Cannot be used with other filters. Maximum of 50 IDs allowed. |
-| `dialects` | any[] | No | — | Comma separated dialect strings to filter by. Maximum of 15 dialects allowed. |
+| `ids` | string[] | No | — | Comma separated Topic IDs to filter by. Cannot be used with other filters. Maximum of 50 IDs allowed. |
+| `dialects` | string[] | No | — | Comma separated dialect strings to filter by. Maximum of 15 dialects allowed. |
 | `sortBy` | string | No | — | Sort results by. Defaults to name |
 | `sortOrder` | string | No | — | Sort order. Defaults to asc |
 
@@ -1367,10 +1373,34 @@ Get the list of Speech & Text Analytics topics
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Comma separated Topic IDs to filter by. Cannot be used with other filters. Maximum of 50 IDs allowed."
     },
     "dialects": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "en-US",
+          "es-US",
+          "en-AU",
+          "en-GB",
+          "en-ZA",
+          "es-ES",
+          "en-IN",
+          "fr-FR",
+          "fr-CA",
+          "it-IT",
+          "de-DE",
+          "pt-BR",
+          "pl-PL",
+          "pt-PT",
+          "nl-NL",
+          "ko-KR"
+        ]
+      },
       "description": "Comma separated dialect strings to filter by. Maximum of 15 dialects allowed."
     },
     "sortBy": {
@@ -1738,7 +1768,7 @@ Patch Speech And Text Analytics Settings
 | --- | --- | --- | --- | --- |
 | `agentEmpathyEnabled` | boolean | No | — | Setting to enable/disable Agent Empathy setting |
 | `defaultProgramId` | string | No | — | Setting to choose name for the default program for topic detection |
-| `expectedDialects` | any[] | No | — | Setting to choose expected dialects |
+| `expectedDialects` | string[] | No | — | Setting to choose expected dialects |
 | `textAnalyticsEnabled` | boolean | No | — | Setting to enable/disable text analytics |
 
 <Expandable title="inputSchema">
@@ -1761,6 +1791,9 @@ Patch Speech And Text Analytics Settings
     },
     "expectedDialects": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Setting to choose expected dialects"
     },
     "textAnalyticsEnabled": {
@@ -1891,11 +1924,11 @@ Create a Speech & Text Analytics DictionaryFeedback
 | `dateModified` | string | No | — | The Timestamp when dictionary feedback modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dialect` | string | Yes | — | The dialect for the given term, dialect format is &#123;language&#125;-&#123;country&#125; where language follows ISO 639-1 standard and country follows ISO 3166-1 alpha 2 standard |
 | `displayAs` | string | No | — | The display name for the dictionary feedback. Only returned when GenesysExtended feature is enabled. This field is only valid for Extended Services transcription engine. |
-| `examplePhrases` | any[] | No | — | A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine. |
+| `examplePhrases` | object[] | No | — | A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedBy` | object | No | — | Modified By |
 | `selfUri` | string | No | — | The URI for this object |
-| `soundsLike` | any[] | No | — | A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine. |
+| `soundsLike` | string[] | No | — | A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine. |
 | `source` | string | No | — | The source of the given dictionary feedback |
 | `status` | string | No | — | The status of the dictionary feedback. Only returned when GenesysExtended feature is enabled. |
 | `term` | string | Yes | — | The dictionary term which needs to be added to dictionary feedback system |
@@ -1947,6 +1980,9 @@ Create a Speech & Text Analytics DictionaryFeedback
     },
     "examplePhrases": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine."
     },
     "id": {
@@ -1973,6 +2009,9 @@ Create a Speech & Text Analytics DictionaryFeedback
     },
     "soundsLike": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine."
     },
     "source": {
@@ -2027,8 +2066,8 @@ Create new Speech & Text Analytics program
 | --- | --- | --- | --- | --- |
 | `description` | string | No | — | The program description |
 | `name` | string | Yes | — | The program name |
-| `tags` | any[] | No | — | The program tags |
-| `topicIds` | any[] | No | — | The ids of topics associated to the program |
+| `tags` | string[] | No | — | The program tags |
+| `topicIds` | string[] | No | — | The ids of topics associated to the program |
 
 <Expandable title="inputSchema">
 
@@ -2050,10 +2089,16 @@ Create new Speech & Text Analytics program
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The program tags"
     },
     "topicIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of topics associated to the program"
     }
   },
@@ -2164,7 +2209,7 @@ Create new Speech & Text Analytics publish programs job
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `programIds` | any[] | Yes | — | The ids of the programs used for this job |
+| `programIds` | string[] | Yes | — | The ids of the programs used for this job |
 
 <Expandable title="inputSchema">
 
@@ -2178,6 +2223,9 @@ Create new Speech & Text Analytics publish programs job
     },
     "programIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of the programs used for this job"
     }
   },
@@ -2282,10 +2330,10 @@ Create new Speech & Text Analytics topic
 | `dialect` | string | Yes | — | The topic dialect |
 | `name` | string | Yes | — | The topic name |
 | `participants` | string | No | — | The topic participants, default value is All |
-| `phrases` | any[] | No | — | The topic phrases |
-| `programIds` | any[] | No | — | The ids of programs associated to the topic |
+| `phrases` | object[] | No | — | The topic phrases |
+| `programIds` | string[] | No | — | The ids of programs associated to the topic |
 | `strictness` | string | No | — | The topic strictness, default value is 72 |
-| `tags` | any[] | No | — | The topic tags |
+| `tags` | string[] | No | — | The topic tags |
 
 <Expandable title="inputSchema">
 
@@ -2320,10 +2368,16 @@ Create new Speech & Text Analytics topic
     },
     "phrases": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The topic phrases"
     },
     "programIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of programs associated to the topic"
     },
     "strictness": {
@@ -2340,6 +2394,9 @@ Create new Speech & Text Analytics topic
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The topic tags"
     }
   },
@@ -2363,7 +2420,7 @@ Create new Speech & Text Analytics publish topics job
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `topicIds` | any[] | Yes | — | The ids of the topics used for this job |
+| `topicIds` | string[] | Yes | — | The ids of the topics used for this job |
 
 <Expandable title="inputSchema">
 
@@ -2377,6 +2434,9 @@ Create new Speech & Text Analytics publish topics job
     },
     "topicIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of the topics used for this job"
     }
   },
@@ -2600,11 +2660,11 @@ Update existing Speech & Text Analytics dictionary feedback by id
 | `dateModified` | string | No | — | The Timestamp when dictionary feedback modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dialect` | string | Yes | — | The dialect for the given term, dialect format is &#123;language&#125;-&#123;country&#125; where language follows ISO 639-1 standard and country follows ISO 3166-1 alpha 2 standard |
 | `displayAs` | string | No | — | The display name for the dictionary feedback. Only returned when GenesysExtended feature is enabled. This field is only valid for Extended Services transcription engine. |
-| `examplePhrases` | any[] | No | — | A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine. |
+| `examplePhrases` | object[] | No | — | A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine. |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `modifiedBy` | object | No | — | Modified By |
 | `selfUri` | string | No | — | The URI for this object |
-| `soundsLike` | any[] | No | — | A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine. |
+| `soundsLike` | string[] | No | — | A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine. |
 | `source` | string | No | — | The source of the given dictionary feedback |
 | `status` | string | No | — | The status of the dictionary feedback. Only returned when GenesysExtended feature is enabled. |
 | `term` | string | Yes | — | The dictionary term which needs to be added to dictionary feedback system |
@@ -2660,6 +2720,9 @@ Update existing Speech & Text Analytics dictionary feedback by id
     },
     "examplePhrases": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of at least 3 and up to 20 unique phrases that are example usage of the term. This field is only valid and required for Genesys transcription engine."
     },
     "id": {
@@ -2686,6 +2749,9 @@ Update existing Speech & Text Analytics dictionary feedback by id
     },
     "soundsLike": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of up to 10 terms that give examples of how the term sounds. This field is only valid for Genesys transcription engine."
     },
     "source": {
@@ -2742,8 +2808,8 @@ Update existing Speech & Text Analytics program
 | `programId` | string | Yes | — | The id of the program |
 | `description` | string | No | — | The program description |
 | `name` | string | Yes | — | The program name |
-| `tags` | any[] | No | — | The program tags |
-| `topicIds` | any[] | No | — | The ids of topics associated to the program |
+| `tags` | string[] | No | — | The program tags |
+| `topicIds` | string[] | No | — | The ids of topics associated to the program |
 
 <Expandable title="inputSchema">
 
@@ -2769,10 +2835,16 @@ Update existing Speech & Text Analytics program
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The program tags"
     },
     "topicIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of topics associated to the program"
     }
   },
@@ -2797,8 +2869,8 @@ Set Speech & Text Analytics program mappings to queues and flows
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `programId` | string | Yes | — | The id of the program |
-| `flowIds` | any[] | Yes | — | The program flows |
-| `queueIds` | any[] | Yes | — | The program queues |
+| `flowIds` | string[] | Yes | — | The program flows |
+| `queueIds` | string[] | Yes | — | The program queues |
 
 <Expandable title="inputSchema">
 
@@ -2816,10 +2888,16 @@ Set Speech & Text Analytics program mappings to queues and flows
     },
     "flowIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The program flows"
     },
     "queueIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The program queues"
     }
   },
@@ -2887,7 +2965,7 @@ Update transcription engine settings of a program
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `programId` | string | Yes | — | The id of the program |
-| `transcriptionEngines` | any[] | Yes | — | The transcription engine setting |
+| `transcriptionEngines` | object[] | Yes | — | The transcription engine setting |
 
 <Expandable title="inputSchema">
 
@@ -2905,6 +2983,9 @@ Update transcription engine settings of a program
     },
     "transcriptionEngines": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The transcription engine setting"
     }
   },
@@ -2930,7 +3011,7 @@ Update Speech And Text Analytics Settings
 | --- | --- | --- | --- | --- |
 | `agentEmpathyEnabled` | boolean | No | — | Setting to enable/disable Agent Empathy setting |
 | `defaultProgramId` | string | No | — | Setting to choose name for the default program for topic detection |
-| `expectedDialects` | any[] | No | — | Setting to choose expected dialects |
+| `expectedDialects` | string[] | No | — | Setting to choose expected dialects |
 | `textAnalyticsEnabled` | boolean | No | — | Setting to enable/disable text analytics |
 
 <Expandable title="inputSchema">
@@ -2953,6 +3034,9 @@ Update Speech And Text Analytics Settings
     },
     "expectedDialects": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Setting to choose expected dialects"
     },
     "textAnalyticsEnabled": {
@@ -2983,10 +3067,10 @@ Update existing Speech & Text Analytics topic
 | `dialect` | string | Yes | — | The topic dialect |
 | `name` | string | Yes | — | The topic name |
 | `participants` | string | No | — | The topic participants, default value is All |
-| `phrases` | any[] | No | — | The topic phrases |
-| `programIds` | any[] | No | — | The ids of programs associated to the topic |
+| `phrases` | object[] | No | — | The topic phrases |
+| `programIds` | string[] | No | — | The ids of programs associated to the topic |
 | `strictness` | string | No | — | The topic strictness, default value is 72 |
-| `tags` | any[] | No | — | The topic tags |
+| `tags` | string[] | No | — | The topic tags |
 
 <Expandable title="inputSchema">
 
@@ -3025,10 +3109,16 @@ Update existing Speech & Text Analytics topic
     },
     "phrases": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The topic phrases"
     },
     "programIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The ids of programs associated to the topic"
     },
     "strictness": {
@@ -3045,6 +3135,9 @@ Update existing Speech & Text Analytics topic
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The topic tags"
     }
   },

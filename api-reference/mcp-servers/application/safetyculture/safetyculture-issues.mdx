@@ -43,7 +43,7 @@ List Categories
 | --- | --- | --- | --- | --- |
 | `include_deleted` | boolean | No | — | Optional. If this is set to true, all categories including deleted categories will be returned. |
 | `search` | string | No | — | Search used to search for specific named categories |
-| `category_ids` | any[] | No | — | Define specific categoryIDs to filter for |
+| `category_ids` | string[] | No | — | Define specific categoryIDs to filter for |
 | `page_token` | string | No | — | Page token used to scroll for the next set of categories |
 | `page_size` | integer | No | — | Number of categories to respond with |
 | `sort_direction` | string | No | — | Optional. Direction for sorting. |
@@ -69,6 +69,9 @@ List Categories
     },
     "category_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Define specific categoryIDs to filter for"
     },
     "page_token": {
@@ -112,7 +115,7 @@ Add Issue assignee
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The UUID of the task being updated. |
-| `collaborators` | any[] | No | — | Required. The collaborators to be added to the task. |
+| `collaborators` | object[] | Yes | — | Required. The collaborators to be added to the task. |
 | `modified_at` | string | No | — | Optional. The timestamp of when this event occurred. |
 
 <Expandable title="inputSchema">
@@ -131,6 +134,9 @@ Add Issue assignee
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Required. The collaborators to be added to the task."
     },
     "modified_at": {
@@ -140,7 +146,8 @@ Add Issue assignee
   },
   "required": [
     "PCID",
-    "task_id"
+    "task_id",
+    "collaborators"
   ]
 }
 ```
@@ -157,7 +164,7 @@ Delete Issues
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ids` | any[] | Yes | — | The list of issue UUIDs to be deleted. |
+| `ids` | string[] | Yes | — | The list of issue UUIDs to be deleted. |
 | `modified_at` | string | No | — | Optional. The UTC time and date the deletion took place. |
 
 <Expandable title="inputSchema">
@@ -172,6 +179,9 @@ Delete Issues
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of issue UUIDs to be deleted."
     },
     "modified_at": {
@@ -234,7 +244,7 @@ List Issues
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filters` | any[] | No | — | Optional. An array of filters can be provided in the request to filter the issues. |
+| `filters` | object[] | No | — | Optional. An array of filters can be provided in the request to filter the issues. |
 | `page_size` | integer | No | — | Optional. Number of issues to be returned in a single request. This must be a value between 1 and 100, any values outside of this range will be ignored. The presence of `next_page_token` in the response indicates that more results might be available. |
 | `page_token` | string | No | — | Optional. If present, then retrieve the next batch of results from the preceding call to this method. `page_token` must be the value of `next_page_token` from the previous response.  The values of other method parameters should be identical to those in the previous call. This can be used to retrieve more than 100 issues with multiple API calls. For example: 'ODFBMzQ3MDYtNzQxNy00RDZGLThDNjE1MEFDMkM4MTQ3NDQ=' |
 | `sort_direction` | string | No | — | Optional. Direction for sorting. |
@@ -252,6 +262,9 @@ List Issues
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. An array of filters can be provided in the request to filter the issues."
     },
     "page_size": {
@@ -302,7 +315,7 @@ Get count of Issues
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filters` | any[] | No | — | Optional. An array of filters can be provided in the request to filter the issues. |
+| `filters` | object[] | No | — | Optional. An array of filters can be provided in the request to filter the issues. |
 | `page_size` | integer | No | — | Optional. Number of issues to be returned in a single request. This must be a value between 1 and 100, any values outside of this range will be ignored. The presence of `next_page_token` in the response indicates that more results might be available. |
 | `page_token` | string | No | — | Optional. If present, then retrieve the next batch of results from the preceding call to this method. `page_token` must be the value of `next_page_token` from the previous response.  The values of other method parameters should be identical to those in the previous call. This can be used to retrieve more than 100 issues with multiple API calls. For example: 'ODFBMzQ3MDYtNzQxNy00RDZGLThDNjE1MEFDMkM4MTQ3NDQ=' |
 | `sort_direction` | string | No | — | Optional. Direction for sorting. |
@@ -320,6 +333,9 @@ Get count of Issues
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. An array of filters can be provided in the request to filter the issues."
     },
     "page_size": {
@@ -407,7 +423,7 @@ Remove Issue assignee
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The UUID of the task being updated. |
-| `collaborators` | any[] | No | — | Required. The collaborators to be removed from the task. |
+| `collaborators` | object[] | Yes | — | Required. The collaborators to be removed from the task. |
 | `modified_at` | string | No | — | Optional. The timestamp of when this event occurred. |
 
 <Expandable title="inputSchema">
@@ -426,6 +442,9 @@ Remove Issue assignee
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Required. The collaborators to be removed from the task."
     },
     "modified_at": {
@@ -435,7 +454,8 @@ Remove Issue assignee
   },
   "required": [
     "PCID",
-    "task_id"
+    "task_id",
+    "collaborators"
   ]
 }
 ```
@@ -453,19 +473,19 @@ Create Issue
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `access_token` | string | No | — | Optional. The access token used to authenticate the request. This field should be set when following the contributor flow. Otherwise, authenticate via normal means. |
-| `answered_questions` | any[] | No | — | Optional. An array of all, if any, custom questions that have been answered by the contributor @deprecated: Use `QuestionAnswer` instead. This was a field used for string custom questions. We've since moved to structured custom questions in the `QuestionAnswer` field. |
+| `answered_questions` | string[] | No | — | Optional. An array of all, if any, custom questions that have been answered by the contributor @deprecated: Use `QuestionAnswer` instead. This was a field used for string custom questions. We've since moved to structured custom questions in the `QuestionAnswer` field. |
 | `asset_id` | string | No | — | Optional. The ID of the asset associated with this incident. |
 | `category_id` | string | Yes | — | Required. ID of the incident's category If not set, this incident will be stored with the default category(None) |
 | `contact` | string | No | — | Optional. The contact details of the contributor |
 | `created_at` | string | No | — | Optional. Date and time this incident was created |
 | `description` | string | No | — | Optional. Description of the issue (maximum 500 characters). |
 | `email` | string | No | — | Optional. The email address of the contributor |
-| `items` | any[] | No | — | Optional. The category fields and questions that applied to this incident when it was created. |
+| `items` | object[] | No | — | Optional. The category fields and questions that applied to this incident when it was created. |
 | `location` | object | No | — | The location that the incident occurred at |
-| `media` | any[] | No | — | Optional. Array of media items to be linked to the incident. |
+| `media` | object[] | No | — | Optional. Array of media items to be linked to the incident. |
 | `name` | string | No | — | Optional. The name of the contributor |
 | `occurred_at` | string | No | — | Optional. Date and time this incident occurred at |
-| `questions_and_answers` | any[] | No | — | Optional. An array of all, if any, custom questions that have been answered for this issue. |
+| `questions_and_answers` | object[] | No | — | Optional. An array of all, if any, custom questions that have been answered for this issue. |
 | `site_id` | string | No | — | Optional. ID of the site to associate with the incident. If not provided, no site will be associated with the incident. |
 | `task_id` | string | No | — | Optional. The unique identifier of the incident If not provided, UUID will be generated server side |
 | `title` | string | Yes | — | Required. Title of the incident Title is limited to only 255 characters max |
@@ -486,6 +506,9 @@ Create Issue
     },
     "answered_questions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Optional. An array of all, if any, custom questions that have been answered by the contributor @deprecated: Use `QuestionAnswer` instead. This was a field used for string custom questions. We've since moved to structured custom questions in the `QuestionAnswer` field."
     },
     "asset_id": {
@@ -514,6 +537,9 @@ Create Issue
     },
     "items": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. The category fields and questions that applied to this incident when it was created."
     },
     "location": {
@@ -568,6 +594,9 @@ Create Issue
     },
     "media": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. Array of media items to be linked to the incident."
     },
     "name": {
@@ -580,6 +609,9 @@ Create Issue
     },
     "questions_and_answers": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. An array of all, if any, custom questions that have been answered for this issue."
     },
     "site_id": {
@@ -638,7 +670,8 @@ Update Issue asset
       "description": "Optional. The new asset UUID for the task. If this is empty, the asset will be unset.",
       "properties": {
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "The value value"
         }
       }
     },
@@ -714,7 +747,7 @@ Update Issue description
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The UUID of the task being updated. |
-| `description` | string | No | — | Required. The new description for the task. |
+| `description` | string | Yes | — | Required. The new description for the task. |
 | `modified_at` | string | No | — | Optional. The timestamp of when this event occurred. |
 
 <Expandable title="inputSchema">
@@ -742,7 +775,8 @@ Update Issue description
   },
   "required": [
     "PCID",
-    "task_id"
+    "task_id",
+    "description"
   ]
 }
 ```
@@ -925,7 +959,8 @@ Update Issue site
       "description": "Optional. The new site UUID for the task. If this is empty, the site will be unset. Use the `GetFolders` endpoint to get the available sites.",
       "properties": {
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "The value value"
         }
       }
     }

@@ -12,7 +12,7 @@ description: "Speech-to-text and text-to-speech"
 
 | Tool | Description |
 | --- | --- |
-| [`deepgram_transcribe_audio`](#deepgram_transcribe_audio) | Transcribe audio file using Deepgram speech recognition |
+| [`deepgram_transcribe_audio`](#deepgram_transcribe_audio) | Transcribe audio (or video) from a URL using Deepgram. Returns full Deepgram response including word-level timestamps in channels[].alternatives[].words[]. Enable utterances/paragraphs/diarize for structured timing. |
 | [`deepgram_transcribe_live`](#deepgram_transcribe_live) | Start live audio transcription stream |
 | [`deepgram_analyze_audio`](#deepgram_analyze_audio) | Analyze audio for insights beyond transcription |
 | [`deepgram_get_usage`](#deepgram_get_usage) | Get usage statistics for Deepgram API |
@@ -23,23 +23,44 @@ description: "Speech-to-text and text-to-speech"
 
 ## deepgram_transcribe_audio
 
-Transcribe audio file using Deepgram speech recognition
+Transcribe audio (or video) from a URL using Deepgram. Returns full Deepgram response including word-level timestamps in channels[].alternatives[].words[]. Enable utterances/paragraphs/diarize for structured timing.
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `audioUrl` | string | Yes | — | URL of audio file to transcribe |
-| `model` | string | No | `"nova-2"` | Deepgram model to use |
-| `language` | string | No | `"en-US"` | Language code |
-| `punctuate` | boolean | No | `true` | Add punctuation to transcript |
-| `diarize` | boolean | No | `false` | Enable speaker diarization |
-| `numerals` | boolean | No | `true` | Convert numbers to numerals |
-| `profanityFilter` | boolean | No | `false` | Filter profanity |
-| `redact` | string[] | No | — | Redaction options. Common: pci (credit card info), pii (personally identifiable info), phi (protected health info), numbers (numerical entities), ssn (social security numbers). For pre-recorded: supports all options plus specific entity types. For streaming: pci, phi, numbers, aggressive_numbers, ssn. |
-| `summarize` | boolean | No | `false` | Generate summary |
-| `detectTopics` | boolean | No | `false` | Detect topics |
-| `detectLanguage` | boolean | No | `false` | Auto-detect language |
+| `audioUrl` | string | Yes | — | URL of audio or video file to transcribe |
+| `model` | string | No | `"nova-3"` | Deepgram model. Nova-3 is current best; required for keyterm. |
+| `language` | string | No | `"en-US"` | BCP-47 language code (e.g. en-US, es, fr) |
+| `detectLanguage` | boolean | No | — | Auto-detect language instead of using `language` |
+| `punctuate` | boolean | No | `true` | Add punctuation |
+| `smartFormat` | boolean | No | `true` | Smart formatting: dates, times, numbers, etc. Recommended for most use cases. |
+| `numerals` | boolean | No | — | Convert numbers to numerals (e.g. "one" → "1") |
+| `profanityFilter` | boolean | No | — | Filter profanity |
+| `dictation` | boolean | No | — | Interpret spoken punctuation commands (e.g. "period", "comma") |
+| `measurements` | boolean | No | — | Normalize measurement abbreviations |
+| `fillerWords` | boolean | No | — | Include "um" / "uh" / etc. in transcript |
+| `diarize` | boolean | No | — | Enable speaker diarization |
+| `diarizeVersion` | string | No | — | Pin diarization algorithm version (e.g. "2023-09-15") |
+| `utterances` | boolean | No | — | Group output into utterances with start/end timestamps. Often combined with diarize. |
+| `uttSplit` | number | No | — | Silence threshold (seconds) for splitting utterances. Default 0.8. |
+| `paragraphs` | boolean | No | — | Group output into paragraphs with start/end timestamps. |
+| `multichannel` | boolean | No | — | Transcribe each audio channel separately. Critical for stereo call recordings. |
+| `alternatives` | number | No | — | Return N transcription candidates per channel with confidence |
+| `keywords` | string[] | No | — | Keyword boosting. Each entry may be "word" or "word:intensifier" (e.g. "Pinkfish:2"). Pre-Nova-3 models. |
+| `keyterm` | string[] | No | — | Nova-3 keyterm boosting (superior to `keywords`). Multi-word phrases supported. English-only. |
+| `search` | string[] | No | — | Search for phrases; returns hits with timestamps |
+| `replace` | string[] | No | — | Find-and-replace in transcript. Format: "find:replace" per entry. |
+| `summarize` | string | No | — | Generate summary. Pass true (v2) or "v2". |
+| `detectTopics` | boolean | No | — | Detect topics |
+| `customTopics` | string[] | No | — | Custom topics to detect (requires detectTopics) |
+| `intents` | boolean | No | — | Detect intents |
+| `customIntents` | string[] | No | — | Custom intents to detect (requires intents) |
+| `sentiment` | boolean | No | — | Sentiment analysis per segment |
+| `redact` | string[] | No | — | Redaction options. Common: pci, pii, phi, numbers, ssn. Also supports specific entity types. |
+| `mipOptOut` | boolean | No | — | Opt out of Deepgram model improvement program (compliance) |
+| `tag` | string[] | No | — | Labels for Deepgram console analytics filtering |
+| `extra` | string[] | No | — | Arbitrary key:value metadata passthrough. Format: "key:value" per entry. |
 
 <Expandable title="inputSchema">
 
@@ -53,43 +74,171 @@ Transcribe audio file using Deepgram speech recognition
     },
     "audioUrl": {
       "type": "string",
-      "description": "URL of audio file to transcribe"
+      "description": "URL of audio or video file to transcribe"
     },
     "model": {
       "type": "string",
       "enum": [
+        "nova-3",
+        "nova-3-general",
+        "nova-3-medical",
         "nova-2",
+        "nova-2-general",
+        "nova-2-meeting",
+        "nova-2-phonecall",
+        "nova-2-voicemail",
+        "nova-2-finance",
+        "nova-2-conversationalai",
+        "nova-2-video",
+        "nova-2-medical",
+        "nova-2-drivethru",
+        "nova-2-automotive",
         "nova",
         "enhanced",
-        "base"
+        "base",
+        "whisper-tiny",
+        "whisper-base",
+        "whisper-small",
+        "whisper-medium",
+        "whisper-large"
       ],
-      "default": "nova-2",
-      "description": "Deepgram model to use"
+      "default": "nova-3",
+      "description": "Deepgram model. Nova-3 is current best; required for keyterm."
     },
     "language": {
       "type": "string",
       "default": "en-US",
-      "description": "Language code"
+      "description": "BCP-47 language code (e.g. en-US, es, fr)"
+    },
+    "detectLanguage": {
+      "type": "boolean",
+      "description": "Auto-detect language instead of using `language`"
     },
     "punctuate": {
       "type": "boolean",
       "default": true,
-      "description": "Add punctuation to transcript"
+      "description": "Add punctuation"
     },
-    "diarize": {
+    "smartFormat": {
       "type": "boolean",
-      "default": false,
-      "description": "Enable speaker diarization"
+      "default": true,
+      "description": "Smart formatting: dates, times, numbers, etc. Recommended for most use cases."
     },
     "numerals": {
       "type": "boolean",
-      "default": true,
-      "description": "Convert numbers to numerals"
+      "description": "Convert numbers to numerals (e.g. \"one\" → \"1\")"
     },
     "profanityFilter": {
       "type": "boolean",
-      "default": false,
       "description": "Filter profanity"
+    },
+    "dictation": {
+      "type": "boolean",
+      "description": "Interpret spoken punctuation commands (e.g. \"period\", \"comma\")"
+    },
+    "measurements": {
+      "type": "boolean",
+      "description": "Normalize measurement abbreviations"
+    },
+    "fillerWords": {
+      "type": "boolean",
+      "description": "Include \"um\" / \"uh\" / etc. in transcript"
+    },
+    "diarize": {
+      "type": "boolean",
+      "description": "Enable speaker diarization"
+    },
+    "diarizeVersion": {
+      "type": "string",
+      "description": "Pin diarization algorithm version (e.g. \"2023-09-15\")"
+    },
+    "utterances": {
+      "type": "boolean",
+      "description": "Group output into utterances with start/end timestamps. Often combined with diarize."
+    },
+    "uttSplit": {
+      "type": "number",
+      "description": "Silence threshold (seconds) for splitting utterances. Default 0.8."
+    },
+    "paragraphs": {
+      "type": "boolean",
+      "description": "Group output into paragraphs with start/end timestamps."
+    },
+    "multichannel": {
+      "type": "boolean",
+      "description": "Transcribe each audio channel separately. Critical for stereo call recordings."
+    },
+    "alternatives": {
+      "type": "number",
+      "description": "Return N transcription candidates per channel with confidence"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keyword boosting. Each entry may be \"word\" or \"word:intensifier\" (e.g. \"Pinkfish:2\"). Pre-Nova-3 models."
+    },
+    "keyterm": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Nova-3 keyterm boosting (superior to `keywords`). Multi-word phrases supported. English-only."
+    },
+    "search": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search for phrases; returns hits with timestamps"
+    },
+    "replace": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Find-and-replace in transcript. Format: \"find:replace\" per entry."
+    },
+    "summarize": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "v2"
+          ]
+        }
+      ],
+      "description": "Generate summary. Pass true (v2) or \"v2\"."
+    },
+    "detectTopics": {
+      "type": "boolean",
+      "description": "Detect topics"
+    },
+    "customTopics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom topics to detect (requires detectTopics)"
+    },
+    "intents": {
+      "type": "boolean",
+      "description": "Detect intents"
+    },
+    "customIntents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom intents to detect (requires intents)"
+    },
+    "sentiment": {
+      "type": "boolean",
+      "description": "Sentiment analysis per segment"
     },
     "redact": {
       "type": "array",
@@ -130,22 +279,25 @@ Transcribe audio file using Deepgram speech recognition
           "routing_number"
         ]
       },
-      "description": "Redaction options. Common: pci (credit card info), pii (personally identifiable info), phi (protected health info), numbers (numerical entities), ssn (social security numbers). For pre-recorded: supports all options plus specific entity types. For streaming: pci, phi, numbers, aggressive_numbers, ssn."
+      "description": "Redaction options. Common: pci, pii, phi, numbers, ssn. Also supports specific entity types."
     },
-    "summarize": {
+    "mipOptOut": {
       "type": "boolean",
-      "default": false,
-      "description": "Generate summary"
+      "description": "Opt out of Deepgram model improvement program (compliance)"
     },
-    "detectTopics": {
-      "type": "boolean",
-      "default": false,
-      "description": "Detect topics"
+    "tag": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Labels for Deepgram console analytics filtering"
     },
-    "detectLanguage": {
-      "type": "boolean",
-      "default": false,
-      "description": "Auto-detect language"
+    "extra": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Arbitrary key:value metadata passthrough. Format: \"key:value\" per entry."
     }
   },
   "required": [
@@ -167,13 +319,23 @@ Start live audio transcription stream
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `model` | string | No | `"nova-2"` | Deepgram model to use |
+| `model` | string | No | `"nova-3"` | Deepgram model |
 | `language` | string | No | `"en-US"` | Language code |
-| `punctuate` | boolean | No | `true` | Add punctuation to transcript |
+| `punctuate` | boolean | No | `true` | Add punctuation |
+| `smartFormat` | boolean | No | `true` | Smart formatting |
+| `numerals` | boolean | No | — | Convert numbers to numerals |
+| `fillerWords` | boolean | No | — | Include filler words |
+| `diarize` | boolean | No | — | Enable speaker diarization |
+| `multichannel` | boolean | No | — | Per-channel transcription |
+| `keywords` | string[] | No | — | Keyword boosting |
+| `keyterm` | string[] | No | — | Nova-3 keyterm boosting |
 | `interimResults` | boolean | No | `true` | Return interim results |
 | `endpointing` | number | No | — | Endpointing sensitivity (0-500ms) |
-| `vadEvents` | boolean | No | `false` | Voice activity detection events |
-| `redact` | string[] | No | — | Redaction options for streaming. Supported: pci (credit card info), phi (protected health info), numbers (3+ consecutive numerals), aggressive_numbers (all numerals), ssn (social security numbers). |
+| `vadEvents` | boolean | No | — | Voice activity detection events |
+| `uttSplit` | number | No | — | Utterance split silence threshold (s) |
+| `tag` | string[] | No | — | Analytics labels |
+| `mipOptOut` | boolean | No | — | Opt out of model improvement |
+| `redact` | string[] | No | — | Redaction options (streaming subset) |
 
 <Expandable title="inputSchema">
 
@@ -188,13 +350,31 @@ Start live audio transcription stream
     "model": {
       "type": "string",
       "enum": [
+        "nova-3",
+        "nova-3-general",
+        "nova-3-medical",
         "nova-2",
+        "nova-2-general",
+        "nova-2-meeting",
+        "nova-2-phonecall",
+        "nova-2-voicemail",
+        "nova-2-finance",
+        "nova-2-conversationalai",
+        "nova-2-video",
+        "nova-2-medical",
+        "nova-2-drivethru",
+        "nova-2-automotive",
         "nova",
         "enhanced",
-        "base"
+        "base",
+        "whisper-tiny",
+        "whisper-base",
+        "whisper-small",
+        "whisper-medium",
+        "whisper-large"
       ],
-      "default": "nova-2",
-      "description": "Deepgram model to use"
+      "default": "nova-3",
+      "description": "Deepgram model"
     },
     "language": {
       "type": "string",
@@ -204,7 +384,42 @@ Start live audio transcription stream
     "punctuate": {
       "type": "boolean",
       "default": true,
-      "description": "Add punctuation to transcript"
+      "description": "Add punctuation"
+    },
+    "smartFormat": {
+      "type": "boolean",
+      "default": true,
+      "description": "Smart formatting"
+    },
+    "numerals": {
+      "type": "boolean",
+      "description": "Convert numbers to numerals"
+    },
+    "fillerWords": {
+      "type": "boolean",
+      "description": "Include filler words"
+    },
+    "diarize": {
+      "type": "boolean",
+      "description": "Enable speaker diarization"
+    },
+    "multichannel": {
+      "type": "boolean",
+      "description": "Per-channel transcription"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keyword boosting"
+    },
+    "keyterm": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Nova-3 keyterm boosting"
     },
     "interimResults": {
       "type": "boolean",
@@ -217,8 +432,22 @@ Start live audio transcription stream
     },
     "vadEvents": {
       "type": "boolean",
-      "default": false,
       "description": "Voice activity detection events"
+    },
+    "uttSplit": {
+      "type": "number",
+      "description": "Utterance split silence threshold (s)"
+    },
+    "tag": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Analytics labels"
+    },
+    "mipOptOut": {
+      "type": "boolean",
+      "description": "Opt out of model improvement"
     },
     "redact": {
       "type": "array",
@@ -232,7 +461,7 @@ Start live audio transcription stream
           "ssn"
         ]
       },
-      "description": "Redaction options for streaming. Supported: pci (credit card info), phi (protected health info), numbers (3+ consecutive numerals), aggressive_numbers (all numerals), ssn (social security numbers)."
+      "description": "Redaction options (streaming subset)"
     }
   },
   "required": [

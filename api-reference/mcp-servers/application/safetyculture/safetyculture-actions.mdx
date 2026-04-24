@@ -193,21 +193,21 @@ Create an action
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `asset_id` | string | No | — | ID of the Asset associated with the action |
-| `collaborators` | any[] | No | — | The collaborators involved into this action. |
+| `collaborators` | object[] | No | — | The collaborators involved into this action. |
 | `created_at` | string | No | — | Date and time this action was created. |
 | `description` | string | No | — | Description of the action (maximum 30000 characters). |
 | `due_at` | string | No | — | Date/time this action is due |
-| `field_values` | any[] | No | — | Array of custom fields and their values to create with the action. |
+| `field_values` | object[] | No | — | Array of custom fields and their values to create with the action. |
 | `inspection_id` | string | No | — | ID of the inspection the action belongs to If not set, this action is a standalone action and the inspection ID will be null. |
 | `inspection_item_id` | string | No | — | ID of the item in the inspection associated with the action |
-| `label_ids` | any[] | No | — | IDs of the labels associated with the action. |
+| `label_ids` | string[] | No | — | IDs of the labels associated with the action. |
 | `priority_id` | string | No | — | ID of the action's priority If not set, this action will be stored with the default priority(none). |
-| `references` | any[] | No | — | Array of references attached to this action. |
+| `references` | object[] | No | — | Array of references attached to this action. |
 | `site_id` | string | No | — | ID of the Site associated with the action. |
 | `status_id` | string | No | — | ID of the action's status If not set, this action will be stored with the default status(to do). |
 | `task_id` | string | No | — | The unique identifier of the action If not provided, UUID will be generated server side. |
 | `template_id` | string | No | — | If a template ID is provided then an inspection ID must be provided. If not set, this action is a standalone action and the template ID will be null. |
-| `template_ids` | any[] | No | — | The list of templates to be linked to the action. |
+| `template_ids` | string[] | No | — | The list of templates to be linked to the action. |
 | `title` | string | Yes | — | Required. Title of the action Title is limited to only 255 characters max. |
 | `type` | object | No | — | The type to create an action in. |
 
@@ -227,6 +227,9 @@ Create an action
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The collaborators involved into this action."
     },
     "created_at": {
@@ -243,6 +246,9 @@ Create an action
     },
     "field_values": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of custom fields and their values to create with the action."
     },
     "inspection_id": {
@@ -255,6 +261,9 @@ Create an action
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of the labels associated with the action."
     },
     "priority_id": {
@@ -263,6 +272,9 @@ Create an action
     },
     "references": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Array of references attached to this action."
     },
     "site_id": {
@@ -283,6 +295,9 @@ Create an action
     },
     "template_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of templates to be linked to the action."
     },
     "title": {
@@ -363,7 +378,7 @@ Delete actions (Bulk)
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ids` | any[] | No | — | The list of action ids to be deleted |
+| `ids` | string[] | Yes | — | The list of action ids to be deleted |
 | `modified_at` | string | No | — | Optional. The UTC time and date the deletion took place. |
 
 <Expandable title="inputSchema">
@@ -378,6 +393,9 @@ Delete actions (Bulk)
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of action ids to be deleted"
     },
     "modified_at": {
@@ -386,7 +404,8 @@ Delete actions (Bulk)
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "ids"
   ]
 }
 ```
@@ -481,7 +500,7 @@ List actions
 | `page_token` | string | No | — | Optional. If present, then retrieve the next batch of results from the preceding call to this method. `page_token` must be the value of `next_page_token` from the previous response.  The values of other method parameters should be identical to those in the previous call. For example: 'ODFBMzQ3MDYtNzQxNy00RDZGLThDNjE1MEFDMkM4MTQ3NDQ='. |
 | `sort_direction` | string | No | — | Optional. Direction for sorting. |
 | `sort_field` | string | No | — | Optional. Which field to use for sorting. |
-| `task_filters` | any[] | No | — | Optional. The array of filters to apply in your request. You can apply multiple filters in a single request. |
+| `task_filters` | object[] | No | — | Optional. The array of filters to apply in your request. You can apply multiple filters in a single request. |
 | `without_count` | boolean | No | — | Optional. If true, will not return the count of actions. |
 
 <Expandable title="inputSchema">
@@ -530,6 +549,9 @@ List actions
     },
     "task_filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. The array of filters to apply in your request. You can apply multiple filters in a single request."
     },
     "without_count": {
@@ -592,7 +614,7 @@ Updates the labels associated with an action
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `action_id` | string | Yes | — | action_id is the ID of the action to be updated. |
-| `label_ids` | any[] | No | — | The list of label IDs to associate with the action. Multiple labels can be added. Note: Sending an empty list for `label_ids` will remove all labels currently associated with the action. |
+| `label_ids` | string[] | No | — | The list of label IDs to associate with the action. Multiple labels can be added. Note: Sending an empty list for `label_ids` will remove all labels currently associated with the action. |
 | `modified_at` | string | No | — | Date and time this label was modified. |
 
 <Expandable title="inputSchema">
@@ -611,6 +633,9 @@ Updates the labels associated with an action
     },
     "label_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of label IDs to associate with the action. Multiple labels can be added. Note: Sending an empty list for `label_ids` will remove all labels currently associated with the action."
     },
     "modified_at": {
@@ -660,7 +685,8 @@ Update the asset of an action
       "description": "Optional. The new asset UUID for the task. If this is empty, the asset will be unset.",
       "properties": {
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "The value value"
         }
       }
     },
@@ -689,7 +715,7 @@ Update the assignees of an action
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The unique identifier for the task to be updated. |
-| `assignees` | any[] | Yes | — | Required. The assignees to be assigned to the task. |
+| `assignees` | object[] | Yes | — | Required. The assignees to be assigned to the task. |
 | `modified_at` | string | No | — | Optional. The UTC time and date the modification took place. |
 
 <Expandable title="inputSchema">
@@ -708,6 +734,9 @@ Update the assignees of an action
     },
     "assignees": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Required. The assignees to be assigned to the task."
     },
     "modified_at": {
@@ -736,7 +765,7 @@ Update the description of an action
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The UUID of the task being updated. |
-| `description` | string | No | — | Required. The new description for the task. |
+| `description` | string | Yes | — | Required. The new description for the task. |
 | `modified_at` | string | No | — | Optional. The timestamp of when this event occurred. |
 
 <Expandable title="inputSchema">
@@ -764,7 +793,8 @@ Update the description of an action
   },
   "required": [
     "PCID",
-    "task_id"
+    "task_id",
+    "description"
   ]
 }
 ```
@@ -901,7 +931,8 @@ Update the site of an action
       "description": "Optional. The new site UUID for the task. If this is empty, the site will be unset. Use the `GetFolders` endpoint to get the available sites.",
       "properties": {
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "The value value"
         }
       }
     }
@@ -974,7 +1005,7 @@ Update the title of an action
 | --- | --- | --- | --- | --- |
 | `task_id` | string | Yes | — | Required. The UUID of the task being updated. |
 | `modified_at` | string | No | — | Optional. The timestamp of when this event occurred. |
-| `title` | string | No | — | Required. The new title for the task. The title must be between 0 and 255 characters. |
+| `title` | string | Yes | — | Required. The new title for the task. The title must be between 0 and 255 characters. |
 
 <Expandable title="inputSchema">
 
@@ -1001,7 +1032,8 @@ Update the title of an action
   },
   "required": [
     "PCID",
-    "task_id"
+    "task_id",
+    "title"
   ]
 }
 ```

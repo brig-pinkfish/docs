@@ -65,7 +65,7 @@ Add Data Subjects to Parent Consent Group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `consentGroupGuid` | string | Yes | — | The UUID of the Consent Group. `consentGroupGuid` can be retrieved using the [Get a paged view for consent groups API](/onetrust/reference/getconsentgrouplistusingget) |
-| `dataSubjects` | any[] | No | — | A list of Data Subjects to be added to a Consent Group, identified either by their id or their identifier value |
+| `dataSubjects` | object[] | No | — | A list of Data Subjects to be added to a Consent Group, identified either by their id or their identifier value |
 
 <Expandable title="inputSchema">
 
@@ -83,6 +83,9 @@ Add Data Subjects to Parent Consent Group
     },
     "dataSubjects": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of Data Subjects to be added to a Consent Group, identified either by their id or their identifier value"
     }
   },
@@ -106,7 +109,7 @@ Add Purpose Rules to Consent Group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `consentGroupGuid` | string | Yes | — | The UUID of the Consent Group. `consentGroupGuid` can be retrieved using the [Get a paged view for consent groups API](/onetrust/reference/getconsentgrouplistusingget) to add Purpose Rules |
-| `purposeRules` | any[] | No | — | A list of Purpose Rules to be added to a Consent Group |
+| `purposeRules` | object[] | No | — | A list of Purpose Rules to be added to a Consent Group |
 
 <Expandable title="inputSchema">
 
@@ -124,6 +127,9 @@ Add Purpose Rules to Consent Group
     },
     "purposeRules": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of Purpose Rules to be added to a Consent Group"
     }
   },
@@ -155,7 +161,7 @@ Create Collection Point
 | `ConsentType` | string | No | — | The type of consent mechanism used by this Collection Point. This determines how consent is captured and processed. For example, EXPLICIT requires explicit user action, while IMPLIED infers consent from user behavior. |
 | `CookieConsentUpdate` | string | No | — | Specifies how cookie consent updates should be handled for this Collection Point. This determines the behavior when consent preferences change. |
 | `DataControllerName` | string | No | — | The name of the data controller responsible for this Collection Point. This is typically the organization or entity that determines the purposes and means of processing personal data. |
-| `DataElements` | any[] | No | — | List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity. |
+| `DataElements` | string[] | No | — | List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity. |
 | `Description` | string | Yes | — | Detailed description of the Collection Point. This should explain the purpose and functionality of the Collection Point. |
 | `DisableReports` | boolean | No | — | When set to true, disables all reporting for this Collection Point. This can be used to improve performance for high-volume Collection Points where reporting is not needed. |
 | `DOIEmailIdentifier` | string | No | — | The email address to use when sending double opt-in confirmation emails. If not specified, the primary email identifier will be used. |
@@ -177,26 +183,26 @@ Create Collection Point
 | `HowToWithdraw` | string | No | — | Instructions on how a data subject can withdraw their consent. This should provide clear, actionable steps. |
 | `IABVendorId` | integer | No | — | The IAB Vendor Id. Used for legacy mobile Collection Points |
 | `IdentifierDataElementId` | string | No | — | Unique identifier for the Data Element. Note: this can be found in the url path when viewing Data Element details under the Consent & Preference Management module |
-| `IdentifierTypes` | any[] | No | — | Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point |
+| `IdentifierTypes` | string[] | No | — | Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point |
 | `includeIdentifierParameter` | boolean | No | — | When enabled, includes the identifier parameter in the double opt-in (DOI) confirmation link. This is useful for passing the identifier through the DOI process. |
 | `includeParameter` | boolean | No | — | When enabled, includes additional parameters in the double opt-in (DOI) confirmation link. This can be used to pass through custom parameters during the DOI process. |
 | `IsAuthenticationRequired` | boolean | No | — | Setting to require authentication for a collection point. For more information see this [article](https://my.onetrust.com/s/article/UUID-b359a104-1900-9ac9-7765-ee08c8047f1d?topicId=0TO3q000000kIUHGA2) |
 | `IsDynamicCollectionPoint` | boolean | No | — | Whether this is a dynamic collection point or not. For more information see this [article](https://my.onetrust.com/s/article/UUID-358c7e03-1d60-ff3b-e443-25d4283c7ac3?topicId=0TO3q000000kIWXGA2) |
 | `Language` | string | No | — | The Collection Point default language code |
-| `Languages` | any[] | No | — | List containing the Collection Point translations' language codes |
+| `Languages` | string[] | No | — | List containing the Collection Point translations' language codes |
 | `Name` | string | Yes | — | The unique name of the Collection Point. This is a required field and must be unique within the organization. The name is used to identify the Collection Point in the UI and API. |
 | `NewSdkIntegrationEnabled` | boolean | No | — | Whether new sdk integration is enabled or not. SDK can be loaded in the &lt;head&gt; and a new script is no longer required for each form |
 | `NoConsentTransactions` | boolean | No | — | Whether no consent transactions can be recorded against the collection point. For more information about consent transaction types and purpose statuses see this [article](https://my.onetrust.com/s/article/UUID-d4ed05a9-a999-f2cb-8272-610a5817b43f?topicId=0TO1Q000000bHgoWAE) |
 | `OrganizationId` | string | Yes | — | The unique identifier of the Organization associated with the Collection Point. Note: this can be found in the URL path when viewing Organization details under global settings. |
 | `OtherInformation` | string | No | — | Any additional information relevant to the Collection Point that doesn't fit in other fields. This could include legal basis for processing or other compliance-related information. |
 | `OverrideActivePurpose` | boolean | No | — | Used in conjunction with the double opt in reconfirmation and purpose expiration features. This setting is enabled by default and can be turned off if it is desired for a purpose to remain in active status until expired if a data subject does not reconfirm their consent |
-| `ParentIdentifierTypes` | any[] | No | — | List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features. |
+| `ParentIdentifierTypes` | string[] | No | — | List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features. |
 | `PreferenceCenterGuid` | string | No | — | Unique identifier for a Preference Center to associate with this Collection Point |
 | `PrefillIdentifier` | string | No | — | The identifier value to pre-fill in the form when known. This improves user experience by reducing data entry for returning visitors. |
 | `PrimaryIdentifierType` | string | No | — | The primary identifier type used to identify data subjects for this Collection Point. This is used when multiple identifier types are configured. |
 | `PrivacyPolicyUrl` | string | No | — | The URL of the privacy policy associated with this Collection Point. This is typically displayed to users when they are providing consent. |
 | `PurposeId` | string | No | — | Comma-separated list of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
-| `PurposeIds` | any[] | No | — | List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
+| `PurposeIds` | string[] | No | — | List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
 | `PurposeIdsWithVersion` | any[] | No | — | A list containing the IDs of purposes along with their versions that this Collection Point is associated with. Each entry maps a purpose ID to a specific version. |
 | `ReconfirmActivePurpose` | boolean | No | — | Used in conjunction with the double opt in feature. Will treat a returning data subject the same as a new one, and trigger the confirmation email event when re-consenting to the same purpose |
 | `RedirectOnFormSubmission` | boolean | No | — | When enabled, automatically redirects users to a specified URL after they submit the form. The redirect URL can be configured separately. |
@@ -304,6 +310,9 @@ Create Collection Point
     },
     "DataElements": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity."
     },
     "Description": {
@@ -391,6 +400,9 @@ Create Collection Point
     },
     "IdentifierTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point"
     },
     "includeIdentifierParameter": {
@@ -415,6 +427,9 @@ Create Collection Point
     },
     "Languages": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List containing the Collection Point translations' language codes"
     },
     "Name": {
@@ -443,6 +458,9 @@ Create Collection Point
     },
     "ParentIdentifierTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features."
     },
     "PreferenceCenterGuid": {
@@ -467,6 +485,10 @@ Create Collection Point
     },
     "PurposeIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version."
     },
     "PurposeIdsWithVersion": {
@@ -613,8 +635,8 @@ Create Data Subject Group
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `groupName` | string | Yes | — | A user-defined name for the group of linked identities. |
-| `memberIdentifiers` | any[] | Yes | — | A list of all member identifiers that belong to the group. |
-| `primaryIdentifiers` | any[] | Yes | — | A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive. |
+| `memberIdentifiers` | string[] | Yes | — | A list of all member identifiers that belong to the group. |
+| `primaryIdentifiers` | string[] | Yes | — | A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive. |
 
 <Expandable title="inputSchema">
 
@@ -632,10 +654,16 @@ Create Data Subject Group
     },
     "memberIdentifiers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of all member identifiers that belong to the group."
     },
     "primaryIdentifiers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive."
     }
   },
@@ -744,7 +772,7 @@ Create Purpose
 | `isInternalOrg` | boolean | No | — | Specifies if the Purpose is for internal organization use |
 | `attributeValues` | object | No | — | Map of attribute values associated with the purpose |
 | `ConsentLifeSpan` | integer | Yes | — | The lifespan of consents recorded against this purpose in seconds |
-| `CustomPreferenceIds` | any[] | No | — | List of custom preference IDs associated with the purpose |
+| `CustomPreferenceIds` | string[] | No | — | List of custom preference IDs associated with the purpose |
 | `DefaultLanguage` | string | No | — | The default language for the Purpose in BCP 47 format |
 | `Description` | string | Yes | — | Detailed description of the Purpose's intended use |
 | `EnableGeolocation` | boolean | No | — | Flag to enable geolocation tracking for this purpose |
@@ -755,7 +783,7 @@ Create Purpose
 | `IsMajorVersion` | boolean | No | — | Indicates if this is a major version update |
 | `LastMajorVersion` | integer | No | — | Version number of the last major update |
 | `Name` | string | Yes | — | Name of the Purpose |
-| `Organizations` | any[] | No | — | A list of External Organization Ids. |
+| `Organizations` | string[] | No | — | A list of External Organization Ids. |
 | `ParentPurposeId` | string | No | — | Unique identifier of the parent purpose |
 | `PurposeCategory` | object | No | — | Purpose Category |
 | `Type` | string | No | — | Type of the Purpose |
@@ -785,6 +813,10 @@ Create Purpose
     },
     "CustomPreferenceIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of custom preference IDs associated with the purpose"
     },
     "DefaultLanguage": {
@@ -833,6 +865,9 @@ Create Purpose
     },
     "Organizations": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of External Organization Ids."
     },
     "ParentPurposeId": {
@@ -890,7 +925,7 @@ Update Existing Collection Point
 | `ConsentType` | string | No | — | The type of consent mechanism used by this Collection Point. This determines how consent is captured and processed. For example, EXPLICIT requires explicit user action, while IMPLIED infers consent from user behavior. |
 | `CookieConsentUpdate` | string | No | — | Specifies how cookie consent updates should be handled for this Collection Point. This determines the behavior when consent preferences change. |
 | `DataControllerName` | string | No | — | The name of the data controller responsible for this Collection Point. This is typically the organization or entity that determines the purposes and means of processing personal data. |
-| `DataElements` | any[] | No | — | List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity. |
+| `DataElements` | string[] | No | — | List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity. |
 | `Description` | string | Yes | — | Detailed description of the Collection Point. This should explain the purpose and functionality of the Collection Point. |
 | `DisableReports` | boolean | No | — | When set to true, disables all reporting for this Collection Point. This can be used to improve performance for high-volume Collection Points where reporting is not needed. |
 | `DOIEmailIdentifier` | string | No | — | The email address to use when sending double opt-in confirmation emails. If not specified, the primary email identifier will be used. |
@@ -915,13 +950,13 @@ Update Existing Collection Point
 | `HowToWithdraw` | string | No | — | Instructions on how a data subject can withdraw their consent. This should provide clear, actionable steps. |
 | `IABVendorId` | integer | No | — | The IAB Vendor Id. Used for legacy mobile Collection Points |
 | `IdentifierDataElementId` | string | No | — | Unique identifier for the Data Element. Note: this can be found in the url path when viewing Data Element details under the Consent & Preference Management module |
-| `IdentifierTypes` | any[] | No | — | Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point |
+| `IdentifierTypes` | string[] | No | — | Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point |
 | `includeIdentifierParameter` | boolean | No | — | When enabled, includes the identifier parameter in the double opt-in (DOI) confirmation link. This is useful for passing the identifier through the DOI process. |
 | `includeParameter` | boolean | No | — | When enabled, includes additional parameters in the double opt-in (DOI) confirmation link. This can be used to pass through custom parameters during the DOI process. |
 | `IsAuthenticationRequired` | boolean | No | — | Setting to require authentication for a collection point. For more information see this [article](https://my.onetrust.com/s/article/UUID-b359a104-1900-9ac9-7765-ee08c8047f1d?topicId=0TO3q000000kIUHGA2) |
 | `IsDynamicCollectionPoint` | boolean | No | — | Whether this is a dynamic collection point or not. For more information see this [article](https://my.onetrust.com/s/article/UUID-358c7e03-1d60-ff3b-e443-25d4283c7ac3?topicId=0TO3q000000kIWXGA2) |
 | `Language` | string | No | — | The Collection Point default language code |
-| `Languages` | any[] | No | — | List containing the Collection Point translations' language codes |
+| `Languages` | string[] | No | — | List containing the Collection Point translations' language codes |
 | `LastSdkIntegrationDate` | string | No | — | The timestamp when the SDK integration was last synchronized with this Collection Point.  This field is automatically updated by the system when changes are made to the Collection Point that require SDK updates. It should not be set manually. |
 | `Name` | string | Yes | — | The unique name of the Collection Point. This is a required field and must be unique within the organization. The name is used to identify the Collection Point in the UI and API. |
 | `NewSdkIntegrationEnabled` | boolean | No | — | Whether new sdk integration is enabled or not. SDK can be loaded in the &lt;head&gt; and a new script is no longer required for each form |
@@ -930,7 +965,7 @@ Update Existing Collection Point
 | `OrganizationId` | string | Yes | — | The unique identifier of the Organization associated with the Collection Point. Note: this can be found in the URL path when viewing Organization details under global settings. |
 | `OtherInformation` | string | No | — | Any additional information relevant to the Collection Point that doesn't fit in other fields. This could include legal basis for processing or other compliance-related information. |
 | `OverrideActivePurpose` | boolean | No | — | Used in conjunction with the double opt in reconfirmation and purpose expiration features. This setting is enabled by default and can be turned off if it is desired for a purpose to remain in active status until expired if a data subject does not reconfirm their consent |
-| `ParentIdentifierTypes` | any[] | No | — | List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features. |
+| `ParentIdentifierTypes` | string[] | No | — | List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features. |
 | `PortalSettings` | object | No | — | A key-value map containing all Portal settings for this Collection Point.  These settings control the appearance and behavior of the Privacy Portal associated with this Collection Point. The structure of this object depends on the specific configuration of the Portal. |
 | `PreferenceCenterGuid` | string | No | — | Unique identifier for a Preference Center to associate with this Collection Point |
 | `PreferenceCenterSettings` | object | No | — | A key-value map containing all Preference Center settings for this Collection Point.  These settings control the appearance and behavior of the Preference Center associated with this Collection Point. The structure of this object depends on the specific configuration of the Preference Center. |
@@ -938,7 +973,7 @@ Update Existing Collection Point
 | `PrimaryIdentifierType` | string | No | — | The primary identifier type used to identify data subjects for this Collection Point. This is used when multiple identifier types are configured. |
 | `PrivacyPolicyUrl` | string | No | — | The URL of the privacy policy associated with this Collection Point. This is typically displayed to users when they are providing consent. |
 | `PurposeId` | string | No | — | Comma-separated list of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
-| `PurposeIds` | any[] | No | — | List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
+| `PurposeIds` | string[] | No | — | List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version. |
 | `PurposeIdsWithVersion` | any[] | No | — | A list containing the IDs of purposes along with their versions that this Collection Point is associated with. Each entry maps a purpose ID to a specific version. |
 | `ReconfirmActivePurpose` | boolean | No | — | Used in conjunction with the double opt in feature. Will treat a returning data subject the same as a new one, and trigger the confirmation email event when re-consenting to the same purpose |
 | `RedirectOnFormSubmission` | boolean | No | — | When enabled, automatically redirects users to a specified URL after they submit the form. The redirect URL can be configured separately. |
@@ -1055,6 +1090,9 @@ Update Existing Collection Point
     },
     "DataElements": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of data element IDs that this Collection Point will collect consent for. Each data element represents a specific type of data processing activity."
     },
     "Description": {
@@ -1154,6 +1192,9 @@ Update Existing Collection Point
     },
     "IdentifierTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Used in conjunction with the `AllowMultipleIdentifierTypes` setting. The List of Data Subject identifiers that can be used for the Collection Point"
     },
     "includeIdentifierParameter": {
@@ -1178,6 +1219,9 @@ Update Existing Collection Point
     },
     "Languages": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List containing the Collection Point translations' language codes"
     },
     "LastSdkIntegrationDate": {
@@ -1214,6 +1258,9 @@ Update Existing Collection Point
     },
     "ParentIdentifierTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of parent data subject identifier types for this Collection Point. Used with Consent on Behalf and Multiple Data Subject Identifiers features."
     },
     "PortalSettings": {
@@ -1246,6 +1293,10 @@ Update Existing Collection Point
     },
     "PurposeIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of Purpose unique identifiers. Will default to the most recent purpose version. It is recommended to use the `PurposeIdsWithVersion` field and specify the desired version."
     },
     "PurposeIdsWithVersion": {
@@ -1340,7 +1391,7 @@ Update Purpose Preference
 | `NumberOfLanguages` | integer | No | — | Number of languages this Custom Preference has been translated into |
 | `NumberOfOptions` | integer | No | — | Total number of available options for this Custom Preference |
 | `Options` | any[] | No | — | List of available options for this Custom Preference |
-| `Organizations` | any[] | No | — | List of Organization IDs that have access to this Custom Preference |
+| `Organizations` | string[] | No | — | List of Organization IDs that have access to this Custom Preference |
 | `Required` | boolean | No | — | Indicates whether a response is mandatory for this Custom Preference |
 | `SelectionType` | string | Yes | — | Defines how options can be selected in this Custom Preference |
 | `TotalLinkedActivePurposes` | integer | No | — | Count of active purposes that reference this Custom Preference |
@@ -1414,6 +1465,10 @@ Update Purpose Preference
     },
     "Organizations": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of Organization IDs that have access to this Custom Preference"
     },
     "Required": {
@@ -1466,7 +1521,7 @@ Update Purpose
 | `isInternalOrg` | boolean | No | — | Specifies if the Purpose is for internal organization use |
 | `attributeValues` | object | No | — | Map of attribute values associated with the purpose |
 | `ConsentLifeSpan` | integer | Yes | — | The lifespan of consents recorded against this purpose in seconds |
-| `CustomPreferenceIds` | any[] | No | — | List of custom preference IDs associated with the purpose |
+| `CustomPreferenceIds` | string[] | No | — | List of custom preference IDs associated with the purpose |
 | `DefaultLanguage` | string | No | — | The default language for the Purpose in BCP 47 format |
 | `Description` | string | Yes | — | Detailed description of the Purpose's intended use |
 | `EnableGeolocation` | boolean | No | — | Flag to enable geolocation tracking for this purpose |
@@ -1479,11 +1534,11 @@ Update Purpose
 | `Languages` | any[] | No | — | List of language-specific details for the Purpose |
 | `LastMajorVersion` | integer | No | — | Version number of the last major update |
 | `Name` | string | Yes | — | Name of the Purpose |
-| `Organizations` | any[] | No | — | A list of External Organization Ids. |
+| `Organizations` | string[] | No | — | A list of External Organization Ids. |
 | `ParentPurposeId` | string | No | — | Unique identifier of the parent purpose |
 | `PurposeCategory` | object | No | — | Purpose Category |
 | `Status` | string | Yes | — | The current status of the Purpose |
-| `TopicIds` | any[] | No | — | List of unique identifiers for Topics associated with this Purpose |
+| `TopicIds` | string[] | No | — | List of unique identifiers for Topics associated with this Purpose |
 | `Type` | string | No | — | Type of the Purpose |
 | `Version` | integer | Yes | — | Version number of the Purpose being updated |
 | `VersionNotes` | string | No | — | Release notes for the current version |
@@ -1516,6 +1571,10 @@ Update Purpose
     },
     "CustomPreferenceIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of custom preference IDs associated with the purpose"
     },
     "DefaultLanguage": {
@@ -1576,6 +1635,9 @@ Update Purpose
     },
     "Organizations": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of External Organization Ids."
     },
     "ParentPurposeId": {
@@ -1596,6 +1658,10 @@ Update Purpose
     },
     "TopicIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of unique identifiers for Topics associated with this Purpose"
     },
     "Type": {
@@ -3050,7 +3116,7 @@ Search Data Subjects
 | `language` | string | No | — | Filter Data Subject records by preferred language code |
 | `linkedDS` | boolean | No | — | When true, includes additional linked Data Subject information in the response |
 | `linkTokens` | boolean | No | — | When true, includes link tokens in the response for magic link functionality |
-| `orgIds` | any[] | No | — | Filter Data Subject records by organization IDs (internal use only) |
+| `orgIds` | string[] | No | — | Filter Data Subject records by organization IDs (internal use only) |
 | `updatedSince` | string | No | — | Filter Data Subject records updated on or after this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss) |
 | `updatedUntil` | string | No | — | Filter Data Subject records updated on or before this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss) |
 
@@ -3114,6 +3180,10 @@ Search Data Subjects
     },
     "orgIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "Filter Data Subject records by organization IDs (internal use only)"
     },
     "updatedSince": {
@@ -3186,8 +3256,8 @@ Update Data Subject Group
 | --- | --- | --- | --- | --- |
 | `dataSubjectGroupId` | string | Yes | — | The unique identifier for the Data Subject Group to be updated. |
 | `groupName` | string | Yes | — | A user-defined name for the group of linked identities. |
-| `memberIdentifiers` | any[] | Yes | — | A list of all member identifiers that belong to the group. |
-| `primaryIdentifiers` | any[] | Yes | — | A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive. |
+| `memberIdentifiers` | string[] | Yes | — | A list of all member identifiers that belong to the group. |
+| `primaryIdentifiers` | string[] | Yes | — | A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive. |
 
 <Expandable title="inputSchema">
 
@@ -3209,10 +3279,16 @@ Update Data Subject Group
     },
     "memberIdentifiers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of all member identifiers that belong to the group."
     },
     "primaryIdentifiers": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive."
     }
   },

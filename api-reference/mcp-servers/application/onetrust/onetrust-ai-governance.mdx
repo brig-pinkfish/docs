@@ -44,7 +44,7 @@ Add Attribute to Schema
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `schemaName` | string | Yes | — | Name of the schema where the attribute will be created |
-| `abacBasicAssignmentInfo` | any[] | No | — | GUID, name and the objectType of the linked assignment |
+| `abacBasicAssignmentInfo` | object[] | No | — | GUID, name and the objectType of the linked assignment |
 | `allowOther` | boolean | No | — | Indicates if user-specified values are allowed |
 | `associatedAttributeRequest` | object | No | — | Associated Attribute Request |
 | `context` | object | No | — | The context value |
@@ -58,9 +58,9 @@ Add Attribute to Schema
 | `metadata` | string | No | — | Metadata about the attribute in JSON format |
 | `name` | string | Yes | — | Attribute name |
 | `nameKey` | string | No | — | Attribute name key used for translation |
-| `options` | any[] | No | — | List of options for the attribute (applicable for SingleSelect and MultiSelect) |
+| `options` | object[] | No | — | List of options for the attribute (applicable for SingleSelect and MultiSelect) |
 | `optionType` | string | No | — | Source for attribute options |
-| `referenceCategoryIds` | any[] | No | — | List of category IDs associated with the attribute |
+| `referenceCategoryIds` | string[] | No | — | List of category IDs associated with the attribute |
 | `required` | boolean | No | — | Indicates if this attribute is required |
 | `responseSubType` | string | No | — | Response sub type for the attribute |
 | `responseType` | string | Yes | — | Response type for the attribute |
@@ -83,6 +83,9 @@ Add Attribute to Schema
     },
     "abacBasicAssignmentInfo": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "GUID, name and the objectType of the linked assignment"
     },
     "allowOther": {
@@ -169,6 +172,9 @@ Add Attribute to Schema
     },
     "options": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of options for the attribute (applicable for SingleSelect and MultiSelect)"
     },
     "optionType": {
@@ -182,6 +188,10 @@ Add Attribute to Schema
     },
     "referenceCategoryIds": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
       "description": "List of category IDs associated with the attribute"
     },
     "required": {
@@ -245,7 +255,7 @@ Create Entity
 | `entityTypeId` | string | No | — | Identifier of the entity type |
 | `entityTypeName` | string | No | — | Name of the entity type |
 | `attributes` | object | No | — | The custom attributes for the entity defined by its schema. Contains attribute paths mapped to their values. |
-| `entityLinks` | any[] | No | — | Entity link requests to create relationships with other entities during entity creation |
+| `entityLinks` | object[] | No | — | Entity link requests to create relationships with other entities during entity creation |
 | `name` | string | Yes | — | The name of the entity. Required field used as the primary identifier for users. |
 | `organization` | object | No | — | The organization value |
 | `workflowAndStage` | object | No | — | Workflow And Stage |
@@ -274,6 +284,9 @@ Create Entity
     },
     "entityLinks": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Entity link requests to create relationships with other entities during entity creation"
     },
     "name": {
@@ -600,7 +613,7 @@ Create Task
 | --- | --- | --- | --- | --- |
 | `assigneeEmail` | string | No | — | Email of the assignee |
 | `assigneeId` | string | No | — | ID of the assignee |
-| `collaborators` | any[] | No | — | List of task collaborators |
+| `collaborators` | object[] | No | — | List of task collaborators |
 | `context` | object | No | — | The context value |
 | `deadline` | string | No | — | Deadline for the task |
 | `description` | string | No | — | Description of the task |
@@ -637,6 +650,9 @@ Create Task
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of task collaborators"
     },
     "context": {
@@ -930,7 +946,7 @@ Get List of Entity Types
 | `page` | integer | No | — | Results page to be retrieved (0..N). Example: '?page=1' |
 | `size` | integer | No | — | Number of records per page (1..50). Example: '?size=20' |
 | `sort` | string | No | — | Sorting criteria in the format: property,(asc\|desc). Example: '?sort=name,asc' |
-| `filters` | any[] | No | — | The fields and values used to filter results. |
+| `filters` | object[] | No | — | The fields and values used to filter results. |
 | `fullText` | string | No | — | The key terms for the search criteria. |
 
 <Expandable title="inputSchema">
@@ -961,6 +977,9 @@ Get List of Entity Types
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The fields and values used to filter results."
     },
     "fullText": {
@@ -1356,7 +1375,7 @@ Get List of Relationship Records by Entity
 | `sort` | string | No | — | Sorting criteria in the format: property,(asc\|desc). Example: '?sort=id,desc' |
 | `entityTypeName` | string | Yes | — | Name of the Entity Type |
 | `entityId` | string | Yes | — | Entity Identifier |
-| `filters` | any[] | No | — | The fields and values used to filter results. |
+| `filters` | object[] | No | — | The fields and values used to filter results. |
 | `fullText` | string | No | — | The key terms for the search criteria. |
 
 <Expandable title="inputSchema">
@@ -1401,6 +1420,9 @@ Get List of Relationship Records by Entity
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The fields and values used to filter results."
     },
     "fullText": {
@@ -1431,7 +1453,7 @@ Update Task
 | `taskId` | string | Yes | — | UUID of the Task to be updated |
 | `assigneeEmail` | string | No | — | Email of the assignee |
 | `assigneeId` | string | No | — | ID of the assignee |
-| `collaborators` | any[] | No | — | List of task collaborators |
+| `collaborators` | object[] | No | — | List of task collaborators |
 | `context` | object | No | — | The context value |
 | `deadline` | string | No | — | Deadline for the task |
 | `description` | string | No | — | Description of the task |
@@ -1466,6 +1488,9 @@ Update Task
     },
     "collaborators": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of task collaborators"
     },
     "context": {

@@ -343,7 +343,7 @@ Get a voicemail message
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `messageId` | string | Yes | — | Message ID |
-| `expand` | any[] | No | — | If the caller is a known user, which fields, if any, to expand |
+| `expand` | string[] | No | — | If the caller is a known user, which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -361,6 +361,18 @@ Get a voicemail message
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "callerUser.routingStatus",
+          "callerUser.primaryPresence",
+          "callerUser.conversationSummary",
+          "callerUser.outOfOffice",
+          "callerUser.geolocation",
+          "conversations",
+          "transcription"
+        ]
+      },
       "description": "If the caller is a known user, which fields, if any, to expand"
     }
   },
@@ -434,7 +446,7 @@ List voicemail messages
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `ids` | string | No | — | An optional comma separated list of VoicemailMessage ids |
-| `expand` | any[] | No | — | If the caller is a known user, which fields, if any, to expand |
+| `expand` | string[] | No | — | If the caller is a known user, which fields, if any, to expand |
 
 <Expandable title="inputSchema">
 
@@ -452,6 +464,18 @@ List voicemail messages
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "callerUser.routingStatus",
+          "callerUser.primaryPresence",
+          "callerUser.conversationSummary",
+          "callerUser.outOfOffice",
+          "callerUser.geolocation",
+          "conversations",
+          "transcription"
+        ]
+      },
       "description": "If the caller is a known user, which fields, if any, to expand"
     }
   },
@@ -927,7 +951,7 @@ Update a voicemail message
 | `callerUser` | object | No | — | Caller User |
 | `conversation` | object | No | — | The conversation value |
 | `copiedFrom` | object | No | — | Copied From |
-| `copiedTo` | any[] | No | — | Represents where this voicemail has been copied to |
+| `copiedTo` | object[] | No | — | Represents where this voicemail has been copied to |
 | `createdDate` | string | No | — | The date the voicemail message was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleted` | boolean | No | — | Whether the voicemail message has been marked as deleted |
 | `deletedDate` | string | No | — | The date the voicemail message deleted property was set to true. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
@@ -1235,6 +1259,9 @@ Update a voicemail message
     },
     "copiedTo": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Represents where this voicemail has been copied to"
     },
     "createdDate": {
@@ -1837,7 +1864,7 @@ Update a voicemail message
 | `callerUser` | object | No | — | Caller User |
 | `conversation` | object | No | — | The conversation value |
 | `copiedFrom` | object | No | — | Copied From |
-| `copiedTo` | any[] | No | — | Represents where this voicemail has been copied to |
+| `copiedTo` | object[] | No | — | Represents where this voicemail has been copied to |
 | `createdDate` | string | No | — | The date the voicemail message was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `deleted` | boolean | No | — | Whether the voicemail message has been marked as deleted |
 | `deletedDate` | string | No | — | The date the voicemail message deleted property was set to true. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
@@ -2145,6 +2172,9 @@ Update a voicemail message
     },
     "copiedTo": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Represents where this voicemail has been copied to"
     },
     "createdDate": {
