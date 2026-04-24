@@ -137,7 +137,7 @@ Delete folders (bulk)
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `folder_ids` | any[] | Yes | — | Required. Folder ids of the folders to be deleted |
+| `folder_ids` | string[] | Yes | — | Required. Folder ids of the folders to be deleted |
 | `cascade_up` | boolean | No | — | Deleting folders will always cascade down. If a parent is deleted, then all of its children are deleted. When cascade_up is true, if a child is deleted, and it's parent no longer has any children, then it will be deleted too. This will cascade all the way up the tree. |
 | `domain` | string | No | — | domain represents the type/domain/hierarchy for the folder. This is used for deleting folders within a specified domain |
 
@@ -153,6 +153,9 @@ Delete folders (bulk)
     },
     "folder_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Required. Folder ids of the folders to be deleted"
     },
     "cascade_up": {
@@ -430,7 +433,7 @@ Remove association for a specific user to multiple folders
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `user_id` | string | Yes | — | Required. The user identifier we want to remove folders from |
-| `folder_ids` | any[] | Yes | — | Required. List of folder IDs to remove association to given user |
+| `folder_ids` | string[] | Yes | — | Required. List of folder IDs to remove association to given user |
 
 <Expandable title="inputSchema">
 
@@ -448,6 +451,9 @@ Remove association for a specific user to multiple folders
     },
     "folder_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Required. List of folder IDs to remove association to given user"
     }
   },
@@ -472,7 +478,7 @@ Search folders
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `domain` | string | No | — | domain represents the type/domain/hierarchy for the folder. This is used for getting folders of a certain domain, i.e. getting all `template` folders or `site` folders |
-| `filters` | any[] | No | — | Optional. Filters to apply when getting folders. Used for only returning folders that match the filter setting. i.e. only returning meta_label 'location'. Maximum of 1000 filters allowed. |
+| `filters` | object[] | No | — | Optional. Filters to apply when getting folders. Used for only returning folders that match the filter setting. i.e. only returning meta_label 'location'. Maximum of 1000 filters allowed. |
 | `ignore_folders_disabled` | boolean | No | — | Optional. When true, folders will still be returned when disabled for the organisation |
 | `include_deleted_folders` | boolean | No | — | Whether to return both deleted and non-deleted folders. Defaults to false |
 | `include_folders_count` | boolean | No | — | Whether to return the total number of folders discovered in the query. Defaults to false |
@@ -500,6 +506,9 @@ Search folders
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Optional. Filters to apply when getting folders. Used for only returning folders that match the filter setting. i.e. only returning meta_label 'location'. Maximum of 1000 filters allowed."
     },
     "ignore_folders_disabled": {
@@ -598,7 +607,8 @@ Update a folder
       "description": "Optional. Non-empty folder name. Limited to maximum 250 characters.",
       "properties": {
         "val": {
-          "type": "string"
+          "type": "string",
+          "description": "The val value"
         }
       }
     }
@@ -624,7 +634,7 @@ Assign user to a permission set
 | --- | --- | --- | --- | --- |
 | `id` | string | No | — | Optional. The ID of the permission set. |
 | `name` | string | No | — | Optional. The name of the permission set to assign. De-prioritised in favour of id. |
-| `user_ids` | any[] | No | — | The IDs of the users to assign. |
+| `user_ids` | string[] | No | — | The IDs of the users to assign. |
 
 <Expandable title="inputSchema">
 
@@ -646,6 +656,9 @@ Assign user to a permission set
     },
     "user_ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The IDs of the users to assign."
     }
   },
@@ -708,7 +721,7 @@ List permission sets
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filters` | any[] | No | — | (Optional). The filters to apply. |
+| `filters` | object[] | No | — | (Optional). The filters to apply. |
 | `include_users` | boolean | No | — | Whether to include users in the response. |
 | `limit` | integer | No | — | The maximum number of permission sets to return. |
 | `offset` | integer | No | — | The offset of the first permission set to return. |
@@ -727,6 +740,9 @@ List permission sets
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "(Optional). The filters to apply."
     },
     "include_users": {
@@ -993,7 +1009,7 @@ List a group's or an organization's users
 | `group_id` | string | Yes | — | The ID of the group or organization to list users for. |
 | `limit` | integer | No | — | The maximum number of users to return.  optional |
 | `offset` | integer | No | — | The offset to start listing users from.  optional |
-| `status` | any[] | No | — | The status to filter users by.  optional   - active: Active user.  - inactive: Inactive user. |
+| `status` | string[] | No | — | The status to filter users by.  optional   - active: Active user.  - inactive: Inactive user. |
 
 <Expandable title="inputSchema">
 
@@ -1019,6 +1035,13 @@ List a group's or an organization's users
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "active",
+          "inactive"
+        ]
+      },
       "description": "The status to filter users by.  optional   - active: Active user.  - inactive: Inactive user."
     }
   },
@@ -1088,7 +1111,7 @@ List users (by email)
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `email` | any[] | Yes | — | Emails to filter by. Required. |
+| `email` | string[] | Yes | — | Emails to filter by. Required. |
 
 <Expandable title="inputSchema">
 
@@ -1102,6 +1125,9 @@ List users (by email)
     },
     "email": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Emails to filter by. Required."
     }
   },

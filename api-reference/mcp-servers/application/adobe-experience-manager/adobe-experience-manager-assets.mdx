@@ -412,7 +412,7 @@ Get the asset relations for an asset
 | `assetId` | string | Yes | — | ID of the asset to access |
 | `limit` | integer | No | — | For a paginated request, this parameter defines the maximum number of items to retrieve. |
 | `cursor` | string | No | — | When the number of results for a request exceeds the allowed limit, the response will include a `cursor`.  That value can then be sent via this parameter on a subsequent request to retrieve the next set of items. |
-| `relationTypes` | any[] | No | — | Comma-delimited list of relation types to filter the asset relations to include only the specified types. |
+| `relationTypes` | string[] | No | — | Comma-delimited list of relation types to filter the asset relations to include only the specified types. |
 
 <Expandable title="inputSchema">
 
@@ -438,6 +438,9 @@ Get the asset relations for an asset
     },
     "relationTypes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Comma-delimited list of relation types to filter the asset relations to include only the specified types."
     }
   },
@@ -690,7 +693,7 @@ Import From Url
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assetMetadata` | object | No | — | Metadata properties and values that should be applied to assets that are part of the import. Client should use the assetMetadata properties as exposed by the metadata API endpoints. |
-| `files` | any[] | Yes | — | files |
+| `files` | object[] | Yes | — | The files value |
 | `folder` | string | Yes | — | The ID or path for the folder into which to import the assets in AEM. |
 | `sourceName` | string | No | — | A user-friendly display name for the source of the assets |
 
@@ -710,7 +713,10 @@ Import From Url
     },
     "files": {
       "type": "array",
-      "description": "files"
+      "items": {
+        "type": "object"
+      },
+      "description": "The files value"
     },
     "folder": {
       "type": "string",
@@ -742,7 +748,7 @@ Updates the asset's assetMetadata properties
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `assetId` | string | Yes | — | ID of the asset to access |
-| `body` | any[] | No | — | JSON Patch defines a JSON document structure for expressing a sequence of operations to apply to a JavaScript Object Notation (JSON) document; it is suitable for use with the HTTP PATCH method. The `application/json-patch+json` media type is used to identify such patch documents.  For more details check [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902). |
+| `body` | object[] | No | — | JSON Patch defines a JSON document structure for expressing a sequence of operations to apply to a JavaScript Object Notation (JSON) document; it is suitable for use with the HTTP PATCH method. The `application/json-patch+json` media type is used to identify such patch documents.  For more details check [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902). |
 
 <Expandable title="inputSchema">
 
@@ -760,6 +766,9 @@ Updates the asset's assetMetadata properties
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "JSON Patch defines a JSON document structure for expressing a sequence of operations to apply to a JavaScript Object Notation (JSON) document; it is suitable for use with the HTTP PATCH method. The `application/json-patch+json` media type is used to identify such patch documents.  For more details check [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902)."
     }
   },

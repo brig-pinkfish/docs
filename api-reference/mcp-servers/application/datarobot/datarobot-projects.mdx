@@ -126,7 +126,7 @@ Update the project's access controls.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
-| `data` | any[] | Yes | — | The role to set for the user. |
+| `data` | object[] | Yes | — | The role to set for the user. |
 | `includeFeatureDiscoveryEntities` | boolean | No | — | Whether to share all the related entities. |
 | `sendNotification` | boolean | No | — | Send an email notification. |
 
@@ -146,6 +146,9 @@ Update the project's access controls.
     },
     "data": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The role to set for the user."
     },
     "includeFeatureDiscoveryEntities": {
@@ -224,7 +227,7 @@ Start autopilot
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
-| `autopilotClusterList` | any[] | No | — | Optional. A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless unsupervisedMode is true and unsupervisedType is set to 'clustering'. |
+| `autopilotClusterList` | integer[] | No | — | Optional. A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless unsupervisedMode is true and unsupervisedType is set to 'clustering'. |
 | `blendBestModels` | boolean | No | — | Blend best models during Autopilot run. This option is not supported in SHAP-only mode or for multilabel projects. |
 | `considerBlendersInRecommendation` | boolean | No | — | Include blenders when selecting a model to prepare for deployment in an Autopilot Run. This option is not supported in SHAP-only mode or for multilabel projects. |
 | `featurelistId` | string | Yes | — | The ID of a featurelist that should be used for autopilot. |
@@ -250,6 +253,9 @@ Start autopilot
     },
     "autopilotClusterList": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "Optional. A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless unsupervisedMode is true and unsupervisedType is set to 'clustering'."
     },
     "blendBestModels": {
@@ -313,14 +319,14 @@ Start modeling.
 | `projectId` | string | Yes | — | The project ID. |
 | `accuracyOptimizedMb` | boolean | No | — | Include additional, longer-running models that will be run by the autopilot and available to run manually. |
 | `aggregationType` | string | No | — | For multiseries projects only. The aggregation type to apply when creating cross-series features. |
-| `allowedPairwiseInteractionGroups` | any[] | No | — | For GAM models - specify groups of columns for which pairwise interactions will be allowed. E.g. if set to [['A', 'B', 'C'], ['C', 'D']] then GAM models will allow interactions between columns AxB, BxC, AxC, CxD. All others (AxD, BxD) will not be considered. If not specified - all possible interactions will be considered by model. |
+| `allowedPairwiseInteractionGroups` | any[][] | No | — | For GAM models - specify groups of columns for which pairwise interactions will be allowed. E.g. if set to [['A', 'B', 'C'], ['C', 'D']] then GAM models will allow interactions between columns AxB, BxC, AxC, CxD. All others (AxD, BxD) will not be considered. If not specified - all possible interactions will be considered by model. |
 | `allowedPairwiseInteractionGroupsFilename` | string | No | — | Filename that was used to upload allowed_pairwise_interaction_groups. Necessary for persistence of UI/UX when you specify that parameter via file. |
 | `allowPartialHistoryTimeSeriesPredictions` | boolean | No | — | Specifies whether the time series predictions can use partial historical data. |
-| `autopilotClusterList` | any[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
+| `autopilotClusterList` | integer[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
 | `autopilotDataSamplingMethod` | string | No | — | Defines how autopilot will select subsample from training dataset in OTV/TS projects. Defaults to 'latest' for 'rowCount' dataSelectionMethod and to 'random' for 'duration'. |
 | `autopilotDataSelectionMethod` | string | Yes | — | The Data Selection method to be used by autopilot when creating models for datetime-partitioned datasets. |
 | `autopilotWithFeatureDiscovery` | boolean | No | — | If true, autopilot will run on a feature list that includes features found via search for interactions. |
-| `backtests` | any[] | No | — | An array specifying the format of the backtests. |
+| `backtests` | object[] | No | — | An array specifying the format of the backtests. |
 | `biasMitigationFeatureName` | string | No | — | The name of the protected feature used to mitigate bias on models. |
 | `biasMitigationTechnique` | string | No | — | Method applied to perform bias mitigation. |
 | `blendBestModels` | boolean | No | — | Blend best models during Autopilot run. This option is not supported in SHAP-only mode or for multilabel projects. |
@@ -330,7 +336,7 @@ Start modeling.
 | `classMappingAggregationSettings` | object | No | — | Class mapping aggregation settings. |
 | `considerBlendersInRecommendation` | boolean | No | — | Include blenders when selecting a model to prepare for deployment in an Autopilot Run. This option is not supported in SHAP-only mode or for multilabel projects. |
 | `credentials` | any[] | No | — | List of credentials for the secondary datasets used in feature discovery project. |
-| `crossSeriesGroupByColumns` | any[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
+| `crossSeriesGroupByColumns` | string[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
 | `cvHoldoutLevel` | object | No | — | The value of the partition column indicating a row is part of the holdout set. This level is optional - if not specified or if provided as ``null``, then no holdout will be used in the project. The rest of the levels indicate which cross validation fold each row should fall into. |
 | `cvMethod` | string | No | — | The partitioning method to be applied to the training data. |
 | `dateRemoval` | boolean | No | — | If true, enable creating additional feature lists without dates (does not apply to time-aware projects). |
@@ -344,7 +350,7 @@ Start modeling.
 | `eventsCount` | string | No | — | The name of a column specifying events count. The data in this column must be pure numeric and non negative without missing values |
 | `exponentiallyWeightedMovingAlpha` | number | No | — | Discount factor (alpha) used for exponentially weighted moving features |
 | `exposure` | string | No | — | The name of a column specifying row exposure.The data in this column must be pure numeric (e.g. not currency, date, length, etc.) and without missing values |
-| `externalPredictions` | any[] | No | — | List of external prediction columns from the dataset. |
+| `externalPredictions` | string[] | No | — | List of external prediction columns from the dataset. |
 | `externalTimeSeriesBaselineDatasetId` | string | No | — | Catalog version id for external prediction data that can be used as a baseline to calculate new metrics. |
 | `externalTimeSeriesBaselineDatasetName` | string | No | — | The name of the time series baseline dataset for the project. |
 | `fairnessMetricsSet` | string | No | — | Metric to use for calculating fairness. Can be one of ``proportionalParity``, ``equalParity``, ``predictionBalance``, ``trueFavorableAndUnfavorableRateParity`` or ``FavorableAndUnfavorablePredictiveValueParity``. Used and required only if *Bias & Fairness in AutoML* feature is enabled. |
@@ -354,9 +360,9 @@ Start modeling.
 | `featureDiscoverySupervisedFeatureReduction` | boolean | No | — | Run supervised feature reduction for feature discovery projects. |
 | `featureEngineeringPredictionPoint` | string | No | — | The date column to be used as the prediction point for time-based feature engineering. |
 | `featurelistId` | string | No | — | The ID of a featurelist to use for autopilot. |
-| `featureSettings` | any[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
+| `featureSettings` | object[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
 | `forecastDistance` | string | No | — | The name of a column specifying the forecast distance to which each row of the dataset belongs. Column unique values are used to subset the modeling data and build a separate model for each unique column value. Similar to time series this column is well suited to be used as forecast distance. |
-| `forecastOffsets` | any[] | No | — | An array of strings with names of a columns specifying row offsets. Columns values are used as offset or predictions to boost for models.  The data in this column must be pure numeric (e.g. not currency, date, length, etc.). |
+| `forecastOffsets` | string[] | No | — | An array of strings with names of a columns specifying row offsets. Columns values are used as offset or predictions to boost for models.  The data in this column must be pure numeric (e.g. not currency, date, length, etc.). |
 | `forecastWindowEnd` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should end. |
 | `forecastWindowStart` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should start. |
 | `gapDuration` | string | No | — | The duration of the gap between holdout training and holdout scoring data. For time series projects, defaults to the duration of the gap between the end of the feature derivation window and the beginning of the forecast window. For OTV projects, defaults to a zero duration (P0Y0M0D). |
@@ -377,18 +383,18 @@ Start modeling.
 | `modelSplits` | integer | No | — | Sets the cap on the number of jobs per model used when building models to control number of jobs in the queue. Higher number of modelSplits will allow for less downsampling leading to the use of more post-processed data. |
 | `monotonicDecreasingFeaturelistId` | string | No | — | The ID of the featurelist that defines the set of features with a monotonically decreasing relationship to the target.  If null, no such constraints are enforced. When specified, this will set a default for the project that can be overriden at model submission time if desired. |
 | `monotonicIncreasingFeaturelistId` | string | No | — | The ID of the featurelist that defines the set of features with a monotonically increasing relationship to the target. If null, no such constraints are enforced. When specified, this will set a default for the project that can be overriden at model submission time if desired. |
-| `multiseriesIdColumns` | any[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
+| `multiseriesIdColumns` | string[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
 | `numberOfBacktests` | integer | No | — | The number of backtests to use. If omitted, defaults to a positive value selected by the server based on the validation and gap durations. |
 | `numberOfIncrementalLearningIterationsBeforeBestModelSelection` | integer | No | — | Number of incremental_learning iterations before best model selection. |
-| `offset` | any[] | No | — | An array of strings with names of a columns specifying row offsets.The data in this column must be pure numeric (e.g. not currency, date, length, etc.) and without missing values |
+| `offset` | string[] | No | — | An array of strings with names of a columns specifying row offsets.The data in this column must be pure numeric (e.g. not currency, date, length, etc.) and without missing values |
 | `onlyIncludeMonotonicBlueprints` | boolean | Yes | — | When true, only blueprints that support enforcing montonic constraints will be available in the project or selected for autopilot. |
-| `partitionKeyCols` | any[] | No | — | An array containing a single string - the name of the group partition column |
-| `periodicities` | any[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
+| `partitionKeyCols` | string[] | No | — | An array containing a single string - the name of the group partition column |
+| `periodicities` | object[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
 | `positiveClass` | object | No | — | A value from the target column to use for the positive class. May only be specified for projects doing binary classification.If not specified, a positive class is selected automatically. |
 | `preferableTargetValue` | object | No | — | A target value that should be treated as a positive outcome for the prediction. For example if we want to check gender discrimination for giving a loan and our target named ``is_bad``, then the positive outcome for the prediction would be ``No``, which means that the loan is good and that's what we treat as a preferable result for the loaner. Used and required only if *Bias & Fairness in AutoML* feature is enabled. |
 | `prepareModelForDeployment` | boolean | No | — | Prepare model for deployment during Autopilot run. The preparation includes creating reduced feature list models, retraining best model on higher sample size, computing insights and assigning 'RECOMMENDED FOR DEPLOYMENT' label. |
 | `primaryLocationColumn` | string | No | — | Primary geospatial location column. |
-| `protectedFeatures` | any[] | No | — | A list of project feature to mark as protected for Bias metric calculation and Fairness correction. Used and required only if *Bias & Fairness in AutoML* feature is enabled. |
+| `protectedFeatures` | string[] | No | — | A list of project feature to mark as protected for Bias metric calculation and Fairness correction. Used and required only if *Bias & Fairness in AutoML* feature is enabled. |
 | `quantileLevel` | number | No | — | The quantile level between 0.01 and 0.99 for specifying the Quantile metric. |
 | `quickrun` | boolean | No | — | (Deprecated): 'quick' should be used in the `mode` parameter instead of using this parameter. If set to `true`, autopilot mode will be set to 'quick'.Cannot be set to `true` when `mode` is set to 'comprehensive' or 'manual'. |
 | `rateTopPctThreshold` | number | No | — | The percentage threshold between 0.1 and 50 for specifying the Rate@Top% metric. |
@@ -403,7 +409,7 @@ Start modeling.
 | `seriesId` | string | No | — | The name of a column specifying the series ID to which each row of the dataset belongs. Typically the series was used to derive the additional features, that are independent from each other. Column unique values are used to subset the modeling data and build a separate model for each unique column value. Similar to time series this column is well suited to be used as multi-series ID column. |
 | `shapOnlyMode` | boolean | No | — | Keep only models that support SHAP values during Autopilot run. Use SHAP-based insights wherever possible. |
 | `smartDownsampled` | boolean | No | — | Whether to use smart downsampling to throw away excess rows of the majority class. Only applicable to classification and zero-boosted regression projects. |
-| `stopWords` | any[] | No | — | A list of stop words to be used for text blueprints. Note: ``stop_words=True`` must be set in the blueprint preprocessing parameters for this list of stop words to actually be used during preprocessing. |
+| `stopWords` | string[] | No | — | A list of stop words to be used for text blueprints. Note: ``stop_words=True`` must be set in the blueprint preprocessing parameters for this list of stop words to actually be used during preprocessing. |
 | `target` | string | No | — | The name of the target feature. |
 | `targetType` | string | No | — | Used to specify the targetType to use for a project when it is ambiguous, i.e. a numeric target with a few unique values that could be used for either regression or multiclass. |
 | `trainingLevel` | object | No | — | The value of the partition column indicating a row is part of the training set. |
@@ -451,6 +457,9 @@ Start modeling.
     },
     "allowedPairwiseInteractionGroups": {
       "type": "array",
+      "items": {
+        "type": "array"
+      },
       "description": "For GAM models - specify groups of columns for which pairwise interactions will be allowed. E.g. if set to [['A', 'B', 'C'], ['C', 'D']] then GAM models will allow interactions between columns AxB, BxC, AxC, CxD. All others (AxD, BxD) will not be considered. If not specified - all possible interactions will be considered by model."
     },
     "allowedPairwiseInteractionGroupsFilename": {
@@ -463,6 +472,9 @@ Start modeling.
     },
     "autopilotClusterList": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`."
     },
     "autopilotDataSamplingMethod": {
@@ -487,6 +499,9 @@ Start modeling.
     },
     "backtests": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array specifying the format of the backtests."
     },
     "biasMitigationFeatureName": {
@@ -549,6 +564,9 @@ Start modeling.
     },
     "crossSeriesGroupByColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like \"men's clothing\", \"sports equipment\", etc."
     },
     "cvHoldoutLevel": {
@@ -617,6 +635,9 @@ Start modeling.
     },
     "externalPredictions": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of external prediction columns from the dataset."
     },
     "externalTimeSeriesBaselineDatasetId": {
@@ -664,6 +685,9 @@ Start modeling.
     },
     "featureSettings": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array specifying per feature settings. Features can be left unspecified."
     },
     "forecastDistance": {
@@ -672,6 +696,9 @@ Start modeling.
     },
     "forecastOffsets": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array of strings with names of a columns specifying row offsets. Columns values are used as offset or predictions to boost for models.  The data in this column must be pure numeric (e.g. not currency, date, length, etc.)."
     },
     "forecastWindowEnd": {
@@ -765,6 +792,9 @@ Start modeling.
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries <multiseries>` section of the time series documentation for more context."
     },
     "numberOfBacktests": {
@@ -777,6 +807,9 @@ Start modeling.
     },
     "offset": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array of strings with names of a columns specifying row offsets.The data in this column must be pure numeric (e.g. not currency, date, length, etc.) and without missing values"
     },
     "onlyIncludeMonotonicBlueprints": {
@@ -785,10 +818,16 @@ Start modeling.
     },
     "partitionKeyCols": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array containing a single string - the name of the group partition column"
     },
     "periodicities": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'."
     },
     "positiveClass": {
@@ -807,6 +846,9 @@ Start modeling.
     },
     "protectedFeatures": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of project feature to mark as protected for Bias metric calculation and Fairness correction. Used and required only if *Bias & Fairness in AutoML* feature is enabled."
     },
     "quantileLevel": {
@@ -867,6 +909,9 @@ Start modeling.
     },
     "stopWords": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of stop words to be used for text blueprints. Note: ``stop_words=True`` must be set in the blueprint preprocessing parameters for this list of stop words to actually be used during preprocessing."
     },
     "target": {
@@ -995,13 +1040,13 @@ Preview the fully specified datetime partitioning generated by the requested con
 | `projectId` | string | Yes | — | The project ID. |
 | `aggregationType` | string | No | — | For multiseries projects only. The aggregation type to apply when creating cross-series features. |
 | `allowPartialHistoryTimeSeriesPredictions` | boolean | No | — | Specifies whether the time series predictions can use partial historical data. |
-| `autopilotClusterList` | any[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
+| `autopilotClusterList` | integer[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
 | `autopilotDataSamplingMethod` | string | No | — | Defines how autopilot will select subsample from training dataset in OTV/TS projects. Defaults to 'latest' for 'rowCount' dataSelectionMethod and to 'random' for 'duration'. |
 | `autopilotDataSelectionMethod` | string | No | — | The Data Selection method to be used by autopilot when creating models for datetime-partitioned datasets. |
 | `backtests` | any[] | No | — | An array specifying individual backtests. |
 | `calendarId` | string | No | — | The ID of the calendar to be used in this project. |
 | `clusteringBufferDisabled` | boolean | No | — | A boolean value indicating whether an clustering buffer creation should be disabled for unsupervised time series clustering project. |
-| `crossSeriesGroupByColumns` | any[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
+| `crossSeriesGroupByColumns` | string[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
 | `datetimePartitionColumn` | string | Yes | — | The date column that will be used as a datetime partition column. |
 | `defaultToAPriori` | boolean | No | — | Renamed to `defaultToKnownInAdvance`. |
 | `defaultToDoNotDerive` | boolean | No | — | For time series projects only. Sets whether all features default to being treated as do-not-derive features, excluding them from feature derivation. Individual features can be set to a value different than the default by using the `featureSettings` parameter. |
@@ -1010,7 +1055,7 @@ Preview the fully specified datetime partitioning generated by the requested con
 | `disableHoldout` | boolean | No | — | Whether to suppress allocating a holdout fold. If `disableHoldout` is set to true, `holdoutStartDate` and `holdoutDuration` must not be set. |
 | `featureDerivationWindowEnd` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the past relative to the forecast point the feature derivation window should end. |
 | `featureDerivationWindowStart` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the past relative to the forecast point the feature derivation window should begin. |
-| `featureSettings` | any[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
+| `featureSettings` | object[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
 | `forecastWindowEnd` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should end. |
 | `forecastWindowStart` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should start. |
 | `gapDuration` | string | No | — | The duration of the gap between holdout training and holdout scoring data. For time series projects, defaults to the duration of the gap between the end of the feature derivation window and the beginning of the forecast window. For OTV projects, defaults to a zero duration (P0Y0M0D). |
@@ -1019,9 +1064,9 @@ Preview the fully specified datetime partitioning generated by the requested con
 | `holdoutStartDate` | string | No | — | The start date of holdout scoring data. When specifying `holdoutStartDate`, one of `holdoutEndDate` or `holdoutDuration` must also be specified. This attribute cannot be specified when `disableHoldout` is true. |
 | `isHoldoutModified` | boolean | No | — | A boolean value indicating whether holdout settings (start/end dates) have been modified by user. |
 | `modelSplits` | integer | No | — | Sets the cap on the number of jobs per model used when building models to control number of jobs in the queue. Higher number of modelSplits will allow for less downsampling leading to the use of more post-processed data. |
-| `multiseriesIdColumns` | any[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
+| `multiseriesIdColumns` | string[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
 | `numberOfBacktests` | integer | No | — | The number of backtests to use. If omitted, defaults to a positive value selected by the server based on the validation and gap durations. |
-| `periodicities` | any[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
+| `periodicities` | object[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
 | `treatAsExponential` | string | No | — | For time series projects only. Used to specify whether to treat data as exponential trend and apply transformations like log-transform. For classification problems `always` is not allowed. Defaults to `auto`. |
 | `unsupervisedMode` | boolean | No | — | A boolean value indicating whether an unsupervised project should be created. |
 | `unsupervisedType` | string | No | — | The type of unsupervised project. Only valid when `unsupervisedMode` is true. If `unsupervisedMode`, defaults to `anomaly`. |
@@ -1059,6 +1104,9 @@ Preview the fully specified datetime partitioning generated by the requested con
     },
     "autopilotClusterList": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`."
     },
     "autopilotDataSamplingMethod": {
@@ -1091,6 +1139,9 @@ Preview the fully specified datetime partitioning generated by the requested con
     },
     "crossSeriesGroupByColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like \"men's clothing\", \"sports equipment\", etc."
     },
     "datetimePartitionColumn": {
@@ -1133,6 +1184,9 @@ Preview the fully specified datetime partitioning generated by the requested con
     },
     "featureSettings": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array specifying per feature settings. Features can be left unspecified."
     },
     "forecastWindowEnd": {
@@ -1169,6 +1223,9 @@ Preview the fully specified datetime partitioning generated by the requested con
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries <multiseries>` section of the time series documentation for more context."
     },
     "numberOfBacktests": {
@@ -1177,6 +1234,9 @@ Preview the fully specified datetime partitioning generated by the requested con
     },
     "periodicities": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'."
     },
     "treatAsExponential": {
@@ -1489,14 +1549,14 @@ Validate baseline data.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
-| `backtests` | any[] | No | — | An array of the configured backtests. |
+| `backtests` | object[] | No | — | An array of the configured backtests. |
 | `catalogVersionId` | string | Yes | — | The version ID of the external baseline data item in the AI catalog. |
 | `datetimePartitionColumn` | string | Yes | — | The date column that will be used as the datetime partition column for the specified project. |
 | `forecastWindowEnd` | integer | Yes | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should end. |
 | `forecastWindowStart` | integer | Yes | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should start. |
 | `holdoutEndDate` | string | No | — | The end date of holdout scoring data. |
 | `holdoutStartDate` | string | No | — | The start date of holdout scoring data. |
-| `multiseriesIdColumns` | any[] | No | — | An array of column names identifying the multiseries ID column(s)to use to identify series within the data. Must match the multiseries ID column(s) for the specified project. Currently, only one multiseries ID column may be specified. |
+| `multiseriesIdColumns` | string[] | No | — | An array of column names identifying the multiseries ID column(s)to use to identify series within the data. Must match the multiseries ID column(s) for the specified project. Currently, only one multiseries ID column may be specified. |
 | `target` | string | Yes | — | The selected target of the specified project. |
 
 <Expandable title="inputSchema">
@@ -1515,6 +1575,9 @@ Validate baseline data.
     },
     "backtests": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array of the configured backtests."
     },
     "catalogVersionId": {
@@ -1543,6 +1606,9 @@ Validate baseline data.
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array of column names identifying the multiseries ID column(s)to use to identify series within the data. Must match the multiseries ID column(s) for the specified project. Currently, only one multiseries ID column may be specified."
     },
     "target": {
@@ -1802,7 +1868,7 @@ Retrieve eligible cross-series group-by columns.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `crossSeriesGroupByColumns` | any[] | No | — | The names of the columns to retrieve the validation status for. If not specified, all eligible columns will be returned. |
+| `crossSeriesGroupByColumns` | string[] | No | — | The names of the columns to retrieve the validation status for. If not specified, all eligible columns will be returned. |
 | `projectId` | string | Yes | — | The project to retrieve cross-series group-by columns for. |
 | `multiseriesId` | string | Yes | — | The name of the column to be used as the multiseries ID column. |
 
@@ -1818,6 +1884,9 @@ Retrieve eligible cross-series group-by columns.
     },
     "crossSeriesGroupByColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The names of the columns to retrieve the validation status for. If not specified, all eligible columns will be returned."
     },
     "projectId": {
@@ -1897,7 +1966,7 @@ Detect multiseries properties.
 | --- | --- | --- | --- | --- |
 | `projectId` | string | Yes | — | The project ID. |
 | `datetimePartitionColumn` | string | Yes | — | The date column that will be used to perform detection and validation for. |
-| `multiseriesIdColumns` | any[] | No | — | The list of one or more names of potential multiseries ID columns. If not provided, all numerical and categorical columns are used. |
+| `multiseriesIdColumns` | string[] | No | — | The list of one or more names of potential multiseries ID columns. If not provided, all numerical and categorical columns are used. |
 
 <Expandable title="inputSchema">
 
@@ -1919,6 +1988,9 @@ Detect multiseries properties.
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of one or more names of potential multiseries ID columns. If not provided, all numerical and categorical columns are used."
     }
   },
@@ -1945,13 +2017,13 @@ Create an optimized datetime partitioning configuration using the target.
 | `projectId` | string | Yes | — | The project ID. |
 | `aggregationType` | string | No | — | For multiseries projects only. The aggregation type to apply when creating cross-series features. |
 | `allowPartialHistoryTimeSeriesPredictions` | boolean | No | — | Specifies whether the time series predictions can use partial historical data. |
-| `autopilotClusterList` | any[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
+| `autopilotClusterList` | integer[] | No | — | A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`. |
 | `autopilotDataSamplingMethod` | string | No | — | Defines how autopilot will select subsample from training dataset in OTV/TS projects. Defaults to 'latest' for 'rowCount' dataSelectionMethod and to 'random' for 'duration'. |
 | `autopilotDataSelectionMethod` | string | No | — | The Data Selection method to be used by autopilot when creating models for datetime-partitioned datasets. |
 | `backtests` | any[] | No | — | An array specifying individual backtests. |
 | `calendarId` | string | No | — | The ID of the calendar to be used in this project. |
 | `clusteringBufferDisabled` | boolean | No | — | A boolean value indicating whether an clustering buffer creation should be disabled for unsupervised time series clustering project. |
-| `crossSeriesGroupByColumns` | any[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
+| `crossSeriesGroupByColumns` | string[] | No | — | For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like "men's clothing", "sports equipment", etc. |
 | `datetimePartitionColumn` | string | Yes | — | The date column that will be used as a datetime partition column. |
 | `defaultToAPriori` | boolean | No | — | Renamed to `defaultToKnownInAdvance`. |
 | `defaultToDoNotDerive` | boolean | No | — | For time series projects only. Sets whether all features default to being treated as do-not-derive features, excluding them from feature derivation. Individual features can be set to a value different than the default by using the `featureSettings` parameter. |
@@ -1960,7 +2032,7 @@ Create an optimized datetime partitioning configuration using the target.
 | `disableHoldout` | boolean | No | — | Whether to suppress allocating a holdout fold. If `disableHoldout` is set to true, `holdoutStartDate` and `holdoutDuration` must not be set. |
 | `featureDerivationWindowEnd` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the past relative to the forecast point the feature derivation window should end. |
 | `featureDerivationWindowStart` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the past relative to the forecast point the feature derivation window should begin. |
-| `featureSettings` | any[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
+| `featureSettings` | object[] | No | — | An array specifying per feature settings. Features can be left unspecified. |
 | `forecastWindowEnd` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should end. |
 | `forecastWindowStart` | integer | No | — | For time series projects only. How many timeUnits of the datetimePartitionColumn into the future relative to the forecast point the forecast window should start. |
 | `gapDuration` | string | No | — | The duration of the gap between holdout training and holdout scoring data. For time series projects, defaults to the duration of the gap between the end of the feature derivation window and the beginning of the forecast window. For OTV projects, defaults to a zero duration (P0Y0M0D). |
@@ -1969,9 +2041,9 @@ Create an optimized datetime partitioning configuration using the target.
 | `holdoutStartDate` | string | No | — | The start date of holdout scoring data. When specifying `holdoutStartDate`, one of `holdoutEndDate` or `holdoutDuration` must also be specified. This attribute cannot be specified when `disableHoldout` is true. |
 | `isHoldoutModified` | boolean | No | — | A boolean value indicating whether holdout settings (start/end dates) have been modified by user. |
 | `modelSplits` | integer | No | — | Sets the cap on the number of jobs per model used when building models to control number of jobs in the queue. Higher number of modelSplits will allow for less downsampling leading to the use of more post-processed data. |
-| `multiseriesIdColumns` | any[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
+| `multiseriesIdColumns` | string[] | No | — | May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries &lt;multiseries&gt;` section of the time series documentation for more context. |
 | `numberOfBacktests` | integer | No | — | The number of backtests to use. If omitted, defaults to a positive value selected by the server based on the validation and gap durations. |
-| `periodicities` | any[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
+| `periodicities` | object[] | No | — | A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'. |
 | `target` | string | No | — | The name of the target column. |
 | `treatAsExponential` | string | No | — | For time series projects only. Used to specify whether to treat data as exponential trend and apply transformations like log-transform. For classification problems `always` is not allowed. Defaults to `auto`. |
 | `unsupervisedMode` | boolean | No | — | A boolean value indicating whether an unsupervised project should be created. |
@@ -2010,6 +2082,9 @@ Create an optimized datetime partitioning configuration using the target.
     },
     "autopilotClusterList": {
       "type": "array",
+      "items": {
+        "type": "integer"
+      },
       "description": "A list of integers where each value will be used as the number of clusters in Autopilot model(s) for unsupervised clustering projects. Cannot be specified unless `unsupervisedMode` is true and `unsupervisedType` is set to `clustering`."
     },
     "autopilotDataSamplingMethod": {
@@ -2042,6 +2117,9 @@ Create an optimized datetime partitioning configuration using the target.
     },
     "crossSeriesGroupByColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "For multiseries projects with cross-series features enabled only. List of columns (currently of length 1). Setting that indicates how to further split series into related groups. For example, if every series is sales of an individual product, the series group-by could be the product category with values like \"men's clothing\", \"sports equipment\", etc."
     },
     "datetimePartitionColumn": {
@@ -2084,6 +2162,9 @@ Create an optimized datetime partitioning configuration using the target.
     },
     "featureSettings": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "An array specifying per feature settings. Features can be left unspecified."
     },
     "forecastWindowEnd": {
@@ -2120,6 +2201,9 @@ Create an optimized datetime partitioning configuration using the target.
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "May be used only with time series projects. An array of the column names identifying  the series to which each row of the dataset belongs. Currently only one multiseries ID column is supported. See the :ref:`multiseries <multiseries>` section of the time series documentation for more context."
     },
     "numberOfBacktests": {
@@ -2128,6 +2212,9 @@ Create an optimized datetime partitioning configuration using the target.
     },
     "periodicities": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of periodicities for time series projects only. For classification problems periodicities are not allowed. If this is provided, parameter 'differencing_method' will default to 'seasonal' if not provided or 'auto'."
     },
     "target": {
@@ -2439,7 +2526,7 @@ Schedule project permadelete job.
 | `limit` | integer | No | — | At most this many projects are deleted. |
 | `offset` | integer | No | — | This many projects will be skipped. |
 | `organization` | string | No | — | ID of organization that projects should belong to |
-| `projectIds` | any[] | No | — | The list of project IDs to delete permanently. |
+| `projectIds` | string[] | No | — | The list of project IDs to delete permanently. |
 | `searchFor` | string | No | — | Project or dataset name to filter by. |
 
 <Expandable title="inputSchema">
@@ -2478,6 +2565,9 @@ Schedule project permadelete job.
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of project IDs to delete permanently."
     },
     "searchFor": {
@@ -2839,7 +2929,7 @@ List projects.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `projectName` | string | No | — | if provided will filter returned projects for projects with matching names |
-| `projectId` | any[] | No | — | if provided will filter returned projects with matching project IDs |
+| `projectId` | string[] | No | — | if provided will filter returned projects with matching project IDs |
 | `orderBy` | string | No | — | if provided will order the results by this field |
 | `featureDiscovery` | string | No | — | Return only feature discovery projects |
 | `offset` | integer | No | — | This many results will be skipped. |
@@ -2861,6 +2951,9 @@ List projects.
     },
     "projectId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "if provided will filter returned projects with matching project IDs"
     },
     "orderBy": {
@@ -3053,10 +3146,10 @@ Create segmentation tasks.
 | `projectId` | string | Yes | — | The project ID. |
 | `datetimePartitionColumn` | string | No | — | The date column that will be used to identify the date in time series segmentation. |
 | `modelPackageId` | string | No | — | The model package ID for using an external model registry package. |
-| `multiseriesIdColumns` | any[] | No | — | The list of one or more names of multiseries ID columns. |
+| `multiseriesIdColumns` | string[] | No | — | The list of one or more names of multiseries ID columns. |
 | `target` | string | Yes | — | The target for the dataset. |
 | `useAutomatedSegmentation` | boolean | No | — | Enable the use of automated segmentation tasks. |
-| `userDefinedSegmentIdColumns` | any[] | No | — | The list of one or more names of columns to be used for user-defined business rule segmentations. |
+| `userDefinedSegmentIdColumns` | string[] | No | — | The list of one or more names of columns to be used for user-defined business rule segmentations. |
 | `useTimeSeries` | boolean | No | — | Enable time series-based segmentation tasks. |
 
 <Expandable title="inputSchema">
@@ -3083,6 +3176,9 @@ Create segmentation tasks.
     },
     "multiseriesIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of one or more names of multiseries ID columns."
     },
     "target": {
@@ -3095,6 +3191,9 @@ Create segmentation tasks.
     },
     "userDefinedSegmentIdColumns": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of one or more names of columns to be used for user-defined business rule segmentations."
     },
     "useTimeSeries": {
