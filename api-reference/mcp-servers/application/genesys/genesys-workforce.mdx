@@ -333,7 +333,7 @@ Get a list of UserScheduleAdherence records for the requested users
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `userId` | any[] | Yes | — | User Id(s) for which to fetch current schedule adherence information.  Min 1, Max of 100 userIds per request |
+| `userId` | string[] | Yes | — | User Id(s) for which to fetch current schedule adherence information.  Min 1, Max of 100 userIds per request |
 
 <Expandable title="inputSchema">
 
@@ -347,6 +347,9 @@ Get a list of UserScheduleAdherence records for the requested users
     },
     "userId": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "User Id(s) for which to fetch current schedule adherence information.  Min 1, Max of 100 userIds per request"
     }
   },
@@ -617,7 +620,7 @@ Get management unit
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -635,6 +638,17 @@ Get management unit
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "settings",
+          "settings.adherence",
+          "settings.timeOff",
+          "settings.scheduling",
+          "settings.shortTermForecasting",
+          "settings.shiftTrading"
+        ]
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -701,7 +715,7 @@ Get data for agent in the management unit
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `agentId` | string | Yes | — | The agent id |
 | `excludeCapabilities` | boolean | No | — | Excludes all capabilities of the agent such as queues, languages, and skills |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -727,6 +741,12 @@ Get data for agent in the management unit
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "workPlanOverrides"
+        ]
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -1253,7 +1273,7 @@ Get a work plan
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `workPlanId` | string | Yes | — | The ID of the work plan to fetch |
-| `includeOnly` | any[] | No | — | limit response to the specified fields |
+| `includeOnly` | string[] | No | — | limit response to the specified fields |
 
 <Expandable title="inputSchema">
 
@@ -1275,6 +1295,16 @@ Get a work plan
     },
     "includeOnly": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agentCount",
+          "agents",
+          "optionalDays",
+          "shifts",
+          "shiftStartVariances"
+        ]
+      },
       "description": "limit response to the specified fields"
     }
   },
@@ -1341,7 +1371,7 @@ Get work plan rotations
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 
 <Expandable title="inputSchema">
 
@@ -1359,6 +1389,12 @@ Get work plan rotations
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agents"
+        ]
+      },
       "description": "Related resources to expand inline"
     }
   },
@@ -1382,8 +1418,8 @@ Get work plans
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `expand` | any[] | No | — | Include to access additional data on the work plans |
-| `exclude` | any[] | No | — | Exclude specific data on the work plans from the response |
+| `expand` | string[] | No | — | Include to access additional data on the work plans |
+| `exclude` | string[] | No | — | Exclude specific data on the work plans from the response |
 
 <Expandable title="inputSchema">
 
@@ -1401,10 +1437,27 @@ Get work plans
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agentCount",
+          "agents",
+          "optionalDays",
+          "shifts",
+          "shiftStartVariances",
+          "details"
+        ]
+      },
       "description": "Include to access additional data on the work plans"
     },
     "exclude": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "shifts.activities"
+        ]
+      },
       "description": "Exclude specific data on the work plans from the response"
     }
   },
@@ -2371,7 +2424,7 @@ Update agent configurations
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `entities` | any[] | No | — | List of agents to update |
+| `entities` | object[] | No | — | List of agents to update |
 
 <Expandable title="inputSchema">
 
@@ -2389,6 +2442,9 @@ Update agent configurations
     },
     "entities": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of agents to update"
     }
   },
@@ -2687,13 +2743,13 @@ Update a time off request
 | `timeOffRequestId` | string | Yes | — | The id of the time off request to update |
 | `activityCodeId` | string | No | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | No | — | The daily duration of this time off request in minutes |
-| `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone |
+| `durationMinutes` | integer[] | No | — | Daily durations for each day of this time off request in minutes |
+| `fullDayManagementUnitDates` | string[] | No | — | A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone |
 | `metadata` | object | Yes | — | The metadata value |
 | `notes` | string | No | — | Notes about the time off request |
 | `paid` | boolean | No | — | Whether this is a paid time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
-| `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
+| `partialDayStartDateTimes` | string[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
+| `payableMinutes` | integer[] | No | — | Payable minutes for each day of this time off request |
 | `status` | string | No | — | The status of this time off request |
 
 <Expandable title="inputSchema">
@@ -2728,10 +2784,17 @@ Update a time off request
     },
     "durationMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Daily durations for each day of this time off request in minutes"
     },
     "fullDayManagementUnitDates": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A set of dates in yyyy-MM-dd format. Should be interpreted in the management unit's configured time zone"
     },
     "metadata": {
@@ -2773,10 +2836,18 @@ Update a time off request
     },
     "partialDayStartDateTimes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date-time"
+      },
       "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Payable minutes for each day of this time off request"
     },
     "status": {
@@ -2927,7 +2998,7 @@ Update a work plan
 | `workPlanId` | string | Yes | — | The ID of the work plan to update |
 | `validationMode` | string | No | — | Allows to update work plan even if validation result is invalid |
 | `agentCount` | integer | No | — | Number of agents in this work plan |
-| `agents` | any[] | No | — | Agents in this work plan |
+| `agents` | object[] | No | — | Agents in this work plan |
 | `constrainMaximumConsecutiveWorkingDays` | boolean | No | — | Whether to constrain the maximum consecutive working days |
 | `constrainMaximumConsecutiveWorkingWeekends` | boolean | No | — | Whether to constrain the maximum consecutive working weekends |
 | `constrainMaximumWorkingWeekendsPerPlanningPeriod` | boolean | No | — | Whether to constrain the maximum working weekends in the planning period |
@@ -2954,7 +3025,7 @@ Update a work plan
 | `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
 | `selfUri` | string | No | — | The URI for this object |
-| `shifts` | any[] | No | — | Shifts in this work plan |
+| `shifts` | object[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
 | `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
@@ -2994,6 +3065,9 @@ Update a work plan
     },
     "agents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Agents in this work plan"
     },
     "constrainMaximumConsecutiveWorkingDays": {
@@ -3133,6 +3207,9 @@ Update a work plan
     },
     "shifts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Shifts in this work plan"
     },
     "shiftStartVariancePeriod": {
@@ -3201,7 +3278,7 @@ Update a work plan rotation
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `workPlanRotationId` | string | Yes | — | The ID of the work plan rotation to update |
-| `agents` | any[] | No | — | Agents in this work plan rotation |
+| `agents` | object[] | No | — | Agents in this work plan rotation |
 | `dateRange` | object | No | — | Date Range |
 | `enabled` | boolean | No | — | Whether the work plan rotation is enabled for scheduling |
 | `metadata` | object | Yes | — | The metadata value |
@@ -3228,6 +3305,9 @@ Update a work plan rotation
     },
     "agents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Agents in this work plan rotation"
     },
     "dateRange": {
@@ -3612,7 +3692,7 @@ Move agents in and out of management unit
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `destinationManagementUnitId` | string | No | — | The id of the management unit for which the move will be performed. To remove users from their management unit this should be set to null. |
-| `userIds` | any[] | Yes | — | The list of user ids to move |
+| `userIds` | string[] | Yes | — | The list of user ids to move |
 
 <Expandable title="inputSchema">
 
@@ -3630,6 +3710,9 @@ Move agents in and out of management unit
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of user ids to move"
     }
   },
@@ -3652,7 +3735,7 @@ Request an agent historical adherence report
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Which fields, if any, to expand with. wfm:AgentHistoricalAdherenceConformance:view permission is required for conformance, and wfm:agentSchedule:view permission is required for scheduledActivities. |
+| `expand` | string[] | No | — | Which fields, if any, to expand with. wfm:AgentHistoricalAdherenceConformance:view permission is required for conformance, and wfm:agentSchedule:view permission is required for scheduledActivities. |
 | `endDate` | string | No | — | End of the date range to query in ISO-8601 format. If it is not set, end date will be set to current time |
 | `startDate` | string | Yes | — | Beginning of the date range to query in ISO-8601 format |
 | `timeZone` | string | No | — | The time zone, in olson format, to use in defining days when computing adherence. The results will be returned as UTC timestamps regardless of the time zone input. |
@@ -3669,6 +3752,15 @@ Request an agent historical adherence report
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "exceptionInfo",
+          "actuals",
+          "scheduledActivities",
+          "conformance"
+        ]
+      },
       "description": "Which fields, if any, to expand with. wfm:AgentHistoricalAdherenceConformance:view permission is required for conformance, and wfm:agentSchedule:view permission is required for scheduledActivities."
     },
     "endDate": {
@@ -3841,7 +3933,7 @@ Get agents work plans configuration
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `forceDownloadService` | boolean | No | — | Force the result of this operation to be sent via download service. For testing/app development purposes |
-| `agentIds` | any[] | Yes | — | The list of agent IDs |
+| `agentIds` | string[] | Yes | — | The list of agent IDs |
 | `startDate` | string | Yes | — | The start of a date in yyyy-MM-dd format. Response contains values rolled back to nearest BU start day of week. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `weekCount` | integer | Yes | — | The number of weeks to query |
 
@@ -3865,6 +3957,9 @@ Get agents work plans configuration
     },
     "agentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The list of agent IDs"
     },
     "startDate": {
@@ -3903,7 +3998,7 @@ Query published schedules for given given time range for set of users
 | `forceDownloadService` | boolean | No | — | Force the result of this operation to be sent via download service. For testing/app development purposes |
 | `endDate` | string | Yes | — | End date of the range to search. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `startDate` | string | Yes | — | Start date of the range to search. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `userIds` | any[] | No | — | IDs of the users for whose schedules to search |
+| `userIds` | string[] | No | — | IDs of the users for whose schedules to search |
 
 <Expandable title="inputSchema">
 
@@ -3937,6 +4032,9 @@ Query published schedules for given given time range for set of users
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of the users for whose schedules to search"
     }
   },
@@ -3965,9 +4063,9 @@ Request a historical adherence report
 | `endDate` | string | No | — | End of the date range to query in ISO-8601 format. If it is not set, end date will be set to current time |
 | `includeExceptions` | boolean | No | — | Whether user exceptions should be returned as part of the results |
 | `startDate` | string | Yes | — | Beginning of the date range to query in ISO-8601 format |
-| `teamIds` | any[] | No | — | The teamIds to report on. If null or not set, adherence will be computed for requested users if applicable or otherwise all users in the management unit. Note: If teamIds is also specified, only adherence for users in the requested teams will be returned |
+| `teamIds` | string[] | No | — | The teamIds to report on. If null or not set, adherence will be computed for requested users if applicable or otherwise all users in the management unit. Note: If teamIds is also specified, only adherence for users in the requested teams will be returned |
 | `timeZone` | string | No | — | The time zone, in olson format, to use in defining days when computing adherence. The results will be returned as UTC timestamps regardless of the time zone input. |
-| `userIds` | any[] | No | — | The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds |
+| `userIds` | string[] | No | — | The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds |
 
 <Expandable title="inputSchema">
 
@@ -3997,6 +4095,9 @@ Request a historical adherence report
     },
     "teamIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The teamIds to report on. If null or not set, adherence will be computed for requested users if applicable or otherwise all users in the management unit. Note: If teamIds is also specified, only adherence for users in the requested teams will be returned"
     },
     "timeZone": {
@@ -4005,6 +4106,9 @@ Request a historical adherence report
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds"
     }
   },
@@ -4122,7 +4226,7 @@ Retrieves time off limit related values based on a given set of filters.
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
 | `activityCodeId` | string | No | — | The ID of the activity code by which to filter the affected limit objects. Required if timeOffLimitId is not specified |
-| `dateRanges` | any[] | Yes | — | The list of the date ranges to return time off limit, allocated and waitlisted minutes. The valid number of date ranges is between 1 and 30. Maximum total number of days in all ranges in 366. |
+| `dateRanges` | object[] | Yes | — | The list of the date ranges to return time off limit, allocated and waitlisted minutes. The valid number of date ranges is between 1 and 30. Maximum total number of days in all ranges in 366. |
 | `timeOffLimitId` | string | No | — | The time off limit object id to retrieve values for. Required if activityCodeId is not specified |
 
 <Expandable title="inputSchema">
@@ -4145,6 +4249,9 @@ Retrieves time off limit related values based on a given set of filters.
     },
     "dateRanges": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the date ranges to return time off limit, allocated and waitlisted minutes. The valid number of date ranges is between 1 and 30. Maximum total number of days in all ranges in 366."
     },
     "timeOffLimitId": {
@@ -4174,12 +4281,12 @@ Creates a new time off plan
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit |
 | `active` | boolean | Yes | — | Whether this time off plan should be used by agents. |
-| `activityCodeIds` | any[] | No | — | The set of activity code IDs to associate with this time off plan. |
+| `activityCodeIds` | string[] | No | — | The set of activity code IDs to associate with this time off plan. |
 | `autoApprovalRule` | string | Yes | — | Auto approval rule for the time off plan. |
 | `daysBeforeStartToExpireFromWaitlist` | integer | No | — | The number of days before the time off request start date for when the request will be expired from the waitlist. |
 | `hrisTimeOffType` | object | No | — | Hris Time Off Type |
 | `name` | string | Yes | — | The name of this time off plan. |
-| `timeOffLimitIds` | any[] | No | — | The set of time off limit IDs to associate with this time off plan. |
+| `timeOffLimitIds` | string[] | No | — | The set of time off limit IDs to associate with this time off plan. |
 
 <Expandable title="inputSchema">
 
@@ -4201,6 +4308,9 @@ Creates a new time off plan
     },
     "activityCodeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of activity code IDs to associate with this time off plan."
     },
     "autoApprovalRule": {
@@ -4251,6 +4361,9 @@ Creates a new time off plan
     },
     "timeOffLimitIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of time off limit IDs to associate with this time off plan."
     }
   },
@@ -4279,14 +4392,14 @@ Create a new time off request
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | Yes | — | The daily duration of this time off request in minutes |
-| `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
+| `durationMinutes` | integer[] | No | — | Daily durations for each day of this time off request in minutes |
+| `fullDayManagementUnitDates` | string[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
 | `notes` | string | No | — | Notes about the time off request |
 | `paid` | boolean | No | — | Whether this is a paid time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
-| `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
+| `partialDayStartDateTimes` | string[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
+| `payableMinutes` | integer[] | No | — | Payable minutes for each day of this time off request |
 | `status` | string | Yes | — | The status of this time off request |
-| `users` | any[] | Yes | — | A set of IDs for users to associate with this time off request |
+| `users` | object[] | Yes | — | A set of IDs for users to associate with this time off request |
 
 <Expandable title="inputSchema">
 
@@ -4312,10 +4425,17 @@ Create a new time off request
     },
     "durationMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Daily durations for each day of this time off request in minutes"
     },
     "fullDayManagementUnitDates": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone"
     },
     "notes": {
@@ -4328,10 +4448,18 @@ Create a new time off request
     },
     "partialDayStartDateTimes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date-time"
+      },
       "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Payable minutes for each day of this time off request"
     },
     "status": {
@@ -4344,6 +4472,9 @@ Create a new time off request
     },
     "users": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A set of IDs for users to associate with this time off request"
     }
   },
@@ -4371,7 +4502,7 @@ Retrieves integration statuses for a list of time off requests
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
-| `timeOffRequestLookups` | any[] | Yes | — | A list of time off request lookups |
+| `timeOffRequestLookups` | object[] | Yes | — | A list of time off request lookups |
 
 <Expandable title="inputSchema">
 
@@ -4389,6 +4520,9 @@ Retrieves integration statuses for a list of time off requests
     },
     "timeOffRequestLookups": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of time off request lookups"
     }
   },
@@ -4415,10 +4549,10 @@ Fetches time off requests matching the conditions specified in the request body
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `forceDownloadService` | boolean | No | — | Force the result of this operation to be sent via download service. For testing/app development purposes |
 | `dateRange` | object | No | — | Date Range |
-| `ids` | any[] | No | — | The set of ids to filter time off requests |
-| `statuses` | any[] | No | — | The set of statuses to filter time off requests |
-| `substatuses` | any[] | No | — | The set of substatuses to filter time off requests |
-| `userIds` | any[] | No | — | The set of user ids to filter time off requests |
+| `ids` | string[] | No | — | The set of ids to filter time off requests |
+| `statuses` | string[] | No | — | The set of statuses to filter time off requests |
+| `substatuses` | string[] | No | — | The set of substatuses to filter time off requests |
+| `userIds` | string[] | No | — | The set of user ids to filter time off requests |
 
 <Expandable title="inputSchema">
 
@@ -4454,18 +4588,49 @@ Fetches time off requests matching the conditions specified in the request body
     },
     "ids": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of ids to filter time off requests"
     },
     "statuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "APPROVED",
+          "DENIED",
+          "CANCELED"
+        ]
+      },
       "description": "The set of statuses to filter time off requests"
     },
     "substatuses": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "AdvanceTimeElapsed",
+          "AutoApproved",
+          "BlockedDate",
+          "InsufficientBalance",
+          "InvalidDailyDuration",
+          "ManualApproval",
+          "OutsideShift",
+          "OverlapsRestrictedActivityCode",
+          "RemovedFromWaitlist",
+          "ReviewDate",
+          "Waitlisted"
+        ]
+      },
       "description": "The set of substatuses to filter time off requests"
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of user ids to filter time off requests"
     }
   },
@@ -4489,7 +4654,7 @@ Retrieves daily waitlist position for a list of time off requests
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
-| `timeOffRequests` | any[] | Yes | — | The list of the time off request ids for which to fetch the daily waitlist positions |
+| `timeOffRequests` | object[] | Yes | — | The list of the time off request ids for which to fetch the daily waitlist positions |
 
 <Expandable title="inputSchema">
 
@@ -4507,6 +4672,9 @@ Retrieves daily waitlist position for a list of time off requests
     },
     "timeOffRequests": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of the time off request ids for which to fetch the daily waitlist positions"
     }
   },
@@ -4532,8 +4700,8 @@ Query time off balances for a given user for specified activity code and dates
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit |
 | `userId` | string | Yes | — | The ID of the user |
-| `activityCodeIds` | any[] | Yes | — | The set of activity code IDs for which to query available time off balances |
-| `dateRanges` | any[] | No | — | The list of date ranges for which to query time off balance |
+| `activityCodeIds` | string[] | Yes | — | The set of activity code IDs for which to query available time off balances |
+| `dateRanges` | object[] | No | — | The list of date ranges for which to query time off balance |
 
 <Expandable title="inputSchema">
 
@@ -4555,10 +4723,16 @@ Query time off balances for a given user for specified activity code and dates
     },
     "activityCodeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of activity code IDs for which to query available time off balances"
     },
     "dateRanges": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of date ranges for which to query time off balance"
     }
   },
@@ -4634,9 +4808,9 @@ Estimates available time off for an agent
 | `managementUnitId` | string | Yes | — | The ID of the management unit |
 | `userId` | string | Yes | — | The id of the user for whom the time off request estimate is requested |
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with the time off request. Activity code must be of the TimeOff category |
-| `fullDayDates` | any[] | No | — | Full day dates. partialDayDates must be empty if this field is populated |
+| `fullDayDates` | object[] | No | — | Full day dates. partialDayDates must be empty if this field is populated |
 | `paid` | boolean | Yes | — | Whether this estimate is for a paid time off request |
-| `partialDayDates` | any[] | No | — | Partial day dates. fullDayDates must be empty if this field is populated |
+| `partialDayDates` | object[] | No | — | Partial day dates. fullDayDates must be empty if this field is populated |
 
 <Expandable title="inputSchema">
 
@@ -4662,6 +4836,9 @@ Estimates available time off for an agent
     },
     "fullDayDates": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Full day dates. partialDayDates must be empty if this field is populated"
     },
     "paid": {
@@ -4670,6 +4847,9 @@ Estimates available time off for an agent
     },
     "partialDayDates": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Partial day dates. fullDayDates must be empty if this field is populated"
     }
   },
@@ -4787,7 +4967,7 @@ Adds a shift trade
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `weekDateId` | string | Yes | — | The start week date of the initiating shift in yyyy-MM-dd format. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
-| `acceptableIntervals` | any[] | No | — | The acceptable intervals the initiating user is willing to accept in trade.  Empty indicates the user is giving up the shift. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
+| `acceptableIntervals` | string[] | No | — | The acceptable intervals the initiating user is willing to accept in trade.  Empty indicates the user is giving up the shift. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `expiration` | string | No | — | When this shift trade request should expire. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `initiatingShiftId` | string | Yes | — | The ID of the shift that the initiating user wants to give up |
 | `receivingUserId` | string | No | — | The ID of the user to whom to send the request (for use in direct trade requests) |
@@ -4813,6 +4993,10 @@ Adds a shift trade
     },
     "acceptableIntervals": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "interval"
+      },
       "description": "The acceptable intervals the initiating user is willing to accept in trade.  Empty indicates the user is giving up the shift. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss"
     },
     "expiration": {
@@ -4858,7 +5042,7 @@ Searches for potential shift trade matches for the current agent
 | `weekDateId` | string | Yes | — | The start week date of the initiating shift in yyyy-MM-dd format. Dates are represented as an ISO-8601 string. For example: yyyy-MM-dd |
 | `forceDownloadService` | boolean | No | — | Force the result of this operation to be sent via download service. For testing/app development purposes |
 | `receivingScheduleId` | string | Yes | — | The ID of the schedule for which to search for available shift trades |
-| `receivingShiftIds` | any[] | No | — | The IDs of shifts that the receiving user would potentially be willing to trade. If empty, only returns one sided trades (pick up a shift) |
+| `receivingShiftIds` | string[] | No | — | The IDs of shifts that the receiving user would potentially be willing to trade. If empty, only returns one sided trades (pick up a shift) |
 
 <Expandable title="inputSchema">
 
@@ -4888,6 +5072,9 @@ Searches for potential shift trade matches for the current agent
     },
     "receivingShiftIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The IDs of shifts that the receiving user would potentially be willing to trade. If empty, only returns one sided trades (pick up a shift)"
     }
   },
@@ -4962,9 +5149,9 @@ Validate Work Plan
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `workPlanId` | string | Yes | — | The ID of the work plan to validate. For new work plan, use the word 'new' for the ID. |
-| `expand` | any[] | No | — | Related resources to expand inline |
+| `expand` | string[] | No | — | Related resources to expand inline |
 | `agentCount` | integer | No | — | Number of agents in this work plan |
-| `agents` | any[] | No | — | Agents in this work plan |
+| `agents` | object[] | No | — | Agents in this work plan |
 | `constrainMaximumConsecutiveWorkingDays` | boolean | No | — | Whether to constrain the maximum consecutive working days |
 | `constrainMaximumConsecutiveWorkingWeekends` | boolean | No | — | Whether to constrain the maximum consecutive working weekends |
 | `constrainMaximumWorkingWeekendsPerPlanningPeriod` | boolean | No | — | Whether to constrain the maximum working weekends in the planning period |
@@ -4990,7 +5177,7 @@ Validate Work Plan
 | `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
 | `selfUri` | string | No | — | The URI for this object |
-| `shifts` | any[] | No | — | Shifts in this work plan |
+| `shifts` | object[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
 | `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
@@ -5019,6 +5206,12 @@ Validate Work Plan
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "messages"
+        ]
+      },
       "description": "Related resources to expand inline"
     },
     "agentCount": {
@@ -5027,6 +5220,9 @@ Validate Work Plan
     },
     "agents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Agents in this work plan"
     },
     "constrainMaximumConsecutiveWorkingDays": {
@@ -5137,6 +5333,9 @@ Validate Work Plan
     },
     "shifts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Shifts in this work plan"
     },
     "shiftStartVariancePeriod": {
@@ -5251,7 +5450,7 @@ Create a new work plan rotation
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
-| `agents` | any[] | No | — | Agents in this work plan rotation |
+| `agents` | object[] | No | — | Agents in this work plan rotation |
 | `dateRange` | object | Yes | — | Date Range |
 | `name` | string | Yes | — | Name of this work plan rotation |
 | `pattern` | object | Yes | — | The pattern value |
@@ -5272,6 +5471,9 @@ Create a new work plan rotation
     },
     "agents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Agents in this work plan rotation"
     },
     "dateRange": {
@@ -5333,7 +5535,7 @@ Create a new work plan
 | --- | --- | --- | --- | --- |
 | `managementUnitId` | string | Yes | — | The ID of the management unit, or 'mine' for the management unit of the logged-in user. |
 | `validationMode` | string | No | — | Allows to create work plan even if the validation result is invalid |
-| `agents` | any[] | No | — | Agents in this work plan |
+| `agents` | object[] | No | — | Agents in this work plan |
 | `constrainMaximumConsecutiveWorkingDays` | boolean | No | — | Whether to constrain the maximum consecutive working days |
 | `constrainMaximumConsecutiveWorkingWeekends` | boolean | No | — | Whether to constrain the maximum consecutive working weekends |
 | `constrainMaximumWorkingWeekendsPerPlanningPeriod` | boolean | No | — | Whether to constrain the maximum working weekends in the planning period |
@@ -5357,7 +5559,7 @@ Create a new work plan
 | `name` | string | Yes | — | Name of this work plan |
 | `optionalDays` | object | No | — | Optional Days |
 | `paidTimeGranularityMinutes` | integer | No | — | Granularity in minutes allowed for shift paid time in this work plan. Used if constrainPaidTimeGranularity == true |
-| `shifts` | any[] | No | — | Shifts in this work plan |
+| `shifts` | object[] | No | — | Shifts in this work plan |
 | `shiftStartVariancePeriod` | string | No | — | The length of the period over which the maximum shift start time variance is applied |
 | `shiftStartVariances` | object | No | — | Shift Start Variances |
 | `shiftStartVarianceType` | string | No | — | This constraint ensures that an agent starts each workday within a user-defined time threshold |
@@ -5388,6 +5590,9 @@ Create a new work plan
     },
     "agents": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Agents in this work plan"
     },
     "constrainMaximumConsecutiveWorkingDays": {
@@ -5490,6 +5695,9 @@ Create a new work plan
     },
     "shifts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Shifts in this work plan"
     },
     "shiftStartVariancePeriod": {
@@ -5644,7 +5852,7 @@ Mark a list of notifications as read or unread
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `entities` | any[] | Yes | — | The notifications to update |
+| `entities` | object[] | Yes | — | The notifications to update |
 
 <Expandable title="inputSchema">
 
@@ -5658,6 +5866,9 @@ Mark a list of notifications as read or unread
     },
     "entities": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The notifications to update"
     }
   },
@@ -5685,7 +5896,7 @@ Request a teams historical adherence report
 | `includeExceptions` | boolean | No | — | Whether user exceptions should be returned as part of the results |
 | `startDate` | string | Yes | — | Beginning of the date range to query in ISO-8601 format |
 | `timeZone` | string | Yes | — | The time zone, in olson format, to use in defining days when computing adherence. The results will be returned as UTC timestamps regardless of the time zone input. |
-| `userIds` | any[] | No | — | The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds |
+| `userIds` | string[] | No | — | The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds |
 
 <Expandable title="inputSchema">
 
@@ -5719,6 +5930,9 @@ Request a teams historical adherence report
     },
     "userIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The userIds to report on. If null or not set, adherence will be computed for all the users in management unit or requested teamIds"
     }
   },
@@ -5743,8 +5957,8 @@ Query time off balances for the current user for specified activity code and dat
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `activityCodeIds` | any[] | Yes | — | The set of activity code IDs for which to query available time off balances |
-| `dateRanges` | any[] | No | — | The list of date ranges for which to query time off balance |
+| `activityCodeIds` | string[] | Yes | — | The set of activity code IDs for which to query available time off balances |
+| `dateRanges` | object[] | No | — | The list of date ranges for which to query time off balance |
 
 <Expandable title="inputSchema">
 
@@ -5758,10 +5972,16 @@ Query time off balances for the current user for specified activity code and dat
     },
     "activityCodeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The set of activity code IDs for which to query available time off balances"
     },
     "dateRanges": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The list of date ranges for which to query time off balance"
     }
   },
@@ -5785,7 +6005,7 @@ Queries available time off for the current user
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `activityCodeId` | string | Yes | — | The ID for activity code to query available time off minutes |
-| `dateRanges` | any[] | No | — | A list of date ranges of available time off minutes. A maximum number of date ranges is 30. The maximum total number of days in all ranges is 366. If no ranges are specified, then only the presence of the associated time off limit object will be checked. In such case, if the association exists, then the response will contain a list with of a single element filled with timeOffLimitId only. |
+| `dateRanges` | object[] | No | — | A list of date ranges of available time off minutes. A maximum number of date ranges is 30. The maximum total number of days in all ranges is 366. If no ranges are specified, then only the presence of the associated time off limit object will be checked. In such case, if the association exists, then the response will contain a list with of a single element filled with timeOffLimitId only. |
 
 <Expandable title="inputSchema">
 
@@ -5803,6 +6023,9 @@ Queries available time off for the current user
     },
     "dateRanges": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of date ranges of available time off minutes. A maximum number of date ranges is 30. The maximum total number of days in all ranges is 366. If no ranges are specified, then only the presence of the associated time off limit object will be checked. In such case, if the association exists, then the response will contain a list with of a single element filled with timeOffLimitId only."
     }
   },
@@ -5827,11 +6050,11 @@ Create a time off request for the current user
 | --- | --- | --- | --- | --- |
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with this time off request. Activity code must be of the TimeOff category |
 | `dailyDurationMinutes` | integer | Yes | — | The daily duration of this time off request in minutes |
-| `durationMinutes` | any[] | No | — | Daily durations for each day of this time off request in minutes |
-| `fullDayManagementUnitDates` | any[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
+| `durationMinutes` | integer[] | No | — | Daily durations for each day of this time off request in minutes |
+| `fullDayManagementUnitDates` | string[] | No | — | A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone |
 | `notes` | string | No | — | Notes about the time off request |
-| `partialDayStartDateTimes` | any[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
-| `payableMinutes` | any[] | No | — | Payable minutes for each day of this time off request |
+| `partialDayStartDateTimes` | string[] | No | — | A set of start date-times in ISO-8601 format for partial day requests |
+| `payableMinutes` | integer[] | No | — | Payable minutes for each day of this time off request |
 
 <Expandable title="inputSchema">
 
@@ -5853,10 +6076,17 @@ Create a time off request for the current user
     },
     "durationMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Daily durations for each day of this time off request in minutes"
     },
     "fullDayManagementUnitDates": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A set of dates in yyyy-MM-dd format.  Should be interpreted in the management unit's configured time zone"
     },
     "notes": {
@@ -5865,10 +6095,18 @@ Create a time off request for the current user
     },
     "partialDayStartDateTimes": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date-time"
+      },
       "description": "A set of start date-times in ISO-8601 format for partial day requests"
     },
     "payableMinutes": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int32"
+      },
       "description": "Payable minutes for each day of this time off request"
     }
   },
@@ -5893,9 +6131,9 @@ Estimates available time off for current user
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `activityCodeId` | string | Yes | — | The ID of the activity code associated with the time off request. Activity code must be of the TimeOff category |
-| `fullDayDates` | any[] | No | — | Full day dates. partialDayDates must be empty if this field is populated |
+| `fullDayDates` | object[] | No | — | Full day dates. partialDayDates must be empty if this field is populated |
 | `paid` | boolean | Yes | — | Whether this estimate is for a paid time off request |
-| `partialDayDates` | any[] | No | — | Partial day dates. fullDayDates must be empty if this field is populated |
+| `partialDayDates` | object[] | No | — | Partial day dates. fullDayDates must be empty if this field is populated |
 
 <Expandable title="inputSchema">
 
@@ -5913,6 +6151,9 @@ Estimates available time off for current user
     },
     "fullDayDates": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Full day dates. partialDayDates must be empty if this field is populated"
     },
     "paid": {
@@ -5921,6 +6162,9 @@ Estimates available time off for current user
     },
     "partialDayDates": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Partial day dates. fullDayDates must be empty if this field is populated"
     }
   },
@@ -5944,7 +6188,7 @@ Retrieves integration statuses for a list of current user time off requests
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `timeOffRequestIds` | any[] | Yes | — | A list of time off request IDs |
+| `timeOffRequestIds` | string[] | Yes | — | A list of time off request IDs |
 
 <Expandable title="inputSchema">
 
@@ -5958,6 +6202,9 @@ Retrieves integration statuses for a list of current user time off requests
     },
     "timeOffRequestIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of time off request IDs"
     }
   },
@@ -6221,7 +6468,7 @@ Sets daily values for a date range of time off limit object
 | `managementUnitId` | string | Yes | — | The ID of the management unit. |
 | `timeOffLimitId` | string | Yes | — | The ID of the time off limit object to set values for |
 | `metadata` | object | Yes | — | The metadata value |
-| `values` | any[] | No | — | The values value |
+| `values` | object[] | No | — | The values value |
 
 <Expandable title="inputSchema">
 
@@ -6272,6 +6519,9 @@ Sets daily values for a date range of time off limit object
     },
     "values": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The values value"
     }
   },

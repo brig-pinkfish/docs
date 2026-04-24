@@ -12,46 +12,47 @@ description: "IT service management tickets, assets, and agents"
 
 | Tool | Description |
 | --- | --- |
-| [`freshservice_list_tickets`](#freshservice_list_tickets) | List all tickets with optional filtering and pagination. Status values: 2=Open, 3=Pending, 4=Resolved, 5=Closed. Priority values: 1=Low, 2=Medium, 3=High, 4=Urgent. |
-| [`freshservice_get_ticket`](#freshservice_get_ticket) | Get detailed information about a specific ticket by ID |
-| [`freshservice_create_ticket`](#freshservice_create_ticket) | Create a new ticket. Status values: 2=Open, 3=Pending, 4=Resolved, 5=Closed. Priority values: 1=Low, 2=Medium, 3=High, 4=Urgent. Source values: 1=Email, 2=Portal, 3=Phone, 4=Chat. |
-| [`freshservice_update_ticket`](#freshservice_update_ticket) | Update an existing ticket with new priority, status, responder, or group assignment |
-| [`freshservice_list_assets`](#freshservice_list_assets) | List all assets with optional pagination |
-| [`freshservice_create_asset`](#freshservice_create_asset) | Create a new asset with specified details |
-| [`freshservice_list_requesters`](#freshservice_list_requesters) | List all requesters/users with optional pagination |
-| [`freshservice_create_requester`](#freshservice_create_requester) | Create a new requester/user |
-| [`freshservice_list_agents`](#freshservice_list_agents) | List all agents with optional pagination |
-| [`freshservice_create_agent`](#freshservice_create_agent) | Create a new agent with specified details |
-| [`freshservice_list_departments`](#freshservice_list_departments) | List all departments with optional pagination |
-| [`freshservice_create_department`](#freshservice_create_department) | Create a new department |
-| [`freshservice_delete_ticket`](#freshservice_delete_ticket) | Delete a ticket by ID. The ticket will be moved to trash and can be restored later. |
-| [`freshservice_list_ticket_conversations`](#freshservice_list_ticket_conversations) | List all conversations (replies and notes) for a specific ticket. Returns the full conversation history including public replies, private notes, and system messages. |
-| [`freshservice_add_ticket_note`](#freshservice_add_ticket_note) | Add a note to a ticket. Notes can be private (visible only to agents) or public (visible to requester and agents). |
-| [`freshservice_reply_to_ticket`](#freshservice_reply_to_ticket) | Send a reply to a ticket. The reply will be sent as an email to the requester and will appear in the ticket conversation thread. |
-| [`freshservice_get_asset`](#freshservice_get_asset) | Get detailed information about a specific asset by its display ID |
-| [`freshservice_update_asset`](#freshservice_update_asset) | Update an existing asset with new details |
-| [`freshservice_search_assets`](#freshservice_search_assets) | Search assets using a query string. Query format follows Freshservice filter syntax, e.g. "asset_type_id:1" or "name:'laptop'". |
-| [`freshservice_list_agent_groups`](#freshservice_list_agent_groups) | List all agent groups with optional pagination. Agent groups are used for ticket assignment and routing. |
-| [`freshservice_list_locations`](#freshservice_list_locations) | List all locations with optional pagination. Locations are used by assets, agents, and requesters. |
-| [`freshservice_list_changes`](#freshservice_list_changes) | List all change requests with optional pagination. Status values: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. |
-| [`freshservice_create_change`](#freshservice_create_change) | Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Risk: 1=Low, 2=Medium, 3=High, 4=Very High. Impact: 1=Low, 2=Medium, 3=High. Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency. |
-| [`freshservice_list_problems`](#freshservice_list_problems) | List all problems with optional pagination. Status values: 1=Open, 2=Change Requested, 3=Closed. |
-| [`freshservice_create_problem`](#freshservice_create_problem) | Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Impact: 1=Low, 2=Medium, 3=High. |
-| [`freshservice_list_service_catalog_items`](#freshservice_list_service_catalog_items) | List all service catalog items with optional pagination. Service catalog items are the services that requesters can browse and submit requests for. |
+| [`freshservice_add_ticket_note`](#freshservice_add_ticket_note) | Add a note to a ticket |
+| [`freshservice_create_agent`](#freshservice_create_agent) | Create an agent |
+| [`freshservice_create_asset`](#freshservice_create_asset) | Create an asset |
+| [`freshservice_create_change`](#freshservice_create_change) | Create a change request |
+| [`freshservice_create_department`](#freshservice_create_department) | Create a department |
+| [`freshservice_create_problem`](#freshservice_create_problem) | Create a problem |
+| [`freshservice_create_requester`](#freshservice_create_requester) | Create a requester |
+| [`freshservice_create_ticket`](#freshservice_create_ticket) | Create a new ticket |
+| [`freshservice_delete_ticket`](#freshservice_delete_ticket) | Delete a ticket |
+| [`freshservice_get_asset`](#freshservice_get_asset) | Get an asset |
+| [`freshservice_get_ticket`](#freshservice_get_ticket) | Get a ticket |
+| [`freshservice_list_agent_groups`](#freshservice_list_agent_groups) | List all agent groups |
+| [`freshservice_list_agents`](#freshservice_list_agents) | List all agents |
+| [`freshservice_list_assets`](#freshservice_list_assets) | List all assets |
+| [`freshservice_list_changes`](#freshservice_list_changes) | List all changes |
+| [`freshservice_list_departments`](#freshservice_list_departments) | List all departments |
+| [`freshservice_list_locations`](#freshservice_list_locations) | List all locations |
+| [`freshservice_list_problems`](#freshservice_list_problems) | List all problems |
+| [`freshservice_list_requesters`](#freshservice_list_requesters) | List all requesters |
+| [`freshservice_list_service_catalog_items`](#freshservice_list_service_catalog_items) | List service catalog items |
+| [`freshservice_list_ticket_conversations`](#freshservice_list_ticket_conversations) | List conversations of a ticket |
+| [`freshservice_list_tickets`](#freshservice_list_tickets) | List all tickets |
+| [`freshservice_reply_to_ticket`](#freshservice_reply_to_ticket) | Reply to a ticket |
+| [`freshservice_search_assets`](#freshservice_search_assets) | DEPRECATED — Search assets by query. Use list_assets with the query parameter instead. |
+| [`freshservice_update_asset`](#freshservice_update_asset) | Update an asset |
+| [`freshservice_update_ticket`](#freshservice_update_ticket) | Update a ticket |
 
 ---
 
-## freshservice_list_tickets
+## freshservice_add_ticket_note
 
-List all tickets with optional filtering and pagination. Status values: 2=Open, 3=Pending, 4=Resolved, 5=Closed. Priority values: 1=Low, 2=Medium, 3=High, 4=Urgent.
+Add a note to a ticket
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filter` | string | No | — | Filter criteria for tickets |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of tickets per page |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
+| `body` | string | Yes | — | HTML content of the note |
+| `notify_emails` | string[] | No | — | Email addresses to notify |
+| `private` | boolean | No | — | Whether the note is private (default: true) |
 
 <Expandable title="inputSchema">
 
@@ -61,466 +62,32 @@ List all tickets with optional filtering and pagination. Status values: 2=Open, 
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "filter": {
-      "type": "string",
-      "description": "Filter criteria for tickets"
-    },
-    "page": {
-      "type": "number",
-      "description": "Page number for pagination"
-    },
-    "per_page": {
-      "type": "number",
-      "description": "Number of tickets per page"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_get_ticket
-
-Get detailed information about a specific ticket by ID
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to retrieve |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to retrieve"
-    }
-  },
-  "required": [
-    "PCID",
-    "ticket_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_create_ticket
-
-Create a new ticket. Status values: 2=Open, 3=Pending, 4=Resolved, 5=Closed. Priority values: 1=Low, 2=Medium, 3=High, 4=Urgent. Source values: 1=Email, 2=Portal, 3=Phone, 4=Chat.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `subject` | string | Yes | — | Ticket subject |
-| `description` | string | Yes | — | Ticket description |
-| `email` | string | No | — | Requester email |
-| `priority` | number | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
-| `status` | number | No | — | Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed |
-| `source` | number | No | — | Source: 1=Email, 2=Portal, 3=Phone, 4=Chat |
-| `type` | string | No | — | Ticket type (e.g., "Service Request", "Incident") |
-| `category` | string | No | — | Ticket category |
-| `sub_category` | string | No | — | Ticket sub-category |
-| `item_category` | string | No | — | Ticket item category |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
+      "type": "integer",
+      "description": "ID of the ticket"
+    },
+    "body": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "HTML content of the note"
     },
-    "subject": {
-      "type": "string",
-      "description": "Ticket subject"
+    "notify_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Email addresses to notify"
     },
-    "description": {
-      "type": "string",
-      "description": "Ticket description"
-    },
-    "email": {
-      "type": "string",
-      "description": "Requester email"
-    },
-    "priority": {
-      "type": "number",
-      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
-    },
-    "status": {
-      "type": "number",
-      "description": "Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed"
-    },
-    "source": {
-      "type": "number",
-      "description": "Source: 1=Email, 2=Portal, 3=Phone, 4=Chat"
-    },
-    "type": {
-      "type": "string",
-      "description": "Ticket type (e.g., \"Service Request\", \"Incident\")"
-    },
-    "category": {
-      "type": "string",
-      "description": "Ticket category"
-    },
-    "sub_category": {
-      "type": "string",
-      "description": "Ticket sub-category"
-    },
-    "item_category": {
-      "type": "string",
-      "description": "Ticket item category"
-    }
-  },
-  "required": [
-    "PCID",
-    "subject",
-    "description"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_update_ticket
-
-Update an existing ticket with new priority, status, responder, or group assignment
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to update |
-| `priority` | number | No | — | New priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
-| `status` | number | No | — | New status: 2=Open, 3=Pending, 4=Resolved, 5=Closed |
-| `responder_id` | number | No | — | ID of the responder to assign |
-| `group_id` | number | No | — | ID of the group to assign |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to update"
-    },
-    "priority": {
-      "type": "number",
-      "description": "New priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
-    },
-    "status": {
-      "type": "number",
-      "description": "New status: 2=Open, 3=Pending, 4=Resolved, 5=Closed"
-    },
-    "responder_id": {
-      "type": "number",
-      "description": "ID of the responder to assign"
-    },
-    "group_id": {
-      "type": "number",
-      "description": "ID of the group to assign"
-    }
-  },
-  "required": [
-    "PCID",
-    "ticket_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_list_assets
-
-List all assets with optional pagination
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of assets per page |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "page": {
-      "type": "number",
-      "description": "Page number for pagination"
-    },
-    "per_page": {
-      "type": "number",
-      "description": "Number of assets per page"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_create_asset
-
-Create a new asset with specified details
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `name` | string | Yes | — | Asset name |
-| `description` | string | No | — | Asset description |
-| `asset_type_id` | number | No | — | Asset type ID |
-| `asset_tag` | string | No | — | Asset tag |
-| `serial_number` | string | No | — | Asset serial number |
-| `status` | number | No | — | Asset status |
-| `user_id` | number | No | — | User ID assigned to asset |
-| `location_id` | number | No | — | Location ID |
-| `department_id` | number | No | — | Department ID |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "name": {
-      "type": "string",
-      "description": "Asset name"
-    },
-    "description": {
-      "type": "string",
-      "description": "Asset description"
-    },
-    "asset_type_id": {
-      "type": "number",
-      "description": "Asset type ID"
-    },
-    "asset_tag": {
-      "type": "string",
-      "description": "Asset tag"
-    },
-    "serial_number": {
-      "type": "string",
-      "description": "Asset serial number"
-    },
-    "status": {
-      "type": "number",
-      "description": "Asset status"
-    },
-    "user_id": {
-      "type": "number",
-      "description": "User ID assigned to asset"
-    },
-    "location_id": {
-      "type": "number",
-      "description": "Location ID"
-    },
-    "department_id": {
-      "type": "number",
-      "description": "Department ID"
-    }
-  },
-  "required": [
-    "PCID",
-    "name"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_list_requesters
-
-List all requesters/users with optional pagination
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of requesters per page |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "page": {
-      "type": "number",
-      "description": "Page number for pagination"
-    },
-    "per_page": {
-      "type": "number",
-      "description": "Number of requesters per page"
-    }
-  },
-  "required": [
-    "PCID"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_create_requester
-
-Create a new requester/user
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `first_name` | string | Yes | — | First name |
-| `last_name` | string | Yes | — | Last name |
-| `email` | string | Yes | — | Email address |
-| `phone` | string | No | — | Phone number |
-| `mobile` | string | No | — | Mobile number |
-| `department_id` | number | No | — | Department ID |
-| `location_id` | number | No | — | Location ID |
-| `active` | boolean | No | — | Whether the user is active |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "first_name": {
-      "type": "string",
-      "description": "First name"
-    },
-    "last_name": {
-      "type": "string",
-      "description": "Last name"
-    },
-    "email": {
-      "type": "string",
-      "description": "Email address"
-    },
-    "phone": {
-      "type": "string",
-      "description": "Phone number"
-    },
-    "mobile": {
-      "type": "string",
-      "description": "Mobile number"
-    },
-    "department_id": {
-      "type": "number",
-      "description": "Department ID"
-    },
-    "location_id": {
-      "type": "number",
-      "description": "Location ID"
-    },
-    "active": {
+    "private": {
       "type": "boolean",
-      "description": "Whether the user is active"
+      "description": "Whether the note is private (default: true)"
     }
   },
   "required": [
     "PCID",
-    "first_name",
-    "last_name",
-    "email"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_list_agents
-
-List all agents with optional pagination
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of agents per page |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "page": {
-      "type": "number",
-      "description": "Page number for pagination"
-    },
-    "per_page": {
-      "type": "number",
-      "description": "Number of agents per page"
-    }
-  },
-  "required": [
-    "PCID"
+    "ticket_id",
+    "body"
   ]
 }
 ```
@@ -531,23 +98,23 @@ List all agents with optional pagination
 
 ## freshservice_create_agent
 
-Create a new agent with specified details
+Create an agent
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `first_name` | string | Yes | — | First name |
-| `last_name` | string | Yes | — | Last name |
-| `email` | string | Yes | — | Email address |
-| `phone` | string | No | — | Phone number |
-| `mobile` | string | No | — | Mobile number |
+| `department_ids` | integer[] | No | — | Department IDs |
+| `email` | string | Yes | — | Email address (must be unique) |
+| `first_name` | string | No | — | First name |
+| `group_ids` | integer[] | No | — | Group IDs |
 | `job_title` | string | No | — | Job title |
-| `active` | boolean | No | — | Whether the agent is active |
-| `department_id` | number | No | — | Department ID |
-| `location_id` | number | No | — | Location ID |
-| `role_id` | number | No | — | Role ID |
-| `group_ids` | number[] | No | — | Array of group IDs |
+| `last_name` | string | No | — | Last name |
+| `location_id` | integer | No | — | Location ID |
+| `mobile_phone_number` | string | No | — | Mobile phone number |
+| `occasional` | boolean | No | — | Whether the agent is occasional (true) or full-time (false) |
+| `phone` | string | No | — | Phone number |
+| `role_ids` | integer[] | No | — | Role IDs |
 
 <Expandable title="inputSchema">
 
@@ -557,60 +124,64 @@ Create a new agent with specified details
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "department_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "Department IDs"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address (must be unique)"
     },
     "first_name": {
       "type": "string",
       "description": "First name"
     },
-    "last_name": {
-      "type": "string",
-      "description": "Last name"
-    },
-    "email": {
-      "type": "string",
-      "description": "Email address"
-    },
-    "phone": {
-      "type": "string",
-      "description": "Phone number"
-    },
-    "mobile": {
-      "type": "string",
-      "description": "Mobile number"
+    "group_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "Group IDs"
     },
     "job_title": {
       "type": "string",
       "description": "Job title"
     },
-    "active": {
-      "type": "boolean",
-      "description": "Whether the agent is active"
-    },
-    "department_id": {
-      "type": "number",
-      "description": "Department ID"
+    "last_name": {
+      "type": "string",
+      "description": "Last name"
     },
     "location_id": {
-      "type": "number",
+      "type": "integer",
       "description": "Location ID"
     },
-    "role_id": {
-      "type": "number",
-      "description": "Role ID"
+    "mobile_phone_number": {
+      "type": "string",
+      "description": "Mobile phone number"
     },
-    "group_ids": {
+    "occasional": {
+      "type": "boolean",
+      "description": "Whether the agent is occasional (true) or full-time (false)"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "role_ids": {
       "type": "array",
       "items": {
-        "type": "number"
+        "type": "integer"
       },
-      "description": "Array of group IDs"
+      "description": "Role IDs"
     }
   },
   "required": [
     "PCID",
-    "first_name",
-    "last_name",
     "email"
   ]
 }
@@ -620,16 +191,26 @@ Create a new agent with specified details
 
 ---
 
-## freshservice_list_departments
+## freshservice_create_asset
 
-List all departments with optional pagination
+Create an asset
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of departments per page |
+| `agent_id` | integer | No | — | ID of the agent managing the asset |
+| `asset_tag` | string | No | — | Asset tag identifier |
+| `asset_type_id` | integer | Yes | — | ID of the asset type |
+| `assigned_on` | string | No | — | Date when asset was assigned |
+| `department_id` | integer | No | — | ID of the department |
+| `description` | string | No | — | Description of the asset |
+| `group_id` | integer | No | — | ID of the agent group |
+| `impact` | string | No | — | Impact level (low, medium, high) |
+| `location_id` | integer | No | — | ID of the location |
+| `name` | string | Yes | — | Name of the asset |
+| `usage_type` | string | No | — | Usage type (permanent, loaner) |
+| `user_id` | integer | No | — | ID of the user associated with the asset |
 
 <Expandable title="inputSchema">
 
@@ -639,19 +220,192 @@ List all departments with optional pagination
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
-    "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+    "agent_id": {
+      "type": "integer",
+      "description": "ID of the agent managing the asset"
     },
-    "per_page": {
-      "type": "number",
-      "description": "Number of departments per page"
+    "asset_tag": {
+      "type": "string",
+      "description": "Asset tag identifier"
+    },
+    "asset_type_id": {
+      "type": "integer",
+      "description": "ID of the asset type"
+    },
+    "assigned_on": {
+      "type": "string",
+      "description": "Date when asset was assigned"
+    },
+    "department_id": {
+      "type": "integer",
+      "description": "ID of the department"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the asset"
+    },
+    "group_id": {
+      "type": "integer",
+      "description": "ID of the agent group"
+    },
+    "impact": {
+      "type": "string",
+      "description": "Impact level (low, medium, high)",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "location_id": {
+      "type": "integer",
+      "description": "ID of the location"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the asset"
+    },
+    "usage_type": {
+      "type": "string",
+      "description": "Usage type (permanent, loaner)"
+    },
+    "user_id": {
+      "type": "integer",
+      "description": "ID of the user associated with the asset"
     }
   },
   "required": [
-    "PCID"
+    "PCID",
+    "asset_type_id",
+    "name"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_create_change
+
+Create a change request
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `agent_id` | integer | No | — | ID of the agent |
+| `category` | string | No | — | The category value |
+| `change_type` | integer | Yes | — | Type: 1=Minor, 2=Standard, 3=Major, 4=Emergency |
+| `description` | string | No | — | Description in HTML |
+| `impact` | integer | Yes | — | Impact: 1=Low, 2=Medium, 3=High |
+| `planned_end_date` | string | Yes | — | Planned end date |
+| `planned_start_date` | string | Yes | — | Planned start date |
+| `priority` | integer | Yes | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `requester_id` | integer | Yes | — | ID of the requester |
+| `risk` | integer | Yes | — | Risk: 1=Low, 2=Medium, 3=High, 4=Very High |
+| `status` | integer | No | — | Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed |
+| `sub_category` | string | No | — | Sub-category |
+| `subject` | string | Yes | — | Subject of the change |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "agent_id": {
+      "type": "integer",
+      "description": "ID of the agent"
+    },
+    "category": {
+      "type": "string",
+      "description": "The category value"
+    },
+    "change_type": {
+      "type": "integer",
+      "description": "Type: 1=Minor, 2=Standard, 3=Major, 4=Emergency",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Description in HTML"
+    },
+    "impact": {
+      "type": "integer",
+      "description": "Impact: 1=Low, 2=Medium, 3=High",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "planned_end_date": {
+      "type": "string",
+      "description": "Planned end date"
+    },
+    "planned_start_date": {
+      "type": "string",
+      "description": "Planned start date"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "requester_id": {
+      "type": "integer",
+      "description": "ID of the requester"
+    },
+    "risk": {
+      "type": "integer",
+      "description": "Risk: 1=Low, 2=Medium, 3=High, 4=Very High",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "status": {
+      "type": "integer",
+      "description": "Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed"
+    },
+    "sub_category": {
+      "type": "string",
+      "description": "Sub-category"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject of the change"
+    }
+  },
+  "required": [
+    "PCID",
+    "change_type",
+    "impact",
+    "planned_end_date",
+    "planned_start_date",
+    "priority",
+    "requester_id",
+    "risk",
+    "subject"
   ]
 }
 ```
@@ -662,17 +416,17 @@ List all departments with optional pagination
 
 ## freshservice_create_department
 
-Create a new department
+Create a department
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `name` | string | Yes | — | Department name |
-| `description` | string | No | — | Department description |
-| `head_user_id` | number | No | — | Head user ID |
-| `prime_user_id` | number | No | — | Prime user ID |
-| `domains` | string[] | No | — | Array of domain names |
+| `description` | string | No | — | The description value |
+| `domains` | string[] | No | — | Email domains associated with the department |
+| `head_user_id` | integer | No | — | ID of the department head |
+| `name` | string | Yes | — | Name of the department |
+| `prime_user_id` | integer | No | — | ID of the primary contact |
 
 <Expandable title="inputSchema">
 
@@ -682,30 +436,30 @@ Create a new department
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "name": {
-      "type": "string",
-      "description": "Department name"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "description": {
       "type": "string",
-      "description": "Department description"
-    },
-    "head_user_id": {
-      "type": "number",
-      "description": "Head user ID"
-    },
-    "prime_user_id": {
-      "type": "number",
-      "description": "Prime user ID"
+      "description": "The description value"
     },
     "domains": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Array of domain names"
+      "description": "Email domains associated with the department"
+    },
+    "head_user_id": {
+      "type": "integer",
+      "description": "ID of the department head"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the department"
+    },
+    "prime_user_id": {
+      "type": "integer",
+      "description": "ID of the primary contact"
     }
   },
   "required": [
@@ -719,15 +473,386 @@ Create a new department
 
 ---
 
+## freshservice_create_problem
+
+Create a problem
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `agent_id` | integer | No | — | ID of the agent |
+| `category` | string | No | — | The category value |
+| `description` | string | No | — | Description in HTML |
+| `due_by` | string | No | — | Due date |
+| `group_id` | integer | No | — | Group ID |
+| `impact` | integer | Yes | — | Impact: 1=Low, 2=Medium, 3=High |
+| `item_category` | string | No | — | Item category |
+| `known_error` | boolean | No | — | Whether this is a known error |
+| `priority` | integer | Yes | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `requester_id` | integer | Yes | — | ID of the requester |
+| `status` | integer | Yes | — | Status: 1=Open, 2=Change Requested, 3=Closed |
+| `sub_category` | string | No | — | Sub-category |
+| `subject` | string | Yes | — | Subject of the problem |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "agent_id": {
+      "type": "integer",
+      "description": "ID of the agent"
+    },
+    "category": {
+      "type": "string",
+      "description": "The category value"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description in HTML"
+    },
+    "due_by": {
+      "type": "string",
+      "description": "Due date"
+    },
+    "group_id": {
+      "type": "integer",
+      "description": "Group ID"
+    },
+    "impact": {
+      "type": "integer",
+      "description": "Impact: 1=Low, 2=Medium, 3=High",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "item_category": {
+      "type": "string",
+      "description": "Item category"
+    },
+    "known_error": {
+      "type": "boolean",
+      "description": "Whether this is a known error"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "requester_id": {
+      "type": "integer",
+      "description": "ID of the requester"
+    },
+    "status": {
+      "type": "integer",
+      "description": "Status: 1=Open, 2=Change Requested, 3=Closed",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "sub_category": {
+      "type": "string",
+      "description": "Sub-category"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject of the problem"
+    }
+  },
+  "required": [
+    "PCID",
+    "impact",
+    "priority",
+    "requester_id",
+    "status",
+    "subject"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_create_requester
+
+Create a requester
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `department_ids` | integer[] | No | — | Department IDs |
+| `email` | string | No | — | Primary email of the requester |
+| `first_name` | string | Yes | — | First name of the requester |
+| `job_title` | string | No | — | Job title |
+| `language` | string | No | — | Language preference |
+| `last_name` | string | No | — | Last name of the requester |
+| `location_id` | integer | No | — | Location ID |
+| `mobile_phone_number` | string | No | — | Mobile phone number |
+| `phone` | string | No | — | Phone number |
+| `time_zone` | string | No | — | Time zone |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "department_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "Department IDs"
+    },
+    "email": {
+      "type": "string",
+      "description": "Primary email of the requester"
+    },
+    "first_name": {
+      "type": "string",
+      "description": "First name of the requester"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Job title"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language preference"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "Last name of the requester"
+    },
+    "location_id": {
+      "type": "integer",
+      "description": "Location ID"
+    },
+    "mobile_phone_number": {
+      "type": "string",
+      "description": "Mobile phone number"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "time_zone": {
+      "type": "string",
+      "description": "Time zone"
+    }
+  },
+  "required": [
+    "PCID",
+    "first_name"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_create_ticket
+
+Create a new ticket
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `category` | string | No | — | Category of the ticket |
+| `description` | string | Yes | — | HTML content of the ticket |
+| `due_by` | string | No | — | Ticket due date |
+| `email` | string | No | — | Email of the requester. If no contact exists with this email, a new one is created. |
+| `fr_due_by` | string | No | — | First response due date |
+| `group_id` | integer | No | — | ID of the group to which the ticket is assigned |
+| `impact` | integer | No | — | Impact: 1=Low, 2=Medium, 3=High |
+| `item_category` | string | No | — | Item category of the ticket |
+| `phone` | string | No | — | Phone number of the requester |
+| `priority` | integer | Yes | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `requester_id` | integer | No | — | ID of the requester. Must be an existing contact. |
+| `responder_id` | integer | No | — | ID of the agent to whom the ticket is assigned |
+| `source` | integer | No | — | Source: 1=Email, 2=Portal, 3=Phone, 4=Chat, 5=Feedback Widget, 6=Yammer, 7=AWS Cloudwatch, 8=Pagerduty, 9=Walkup, 10=Slack |
+| `status` | integer | Yes | — | Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed |
+| `sub_category` | string | No | — | Sub-category of the ticket |
+| `subject` | string | Yes | — | Ticket subject |
+| `tags` | string[] | No | — | Tags for the ticket |
+| `type` | string | No | — | Ticket type (e.g., 'Incident', 'Service Request') |
+| `urgency` | integer | No | — | Urgency: 1=Low, 2=Medium, 3=High |
+| `workspace_id` | integer | No | — | Workspace ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of the ticket"
+    },
+    "description": {
+      "type": "string",
+      "description": "HTML content of the ticket"
+    },
+    "due_by": {
+      "type": "string",
+      "description": "Ticket due date"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email of the requester. If no contact exists with this email, a new one is created."
+    },
+    "fr_due_by": {
+      "type": "string",
+      "description": "First response due date"
+    },
+    "group_id": {
+      "type": "integer",
+      "description": "ID of the group to which the ticket is assigned"
+    },
+    "impact": {
+      "type": "integer",
+      "description": "Impact: 1=Low, 2=Medium, 3=High",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "item_category": {
+      "type": "string",
+      "description": "Item category of the ticket"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number of the requester"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "requester_id": {
+      "type": "integer",
+      "description": "ID of the requester. Must be an existing contact."
+    },
+    "responder_id": {
+      "type": "integer",
+      "description": "ID of the agent to whom the ticket is assigned"
+    },
+    "source": {
+      "type": "integer",
+      "description": "Source: 1=Email, 2=Portal, 3=Phone, 4=Chat, 5=Feedback Widget, 6=Yammer, 7=AWS Cloudwatch, 8=Pagerduty, 9=Walkup, 10=Slack",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "status": {
+      "type": "integer",
+      "description": "Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed",
+      "enum": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "sub_category": {
+      "type": "string",
+      "description": "Sub-category of the ticket"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Ticket subject"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for the ticket"
+    },
+    "type": {
+      "type": "string",
+      "description": "Ticket type (e.g., 'Incident', 'Service Request')"
+    },
+    "urgency": {
+      "type": "integer",
+      "description": "Urgency: 1=Low, 2=Medium, 3=High",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "workspace_id": {
+      "type": "integer",
+      "description": "Workspace ID"
+    }
+  },
+  "required": [
+    "PCID",
+    "description",
+    "priority",
+    "status",
+    "subject"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
 ## freshservice_delete_ticket
 
-Delete a ticket by ID. The ticket will be moved to trash and can be restored later.
+Delete a ticket
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to delete |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
 
 <Expandable title="inputSchema">
 
@@ -737,157 +862,16 @@ Delete a ticket by ID. The ticket will be moved to trash and can be restored lat
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to delete"
+      "type": "integer",
+      "description": "ID of the ticket"
     }
   },
   "required": [
     "PCID",
     "ticket_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_list_ticket_conversations
-
-List all conversations (replies and notes) for a specific ticket. Returns the full conversation history including public replies, private notes, and system messages.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to get conversations for |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to get conversations for"
-    }
-  },
-  "required": [
-    "PCID",
-    "ticket_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_add_ticket_note
-
-Add a note to a ticket. Notes can be private (visible only to agents) or public (visible to requester and agents).
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to add the note to |
-| `body` | string | Yes | — | HTML content of the note |
-| `private` | boolean | No | — | Whether this is a private note (default: true). Private notes are only visible to agents. |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to add the note to"
-    },
-    "body": {
-      "type": "string",
-      "description": "HTML content of the note"
-    },
-    "private": {
-      "type": "boolean",
-      "description": "Whether this is a private note (default: true). Private notes are only visible to agents."
-    }
-  },
-  "required": [
-    "PCID",
-    "ticket_id",
-    "body"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_reply_to_ticket
-
-Send a reply to a ticket. The reply will be sent as an email to the requester and will appear in the ticket conversation thread.
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `ticket_id` | number | Yes | — | Ticket ID to reply to |
-| `body` | string | Yes | — | HTML content of the reply |
-| `cc_emails` | string[] | No | — | Array of CC email addresses |
-| `bcc_emails` | string[] | No | — | Array of BCC email addresses |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "ticket_id": {
-      "type": "number",
-      "description": "Ticket ID to reply to"
-    },
-    "body": {
-      "type": "string",
-      "description": "HTML content of the reply"
-    },
-    "cc_emails": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Array of CC email addresses"
-    },
-    "bcc_emails": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Array of BCC email addresses"
-    }
-  },
-  "required": [
-    "PCID",
-    "ticket_id",
-    "body"
   ]
 }
 ```
@@ -898,13 +882,13 @@ Send a reply to a ticket. The reply will be sent as an email to the requester an
 
 ## freshservice_get_asset
 
-Get detailed information about a specific asset by its display ID
+Get an asset
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `asset_display_id` | number | Yes | — | Asset display ID to retrieve |
+| `asset_display_id` | integer | Yes | — | Display ID of the asset |
 
 <Expandable title="inputSchema">
 
@@ -914,11 +898,11 @@ Get detailed information about a specific asset by its display ID
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "asset_display_id": {
-      "type": "number",
-      "description": "Asset display ID to retrieve"
+      "type": "integer",
+      "description": "Display ID of the asset"
     }
   },
   "required": [
@@ -932,23 +916,16 @@ Get detailed information about a specific asset by its display ID
 
 ---
 
-## freshservice_update_asset
+## freshservice_get_ticket
 
-Update an existing asset with new details
+Get a ticket
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `asset_display_id` | number | Yes | — | Asset display ID to update |
-| `name` | string | No | — | New asset name |
-| `description` | string | No | — | New asset description |
-| `asset_type_id` | number | No | — | New asset type ID |
-| `asset_tag` | string | No | — | New asset tag |
-| `status` | number | No | — | New asset status |
-| `user_id` | number | No | — | New user ID assigned to asset |
-| `location_id` | number | No | — | New location ID |
-| `department_id` | number | No | — | New department ID |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
+| `include` | string | No | — | Include additional information (e.g., 'requester', 'stats', 'conversations', 'tags') |
 
 <Expandable title="inputSchema">
 
@@ -958,84 +935,20 @@ Update an existing asset with new details
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
-    "asset_display_id": {
-      "type": "number",
-      "description": "Asset display ID to update"
+    "ticket_id": {
+      "type": "integer",
+      "description": "ID of the ticket"
     },
-    "name": {
+    "include": {
       "type": "string",
-      "description": "New asset name"
-    },
-    "description": {
-      "type": "string",
-      "description": "New asset description"
-    },
-    "asset_type_id": {
-      "type": "number",
-      "description": "New asset type ID"
-    },
-    "asset_tag": {
-      "type": "string",
-      "description": "New asset tag"
-    },
-    "status": {
-      "type": "number",
-      "description": "New asset status"
-    },
-    "user_id": {
-      "type": "number",
-      "description": "New user ID assigned to asset"
-    },
-    "location_id": {
-      "type": "number",
-      "description": "New location ID"
-    },
-    "department_id": {
-      "type": "number",
-      "description": "New department ID"
+      "description": "Include additional information (e.g., 'requester', 'stats', 'conversations', 'tags')"
     }
   },
   "required": [
     "PCID",
-    "asset_display_id"
-  ]
-}
-```
-
-</Expandable>
-
----
-
-## freshservice_search_assets
-
-Search assets using a query string. Query format follows Freshservice filter syntax, e.g. "asset_type_id:1" or "name:'laptop'".
-
-**Parameters:**
-
-| Parameter | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `query` | string | Yes | — | Search query string using Freshservice filter syntax (e.g. "asset_type_id:1", "name:'laptop'") |
-
-<Expandable title="inputSchema">
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "PCID": {
-      "type": "string",
-      "description": "PinkConnect ID"
-    },
-    "query": {
-      "type": "string",
-      "description": "Search query string using Freshservice filter syntax (e.g. \"asset_type_id:1\", \"name:'laptop'\")"
-    }
-  },
-  "required": [
-    "PCID",
-    "query"
+    "ticket_id"
   ]
 }
 ```
@@ -1046,14 +959,14 @@ Search assets using a query string. Query format follows Freshservice filter syn
 
 ## freshservice_list_agent_groups
 
-List all agent groups with optional pagination. Agent groups are used for ticket assignment and routing.
+List all agent groups
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of groups per page |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1063,15 +976,15 @@ List all agent groups with optional pagination. Agent groups are used for ticket
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+      "type": "integer",
+      "description": "Page number"
     },
     "per_page": {
-      "type": "number",
-      "description": "Number of groups per page"
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
@@ -1084,16 +997,19 @@ List all agent groups with optional pagination. Agent groups are used for ticket
 
 ---
 
-## freshservice_list_locations
+## freshservice_list_agents
 
-List all locations with optional pagination. Locations are used by assets, agents, and requesters.
+List all agents
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of locations per page |
+| `email` | string | No | — | Filter by email |
+| `active` | boolean | No | — | Filter by active status |
+| `state` | string | No | — | Filter by state (fulltime, occasional) |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1103,15 +1019,81 @@ List all locations with optional pagination. Locations are used by assets, agent
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "email": {
+      "type": "string",
+      "description": "Filter by email"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Filter by active status"
+    },
+    "state": {
+      "type": "string",
+      "description": "Filter by state (fulltime, occasional)",
+      "enum": [
+        "fulltime",
+        "occasional"
+      ]
     },
     "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+      "type": "integer",
+      "description": "Page number"
     },
     "per_page": {
-      "type": "number",
-      "description": "Number of locations per page"
+      "type": "integer",
+      "description": "Records per page (max 100)"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_assets
+
+List all assets
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
+| `include` | string | No | — | Include additional info (e.g., 'type_fields') |
+| `query` | string | No | — | Search query to filter assets (e.g., "name:'Dell Laptop'") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number"
+    },
+    "per_page": {
+      "type": "integer",
+      "description": "Records per page (max 100)"
+    },
+    "include": {
+      "type": "string",
+      "description": "Include additional info (e.g., 'type_fields')"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search query to filter assets (e.g., \"name:'Dell Laptop'\")"
     }
   },
   "required": [
@@ -1126,14 +1108,16 @@ List all locations with optional pagination. Locations are used by assets, agent
 
 ## freshservice_list_changes
 
-List all change requests with optional pagination. Status values: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed.
+List all changes
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of changes per page |
+| `filter` | string | No | — | Predefined filter |
+| `updated_since` | string | No | — | Filter changes updated since date |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1143,15 +1127,23 @@ List all change requests with optional pagination. Status values: 1=Open, 2=Plan
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "filter": {
+      "type": "string",
+      "description": "Predefined filter"
+    },
+    "updated_since": {
+      "type": "string",
+      "description": "Filter changes updated since date"
     },
     "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+      "type": "integer",
+      "description": "Page number"
     },
     "per_page": {
-      "type": "number",
-      "description": "Number of changes per page"
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
@@ -1164,25 +1156,16 @@ List all change requests with optional pagination. Status values: 1=Open, 2=Plan
 
 ---
 
-## freshservice_create_change
+## freshservice_list_departments
 
-Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Risk: 1=Low, 2=Medium, 3=High, 4=Very High. Impact: 1=Low, 2=Medium, 3=High. Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency.
+List all departments
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `subject` | string | Yes | — | Change request subject |
-| `description` | string | No | — | Change request description (HTML) |
-| `agent_id` | number | No | — | ID of the agent assigned |
-| `requester_id` | number | No | — | ID of the requester |
-| `priority` | number | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
-| `status` | number | No | — | Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed |
-| `risk` | number | No | — | Risk: 1=Low, 2=Medium, 3=High, 4=Very High |
-| `impact` | number | No | — | Impact: 1=Low, 2=Medium, 3=High |
-| `change_type` | number | No | — | Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency |
-| `planned_start_date` | string | No | — | Planned start date (ISO 8601 format) |
-| `planned_end_date` | string | No | — | Planned end date (ISO 8601 format) |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1192,56 +1175,59 @@ Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
-    "subject": {
-      "type": "string",
-      "description": "Change request subject"
+    "page": {
+      "type": "integer",
+      "description": "Page number"
     },
-    "description": {
-      "type": "string",
-      "description": "Change request description (HTML)"
-    },
-    "agent_id": {
-      "type": "number",
-      "description": "ID of the agent assigned"
-    },
-    "requester_id": {
-      "type": "number",
-      "description": "ID of the requester"
-    },
-    "priority": {
-      "type": "number",
-      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
-    },
-    "status": {
-      "type": "number",
-      "description": "Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=Pending Release, 5=Pending Review, 6=Closed"
-    },
-    "risk": {
-      "type": "number",
-      "description": "Risk: 1=Low, 2=Medium, 3=High, 4=Very High"
-    },
-    "impact": {
-      "type": "number",
-      "description": "Impact: 1=Low, 2=Medium, 3=High"
-    },
-    "change_type": {
-      "type": "number",
-      "description": "Change type: 1=Minor, 2=Standard, 3=Major, 4=Emergency"
-    },
-    "planned_start_date": {
-      "type": "string",
-      "description": "Planned start date (ISO 8601 format)"
-    },
-    "planned_end_date": {
-      "type": "string",
-      "description": "Planned end date (ISO 8601 format)"
+    "per_page": {
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
-    "PCID",
-    "subject"
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_locations
+
+List all locations
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number"
+    },
+    "per_page": {
+      "type": "integer",
+      "description": "Records per page (max 100)"
+    }
+  },
+  "required": [
+    "PCID"
   ]
 }
 ```
@@ -1252,14 +1238,14 @@ Create a new change request. Status: 1=Open, 2=Planning, 3=Awaiting Approval, 4=
 
 ## freshservice_list_problems
 
-List all problems with optional pagination. Status values: 1=Open, 2=Change Requested, 3=Closed.
+List all problems
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of problems per page |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1269,15 +1255,15 @@ List all problems with optional pagination. Status values: 1=Open, 2=Change Requ
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
     "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+      "type": "integer",
+      "description": "Page number"
     },
     "per_page": {
-      "type": "number",
-      "description": "Number of problems per page"
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
@@ -1290,22 +1276,17 @@ List all problems with optional pagination. Status values: 1=Open, 2=Change Requ
 
 ---
 
-## freshservice_create_problem
+## freshservice_list_requesters
 
-Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Priority: 1=Low, 2=Medium, 3=High, 4=Urgent. Impact: 1=Low, 2=Medium, 3=High.
+List all requesters
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `subject` | string | Yes | — | Problem subject |
-| `description` | string | No | — | Problem description (HTML) |
-| `agent_id` | number | No | — | ID of the agent assigned |
-| `requester_id` | number | No | — | ID of the requester |
-| `priority` | number | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
-| `status` | number | No | — | Status: 1=Open, 2=Change Requested, 3=Closed |
-| `impact` | number | No | — | Impact: 1=Low, 2=Medium, 3=High |
-| `due_by` | string | No | — | Due date (ISO 8601 format) |
+| `email` | string | No | — | Filter by email address |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1315,44 +1296,23 @@ Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Prior
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
     },
-    "subject": {
+    "email": {
       "type": "string",
-      "description": "Problem subject"
+      "description": "Filter by email address"
     },
-    "description": {
-      "type": "string",
-      "description": "Problem description (HTML)"
+    "page": {
+      "type": "integer",
+      "description": "Page number"
     },
-    "agent_id": {
-      "type": "number",
-      "description": "ID of the agent assigned"
-    },
-    "requester_id": {
-      "type": "number",
-      "description": "ID of the requester"
-    },
-    "priority": {
-      "type": "number",
-      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent"
-    },
-    "status": {
-      "type": "number",
-      "description": "Status: 1=Open, 2=Change Requested, 3=Closed"
-    },
-    "impact": {
-      "type": "number",
-      "description": "Impact: 1=Low, 2=Medium, 3=High"
-    },
-    "due_by": {
-      "type": "string",
-      "description": "Due date (ISO 8601 format)"
+    "per_page": {
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
-    "PCID",
-    "subject"
+    "PCID"
   ]
 }
 ```
@@ -1363,14 +1323,15 @@ Create a new problem record. Status: 1=Open, 2=Change Requested, 3=Closed. Prior
 
 ## freshservice_list_service_catalog_items
 
-List all service catalog items with optional pagination. Service catalog items are the services that requesters can browse and submit requests for.
+List service catalog items
 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `page` | number | No | — | Page number for pagination |
-| `per_page` | number | No | — | Number of items per page |
+| `category_id` | integer | No | — | Filter by category ID |
+| `page` | integer | No | — | Page number |
+| `per_page` | integer | No | — | Records per page (max 100) |
 
 <Expandable title="inputSchema">
 
@@ -1380,19 +1341,469 @@ List all service catalog items with optional pagination. Service catalog items a
   "properties": {
     "PCID": {
       "type": "string",
-      "description": "PinkConnect ID"
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Filter by category ID"
     },
     "page": {
-      "type": "number",
-      "description": "Page number for pagination"
+      "type": "integer",
+      "description": "Page number"
     },
     "per_page": {
-      "type": "number",
-      "description": "Number of items per page"
+      "type": "integer",
+      "description": "Records per page (max 100)"
     }
   },
   "required": [
     "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_ticket_conversations
+
+List conversations of a ticket
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "description": "ID of the ticket"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_list_tickets
+
+List all tickets
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `filter` | string | No | — | Filter criteria for tickets (e.g., 'new_and_my_open', 'watching', 'spam', 'deleted') |
+| `requester_id` | integer | No | — | Filter tickets by requester ID |
+| `email` | string | No | — | Filter tickets by requester email |
+| `updated_since` | string | No | — | Filter tickets updated since this date (ISO 8601 format) |
+| `type` | string | No | — | Filter by ticket type (e.g., 'Incident', 'Service Request') |
+| `order_by` | string | No | — | Sort field (e.g., 'created_at', 'due_by', 'updated_at') |
+| `order_type` | string | No | — | Sort direction: 'asc' or 'desc' |
+| `page` | integer | No | — | Page number for pagination |
+| `per_page` | integer | No | — | Number of records per page (max 100) |
+| `include` | string | No | — | Include additional information (e.g., 'requester', 'stats', 'tags') |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "filter": {
+      "type": "string",
+      "description": "Filter criteria for tickets (e.g., 'new_and_my_open', 'watching', 'spam', 'deleted')"
+    },
+    "requester_id": {
+      "type": "integer",
+      "description": "Filter tickets by requester ID"
+    },
+    "email": {
+      "type": "string",
+      "description": "Filter tickets by requester email"
+    },
+    "updated_since": {
+      "type": "string",
+      "description": "Filter tickets updated since this date (ISO 8601 format)"
+    },
+    "type": {
+      "type": "string",
+      "description": "Filter by ticket type (e.g., 'Incident', 'Service Request')"
+    },
+    "order_by": {
+      "type": "string",
+      "description": "Sort field (e.g., 'created_at', 'due_by', 'updated_at')"
+    },
+    "order_type": {
+      "type": "string",
+      "description": "Sort direction: 'asc' or 'desc'",
+      "enum": [
+        "asc",
+        "desc"
+      ]
+    },
+    "page": {
+      "type": "integer",
+      "description": "Page number for pagination"
+    },
+    "per_page": {
+      "type": "integer",
+      "description": "Number of records per page (max 100)"
+    },
+    "include": {
+      "type": "string",
+      "description": "Include additional information (e.g., 'requester', 'stats', 'tags')"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_reply_to_ticket
+
+Reply to a ticket
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
+| `bcc_emails` | string[] | No | — | BCC email addresses |
+| `body` | string | Yes | — | HTML content of the reply |
+| `cc_emails` | string[] | No | — | CC email addresses |
+| `from_email` | string | No | — | Email address from which the reply is sent |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "description": "ID of the ticket"
+    },
+    "bcc_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "BCC email addresses"
+    },
+    "body": {
+      "type": "string",
+      "description": "HTML content of the reply"
+    },
+    "cc_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "CC email addresses"
+    },
+    "from_email": {
+      "type": "string",
+      "description": "Email address from which the reply is sent"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id",
+    "body"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_search_assets
+
+DEPRECATED — Search assets by query. Use list_assets with the query parameter instead.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `query` | string | Yes | — | Search query to filter assets (e.g., "name:'Dell Laptop'") |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search query to filter assets (e.g., \"name:'Dell Laptop'\")"
+    }
+  },
+  "required": [
+    "PCID",
+    "query"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_update_asset
+
+Update an asset
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `asset_display_id` | integer | Yes | — | Display ID of the asset |
+| `agent_id` | integer | No | — | Agent ID |
+| `asset_tag` | string | No | — | Asset tag |
+| `asset_type_id` | integer | No | — | Asset type ID |
+| `department_id` | integer | No | — | Department ID |
+| `description` | string | No | — | The description value |
+| `group_id` | integer | No | — | Group ID |
+| `impact` | string | No | — | Impact level |
+| `location_id` | integer | No | — | Location ID |
+| `name` | string | No | — | Name of the asset |
+| `usage_type` | string | No | — | Usage type |
+| `user_id` | integer | No | — | User ID |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "asset_display_id": {
+      "type": "integer",
+      "description": "Display ID of the asset"
+    },
+    "agent_id": {
+      "type": "integer",
+      "description": "Agent ID"
+    },
+    "asset_tag": {
+      "type": "string",
+      "description": "Asset tag"
+    },
+    "asset_type_id": {
+      "type": "integer",
+      "description": "Asset type ID"
+    },
+    "department_id": {
+      "type": "integer",
+      "description": "Department ID"
+    },
+    "description": {
+      "type": "string",
+      "description": "The description value"
+    },
+    "group_id": {
+      "type": "integer",
+      "description": "Group ID"
+    },
+    "impact": {
+      "type": "string",
+      "description": "Impact level",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "location_id": {
+      "type": "integer",
+      "description": "Location ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the asset"
+    },
+    "usage_type": {
+      "type": "string",
+      "description": "Usage type"
+    },
+    "user_id": {
+      "type": "integer",
+      "description": "User ID"
+    }
+  },
+  "required": [
+    "PCID",
+    "asset_display_id"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## freshservice_update_ticket
+
+Update a ticket
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ticket_id` | integer | Yes | — | ID of the ticket |
+| `category` | string | No | — | Ticket category |
+| `description` | string | No | — | HTML content of the ticket |
+| `due_by` | string | No | — | Due date |
+| `fr_due_by` | string | No | — | First response due date |
+| `group_id` | integer | No | — | Group ID |
+| `impact` | integer | No | — | Impact level |
+| `item_category` | string | No | — | Item category |
+| `priority` | integer | No | — | Priority: 1=Low, 2=Medium, 3=High, 4=Urgent |
+| `responder_id` | integer | No | — | Agent ID |
+| `source` | integer | No | — | Source channel |
+| `status` | integer | No | — | Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed |
+| `sub_category` | string | No | — | Sub-category |
+| `subject` | string | No | — | Ticket subject |
+| `tags` | string[] | No | — | The tags value |
+| `type` | string | No | — | Ticket type |
+| `urgency` | integer | No | — | Urgency level |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "Pink Connect ID for the authenticated connection"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "description": "ID of the ticket"
+    },
+    "category": {
+      "type": "string",
+      "description": "Ticket category"
+    },
+    "description": {
+      "type": "string",
+      "description": "HTML content of the ticket"
+    },
+    "due_by": {
+      "type": "string",
+      "description": "Due date"
+    },
+    "fr_due_by": {
+      "type": "string",
+      "description": "First response due date"
+    },
+    "group_id": {
+      "type": "integer",
+      "description": "Group ID"
+    },
+    "impact": {
+      "type": "integer",
+      "description": "Impact level"
+    },
+    "item_category": {
+      "type": "string",
+      "description": "Item category"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Priority: 1=Low, 2=Medium, 3=High, 4=Urgent",
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "responder_id": {
+      "type": "integer",
+      "description": "Agent ID"
+    },
+    "source": {
+      "type": "integer",
+      "description": "Source channel"
+    },
+    "status": {
+      "type": "integer",
+      "description": "Status: 2=Open, 3=Pending, 4=Resolved, 5=Closed",
+      "enum": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "sub_category": {
+      "type": "string",
+      "description": "Sub-category"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Ticket subject"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The tags value"
+    },
+    "type": {
+      "type": "string",
+      "description": "Ticket type"
+    },
+    "urgency": {
+      "type": "integer",
+      "description": "Urgency level"
+    }
+  },
+  "required": [
+    "PCID",
+    "ticket_id"
   ]
 }
 ```

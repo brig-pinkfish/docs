@@ -385,8 +385,8 @@ Retrieve all action maps.
 | `sortBy` | string | No | — | Field(s) to sort by. Prefix with '-' for descending (e.g. sortBy=displayName,-createdDate). |
 | `filterField` | string | No | — | Field to filter by (e.g. filterField=weight or filterField=action.actionTemplate.id). Requires 'filterField' to also be set. |
 | `filterValue` | string | No | — | Value to filter by. Requires 'filterValue' to also be set. |
-| `actionMapIds` | any[] | No | — | IDs of action maps to return. Use of this parameter is not compatible with pagination, filtering, sorting or querying. A maximum of 100 action maps are allowed per request. |
-| `queryFields` | any[] | No | — | Action Map field(s) to query on. Requires 'queryValue' to also be set. |
+| `actionMapIds` | string[] | No | — | IDs of action maps to return. Use of this parameter is not compatible with pagination, filtering, sorting or querying. A maximum of 100 action maps are allowed per request. |
+| `queryFields` | string[] | No | — | Action Map field(s) to query on. Requires 'queryValue' to also be set. |
 | `queryValue` | string | No | — | Value to query on using fuzzy matching. Requires 'queryFields' to also be set. |
 
 <Expandable title="inputSchema">
@@ -421,10 +421,16 @@ Retrieve all action maps.
     },
     "actionMapIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of action maps to return. Use of this parameter is not compatible with pagination, filtering, sorting or querying. A maximum of 100 action maps are allowed per request."
     },
     "queryFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Action Map field(s) to query on. Requires 'queryValue' to also be set."
     },
     "queryValue": {
@@ -639,7 +645,7 @@ Retrieve all action templates.
 | `sortBy` | string | No | — | Field(s) to sort by. Prefix with '-' for descending (e.g. sortBy=name,-createdDate). |
 | `mediaType` | string | No | — | Media type |
 | `state` | string | No | — | Action template state. |
-| `queryFields` | any[] | No | — | ActionTemplate field(s) to query on. Requires 'queryValue' to also be set. |
+| `queryFields` | string[] | No | — | ActionTemplate field(s) to query on. Requires 'queryValue' to also be set. |
 | `queryValue` | string | No | — | Value to query on using fuzzy matching. Requires 'queryFields' to also be set. |
 
 <Expandable title="inputSchema">
@@ -687,6 +693,9 @@ Retrieve all action templates.
     },
     "queryFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "ActionTemplate field(s) to query on. Requires 'queryValue' to also be set."
     },
     "queryValue": {
@@ -818,8 +827,8 @@ Retrieve all outcomes.
 | `pageNumber` | integer | No | — | Page number |
 | `pageSize` | integer | No | — | Page size |
 | `sortBy` | string | No | — | Field(s) to sort by. The response can be sorted by any first level property on the Outcome response. Prefix with '-' for descending (e.g. sortBy=displayName,-createdDate). |
-| `outcomeIds` | any[] | No | — | IDs of outcomes to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 20 outcomes are allowed per request. |
-| `queryFields` | any[] | No | — | Outcome field(s) to query on. Requires 'queryValue' to also be set. |
+| `outcomeIds` | string[] | No | — | IDs of outcomes to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 20 outcomes are allowed per request. |
+| `queryFields` | string[] | No | — | Outcome field(s) to query on. Requires 'queryValue' to also be set. |
 | `queryValue` | string | No | — | Value to query on using fuzzy matching. Requires 'queryFields' to also be set. |
 
 <Expandable title="inputSchema">
@@ -846,10 +855,16 @@ Retrieve all outcomes.
     },
     "outcomeIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of outcomes to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 20 outcomes are allowed per request."
     },
     "queryFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Outcome field(s) to query on. Requires 'queryValue' to also be set."
     },
     "queryValue": {
@@ -976,8 +991,8 @@ Retrieve all segments.
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `isActive` | boolean | No | — | Determines whether or not to show only active segments. |
-| `segmentIds` | any[] | No | — | IDs of segments to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 100 segments are allowed per request. |
-| `queryFields` | any[] | No | — | Segment field(s) to query on. Requires 'queryValue' to also be set. |
+| `segmentIds` | string[] | No | — | IDs of segments to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 100 segments are allowed per request. |
+| `queryFields` | string[] | No | — | Segment field(s) to query on. Requires 'queryValue' to also be set. |
 | `queryValue` | string | No | — | Value to query on using fuzzy matching. Requires 'queryFields' to also be set. |
 
 <Expandable title="inputSchema">
@@ -1008,10 +1023,16 @@ Retrieve all segments.
     },
     "segmentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "IDs of segments to return. Use of this parameter is not compatible with pagination, sorting or querying. A maximum of 100 segments are allowed per request."
     },
     "queryFields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Segment field(s) to query on. Requires 'queryValue' to also be set."
     },
     "queryValue": {
@@ -1870,14 +1891,14 @@ Update single action map.
 | `ignoreFrequencyCap` | boolean | No | — | Override organization-level frequency cap and always offer web engagements from this action map. |
 | `isActive` | boolean | No | — | Whether the action map is active. |
 | `modifiedDate` | string | No | — | Timestamp indicating when the action map was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `pageUrlConditions` | any[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
+| `pageUrlConditions` | object[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
 | `selfUri` | string | No | — | The URI for this object |
 | `startDate` | string | No | — | Timestamp at which the action map is scheduled to start firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `triggerWithEventConditions` | any[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
-| `triggerWithOutcomePercentileConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithOutcomeProbabilityConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithOutcomeQuantileConditions` | any[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithSegments` | any[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
+| `triggerWithEventConditions` | object[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
+| `triggerWithOutcomePercentileConditions` | object[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithOutcomeProbabilityConditions` | object[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithOutcomeQuantileConditions` | object[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithSegments` | string[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
 | `version` | integer | No | — | The version of the action map. |
 | `weight` | integer | No | — | Weight of the action map with higher number denoting higher weight. |
 
@@ -2000,6 +2021,9 @@ Update single action map.
     },
     "pageUrlConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "URL conditions that a page must match for web actions to be displayable."
     },
     "selfUri": {
@@ -2012,22 +2036,37 @@ Update single action map.
     },
     "triggerWithEventConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of event conditions that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomePercentileConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "(deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomeProbabilityConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "(deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomeQuantileConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Quantile conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithSegments": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Trigger action map if any segment in the list is assigned to a given customer."
     },
     "version": {
@@ -2628,14 +2667,14 @@ Create an action map.
 | `ignoreFrequencyCap` | boolean | No | — | Override organization-level frequency cap and always offer web engagements from this action map. |
 | `isActive` | boolean | No | — | Whether the action map is active. |
 | `modifiedDate` | string | No | — | Timestamp indicating when the action map was last updated. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `pageUrlConditions` | any[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
+| `pageUrlConditions` | object[] | Yes | — | URL conditions that a page must match for web actions to be displayable. |
 | `selfUri` | string | No | — | The URI for this object |
 | `startDate` | string | No | — | Timestamp at which the action map is scheduled to start firing. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
-| `triggerWithEventConditions` | any[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
-| `triggerWithOutcomePercentileConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithOutcomeProbabilityConditions` | any[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithOutcomeQuantileConditions` | any[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
-| `triggerWithSegments` | any[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
+| `triggerWithEventConditions` | object[] | No | — | List of event conditions that must be satisfied to trigger the action map. |
+| `triggerWithOutcomePercentileConditions` | object[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithOutcomeProbabilityConditions` | object[] | No | — | (deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithOutcomeQuantileConditions` | object[] | No | — | Quantile conditions for outcomes that must be satisfied to trigger the action map. |
+| `triggerWithSegments` | string[] | Yes | — | Trigger action map if any segment in the list is assigned to a given customer. |
 | `version` | integer | No | — | The version of the action map. |
 | `weight` | integer | No | — | Weight of the action map with higher number denoting higher weight. |
 
@@ -2751,6 +2790,9 @@ Create an action map.
     },
     "pageUrlConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "URL conditions that a page must match for web actions to be displayable."
     },
     "selfUri": {
@@ -2763,22 +2805,37 @@ Create an action map.
     },
     "triggerWithEventConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of event conditions that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomePercentileConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "(deprecated - use triggerWithOutcomeQuantileConditions instead) Percentile conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomeProbabilityConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "(deprecated - use triggerWithOutcomeQuantileConditions instead) Probability conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithOutcomeQuantileConditions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Quantile conditions for outcomes that must be satisfied to trigger the action map."
     },
     "triggerWithSegments": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Trigger action map if any segment in the list is assigned to a given customer."
     },
     "version": {
@@ -2812,7 +2869,7 @@ Query for estimates
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `outcomeCriteria` | object | No | — | Outcome Criteria |
-| `segmentIds` | any[] | No | — | List of Segment IDs. |
+| `segmentIds` | string[] | No | — | List of Segment IDs. |
 
 <Expandable title="inputSchema">
 
@@ -2855,6 +2912,9 @@ Query for estimates
     },
     "segmentIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "List of Segment IDs."
     }
   },
@@ -3500,7 +3560,7 @@ Query for flow paths.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `category` | string | Yes | — | Category (use case) of the paths within a given domain. |
-| `flows` | any[] | Yes | — | List of flows to query the paths result. |
+| `flows` | object[] | Yes | — | List of flows to query the paths result. |
 
 <Expandable title="inputSchema">
 
@@ -3528,6 +3588,9 @@ Query for flow paths.
     },
     "flows": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "List of flows to query the paths result."
     }
   },
@@ -3929,13 +3992,13 @@ Update a Journey View by ID
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `viewId` | string | Yes | — | View Id |
-| `charts` | any[] | No | — | A list of charts to measure within context of the elements of the the journey view |
+| `charts` | object[] | No | — | A list of charts to measure within context of the elements of the the journey view |
 | `createdBy` | object | No | — | Created By |
 | `dateCreated` | string | No | — | The date when the journey view was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The date when this version of the journey view was modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | No | — | A description of the journey view |
 | `duration` | string | No | — | A relative timeframe for the journey view, expressed as an ISO 8601 duration. Only one of interval or duration must be specified. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `elements` | any[] | Yes | — | The elements within the journey view |
+| `elements` | object[] | Yes | — | The elements within the journey view |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `interval` | string | No | — | An absolute timeframe for the journey view, expressed as an ISO 8601 interval. Only one of interval or duration must be specified. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `modifiedBy` | object | No | — | Modified By |
@@ -3959,6 +4022,9 @@ Update a Journey View by ID
     },
     "charts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of charts to measure within context of the elements of the the journey view"
     },
     "createdBy": {
@@ -3997,6 +4063,9 @@ Update a Journey View by ID
     },
     "elements": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The elements within the journey view"
     },
     "id": {
@@ -4058,13 +4127,13 @@ Create a new Journey View
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `charts` | any[] | No | — | A list of charts to measure within context of the elements of the the journey view |
+| `charts` | object[] | No | — | A list of charts to measure within context of the elements of the the journey view |
 | `createdBy` | object | No | — | Created By |
 | `dateCreated` | string | No | — | The date when the journey view was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The date when this version of the journey view was modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | No | — | A description of the journey view |
 | `duration` | string | No | — | A relative timeframe for the journey view, expressed as an ISO 8601 duration. Only one of interval or duration must be specified. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `elements` | any[] | Yes | — | The elements within the journey view |
+| `elements` | object[] | Yes | — | The elements within the journey view |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `interval` | string | No | — | An absolute timeframe for the journey view, expressed as an ISO 8601 interval. Only one of interval or duration must be specified. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `modifiedBy` | object | No | — | Modified By |
@@ -4084,6 +4153,9 @@ Create a new Journey View
     },
     "charts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of charts to measure within context of the elements of the the journey view"
     },
     "createdBy": {
@@ -4122,6 +4194,9 @@ Create a new Journey View
     },
     "elements": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The elements within the journey view"
     },
     "id": {
@@ -4182,7 +4257,7 @@ Validate whether an encoding exist for a label/value combination.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `body` | any[] | No | — | Request body |
+| `body` | object[] | No | — | Request body |
 
 <Expandable title="inputSchema">
 
@@ -4196,6 +4271,9 @@ Validate whether an encoding exist for a label/value combination.
     },
     "body": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Request body"
     }
   },
@@ -4298,13 +4376,13 @@ Update a Journey View by ID and version
 | --- | --- | --- | --- | --- |
 | `viewId` | string | Yes | — | View Id |
 | `versionId` | string | Yes | — | Version Id |
-| `charts` | any[] | No | — | A list of charts to measure within context of the elements of the the journey view |
+| `charts` | object[] | No | — | A list of charts to measure within context of the elements of the the journey view |
 | `createdBy` | object | No | — | Created By |
 | `dateCreated` | string | No | — | The date when the journey view was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | The date when this version of the journey view was modified. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `description` | string | No | — | A description of the journey view |
 | `duration` | string | No | — | A relative timeframe for the journey view, expressed as an ISO 8601 duration. Only one of interval or duration must be specified. Periods are represented as an ISO-8601 string. For example: P1D or P1DT12H |
-| `elements` | any[] | Yes | — | The elements within the journey view |
+| `elements` | object[] | Yes | — | The elements within the journey view |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `interval` | string | No | — | An absolute timeframe for the journey view, expressed as an ISO 8601 interval. Only one of interval or duration must be specified. Intervals are represented as an ISO-8601 string. For example: YYYY-MM-DDThh:mm:ss/YYYY-MM-DDThh:mm:ss |
 | `modifiedBy` | object | No | — | Modified By |
@@ -4332,6 +4410,9 @@ Update a Journey View by ID and version
     },
     "charts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of charts to measure within context of the elements of the the journey view"
     },
     "createdBy": {
@@ -4370,6 +4451,9 @@ Update a Journey View by ID and version
     },
     "elements": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The elements within the journey view"
     },
     "id": {
