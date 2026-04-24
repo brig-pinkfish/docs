@@ -405,10 +405,10 @@ Retrieves the Leaves Of Absence for a specified worker ID.
 | --- | --- | --- | --- | --- |
 | `ID` | string | Yes | — | The Workday ID of the resource. |
 | `fromDate` | string | No | — | The start of a date range filter using the yyyy-mm-dd format. |
-| `leaveType` | any[] | No | — | The Workday ID of the type of leave of absence. You can specify multiple leaveType query parameters. |
+| `leaveType` | string[] | No | — | The Workday ID of the type of leave of absence. You can specify multiple leaveType query parameters. |
 | `limit` | integer | No | — | The maximum number of objects in a single response. The default is 20. The maximum is 100. |
 | `offset` | integer | No | — | The zero-based index of the first object in a response collection. The default is 0. Use offset with the limit parameter to control paging of a response collection. Example: If limit is 5 and offset is 9, the response returns a collection of 5 objects starting with the 10th object. |
-| `status` | any[] | No | — | The Workday ID of the status of the leave of absence. The valid statuses are Successfully Completed, In Progress, Canceled, Rescinded, and Process Terminated. To get valid values, call the GET /values/leave/status endpoint. You can specify multiple status query parameters. |
+| `status` | string[] | No | — | The Workday ID of the status of the leave of absence. The valid statuses are Successfully Completed, In Progress, Canceled, Rescinded, and Process Terminated. To get valid values, call the GET /values/leave/status endpoint. You can specify multiple status query parameters. |
 | `toDate` | string | No | — | The end of a date range filter using the yyyy-mm-dd format. |
 
 <Expandable title="inputSchema">
@@ -431,6 +431,9 @@ Retrieves the Leaves Of Absence for a specified worker ID.
     },
     "leaveType": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Workday ID of the type of leave of absence. You can specify multiple leaveType query parameters."
     },
     "limit": {
@@ -443,6 +446,9 @@ Retrieves the Leaves Of Absence for a specified worker ID.
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Workday ID of the status of the leave of absence. The valid statuses are Successfully Completed, In Progress, Canceled, Rescinded, and Process Terminated. To get valid values, call the GET /values/leave/status endpoint. You can specify multiple status query parameters."
     },
     "toDate": {
@@ -515,8 +521,8 @@ Retrieves a collection of time off details for a specified worker.
 | `fromDate` | string | No | — | The start of a date range filter using the yyyy-mm-dd format. |
 | `limit` | integer | No | — | The maximum number of objects in a single response. The default is 20. The maximum is 100. |
 | `offset` | integer | No | — | The zero-based index of the first object in a response collection. The default is 0. Use offset with the limit parameter to control paging of a response collection. Example: If limit is 5 and offset is 9, the response returns a collection of 5 objects starting with the 10th object. |
-| `status` | any[] | No | — | The Workday ID of the time off status. You can specify multiple status query parameters. This method returns the most recent instance of a time off entry based on this query parameter.   The valid statuses are Approved, Submitted, Not Submitted, and Sent Back. This method does not return Canceled and Denied Time Off Entries. To get the Workday ID of a status, call the GET /values/timeOff/status endpoint. You can specify multiple status query parameters.  Example: An approved Time Off Entry for Vacation 8 hours was corrected to Vacation 4 hours and is not in submitted status. If the query parameter is status = approved, the Time Off Entry of Vacation, 8 hours, Approved is returned. If query parameter status = submitted, the Time Off Entry of Vacation, 4 hours, Submitted is returned. If no query parameter is passed, the Time Off Entry of Vacation, 4 hours, Submitted is returned. |
-| `timeOffType` | any[] | No | — | The Workday ID of the Time Off Type. You can specify multiple timeOffType query parameters. |
+| `status` | string[] | No | — | The Workday ID of the time off status. You can specify multiple status query parameters. This method returns the most recent instance of a time off entry based on this query parameter.   The valid statuses are Approved, Submitted, Not Submitted, and Sent Back. This method does not return Canceled and Denied Time Off Entries. To get the Workday ID of a status, call the GET /values/timeOff/status endpoint. You can specify multiple status query parameters.  Example: An approved Time Off Entry for Vacation 8 hours was corrected to Vacation 4 hours and is not in submitted status. If the query parameter is status = approved, the Time Off Entry of Vacation, 8 hours, Approved is returned. If query parameter status = submitted, the Time Off Entry of Vacation, 4 hours, Submitted is returned. If no query parameter is passed, the Time Off Entry of Vacation, 4 hours, Submitted is returned. |
+| `timeOffType` | string[] | No | — | The Workday ID of the Time Off Type. You can specify multiple timeOffType query parameters. |
 | `toDate` | string | No | — | The end of a date range filter using the yyyy-mm-dd format. |
 
 <Expandable title="inputSchema">
@@ -547,10 +553,16 @@ Retrieves a collection of time off details for a specified worker.
     },
     "status": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Workday ID of the time off status. You can specify multiple status query parameters. This method returns the most recent instance of a time off entry based on this query parameter.   The valid statuses are Approved, Submitted, Not Submitted, and Sent Back. This method does not return Canceled and Denied Time Off Entries. To get the Workday ID of a status, call the GET /values/timeOff/status endpoint. You can specify multiple status query parameters.  Example: An approved Time Off Entry for Vacation 8 hours was corrected to Vacation 4 hours and is not in submitted status. If the query parameter is status = approved, the Time Off Entry of Vacation, 8 hours, Approved is returned. If query parameter status = submitted, the Time Off Entry of Vacation, 4 hours, Submitted is returned. If no query parameter is passed, the Time Off Entry of Vacation, 4 hours, Submitted is returned."
     },
     "timeOffType": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The Workday ID of the Time Off Type. You can specify multiple timeOffType query parameters."
     },
     "toDate": {

@@ -57,6 +57,13 @@ description: "Contacts, deals, companies, and pipelines"
 | [`hubspot_get_order`](#hubspot_get_order) | Get a specific order by ID from HubSpot |
 | [`hubspot_list_invoices`](#hubspot_list_invoices) | List invoices from HubSpot Commerce Hub. Note: Invoices are read-only via the API. |
 | [`hubspot_get_invoice`](#hubspot_get_invoice) | Get a specific invoice by ID from HubSpot. Note: Invoices are read-only via the API. |
+| [`hubspot_create_post`](#hubspot_create_post) | Create a new blog post in HubSpot CMS. The post can be saved as a draft or published immediately. |
+| [`hubspot_update_post`](#hubspot_update_post) | Update an existing blog post in HubSpot CMS. Only provided fields will be updated. |
+| [`hubspot_get_publish_channels`](#hubspot_get_publish_channels) | Get the list of connected social media publishing channels (LinkedIn, X/Twitter, etc.) for the current HubSpot account. Use this to discover available channel GUIDs before creating a broadcast. |
+| [`hubspot_list_broadcasts`](#hubspot_list_broadcasts) | List social media broadcasts (posts) from HubSpot. Returns scheduled, published, and draft broadcasts across connected LinkedIn and X/Twitter channels. |
+| [`hubspot_get_broadcast`](#hubspot_get_broadcast) | Get details of a specific social media broadcast by its GUID. |
+| [`hubspot_create_broadcast`](#hubspot_create_broadcast) | Create a new social media broadcast (post) in HubSpot for publishing to LinkedIn or X (Twitter). Use hubspot_get_publish_channels first to get the channelGuid for the desired social account. |
+| [`hubspot_delete_broadcast`](#hubspot_delete_broadcast) | Delete a social media broadcast from HubSpot. Only drafts and scheduled broadcasts can be deleted; already published broadcasts cannot be removed. |
 
 ---
 
@@ -2205,6 +2212,370 @@ Get a specific invoice by ID from HubSpot. Note: Invoices are read-only via the 
   "required": [
     "PCID",
     "invoiceId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_create_post
+
+Create a new blog post in HubSpot CMS. The post can be saved as a draft or published immediately.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `name` | string | Yes | — | The title of the blog post |
+| `contentGroupId` | string | Yes | — | The ID of the blog (content group) this post belongs to. Use hubspot_list_objects with objectType "blogs" or the HubSpot CMS API to find available blog IDs. |
+| `postBody` | string | Yes | — | The HTML body content of the blog post |
+| `slug` | string | No | — | URL slug for the post (auto-generated from title if not provided) |
+| `metaDescription` | string | No | — | Meta description for SEO |
+| `postSummary` | string | No | — | Summary/excerpt of the blog post (HTML) |
+| `blogAuthorId` | string | No | — | The ID of the blog author |
+| `featuredImage` | string | No | — | URL of the featured image |
+| `state` | string | No | `"DRAFT"` | Publish state of the post (default: DRAFT) |
+| `htmlTitle` | string | No | — | HTML title tag for the post (defaults to name if not provided) |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "name": {
+      "type": "string",
+      "description": "The title of the blog post"
+    },
+    "contentGroupId": {
+      "type": "string",
+      "description": "The ID of the blog (content group) this post belongs to. Use hubspot_list_objects with objectType \"blogs\" or the HubSpot CMS API to find available blog IDs."
+    },
+    "postBody": {
+      "type": "string",
+      "description": "The HTML body content of the blog post"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL slug for the post (auto-generated from title if not provided)"
+    },
+    "metaDescription": {
+      "type": "string",
+      "description": "Meta description for SEO"
+    },
+    "postSummary": {
+      "type": "string",
+      "description": "Summary/excerpt of the blog post (HTML)"
+    },
+    "blogAuthorId": {
+      "type": "string",
+      "description": "The ID of the blog author"
+    },
+    "featuredImage": {
+      "type": "string",
+      "description": "URL of the featured image"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "PUBLISHED"
+      ],
+      "default": "DRAFT",
+      "description": "Publish state of the post (default: DRAFT)"
+    },
+    "htmlTitle": {
+      "type": "string",
+      "description": "HTML title tag for the post (defaults to name if not provided)"
+    }
+  },
+  "required": [
+    "PCID",
+    "name",
+    "contentGroupId",
+    "postBody"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_update_post
+
+Update an existing blog post in HubSpot CMS. Only provided fields will be updated.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `postId` | string | Yes | — | The ID of the blog post to update |
+| `name` | string | No | — | Updated title of the blog post |
+| `postBody` | string | No | — | Updated HTML body content of the blog post |
+| `slug` | string | No | — | Updated URL slug |
+| `metaDescription` | string | No | — | Updated meta description for SEO |
+| `postSummary` | string | No | — | Updated summary/excerpt of the blog post (HTML) |
+| `blogAuthorId` | string | No | — | Updated blog author ID |
+| `featuredImage` | string | No | — | Updated URL of the featured image |
+| `state` | string | No | — | Updated publish state |
+| `htmlTitle` | string | No | — | Updated HTML title tag |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "postId": {
+      "type": "string",
+      "description": "The ID of the blog post to update"
+    },
+    "name": {
+      "type": "string",
+      "description": "Updated title of the blog post"
+    },
+    "postBody": {
+      "type": "string",
+      "description": "Updated HTML body content of the blog post"
+    },
+    "slug": {
+      "type": "string",
+      "description": "Updated URL slug"
+    },
+    "metaDescription": {
+      "type": "string",
+      "description": "Updated meta description for SEO"
+    },
+    "postSummary": {
+      "type": "string",
+      "description": "Updated summary/excerpt of the blog post (HTML)"
+    },
+    "blogAuthorId": {
+      "type": "string",
+      "description": "Updated blog author ID"
+    },
+    "featuredImage": {
+      "type": "string",
+      "description": "Updated URL of the featured image"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "PUBLISHED"
+      ],
+      "description": "Updated publish state"
+    },
+    "htmlTitle": {
+      "type": "string",
+      "description": "Updated HTML title tag"
+    }
+  },
+  "required": [
+    "PCID",
+    "postId"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_get_publish_channels
+
+Get the list of connected social media publishing channels (LinkedIn, X/Twitter, etc.) for the current HubSpot account. Use this to discover available channel GUIDs before creating a broadcast.
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_list_broadcasts
+
+List social media broadcasts (posts) from HubSpot. Returns scheduled, published, and draft broadcasts across connected LinkedIn and X/Twitter channels.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `count` | number | No | `20` | Number of broadcasts to return (default: 20) |
+| `offset` | number | No | — | Offset for pagination |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "count": {
+      "type": "number",
+      "default": 20,
+      "description": "Number of broadcasts to return (default: 20)"
+    },
+    "offset": {
+      "type": "number",
+      "description": "Offset for pagination"
+    }
+  },
+  "required": [
+    "PCID"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_get_broadcast
+
+Get details of a specific social media broadcast by its GUID.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `broadcastGuid` | string | Yes | — | The GUID of the broadcast to retrieve |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "broadcastGuid": {
+      "type": "string",
+      "description": "The GUID of the broadcast to retrieve"
+    }
+  },
+  "required": [
+    "PCID",
+    "broadcastGuid"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_create_broadcast
+
+Create a new social media broadcast (post) in HubSpot for publishing to LinkedIn or X (Twitter). Use hubspot_get_publish_channels first to get the channelGuid for the desired social account.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `channelGuid` | string | Yes | — | The GUID of the social channel to publish to (get from hubspot_get_publish_channels) |
+| `content` | object | Yes | — | The broadcast content object |
+| `triggerAt` | number | No | — | Unix timestamp in milliseconds for when to publish the post. If omitted, the post may need to be published manually or will be saved as a draft. |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "channelGuid": {
+      "type": "string",
+      "description": "The GUID of the social channel to publish to (get from hubspot_get_publish_channels)"
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "The text content of the social media post"
+        }
+      },
+      "description": "The broadcast content object"
+    },
+    "triggerAt": {
+      "type": "number",
+      "description": "Unix timestamp in milliseconds for when to publish the post. If omitted, the post may need to be published manually or will be saved as a draft."
+    }
+  },
+  "required": [
+    "PCID",
+    "channelGuid",
+    "content"
+  ]
+}
+```
+
+</Expandable>
+
+---
+
+## hubspot_delete_broadcast
+
+Delete a social media broadcast from HubSpot. Only drafts and scheduled broadcasts can be deleted; already published broadcasts cannot be removed.
+
+**Parameters:**
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `broadcastGuid` | string | Yes | — | The GUID of the broadcast to delete |
+
+<Expandable title="inputSchema">
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "PCID": {
+      "type": "string",
+      "description": "The PinkConnect ID for authentication"
+    },
+    "broadcastGuid": {
+      "type": "string",
+      "description": "The GUID of the broadcast to delete"
+    }
+  },
+  "required": [
+    "PCID",
+    "broadcastGuid"
   ]
 }
 ```
