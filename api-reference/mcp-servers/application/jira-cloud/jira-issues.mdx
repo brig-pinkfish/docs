@@ -72,7 +72,7 @@ Add comment
 | `id` | string | No | — | The ID of the comment. |
 | `jsdAuthorCanSeeRequest` | boolean | No | — | Whether the comment was added from an email sent by a person who is not part of the issue. See [Allow external emails to be added as comments on issues](https://support.atlassian.com/jira-service-management-cloud/docs/allow-external-emails-to-be-added-as-comments-on-issues/)for information on setting up this feature. |
 | `jsdPublic` | boolean | No | — | Whether the comment is visible in Jira Service Desk. Defaults to true when comments are created in the Jira Cloud Platform. This includes when the site doesn't use Jira Service Desk or the project isn't a Jira Service Desk project and, therefore, there is no Jira Service Desk for the issue to be visible on. To create a comment with its visibility in Jira Service Desk set to false, use the Jira Service Desk REST API [Create request comment](https://developer.atlassian.com/cloud/jira/service-desk/rest/#api-rest-servicedeskapi-request-issueIdOrKey-comment-post) operation. |
-| `properties` | any[] | No | — | A list of comment properties. Optional on create and update. |
+| `properties` | object[] | No | — | A list of comment properties. Optional on create and update. |
 | `renderedBody` | string | No | — | The rendered version of the comment. |
 | `self` | string | No | — | The URL of the comment. |
 | `updateAuthor` | object | No | — | The ID of the user who updated the comment last. |
@@ -121,6 +121,9 @@ Add comment
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of comment properties. Optional on create and update."
     },
     "renderedBody": {
@@ -251,7 +254,7 @@ Add worklog
 | `created` | string | No | — | The datetime on which the worklog was created. |
 | `id` | string | No | — | The ID of the worklog record. |
 | `issueId` | string | No | — | The ID of the issue this worklog is for. |
-| `properties` | any[] | No | — | Details of properties for the worklog. Optional when creating or updating a worklog. |
+| `properties` | object[] | No | — | Details of properties for the worklog. Optional when creating or updating a worklog. |
 | `self` | string | No | — | The URL of the worklog item. |
 | `started` | string | No | — | The datetime on which the worklog effort was started. Required when creating a worklog. Optional when updating a worklog. |
 | `timeSpent` | string | No | — | The time spent working on the issue as days (\#d), hours (\#h), or minutes (\#m or \#). Required when creating a worklog if `timeSpentSeconds` isn't provided. Optional when updating a worklog. Cannot be provided if `timeSpentSecond` is provided. |
@@ -324,6 +327,9 @@ Add worklog
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details of properties for the worklog. Optional when creating or updating a worklog."
     },
     "self": {
@@ -491,11 +497,11 @@ Bulk fetch issues
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Use [expand](#expansion) to include additional information about issues in the response. Note that, unlike the majority of instances where `expand` is specified, `expand` is defined as a list of values. The expand options are:   *  `renderedFields` Returns field values rendered in HTML format.  *  `names` Returns the display name of each field.  *  `schema` Returns the schema describing a field type.  *  `transitions` Returns all possible transitions for the issue.  *  `operations` Returns all possible operations for the issue.  *  `editmeta` Returns information about how each field can be edited.  *  `changelog` Returns a list of recent updates to an issue, sorted by date, starting from the most recent. This returns a maximum of 40 changelogs. If you require more, please refer to [Bulk fetch changelogs](#api-rest-api-3-changelog-bulkfetch-post).  *  `versionedRepresentations` Instead of `fields`, returns `versionedRepresentations` a JSON array containing each version of a field's value, with the highest numbered item representing the most recent version. |
-| `fields` | any[] | No | — | A list of fields to return for each issue, use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  The default is `*navigable`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `-description` Returns all navigable (default) fields except description.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: All navigable fields are returned by default. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields. |
+| `expand` | string[] | No | — | Use [expand](#expansion) to include additional information about issues in the response. Note that, unlike the majority of instances where `expand` is specified, `expand` is defined as a list of values. The expand options are:   *  `renderedFields` Returns field values rendered in HTML format.  *  `names` Returns the display name of each field.  *  `schema` Returns the schema describing a field type.  *  `transitions` Returns all possible transitions for the issue.  *  `operations` Returns all possible operations for the issue.  *  `editmeta` Returns information about how each field can be edited.  *  `changelog` Returns a list of recent updates to an issue, sorted by date, starting from the most recent. This returns a maximum of 40 changelogs. If you require more, please refer to [Bulk fetch changelogs](#api-rest-api-3-changelog-bulkfetch-post).  *  `versionedRepresentations` Instead of `fields`, returns `versionedRepresentations` a JSON array containing each version of a field's value, with the highest numbered item representing the most recent version. |
+| `fields` | string[] | No | — | A list of fields to return for each issue, use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  The default is `*navigable`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `-description` Returns all navigable (default) fields except description.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: All navigable fields are returned by default. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields. |
 | `fieldsByKeys` | boolean | No | — | Reference fields by their key (rather than ID). The default is `false`. |
-| `issueIdsOrKeys` | any[] | Yes | — | An array of issue IDs or issue keys to fetch. You can mix issue IDs and keys in the same query. |
-| `properties` | any[] | No | — | A list of issue property keys of issue properties to be included in the results. A maximum of 5 issue property keys can be specified. |
+| `issueIdsOrKeys` | string[] | Yes | — | An array of issue IDs or issue keys to fetch. You can mix issue IDs and keys in the same query. |
+| `properties` | string[] | No | — | A list of issue property keys of issue properties to be included in the results. A maximum of 5 issue property keys can be specified. |
 
 <Expandable title="inputSchema">
 
@@ -509,10 +515,16 @@ Bulk fetch issues
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Use [expand](#expansion) to include additional information about issues in the response. Note that, unlike the majority of instances where `expand` is specified, `expand` is defined as a list of values. The expand options are:   *  `renderedFields` Returns field values rendered in HTML format.  *  `names` Returns the display name of each field.  *  `schema` Returns the schema describing a field type.  *  `transitions` Returns all possible transitions for the issue.  *  `operations` Returns all possible operations for the issue.  *  `editmeta` Returns information about how each field can be edited.  *  `changelog` Returns a list of recent updates to an issue, sorted by date, starting from the most recent. This returns a maximum of 40 changelogs. If you require more, please refer to [Bulk fetch changelogs](#api-rest-api-3-changelog-bulkfetch-post).  *  `versionedRepresentations` Instead of `fields`, returns `versionedRepresentations` a JSON array containing each version of a field's value, with the highest numbered item representing the most recent version."
     },
     "fields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of fields to return for each issue, use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  The default is `*navigable`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `-description` Returns all navigable (default) fields except description.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: All navigable fields are returned by default. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields."
     },
     "fieldsByKeys": {
@@ -521,10 +533,16 @@ Bulk fetch issues
     },
     "issueIdsOrKeys": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "An array of issue IDs or issue keys to fetch. You can mix issue IDs and keys in the same query."
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of issue property keys of issue properties to be included in the results. A maximum of 5 issue property keys can be specified."
     }
   },
@@ -586,7 +604,7 @@ Create filter
 | `overrideSharePermissions` | boolean | No | — | EXPERIMENTAL: Whether share permissions are overridden to enable filters with any share permissions to be created. Available to users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |
 | `approximateLastUsed` | string | No | — | \[Experimental\] Approximate last used time. Returns the date and time when the filter was last used. Returns `null` if the filter hasn't been used after tracking was enabled. For performance reasons, timestamps aren't updated in real time and therefore may not be exactly accurate. |
 | `description` | string | No | — | A description of the filter. |
-| `editPermissions` | any[] | No | — | The groups and projects that can edit the filter. |
+| `editPermissions` | object[] | No | — | The groups and projects that can edit the filter. |
 | `favourite` | boolean | No | — | Whether the filter is selected as a favorite. |
 | `favouritedCount` | integer | No | — | The count of how many users have selected this filter as a favorite, including the filter owner. |
 | `id` | string | No | — | The unique identifier for the filter. |
@@ -596,7 +614,7 @@ Create filter
 | `searchUrl` | string | No | — | A URL to view the filter results in Jira, using the [Search for issues using JQL](#api-rest-api-3-filter-search-get) operation with the filter's JQL string to return the filter results. For example, *https://your-domain.atlassian.net/rest/api/3/search?jql=project+%3D+SSP+AND+issuetype+%3D+Bug*. |
 | `self` | string | No | — | The URL of the filter. |
 | `sharedUsers` | object | No | — | A paginated list of the users that the filter is shared with. This includes users that are members of the groups or can browse the projects that the filter is shared with. |
-| `sharePermissions` | any[] | No | — | The groups and projects that the filter is shared with. |
+| `sharePermissions` | object[] | No | — | The groups and projects that the filter is shared with. |
 | `subscriptions` | object | No | — | A paginated list of the users that are subscribed to the filter. |
 | `viewUrl` | string | No | — | A URL to view the filter results in Jira, using the ID of the filter. For example, *https://your-domain.atlassian.net/issues/?filter=10100*. |
 
@@ -628,6 +646,9 @@ Create filter
     },
     "editPermissions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups and projects that can edit the filter."
     },
     "favourite": {
@@ -666,6 +687,9 @@ Create filter
     },
     "sharePermissions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups and projects that the filter is shared with."
     },
     "subscriptions": {
@@ -698,7 +722,7 @@ Create issue
 | `updateHistory` | boolean | No | — | Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. When provided, the issue type and request type are added to the user's history for a project. These values are then used to provide defaults on the issue create screen. |
 | `fields` | object | No | — | List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`. |
 | `historyMetadata` | object | No | — | Additional issue history details. |
-| `properties` | any[] | No | — | Details of issue properties to be add or update. |
+| `properties` | object[] | No | — | Details of issue properties to be add or update. |
 | `transition` | object | No | — | Details of a transition. Required when performing a transition, optional when creating or editing an issue. |
 | `update` | object | No | — | A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`. |
 
@@ -725,6 +749,9 @@ Create issue
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details of issue properties to be add or update."
     },
     "transition": {
@@ -952,7 +979,7 @@ Transition issue
 | `issueIdOrKey` | string | Yes | — | The ID or key of the issue. |
 | `fields` | object | No | — | List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`. |
 | `historyMetadata` | object | No | — | Additional issue history details. |
-| `properties` | any[] | No | — | Details of issue properties to be add or update. |
+| `properties` | object[] | No | — | Details of issue properties to be add or update. |
 | `transition` | object | No | — | Details of a transition. Required when performing a transition, optional when creating or editing an issue. |
 | `update` | object | No | — | A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`. |
 
@@ -979,6 +1006,9 @@ Transition issue
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details of issue properties to be add or update."
     },
     "transition": {
@@ -1016,7 +1046,7 @@ Edit issue
 | `expand` | string | No | — | The Get issue API expand parameter to use in the response if the `returnIssue` parameter is `true`. |
 | `fields` | object | No | — | List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`. |
 | `historyMetadata` | object | No | — | Additional issue history details. |
-| `properties` | any[] | No | — | Details of issue properties to be add or update. |
+| `properties` | object[] | No | — | Details of issue properties to be add or update. |
 | `transition` | object | No | — | Details of a transition. Required when performing a transition, optional when creating or editing an issue. |
 | `update` | object | No | — | A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`. |
 
@@ -1063,6 +1093,9 @@ Edit issue
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details of issue properties to be add or update."
     },
     "transition": {
@@ -1194,7 +1227,7 @@ Get field reference data (POST)
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `includeCollapsedFields` | boolean | No | — | Include collapsed fields for fields that have non-unique names. |
-| `projectIds` | any[] | No | — | List of project IDs used to filter the visible field details returned. |
+| `projectIds` | integer[] | No | — | List of project IDs used to filter the visible field details returned. |
 
 <Expandable title="inputSchema">
 
@@ -1212,6 +1245,10 @@ Get field reference data (POST)
     },
     "projectIds": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
       "description": "List of project IDs used to filter the visible field details returned."
     }
   },
@@ -1572,7 +1609,7 @@ Search for filters
 | `groupname` | string | No | — | As a group's name can change, use of `groupId` is recommended to identify a group. Group name used to returns filters that are shared with a group that matches `sharePermissions.group.groupname`. This parameter cannot be used with the `groupId` parameter. |
 | `groupId` | string | No | — | Group ID used to returns filters that are shared with a group that matches `sharePermissions.group.groupId`. This parameter cannot be used with the `groupname` parameter. |
 | `projectId` | integer | No | — | Project ID used to returns filters that are shared with a project that matches `sharePermissions.project.id`. |
-| `id` | any[] | No | — | The list of filter IDs. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Do not exceed 200 filter IDs. |
+| `id` | integer[] | No | — | The list of filter IDs. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Do not exceed 200 filter IDs. |
 | `orderBy` | string | No | — | [Order](#ordering) the results by a field:   *  `description` Sorts by filter description. Note that this sorting works independently of whether the expand to display the description field is in use.  *  `favourite_count` Sorts by the count of how many users have this filter as a favorite.  *  `is_favourite` Sorts by whether the filter is marked as a favorite.  *  `id` Sorts by filter ID.  *  `name` Sorts by filter name.  *  `owner` Sorts by the ID of the filter owner.  *  `is_shared` Sorts by whether the filter is shared. |
 | `startAt` | integer | No | — | The index of the first item to return in a page of results (page offset). |
 | `maxResults` | integer | No | — | The maximum number of items to return per page. |
@@ -1616,6 +1653,10 @@ Search for filters
     },
     "id": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
       "description": "The list of filter IDs. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Do not exceed 200 filter IDs."
     },
     "orderBy": {
@@ -1685,10 +1726,10 @@ Get issue
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `issueIdOrKey` | string | Yes | — | The ID or key of the issue. |
-| `fields` | any[] | No | — | A list of fields to return for the issue. This parameter accepts a comma-separated list. Use it to retrieve a subset of fields. Allowed values:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  Examples:   *  `summary,comment` Returns only the summary and comments fields.  *  `-description` Returns all (default) fields except description.  *  `*navigable,-comment` Returns all navigable fields except comment.  This parameter may be specified multiple times. For example, `fields=field1,field2& fields=field3`.  Note: All fields are returned by default. This differs from [Search for issues using JQL (GET)](#api-rest-api-3-search-get) and [Search for issues using JQL (POST)](#api-rest-api-3-search-post) where the default is all navigable fields. |
+| `fields` | string[] | No | — | A list of fields to return for the issue. This parameter accepts a comma-separated list. Use it to retrieve a subset of fields. Allowed values:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  Examples:   *  `summary,comment` Returns only the summary and comments fields.  *  `-description` Returns all (default) fields except description.  *  `*navigable,-comment` Returns all navigable fields except comment.  This parameter may be specified multiple times. For example, `fields=field1,field2& fields=field3`.  Note: All fields are returned by default. This differs from [Search for issues using JQL (GET)](#api-rest-api-3-search-get) and [Search for issues using JQL (POST)](#api-rest-api-3-search-post) where the default is all navigable fields. |
 | `fieldsByKeys` | boolean | No | — | Whether fields in `fields` are referenced by keys rather than IDs. This parameter is useful where fields have been added by a connect app and a field's key may differ from its ID. |
 | `expand` | string | No | — | Use [expand](#expansion) to include additional information about the issues in the response. This parameter accepts a comma-separated list. Expand options include:   *  `renderedFields` Returns field values rendered in HTML format.  *  `names` Returns the display name of each field.  *  `schema` Returns the schema describing a field type.  *  `transitions` Returns all possible transitions for the issue.  *  `editmeta` Returns information about how each field can be edited.  *  `changelog` Returns a list of recent updates to an issue, sorted by date, starting from the most recent.  *  `versionedRepresentations` Returns a JSON array for each version of a field's value, with the highest number representing the most recent version. Note: When included in the request, the `fields` parameter is ignored. |
-| `properties` | any[] | No | — | A list of issue properties to return for the issue. This parameter accepts a comma-separated list. Allowed values:   *  `*all` Returns all issue properties.  *  Any issue property key, prefixed with a minus to exclude.  Examples:   *  `*all` Returns all properties.  *  `*all,-prop1` Returns all properties except `prop1`.  *  `prop1,prop2` Returns `prop1` and `prop2` properties.  This parameter may be specified multiple times. For example, `properties=prop1,prop2& properties=prop3`. |
+| `properties` | string[] | No | — | A list of issue properties to return for the issue. This parameter accepts a comma-separated list. Allowed values:   *  `*all` Returns all issue properties.  *  Any issue property key, prefixed with a minus to exclude.  Examples:   *  `*all` Returns all properties.  *  `*all,-prop1` Returns all properties except `prop1`.  *  `prop1,prop2` Returns `prop1` and `prop2` properties.  This parameter may be specified multiple times. For example, `properties=prop1,prop2& properties=prop3`. |
 | `updateHistory` | boolean | No | — | Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. This also populates the [JQL issues search](#api-rest-api-3-search-get) `lastViewed` field. |
 | `failFast` | boolean | No | — | Whether to fail the request quickly in case of an error while loading fields for an issue. For `failFast=true`, if one field fails, the entire operation fails. For `failFast=false`, the operation will continue even if a field fails. It will return a valid response, but without values for the failed field(s). |
 
@@ -1708,6 +1749,9 @@ Get issue
     },
     "fields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of fields to return for the issue. This parameter accepts a comma-separated list. Use it to retrieve a subset of fields. Allowed values:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  Any issue field, prefixed with a minus to exclude.  Examples:   *  `summary,comment` Returns only the summary and comments fields.  *  `-description` Returns all (default) fields except description.  *  `*navigable,-comment` Returns all navigable fields except comment.  This parameter may be specified multiple times. For example, `fields=field1,field2& fields=field3`.  Note: All fields are returned by default. This differs from [Search for issues using JQL (GET)](#api-rest-api-3-search-get) and [Search for issues using JQL (POST)](#api-rest-api-3-search-post) where the default is all navigable fields."
     },
     "fieldsByKeys": {
@@ -1720,6 +1764,9 @@ Get issue
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of issue properties to return for the issue. This parameter accepts a comma-separated list. Allowed values:   *  `*all` Returns all issue properties.  *  Any issue property key, prefixed with a minus to exclude.  Examples:   *  `*all` Returns all properties.  *  `*all,-prop1` Returns all properties except `prop1`.  *  `prop1,prop2` Returns `prop1` and `prop2` properties.  This parameter may be specified multiple times. For example, `properties=prop1,prop2& properties=prop3`."
     },
     "updateHistory": {
@@ -2269,13 +2316,13 @@ Search for issues using JQL enhanced search (POST)
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `expand` | string | No | — | Use [expand](#expansion) to include additional information about issues in the response. Note that, unlike the majority of instances where `expand` is specified, `expand` is defined as a comma-delimited string of values. The expand options are:   *  `renderedFields` Returns field values rendered in HTML format.  *  `names` Returns the display name of each field.  *  `schema` Returns the schema describing a field type.  *  `transitions` Returns all possible transitions for the issue.  *  `operations` Returns all possible operations for the issue.  *  `editmeta` Returns information about how each field can be edited.  *  `changelog` Returns a list of recent updates to an issue, sorted by date, starting from the most recent.  *  `versionedRepresentations` Instead of `fields`, returns `versionedRepresentations` a JSON array containing each version of a field's value, with the highest numbered item representing the most recent version.  Examples: `"names,changelog"` Returns the display name of each field as well as a list of recent updates to an issue. |
-| `fields` | any[] | No | — | A list of fields to return for each issue. Use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  `id` Returns only issue IDs.  *  Any issue field, prefixed with a dash to exclude.  The default is `id`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: By default, this resource returns IDs only. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields. |
+| `fields` | string[] | No | — | A list of fields to return for each issue. Use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  `id` Returns only issue IDs.  *  Any issue field, prefixed with a dash to exclude.  The default is `id`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: By default, this resource returns IDs only. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields. |
 | `fieldsByKeys` | boolean | No | — | Reference fields by their key (rather than ID). The default is `false`. |
 | `jql` | string | No | — | A [JQL](https://confluence.atlassian.com/x/egORLQ) expression. For performance reasons, this parameter requires a bounded query. A bounded query is a query with a search restriction.   *  Example of an unbounded query: `order by key desc`.  *  Example of a bounded query: `assignee = currentUser() order by key`.  Additionally, `orderBy` clause can contain a maximum of 7 fields. |
 | `maxResults` | integer | No | — | The maximum number of items to return per page. To manage page size, API may return fewer items per page where a large number of fields are requested. The greatest number of items returned per page is achieved when requesting `id` or `key` only. It returns max 5000 issues. |
 | `nextPageToken` | string | No | — | The token for a page to fetch that is not the first page. The first page has a `nextPageToken` of `null`. Use the `nextPageToken` to fetch the next page of issues. |
-| `properties` | any[] | No | — | A list of up to 5 issue properties to include in the results. This parameter accepts a comma-separated list. |
-| `reconcileIssues` | any[] | No | — | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. |
+| `properties` | string[] | No | — | A list of up to 5 issue properties to include in the results. This parameter accepts a comma-separated list. |
+| `reconcileIssues` | integer[] | No | — | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. |
 
 <Expandable title="inputSchema">
 
@@ -2293,6 +2340,9 @@ Search for issues using JQL enhanced search (POST)
     },
     "fields": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of fields to return for each issue. Use it to retrieve a subset of fields. This parameter accepts a comma-separated list. Expand options include:   *  `*all` Returns all fields.  *  `*navigable` Returns navigable fields.  *  `id` Returns only issue IDs.  *  Any issue field, prefixed with a dash to exclude.  The default is `id`.  Examples:   *  `summary,comment` Returns the summary and comments fields only.  *  `*all,-comment` Returns all fields except comments.  Multiple `fields` parameters can be included in a request.  Note: By default, this resource returns IDs only. This differs from [GET issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields."
     },
     "fieldsByKeys": {
@@ -2313,10 +2363,17 @@ Search for issues using JQL enhanced search (POST)
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "A list of up to 5 issue properties to include in the results. This parameter accepts a comma-separated list."
     },
     "reconcileIssues": {
       "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "int64"
+      },
       "description": "Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages."
     }
   },
@@ -2348,7 +2405,7 @@ Update comment
 | `created` | string | No | — | The date and time at which the comment was created. |
 | `jsdAuthorCanSeeRequest` | boolean | No | — | Whether the comment was added from an email sent by a person who is not part of the issue. See [Allow external emails to be added as comments on issues](https://support.atlassian.com/jira-service-management-cloud/docs/allow-external-emails-to-be-added-as-comments-on-issues/)for information on setting up this feature. |
 | `jsdPublic` | boolean | No | — | Whether the comment is visible in Jira Service Desk. Defaults to true when comments are created in the Jira Cloud Platform. This includes when the site doesn't use Jira Service Desk or the project isn't a Jira Service Desk project and, therefore, there is no Jira Service Desk for the issue to be visible on. To create a comment with its visibility in Jira Service Desk set to false, use the Jira Service Desk REST API [Create request comment](https://developer.atlassian.com/cloud/jira/service-desk/rest/#api-rest-servicedeskapi-request-issueIdOrKey-comment-post) operation. |
-| `properties` | any[] | No | — | A list of comment properties. Optional on create and update. |
+| `properties` | object[] | No | — | A list of comment properties. Optional on create and update. |
 | `renderedBody` | string | No | — | The rendered version of the comment. |
 | `self` | string | No | — | The URL of the comment. |
 | `updateAuthor` | object | No | — | The ID of the user who updated the comment last. |
@@ -2405,6 +2462,9 @@ Update comment
     },
     "properties": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "A list of comment properties. Optional on create and update."
     },
     "renderedBody": {
@@ -2451,7 +2511,7 @@ Update filter
 | `overrideSharePermissions` | boolean | No | — | EXPERIMENTAL: Whether share permissions are overridden to enable the addition of any share permissions to filters. Available to users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |
 | `approximateLastUsed` | string | No | — | \[Experimental\] Approximate last used time. Returns the date and time when the filter was last used. Returns `null` if the filter hasn't been used after tracking was enabled. For performance reasons, timestamps aren't updated in real time and therefore may not be exactly accurate. |
 | `description` | string | No | — | A description of the filter. |
-| `editPermissions` | any[] | No | — | The groups and projects that can edit the filter. |
+| `editPermissions` | object[] | No | — | The groups and projects that can edit the filter. |
 | `favourite` | boolean | No | — | Whether the filter is selected as a favorite. |
 | `favouritedCount` | integer | No | — | The count of how many users have selected this filter as a favorite, including the filter owner. |
 | `jql` | string | No | — | The JQL query for the filter. For example, *project = SSP AND issuetype = Bug*. |
@@ -2460,7 +2520,7 @@ Update filter
 | `searchUrl` | string | No | — | A URL to view the filter results in Jira, using the [Search for issues using JQL](#api-rest-api-3-filter-search-get) operation with the filter's JQL string to return the filter results. For example, *https://your-domain.atlassian.net/rest/api/3/search?jql=project+%3D+SSP+AND+issuetype+%3D+Bug*. |
 | `self` | string | No | — | The URL of the filter. |
 | `sharedUsers` | object | No | — | A paginated list of the users that the filter is shared with. This includes users that are members of the groups or can browse the projects that the filter is shared with. |
-| `sharePermissions` | any[] | No | — | The groups and projects that the filter is shared with. |
+| `sharePermissions` | object[] | No | — | The groups and projects that the filter is shared with. |
 | `subscriptions` | object | No | — | A paginated list of the users that are subscribed to the filter. |
 | `viewUrl` | string | No | — | A URL to view the filter results in Jira, using the ID of the filter. For example, *https://your-domain.atlassian.net/issues/?filter=10100*. |
 
@@ -2496,6 +2556,9 @@ Update filter
     },
     "editPermissions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups and projects that can edit the filter."
     },
     "favourite": {
@@ -2530,6 +2593,9 @@ Update filter
     },
     "sharePermissions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The groups and projects that the filter is shared with."
     },
     "subscriptions": {

@@ -422,7 +422,7 @@ Get a document.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `documentId` | string | Yes | — | Document ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -440,6 +440,14 @@ Get a document.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "lockInfo",
+          "acl",
+          "workspace"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -517,7 +525,7 @@ Query content
 | `sortBy` | string | No | — | name or dateCreated |
 | `sortOrder` | string | No | — | ascending or descending |
 | `queryPhrase` | string | Yes | — | Phrase tokens are ANDed together over all searchable fields |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -551,6 +559,13 @@ Query content
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "acl",
+          "workspace"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -635,7 +650,7 @@ Retrieve details about an existing share.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `shareId` | string | Yes | — | Share ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -653,6 +668,12 @@ Retrieve details about an existing share.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "member"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -735,7 +756,7 @@ Gets a list of shares.  You must specify at least one filter (e.g. entityId).
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `entityId` | string | No | — | Filters the shares returned to only the entity specified by the value of this parameter. |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 
@@ -755,6 +776,12 @@ Gets a list of shares.  You must specify at least one filter (e.g. entityId).
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "member"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "pageSize": {
@@ -886,7 +913,7 @@ Get a workspace.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -904,6 +931,13 @@ Get a workspace.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "summary",
+          "acl"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -927,7 +961,7 @@ Get a list of documents.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
 | `sortBy` | string | No | — | name or dateCreated |
@@ -949,6 +983,13 @@ Get a list of documents.
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "acl",
+          "workspace"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "pageSize": {
@@ -989,7 +1030,7 @@ Get a workspace member
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
 | `memberId` | string | Yes | — | Member ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -1011,6 +1052,12 @@ Get a workspace member
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "member"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1037,7 +1084,7 @@ Get a list workspace members
 | `workspaceId` | string | Yes | — | Workspace ID |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -1063,6 +1110,12 @@ Get a list workspace members
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "member"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1087,7 +1140,7 @@ Get a workspace tag
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
 | `tagId` | string | Yes | — | Tag ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -1109,6 +1162,12 @@ Get a workspace tag
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "acl"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1136,7 +1195,7 @@ Get a list of workspace tags
 | `value` | string | No | — | filter the list of tags returned |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -1166,6 +1225,12 @@ Get a list of workspace tags
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "acl"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1190,8 +1255,8 @@ Get a list of workspaces.
 | --- | --- | --- | --- | --- |
 | `pageSize` | integer | No | — | Page size |
 | `pageNumber` | integer | No | — | Page number |
-| `access` | any[] | No | — | Requested access level. |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `access` | string[] | No | — | Requested access level. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 
 <Expandable title="inputSchema">
 
@@ -1213,10 +1278,43 @@ Get a list of workspaces.
     },
     "access": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "content",
+          "admin",
+          "document:create",
+          "document:viewContent",
+          "document:viewMetadata",
+          "document:download",
+          "document:delete",
+          "document:update",
+          "document:share",
+          "document:shareView",
+          "document:email",
+          "document:print",
+          "document:auditView",
+          "document:replace",
+          "document:tag",
+          "tag:create",
+          "tag:view",
+          "tag:update",
+          "tag:apply",
+          "tag:remove",
+          "tag:delete"
+        ]
+      },
       "description": "Requested access level."
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "summary",
+          "acl"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     }
   },
@@ -1500,15 +1598,15 @@ Update a document.
 | `documentId` | string | Yes | — | Document ID |
 | `expand` | string | No | — | Expand some document fields |
 | `override` | boolean | No | — | Override any lock on the document |
-| `addTagIds` | any[] | No | — | Add Tag Ids |
-| `addTags` | any[] | No | — | Add Tags |
+| `addTagIds` | string[] | No | — | Add Tag Ids |
+| `addTags` | string[] | No | — | Add Tags |
 | `changeNumber` | integer | No | — | Change Number |
 | `name` | string | Yes | — | The name of the document |
 | `read` | boolean | No | — | The read value |
-| `removeAttributes` | any[] | No | — | Remove Attributes |
-| `removeTagIds` | any[] | No | — | Remove Tag Ids |
-| `removeTags` | any[] | No | — | Remove Tags |
-| `updateAttributes` | any[] | No | — | Update Attributes |
+| `removeAttributes` | string[] | No | — | Remove Attributes |
+| `removeTagIds` | string[] | No | — | Remove Tag Ids |
+| `removeTags` | string[] | No | — | Remove Tags |
+| `updateAttributes` | object[] | No | — | Update Attributes |
 
 <Expandable title="inputSchema">
 
@@ -1537,10 +1635,16 @@ Update a document.
     },
     "addTagIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Add Tag Ids"
     },
     "addTags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Add Tags"
     },
     "changeNumber": {
@@ -1557,18 +1661,30 @@ Update a document.
     },
     "removeAttributes": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Remove Attributes"
     },
     "removeTagIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Remove Tag Ids"
     },
     "removeTags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Remove Tags"
     },
     "updateAttributes": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Update Attributes"
     }
   },
@@ -1652,8 +1768,8 @@ Add a document.
 | `moveSource` | string | No | — | Move a document to a new workspace. Provide a document ID as the move source. |
 | `override` | boolean | No | — | Override any lock on the source document |
 | `name` | string | Yes | — | The name of the document |
-| `tagIds` | any[] | No | — | Tag Ids |
-| `tags` | any[] | No | — | The tags value |
+| `tagIds` | string[] | No | — | Tag Ids |
+| `tags` | string[] | No | — | The tags value |
 | `workspace` | object | Yes | — | The workspace value |
 
 <Expandable title="inputSchema">
@@ -1684,10 +1800,16 @@ Add a document.
     },
     "tagIds": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Tag Ids"
     },
     "tags": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The tags value"
     },
     "workspace": {
@@ -1730,14 +1852,14 @@ Query content
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `expand` | string | No | — | Expand some document fields |
-| `attributeFilters` | any[] | No | — | Attribute Filters |
-| `facetNameRequests` | any[] | No | — | Facet Name Requests |
-| `filters` | any[] | No | — | The filters value |
+| `attributeFilters` | object[] | No | — | Attribute Filters |
+| `facetNameRequests` | string[] | No | — | Facet Name Requests |
+| `filters` | object[] | No | — | The filters value |
 | `includeShares` | boolean | No | — | Include Shares |
 | `pageNumber` | integer | No | — | Page number for pagination |
 | `pageSize` | integer | No | — | Number of results per page |
 | `queryPhrase` | string | No | — | Query Phrase |
-| `sort` | any[] | No | — | Sort order for results |
+| `sort` | object[] | No | — | Sort order for results |
 
 <Expandable title="inputSchema">
 
@@ -1759,14 +1881,23 @@ Query content
     },
     "attributeFilters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Attribute Filters"
     },
     "facetNameRequests": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "Facet Name Requests"
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The filters value"
     },
     "includeShares": {
@@ -1787,6 +1918,9 @@ Query content
     },
     "sort": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Sort order for results"
     }
   },
@@ -1809,7 +1943,7 @@ Creates a new share or updates an existing share if the entity has already been 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `member` | object | No | — | The member value |
-| `members` | any[] | No | — | The members value |
+| `members` | object[] | No | — | The members value |
 | `memberType` | string | No | — | Member Type |
 | `sharedEntity` | object | Yes | — | Shared Entity |
 | `sharedEntityType` | string | Yes | — | The share entity type |
@@ -1836,6 +1970,9 @@ Creates a new share or updates an existing share if the entity has already been 
     },
     "members": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "The members value"
     },
     "memberType": {
@@ -1886,7 +2023,7 @@ Create a workspace tag
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
-| `acl` | any[] | No | — | The acl value |
+| `acl` | string[] | No | — | The acl value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inUse` | boolean | No | — | In Use |
 | `name` | string | Yes | — | The workspace tag name. |
@@ -1908,6 +2045,9 @@ Create a workspace tag
     },
     "acl": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The acl value"
     },
     "id": {
@@ -1948,7 +2088,7 @@ Perform a prefix query on tags in the workspace
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
-| `expand` | any[] | No | — | Which fields, if any, to expand. |
+| `expand` | string[] | No | — | Which fields, if any, to expand. |
 | `pageNumber` | integer | No | — | Page number for pagination |
 | `pageSize` | integer | No | — | Number of results per page |
 | `query` | string | No | — | Search query string |
@@ -1969,6 +2109,12 @@ Perform a prefix query on tags in the workspace
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "acl"
+        ]
+      },
       "description": "Which fields, if any, to expand."
     },
     "pageNumber": {
@@ -2283,10 +2429,10 @@ Search response assets
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `expand` | any[] | No | — | Which fields, if any, to expand |
+| `expand` | string[] | No | — | Which fields, if any, to expand |
 | `pageNumber` | integer | No | — | The page of resources you want to retrieve |
 | `pageSize` | integer | No | — | The number of results per page. Default: 25, Maximum: 100. |
-| `query` | any[] | Yes | — | Filter the query results. |
+| `query` | object[] | Yes | — | Filter the query results. |
 | `sortBy` | string | No | — | The field in the resource that you want to sort the results by |
 | `sortOrder` | string | No | — | The sort order for results |
 
@@ -2302,6 +2448,13 @@ Search response assets
     },
     "expand": {
       "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "user",
+          "division"
+        ]
+      },
       "description": "Which fields, if any, to expand"
     },
     "pageNumber": {
@@ -2314,6 +2467,9 @@ Search response assets
     },
     "query": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filter the query results."
     },
     "sortBy": {
@@ -2395,20 +2551,20 @@ Create a response.
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `expand` | string | No | — | Expand instructions for the return value. |
-| `assets` | any[] | No | — | Assets used in the response |
+| `assets` | object[] | No | — | Assets used in the response |
 | `createdBy` | object | No | — | Created By |
 | `dateCreated` | string | No | — | The date and time the response was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `footer` | object | No | — | The Footer template identifies the Footer type and its footerUsage |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `interactionType` | string | No | — | The interaction type for this response. |
-| `libraries` | any[] | Yes | — | One or more libraries response is associated with. |
+| `libraries` | object[] | Yes | — | One or more libraries response is associated with. |
 | `messagingTemplate` | object | No | — | The messaging template identifies a structured message templates supported by a messaging channel. |
 | `name` | string | No | — | The name value |
 | `responseType` | string | No | — | The response type represented by the response. |
 | `selfUri` | string | No | — | The URI for this object |
-| `substitutions` | any[] | No | — | Details about any text substitutions used in the texts for this response. |
+| `substitutions` | object[] | No | — | Details about any text substitutions used in the texts for this response. |
 | `substitutionsSchema` | object | No | — | A JSON Schema document. |
-| `texts` | any[] | Yes | — | One or more texts associated with the response. |
+| `texts` | object[] | Yes | — | One or more texts associated with the response. |
 | `version` | integer | No | — | Version number required for updates. |
 
 <Expandable title="inputSchema">
@@ -2430,6 +2586,9 @@ Create a response.
     },
     "assets": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Assets used in the response"
     },
     "createdBy": {
@@ -2630,6 +2789,9 @@ Create a response.
     },
     "libraries": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "One or more libraries response is associated with."
     },
     "messagingTemplate": {
@@ -2663,6 +2825,9 @@ Create a response.
     },
     "substitutions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details about any text substitutions used in the texts for this response."
     },
     "substitutionsSchema": {
@@ -2705,6 +2870,9 @@ Create a response.
     },
     "texts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "One or more texts associated with the response."
     },
     "version": {
@@ -2732,7 +2900,7 @@ Query responses
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `filters` | any[] | No | — | Filter the query results. |
+| `filters` | object[] | No | — | Filter the query results. |
 | `pageNumber` | integer | No | — | Page Number |
 | `pageSize` | integer | No | — | The maximum number of hits to return. Default: 25, Maximum: 500. |
 | `queryPhrase` | string | No | — | Query phrase to search response text and name. If not set will match all. |
@@ -2749,6 +2917,9 @@ Query responses
     },
     "filters": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Filter the query results."
     },
     "pageNumber": {
@@ -2783,7 +2954,7 @@ Update a workspace
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
-| `acl` | any[] | No | — | The acl value |
+| `acl` | string[] | No | — | The acl value |
 | `bucket` | string | No | — | The bucket value |
 | `dateCreated` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `dateModified` | string | No | — | Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
@@ -2812,6 +2983,9 @@ Update a workspace
     },
     "acl": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The acl value"
     },
     "bucket": {
@@ -3284,7 +3458,7 @@ Update a workspace tag. Will update all documents with the new tag value.
 | --- | --- | --- | --- | --- |
 | `workspaceId` | string | Yes | — | Workspace ID |
 | `tagId` | string | Yes | — | Tag ID |
-| `acl` | any[] | No | — | The acl value |
+| `acl` | string[] | No | — | The acl value |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `inUse` | boolean | No | — | In Use |
 | `name` | string | Yes | — | The workspace tag name. |
@@ -3310,6 +3484,9 @@ Update a workspace tag. Will update all documents with the new tag value.
     },
     "acl": {
       "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "The acl value"
     },
     "id": {
@@ -3592,20 +3769,20 @@ Update an existing response.
 | --- | --- | --- | --- | --- |
 | `responseId` | string | Yes | — | Response ID |
 | `expand` | string | No | — | Expand instructions for the return value. |
-| `assets` | any[] | No | — | Assets used in the response |
+| `assets` | object[] | No | — | Assets used in the response |
 | `createdBy` | object | No | — | Created By |
 | `dateCreated` | string | No | — | The date and time the response was created. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z |
 | `footer` | object | No | — | The Footer template identifies the Footer type and its footerUsage |
 | `id` | string | No | — | The globally unique identifier for the object. |
 | `interactionType` | string | No | — | The interaction type for this response. |
-| `libraries` | any[] | Yes | — | One or more libraries response is associated with. |
+| `libraries` | object[] | Yes | — | One or more libraries response is associated with. |
 | `messagingTemplate` | object | No | — | The messaging template identifies a structured message templates supported by a messaging channel. |
 | `name` | string | No | — | The name value |
 | `responseType` | string | No | — | The response type represented by the response. |
 | `selfUri` | string | No | — | The URI for this object |
-| `substitutions` | any[] | No | — | Details about any text substitutions used in the texts for this response. |
+| `substitutions` | object[] | No | — | Details about any text substitutions used in the texts for this response. |
 | `substitutionsSchema` | object | No | — | A JSON Schema document. |
-| `texts` | any[] | Yes | — | One or more texts associated with the response. |
+| `texts` | object[] | Yes | — | One or more texts associated with the response. |
 | `version` | integer | No | — | Version number required for updates. |
 
 <Expandable title="inputSchema">
@@ -3631,6 +3808,9 @@ Update an existing response.
     },
     "assets": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Assets used in the response"
     },
     "createdBy": {
@@ -3831,6 +4011,9 @@ Update an existing response.
     },
     "libraries": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "One or more libraries response is associated with."
     },
     "messagingTemplate": {
@@ -3864,6 +4047,9 @@ Update an existing response.
     },
     "substitutions": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "Details about any text substitutions used in the texts for this response."
     },
     "substitutionsSchema": {
@@ -3906,6 +4092,9 @@ Update an existing response.
     },
     "texts": {
       "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "One or more texts associated with the response."
     },
     "version": {
